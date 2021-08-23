@@ -52,7 +52,7 @@ const Home: NextPage = () => {
       } else {
         const res = await readOnlyAppProvider?.getBalance(vbAddress);
         if (!isAppConnected) {
-          setBalance({ name: "Vitalik", balance: formatUnits(res || ZERO_BN) });
+          setBalance({ name: "Vitalik balance", balance: formatUnits(res || ZERO_BN) });
         }
       }
     }
