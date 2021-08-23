@@ -3,30 +3,67 @@ import Head from "next/head";
 import Image from "next/image";
 import Select from "react-select";
 import { $enum } from "ts-enum-util";
+import { formatUnits } from "@ethersproject/units";
 
 import { ChainId } from "@/constants/chains";
 import styles from "../styles/Home.module.css";
 import Web3ConnectionProvider, {
   useWeb3Connection,
 } from "@/utils/web3Connection";
+import { useEffect, useState } from "react";
+import { ZERO_BN } from "@/constants/util";
 
-const initalAppChainId = ChainId.Mainnet;
+const vbAddress = "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B";
 
 const Home: NextPage = () => {
   const {
-    rpcProvider,
+    readOnlyAppProvider,
+    web3Provider,
     isAppConnected,
     isWalletConnected,
     appChainId,
+    wallet,
+    address,
+    disconnectWallet,
     setAppChainId,
     connectWallet,
     pushNetwork,
-    walletChainId,
   } = useWeb3Connection();
+
   const chainOptions = $enum(ChainId).map((value, key) => ({
     value,
     label: key,
   }));
+
+  const [balance, setBalance] = useState<
+    { name: string; balance: string } | undefined
+  >();
+
+  useEffect(() => {
+    async function getBalance() {
+      if (isAppConnected) {
+        const res = (await web3Provider?.getBalance(address!)) || ZERO_BN;
+        if (isAppConnected) {
+          setBalance({
+            name: "your balance",
+            balance: formatUnits(res || ZERO_BN),
+          });
+        }
+      } else {
+        const res = await readOnlyAppProvider?.getBalance(vbAddress);
+        if (!isAppConnected) {
+          setBalance({ name: "Vitalik", balance: formatUnits(res || ZERO_BN) });
+        }
+      }
+    }
+
+    if (!isWalletConnected && !readOnlyAppProvider) {
+      setBalance(undefined);
+    } else {
+      getBalance();
+    }
+  }, [isAppConnected, isWalletConnected, readOnlyAppProvider, web3Provider, address]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -57,14 +94,21 @@ const Home: NextPage = () => {
             {isWalletConnected && !isAppConnected && (
               <button onClick={pushNetwork}>Switch Network</button>
             )}
-            {/* vitalik Balance: {formatW(rpcProvider.getBalance("0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B"))} */}
-            <div></div>
+            <div>
+              {balance?.name}: {balance?.balance}
+            </div>
           </div>
 
           <div className={styles.card}>
             <h2>Wallet Connect</h2>
             {isWalletConnected ? (
-              `connected to chainId: ${walletChainId}`
+              <div>
+                <div>
+                  <button onClick={disconnectWallet}>Disconnect</button>
+                </div>
+                <div>Connected to: {wallet?.name}</div>
+                <div>{address}</div>
+              </div>
             ) : (
               <button onClick={connectWallet}>Connect</button>
             )}
@@ -95,7 +139,7 @@ const Home: NextPage = () => {
 
 export default function App() {
   return (
-    <Web3ConnectionProvider initalAppChainId={initalAppChainId}>
+    <Web3ConnectionProvider>
       <Home />
     </Web3ConnectionProvider>
   );

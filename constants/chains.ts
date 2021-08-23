@@ -44,7 +44,7 @@ export const chains: Record<number, ChainConfig> = {
     shortName: "Kovan",
     chainId: 42,
     chainIdHex: "0x2a",
-    rpcUrl: "https://kovan.infura.io",
+    rpcUrl: "https://kovan.infura.io/v3/ecb81cbe2f03436cb39236e4160311fe",
     blockExplorerUrls: ["https://kovan.etherscan.io/"],
     iconUrls: [],
   },

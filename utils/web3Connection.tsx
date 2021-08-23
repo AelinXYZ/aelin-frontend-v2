@@ -1,6 +1,7 @@
 import {
   createContext,
   Dispatch,
+  ReactElement,
   ReactNode,
   SetStateAction,
   useContext,
@@ -15,7 +16,6 @@ import { Subscriptions } from "bnc-onboard/dist/src/interfaces";
 
 import isServer from "@/utils/isServer";
 import { ChainId, chains, getNetworkConfig } from "@/constants/chains";
-import coerce from "@/utils/coerce";
 import { $enum } from "ts-enum-util";
 
 const STORAGE_CONNECTED_WALLET = "onboard_selectedWallet";
@@ -78,9 +78,10 @@ export type Web3Context = {
   isWalletConnected: boolean;
   isWalletNetworkSupported: boolean;
   appChainId: ChainId;
+  wallet: Wallet | null;
   walletChainId: number | null;
   address: string | null;
-  rpcProvider: JsonRpcProvider;
+  readOnlyAppProvider: JsonRpcProvider;
   web3Provider: Web3Provider | null;
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
@@ -91,68 +92,67 @@ export type Web3Context = {
 const Web3ContextConnection = createContext<Web3Context | undefined>(undefined);
 
 type Props = {
+  fallback?: ReactElement;
   children: ReactNode;
-  initalAppChainId: ChainId;
 };
 
+const INITAL_APP_CHAIN_ID = ChainId.Mainnet;
+
 export default function Web3ConnectionProvider({
-  initalAppChainId,
   children,
+  fallback = <div>Loading...</div>,
 }: Props) {
+  const [isInitializing, setIsInitializing] = useState(true);
   const [address, setAddress] = useState<string | null>(null);
   const [walletNetwork, setWalletNetwork] = useState<number | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
-  const [appChainId, setAppChainId] = useState<ChainId>(initalAppChainId);
+  const [appChainId, setAppChainId] = useState<ChainId>(INITAL_APP_CHAIN_ID);
   const supportedChainIds = $enum(ChainId).getValues();
 
-  // check if chain id is in list of supported ids
+  const web3Provider =
+    wallet?.provider != null ? new Web3Provider(wallet.provider) : null;
+
+  const isWalletConnected = web3Provider != null;
+
+  const isAppConnected =
+    walletNetwork === appChainId && address !== null && web3Provider !== null;
+
   const isWalletNetworkSupported = supportedChainIds.includes(
     walletNetwork as any
   );
 
-  // if no web3 connection with valid address on valid chain id, wallet is not connected
-  const web3Provider = useMemo(
-    () => (wallet?.provider != null ? new Web3Provider(wallet.provider) : null),
-    [wallet?.provider]
-  );
-
-  const isWalletConnected =
-    onboard?.getState().address != null && web3Provider != null;
-
-  // if no web3 connection with valid address on valid chain id, wallet is not connected
-  const isAppConnected = walletNetwork === appChainId && address !== null && web3Provider !== null;
-
-  const connectedChainId =
-    isAppConnected && isWalletNetworkSupported
-      ? coerce(ChainId, walletNetwork)
-      : null;
-  const _chainId = connectedChainId ?? appChainId;
-
-  // connect rpc provider to "selected" network
-  const rpcProvider = useMemo(
-    () => new JsonRpcProvider(getNetworkConfig(_chainId).rpcUrl, _chainId),
-    [_chainId]
+  const readOnlyAppProvider = useMemo(
+    () => new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl, appChainId),
+    [appChainId]
   );
 
   // Instantiate Onboard
   useEffect(() => {
-    initOnboard(appChainId, {
+    initOnboard(INITAL_APP_CHAIN_ID, {
       network: (network: number) => {
-        setWalletNetwork(network);
+        setWalletNetwork(network || null);
       },
-      address: (address: string) => {
-        setAddress(address);
+      address: (address: string | undefined) => {
+        setAddress(address || null);
       },
       wallet: (wallet: Wallet) => {
-        setWallet(wallet);
+        if (wallet.name) {
+          window.localStorage.setItem(
+            STORAGE_CONNECTED_WALLET,
+            wallet.name || ""
+          );
+        }
+
+        setWallet(wallet || null);
       },
     });
-  }, [appChainId]);
+  }, []);
 
   // recover previous connection
   useEffect(() => {
-    setTimeout(() => {
-      _reconnectWallet();
+    setTimeout(async () => {
+      await _reconnectWallet();
+      setIsInitializing(false);
     }, ONBOARD_STATE_DELAY);
   }, []);
 
@@ -170,10 +170,11 @@ export default function Web3ConnectionProvider({
       console.warn("Unable to connect, onboard is not defined");
       return;
     }
-    const previouslySelectedWallet = coerce(
-      WalletType,
-      window.localStorage.getItem(STORAGE_CONNECTED_WALLET)
+
+    const previouslySelectedWallet = window.localStorage.getItem(
+      STORAGE_CONNECTED_WALLET
     );
+
     if (previouslySelectedWallet) {
       const success = await onboard.walletSelect(previouslySelectedWallet);
       if (success) {
@@ -188,14 +189,15 @@ export default function Web3ConnectionProvider({
       return;
     }
     const success = await onboard.walletSelect();
+    setIsInitializing(true);
     if (success) {
       await onboard.walletCheck();
     }
+    setIsInitializing(false);
   };
 
   const pushNetwork = async (): Promise<void> => {
-    debugger
-    if (!onboard || !wallet || wallet.name !== 'MetaMask') {
+    if (!onboard || !wallet || wallet.name !== "MetaMask") {
       console.warn("Unable to push network");
       return;
     }
@@ -234,16 +236,21 @@ export default function Web3ConnectionProvider({
     isAppConnected,
     isWalletConnected,
     isWalletNetworkSupported,
-    appChainId: _chainId,
+    appChainId,
+    wallet,
     walletChainId: walletNetwork,
     address,
-    rpcProvider,
+    readOnlyAppProvider,
     web3Provider,
     connectWallet,
     disconnectWallet,
     pushNetwork,
     setAppChainId: setAppChainId,
   };
+
+  if (isInitializing) {
+    return fallback;
+  }
 
   return (
     <Web3ContextConnection.Provider value={value}>
