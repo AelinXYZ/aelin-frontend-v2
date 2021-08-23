@@ -120,7 +120,7 @@ export default function Web3ConnectionProvider({
     onboard?.getState().address != null && web3Provider != null;
 
   // if no web3 connection with valid address on valid chain id, wallet is not connected
-  const isAppConnected = walletNetwork === appChainId;
+  const isAppConnected = walletNetwork === appChainId && address !== null && web3Provider !== null;
 
   const connectedChainId =
     isAppConnected && isWalletNetworkSupported
