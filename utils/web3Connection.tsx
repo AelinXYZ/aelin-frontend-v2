@@ -215,7 +215,7 @@ export default function Web3ConnectionProvider({
       const config = {
         chainId: networkConfig.chainIdHex,
         chainName: networkConfig.name,
-        rpcUrls: networkConfig.rpcUrl,
+        rpcUrls: [networkConfig.rpcUrl],
         blockExplorerUrls: networkConfig.blockExplorerUrls,
         iconUrls: networkConfig.iconUrls,
       };

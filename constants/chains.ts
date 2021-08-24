@@ -53,7 +53,7 @@ export const chains: Record<number, ChainConfig> = {
     name: "Optimism",
     shortName: "Optimism",
     chainId: 10,
-    chainIdHex: "0x0A",
+    chainIdHex: "0xa",
     rpcUrl: "https://mainnet.optimism.io",
     blockExplorerUrls: ["https://optimistic.etherscan.io/"],
     iconUrls: [
