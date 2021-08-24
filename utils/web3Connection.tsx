@@ -136,14 +136,15 @@ export default function Web3ConnectionProvider({
         setAddress(address || null);
       },
       wallet: (wallet: Wallet) => {
-        if (wallet.name) {
+        if (wallet.name === undefined) {
+          setWallet(null);
+        } else {
           window.localStorage.setItem(
             STORAGE_CONNECTED_WALLET,
             wallet.name || ""
           );
+          setWallet(wallet || null);
         }
-
-        setWallet(wallet || null);
       },
     });
   }, []);
