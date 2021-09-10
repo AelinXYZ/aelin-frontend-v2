@@ -27,5 +27,9 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     font-family: ${({ theme }) => theme.fonts.fontFamilyCode};
   }
 
-  #__next {}
+  #__next {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
 `
