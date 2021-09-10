@@ -1,20 +1,23 @@
 import Link from 'next/link'
 import styled from 'styled-components'
 
-import { BootNodeLogo } from '@/assets/BootNodeLogo'
-import { TopMenu } from '@/navigation/TopMenu'
-import { InnerContainer } from '@/pureStyledComponents/layout/InnerContainer'
-import { useScrollPosition } from '@n8tb1t/use-scroll-position'
+import { BootNodeLogo } from '@/components/assets/BootNodeLogo'
+import { InnerContainer as BaseInnerContainer } from '@/components/pureStyledComponents/layout/InnerContainer'
 
-const Wrapper = styled(InnerContainer)`
-  flex-direction: row;
+const Wrapper = styled.div`
+  align-items: center;
+  background-color: #000;
+  display: flex;
   flex-grow: 0;
-  height: var(--header-height);
-  justify-content: center;
-  padding-bottom: ${({ theme }) => theme.header.paddingBottom};
-  padding-top: ${({ theme }) => theme.header.paddingTop};
+  height: ${({ theme }) => theme.header.height};
   position: sticky;
   top: 0;
+`
+
+const InnerContainer = styled(BaseInnerContainer)`
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
 `
 
 const HomeLink = styled.span`
@@ -27,35 +30,19 @@ const HomeLink = styled.span`
 
 const Logo = styled(BootNodeLogo)`
   cursor: pointer;
-  max-height: ${({ theme }) => theme.header.height};
-`
-
-const Menu = styled(TopMenu)`
-  margin-left: auto;
+  max-height: calc(${({ theme }) => theme.header.height} - 20px);
 `
 
 export const Header: React.FC = (props) => {
-  useScrollPosition(({ currPos, prevPos }) => {
-    const direction = currPos.y > prevPos.y ? 'UP' : 'DOWN'
-    // let displacement = 0
-
-    // if (direction === 'DOWN') {
-    const displacement = Math.abs(currPos.y - prevPos.y)
-    // } else {
-    //   displacement = prevPos.y - currPos.y
-    // }
-
-    console.log(displacement)
-  }, [])
-
   return (
     <Wrapper as="header" {...props}>
-      <Link href="/">
-        <HomeLink>
-          <Logo />
-        </HomeLink>
-      </Link>
-      <Menu />
+      <InnerContainer>
+        <Link href="/">
+          <HomeLink>
+            <Logo />
+          </HomeLink>
+        </Link>
+      </InnerContainer>
     </Wrapper>
   )
 }

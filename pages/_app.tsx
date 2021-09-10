@@ -7,6 +7,7 @@ import { theme } from 'theme'
 import { GlobalStyle } from 'theme/globalStyle'
 
 import { Footer } from '@/components/layout/Footer'
+import { Header } from '@/components/layout/Header'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -16,6 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
+        <Header />
         <Component {...pageProps} />
         <Footer />
       </ThemeProvider>
