@@ -6,6 +6,8 @@ import 'sanitize.css'
 import { theme } from 'theme'
 import { GlobalStyle } from 'theme/globalStyle'
 
+import { Footer } from '@/components/layout/Footer'
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
@@ -15,6 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <Component {...pageProps} />
+        <Footer />
       </ThemeProvider>
     </>
   )
