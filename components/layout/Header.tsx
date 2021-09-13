@@ -93,7 +93,7 @@ export const Header: React.FC = (props) => {
   return (
     <Wrapper as="header" {...props}>
       <InnerContainer>
-        <Link href="/">
+        <Link href="/" passHref>
           <HomeLink>
             <Logo />
           </HomeLink>
