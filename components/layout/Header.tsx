@@ -3,13 +3,16 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { formatUnits } from '@ethersproject/units'
-import Select from 'react-select'
 import { $enum } from 'ts-enum-util'
 
 import { BootNodeLogo } from '@/components/assets/BootNodeLogo'
+import { ChevronDown as BaseChevronDown } from '@/components/assets/ChevronDown'
+import { Button } from '@/components/buttons/Button'
+import { Dropdown, DropdownItem } from '@/components/dropdown/Dropdown'
 import { InnerContainer as BaseInnerContainer } from '@/components/pureStyledComponents/layout/InnerContainer'
 import { ChainId } from '@/constants/chains'
 import { ZERO_BN } from '@/constants/util'
+import { truncateStringInTheMiddle } from '@/utils/tools'
 import { useWeb3Connection } from '@/utils/web3Connection'
 
 const vbAddress = '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'
@@ -17,6 +20,7 @@ const vbAddress = '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'
 const Wrapper = styled.div`
   align-items: center;
   background-color: #000;
+  color: #fff;
   display: flex;
   flex-grow: 0;
   height: ${({ theme }) => theme.header.height};
@@ -43,9 +47,47 @@ const Logo = styled(BootNodeLogo)`
   max-height: calc(${({ theme }) => theme.header.height} - 20px);
 `
 
+const StartWrapper = styled.div`
+  align-items: center;
+  display: flex;
+`
+
+const EndWrapper = styled.div`
+  align-items: center;
+  display: flex;
+`
+
+const ButtonWrapper = styled.div`
+  margin-left: 10px;
+`
+
+const ChevronDown = styled(BaseChevronDown)`
+  margin-left: 10px;
+`
+
+const ExtraInfo = styled.div`
+  align-items: center;
+  display: flex;
+`
+
+const Info = styled.div`
+  column-gap: 10px;
+  display: grid;
+  font-size: 11px;
+  grid-template-columns: 1fr 1fr;
+  margin-left: 20px;
+`
+
+const Item = styled.div`
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
 export const Header: React.FC = (props) => {
   const {
-    address,
+    address = '',
     appChainId,
     connectWallet,
     disconnectWallet,
@@ -90,48 +132,68 @@ export const Header: React.FC = (props) => {
     }
   }, [isAppConnected, isWalletConnected, readOnlyAppProvider, web3Provider, address])
 
+  const [currentChain, setCurrentChain] = useState(chainOptions[0].label)
+
   return (
     <Wrapper as="header" {...props}>
       <InnerContainer>
-        <Link href="/" passHref>
-          <HomeLink>
-            <Logo />
-          </HomeLink>
-        </Link>
-        <div>
-          <div>
-            <h2>App Network</h2>
-            <Select
-              defaultValue={chainOptions[0]}
-              onChange={(option) => setAppChainId(option?.value || 1)}
-              options={chainOptions}
+        <StartWrapper>
+          <Link href="/" passHref>
+            <HomeLink>
+              <Logo />
+            </HomeLink>
+          </Link>
+          <ButtonWrapper>
+            <Dropdown
+              currentItem={0}
+              dropdownButtonContent={
+                <Button>
+                  {currentChain}
+                  <ChevronDown />
+                </Button>
+              }
+              items={chainOptions.map((item, index) => (
+                <DropdownItem
+                  key={index}
+                  onClick={() => {
+                    setCurrentChain(item.label)
+                    setAppChainId(item.value)
+                  }}
+                >
+                  {item.label}
+                </DropdownItem>
+              ))}
             />
-            isAppConnected: {isAppConnected ? 'yes' : 'no'}
-            <br />
-            App chainId: {appChainId}
-            {isWalletConnected && !isAppConnected && (
-              <button onClick={pushNetwork}>Switch Network</button>
-            )}
-            <div>
-              {balance?.name}: {balance?.balance}
-            </div>
-          </div>
-
-          <div>
-            <h2>Wallet Connect</h2>
-            {isWalletConnected ? (
-              <div>
+          </ButtonWrapper>
+          {isWalletConnected && !isAppConnected && (
+            <ButtonWrapper>
+              <Button onClick={pushNetwork}>Switch to {currentChain}</Button>
+            </ButtonWrapper>
+          )}
+        </StartWrapper>
+        <EndWrapper>
+          {isWalletConnected ? (
+            <ExtraInfo>
+              <Info>
                 <div>
-                  <button onClick={disconnectWallet}>Disconnect</button>
+                  <Item>Connected to: {wallet?.name}</Item>
+                  {address && <Item>Address: {truncateStringInTheMiddle(address, 6, 6)}</Item>}
                 </div>
-                <div>Connected to: {wallet?.name}</div>
-                <div>{address}</div>
-              </div>
-            ) : (
-              <button onClick={connectWallet}>Connect</button>
-            )}
-          </div>
-        </div>
+                <div>
+                  <Item>App chainId: {appChainId}</Item>
+                  <Item>
+                    {balance?.name}: {balance?.balance}
+                  </Item>
+                </div>
+              </Info>
+              <ButtonWrapper>
+                <Button onClick={disconnectWallet}>Disconnect</Button>
+              </ButtonWrapper>
+            </ExtraInfo>
+          ) : (
+            <Button onClick={connectWallet}>Connect</Button>
+          )}
+        </EndWrapper>
       </InnerContainer>
     </Wrapper>
   )

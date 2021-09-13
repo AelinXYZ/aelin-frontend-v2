@@ -5,6 +5,14 @@ const tertiary = '#A6CFD5'
 const textColor = '#000'
 
 export const theme = {
+  buttonPrimary: {
+    backgroundColor: '#fff',
+    backgroundColorHover: '#fafafa',
+    borderColor: '#ccc',
+    borderColorHover: '#cacaca',
+    color: '#000',
+    colorHover: '#000',
+  },
   card: {
     backgroundColor: '#fff',
     backgroundOpacity: '1',
@@ -17,6 +25,22 @@ export const theme = {
     secondary: secondary,
     tertiary: tertiary,
     textColor: textColor,
+  },
+  dropdown: {
+    background: '#fff',
+    borderColor: '#ccc',
+    borderRadius: '6px',
+    boxShadow: '0 0 24px 0 rgba(0, 0, 0, 0.1)',
+    item: {
+      backgroundColor: 'transparent',
+      backgroundColorActive: 'rgba(0, 0, 0, 0.05)',
+      backgroundColorHover: 'rgba(0, 0, 0, 0.05)',
+      borderColor: '#ccc',
+      color: '#000',
+      colorActive: '#000',
+      height: '38px',
+      paddingHorizontal: '12px',
+    },
   },
   fonts: {
     defaultSize: '1.4rem',
