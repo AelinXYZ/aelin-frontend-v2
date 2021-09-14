@@ -9,7 +9,8 @@
     "lint:fix": "eslint --fix \"./**/*.{js,jsx,ts,tsx}\"",
     "prepare": "husky install",
     "prettier:fix": "prettier --write \"./**/*.{js,jsx,ts,tsx}\"",
-    "start": "next start"
+    "start": "next start",
+    "postinstall": "typechain --target=web3-v1 ./src/abis/**/*.json --out-dir ./types/typechain/"
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.4.1",
@@ -26,8 +27,10 @@
     "ts-enum-util": "^4.0.2"
   },
   "devDependencies": {
+    "@typechain/web3-v1": "^3.1.0",
     "@types/react": "17.0.17",
     "@types/react-select": "^4.0.17",
+    "typechain": "^5.1.2",
     "@types/styled-components": "^5.1.14",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.0",

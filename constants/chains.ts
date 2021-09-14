@@ -22,9 +22,9 @@ export type ChainConfig = {
 export enum ChainId {
   Mainnet = 1,
   Kovan = 42,
-  OptimismMainnet = 10,
-  OptimismKovan = 69,
-  Local = 31337,
+  // OptimismMainnet = 10,
+  // OptimismKovan = 69,
+  // Local = 31337,
 }
 
 export const chains: Record<number, ChainConfig> = {
@@ -48,45 +48,45 @@ export const chains: Record<number, ChainConfig> = {
     blockExplorerUrls: ['https://kovan.etherscan.io/'],
     iconUrls: [],
   },
-  [ChainId.OptimismMainnet]: {
-    id: ChainStringId.OptimismMainnet,
-    name: 'Optimism',
-    shortName: 'Optimism',
-    chainId: 10,
-    chainIdHex: '0xa',
-    rpcUrl: 'https://mainnet.optimism.io',
-    blockExplorerUrls: ['https://optimistic.etherscan.io/'],
-    iconUrls: [
-      'https://optimism.io/images/metamask_icon.svg',
-      'https://optimism.io/images/metamask_icon.png',
-    ],
-  },
-  [ChainId.OptimismKovan]: {
-    id: ChainStringId.OptimismKovan,
-    name: 'Optimistic Kovan',
-    shortName: 'Optimism',
-    chainId: 69,
-    chainIdHex: '0x45',
-    rpcUrl: 'https://kovan.optimism.io',
-    blockExplorerUrls: ['https://kovan-explorer.optimism.io/'],
-    iconUrls: [
-      'https://optimism.io/images/metamask_icon.svg',
-      'https://optimism.io/images/metamask_icon.png',
-    ],
-  },
-  [ChainId.Local]: {
-    id: ChainStringId.Local,
-    name: 'Local',
-    shortName: 'Local',
-    chainId: ChainId.Local,
-    chainIdHex: '0x539',
-    rpcUrl: 'http://0.0.0.0:8545',
-    blockExplorerUrls: ['https://kovan-explorer.optimism.io/'],
-    iconUrls: [
-      'https://optimism.io/images/metamask_icon.svg',
-      'https://optimism.io/images/metamask_icon.png',
-    ],
-  },
+  // [ChainId.OptimismMainnet]: {
+  //   id: ChainStringId.OptimismMainnet,
+  //   name: "Optimism",
+  //   shortName: "Optimism",
+  //   chainId: 10,
+  //   chainIdHex: "0xa",
+  //   rpcUrl: "https://mainnet.optimism.io",
+  //   blockExplorerUrls: ["https://optimistic.etherscan.io/"],
+  //   iconUrls: [
+  //     "https://optimism.io/images/metamask_icon.svg",
+  //     "https://optimism.io/images/metamask_icon.png",
+  //   ],
+  // },
+  // [ChainId.OptimismKovan]: {
+  //   id: ChainStringId.OptimismKovan,
+  //   name: "Optimistic Kovan",
+  //   shortName: "Optimism",
+  //   chainId: 69,
+  //   chainIdHex: "0x45",
+  //   rpcUrl: "https://kovan.optimism.io",
+  //   blockExplorerUrls: ["https://kovan-explorer.optimism.io/"],
+  //   iconUrls: [
+  //     "https://optimism.io/images/metamask_icon.svg",
+  //     "https://optimism.io/images/metamask_icon.png",
+  //   ],
+  // },
+  // [ChainId.Local]: {
+  //   id: ChainStringId.Local,
+  //   name: "Local",
+  //   shortName: "Local",
+  //   chainId: ChainId.Local,
+  //   chainIdHex: "0x539",
+  //   rpcUrl: "http://0.0.0.0:8545",
+  //   blockExplorerUrls: ["https://kovan-explorer.optimism.io/"],
+  //   iconUrls: [
+  //     "https://optimism.io/images/metamask_icon.svg",
+  //     "https://optimism.io/images/metamask_icon.png",
+  //   ],
+  // },
 }
 
 export function getNetworkConfig(chainId: ChainId): ChainConfig {
