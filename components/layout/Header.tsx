@@ -7,8 +7,8 @@ import { $enum } from 'ts-enum-util'
 
 import { BootNodeLogo } from '@/components/assets/BootNodeLogo'
 import { ChevronDown as BaseChevronDown } from '@/components/assets/ChevronDown'
-import { Button } from '@/components/buttons/Button'
 import { Dropdown, DropdownItem } from '@/components/dropdown/Dropdown'
+import { ButtonPrimary } from '@/components/pureStyledComponents/buttons/Button'
 import { InnerContainer as BaseInnerContainer } from '@/components/pureStyledComponents/layout/InnerContainer'
 import { ChainId } from '@/constants/chains'
 import { ZERO_BN } from '@/constants/util'
@@ -147,10 +147,10 @@ export const Header: React.FC = (props) => {
             <Dropdown
               currentItem={0}
               dropdownButtonContent={
-                <Button>
+                <ButtonPrimary>
                   {currentChain}
                   <ChevronDown />
-                </Button>
+                </ButtonPrimary>
               }
               items={chainOptions.map((item, index) => (
                 <DropdownItem
@@ -167,7 +167,7 @@ export const Header: React.FC = (props) => {
           </ButtonWrapper>
           {isWalletConnected && !isAppConnected && (
             <ButtonWrapper>
-              <Button onClick={pushNetwork}>Switch to {currentChain}</Button>
+              <ButtonPrimary onClick={pushNetwork}>Switch to {currentChain}</ButtonPrimary>
             </ButtonWrapper>
           )}
         </StartWrapper>
@@ -187,11 +187,11 @@ export const Header: React.FC = (props) => {
                 </div>
               </Info>
               <ButtonWrapper>
-                <Button onClick={disconnectWallet}>Disconnect</Button>
+                <ButtonPrimary onClick={disconnectWallet}>Disconnect</ButtonPrimary>
               </ButtonWrapper>
             </ExtraInfo>
           ) : (
-            <Button onClick={connectWallet}>Connect</Button>
+            <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
           )}
         </EndWrapper>
       </InnerContainer>
