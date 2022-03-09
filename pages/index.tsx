@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 
-import { InnerContainer } from '@/components/pureStyledComponents/layout/InnerContainer'
+import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 
 const Home: NextPage = () => {
   return (

@@ -1,14 +1,20 @@
 import type { AppProps } from 'next/app'
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import { ThemeProvider } from 'styled-components'
 
-import 'sanitize.css'
-import { theme } from 'theme'
-import { GlobalStyle } from 'theme/globalStyle'
+import { SWRConfig } from 'swr'
 
-import { Footer } from '@/components/layout/Footer'
-import { Header } from '@/components/layout/Header'
-import Web3ConnectionProvider from '@/utils/web3Connection'
+import 'sanitize.css'
+
+import { Footer } from '@/src/components/layout/Footer'
+import { Header } from '@/src/components/layout/Header'
+import { theme } from '@/src/theme'
+import { GlobalStyle } from '@/src/theme/globalStyle'
+
+const Web3ConnectionProvider = dynamic(() => import('@/src/providers/web3ConnectionProvider'), {
+  ssr: false,
+})
 
 function App({ Component, pageProps }: AppProps) {
   const { hostname, port, protocol } =
@@ -36,12 +42,19 @@ function App({ Component, pageProps }: AppProps) {
         <meta content={twitterHandle} name="twitter:creator" />
       </Head>
       <ThemeProvider theme={theme}>
-        <Web3ConnectionProvider>
-          <GlobalStyle />
-          <Header />
-          <Component {...pageProps} />
-          <Footer />
-        </Web3ConnectionProvider>
+        <SWRConfig
+          value={{
+            suspense: true,
+            revalidateOnFocus: false,
+          }}
+        >
+          <Web3ConnectionProvider>
+            <GlobalStyle />
+            <Header />
+            <Component {...pageProps} />
+            <Footer />
+          </Web3ConnectionProvider>
+        </SWRConfig>
       </ThemeProvider>
     </>
   )

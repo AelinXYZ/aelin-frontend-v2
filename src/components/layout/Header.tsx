@@ -2,18 +2,18 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
-import { $enum } from 'ts-enum-util'
 
-import { BootNodeLogo } from '@/components/assets/BootNodeLogo'
-import { ChevronDown as BaseChevronDown } from '@/components/assets/ChevronDown'
-import { Dropdown, DropdownItem } from '@/components/dropdown/Dropdown'
-import { ButtonPrimary } from '@/components/pureStyledComponents/buttons/Button'
-import { InnerContainer as BaseInnerContainer } from '@/components/pureStyledComponents/layout/InnerContainer'
-import { ChainId } from '@/constants/chains'
-import { ZERO_BN } from '@/constants/util'
-import { truncateStringInTheMiddle } from '@/utils/tools'
-import { useWeb3Connection } from '@/utils/web3Connection'
+import { BootNodeLogo } from '@/src/components/assets/BootNodeLogo'
+import { ChevronDown as BaseChevronDown } from '@/src/components/assets/ChevronDown'
+import { Dropdown, DropdownItem } from '@/src/components/dropdown/Dropdown'
+import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
+import { chainsConfig } from '@/src/constants/chains'
+import { ZERO_BN } from '@/src/constants/misc'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
 const vbAddress = '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'
 
@@ -100,10 +100,7 @@ export const Header: React.FC = (props) => {
     web3Provider,
   } = useWeb3Connection()
 
-  const chainOptions = $enum(ChainId).map((value, key) => ({
-    value,
-    label: key,
-  }))
+  const chainOptions = Object.values(chainsConfig)
 
   const [balance, setBalance] = useState<{ name: string; balance: string } | undefined>()
 
@@ -132,7 +129,7 @@ export const Header: React.FC = (props) => {
     }
   }, [isAppConnected, isWalletConnected, readOnlyAppProvider, web3Provider, address])
 
-  const [currentChain, setCurrentChain] = useState(chainOptions[0].label)
+  const [currentChain, setCurrentChain] = useState(chainOptions[0].name)
 
   return (
     <Wrapper as="header" {...props}>
@@ -156,11 +153,11 @@ export const Header: React.FC = (props) => {
                 <DropdownItem
                   key={index}
                   onClick={() => {
-                    setCurrentChain(item.label)
-                    setAppChainId(item.value)
+                    setCurrentChain(item.name)
+                    setAppChainId(item.chainId)
                   }}
                 >
-                  {item.label}
+                  {item.name}
                 </DropdownItem>
               ))}
             />

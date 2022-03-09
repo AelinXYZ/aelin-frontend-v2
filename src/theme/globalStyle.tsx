@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components'
 
-import { theme } from 'theme/index'
+import { theme } from '@/src/theme/index'
 
 type ThemeType = typeof theme
 

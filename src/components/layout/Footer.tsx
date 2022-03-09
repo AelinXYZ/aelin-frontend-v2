@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
-import { InnerContainer as BaseInnerContainer } from '@/components/pureStyledComponents/layout/InnerContainer'
-import { BaseParagraph } from '@/components/pureStyledComponents/text/BaseParagraph'
+import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
+import { BaseParagraph } from '@/src/components/pureStyledComponents/text/BaseParagraph'
 
 const Wrapper = styled.footer`
   flex-shrink: 0;
