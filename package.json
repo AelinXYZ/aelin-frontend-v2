@@ -33,7 +33,8 @@
     "sanitize.css": "^13.0.0",
     "styled-components": "^5.3.3",
     "swr": "^1.2.2",
-    "ts-enum-util": "^4.0.2"
+    "ts-enum-util": "^4.0.2",
+    "xstate": "^4.30.5"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^9.0.0",
