@@ -25,6 +25,9 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '',
       [Chains.kovan]: '',
+      [Chains.goerli]: '',
+      [Chains.optimism]: '',
+      [Chains['optimism-kovan']]: '',
     },
     abi: [],
   },

@@ -10,7 +10,7 @@ import { ChevronDown as BaseChevronDown } from '@/src/components/assets/ChevronD
 import { Dropdown, DropdownItem } from '@/src/components/dropdown/Dropdown'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
-import { chainsConfig } from '@/src/constants/chains'
+import { chainsConfig, getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
@@ -97,6 +97,7 @@ export const Header: React.FC = (props) => {
     readOnlyAppProvider,
     setAppChainId,
     wallet,
+    walletChainId,
     web3Provider,
   } = useWeb3Connection()
 
@@ -129,7 +130,7 @@ export const Header: React.FC = (props) => {
     }
   }, [isAppConnected, isWalletConnected, readOnlyAppProvider, web3Provider, address])
 
-  const [currentChain, setCurrentChain] = useState(chainOptions[0].name)
+  const [currentChain, setCurrentChain] = useState(getNetworkConfig(appChainId).name)
 
   return (
     <Wrapper as="header" {...props}>
@@ -142,7 +143,7 @@ export const Header: React.FC = (props) => {
           </Link>
           <ButtonWrapper>
             <Dropdown
-              currentItem={0}
+              currentItem={chainOptions.findIndex(({ id }) => id === appChainId)}
               dropdownButtonContent={
                 <ButtonPrimary>
                   {currentChain}
@@ -162,7 +163,7 @@ export const Header: React.FC = (props) => {
               ))}
             />
           </ButtonWrapper>
-          {isWalletConnected && !isAppConnected && (
+          {isWalletConnected && !isAppConnected && walletChainId !== appChainId && (
             <ButtonWrapper>
               <ButtonPrimary onClick={pushNetwork}>Switch to {currentChain}</ButtonPrimary>
             </ButtonWrapper>

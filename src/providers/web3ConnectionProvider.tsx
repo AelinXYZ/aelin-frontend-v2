@@ -62,7 +62,7 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
     darkMode: true, // @TODO: it is a default value
     walletSelect: {
       heading: 'Select a Wallet',
-      description: 'Pick a wallet to connect to FIAT DAO',
+      description: 'Pick a wallet to connect to Aelin',
       wallets: [
         {
           walletName: WalletType.MetaMask,
@@ -77,7 +77,6 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
           walletName: WalletType.Portis,
           apiKey: PORTIS_KEY,
           preferred: true,
-          // label: 'Login with Email'
         },
         {
           walletName: WalletType.Trezor,
@@ -193,9 +192,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
 
   // recover previous connection
   useEffect(() => {
-    setTimeout(async () => {
-      await _reconnectWallet()
-    }, ONBOARD_STATE_DELAY)
+    _reconnectWallet()
   }, [])
 
   // efectively connect wallet
@@ -285,7 +282,6 @@ export default function Web3ConnectionProvider({ children }: Props) {
   }, [appChainId])
 
   const value = {
-    // true when wallet is connected to same network as the dapp
     isAppConnected,
     isWalletConnected,
     isWalletNetworkSupported,
