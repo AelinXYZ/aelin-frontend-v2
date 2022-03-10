@@ -12,16 +12,20 @@
     "start": "next start",
     "typechain": "typechain --target=ethers-v5 ./src/abis/**/*.json --out-dir ./types/typechain/",
     "schema": "bash scripts/apollo-schema.sh",
-    "postinstall": "yarn typechain"
+    "postinstall": "yarn typechain",
+    "graph-schema": "graphql-codegen --config codegen.js"
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.4.1",
     "@ethersproject/contracts": "^5.5.0",
     "@ethersproject/providers": "^5.4.5",
     "@ethersproject/units": "^5.4.0",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/typescript-graphql-request": "^4.4.2",
     "bignumber.js": "^9.0.2",
     "bnc-onboard": "^1.38.2",
     "graphql": "^16.3.0",
+    "graphql-codegen-plugin-typescript-swr": "^0.8.1",
     "graphql-request": "^4.0.0",
     "graphql-tag": "^2.12.6",
     "next": "12.1.0",
@@ -37,6 +41,11 @@
     "xstate": "^4.30.5"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "2.6.2",
+    "@graphql-codegen/introspection": "2.1.1",
+    "@graphql-codegen/typescript": "2.4.7",
+    "@graphql-codegen/typescript-operations": "2.3.4",
+    "@graphql-codegen/typescript-react-apollo": "3.2.10",
     "@typechain/ethers-v5": "^9.0.0",
     "@types/react": "17.0.39",
     "@types/styled-components": "^5.1.24",

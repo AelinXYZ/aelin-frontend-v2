@@ -37,6 +37,7 @@ yarn-error.log*
 
 #types
 /types/typechain
+/types/generated
 
 #IDE files
 /.idea
