@@ -5,14 +5,14 @@ loadEnvConfig(process.cwd())
 module.exports = {
   overwrite: true,
   schema: [
-    process.env.GRAPH_ENDPOINT_MAINNET,
-    process.env.GRAPH_ENDPOINT_OPTIMISM,
-    process.env.GRAPH_ENDPOINT_KOVAN,
-    process.env.GRAPH_ENDPOINT_GOERLI,
+    process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_MAINNET,
+    // process.env.GRAPH_ENDPOINT_OPTIMISM,
+    // process.env.GRAPH_ENDPOINT_KOVAN,
+    // process.env.GRAPH_ENDPOINT_GOERLI,
   ],
   documents: 'src/queries/**/*.ts',
   generates: {
-    'types/generated/subgraph-queries.ts': {
+    [process.env.CODEGEN_OUTPUT_FILE]: {
       plugins: [
         'typescript',
         'typescript-operations',

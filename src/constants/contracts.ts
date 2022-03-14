@@ -27,7 +27,6 @@ export const contracts = constantContracts({
       [Chains.kovan]: '',
       [Chains.goerli]: '',
       [Chains.optimism]: '',
-      [Chains['optimism-kovan']]: '',
     },
     abi: [],
   },

@@ -10,18 +10,16 @@ $ yarn
 ```
 $ cp .env.example .env.local
 ```
-3. Run application as dev mode
+3. Auto generate generate contracts types, subgraph types & queries SDK
+```
+$ yarn postinstall
+```
+* NOTE: `postinstall` will generates an sdk file in `CODEGEN_OUTPUT_FILE` environment variable (default value: `types/generated/queries.ts` ) with all queries uses in the App.
+
+4. Run application as dev mode
 ```
 $ yarn dev
 ```
 4. Open `http://localhost:3000`
 
-### Auto generate contracts types
-```
-$ yarn typechain
-```
-### Auto generate subgraph types
-```
-$ yarn schema
-```
-Note: you need a valid `NEXT_PUBLIC_REACT_APP_SUBGRAPH_API` env variable value 
+

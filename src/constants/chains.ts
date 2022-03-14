@@ -1,5 +1,6 @@
 import nullthrows from 'nullthrows'
 
+import { getSdk, getSdkWithHooks } from '@/graphql-schema'
 import { ObjectValues } from '@/types/utils'
 
 export const Chains = {
@@ -7,7 +8,6 @@ export const Chains = {
   goerli: 5,
   kovan: 42,
   optimism: 10,
-  'optimism-kovan': 69,
 } as const
 
 export type ChainsValues = ObjectValues<typeof Chains>
@@ -22,7 +22,7 @@ export type ChainConfig = {
   rpcUrl: string
   blockExplorerUrls: string[]
   iconUrls: string[]
-  isMainnet: boolean
+  isProd: boolean
 }
 
 export const chainsConfig: Record<ChainsValues, ChainConfig> = {
@@ -35,7 +35,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: 'https://main-light.eth.linkpool.io',
     blockExplorerUrls: ['https://etherscan.io/'],
     iconUrls: [],
-    isMainnet: true,
+    isProd: true,
   },
   [Chains.goerli]: {
     id: Chains.goerli,
@@ -46,7 +46,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     blockExplorerUrls: ['https://goerli.etherscan.io/'],
     iconUrls: [],
-    isMainnet: false,
+    isProd: false,
   },
   [Chains.kovan]: {
     id: Chains.kovan,
@@ -57,7 +57,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: 'https://kovan.infura.io/v3/ecb81cbe2f03436cb39236e4160311fe',
     blockExplorerUrls: ['https://kovan.etherscan.io/'],
     iconUrls: [],
-    isMainnet: false,
+    isProd: false,
   },
   [Chains.optimism]: {
     id: Chains.optimism,
@@ -68,18 +68,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: 'https://mainnet.optimism.io/',
     blockExplorerUrls: ['https://optimistic.etherscan.io/'],
     iconUrls: [],
-    isMainnet: true,
-  },
-  [Chains['optimism-kovan']]: {
-    id: Chains['optimism-kovan'],
-    name: 'Optimism Kovan',
-    shortName: 'Optimism Kovan',
-    chainId: Chains['optimism-kovan'],
-    chainIdHex: '0x45',
-    rpcUrl: 'https://kovan.optimism.io',
-    blockExplorerUrls: ['https://kovan-optimistic.etherscan.io'],
-    iconUrls: [],
-    isMainnet: false,
+    isProd: true,
   },
 }
 
