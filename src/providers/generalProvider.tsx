@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, createContext, useContext, useState } from 'r
 
 import { SdkWithHooks } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import getWrappedSdks from '@/src/utils/sdksWrapper'
+import getWrappedSdks from '@/src/utils/getGqlSdkByEnvironment'
 
 export type GeneralContextType = {
   title?: string

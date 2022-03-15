@@ -1,15 +1,17 @@
 import type { NextPage } from 'next'
 
 import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
+import useSdk from '@/src/hooks/useSdk'
 import { useGeneral } from '@/src/providers/generalProvider'
 
 const Home: NextPage = () => {
-  const { queriesSDK } = useGeneral()
+  const sdk = useSdk()
+  console.log(sdk)
   // Return poolsCreated on chain id 42 (Kovan)
-  const { data, error } = queriesSDK['42'].usePoolsCreated()
-
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
+  // const { data, error } = queriesSDK['42'].usePoolsCreated()
+  //
+  // if (error) return <div>failed to load</div>
+  // if (!data) return <div>loading...</div>
 
   return (
     <>
