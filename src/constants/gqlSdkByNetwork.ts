@@ -11,14 +11,14 @@ import {
 } from '@/src/constants/endpoints'
 
 // Set the queries SDK by chain id.
-export const gqlSdkByNetwork: Record<ChainsValues, ReturnType<typeof getSdkWithHooks>> = {
+export const gqlGqlSdkByNetwork: Record<ChainsValues, ReturnType<typeof getSdkWithHooks>> = {
   [Chains.mainnet]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_MAINNET)),
   [Chains.goerli]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_GOERLI)),
   [Chains.kovan]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_KOVAN)),
   [Chains.optimism]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_OPTIMISM)),
 }
 
-export function getSdkByNetwork(chainId: ChainsValues): ReturnType<typeof getSdkWithHooks> {
-  const networkConfig = gqlSdkByNetwork[chainId]
+export function getGqlSdkByNetwork(chainId: ChainsValues): ReturnType<typeof getSdkWithHooks> {
+  const networkConfig = gqlGqlSdkByNetwork[chainId]
   return nullthrows(networkConfig, `No sdk for chain id: ${chainId}`)
 }
