@@ -7,7 +7,7 @@ import {
   GRAPH_URL_GOERLI,
   GRAPH_URL_KOVAN,
   GRAPH_URL_MAINNET,
-  GRAPH_URL_OPTMISM,
+  GRAPH_URL_OPTIMISM,
 } from '@/src/constants/endpoints'
 
 // Set the queries SDK by chain id.
@@ -15,7 +15,7 @@ export const gqlSdkByNetwork: Record<ChainsValues, ReturnType<typeof getSdkWithH
   [Chains.mainnet]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_MAINNET)),
   [Chains.goerli]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_GOERLI)),
   [Chains.kovan]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_KOVAN)),
-  [Chains.optimism]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_OPTMISM)),
+  [Chains.optimism]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_OPTIMISM)),
 }
 
 export function getSdkByNetwork(chainId: ChainsValues): ReturnType<typeof getSdkWithHooks> {

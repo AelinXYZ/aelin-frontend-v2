@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, createContext, useContext, useState } from 'r
 
 import { SdkWithHooks } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import getWrappedSdks from '@/src/utils/getGqlSdkByEnvironment'
+import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
 export type GeneralContextType = {
   title?: string
@@ -15,7 +15,7 @@ const GeneralContext = createContext<GeneralContextType>({} as any)
 
 const GeneralContextProvider: React.FC = ({ children }) => {
   const [title, setTitle] = useState<GeneralContextType['title']>()
-  const queriesSDK = getWrappedSdks()
+  const queriesSDK = getAllGqlSDK()
 
   return (
     <GeneralContext.Provider

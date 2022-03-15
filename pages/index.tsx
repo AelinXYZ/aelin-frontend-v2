@@ -1,12 +1,11 @@
 import type { NextPage } from 'next'
 
 import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
-import useSdk from '@/src/hooks/useSdk'
-import { useGeneral } from '@/src/providers/generalProvider'
+import useGqlSdk from '@/src/utils/getAllGqlSDK'
 
 const Home: NextPage = () => {
-  const sdk = useSdk()
-  console.log(sdk)
+  // const sdk = useGqlSdk()
+  // console.log(sdk)
   // Return poolsCreated on chain id 42 (Kovan)
   // const { data, error } = queriesSDK['42'].usePoolsCreated()
   //
