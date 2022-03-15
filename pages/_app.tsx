@@ -9,10 +9,13 @@ import 'sanitize.css'
 
 import { Footer } from '@/src/components/layout/Footer'
 import { Header } from '@/src/components/layout/Header'
+import SafeSuspense from '@/src/components/safeSuspense'
+import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
-const Web3ConnectionProvider = dynamic(() => import('@/src/providers/web3ConnectionProvider'), {
+// Should be rendered on client side only!
+const GeneralContextProvider = dynamic(() => import('@/src/providers/generalProvider'), {
   ssr: false,
 })
 
@@ -49,10 +52,14 @@ function App({ Component, pageProps }: AppProps) {
           }}
         >
           <Web3ConnectionProvider>
-            <GlobalStyle />
-            <Header />
-            <Component {...pageProps} />
-            <Footer />
+            <GeneralContextProvider>
+              <GlobalStyle />
+              <Header />
+              <SafeSuspense>
+                <Component {...pageProps} />
+              </SafeSuspense>
+              <Footer />
+            </GeneralContextProvider>
           </Web3ConnectionProvider>
         </SWRConfig>
       </ThemeProvider>

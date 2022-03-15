@@ -20,8 +20,7 @@ import { RequiredNonNull } from '@/types/utils'
 
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
 
-// give onboard a window to update its internal state after certain actions
-const ONBOARD_STATE_DELAY = 100
+const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME
 
 // Default chain id from env var
 const INITAL_APP_CHAIN_ID = Number(
@@ -62,7 +61,7 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
     darkMode: true, // @TODO: it is a default value
     walletSelect: {
       heading: 'Select a Wallet',
-      description: 'Pick a wallet to connect to FIAT DAO',
+      description: `Pick a wallet to connect to ${APP_NAME}`,
       wallets: [
         {
           walletName: WalletType.MetaMask,
@@ -77,7 +76,6 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
           walletName: WalletType.Portis,
           apiKey: PORTIS_KEY,
           preferred: true,
-          // label: 'Login with Email'
         },
         {
           walletName: WalletType.Trezor,
@@ -193,9 +191,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
 
   // recover previous connection
   useEffect(() => {
-    setTimeout(async () => {
-      await _reconnectWallet()
-    }, ONBOARD_STATE_DELAY)
+    _reconnectWallet()
   }, [])
 
   // efectively connect wallet
@@ -285,7 +281,6 @@ export default function Web3ConnectionProvider({ children }: Props) {
   }, [appChainId])
 
   const value = {
-    // true when wallet is connected to same network as the dapp
     isAppConnected,
     isWalletConnected,
     isWalletNetworkSupported,

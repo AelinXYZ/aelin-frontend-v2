@@ -1,11 +1,13 @@
 import nullthrows from 'nullthrows'
 
+import { getSdk, getSdkWithHooks } from '@/graphql-schema'
 import { ObjectValues } from '@/types/utils'
 
 export const Chains = {
   mainnet: 1,
-  // goerli: 5,
+  goerli: 5,
   kovan: 42,
+  optimism: 10,
 } as const
 
 export type ChainsValues = ObjectValues<typeof Chains>
@@ -20,6 +22,7 @@ export type ChainConfig = {
   rpcUrl: string
   blockExplorerUrls: string[]
   iconUrls: string[]
+  isProd: boolean
 }
 
 export const chainsConfig: Record<ChainsValues, ChainConfig> = {
@@ -32,26 +35,40 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: 'https://main-light.eth.linkpool.io',
     blockExplorerUrls: ['https://etherscan.io/'],
     iconUrls: [],
+    isProd: true,
   },
-  // [Chains.goerli]: {
-  //   id: Chains.goerli,
-  //   name: 'Görli Testnet',
-  //   shortName: 'Goerli',
-  //   chainId: Chains.goerli,
-  //   chainIdHex: '0x5',
-  //   rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-  //   blockExplorerUrls: ['https://goerli.etherscan.io/'],
-  //   iconUrls: [],
-  // },
+  [Chains.goerli]: {
+    id: Chains.goerli,
+    name: 'Görli Testnet',
+    shortName: 'Goerli',
+    chainId: Chains.goerli,
+    chainIdHex: '0x5',
+    rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+    blockExplorerUrls: ['https://goerli.etherscan.io/'],
+    iconUrls: [],
+    isProd: false,
+  },
   [Chains.kovan]: {
     id: Chains.kovan,
     name: 'Kovan',
     shortName: 'Kovan',
-    chainId: 42,
+    chainId: Chains.kovan,
     chainIdHex: '0x2a',
     rpcUrl: 'https://kovan.infura.io/v3/ecb81cbe2f03436cb39236e4160311fe',
     blockExplorerUrls: ['https://kovan.etherscan.io/'],
     iconUrls: [],
+    isProd: false,
+  },
+  [Chains.optimism]: {
+    id: Chains.optimism,
+    name: 'Optimism',
+    shortName: 'Optimism',
+    chainId: Chains.optimism,
+    chainIdHex: '0xa',
+    rpcUrl: 'https://mainnet.optimism.io/',
+    blockExplorerUrls: ['https://optimistic.etherscan.io/'],
+    iconUrls: [],
+    isProd: true,
   },
 }
 
