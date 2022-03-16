@@ -1,15 +1,15 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
-import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
+import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 
 const Notifications: NextPage = () => {
   return (
     <>
       <Head>Notifications</Head>
-      <InnerContainer as="main">
+      <LeftSidebarLayout>
         You'll be notificated about everything you need to be notified about here.
-      </InnerContainer>
+      </LeftSidebarLayout>
     </>
   )
 }

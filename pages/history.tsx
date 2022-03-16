@@ -1,13 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
-import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
+import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 
 const History: NextPage = () => {
   return (
     <>
       <Head>History</Head>
-      <InnerContainer as="main">We have some history.</InnerContainer>
+      <LeftSidebarLayout>We have some history.</LeftSidebarLayout>
     </>
   )
 }

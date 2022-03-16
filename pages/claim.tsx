@@ -1,13 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
-import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
+import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 
 const Claim: NextPage = () => {
   return (
     <>
       <Head>Claim</Head>
-      <InnerContainer as="main">No claim no gain.</InnerContainer>
+      <LeftSidebarLayout>No claim no gain.</LeftSidebarLayout>
     </>
   )
 }

@@ -99,8 +99,8 @@ export const Header: React.FC = (props) => {
         <div>
           <Link href="pools-list">Pools List</Link>&nbsp;&nbsp;&nbsp;
           <Link href="stake">Stake Aelin</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="claim">Claim</Link>
-          <Link href="history">History</Link>
+          <Link href="claim">Claim</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="history">History</Link>&nbsp;&nbsp;&nbsp;
           <Link href="notifications">Nofitications</Link>
         </div>
         <EndWrapper>
