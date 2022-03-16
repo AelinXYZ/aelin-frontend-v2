@@ -9,7 +9,7 @@ import 'sanitize.css'
 
 import { Footer } from '@/src/components/layout/Footer'
 import { Header } from '@/src/components/layout/Header'
-import SafeSuspense from '@/src/components/safeSuspense'
+import { SafeSuspense } from '@/src/components/safeSuspense'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
