@@ -6,11 +6,13 @@ const Wrapper = styled.div`
   column-gap: 30px;
   display: grid;
   flex-grow: 1;
+  flex-shrink: 0;
+  margin: 0 auto;
+  max-width: 100%;
+  width: ${({ theme }) => theme.layout.maxWidth};
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    grid-template-columns:
-      var(--left-column-width)
-      calc(100% - var(--left-column-width) - 30px);
+    grid-template-columns: var(--left-column-width) 1fr;
   }
 `
 

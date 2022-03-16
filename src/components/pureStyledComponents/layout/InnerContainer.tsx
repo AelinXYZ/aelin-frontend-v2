@@ -8,8 +8,8 @@ export const InnerContainer = styled.div`
   flex-grow: 1;
   flex-shrink: 0;
   margin: 0 auto;
-  max-width: ${({ theme }) => theme.layout.maxWidth};
-  width: 100vw;
+  max-width: 100vw;
+  width: ${({ theme }) => theme.layout.maxWidth};
 
   ${ContainerPadding}
 `

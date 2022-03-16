@@ -54,7 +54,7 @@ export const theme = {
     horizontalPaddingMobile: '10px',
     horizontalPaddingTabletPortraitStart: '80px',
     horizontalPaddingTabletLandscapeStart: '15px',
-    maxWidth: '1122px',
+    maxWidth: '1360px',
   },
   themeBreakPoints: {
     desktopWideStart: '1281px',
