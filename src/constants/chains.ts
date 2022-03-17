@@ -1,6 +1,5 @@
 import nullthrows from 'nullthrows'
 
-import { getSdk, getSdkWithHooks } from '@/graphql-schema'
 import { ObjectValues } from '@/types/utils'
 
 export const Chains = {
@@ -65,7 +64,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     shortName: 'Optimism',
     chainId: Chains.optimism,
     chainIdHex: '0xa',
-    rpcUrl: 'https://mainnet.optimism.io/',
+    rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/CVCAPo-jxyRYey2btuEpguf_pGSZ3Llj',
     blockExplorerUrls: ['https://optimistic.etherscan.io/'],
     iconUrls: [],
     isProd: true,
