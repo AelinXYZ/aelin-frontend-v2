@@ -64,7 +64,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     shortName: 'Optimism',
     chainId: Chains.optimism,
     chainIdHex: '0xa',
-    rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/CVCAPo-jxyRYey2btuEpguf_pGSZ3Llj',
+    rpcUrl: 'https://mainnet.optimism.io/',
     blockExplorerUrls: ['https://optimistic.etherscan.io/'],
     iconUrls: [],
     isProd: true,
