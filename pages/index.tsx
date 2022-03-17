@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { Chains } from '@/src/constants/chains'
-import { getAmountInPool } from '@/src/utils/aelintPool'
+import { getAmountInPool } from '@/src/utils/aelinPool'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
 const PoolRow = styled.div`

@@ -8,7 +8,7 @@ import {
   getDealDeadline,
   getPoolCreatedDate,
   getPurchaseExpiry,
-} from '@/src/utils/aelintPool'
+} from '@/src/utils/aelinPool'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
 export default function useAelinPool(chainId: ChainsValues, poolAddress: string) {
