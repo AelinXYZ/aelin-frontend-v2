@@ -18,12 +18,6 @@ const Wrapper = styled.div`
   }
 `
 
-const Main = styled(BaseCard)`
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-`
-
 const SidebarWrapper = styled(BaseCard)`
   display: flex;
   flex-direction: column;
@@ -39,11 +33,17 @@ const SidebarWrapper = styled(BaseCard)`
   }
 `
 
+const Main = styled.main`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+`
+
 export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
       <SidebarWrapper as="nav">sidebar contents</SidebarWrapper>
-      <Main as="main">{children}</Main>
+      <Main>{children}</Main>
     </Wrapper>
   )
 }
