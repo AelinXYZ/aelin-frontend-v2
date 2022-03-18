@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+
 const Wrapper = styled.div`
   --left-column-width: 200px;
 
@@ -16,13 +18,13 @@ const Wrapper = styled.div`
   }
 `
 
-const Main = styled.div`
+const Main = styled(BaseCard)`
   display: flex;
   flex-direction: column;
   min-width: 0;
 `
 
-const SidebarWrapper = styled.div`
+const SidebarWrapper = styled(BaseCard)`
   display: flex;
   flex-direction: column;
 
@@ -40,8 +42,8 @@ const SidebarWrapper = styled.div`
 export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      <SidebarWrapper>sidebar contents</SidebarWrapper>
-      <Main className="main">{children}</Main>
+      <SidebarWrapper as="nav">sidebar contents</SidebarWrapper>
+      <Main as="main">{children}</Main>
     </Wrapper>
   )
 }

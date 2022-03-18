@@ -17,6 +17,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-grow: 0;
   height: ${({ theme }) => theme.header.height};
+  margin: 0 0 20px;
   position: sticky;
   top: 0;
 `
@@ -99,12 +100,12 @@ export const Header: React.FC = (props) => {
           </Link>
         </StartWrapper>
         <div>
-          <Link href="pools-list">Pools List</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="sponsors">Sponsors</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="stake">Stake Aelin</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="vest">Vest</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="history">History</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="notifications">Nofitications</Link>
+          <Link href="/">Pools List</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="/sponsors">Sponsors</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="/stake">Stake Aelin</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="/vest">Vest</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="/history">History</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="/notifications">Nofitications</Link>
         </div>
         <EndWrapper>
           <Dropdown
