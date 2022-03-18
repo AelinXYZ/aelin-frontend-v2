@@ -17,7 +17,7 @@ const Wrapper = styled.div`
   }
 `
 
-const Main = styled.div`
+const Main = styled.main`
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -45,7 +45,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 export const RightTimelineLayout: React.FC<Props> = ({ children, timeline, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      <Main className="main">{children}</Main>
+      <Main>{children}</Main>
       <TimelineWrapper>{timeline}</TimelineWrapper>
     </Wrapper>
   )

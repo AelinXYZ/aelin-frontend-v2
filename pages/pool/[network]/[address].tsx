@@ -3,11 +3,11 @@ import { useRouter } from 'next/router'
 
 import nullthrows from 'nullthrows'
 
+import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
+import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { Chains, ChainsKeys } from '@/src/constants/chains'
 import useAelinPool from '@/src/hooks/useAelinPool'
-
-type X = ChainsKeys
 
 const PoolDetails: NextPage = () => {
   const router = useRouter()
@@ -21,12 +21,14 @@ const PoolDetails: NextPage = () => {
   const { amountInPool, funded, withdrawn } = useAelinPool(chainId, address as string)
 
   return (
-    <div>
-      <div>Pool details: {address}</div>
-      <div>Funded: {funded.formatted}</div>
-      <div>Withdrawn: {withdrawn.formatted}</div>
-      <div>Amount in Pool: {amountInPool.formatted}</div>
-    </div>
+    <RightTimelineLayout timeline={<>Timeline stuff</>}>
+      <BaseCard>
+        <div>Pool details: {address}</div>
+        <div>Funded: {funded.formatted}</div>
+        <div>Withdrawn: {withdrawn.formatted}</div>
+        <div>Amount in Pool: {amountInPool.formatted}</div>
+      </BaseCard>
+    </RightTimelineLayout>
   )
 }
 
