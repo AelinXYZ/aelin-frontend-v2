@@ -4,7 +4,9 @@ import { getGqlSdkByNetwork } from '@/src/constants/gqlSdkByNetwork'
 import isDev from '@/src/utils/isDev'
 
 export default function getAllGqlSDK() {
-  const filteredChains = Object.values(chainsConfig).filter(({ isProd }) => isDev !== isProd)
+  const filteredChains = Object.values(chainsConfig).filter(({ isProd }) =>
+    isDev ? true : isProd === true,
+  )
 
   return filteredChains.reduce((acc, currentChain) => {
     acc[currentChain.id] = getGqlSdkByNetwork(currentChain.id)
