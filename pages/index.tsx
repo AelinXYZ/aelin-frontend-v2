@@ -4,9 +4,9 @@ import styled from 'styled-components'
 
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { genericSuspense } from '@/src/components/safeSuspense'
-import { Chains } from '@/src/constants/chains'
+import { ChainsValues, chainsConfig, getKeyChainByValue } from '@/src/constants/chains'
+import useAelinPools from '@/src/hooks/pools/useAelinPools'
 import { getAmountInPool } from '@/src/utils/aelinPool'
-import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
 const PoolRow = styled.div`
   display: flex;
@@ -16,9 +16,7 @@ const PoolRow = styled.div`
 
 const Home: NextPage = () => {
   const router = useRouter()
-  const allSDK = getAllGqlSDK()
-  const { usePoolsCreated } = allSDK[Chains.optimism]
-  const { data, error } = usePoolsCreated()
+  const { data, error } = useAelinPools()
   if (error) {
     throw error
   }
@@ -27,18 +25,21 @@ const Home: NextPage = () => {
     <LeftSidebarLayout>
       {!data
         ? 'Loading...'
-        : data.poolCreateds.map((pool) => {
-            const { id, name, purchaseTokenDecimals } = pool
+        : data.map((pool) => {
+            const { chainId, id, name, purchaseTokenDecimals } = pool
             return (
               <PoolRow key={id}>
                 <span>{name.slice(0, 20)}</span>
+                <span>{chainsConfig[chainId as ChainsValues].name}</span>
                 <span>
                   {
                     getAmountInPool({ ...pool, purchaseTokenDecimals: purchaseTokenDecimals || 0 })
                       .formatted
                   }
                 </span>
-                <button onClick={() => router.push(`/pool/optimism/${id}`)}>View</button>
+                <button onClick={() => router.push(`/pool/${getKeyChainByValue(chainId)}/${id}`)}>
+                  View
+                </button>
               </PoolRow>
             )
           })}

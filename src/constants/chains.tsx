@@ -15,6 +15,10 @@ export const Chains = {
 export type ChainsValues = ObjectValues<typeof Chains>
 export type ChainsKeys = keyof typeof Chains
 
+export function getKeyChainByValue(chainId: number) {
+  return Object.keys(Chains).find((key) => Chains[key as ChainsKeys] === chainId)
+}
+
 export type ChainConfig = {
   blockExplorerUrls: string[]
   chainId: ChainsValues
