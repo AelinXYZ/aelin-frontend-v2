@@ -1,6 +1,5 @@
 import nullthrows from 'nullthrows'
 
-import { getSdk, getSdkWithHooks } from '@/graphql-schema'
 import { ObjectValues } from '@/types/utils'
 
 export const Chains = {

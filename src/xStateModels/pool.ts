@@ -18,14 +18,32 @@ export interface poolContext {
   isPrivate: boolean
 }
 
-// export enum Event {
+export enum Action {
+  fundingCheckPoolConditions = 'fundingCheckPoolConditions',
+}
 
-// }
-// type ProviderEvent = { type: Event.PROVIDER; payload: { provider: any } };
+type OnFundingClose = { type: 'OnfundingClosed' }
+type OnDeposit = { type: 'OnDeposit'; deposit: number }
+type OnDealSubmitted = { type: 'OnDealSubmitted' }
+type ClosePool = { type: 'ClosePool' }
+type OnWithdraw = { type: 'OnWithdraw' }
+type OnAcceptDeal = { type: 'OnAcceptDeal' }
+type OnRedemptionStart = { type: 'OnRedemptionStart' }
+type OnPoolEnded = { type: 'OnPoolEnded' }
+
+type Event =
+  | OnFundingClose
+  | OnDeposit
+  | OnDealSubmitted
+  | ClosePool
+  | OnWithdraw
+  | OnAcceptDeal
+  | OnRedemptionStart
+  | OnPoolEnded
 
 const newMachine =
   /** @xstate-layout N4IgpgJg5mDOIC5QAcD2qA2A6AYgVwDsIBLAqAYlQPyNKgGENVZJEVniAXYqtkAD0QAmAJwBWLAA4hYgAwBGAGyLZYgOySRaxQBoQAT0QAWI7KyK1AZiNy1sy7NmTFAXxd60mXIRJlKBABEwNFguPhCuHgI+QQQ1IywjeRlZRUl5OzSRPUMEBwSxIVlReUKhDKKjNw90bAB1AENIshxUACcghox-TowAZTwAIwBbLk5WJBAI7l5J2LShLBFHBVMxS0V5eSMcxAczOySNWW1kyQ3qqdqsRuaoVo6wLvIAYyYWAAVa8I4Z6LnEOdJEttOohOdFCJFEJdAZjCosJYhODLGolGoxFV3FcvLduC12gAJTAQMCPaavd5gL6YH6hP4xRBbEyI1JCSwbRRGCwaXZ5cpLMSlQpOVKSExiS6eepNfH3IkkslBClUOpcAAWEDaDQA7nTIrNQLEROClmyiuy1FDCnz5CJgZjUWJNql4qUsTVcbK6A9iRhSeTfv4AIIvF7BTi9fUMgEIE3yKSoowY2RQ+07OFxswiEROqzO1KWe1S654n0K-1K4JBqgAJUgYGGyD+fU4DTanGjUUZCGZCQc0I5ym5al5mfkSKw4OWahh0mURTUJa9d19isD9P8NIwAFEiBN2PTu7G+6zB5yR2PcjIRFgMopClohDYtvFl9ht4xmJB-GrOJrtT1SZpmPI0mTESQzGSNEizEdYILUPkNjUJZTCMGFYM2UR3ywVBkDAAh61JJs-i3Wo918KAu0NARwPUcwjBzOCH0kTFR1tSdpyceJlFUZ83GxAhUFJeBgOuGhKOo-4wIQZM+SOLATnsZkZCsDEPRxGVV3aKMxKPGjYiMTQp3kSQMSyDRMWceT0MUrlVHQh8inEHCywJNo-QDZVfiknszMWCxGOhaFig2SQkK2RTc3U1i3RnHDPypCBfJPaxgSwl9RHOVRYVyEwE3ZE4TCMSw5HFc4cLwgiiMbZtQKufTpNo3s0vMZJMvtBxnQ4yxzCtSEOXEIpNA06UsAANTgOUUpkioEjUkxp1MO0+RkBNnWkFENGfSxxXfGbmvZW1gRWRwklTNERAnASXCAA */
-  createMachine<poolContext>(
+  createMachine<poolContext, Event>(
     {
       context: {
         purchaseToken: null,
@@ -38,47 +56,47 @@ const newMachine =
         isPrivate: false,
       },
       id: 'pool',
-      initial: 'Funding',
+      initial: 'funding',
       states: {
-        Funding: {
-          entry: 'checkConditions',
+        funding: {
+          entry: Action.fundingCheckPoolConditions,
           on: {
-            onFundingClosed: {
+            OnfundingClosed: {
               target: '#pool.WaitingForDeal',
             },
-            onDeposit: {
-              actions: 'increaseFunding',
-              target: '#pool.Funding',
+            OnDeposit: {
+              actions: 'increasefunding',
+              target: '#pool.funding',
             },
           },
         },
         WaitingForDeal: {
           on: {
-            onDealSubmitted: {
+            OnDealSubmitted: {
               target: '#pool.WaitingForHolderDeposit',
             },
-            closePool: {
+            ClosePool: {
               target: '#pool.PoolClosed',
             },
           },
         },
         WaitingForHolderDeposit: {
           on: {
-            closePool: {
+            ClosePool: {
               target: '#pool.PoolClosed',
             },
-            onWithdraw: {
+            OnWithdraw: {
               actions: 'rejectDeal',
               target: '#pool.WaitingForHolderDeposit',
             },
-            onAcceptDeal: {
+            OnAcceptDeal: {
               actions: 'acceptDeal',
               target: '#pool.WaitingForHolderDeposit',
             },
-            onRedemptionStart: {
+            OnRedemptionStart: {
               target: '#pool.openRedemption',
             },
-            onPoolEnded: {
+            OnPoolEnded: {
               target: '#pool.Vesting',
             },
           },
@@ -86,7 +104,7 @@ const newMachine =
         PoolClosed: {
           type: 'final',
           on: {
-            onWithdraw: {
+            OnWithdraw: {
               actions: 'updatePoolStatus',
               target: '#pool.PoolClosed',
             },
@@ -94,7 +112,7 @@ const newMachine =
         },
         openRedemption: {
           on: {
-            onPoolEnding: {
+            OnPoolEnded: {
               target: '#pool.Vesting',
             },
           },
@@ -104,7 +122,16 @@ const newMachine =
     },
     {
       // Global machine actions (using in events)
-      actions: {},
+      actions: {
+        [Action.fundingCheckPoolConditions]: (context, event: OnDeposit) => {
+          // check if the pool is still open
+
+          // check if max cap is reched
+
+          // if needed transition to next state
+          event.deposit
+        },
+      },
       services: {},
       guards: {},
     },

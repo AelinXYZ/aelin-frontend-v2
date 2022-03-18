@@ -1,27 +1,52 @@
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import styled from 'styled-components'
 
 import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
-import useGqlSdk from '@/src/utils/getAllGqlSDK'
+import { genericSuspense } from '@/src/components/safeSuspense'
+import { Chains } from '@/src/constants/chains'
+import { getAmountInPool } from '@/src/utils/aelinPool'
+import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
+
+const PoolRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`
 
 const Home: NextPage = () => {
-  // const sdk = useGqlSdk()
-  // console.log(sdk)
-  // Return poolsCreated on chain id 42 (Kovan)
-  // const { data, error } = queriesSDK['42'].usePoolsCreated()
-  //
-  // if (error) return <div>failed to load</div>
-  // if (!data) return <div>loading...</div>
+  const router = useRouter()
+  const allSDK = getAllGqlSDK()
+  const { usePoolsCreated } = allSDK[Chains.optimism]
+  const { data, error } = usePoolsCreated()
+
+  if (!data) {
+    return <div>no pools</div>
+  }
+
+  if (error) {
+    throw error
+  }
 
   return (
-    <>
-      <InnerContainer as="main">
-        <h2>Welcome to Bootnode-web3-Next.js!</h2>
-        <p>
-          Get started by editing <code>pages/index.js</code>
-        </p>
-      </InnerContainer>
-    </>
+    <InnerContainer>
+      {data.poolCreateds.map((pool) => {
+        const { id, name, purchaseTokenDecimals } = pool
+        return (
+          <PoolRow key={id}>
+            <span>{name.slice(0, 20)}</span>
+            <span>
+              {
+                getAmountInPool({ ...pool, purchaseTokenDecimals: purchaseTokenDecimals || 0 })
+                  .formatted
+              }
+            </span>
+            <button onClick={() => router.push(`/pool/optimism/${id}`)}>View</button>
+          </PoolRow>
+        )
+      })}
+    </InnerContainer>
   )
 }
 
-export default Home
+export default genericSuspense(Home)

@@ -7,24 +7,7 @@ export const POOLS_CREATED = gql`
     $where: PoolCreated_filter
   ) {
     poolCreateds(orderBy: $orderBy, orderDirection: $orderDirection, where: $where) {
-      id
-      name
-      symbol
-      purchaseTokenCap
-      purchaseToken
-      purchaseTokenSymbol
-      duration
-      sponsorFee
-      sponsor
-      purchaseDuration
-      purchaseExpiry
-      purchaseTokenDecimals
-      timestamp
-      hasAllowList
-      poolStatus
-      contributions
-      totalSupply
-      dealAddress
+      ...PoolDetails
     }
   }
 `
