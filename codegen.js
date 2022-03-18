@@ -2,6 +2,8 @@
 const { loadEnvConfig } = require('@next/env')
 loadEnvConfig(process.cwd())
 
+const codeGenOutDir = process.env.CODEGEN_OUTPUT_FILE || 'types/generated/queries.ts'
+
 module.exports = {
   overwrite: true,
   schema: [
@@ -12,7 +14,7 @@ module.exports = {
   ],
   documents: 'src/queries/**/*.ts',
   generates: {
-    [process.env.CODEGEN_OUTPUT_FILE]: {
+    [codeGenOutDir]: {
       plugins: [
         'typescript',
         'typescript-operations',
