@@ -1,8 +1,11 @@
+const componentBackgroundColor = 'rgba(255, 255, 255, 0.04)'
+const componentBorder = '0.5px solid rgba(255, 255, 255, 0.25)'
+const componentBorderRadius = '8px'
 const error = '#db3a3d'
-const primary = '#320E3B'
+const primary = '#3CBFF0'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
-const textColor = '#000'
+const textColor = '#fff'
 
 export const theme = {
   buttonPrimary: {
@@ -14,13 +17,14 @@ export const theme = {
     colorHover: '#000',
   },
   card: {
-    backgroundColor: '#fff',
-    backgroundOpacity: '1',
-    borderRadius: '12px',
+    backgroundColor: componentBackgroundColor,
+    borderColor: componentBorder,
+    borderRadius: componentBorderRadius,
   },
   colors: {
+    componentBackgroundColor: componentBackgroundColor,
     error: error,
-    mainBodyBackground: '#fff',
+    mainBodyBackground: '#101826',
     primary: primary,
     secondary: secondary,
     tertiary: tertiary,
@@ -49,12 +53,12 @@ export const theme = {
     fontFamilyCode: `'source-code-pro', 'Menlo', 'Monaco', 'Consolas', 'Courier New', 'monospace'`,
   },
   footer: {},
-  header: { height: '65px' },
+  header: { height: '60px' },
   layout: {
-    horizontalPaddingMobile: '10px',
-    horizontalPaddingTabletPortraitStart: '80px',
-    horizontalPaddingTabletLandscapeStart: '15px',
     maxWidth: '1360px',
+    paddingDesktopStart: '20px',
+    paddingDesktopWideStart: '20px 40px',
+    paddingMobile: '10px',
   },
   themeBreakPoints: {
     desktopWideStart: '1281px',

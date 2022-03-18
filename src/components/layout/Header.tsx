@@ -6,6 +6,7 @@ import { ChevronDown as BaseChevronDown } from '@/src/components/assets/ChevronD
 import { BootNodeLogo } from '@/src/components/assets/Logo'
 import { Dropdown, DropdownItem } from '@/src/components/dropdown/Dropdown'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { chainsConfig, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -13,8 +14,6 @@ import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
 const Wrapper = styled.div`
   align-items: center;
-  background-color: #000;
-  color: #fff;
   display: flex;
   flex-grow: 0;
   height: ${({ theme }) => theme.header.height};
@@ -23,9 +22,12 @@ const Wrapper = styled.div`
 `
 
 const InnerContainer = styled(BaseInnerContainer)`
+  ${BaseCardCSS}
+
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
+  padding: 12px 20px 12px 40px;
 `
 
 const HomeLink = styled.span`
@@ -98,8 +100,9 @@ export const Header: React.FC = (props) => {
         </StartWrapper>
         <div>
           <Link href="pools-list">Pools List</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="sponsors">Sponsors</Link>&nbsp;&nbsp;&nbsp;
           <Link href="stake">Stake Aelin</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="claim">Claim</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="vest">Vest</Link>&nbsp;&nbsp;&nbsp;
           <Link href="history">History</Link>&nbsp;&nbsp;&nbsp;
           <Link href="notifications">Nofitications</Link>
         </div>

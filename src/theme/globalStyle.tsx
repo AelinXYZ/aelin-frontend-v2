@@ -31,5 +31,14 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     display: flex;
     flex-direction: column;
     height: 100vh;
+    padding: ${({ theme }) => theme.layout.paddingMobile};
+
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+      padding: ${({ theme }) => theme.layout.paddingDesktopStart};
+    }
+
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopWideStart}) {
+      padding: ${({ theme }) => theme.layout.paddingDesktopWideStart};
+    }
   }
 `
