@@ -1,21 +1,15 @@
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
-import { BigNumber } from '@ethersproject/bignumber'
-import { formatUnits } from '@ethersproject/units'
-
-import { BootNodeLogo } from '@/src/components/assets/BootNodeLogo'
 import { ChevronDown as BaseChevronDown } from '@/src/components/assets/ChevronDown'
+import { BootNodeLogo } from '@/src/components/assets/Logo'
 import { Dropdown, DropdownItem } from '@/src/components/dropdown/Dropdown'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { chainsConfig, getNetworkConfig } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
-
-const vbAddress = '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -70,14 +64,6 @@ const ExtraInfo = styled.div`
   display: flex;
 `
 
-const Info = styled.div`
-  column-gap: 10px;
-  display: grid;
-  font-size: 11px;
-  grid-template-columns: 1fr 1fr;
-  margin-left: 20px;
-`
-
 const Item = styled.div`
   max-width: 130px;
   overflow: hidden;
@@ -91,44 +77,12 @@ export const Header: React.FC = (props) => {
     appChainId,
     connectWallet,
     disconnectWallet,
-    isAppConnected,
     isWalletConnected,
-    pushNetwork,
-    readOnlyAppProvider,
     setAppChainId,
     wallet,
-    walletChainId,
-    web3Provider,
   } = useWeb3Connection()
 
   const chainOptions = Object.values(chainsConfig)
-
-  const [balance, setBalance] = useState<{ name: string; balance: string } | undefined>()
-
-  useEffect(() => {
-    async function getBalance() {
-      if (isAppConnected) {
-        const res = (await web3Provider?.getBalance(address!)) || ZERO_BN
-        if (isAppConnected) {
-          setBalance({
-            name: 'your balance',
-            balance: formatUnits(res || ZERO_BN),
-          })
-        }
-      } else {
-        const res = await readOnlyAppProvider?.getBalance(vbAddress)
-        if (!isAppConnected) {
-          setBalance({ name: 'Vitalik balance', balance: formatUnits(res || ZERO_BN) })
-        }
-      }
-    }
-
-    if (!isWalletConnected && !readOnlyAppProvider) {
-      setBalance(undefined)
-    } else {
-      getBalance()
-    }
-  }, [isAppConnected, isWalletConnected, readOnlyAppProvider, web3Provider, address])
 
   const [currentChain, setCurrentChain] = useState(getNetworkConfig(appChainId).name)
 
@@ -141,49 +95,40 @@ export const Header: React.FC = (props) => {
               <Logo />
             </HomeLink>
           </Link>
-          <ButtonWrapper>
-            <Dropdown
-              currentItem={chainOptions.findIndex(({ id }) => id === appChainId)}
-              dropdownButtonContent={
-                <ButtonPrimary>
-                  {currentChain}
-                  <ChevronDown />
-                </ButtonPrimary>
-              }
-              items={chainOptions.map((item, index) => (
-                <DropdownItem
-                  key={index}
-                  onClick={() => {
-                    setCurrentChain(item.name)
-                    setAppChainId(item.chainId)
-                  }}
-                >
-                  {item.name}
-                </DropdownItem>
-              ))}
-            />
-          </ButtonWrapper>
-          {isWalletConnected && !isAppConnected && walletChainId !== appChainId && (
-            <ButtonWrapper>
-              <ButtonPrimary onClick={pushNetwork}>Switch to {currentChain}</ButtonPrimary>
-            </ButtonWrapper>
-          )}
         </StartWrapper>
+        <div>
+          <Link href="pools-list">Pools List</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="stake">Stake Aelin</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="claim">Claim</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="history">History</Link>&nbsp;&nbsp;&nbsp;
+          <Link href="notifications">Nofitications</Link>
+        </div>
         <EndWrapper>
+          <Dropdown
+            currentItem={chainOptions.findIndex(({ id }) => id === appChainId)}
+            dropdownButtonContent={
+              <ButtonPrimary>
+                {currentChain}
+                <ChevronDown />
+              </ButtonPrimary>
+            }
+            items={chainOptions.map((item, index) => (
+              <DropdownItem
+                key={index}
+                onClick={() => {
+                  setCurrentChain(item.name)
+                  setAppChainId(item.chainId)
+                }}
+              >
+                {item.name}
+              </DropdownItem>
+            ))}
+          />
           {isWalletConnected ? (
             <ExtraInfo>
-              <Info>
-                <div>
-                  <Item>Connected to: {wallet?.name}</Item>
-                  {address && <Item>Address: {truncateStringInTheMiddle(address, 6, 6)}</Item>}
-                </div>
-                <div>
-                  <Item>App chainId: {appChainId}</Item>
-                  <Item>
-                    {balance?.name}: {balance?.balance}
-                  </Item>
-                </div>
-              </Info>
+              {wallet?.name}
+              &nbsp;&nbsp;&nbsp;
+              {address && <Item>{truncateStringInTheMiddle(address, 6, 6)}</Item>}
               <ButtonWrapper>
                 <ButtonPrimary onClick={disconnectWallet}>Disconnect</ButtonPrimary>
               </ButtonWrapper>
