@@ -1,13 +1,15 @@
 import { rgba } from 'polished'
 
 const componentBackgroundColor = 'rgba(255, 255, 255, 0.04)'
-const componentBorder = '0.5px solid rgba(255, 255, 255, 0.25)'
+const componentBorderColor = 'rgba(255, 255, 255, 0.25)'
+const componentBorder = `0.5px solid ${componentBorderColor}`
 const componentBorderRadius = '8px'
 const error = '#db3a3d'
 const primary = '#3CBFF0'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
 const textColor = '#fff'
+const mainBodyBackground = '#101826'
 
 export const theme = {
   buttonPrimary: {
@@ -26,25 +28,25 @@ export const theme = {
   colors: {
     componentBackgroundColor: componentBackgroundColor,
     error: error,
-    mainBodyBackground: '#101826',
+    mainBodyBackground: mainBodyBackground,
     primary: primary,
     secondary: secondary,
     tertiary: tertiary,
     textColor: textColor,
   },
   dropdown: {
-    background: '#fff',
-    borderColor: '#ccc',
+    background: mainBodyBackground,
+    borderColor: componentBorderColor,
     borderRadius: '6px',
-    boxShadow: '0 0 24px 0 rgba(0, 0, 0, 0.1)',
+    boxShadow: 'none',
     item: {
       backgroundColor: 'transparent',
-      backgroundColorActive: 'rgba(0, 0, 0, 0.05)',
-      backgroundColorHover: 'rgba(0, 0, 0, 0.05)',
-      borderColor: '#ccc',
-      color: '#000',
-      colorActive: '#000',
-      height: '38px',
+      backgroundColorActive: rgba(primary, 0.08),
+      backgroundColorHover: rgba(primary, 0.08),
+      borderColor: componentBorderColor,
+      color: '#fff',
+      colorActive: primary,
+      height: '36px',
       paddingHorizontal: '12px',
     },
   },

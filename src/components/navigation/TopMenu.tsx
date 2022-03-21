@@ -29,11 +29,11 @@ const Item = styled(NavLink)`
   }
 `
 
-export const TopMenu: React.FC = (props) => {
+export const TopMenu: React.FC = ({ ...restProps }) => {
   return (
-    <Wrapper>
+    <Wrapper {...restProps}>
       {sections.map(({ href, icon, title }, index) => (
-        <Item href={href} key={`top_menu_item_${index}`} {...props}>
+        <Item href={href} key={`top_menu_item_${index}`}>
           {icon} {title}
         </Item>
       ))}

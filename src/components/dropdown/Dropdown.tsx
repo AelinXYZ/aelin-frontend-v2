@@ -53,7 +53,7 @@ const PositionCenterCSS = css`
 `
 
 const DirectionDownwardsCSS = css`
-  top: calc(100%);
+  top: calc(100% + 10px);
 `
 
 const DirectionUpwardsCSS = css`
@@ -101,10 +101,11 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   color: ${({ theme }) => theme.dropdown.item.color};
   cursor: pointer;
   display: flex;
-  font-size: 1.4rem;
-  font-weight: 300;
+  font-size: 1.3rem;
+  font-weight: 400;
+  gap: 10px;
   justify-content: ${(props) => props.justifyContent};
-  line-height: 1.2;
+  line-height: 1.4;
   min-height: ${({ theme }) => theme.dropdown.item.height};
   overflow: hidden;
   padding: 10px 15px;

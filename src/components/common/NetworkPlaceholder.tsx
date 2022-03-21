@@ -15,6 +15,7 @@ const Name = styled.div`
   color: ${({ theme: { colors } }) => colors.mainBodyBackground};
   font-size: 1.3rem;
   font-weight: 700;
+  height: 11px;
   line-height: 1;
 `
 

@@ -11,13 +11,33 @@ const Wrapper = styled.a`
   position: relative;
 `
 
-const Badge = styled.div``
+const Badge = styled.div`
+  align-items: center;
+  background: ${({ theme: { colors } }) => colors.primary};
+  border-radius: 50%;
+  color: ${({ theme: { colors } }) => colors.textColor};
+  display: flex;
+  font-size: 0.8rem;
+  font-weight: 600;
+  height: 12px;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: -4px;
+  top: 2px;
+  width: 12px;
+  z-index: 5;
+`
 
-export const Notifications: React.FC<{ name: string }> = ({ name, ...restProps }) => (
-  <Link href="/notifications" passHref>
-    <Wrapper {...restProps}>
-      <NotificationsIcon />
-      <Badge>{name}</Badge>
-    </Wrapper>
-  </Link>
-)
+export const Notifications: React.FC = ({ ...restProps }) => {
+  const notifications = 8
+
+  return (
+    <Link href="/notifications" passHref>
+      <Wrapper {...restProps}>
+        <NotificationsIcon />
+        <Badge>{notifications}</Badge>
+      </Wrapper>
+    </Link>
+  )
+}

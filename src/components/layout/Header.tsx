@@ -3,9 +3,12 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
+import { Ellipsis } from '@/src/components/assets/Ellipsis'
 import { BootNodeLogo } from '@/src/components/assets/Logo'
-import { Dropdown, DropdownItem } from '@/src/components/dropdown/Dropdown'
-import { TopMenu } from '@/src/components/navigation/TopMenu'
+import { Metamask } from '@/src/components/assets/Metamask'
+import { Notifications } from '@/src/components/common/Notifications'
+import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
+import { TopMenu as BaseTopMenu } from '@/src/components/navigation/TopMenu'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
@@ -56,13 +59,9 @@ const EndWrapper = styled.div`
   gap: 20px;
 `
 
-const ButtonWrapper = styled.div`
-  margin-left: 10px;
-`
-
-const ExtraInfo = styled.div`
-  align-items: center;
-  display: flex;
+const TopMenu = styled(BaseTopMenu)`
+  margin-left: auto;
+  margin-right: 30px;
 `
 
 const Item = styled.div`
@@ -93,7 +92,6 @@ export const Header: React.FC = (props) => {
     disconnectWallet,
     isWalletConnected,
     setAppChainId,
-    wallet,
   } = useWeb3Connection()
 
   const chainOptions = Object.values(chainsConfig)
@@ -121,6 +119,7 @@ export const Header: React.FC = (props) => {
                 <ChevronDown />
               </DropdownButton>
             }
+            dropdownPosition={DropdownPosition.right}
             items={chainOptions.map((item, index) => (
               <DropdownItem
                 key={index}
@@ -129,26 +128,41 @@ export const Header: React.FC = (props) => {
                   setAppChainId(item.chainId)
                 }}
               >
+                {getNetworkConfig(item.chainId).icon}
                 {item.name}
               </DropdownItem>
             ))}
           />
-          <Line />
-          Notifications
-          <Line />
           {isWalletConnected && (
-            <ExtraInfo>
-              {wallet?.name}
-              &nbsp;&nbsp;&nbsp;
-              {address && <Item>{truncateStringInTheMiddle(address, 6, 6)}</Item>}
-              <ButtonWrapper>
-                <ButtonPrimary onClick={disconnectWallet}>Disconnect</ButtonPrimary>
-              </ButtonWrapper>
-            </ExtraInfo>
+            <>
+              <Line />
+              <Dropdown
+                dropdownButtonContent={
+                  <DropdownButton>
+                    <Metamask />
+                    {address && <Item>{truncateStringInTheMiddle(address, 6, 6)}</Item>}
+                    <ChevronDown />
+                  </DropdownButton>
+                }
+                dropdownPosition={DropdownPosition.right}
+                items={[
+                  <DropdownItem key={'btn_disconnect'} onClick={disconnectWallet}>
+                    Disconnect
+                  </DropdownItem>,
+                ]}
+              />
+              <Line />
+              <Notifications />
+              <Line />
+              <Ellipsis />
+            </>
           )}
-          {!isWalletConnected && <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>}
-          <Line />
-          Ellipsis
+          {!isWalletConnected && (
+            <>
+              <Line />
+              <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
+            </>
+          )}
         </EndWrapper>
       </InnerContainer>
     </Wrapper>
