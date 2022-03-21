@@ -7,19 +7,20 @@ export const DisabledButtonCSS = css`
 
 export const ButtonCSS = css`
   align-items: center;
-  border-radius: 20px;
+  border-radius: 25px;
   border-style: solid;
   border-width: 1px;
   cursor: pointer;
   display: flex;
   font-family: ${({ theme }) => theme.fonts.fontFamily};
-  font-size: 1.5rem;
-  font-weight: 500;
-  height: 34px;
+  font-size: 1.4rem;
+  font-weight: 400;
+  gap: 8px;
+  height: 36px;
   justify-content: center;
   line-height: 1;
   outline: none;
-  padding: 0 12px;
+  padding: 0 24px;
   text-align: center;
   text-decoration: none;
   transition: all 0.15s ease-out;

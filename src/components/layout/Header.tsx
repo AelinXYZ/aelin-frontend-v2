@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { ChevronDown as BaseChevronDown } from '@/src/components/assets/ChevronDown'
 import { BootNodeLogo } from '@/src/components/assets/Logo'
 import { Dropdown, DropdownItem } from '@/src/components/dropdown/Dropdown'
+import { TopMenu } from '@/src/components/navigation/TopMenu'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
@@ -99,14 +100,7 @@ export const Header: React.FC = (props) => {
             </HomeLink>
           </Link>
         </StartWrapper>
-        <div>
-          <Link href="/">Pools List</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="/sponsors">Sponsors</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="/stake">Stake Aelin</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="/vest">Vest</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="/history">History</Link>&nbsp;&nbsp;&nbsp;
-          <Link href="/notifications">Nofitications</Link>
-        </div>
+        <TopMenu />
         <EndWrapper>
           <Dropdown
             currentItem={chainOptions.findIndex(({ id }) => id === appChainId)}

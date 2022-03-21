@@ -1,3 +1,5 @@
+import { rgba } from 'polished'
+
 const componentBackgroundColor = 'rgba(255, 255, 255, 0.04)'
 const componentBorder = '0.5px solid rgba(255, 255, 255, 0.25)'
 const componentBorderRadius = '8px'
@@ -9,12 +11,12 @@ const textColor = '#fff'
 
 export const theme = {
   buttonPrimary: {
-    backgroundColor: '#fff',
-    backgroundColorHover: '#fafafa',
-    borderColor: '#ccc',
-    borderColorHover: '#cacaca',
-    color: '#000',
-    colorHover: '#000',
+    backgroundColor: rgba(primary, 0.08),
+    backgroundColorHover: rgba(primary, 0.2),
+    borderColor: primary,
+    borderColorHover: primary,
+    color: primary,
+    colorHover: primary,
   },
   card: {
     backgroundColor: componentBackgroundColor,
