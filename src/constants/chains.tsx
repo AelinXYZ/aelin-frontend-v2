@@ -1,5 +1,8 @@
 import nullthrows from 'nullthrows'
 
+import { Mainnet } from '@/src/components/assets/Mainnet'
+import { Optimism } from '@/src/components/assets/Optimism'
+import { NetworkPlaceholder } from '@/src/components/common/NetworkPlaceholder'
 import { ObjectValues } from '@/types/utils'
 
 export const Chains = {
@@ -13,50 +16,54 @@ export type ChainsValues = ObjectValues<typeof Chains>
 export type ChainsKeys = keyof typeof Chains
 
 export type ChainConfig = {
-  id: ChainsValues
-  name: string
-  shortName: string
+  blockExplorerUrls: string[]
   chainId: ChainsValues
   chainIdHex: string
-  rpcUrl: string
-  blockExplorerUrls: string[]
+  icon?: React.ReactNode
   iconUrls: string[]
+  id: ChainsValues
   isProd: boolean
+  name: string
+  rpcUrl: string
+  shortName: string
 }
 
 export const chainsConfig: Record<ChainsValues, ChainConfig> = {
   [Chains.mainnet]: {
-    id: Chains.mainnet,
-    name: 'Mainnet',
-    shortName: 'Mainnet',
+    blockExplorerUrls: ['https://etherscan.io/'],
     chainId: Chains.mainnet,
     chainIdHex: '0x1',
-    rpcUrl: 'https://main-light.eth.linkpool.io',
-    blockExplorerUrls: ['https://etherscan.io/'],
+    icon: <Mainnet />,
     iconUrls: [],
+    id: Chains.mainnet,
     isProd: true,
+    name: 'Mainnet',
+    rpcUrl: 'https://main-light.eth.linkpool.io',
+    shortName: 'Mainnet',
   },
   [Chains.goerli]: {
-    id: Chains.goerli,
-    name: 'Görli Testnet',
-    shortName: 'Goerli',
+    blockExplorerUrls: ['https://goerli.etherscan.io/'],
     chainId: Chains.goerli,
     chainIdHex: '0x5',
-    rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
-    blockExplorerUrls: ['https://goerli.etherscan.io/'],
+    icon: <NetworkPlaceholder name="G" />,
     iconUrls: [],
+    id: Chains.goerli,
     isProd: false,
+    name: 'Görli Testnet',
+    rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
+    shortName: 'Goerli',
   },
   [Chains.kovan]: {
-    id: Chains.kovan,
-    name: 'Kovan',
-    shortName: 'Kovan',
+    blockExplorerUrls: ['https://kovan.etherscan.io/'],
     chainId: Chains.kovan,
     chainIdHex: '0x2a',
-    rpcUrl: 'https://kovan.infura.io/v3/ecb81cbe2f03436cb39236e4160311fe',
-    blockExplorerUrls: ['https://kovan.etherscan.io/'],
+    icon: <NetworkPlaceholder name="K" />,
     iconUrls: [],
+    id: Chains.kovan,
     isProd: false,
+    name: 'Kovan',
+    rpcUrl: 'https://kovan.infura.io/v3/ecb81cbe2f03436cb39236e4160311fe',
+    shortName: 'Kovan',
   },
   [Chains.optimism]: {
     id: Chains.optimism,
@@ -68,6 +75,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     blockExplorerUrls: ['https://optimistic.etherscan.io/'],
     iconUrls: [],
     isProd: true,
+    icon: <Optimism />,
   },
 }
 

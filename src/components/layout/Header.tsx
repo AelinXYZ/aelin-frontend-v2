@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { ChevronDown as BaseChevronDown } from '@/src/components/assets/ChevronDown'
+import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { BootNodeLogo } from '@/src/components/assets/Logo'
 import { Dropdown, DropdownItem } from '@/src/components/dropdown/Dropdown'
 import { TopMenu } from '@/src/components/navigation/TopMenu'
@@ -53,13 +53,10 @@ const StartWrapper = styled.div`
 const EndWrapper = styled.div`
   align-items: center;
   display: flex;
+  gap: 20px;
 `
 
 const ButtonWrapper = styled.div`
-  margin-left: 10px;
-`
-
-const ChevronDown = styled(BaseChevronDown)`
   margin-left: 10px;
 `
 
@@ -73,6 +70,19 @@ const Item = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`
+
+const Line = styled.div`
+  background: rgba(255, 255, 255, 0.25);
+  height: 24px;
+  width: 1px;
+`
+
+const DropdownButton = styled.div`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
 `
 
 export const Header: React.FC = (props) => {
@@ -105,10 +115,11 @@ export const Header: React.FC = (props) => {
           <Dropdown
             currentItem={chainOptions.findIndex(({ id }) => id === appChainId)}
             dropdownButtonContent={
-              <ButtonPrimary>
+              <DropdownButton>
+                {getNetworkConfig(appChainId).icon}
                 {currentChain}
                 <ChevronDown />
-              </ButtonPrimary>
+              </DropdownButton>
             }
             items={chainOptions.map((item, index) => (
               <DropdownItem
@@ -122,7 +133,10 @@ export const Header: React.FC = (props) => {
               </DropdownItem>
             ))}
           />
-          {isWalletConnected ? (
+          <Line />
+          Notifications
+          <Line />
+          {isWalletConnected && (
             <ExtraInfo>
               {wallet?.name}
               &nbsp;&nbsp;&nbsp;
@@ -131,9 +145,10 @@ export const Header: React.FC = (props) => {
                 <ButtonPrimary onClick={disconnectWallet}>Disconnect</ButtonPrimary>
               </ButtonWrapper>
             </ExtraInfo>
-          ) : (
-            <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
           )}
+          {!isWalletConnected && <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>}
+          <Line />
+          Ellipsis
         </EndWrapper>
       </InnerContainer>
     </Wrapper>
