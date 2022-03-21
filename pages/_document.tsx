@@ -39,19 +39,10 @@ export default class MyDocument extends Document {
           <link color="#5bbad5" href="/favicon/safari-pinned-tab.svg" rel="mask-icon" />
           <meta content="#da532c" name="msapplication-TileColor" />
           <meta content="#ffffff" name="theme-color" />
-          <meta content="description" name="description" />
-          <meta content="OG title" property="og:title" />
-          <meta content="https://THE_URL" property="og:url" />
-          <meta content="https://THE_URL/shareable/ogImage.jpg" property="og:image" />
-          <meta content="website" property="og:type" />
-          <meta content="OG description" property="og:description" />
-          <meta content="summary_large_image" name="twitter:card" />
-          <meta content="THE_SITE" name="twitter:site" />
-          <meta content="@THE_HANDLE" name="twitter:creator" />
           <link href="https://fonts.googleapis.com" rel="preconnect" />
           <link crossOrigin="crossorigin" href="https://fonts.gstatic.com" rel="preconnect" />
           <link
-            href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Nunito:wght@800;900&family=Roboto:wght@400;500;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Hind+Madurai:wght@400;500;700&family=Montserrat:wght@600;700&display=swap"
             rel="stylesheet"
           />
           <style global jsx>{`
