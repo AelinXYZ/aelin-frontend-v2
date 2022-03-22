@@ -2,6 +2,8 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
+import InfiniteScroll from 'react-infinite-scroll-component'
+
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { ChainsValues, chainsConfig, getKeyChainByValue } from '@/src/constants/chains'
@@ -16,33 +18,51 @@ const PoolRow = styled.div`
 
 const Home: NextPage = () => {
   const router = useRouter()
-  const { data, error } = useAelinPools()
+  const { currentPage, data, error, hasMore, setPage } = useAelinPools({})
+
   if (error) {
     throw error
   }
 
   return (
     <LeftSidebarLayout>
-      {!data
-        ? 'Loading...'
-        : data.map((pool) => {
-            const { chainId, id, name, purchaseTokenDecimals } = pool
-            return (
-              <PoolRow key={id}>
-                <span>{name.slice(0, 20)}</span>
-                <span>{chainsConfig[chainId as ChainsValues].name}</span>
-                <span>
-                  {
-                    getAmountInPool({ ...pool, purchaseTokenDecimals: purchaseTokenDecimals || 0 })
-                      .formatted
-                  }
-                </span>
-                <button onClick={() => router.push(`/pool/${getKeyChainByValue(chainId)}/${id}`)}>
-                  View
-                </button>
-              </PoolRow>
-            )
-          })}
+      <InfiniteScroll
+        dataLength={data.length}
+        endMessage={
+          <p style={{ textAlign: 'center' }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+        hasMore={hasMore}
+        height={500}
+        loader={<h4>Loading...</h4>}
+        next={() => {
+          setPage(currentPage + 1)
+        }}
+      >
+        {!data
+          ? 'Loading...'
+          : data.map((pool) => {
+              const { chainId, id, name, purchaseTokenDecimals } = pool
+              return (
+                <PoolRow key={id}>
+                  <span>{name.slice(0, 20)}</span>
+                  <span>{chainsConfig[chainId as ChainsValues].name}</span>
+                  <span>
+                    {
+                      getAmountInPool({
+                        ...pool,
+                        purchaseTokenDecimals: purchaseTokenDecimals || 0,
+                      }).formatted
+                    }
+                  </span>
+                  <button onClick={() => router.push(`/pool/${getKeyChainByValue(chainId)}/${id}`)}>
+                    View
+                  </button>
+                </PoolRow>
+              )
+            })}
+      </InfiniteScroll>
     </LeftSidebarLayout>
   )
 }

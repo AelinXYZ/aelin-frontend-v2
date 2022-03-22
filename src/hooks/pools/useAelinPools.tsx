@@ -1,65 +1,109 @@
-import * as Dom from 'graphql-request/dist/types.dom'
-import { forEach } from 'iterall'
-import useSWR from 'swr'
+import useSWRInfinite from 'swr/infinite'
 
-import { PoolCreated, PoolsCreatedQuery, PoolsCreatedQueryVariables } from '@/graphql-schema'
-import { ChainsValues } from '@/src/constants/chains'
+import { PoolCreated, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { AllSDK } from '@/src/constants/gqlSdkByNetwork'
+import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pools'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
-import swrKeyGenerator from '@/src/utils/swrKeyGenerator'
 
-interface PoolCreatedWithChainId extends PoolCreated {
-  chainId: number
+interface parsedPool {
+  name: string
+  sponsorName: string
+  sponsorUrl: string
+  badge: number
+  network: ChainsValues
+  amount: number
+  deadline: Date
+  token: string
+  status: string
 }
 
-const pushChainId = (poolsArray: Array<PoolCreated>, chainId: number): PoolCreatedWithChainId[] =>
+interface PoolCreatedWithChainId extends PoolCreated {
+  chainId: ChainsValues
+}
+
+const pushChainId = (poolsArray: PoolCreated[], chainId: ChainsValues): PoolCreatedWithChainId[] =>
   poolsArray.map((pool) => ({ ...pool, chainId }))
 
-const parsePools = (pools: PoolsCreatedQuery[], chains: string[]) =>
-  pools.reduce(
-    (
-      resultAcc: Array<PoolCreatedWithChainId>,
-      currentResult: PoolsCreatedQuery,
-      currentIndex: number,
-    ) => {
-      const chainPools = Object.values(currentResult).shift() as Array<PoolCreated>
-      const chainPoolsWithNetworkId = pushChainId(chainPools, Number(chains[currentIndex]))
+function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
+  return 'value' in response
+}
 
-      resultAcc = [...resultAcc, ...chainPoolsWithNetworkId]
+export async function fetcherPools(allSDK: AllSDK, variables: PoolsCreatedQueryVariables) {
+  const chainsIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
 
-      return resultAcc
-    },
-    [],
-  )
-
-export default function useAelinPools(
-  variables?: PoolsCreatedQueryVariables,
-  requestHeaders?: Dom.RequestInit['headers'],
-) {
-  const allSDK = getAllGqlSDK()
-  const availableChains = Object.keys(allSDK)
-
-  const { data, error } = useSWR(
-    [
-      swrKeyGenerator<PoolsCreatedQueryVariables>('PoolsCreatedAllChains', variables),
-      availableChains,
-    ],
-    async () => {
-      const queriesPromises: Promise<PoolsCreatedQuery>[] = []
-
-      forEach(availableChains, async (chainId: ChainsValues) => {
-        const queryToCall = allSDK[chainId][POOLS_CREATED_QUERY_NAME]
-
-        queriesPromises.push(queryToCall(variables, requestHeaders))
+  const queryPromises = chainsIds.map((chainId: ChainsValues) => {
+    return allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
+      .then((res) => {
+        return {
+          data: res.poolCreateds,
+          chainId,
+        }
       })
+      .catch((e) => {
+        console.error(`fetch pools on chain ${chainId} was failed`)
+        return {
+          data: [],
+          chainId,
+        }
+      })
+  })
 
-      // ChainIds promise array.
-      // Each item will have an array of pools and represent the pools of a single chain
-      const allPools = await Promise.all(queriesPromises)
+  // ChainIds promise array.
+  // Each item will have an array of pools of a single chain
+  try {
+    const poolsByChainResponses = await Promise.allSettled(queryPromises)
 
-      return parsePools(allPools, availableChains)
-    },
-  )
+    // Return Merged all pools by chain in unique array
+    return poolsByChainResponses
+      .filter(isSuccessful)
+      .reduce((resultAcc: PoolCreatedWithChainId[], currentResult) => {
+        const {
+          value: { chainId, data },
+        } = currentResult
+        const chainPoolsWithNetworkId = pushChainId(data, chainId)
 
-  return { data, error }
+        resultAcc = [...resultAcc, ...chainPoolsWithNetworkId]
+
+        return resultAcc
+      }, [])
+      .sort((pool1, pool2) => pool2.timestamp - pool1.timestamp) // sorting result by timestamp
+  } catch (e) {
+    console.error(e)
+    return []
+  }
+}
+
+const getSwrKey = (
+  currentPage: number,
+  previousPageData: PoolCreatedWithChainId[],
+  allSDK: AllSDK,
+  variables: PoolsCreatedQueryVariables,
+) => {
+  if (previousPageData && !previousPageData.length) return null
+
+  return [
+    allSDK,
+    { ...variables, skip: currentPage * POOLS_RESULTS_PER_CHAIN, first: POOLS_RESULTS_PER_CHAIN },
+  ]
+}
+
+export default function useAelinPools(variables: PoolsCreatedQueryVariables) {
+  const allSDK = getAllGqlSDK()
+
+  const {
+    data = [],
+    error,
+    isValidating,
+    mutate,
+    setSize: setPage,
+    size: currentPage,
+  } = useSWRInfinite((...args) => getSwrKey(...args, allSDK, variables), fetcherPools)
+
+  const hasMore = !error && data[data.length - 1]?.length !== 0
+
+  const paginatedResult = data?.flatMap((page) => page)
+
+  return { data: paginatedResult, error, setPage, currentPage, hasMore, isValidating, mutate }
 }

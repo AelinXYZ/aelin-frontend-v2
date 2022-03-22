@@ -26,7 +26,7 @@ module.exports = {
   config: {
     rawRequest: false,
     // excludeQueries:
-    // useSWRInfinite:
+    // useSWRInfinite: ['poolsCreated'],
     autogenSWRKey: true,
   },
 }
