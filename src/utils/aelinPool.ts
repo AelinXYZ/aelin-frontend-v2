@@ -26,6 +26,22 @@ export function getDealDeadline<P extends PoolDates>(pool: P): Date {
   return addSeconds(created, Number(pool.duration) + Number(pool.purchaseDuration))
 }
 
+export function getPurchaseTokenCap<
+  P extends { purchaseTokenCap: string; purchaseTokenDecimals: number },
+>(pool: P) {
+  return {
+    raw: BigNumber.from(pool.purchaseTokenCap),
+    formatted: formatToken(pool.purchaseTokenCap, pool.purchaseTokenDecimals),
+  }
+}
+
+export function getSponsorFee<P extends { sponsorFee: string }>(pool: P) {
+  return {
+    raw: BigNumber.from(pool.sponsorFee),
+    formatted: `${BigNumber.from(pool.sponsorFee)}%`,
+  }
+}
+
 // returns the total amount of purchase tokens that the pool holds
 export function getAmountInPool<P extends { totalSupply: string; purchaseTokenDecimals: number }>(
   pool: P,
