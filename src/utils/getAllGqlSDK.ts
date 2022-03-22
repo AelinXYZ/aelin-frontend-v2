@@ -1,5 +1,4 @@
-import { SdkWithHooks } from '@/graphql-schema'
-import { ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { chainsConfig } from '@/src/constants/chains'
 import { AllSDK, getGqlSdkByNetwork } from '@/src/constants/gqlSdkByNetwork'
 import isDev from '@/src/utils/isDev'
 

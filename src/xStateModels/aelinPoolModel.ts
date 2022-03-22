@@ -1,7 +1,7 @@
 import { ContextFrom, EventObject } from 'xstate'
 import { createModel } from 'xstate/lib/model'
 
-import { ParsedAelinPool } from '@/src/hooks/useAelinPool'
+import { ParsedAelinPool } from '@/src/hooks/pools/useAelinPool'
 
 function assertEvent<TEvent extends EventObject, Type extends TEvent['type']>(
   ev: TEvent,

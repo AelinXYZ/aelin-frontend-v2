@@ -18,7 +18,7 @@ const PoolRow = styled.div`
 
 const Home: NextPage = () => {
   const router = useRouter()
-  const { currentPage, data, error, hasMore, setPage } = useAelinPools({})
+  const { data, error, hasMore, nextPage } = useAelinPools({})
 
   if (error) {
     throw error
@@ -36,9 +36,7 @@ const Home: NextPage = () => {
         hasMore={hasMore}
         height={500}
         loader={<h4>Loading...</h4>}
-        next={() => {
-          setPage(currentPage + 1)
-        }}
+        next={nextPage}
       >
         {!data
           ? 'Loading...'

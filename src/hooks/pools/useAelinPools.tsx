@@ -1,8 +1,9 @@
+import { useCallback } from 'react'
+
 import useSWRInfinite from 'swr/infinite'
 
 import { PoolCreated, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { AllSDK } from '@/src/constants/gqlSdkByNetwork'
 import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pools'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -23,30 +24,22 @@ interface PoolCreatedWithChainId extends PoolCreated {
   chainId: ChainsValues
 }
 
-const pushChainId = (poolsArray: PoolCreated[], chainId: ChainsValues): PoolCreatedWithChainId[] =>
-  poolsArray.map((pool) => ({ ...pool, chainId }))
-
 function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
   return 'value' in response
 }
 
-export async function fetcherPools(allSDK: AllSDK, variables: PoolsCreatedQueryVariables) {
+export async function fetcherPools(variables: PoolsCreatedQueryVariables) {
+  const allSDK = getAllGqlSDK()
+
   const chainsIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
 
+  // Inject chainId in each pool when promise resolve
   const queryPromises = chainsIds.map((chainId: ChainsValues) => {
     return allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
-      .then((res) => {
-        return {
-          data: res.poolCreateds,
-          chainId,
-        }
-      })
+      .then((res) => res.poolCreateds.map((pool) => ({ ...pool, chainId })))
       .catch((e) => {
         console.error(`fetch pools on chain ${chainId} was failed`)
-        return {
-          data: [],
-          chainId,
-        }
+        return []
       })
   })
 
@@ -55,20 +48,12 @@ export async function fetcherPools(allSDK: AllSDK, variables: PoolsCreatedQueryV
   try {
     const poolsByChainResponses = await Promise.allSettled(queryPromises)
 
-    // Return Merged all pools by chain in unique array
+    // Return Merged all pools by chain in unique array. Only success promises
+    // & Sorting by timestamp
     return poolsByChainResponses
       .filter(isSuccessful)
-      .reduce((resultAcc: PoolCreatedWithChainId[], currentResult) => {
-        const {
-          value: { chainId, data },
-        } = currentResult
-        const chainPoolsWithNetworkId = pushChainId(data, chainId)
-
-        resultAcc = [...resultAcc, ...chainPoolsWithNetworkId]
-
-        return resultAcc
-      }, [])
-      .sort((pool1, pool2) => pool2.timestamp - pool1.timestamp) // sorting result by timestamp
+      .reduce((resultAcc: PoolCreatedWithChainId[], { value }) => [...resultAcc, ...value], [])
+      .sort((pool1, pool2) => pool2.timestamp - pool1.timestamp)
   } catch (e) {
     console.error(e)
     return []
@@ -78,20 +63,14 @@ export async function fetcherPools(allSDK: AllSDK, variables: PoolsCreatedQueryV
 const getSwrKey = (
   currentPage: number,
   previousPageData: PoolCreatedWithChainId[],
-  allSDK: AllSDK,
   variables: PoolsCreatedQueryVariables,
 ) => {
-  if (previousPageData && !previousPageData.length) return null
-
   return [
-    allSDK,
     { ...variables, skip: currentPage * POOLS_RESULTS_PER_CHAIN, first: POOLS_RESULTS_PER_CHAIN },
   ]
 }
 
 export default function useAelinPools(variables: PoolsCreatedQueryVariables) {
-  const allSDK = getAllGqlSDK()
-
   const {
     data = [],
     error,
@@ -99,11 +78,21 @@ export default function useAelinPools(variables: PoolsCreatedQueryVariables) {
     mutate,
     setSize: setPage,
     size: currentPage,
-  } = useSWRInfinite((...args) => getSwrKey(...args, allSDK, variables), fetcherPools)
+  } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherPools, {
+    revalidateFirstPage: false,
+  })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0
 
-  const paginatedResult = data?.flatMap((page) => page)
+  const nextPage = useCallback(() => {
+    setPage(currentPage + 1)
+  }, [setPage, currentPage])
 
-  return { data: paginatedResult, error, setPage, currentPage, hasMore, isValidating, mutate }
+  // merge all pages in one array of pools
+  const paginatedResult = data?.reduce(
+    (allResults, pageResults) => [...allResults, ...pageResults],
+    [],
+  )
+
+  return { data: paginatedResult, error, nextPage, currentPage, hasMore, isValidating, mutate }
 }
