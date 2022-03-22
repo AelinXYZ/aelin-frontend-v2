@@ -9,9 +9,13 @@ const Wrapper = styled.a`
   display: flex;
   justify-content: center;
   position: relative;
+
+  &:active {
+    opacity: 0.7;
+  }
 `
 
-const Badge = styled.div`
+const Badge = styled.span`
   align-items: center;
   background: ${({ theme: { colors } }) => colors.primary};
   border-radius: 50%;
