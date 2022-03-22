@@ -57,12 +57,14 @@ export const theme = {
     fontFamilyCode: `'source-code-pro', 'Menlo', 'Monaco', 'Consolas', 'Courier New', 'monospace'`,
   },
   footer: {},
-  header: { height: '60px' },
+  header: {
+    height: '60px',
+  },
   layout: {
     maxWidth: '1360px',
     paddingDesktopStart: '20px',
     paddingDesktopWideStart: '20px 40px',
-    paddingMobile: '10px',
+    paddingMobile: '0 10px 10px 10px',
   },
   themeBreakPoints: {
     desktopWideStart: '1281px',

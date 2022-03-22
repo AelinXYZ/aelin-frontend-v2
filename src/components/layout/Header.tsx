@@ -21,18 +21,24 @@ const Wrapper = styled.div`
   display: flex;
   flex-grow: 0;
   height: ${({ theme }) => theme.header.height};
-  margin: 0 0 20px;
+  margin: 0 0 15px;
   position: sticky;
   top: 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    margin-bottom: 20px;
+  }
 `
 
 const InnerContainer = styled(BaseInnerContainer)`
-  ${BaseCardCSS}
-
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
-  padding: 12px 20px 12px 40px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    ${BaseCardCSS}
+    padding: 12px 20px 12px 40px;
+  }
 `
 
 const HomeLink = styled.span`
@@ -54,14 +60,23 @@ const StartWrapper = styled.div`
 `
 
 const EndWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 20px;
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    align-items: center;
+    display: flex;
+    gap: 20px;
+  }
 `
 
 const TopMenu = styled(BaseTopMenu)`
-  margin-left: auto;
-  margin-right: 30px;
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    display: flex;
+    margin-left: auto;
+    margin-right: 30px;
+  }
 `
 
 const Item = styled.div`
@@ -95,7 +110,6 @@ export const Header: React.FC = (props) => {
   } = useWeb3Connection()
 
   const chainOptions = Object.values(chainsConfig)
-
   const [currentChain, setCurrentChain] = useState(getNetworkConfig(appChainId).name)
 
   return (
