@@ -4,12 +4,12 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
-import { ChainsValues, chainsConfig, getKeyChainByValue } from '@/src/constants/chains'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { getAmountInPool } from '@/src/utils/aelinPool'
 
 const PoolRow = styled.div`
   display: flex;
@@ -45,22 +45,43 @@ const Home: NextPage = () => {
         {!data
           ? 'Loading...'
           : data.map((pool) => {
-              const { chainId, id, name, purchaseTokenDecimals } = pool
+              const {
+                amountInPool,
+                id,
+                investmentDeadline,
+                investmentToken,
+                name,
+                network,
+                sponsor,
+                stage,
+              } = pool
               return (
-                <PoolRow key={id}>
-                  <span>{name.slice(0, 20)}</span>
-                  <span>{chainsConfig[chainId as ChainsValues].name}</span>
-                  <span>
-                    {
-                      getAmountInPool({
-                        ...pool,
-                        purchaseTokenDecimals: purchaseTokenDecimals || 0,
-                      }).formatted
-                    }
+                <PoolRow
+                  key={id}
+                  onClick={() => router.push(`/pool/${getKeyChainByValue(network)}/${id}`)}
+                >
+                  {/*Pool name */}
+                  <span>{name}</span>
+
+                  {/* Sponsor name */}
+                  <ENSOrAddress address={sponsor} />
+
+                  {/* Network Logo */}
+                  <span title={getNetworkConfig(network).name}>
+                    {getNetworkConfig(network).icon}
                   </span>
-                  <button onClick={() => router.push(`/pool/${getKeyChainByValue(chainId)}/${id}`)}>
-                    View
-                  </button>
+
+                  {/* Amount in pool */}
+                  <span>${amountInPool.formatted}</span>
+
+                  {/* Investment deadLine */}
+                  <span>{investmentDeadline}</span>
+
+                  {/* Investment token */}
+                  <span>{investmentToken}</span>
+
+                  {/* poolStage */}
+                  <span>{stage}</span>
                 </PoolRow>
               )
             })}
