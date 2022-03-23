@@ -3,11 +3,11 @@ import { useCallback } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import useSWRInfinite from 'swr/infinite'
 
-import { PoolCreated, PoolStatus, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import { PoolCreated, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { POOLS_RESULTS_PER_CHAIN, STATUS_TEXT } from '@/src/constants/pools'
+import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pools'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
-import { getAmountInPool, getPurchaseExpiry } from '@/src/utils/aelinPool'
+import { getAmountInPool, getPurchaseExpiry, getStatusText } from '@/src/utils/aelinPool'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
@@ -48,7 +48,7 @@ function parsedPool(pool: PoolCreatedWithChainId): ParsedPool {
     }),
     investmentDeadline: getFormattedDurationFromDateToNow(getPurchaseExpiry(pool), 'ended'),
     investmentToken: pool.purchaseTokenSymbol,
-    stage: STATUS_TEXT[pool.poolStatus] || STATUS_TEXT.default,
+    stage: getStatusText(pool),
     timestamp: pool.timestamp,
   }
 }

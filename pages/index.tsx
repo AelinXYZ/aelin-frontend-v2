@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -19,7 +20,10 @@ const PoolRow = styled.div`
 
 const Home: NextPage = () => {
   const router = useRouter()
-  const { data, error, hasMore, nextPage } = useAelinPools({})
+  const { data, error, hasMore, nextPage } = useAelinPools({
+    orderBy: PoolCreated_OrderBy.Timestamp,
+    orderDirection: OrderDirection.Desc,
+  })
 
   if (error) {
     throw error
