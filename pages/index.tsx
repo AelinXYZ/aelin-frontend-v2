@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
-import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
+import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { Chains } from '@/src/constants/chains'
 import { getAmountInPool } from '@/src/utils/aelinPool'
@@ -19,33 +19,30 @@ const Home: NextPage = () => {
   const allSDK = getAllGqlSDK()
   const { usePoolsCreated } = allSDK[Chains.optimism]
   const { data, error } = usePoolsCreated()
-
-  if (!data) {
-    return <div>no pools</div>
-  }
-
   if (error) {
     throw error
   }
 
   return (
-    <InnerContainer>
-      {data.poolCreateds.map((pool) => {
-        const { id, name, purchaseTokenDecimals } = pool
-        return (
-          <PoolRow key={id}>
-            <span>{name.slice(0, 20)}</span>
-            <span>
-              {
-                getAmountInPool({ ...pool, purchaseTokenDecimals: purchaseTokenDecimals || 0 })
-                  .formatted
-              }
-            </span>
-            <button onClick={() => router.push(`/pool/optimism/${id}`)}>View</button>
-          </PoolRow>
-        )
-      })}
-    </InnerContainer>
+    <LeftSidebarLayout>
+      {!data
+        ? 'Loading...'
+        : data.poolCreateds.map((pool) => {
+            const { id, name, purchaseTokenDecimals } = pool
+            return (
+              <PoolRow key={id}>
+                <span>{name.slice(0, 20)}</span>
+                <span>
+                  {
+                    getAmountInPool({ ...pool, purchaseTokenDecimals: purchaseTokenDecimals || 0 })
+                      .formatted
+                  }
+                </span>
+                <button onClick={() => router.push(`/pool/optimism/${id}`)}>View</button>
+              </PoolRow>
+            )
+          })}
+    </LeftSidebarLayout>
   )
 }
 

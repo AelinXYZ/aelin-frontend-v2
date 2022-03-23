@@ -10,8 +10,8 @@ export const NavLink: React.FC<Props> = ({ children, className, href, ...restPro
   const router = useRouter()
 
   return (
-    <Link href={href}>
-      <a className={`${className} ${router.pathname === href && 'active'}`} {...restProps}>
+    <Link href={href} passHref>
+      <a className={`${className} ${router.pathname === href ? 'active' : ''}`} {...restProps}>
         {children}
       </a>
     </Link>

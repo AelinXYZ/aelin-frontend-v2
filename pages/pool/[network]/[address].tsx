@@ -7,6 +7,8 @@ import nullthrows from 'nullthrows'
 
 import CountDown from '@/src/components/countdown'
 import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
+import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
+import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { Chains, ChainsKeys } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -33,38 +35,41 @@ const PoolDetails: NextPage = () => {
   }
 
   return (
-    <div>
-      <div>Investment </div>
-      <div>token: {pool.investmentToken}</div>
-      <div>
-        deadline: {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
-        {isAfter(pool.purchaseExpiry, Date.now()) && (
-          <CountDown date={pool.purchaseExpiry} format={CountDownDHMS} />
-        )}
-      </div>
-      <hr />
-      <div>Sponsor </div>
-      {pool.sponsor}
-      <hr />
-      <div>Pool cap </div>
-      {pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
-      <hr />
-      <div>Sponsor fee </div>
-      {pool.sponsorFee.formatted}
-      <hr />
-      <div>Deal </div>
-      <div>
-        deadline: {formatDate(pool.dealDeadline, DATE_DETAILED)}
-        {isAfter(pool.dealDeadline, Date.now()) && (
-          <CountDown date={pool.dealDeadline} format={CountDownDHMS} />
-        )}
-      </div>
-      <hr />
-      <div>Pool details: {address}</div>
-      <div>Funded: {pool.funded.formatted}</div>
-      <div>Withdrawn: {pool.withdrawn.formatted}</div>
-      <div>Amount in Pool: {pool.amountInPool.formatted}</div>
-    </div>
+    <RightTimelineLayout timeline={<>Timeline stuff</>}>
+      <BaseCard>
+        <div>Pool details: {address}</div>
+        <div>Investment</div>
+        <div>token: {pool.investmentToken}</div>
+        <div>
+          deadline: {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
+          {isAfter(pool.purchaseExpiry, Date.now()) && (
+            <CountDown date={pool.purchaseExpiry} format={CountDownDHMS} />
+          )}
+        </div>
+        <hr />
+        <div>Sponsor </div>
+        {pool.sponsor}
+        <hr />
+        <div>Pool cap </div>
+        {pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
+        <hr />
+        <div>Sponsor fee </div>
+        {pool.sponsorFee.formatted}
+        <hr />
+        <div>Deal </div>
+        <div>
+          deadline: {formatDate(pool.dealDeadline, DATE_DETAILED)}
+          {isAfter(pool.dealDeadline, Date.now()) && (
+            <CountDown date={pool.dealDeadline} format={CountDownDHMS} />
+          )}
+        </div>
+        <hr />
+        <div>Pool details: {address}</div>
+        <div>Funded: {pool.funded.formatted}</div>
+        <div>Withdrawn: {pool.withdrawn.formatted}</div>
+        <div>Amount in Pool: {pool.amountInPool.formatted}</div>
+      </BaseCard>
+    </RightTimelineLayout>
   )
 }
 
