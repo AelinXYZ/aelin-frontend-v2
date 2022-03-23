@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { ChainsValues, chainsConfig, getKeyChainByValue } from '@/src/constants/chains'
@@ -26,6 +27,11 @@ const Home: NextPage = () => {
 
   return (
     <LeftSidebarLayout>
+      <SectionIntro
+        button={{ title: 'Create pool', onClick: () => console.log('create pool') }}
+        description="Aelin is a fully decentralized and community-based fundraising protocol. Invest in a pool to access deals brought by sponsors. Aelin does not endorse any pools, follow an investor's best practices in our docs, and do your own research."
+        title="Pools"
+      />
       <InfiniteScroll
         dataLength={data.length}
         endMessage={
