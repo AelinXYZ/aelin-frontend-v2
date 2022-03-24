@@ -28,6 +28,7 @@ type DetailedNumber = {
 export type ParsedAelinPool = {
   start: Date
   investmentToken: string
+  investmentTokenDecimals: number
   investmentDeadline: Date
   purchaseExpiry: Date
   dealDeadline: Date
@@ -59,6 +60,7 @@ export default function useAelinPool(
 
   const pool = data.poolCreated
   const purchaseTokenDecimals = pool.purchaseTokenDecimals
+
   // prevent TS error
   if (!purchaseTokenDecimals) {
     throw Error('PurchaseTokenDecimals is null or undefined for pool: ' + poolAddress)
@@ -68,6 +70,7 @@ export default function useAelinPool(
     return {
       start: getPoolCreatedDate(pool),
       investmentToken: pool.purchaseToken,
+      investmentTokenDecimals: purchaseTokenDecimals,
       investmentDeadline: pool.purchaseDuration,
       sponsor: pool.sponsor,
       sponsorFee: getSponsorFee(pool),

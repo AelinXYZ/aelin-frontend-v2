@@ -5,9 +5,10 @@ import styled from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
+import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { ChainsValues, chainsConfig, getKeyChainByValue } from '@/src/constants/chains'
-import useAelinPools from '@/src/hooks/pools/useAelinPools'
+import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { getAmountInPool } from '@/src/utils/aelinPool'
 
 const PoolRow = styled.div`
@@ -26,6 +27,9 @@ const Home: NextPage = () => {
 
   return (
     <LeftSidebarLayout>
+      <LinkButton href="/pool/create" passHref>
+        <a>Create Pool</a>
+      </LinkButton>
       <InfiniteScroll
         dataLength={data.length}
         endMessage={

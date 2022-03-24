@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 
 import { Contract, ContractTransaction } from '@ethersproject/contracts'
 
-import { AppContractInfo } from '@/src/constants/contracts'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { TransactionError } from '@/src/utils/TransactionError'
 
@@ -14,8 +13,8 @@ export default function useTransaction<
   MyContract extends Contract,
   Method extends keyof MyContract,
   Params extends Parameters<MyContract[Method]>,
->(contractInfo: AppContractInfo, method: Method) {
-  const { appChainId, getExplorerUrl, isAppConnected, web3Provider } = useWeb3Connection()
+>(address: string, abi: any[], method: Method) {
+  const { getExplorerUrl, isAppConnected, web3Provider } = useWeb3Connection()
 
   return useCallback(
     async (...params: Params) => {
@@ -31,11 +30,7 @@ export default function useTransaction<
         return null
       }
 
-      const contract = new Contract(
-        contractInfo.address[appChainId],
-        contractInfo.abi,
-        signer,
-      ) as MyContract
+      const contract = new Contract(address, abi, signer) as MyContract
 
       let tx: ContractTransaction
       try {
@@ -70,14 +65,6 @@ export default function useTransaction<
         return null
       }
     },
-    [
-      web3Provider,
-      isAppConnected,
-      contractInfo.address,
-      contractInfo.abi,
-      appChainId,
-      method,
-      getExplorerUrl,
-    ],
+    [web3Provider, isAppConnected, address, abi, method, getExplorerUrl],
   )
 }
