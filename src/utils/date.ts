@@ -1,5 +1,4 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { intervalToDuration, isAfter } from 'date-fns'
 import formatFNS from 'date-fns/format'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import isAfter from 'date-fns/isAfter'
