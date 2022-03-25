@@ -39,6 +39,11 @@ const InnerContainer = styled(BaseInnerContainer)`
     ${BaseCardCSS}
     padding: 12px 20px 12px 40px;
   }
+
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    justify-content: center;
+    padding: 1em 0 0;
+  }
 `
 
 const HomeLink = styled.span`

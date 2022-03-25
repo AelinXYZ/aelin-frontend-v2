@@ -1,10 +1,11 @@
 import styled from 'styled-components'
 
+import AelinCollaps from '@/src/components/collapsContent/AelinCollaps'
+import MyPoolsCollaps from '@/src/components/collapsContent/MyPoolsCollaps'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled.div`
-  --left-column-width: 200px;
-
+  --left-column-width: 290px;
   column-gap: 30px;
   display: grid;
   flex-grow: 1;
@@ -21,7 +22,6 @@ const Wrapper = styled.div`
 const SidebarWrapper = styled(BaseCard)`
   display: flex;
   flex-direction: column;
-
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -31,8 +31,12 @@ const SidebarWrapper = styled(BaseCard)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     display: flex;
   }
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    border: none;
+    background: none;
+    padding: 0;
+  }
 `
-
 const Main = styled.main`
   display: flex;
   flex-direction: column;
@@ -42,7 +46,10 @@ const Main = styled.main`
 export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      <SidebarWrapper as="nav">sidebar contents</SidebarWrapper>
+      <SidebarWrapper as="nav">
+        <MyPoolsCollaps />
+        <AelinCollaps />
+      </SidebarWrapper>
       <Main>{children}</Main>
     </Wrapper>
   )
