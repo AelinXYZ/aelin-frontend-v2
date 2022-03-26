@@ -9,7 +9,7 @@ const Wrapper = styled.svg`
 
 export const ArrowDown: React.FC<{ className?: string }> = (props) => (
   <Wrapper
-    className={`ArrowDown ${props.className}`}
+    className={`arrowDown ${props.className}`}
     fill="none"
     height="8"
     viewBox="0 0 10 8"

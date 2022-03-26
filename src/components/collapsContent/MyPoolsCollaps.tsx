@@ -32,25 +32,14 @@ const MyPools = styled.div`
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     margin: 0;
   }
-  & h3,
-  & h4 {
-    margin: 0;
-    padding: 0;
-  }
-  & a {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    padding: 0;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 50%;
-    border: none;
-    & svg {
-      margin: 0 0 0 -2px;
-    }
-  }
+`
+
+const Title = styled.h3`
+  font-size: 1.8rem;
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
 `
 
 const MyPoolsItems = styled.div`
@@ -69,8 +58,7 @@ const Item = styled(NavLink)`
   ${ButtonCSS}
   border-color: transparent;
   color: ${({ theme: { colors } }) => colors.textColor};
-  padding: 0 12px;
-
+  height: 24px;
   &.active,
   &:hover {
     background-color: ${({ theme }) => theme.buttonPrimary.backgroundColor};
@@ -82,18 +70,33 @@ const Item = styled(NavLink)`
     }
   }
 `
+const CollapseBtn = styled.p`
+  width: 30px;
+  height: 30px;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  border: none;
+  & svg {
+    margin: 0 0 0 -2px;
+  }
+`
 
 const Invest = styled.a`
+  display: flex;
+  align-items: center;
   color: ${({ theme: { colors } }) => colors.textColor};
   background-color: rgba(255, 255, 255, 0.08);
   margin-bottom: 0.6em;
   border-radius: 8px;
-  display: block;
-  padding: 5px 0;
+  height: 36px;
 `
-const GreenState = styled.span`
+const Color = styled.span`
   display: inline-block;
-  background-color: #a2ff00;
   width: 8px;
   height: 8px;
   border-radius: 5px;
@@ -121,47 +124,56 @@ const RoundButton = styled(RoundedButton)`
   margin: 1.2em auto 0;
 `
 
-function MyPoolsFunc() {
+const Section = styled.section`
+  padding-bottom: 10px;
+`
+
+const Button = styled.button`
+  padding-bottom: 10px;
+`
+
+const MyPoolsFunc = () => {
   const [isExpanded, setExpanded] = useState(false)
   const { getCollapseProps, getToggleProps } = useCollapse({ isExpanded })
+  const buttons = ['btn1', 'btn2', 'btn3']
 
   return (
-    <div>
-      <MyPoolsCont>
-        <MyPools>
-          <h3>My Pools</h3>
-          <a
-            {...getToggleProps({
-              onClick: () => setExpanded((prevExpanded) => !prevExpanded),
-            })}
-          >
-            {isExpanded ? <ArrowUp /> : <ArrowDown />}
-          </a>
-        </MyPools>
+    <MyPoolsCont>
+      <MyPools>
+        <Title>My Pools</Title>
+        <CollapseBtn
+          {...getToggleProps({
+            onClick: () => setExpanded((prevExpanded) => !prevExpanded),
+          })}
+        >
+          {isExpanded ? <ArrowUp /> : <ArrowDown />}
+        </CollapseBtn>
+      </MyPools>
 
-        <section {...getCollapseProps()}>
-          <MyPoolsItems>
-            {myPools.map(({ href, title }, index) => (
-              <Item href={href} key={`my_pools_item_${index}`}>
-                {title}
-              </Item>
-            ))}
-          </MyPoolsItems>
+      <Section {...getCollapseProps()}>
+        <MyPoolsItems>
+          {/* TODO: buttons on / off */}
 
-          <Invest>
-            <GreenState /> Kwenta DAO
-          </Invest>
-          <Invest>
-            <OrangeState /> Nukevaults.com
-          </Invest>
-          <Invest>
-            <BlueState /> Sheldon.1
-          </Invest>
+          {myPools.map(({ href, title }, index) => (
+            <Item href={href} key={`my_pools_item_${index}`}>
+              {title}
+            </Item>
+          ))}
+        </MyPoolsItems>
 
-          <RoundButton>See more</RoundButton>
-        </section>
-      </MyPoolsCont>
-    </div>
+        <Invest>
+          <Color /> Kwenta DAO
+        </Invest>
+        <Invest>
+          <Color /> Nukevaults.com
+        </Invest>
+        <Invest>
+          <Color /> Sheldon.1
+        </Invest>
+
+        <RoundButton>See more</RoundButton>
+      </Section>
+    </MyPoolsCont>
   )
 }
 

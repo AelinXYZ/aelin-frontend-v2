@@ -44,7 +44,7 @@ export const OnlyBorderCSS = css`
   font-size: 1.1rem;
   font-weight: 400;
   gap: 8px;
-  height: 30px;
+  height: 24px;
   justify-content: center;
   line-height: 1;
   outline: none;
@@ -54,7 +54,7 @@ export const OnlyBorderCSS = css`
   transition: all 0.15s ease-out;
   user-select: none;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.4);
+  color: ${({ theme: { colors } }) => colors.textColor};
   margin: 0 auto;
   &:active {
     opacity: 0.7;
@@ -72,7 +72,7 @@ export const GradientCSS = css`
   font-size: 1.4rem;
   font-weight: 400;
   gap: 8px;
-  height: 30px;
+  height: 36px;
   justify-content: center;
   line-height: 1;
   outline: none;

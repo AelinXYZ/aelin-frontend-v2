@@ -8,11 +8,10 @@ import { ArrowUp } from '@/src/components/assets/ArrowUp'
 import { GradientButton, RoundedButton } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const ClaimSection = styled.div`
-  color: #fff;
-  margin-bottom: 0.5em;
+  color: ${({ theme: { colors } }) => colors.textColor};
   display: block;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.25);
   padding-top: 20px;
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
@@ -24,36 +23,41 @@ const ClaimSection = styled.div`
   }
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     margin: 10px;
+    padding-bottom: 0;
   }
-  & h3 {
-    text-align: left;
-    color: ${({ theme: { colors } }) => colors.textColor};
+`
+
+const CollapseBtn = styled.p`
+  width: 30px;
+  height: 30px;
+  display: flex;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  border: none;
+  & svg {
+    margin: 0 0 0 -2px;
   }
-  & p {
-    color: #babcc1;
-    margin: 0 0 0.3em 0;
-    text-align: left;
-  }
-  & span {
-    color: #3dc0f1;
-  }
-  & h3 {
-    margin: 0;
-  }
-  & a {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    padding: 0;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 50%;
-    border: none;
-    & svg {
-      margin: 0 0 0 -2px;
-    }
-  }
+`
+
+const Text = styled.p`
+  color: #babcc1;
+  margin: 0 0 0.3em 0;
+  text-align: left;
+`
+const Numbers = styled.span`
+  color: #3dc0f1;
+`
+
+const Title = styled.h3`
+  font-size: 1.8rem;
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
 `
 
 const Aelin = styled.div`
@@ -61,14 +65,9 @@ const Aelin = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5em;
+  margin-bottom: 20px;
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    margin: 0;
-  }
-  & h3,
-  & h4 {
-    margin: 0;
-    padding: 0;
+    margin: 0 0 20px 0;
   }
 `
 
@@ -86,33 +85,34 @@ const GradientButtonClaim = styled(GradientButton)`
   }
 `
 
-function AelinFunc() {
+const AelinFunc = () => {
   const [isExpanded, setExpanded] = useState(false)
   const { getCollapseProps, getToggleProps } = useCollapse({ isExpanded })
   return (
     <ClaimSection>
       <Aelin>
-        <h3>Aelin</h3>
+        <Title>Aelin</Title>
 
-        <a
+        <CollapseBtn
           {...getToggleProps({
             onClick: () => setExpanded((prevExpanded) => !prevExpanded),
           })}
         >
           {isExpanded ? <ArrowUp /> : <ArrowDown />}
-        </a>
+        </CollapseBtn>
       </Aelin>
 
       <section {...getCollapseProps()}>
-        <p>
-          Aelin balance: <span> 0.0211231</span>
-        </p>
-        <p>
-          Aelin staking: <span> 0.056641231</span>
-        </p>
-        <p>
-          My rewards: <span> 0.0002112666</span>
-        </p>
+        <Text>
+          Aelin balance: <Numbers> 0.0211231</Numbers>
+        </Text>
+        <Text>
+          Aelin balance: <Numbers> 0.0211231</Numbers>
+        </Text>
+        <Text>
+          Aelin balance: <Numbers> 0.0211231</Numbers>
+        </Text>
+        {/* TODO: array data */}
 
         <GradientButtonClaim>Claim</GradientButtonClaim>
       </section>
