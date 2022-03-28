@@ -5,9 +5,10 @@ import useCollapse from 'react-collapsed'
 
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
+import GraphComponent from '@/src/components/collapsContent/GraphComponent'
 import { GradientButton, RoundedButton } from '@/src/components/pureStyledComponents/buttons/Button'
 
-const ClaimSection = styled.div`
+const Wrapper = styled.div`
   color: ${({ theme: { colors } }) => colors.textColor};
   display: block;
   text-align: center;
@@ -71,10 +72,6 @@ const Aelin = styled.div`
   }
 `
 
-const RoundButton = styled(RoundedButton)`
-  margin: 1.2em auto 0;
-`
-
 const GradientButtonClaim = styled(GradientButton)`
   margin: 1.2em auto 0;
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
@@ -85,11 +82,11 @@ const GradientButtonClaim = styled(GradientButton)`
   }
 `
 
-const AelinFunc = () => {
+const AelinFunc: React.FC = ({ ...restProps }) => {
   const [isExpanded, setExpanded] = useState(false)
   const { getCollapseProps, getToggleProps } = useCollapse({ isExpanded })
   return (
-    <ClaimSection>
+    <Wrapper {...restProps}>
       <Aelin>
         <Title>Aelin</Title>
 
@@ -115,8 +112,10 @@ const AelinFunc = () => {
         {/* TODO: array data */}
 
         <GradientButtonClaim>Claim</GradientButtonClaim>
+        <GraphComponent />
+        <GradientButtonClaim>Buy Aelins</GradientButtonClaim>
       </section>
-    </ClaimSection>
+    </Wrapper>
   )
 }
 

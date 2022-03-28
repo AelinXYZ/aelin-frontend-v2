@@ -6,10 +6,13 @@ import useCollapse from 'react-collapsed'
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
 import { NavLink } from '@/src/components/navigation/NavLink'
-import { ButtonCSS, RoundedButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { myPools } from '@/src/constants/myPools'
+import {
+  ButtonCSS,
+  ButtonPrimary,
+  RoundedButton,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 
-const MyPoolsCont = styled.div`
+const Wrapper = styled.div`
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     margin-right: 20px;
     background-color: ${(props) => props.theme.card.backgroundColor};
@@ -28,7 +31,7 @@ const MyPools = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1em;
+  margin-bottom: 10px;
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     margin: 0;
   }
@@ -45,9 +48,9 @@ const Title = styled.h3`
 const MyPoolsItems = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1.5em;
+  margin-bottom: 20px;
   & a {
-    font-size: 10px;
+    font-size: 1rem;
   }
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     margin-top: 15px;
@@ -91,7 +94,7 @@ const Invest = styled.a`
   align-items: center;
   color: ${({ theme: { colors } }) => colors.textColor};
   background-color: rgba(255, 255, 255, 0.08);
-  margin-bottom: 0.6em;
+  margin-bottom: 10px;
   border-radius: 8px;
   height: 36px;
 `
@@ -128,17 +131,28 @@ const Section = styled.section`
   padding-bottom: 10px;
 `
 
-const Button = styled.button`
-  padding-bottom: 10px;
+const Button = styled(RoundButton)`
+  font-size: 1rem;
+  height: 24px;
+  padding: 0 10px 0 10px;
+  opacity: 0.7;
+  margin: 0;
+  transition: 0.7s;
+  &.active {
+    background-color: ${({ theme }) => theme.buttonPrimary.backgroundColor};
+    border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    color: ${({ theme }) => theme.buttonPrimary.color};
+  }
 `
 
-const MyPoolsFunc = () => {
+const MyPoolsFunc: React.FC = ({ ...restProps }) => {
   const [isExpanded, setExpanded] = useState(false)
   const { getCollapseProps, getToggleProps } = useCollapse({ isExpanded })
-  const buttons = ['btn1', 'btn2', 'btn3']
+  const menuItems = ['Invented (3)', 'Sponsored (9)', 'Funded (5)']
+  const [activeButton, setActiveButton] = useState('')
 
   return (
-    <MyPoolsCont>
+    <Wrapper {...restProps}>
       <MyPools>
         <Title>My Pools</Title>
         <CollapseBtn
@@ -152,15 +166,22 @@ const MyPoolsFunc = () => {
 
       <Section {...getCollapseProps()}>
         <MyPoolsItems>
-          {/* TODO: buttons on / off */}
-
-          {myPools.map(({ href, title }, index) => (
-            <Item href={href} key={`my_pools_item_${index}`}>
-              {title}
-            </Item>
-          ))}
+          {menuItems.map((OnOffButton) => {
+            return (
+              <Button
+                className={activeButton === OnOffButton ? 'active' : ''}
+                key={OnOffButton}
+                onClick={() => {
+                  setActiveButton(OnOffButton)
+                }}
+              >
+                {OnOffButton}
+              </Button>
+            )
+          })}
         </MyPoolsItems>
 
+        {/* TODO: invest component */}
         <Invest>
           <Color /> Kwenta DAO
         </Invest>
@@ -173,7 +194,7 @@ const MyPoolsFunc = () => {
 
         <RoundButton>See more</RoundButton>
       </Section>
-    </MyPoolsCont>
+    </Wrapper>
   )
 }
 
