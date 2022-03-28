@@ -26,19 +26,21 @@ export function getDealDeadline<P extends PoolDates>(pool: P): Date {
   return addSeconds(created, Number(pool.duration) + Number(pool.purchaseDuration))
 }
 
+// returns the max amount a pool can be funded
 export function getPurchaseTokenCap<
-  P extends { purchaseTokenCap: string; purchaseTokenDecimals: number },
+  P extends { purchaseTokenCap: string; purchaseTokenDecimals?: number },
 >(pool: P) {
   return {
     raw: BigNumber.from(pool.purchaseTokenCap),
-    formatted: formatToken(pool.purchaseTokenCap, pool.purchaseTokenDecimals),
+    formatted: formatToken(pool.purchaseTokenCap, pool.purchaseTokenDecimals || 0),
   }
 }
 
+// returns the sponsor's fee amount (max is 98%)
 export function getSponsorFee<P extends { sponsorFee: string }>(pool: P) {
   return {
     raw: BigNumber.from(pool.sponsorFee),
-    formatted: `${BigNumber.from(pool.sponsorFee)}%`,
+    formatted: `${formatToken(pool.sponsorFee, 18, 2)}%`,
   }
 }
 

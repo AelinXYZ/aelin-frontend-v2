@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 export const DisabledButtonCSS = css`
@@ -64,5 +65,8 @@ export const Button = styled(BaseButton)`
 `
 
 export const ButtonPrimary = styled(BaseButton)`
+  ${ButtonPrimaryCSS}
+`
+export const LinkButton = styled(Link)`
   ${ButtonPrimaryCSS}
 `

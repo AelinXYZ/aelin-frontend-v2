@@ -2,7 +2,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 
 import aelinPoolAbi from '@/src/abis/AelinPool.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import useContractCall from '@/src/hooks/useContractCall'
+import useContractCall from '@/src/hooks/contracts/useContractCall'
 import { AelinPool } from '@/types/typechain'
 
 export default function useAelinPoolCall<

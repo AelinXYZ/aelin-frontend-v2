@@ -1,7 +1,7 @@
 import { ContextFrom, EventObject } from 'xstate'
 import { createModel } from 'xstate/lib/model'
 
-import { ParsedAelinPool } from '@/src/hooks/pools/useAelinPool'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 
 function assertEvent<TEvent extends EventObject, Type extends TEvent['type']>(
   ev: TEvent,
@@ -15,6 +15,7 @@ function assertEvent<TEvent extends EventObject, Type extends TEvent['type']>(
 const model = createModel(
   {
     pool: {} as ParsedAelinPool,
+    isMaxCapReached: false,
   },
   {
     events: {
@@ -26,8 +27,7 @@ const model = createModel(
   },
 )
 
-function guardWaitingForDeal(context: ContextFrom<typeof model>) {
-  console.log('guardWaitingForDeal')
+function guardWaitingForDeal(/* context: ContextFrom<typeof model> */) {
   return false
 }
 
@@ -37,7 +37,12 @@ export const aelinPoolMachine = model.createMachine(
     context: model.initialContext,
     states: {
       funding: {
-        always: [{ target: 'waitingForDeal', cond: guardWaitingForDeal.name }],
+        always: [
+          {
+            target: 'waitingForDeal',
+            cond: guardWaitingForDeal.name,
+          },
+        ],
         on: {
           APPROVE: [
             {
@@ -47,7 +52,7 @@ export const aelinPoolMachine = model.createMachine(
             },
           ],
           POOL_UPDATED: {
-            actions: 'updatePool',
+            actions: ['updatePool', 'setFundingHelpers'],
           },
         },
       },
@@ -71,13 +76,15 @@ export const aelinPoolMachine = model.createMachine(
           return event.pool
         },
       }),
-      //   resetGame: model.reset(),
-      //   setWinner: model.assign({
+      setFundingHelpers: model.assign({
+        isMaxCapReached: (context) => {
+          const pool = context.pool
+          return pool.poolCap.raw.eq(0) ? false : pool.funded.raw.eq(pool.poolCap.raw)
+        },
+      }),
     },
     guards: {
       guardWaitingForDeal,
-      //checkDraw,
-      //isValidMove,
     },
   },
 )
