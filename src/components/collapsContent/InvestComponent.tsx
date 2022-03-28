@@ -67,7 +67,7 @@ const Button = styled(RoundButton)`
 interface Props {
   label: string
   notif?: number
-  color?: 'blue' | 'yellow' | 'green'
+  color?: 'poolGreenState' | 'poolYellowState' | 'poolBlueState'
 }
 
 const MyPoolsFunc: React.FC<Props> = ({ color, label, notif }) => {

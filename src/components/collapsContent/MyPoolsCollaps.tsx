@@ -93,9 +93,9 @@ const MyPoolsFunc: React.FC = ({ ...restProps }) => {
         </MyPoolsItems>
 
         {/* TODO: invest component */}
-        <InvestComponent color={'green'} label={'Kwenta DAO'} />
-        <InvestComponent color={'blue'} label={'Nukevaults.com'} />
-        <InvestComponent color={'yellow'} label={'Sheldon.1'} />
+        <InvestComponent color={'poolGreenState'} label={'Kwenta DAO'} />
+        <InvestComponent color={'poolYellowState'} label={'Nukevaults.com'} />
+        <InvestComponent color={'poolBlueState'} label={'Sheldon.1'} />
 
         <RoundButton>See more</RoundButton>
       </section>

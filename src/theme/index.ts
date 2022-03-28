@@ -36,9 +36,9 @@ export const theme = {
     secondary: secondary,
     tertiary: tertiary,
     textColor: textColor,
-    green: poolGreenState,
-    yellow: poolYellowState,
-    blue: poolBlueState,
+    poolGreenState: poolGreenState,
+    poolYellowState: poolYellowState,
+    poolBlueState: poolBlueState,
   },
   dropdown: {
     background: mainBodyBackground,
