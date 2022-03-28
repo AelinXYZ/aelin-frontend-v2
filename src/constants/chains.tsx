@@ -3,6 +3,7 @@ import nullthrows from 'nullthrows'
 import { Mainnet } from '@/src/components/assets/Mainnet'
 import { Optimism } from '@/src/components/assets/Optimism'
 import { NetworkPlaceholder } from '@/src/components/common/NetworkPlaceholder'
+import isDev from '@/src/utils/isDev'
 import { ObjectValues } from '@/types/utils'
 
 export const Chains = {
@@ -83,6 +84,11 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     isProd: true,
     icon: <Optimism />,
   },
+}
+
+// Return chains by environment as array
+export function getChainsByEnvironmentArray() {
+  return Object.values(chainsConfig).filter(({ isProd }) => isProd !== isDev)
 }
 
 export function getNetworkConfig(chainId: ChainsValues): ChainConfig {

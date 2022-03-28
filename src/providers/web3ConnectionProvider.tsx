@@ -15,7 +15,13 @@ import { API, Wallet } from 'bnc-onboard/dist/src/interfaces'
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
 import nullthrows from 'nullthrows'
 
-import { Chains, ChainsValues, chainsConfig, getNetworkConfig } from '@/src/constants/chains'
+import {
+  Chains,
+  ChainsValues,
+  chainsConfig,
+  getChainsByEnvironmentArray,
+  getNetworkConfig,
+} from '@/src/constants/chains'
 import { RequiredNonNull } from '@/types/utils'
 
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
@@ -120,7 +126,7 @@ export type Web3Context = {
   isAppConnected: boolean
   isWalletConnected: boolean
   isWalletNetworkSupported: boolean
-  pushNetwork: () => Promise<void>
+  pushNetwork: (chainId: ChainsValues) => Promise<void>
   readOnlyAppProvider: JsonRpcProvider
   setAppChainId: Dispatch<SetStateAction<ChainsValues>>
   wallet: Wallet | null
@@ -141,8 +147,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
   const [tmpWallet, setTmpWallet] = useState<Wallet | null>(null)
   const [wallet, setWallet] = useState<Wallet | null>(null)
   const [appChainId, setAppChainId] = useState<ChainsValues>(INITAL_APP_CHAIN_ID)
-  const supportedChainIds = Object.values(Chains)
-
+  const supportedChainIds = getChainsByEnvironmentArray().map(({ chainId }) => chainId)
   const web3Provider = wallet?.provider != null ? new Web3Provider(wallet.provider) : null
 
   const isWalletConnected = web3Provider != null && address != null
@@ -168,6 +173,10 @@ export default function Web3ConnectionProvider({ children }: Props) {
       await onboard.walletSelect(previouslySelectedWallet)
     }
   }
+
+  useEffect(() => {
+    if (isWalletNetworkSupported && walletChainId) setAppChainId(walletChainId as ChainsValues)
+  }, [isWalletNetworkSupported, walletChainId])
 
   // Instantiate Onboard
   useEffect(() => {
@@ -237,20 +246,20 @@ export default function Web3ConnectionProvider({ children }: Props) {
     }
   }
 
-  const pushNetwork = async (): Promise<void> => {
+  const pushNetwork = async (chainId: ChainsValues): Promise<void> => {
     if (!onboard || !wallet || wallet.name !== 'MetaMask') {
       console.warn('Unable to push network')
       return
     }
 
     const provider = wallet.provider
-    const networkConfig = getNetworkConfig(appChainId)
-
+    const networkConfig = getNetworkConfig(chainId || appChainId)
     try {
       await provider.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: networkConfig.chainIdHex }],
       })
+      setAppChainId(networkConfig.chainId)
     } catch (switchError) {
       const config = {
         chainId: networkConfig.chainIdHex,
