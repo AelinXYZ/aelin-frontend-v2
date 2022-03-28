@@ -1,23 +1,31 @@
 import { useCallback } from 'react'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import useSWRInfinite from 'swr/infinite'
 
 import { PoolCreated, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pools'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
+import { getAmountInPool, getPurchaseExpiry, getStatusText } from '@/src/utils/aelinPool'
+import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
-interface parsedPool {
+type DetailedNumber = {
+  raw: BigNumber
+  formatted: string | undefined
+}
+
+type ParsedPool = {
+  id: string
   name: string
-  sponsorName: string
-  sponsorUrl: string
-  badge: number
+  sponsor: string
   network: ChainsValues
-  amount: number
-  deadline: Date
-  token: string
-  status: string
+  amountInPool: DetailedNumber
+  investmentDeadline: string
+  investmentToken: string
+  stage: string
+  timestamp: number
 }
 
 interface PoolCreatedWithChainId extends PoolCreated {
@@ -28,6 +36,23 @@ function isSuccessful<T>(response: PromiseSettledResult<T>): response is Promise
   return 'value' in response
 }
 
+function parsedPool(pool: PoolCreatedWithChainId): ParsedPool {
+  return {
+    id: pool.id,
+    name: pool.name,
+    sponsor: pool.sponsor,
+    network: pool.chainId,
+    amountInPool: getAmountInPool({
+      ...pool,
+      purchaseTokenDecimals: pool.purchaseTokenDecimals || 0,
+    }),
+    investmentDeadline: getFormattedDurationFromDateToNow(getPurchaseExpiry(pool), 'ended'),
+    investmentToken: pool.purchaseTokenSymbol,
+    stage: getStatusText(pool),
+    timestamp: pool.timestamp,
+  }
+}
+
 export async function fetcherPools(variables: PoolsCreatedQueryVariables) {
   const allSDK = getAllGqlSDK()
 
@@ -36,9 +61,9 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables) {
   // Inject chainId in each pool when promise resolve
   const queryPromises = chainsIds.map((chainId: ChainsValues) => {
     return allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
-      .then((res) => res.poolCreateds.map((pool) => ({ ...pool, chainId })))
+      .then((res) => res.poolCreateds.map((pool) => parsedPool({ ...pool, chainId })))
       .catch((e) => {
-        console.error(`fetch pools on chain ${chainId} was failed`)
+        console.error(`fetch pools on chain ${chainId} was failed`, e)
         return []
       })
   })
@@ -52,7 +77,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables) {
     // & Sorting by timestamp
     return poolsByChainResponses
       .filter(isSuccessful)
-      .reduce((resultAcc: PoolCreatedWithChainId[], { value }) => [...resultAcc, ...value], [])
+      .reduce((resultAcc: ParsedPool[], { value }) => [...resultAcc, ...value], [])
       .sort((pool1, pool2) => pool2.timestamp - pool1.timestamp)
   } catch (e) {
     console.error(e)

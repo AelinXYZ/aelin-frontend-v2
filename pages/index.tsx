@@ -5,6 +5,8 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
+import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import {
@@ -16,13 +18,15 @@ import {
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { genericSuspense } from '@/src/components/safeSuspense'
-import { ChainsValues, chainsConfig, getKeyChainByValue } from '@/src/constants/chains'
-import useAelinPools from '@/src/hooks/pools/useAelinPools'
-import { getAmountInPool } from '@/src/utils/aelinPool'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 
 const Home: NextPage = () => {
   const router = useRouter()
-  const { data, error, hasMore, nextPage } = useAelinPools({})
+  const { data, error, hasMore, nextPage } = useAelinPools({
+    orderBy: PoolCreated_OrderBy.Timestamp,
+    orderDirection: OrderDirection.Desc,
+  })
 
   if (error) {
     throw error
@@ -61,24 +65,32 @@ const Home: NextPage = () => {
             next={nextPage}
           >
             {data.map((pool) => {
-              const { chainId, id, name, purchaseTokenDecimals } = pool
+              const {
+                amountInPool,
+                id,
+                investmentDeadline,
+                investmentToken,
+                name,
+                network,
+                sponsor,
+                stage,
+              } = pool
               return (
-                <Link href={`/pool/${getKeyChainByValue(chainId)}/${id}`} key={id} passHref>
+                <Link href={`/pool/${getKeyChainByValue(network)}/${id}`} key={id} passHref>
                   <Row as="a" columns={columns}>
-                    <Cell>{name.slice(0, 20)}</Cell>
-                    <Cell>Sponsor name</Cell>
-                    <Cell>{chainsConfig[chainId as ChainsValues].name}</Cell>
+                    <Cell>{name}</Cell>
                     <Cell>
-                      {
-                        getAmountInPool({
-                          ...pool,
-                          purchaseTokenDecimals: purchaseTokenDecimals || 0,
-                        }).formatted
-                      }
+                      <ENSOrAddress address={sponsor} />
                     </Cell>
-                    <Cell>Deadline</Cell>
-                    <Cell>token</Cell>
-                    <Cell>stage</Cell>
+                    <Cell>
+                      <span title={getNetworkConfig(network).name}>
+                        {getNetworkConfig(network).icon}
+                      </span>
+                    </Cell>
+                    <Cell>${amountInPool.formatted}</Cell>
+                    <Cell>{investmentDeadline}</Cell>
+                    <Cell>{investmentToken}</Cell>
+                    <Cell>{stage}</Cell>
                   </Row>
                 </Link>
               )
