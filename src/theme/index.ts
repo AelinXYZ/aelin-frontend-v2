@@ -10,6 +10,9 @@ const secondary = '#E56399'
 const tertiary = '#A6CFD5'
 const textColor = '#fff'
 const mainBodyBackground = '#101826'
+const poolGreenState = '#A2FF00'
+const poolYellowState = '#F1C40F'
+const poolBlueState = '#469FFF'
 
 export const theme = {
   buttonPrimary: {
@@ -33,6 +36,9 @@ export const theme = {
     secondary: secondary,
     tertiary: tertiary,
     textColor: textColor,
+    green: poolGreenState,
+    yellow: poolYellowState,
+    blue: poolBlueState,
   },
   dropdown: {
     background: mainBodyBackground,

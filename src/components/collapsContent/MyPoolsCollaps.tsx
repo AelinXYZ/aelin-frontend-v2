@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import CollapseComponents from './CollapseComponents'
+import InvestComponent from './InvestComponent'
 import { RoundedButton } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const MyPoolsItems = styled.div`
@@ -92,15 +93,9 @@ const MyPoolsFunc: React.FC = ({ ...restProps }) => {
         </MyPoolsItems>
 
         {/* TODO: invest component */}
-        <Invest>
-          <Color /> Kwenta DAO
-        </Invest>
-        <Invest>
-          <Color /> Nukevaults.com
-        </Invest>
-        <Invest>
-          <Color /> Sheldon.1
-        </Invest>
+        <InvestComponent color={'green'} label={'Kwenta DAO'} />
+        <InvestComponent color={'blue'} label={'Nukevaults.com'} />
+        <InvestComponent color={'yellow'} label={'Sheldon.1'} />
 
         <RoundButton>See more</RoundButton>
       </section>
