@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
-const Wrapper = styled(BaseCard)`
+const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
   background-image: url('resources/svg/background-1.svg');
   background-position: 50% 20px;
   background-repeat: no-repeat;
@@ -13,7 +13,9 @@ const Wrapper = styled(BaseCard)`
   padding: 20px 40px 18px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    background-image: none;
+    background-image: ${({ backgroundImage }) =>
+      backgroundImage ? `url(${backgroundImage})` : 'none'};
+    background-position: ${({ backgroundImage }) => (backgroundImage ? `100% 100%` : 'initial')};
     padding: 20px 40px 25px;
   }
 `
@@ -58,15 +60,16 @@ const Button = styled(ButtonPrimary)`
 `
 
 export const SectionIntro: React.FC<{
+  backgroundImage?: string
   button?: {
     onClick: () => void
     title: string
   }
   description: string
   title: string
-}> = ({ button, description, title, ...restProps }) => {
+}> = ({ backgroundImage, button, description, title, ...restProps }) => {
   return (
-    <Wrapper {...restProps}>
+    <Wrapper backgroundImage={backgroundImage} {...restProps}>
       <Title>{title}</Title>
       <Description>{description}</Description>
       {button && <Button onClick={button.onClick}>{button.title}</Button>}
