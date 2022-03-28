@@ -15,14 +15,14 @@ export const RowCSS = css<RowProps>`
   column-gap: 15px;
   display: grid;
   grid-template-columns: ${({ columns }) => columns};
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 28px;
+  padding-right: 16px;
 `
 
 export const Row = styled.div<RowProps>`
   ${RowCSS}
 
-  height: 42px;
+  min-height: 48px;
   transition: background-color 0.1s linear;
 
   &[href] {

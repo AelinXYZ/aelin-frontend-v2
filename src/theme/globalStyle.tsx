@@ -16,11 +16,16 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     background-color: ${({ theme }) => theme.colors.mainBodyBackground};
+
     color: ${({ theme }) => theme.colors.textColor};
     font-family: ${({ theme }) => theme.fonts.fontFamily};
     font-size: ${({ theme }) => theme.fonts.defaultSize};
     min-height: 100vh;
     outline-color: ${({ theme }) => theme.colors.secondary};
+
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+      background-image: url('resources/svg/bg-main.svg');
+    }
   }
 
   code {
