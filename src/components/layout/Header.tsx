@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { useState } from 'react'
 import styled from 'styled-components'
 
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
@@ -12,7 +11,7 @@ import { TopMenu as BaseTopMenu } from '@/src/components/navigation/TopMenu'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
-import { chainsConfig, getNetworkConfig } from '@/src/constants/chains'
+import { chainsConfig, getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
@@ -99,18 +98,26 @@ const DropdownButton = styled.div`
   gap: 8px;
 `
 
+const NetworkError = styled.p`
+  color: red;
+`
+
 export const Header: React.FC = (props) => {
   const {
     address = '',
     appChainId,
     connectWallet,
     disconnectWallet,
+    isAppConnected,
     isWalletConnected,
+    isWalletNetworkSupported,
+    pushNetwork,
     setAppChainId,
+    walletChainId,
   } = useWeb3Connection()
 
   const chainOptions = Object.values(chainsConfig)
-  const [currentChain, setCurrentChain] = useState(getNetworkConfig(appChainId).name)
+  const currentChain = getNetworkConfig(appChainId)
 
   return (
     <Wrapper as="header" {...props}>
@@ -124,22 +131,27 @@ export const Header: React.FC = (props) => {
         </StartWrapper>
         <TopMenu />
         <EndWrapper>
+          {isWalletConnected && !isWalletNetworkSupported && (
+            <NetworkError>Wrong wallet network</NetworkError>
+          )}
           <Dropdown
-            currentItem={chainOptions.findIndex(({ id }) => id === appChainId)}
+            currentItem={getChainsByEnvironmentArray().findIndex(
+              ({ chainId }) => chainId === walletChainId,
+            )}
+            disabled={!isWalletConnected}
             dropdownButtonContent={
               <DropdownButton>
-                {getNetworkConfig(appChainId).icon}
-                {currentChain}
+                {currentChain.icon}
+                {currentChain.name}
                 <ChevronDown />
               </DropdownButton>
             }
             dropdownPosition={DropdownPosition.right}
-            items={chainOptions.map((item, index) => (
+            items={getChainsByEnvironmentArray().map((item, index) => (
               <DropdownItem
                 key={index}
                 onClick={() => {
-                  setCurrentChain(item.name)
-                  setAppChainId(item.chainId)
+                  pushNetwork(item.chainId)
                 }}
               >
                 {getNetworkConfig(item.chainId).icon}
