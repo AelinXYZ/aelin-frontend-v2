@@ -9,6 +9,7 @@ const primary = '#8280FF'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
 const textColor = '#fff'
+const textColorLight = '#BABCC1'
 const mainBodyBackground = '#111317'
 
 export const theme = {
@@ -33,6 +34,7 @@ export const theme = {
     secondary: secondary,
     tertiary: tertiary,
     textColor: textColor,
+    textColorLight: textColorLight,
   },
   dropdown: {
     background: mainBodyBackground,

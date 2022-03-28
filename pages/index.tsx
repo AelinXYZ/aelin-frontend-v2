@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
@@ -11,6 +10,7 @@ import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import {
   Cell,
+  CellName,
   Row,
   TH,
   Table,
@@ -32,7 +32,13 @@ const Home: NextPage = () => {
     throw error
   }
 
-  const columns = '1fr 1fr 1fr 1fr 1fr 1fr 1fr'
+  const columns = {
+    alignment: {
+      investmentToken: 'center',
+      network: 'center',
+    },
+    widths: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+  }
 
   return (
     <LeftSidebarLayout>
@@ -44,15 +50,6 @@ const Home: NextPage = () => {
       />
       <TableWrapper>
         <Table>
-          <TableHead columns={columns}>
-            <TH>Name</TH>
-            <TH>Sponsor</TH>
-            <TH>Network</TH>
-            <TH>Amount in Pool</TH>
-            <TH>Investment deadline</TH>
-            <TH>Investment token</TH>
-            <TH>Stage</TH>
-          </TableHead>
           <InfiniteScroll
             dataLength={data.length}
             endMessage={
@@ -65,6 +62,15 @@ const Home: NextPage = () => {
             loader={<h4>Loading...</h4>}
             next={nextPage}
           >
+            <TableHead columns={columns.widths}>
+              <TH>Name</TH>
+              <TH>Sponsor</TH>
+              <TH justifyContent={columns.alignment.network}>Network</TH>
+              <TH>Amount in Pool</TH>
+              <TH>Investment deadline</TH>
+              <TH justifyContent={columns.alignment.investmentToken}>Investment token</TH>
+              <TH>Stage</TH>
+            </TableHead>
             {data.map((pool) => {
               const {
                 amountInPool,
@@ -78,19 +84,21 @@ const Home: NextPage = () => {
               } = pool
               return (
                 <Link href={`/pool/${getKeyChainByValue(network)}/${id}`} key={id} passHref>
-                  <Row as="a" columns={columns}>
-                    <Cell>{name}</Cell>
+                  <Row as="a" columns={columns.widths}>
+                    <CellName>{name.replace('aePool-', '')}</CellName>
                     <Cell>
                       <ENSOrAddress address={sponsor} />
                     </Cell>
-                    <Cell>
+                    <Cell justifyContent={columns.alignment.network}>
                       <span title={getNetworkConfig(network).name}>
                         {getNetworkConfig(network).icon}
                       </span>
                     </Cell>
                     <Cell>${amountInPool.formatted}</Cell>
                     <Cell>{investmentDeadline}</Cell>
-                    <Cell>{investmentToken}</Cell>
+                    <Cell justifyContent={columns.alignment.investmentToken}>
+                      {investmentToken}
+                    </Cell>
                     <Cell>{stage}</Cell>
                   </Row>
                 </Link>

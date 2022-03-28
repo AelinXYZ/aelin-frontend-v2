@@ -22,41 +22,56 @@ export const RowCSS = css<RowProps>`
 export const Row = styled.div<RowProps>`
   ${RowCSS}
 
+  background-color: ${(props) => props.theme.card.backgroundColor};
+  border-radius: ${({ theme }) => theme.card.borderRadius};
+  border: ${(props) => props.theme.card.borderColor};
+  margin-bottom: 10px;
   min-height: 48px;
   transition: background-color 0.1s linear;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   &[href] {
     cursor: pointer;
     text-decoration: none;
+
+    &:active {
+      opacity: 0.7;
+    }
   }
 `
 
 export const TableHead = styled.div<RowProps>`
   ${RowCSS}
+
+  margin-bottom: 18px;
 `
 
-TableHead.defaultProps = {
-  className: 'tableHead',
-}
-
-export const Cell = styled.span<{ flexDirection?: string; justifyContent?: string }>`
+export const Cell = styled.span<{ justifyContent?: string }>`
   align-items: center;
+  color: ${({ theme }) => theme.colors.textColorLight};
   display: flex;
+  font-size: 1.4rem;
+  font-weight: 500;
   height: 100%;
-  flex-direction: ${({ flexDirection }) => flexDirection};
   justify-content: ${({ justifyContent }) => justifyContent};
   white-space: nowrap;
 `
 
 Cell.defaultProps = {
-  flexDirection: 'row',
   justifyContent: 'flex-start',
 }
+
+export const CellName = styled(Cell)`
+  color: ${({ theme }) => theme.colors.textColor};
+`
 
 export const TH = styled(Cell)`
   color: ${({ theme }) => theme.colors.textColor};
   font-size: 1.4rem;
-  font-weight: 500;
+  font-weight: 700;
   white-space: nowrap;
 `
 
