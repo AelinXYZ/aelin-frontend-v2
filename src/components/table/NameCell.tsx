@@ -1,13 +1,10 @@
 import styled from 'styled-components'
 
-const Wrapper = styled.span`
-  align-items: center;
+import { Cell } from '@/src/components/pureStyledComponents/common/Table'
+
+const Wrapper = styled(Cell)`
   color: ${({ theme }) => theme.colors.textColor};
-  display: flex;
-  font-size: 1.4rem;
-  font-weight: 500;
   gap: 10px;
-  line-height: 1.2;
 `
 
 const Badge = styled.span`
