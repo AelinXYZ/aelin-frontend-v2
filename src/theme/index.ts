@@ -9,7 +9,7 @@ const primary = '#8280FF'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
 const textColor = '#fff'
-const mainBodyBackground = '#101826'
+const mainBodyBackground = '#111317'
 
 export const theme = {
   buttonPrimary: {
