@@ -1,18 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import AelinNumbers from './AelinNumbers'
 import CollapseComponents from './CollapseComponents'
 import GraphComponent from '@/src/components/collapsContent/GraphComponent'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-
-const Text = styled.p`
-  color: #babcc1;
-  margin: 0 0 0.3em 0;
-  text-align: left;
-`
-const Numbers = styled.span`
-  color: #3dc0f1;
-`
 
 const GradientButtonClaim = styled(GradientButton)`
   margin: 1.2em auto 0;
@@ -28,17 +20,9 @@ const AelinFunc = () => {
   return (
     <CollapseComponents title={'Aelin'}>
       <section>
-        <Text>
-          Aelin balance: <Numbers> 0.0211231</Numbers>
-        </Text>
-        <Text>
-          Aelin balance: <Numbers> 0.0211231</Numbers>
-        </Text>
-        <Text>
-          Aelin balance: <Numbers> 0.0211231</Numbers>
-        </Text>
-        {/* TODO: array data */}
-
+        <AelinNumbers label={'Aelin balance:'} value={0.25465487} />
+        <AelinNumbers label={'Aelin staking:'} value={1.7548656} />
+        <AelinNumbers label={'My rewards:'} value={0.0005468} />
         <GradientButtonClaim>Claim</GradientButtonClaim>
         <GraphComponent />
         <GradientButtonClaim>Buy Aelins</GradientButtonClaim>
