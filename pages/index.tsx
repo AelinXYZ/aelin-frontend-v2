@@ -10,7 +10,6 @@ import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import {
   Cell,
-  CellName,
   Row,
   TH,
   Table,
@@ -18,6 +17,7 @@ import {
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { genericSuspense } from '@/src/components/safeSuspense'
+import { NameCell } from '@/src/components/table/NameCell'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 
@@ -85,7 +85,7 @@ const Home: NextPage = () => {
               return (
                 <Link href={`/pool/${getKeyChainByValue(network)}/${id}`} key={id} passHref>
                   <Row as="a" columns={columns.widths}>
-                    <CellName>{name.replace('aePool-', '')}</CellName>
+                    <NameCell badge="3">{name.replace('aePool-', '')}</NameCell>
                     <Cell>
                       <ENSOrAddress address={sponsor} />
                     </Cell>

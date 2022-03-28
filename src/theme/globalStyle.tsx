@@ -20,6 +20,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     color: ${({ theme }) => theme.colors.textColor};
     font-family: ${({ theme }) => theme.fonts.fontFamily};
     font-size: ${({ theme }) => theme.fonts.defaultSize};
+    line-height: 1.2;
     min-height: 100vh;
     outline-color: ${({ theme }) => theme.colors.secondary};
 

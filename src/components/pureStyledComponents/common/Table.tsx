@@ -57,6 +57,7 @@ export const Cell = styled.span<{ justifyContent?: string }>`
   font-weight: 500;
   height: 100%;
   justify-content: ${({ justifyContent }) => justifyContent};
+  line-height: 1.2;
   white-space: nowrap;
 `
 
@@ -64,14 +65,11 @@ Cell.defaultProps = {
   justifyContent: 'flex-start',
 }
 
-export const CellName = styled(Cell)`
-  color: ${({ theme }) => theme.colors.textColor};
-`
-
 export const TH = styled(Cell)`
   color: ${({ theme }) => theme.colors.textColor};
   font-size: 1.4rem;
   font-weight: 700;
+  line-height: 1.2;
   white-space: nowrap;
 `
 
