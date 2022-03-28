@@ -1,10 +1,16 @@
 import { useRouter } from 'next/router'
+import { ChangeEvent, useMemo } from 'react'
 import styled from 'styled-components'
 
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import {
+  OrderDirection,
+  PoolCreated_Filter,
+  PoolCreated_OrderBy,
+  PoolsCreatedQueryVariables,
+} from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import {
@@ -68,10 +74,7 @@ const PoolsList = genericSuspense(({ filters }: { filters: FiltersProp }) => {
               stage,
             } = pool
             return (
-              <PoolRow
-                key={id}
-                onClick={() => router.push(`/pool/${getKeyChainByValue(network)}/${id}`)}
-              >
+              <PoolRow key={id}>
                 {/*Pool name */}
                 <span>{name}</span>
 
@@ -104,9 +107,25 @@ const PoolsList = genericSuspense(({ filters }: { filters: FiltersProp }) => {
   )
 })
 
+const DEBOUNCED_TIME = 500
+
 const PoolsListWithFilters = () => {
   const { network, setNetwork, setOrderBy, setOrderDirection, setWhere, variables } =
     useAelinPoolsFilters()
+
+  const debouncedChangeHandler = useMemo(() => {
+    const changeHandler = (
+      evt: ChangeEvent<HTMLInputElement>,
+      whereKey: keyof PoolCreated_Filter,
+      minLength: number,
+    ) => {
+      const { value } = evt.target
+      setWhere({
+        [whereKey]: value.length >= minLength ? value : null,
+      })
+    }
+    return debounce(changeHandler, DEBOUNCED_TIME)
+  }, [setWhere])
 
   return (
     <>
@@ -114,42 +133,23 @@ const PoolsListWithFilters = () => {
         <div>
           Sponsor:
           <input
-            onChange={(evt) => {
-              const { value } = evt.target
-              debounce(() => {
-                setWhere({
-                  sponsor_contains: value || null,
-                })
-              }, 500)
-            }}
+            onChange={(evt) => debouncedChangeHandler(evt, 'sponsor_contains', 3)}
             type="text"
           />
         </div>
         <div>
           Pool name:
           <input
-            onChange={(evt) => {
-              const { value } = evt.target
-              debounce(() => {
-                setWhere({
-                  name_contains: value || null,
-                })
-              }, 500)
-            }}
+            onChange={(evt) => debouncedChangeHandler(evt, 'name_contains_nocase', 3)}
             type="text"
           />
         </div>
         <div>
           Currency:
           <input
-            onChange={(evt) => {
-              const { value } = evt.target
-              debounce(() => {
-                setWhere({
-                  purchaseTokenSymbol_contains: value || null,
-                })
-              }, 500)
-            }}
+            onChange={(evt) =>
+              debouncedChangeHandler(evt, 'purchaseTokenSymbol_contains_nocase', 2)
+            }
             type="text"
           />
         </div>
