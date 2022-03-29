@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import AelinNumbers from './AelinNumbers'
 import CollapseComponents from './CollapseComponents'
-import GraphComponent from '@/src/components/collapsContent/GraphComponent'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import GraphComponent from '@/src/components/sidebar/GraphComponent'
 
 const GradientButtonClaim = styled(GradientButton)`
   margin: 1.2em auto 0;
+
   @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     margin: 1em 0 0 0;
   }
@@ -16,9 +17,9 @@ const GradientButtonClaim = styled(GradientButton)`
   }
 `
 
-const AelinFunc = () => {
+const Aelin = ({ ...restProps }) => {
   return (
-    <CollapseComponents title={'Aelin'}>
+    <CollapseComponents title={'Aelin'} {...restProps}>
       <section>
         <AelinNumbers label={'Aelin balance:'} value={0.25465487} />
         <AelinNumbers label={'Aelin staking:'} value={1.7548656} />
@@ -31,4 +32,4 @@ const AelinFunc = () => {
   )
 }
 
-export default AelinFunc
+export default Aelin

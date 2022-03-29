@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
-import AelinCollaps from '@/src/components/collapsContent/AelinCollaps'
-import MyPoolsCollaps from '@/src/components/collapsContent/MyPoolsCollaps'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import Aelin from '@/src/components/sidebar/Aelin'
+import MyPools from '@/src/components/sidebar/MyPools'
 
 const Wrapper = styled.div`
   --left-column-width: 290px;
@@ -47,8 +47,8 @@ export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
       <SidebarWrapper as="nav">
-        <MyPoolsCollaps />
-        <AelinCollaps />
+        <MyPools />
+        <Aelin />
       </SidebarWrapper>
       <Main>{children}</Main>
     </Wrapper>

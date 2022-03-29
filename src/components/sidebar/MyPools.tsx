@@ -69,12 +69,12 @@ const Button = styled(RoundButton)`
   }
 `
 
-const MyPoolsFunc: React.FC = ({ ...restProps }) => {
+const MyPools: React.FC = ({ ...restProps }) => {
   const menuItems = ['Invented (3)', 'Sponsored (9)', 'Funded (5)']
   const [activeButton, setActiveButton] = useState('')
 
   return (
-    <CollapseComponents title={'My pools'}>
+    <CollapseComponents title={'My pools'} {...restProps}>
       <section>
         <MyPoolsItems>
           {menuItems.map((OnOffButton) => {
@@ -103,4 +103,4 @@ const MyPoolsFunc: React.FC = ({ ...restProps }) => {
   )
 }
 
-export default MyPoolsFunc
+export default MyPools
