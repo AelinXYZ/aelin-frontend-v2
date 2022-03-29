@@ -1,11 +1,10 @@
 import type { NextPage } from 'next'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
-import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import {
@@ -17,9 +16,11 @@ import {
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { genericSuspense } from '@/src/components/safeSuspense'
+import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { NameCell } from '@/src/components/table/NameCell'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
+import { shortenAddr } from '@/src/web3/utils'
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -83,25 +84,30 @@ const Home: NextPage = () => {
                 stage,
               } = pool
               return (
-                <Link href={`/pool/${getKeyChainByValue(network)}/${id}`} key={id} passHref>
-                  <Row as="a" columns={columns.widths}>
-                    <NameCell badge="3">{name.replace('aePool-', '')}</NameCell>
-                    <Cell>
-                      <ENSOrAddress address={sponsor} />
-                    </Cell>
-                    <Cell justifyContent={columns.alignment.network}>
-                      <span title={getNetworkConfig(network).name}>
-                        {getNetworkConfig(network).icon}
-                      </span>
-                    </Cell>
-                    <Cell>${amountInPool.formatted}</Cell>
-                    <Cell>{investmentDeadline}</Cell>
-                    <Cell justifyContent={columns.alignment.investmentToken}>
-                      {investmentToken}
-                    </Cell>
-                    <Cell>{stage}</Cell>
-                  </Row>
-                </Link>
+                <Row
+                  columns={columns.widths}
+                  hasHover
+                  key={id}
+                  onClick={() => {
+                    router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
+                  }}
+                >
+                  <NameCell badge="3">{name.replace('aePool-', '')}</NameCell>
+                  <Cell>
+                    <ExternalLink href={`https://etherscan.io/address/${getAddress(sponsor)}`}>
+                      {shortenAddr(getAddress(sponsor))}
+                    </ExternalLink>
+                  </Cell>
+                  <Cell justifyContent={columns.alignment.network}>
+                    <span title={getNetworkConfig(network).name}>
+                      {getNetworkConfig(network).icon}
+                    </span>
+                  </Cell>
+                  <Cell>${amountInPool.formatted}</Cell>
+                  <Cell>{investmentDeadline}</Cell>
+                  <Cell justifyContent={columns.alignment.investmentToken}>{investmentToken}</Cell>
+                  <Cell>{stage}</Cell>
+                </Row>
               )
             })}
           </InfiniteScroll>

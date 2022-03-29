@@ -1,3 +1,4 @@
+import { lighten } from 'polished'
 import styled, { css } from 'styled-components'
 
 export const Table = styled.div`
@@ -7,6 +8,7 @@ export const Table = styled.div`
 
 interface RowProps {
   columns?: string
+  hasHover?: boolean
 }
 
 export const RowCSS = css<RowProps>`
@@ -33,14 +35,19 @@ export const Row = styled.div<RowProps>`
     margin-bottom: 0;
   }
 
-  &[href] {
-    cursor: pointer;
-    text-decoration: none;
+  ${({ hasHover, theme }) =>
+    hasHover &&
+    `
+      &:hover {
+        background-color: ${lighten(0.1, theme.card.backgroundColor)};
+        cursor: pointer;
+        text-decoration: none;
 
-    &:active {
-      opacity: 0.7;
-    }
-  }
+        &:active {
+          opacity: 0.7;
+        }
+      }
+  `}
 `
 
 export const TableHead = styled.div<RowProps>`
@@ -56,8 +63,10 @@ export const Cell = styled.span<{ justifyContent?: string }>`
   font-size: 1.4rem;
   font-weight: 500;
   height: 100%;
+  height: fit-content;
   justify-content: ${({ justifyContent }) => justifyContent};
   line-height: 1.2;
+  margin-top: 3px;
   white-space: nowrap;
 `
 
