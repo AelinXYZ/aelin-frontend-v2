@@ -1,9 +1,11 @@
 import styled from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import Aelin from '@/src/components/sidebar/Aelin'
+import MyPools from '@/src/components/sidebar/MyPools'
 
 const Wrapper = styled.div`
-  --left-column-width: 200px;
+  --left-column-width: 290px;
 
   column-gap: 30px;
   display: grid;
@@ -19,17 +21,15 @@ const Wrapper = styled.div`
 `
 
 const SidebarWrapper = styled(BaseCard)`
+  background: none;
+  border: none;
   display: flex;
   flex-direction: column;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: ${({ theme }) => theme.layout.columnGap};
-  }
+  padding: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    display: flex;
+    background-color: ${(props) => props.theme.card.backgroundColor};
+    border: ${(props) => props.theme.card.borderColor};
   }
 `
 
@@ -39,10 +39,26 @@ const Main = styled.main`
   min-width: 0;
 `
 
+const Break = styled.div`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    background-color: ${({ theme }) => theme.colors.borderColor};
+    display: block;
+    height: 1px;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+`
+
 export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      <SidebarWrapper as="nav">sidebar contents</SidebarWrapper>
+      <SidebarWrapper as="nav">
+        <MyPools />
+        <Break />
+        <Aelin />
+      </SidebarWrapper>
       <Main>{children}</Main>
     </Wrapper>
   )

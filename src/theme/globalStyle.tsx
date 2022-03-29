@@ -36,7 +36,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   #__next {
     display: flex;
     flex-direction: column;
-    height: 100vh;
     padding: ${({ theme }) => theme.layout.paddingMobile};
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {

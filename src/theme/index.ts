@@ -10,7 +10,10 @@ const secondary = '#E56399'
 const tertiary = '#A6CFD5'
 const textColor = '#fff'
 const textColorLight = '#BABCC1'
-const mainBodyBackground = '#111317'
+const mainBodyBackground = '#101826'
+const green = '#A2FF00'
+const yellow = '#F1C40F'
+const blue = '#469FFF'
 
 export const theme = {
   buttonPrimary: {
@@ -27,6 +30,7 @@ export const theme = {
     borderRadius: componentBorderRadius,
   },
   colors: {
+    borderColor: componentBorderColor,
     componentBackgroundColor: componentBackgroundColor,
     error: error,
     mainBodyBackground: mainBodyBackground,
@@ -35,6 +39,11 @@ export const theme = {
     tertiary: tertiary,
     textColor: textColor,
     textColorLight: textColorLight,
+  },
+  states: {
+    green: green,
+    yellow: yellow,
+    blue: blue,
   },
   dropdown: {
     background: mainBodyBackground,
