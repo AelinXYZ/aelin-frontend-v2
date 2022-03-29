@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import AelinNumbers from './AelinNumbers'
-import CollapseComponents from './CollapsibleBlock'
+import CollapsibleBlock from './CollapsibleBlock'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import GraphComponent from '@/src/components/sidebar/GraphComponent'
 
@@ -19,7 +19,7 @@ const GradientButtonClaim = styled(GradientButton)`
 
 const Aelin = ({ ...restProps }) => {
   return (
-    <CollapseComponents title={'Aelin'} {...restProps}>
+    <CollapsibleBlock title={'Aelin'} {...restProps}>
       <section>
         <AelinNumbers label={'Aelin balance:'} value={0.25465487} />
         <AelinNumbers label={'Aelin staking:'} value={1.7548656} />
@@ -28,7 +28,7 @@ const Aelin = ({ ...restProps }) => {
         <GraphComponent />
         <GradientButtonClaim>Buy Aelins</GradientButtonClaim>
       </section>
-    </CollapseComponents>
+    </CollapsibleBlock>
   )
 }
 

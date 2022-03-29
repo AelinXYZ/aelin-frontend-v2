@@ -5,33 +5,12 @@ import useCollapse from 'react-collapsed'
 
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
+import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
-const Wrapper = styled.div`
-  border-bottom: 1px solid ${({ theme: { colors } }) => colors.borderColor};
-  color: ${({ theme: { colors } }) => colors.textColor};
-  margin-bottom: 20px;
-  text-align: center;
-
-  &:last-child {
+const Wrapper = styled(BaseCard)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    background-color: transparent;
     border: none;
-  }
-
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    background-color: ${(props) => props.theme.card.backgroundColor};
-    border-radius: ${({ theme }) => theme.card.borderRadius};
-    border: ${(props) => props.theme.card.borderColor};
-    margin: 10px 0 10px 10px;
-    padding: 20px;
-  }
-
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
-    margin: 10px;
-    padding-bottom: 0;
-
-    &:last-child {
-      margin-bottom: 20px;
-    }
   }
 `
 
@@ -41,16 +20,13 @@ const Header = styled.div`
   justify-content: space-between;
   margin-bottom: 20px;
   width: 100%;
-
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    margin: 0 0 20px 0;
-  }
 `
 
 const Title = styled.h3`
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.8rem;
   font-weight: 700;
+  line-height: 1.2;
   margin: 0;
   padding: 0;
 `

@@ -16,14 +16,14 @@ import { chainsConfig, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
-const Wrapper = styled.div`
+const Wrapper = styled.header`
   align-items: center;
   display: flex;
   flex-grow: 0;
   height: ${({ theme }) => theme.header.height};
   margin: 0 0 15px;
-  position: sticky;
-  top: 0;
+  /* position: sticky;
+  top: 20px; */
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     margin-bottom: 20px;
@@ -118,7 +118,7 @@ export const Header: React.FC = (props) => {
   const [currentChain, setCurrentChain] = useState(getNetworkConfig(appChainId).name)
 
   return (
-    <Wrapper as="header" {...props}>
+    <Wrapper {...props}>
       <InnerContainer>
         <StartWrapper>
           <Link href="/" passHref>

@@ -1,105 +1,70 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import CollapseComponents from './CollapsibleBlock'
-import InvestComponent from './InvestComponent'
-import { RoundedButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import CollapsibleBlock from './CollapsibleBlock'
+import Pool from './Pool'
+import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 
-const MyPoolsItems = styled.div`
+const Filters = styled.div`
   display: flex;
+  gap: 6px;
   justify-content: space-between;
   margin-bottom: 20px;
-  & a {
-    font-size: 1rem;
-  }
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    margin-top: 15px;
-  }
 `
 
-const Invest = styled.a`
-  display: flex;
-  align-items: center;
+const MoreButton = styled(TabButton)`
+  border-color: ${({ theme: { colors } }) => colors.textColor};
   color: ${({ theme: { colors } }) => colors.textColor};
-  background-color: rgba(255, 255, 255, 0.08);
-  margin-bottom: 10px;
-  border-radius: 8px;
-  height: 36px;
-`
-const Color = styled.span`
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 5px;
-  margin: 0 8px 0 14px;
 `
 
-const OrangeState = styled.span`
-  display: inline-block;
-  background-color: #f1c40f;
-  width: 8px;
-  height: 8px;
-  border-radius: 5px;
-  margin: 0 8px 0 14px;
-`
-
-const BlueState = styled.span`
-  display: inline-block;
-  background-color: #469fff;
-  width: 8px;
-  height: 8px;
-  border-radius: 5px;
-  margin: 0 8px 0 14px;
-`
-const RoundButton = styled(RoundedButton)`
-  margin: 12px auto 20px;
-`
-
-const Button = styled(RoundButton)`
-  font-size: 1rem;
-  height: 24px;
-  padding: 0 10px 0 10px;
-  opacity: 0.7;
-  margin: 0;
-  transition: 0.7s;
-  &.active {
-    background-color: ${({ theme }) => theme.buttonPrimary.backgroundColor};
-    border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
-    color: ${({ theme }) => theme.buttonPrimary.color};
-  }
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 5px 0 0 0;
 `
 
 const MyPools: React.FC = ({ ...restProps }) => {
-  const menuItems = ['Invented (3)', 'Sponsored (9)', 'Funded (5)']
-  const [activeButton, setActiveButton] = useState('')
+  const [activeFilter, setActiveFilter] = useState<'invested' | 'sponsored' | 'funded' | undefined>(
+    'invested',
+  )
 
   return (
-    <CollapseComponents title={'My pools'} {...restProps}>
-      <section>
-        <MyPoolsItems>
-          {menuItems.map((OnOffButton) => {
-            return (
-              <Button
-                className={activeButton === OnOffButton ? 'active' : ''}
-                key={OnOffButton}
-                onClick={() => {
-                  setActiveButton(OnOffButton)
-                }}
-              >
-                {OnOffButton}
-              </Button>
-            )
-          })}
-        </MyPoolsItems>
-
-        {/* TODO: invest component */}
-        <InvestComponent color={'poolGreenState'} label={'Kwenta DAO'} />
-        <InvestComponent color={'poolYellowState'} label={'Nukevaults.com'} />
-        <InvestComponent color={'poolBlueState'} label={'Sheldon.1'} />
-
-        <RoundButton>See more</RoundButton>
-      </section>
-    </CollapseComponents>
+    <CollapsibleBlock title={'My pools'} {...restProps}>
+      <Filters>
+        <TabButton
+          isActive={activeFilter === 'invested'}
+          onClick={() => {
+            setActiveFilter('invested')
+          }}
+        >
+          Invested (4)
+        </TabButton>
+        <TabButton
+          isActive={activeFilter === 'sponsored'}
+          onClick={() => {
+            setActiveFilter('sponsored')
+          }}
+        >
+          Sponsored (0)
+        </TabButton>
+        <TabButton
+          isActive={activeFilter === 'funded'}
+          onClick={() => {
+            setActiveFilter('funded')
+          }}
+        >
+          Funded (0)
+        </TabButton>
+      </Filters>
+      <Pool color={'green'}>Kwenta DAO</Pool>
+      <Pool color={'yellow'} notifications={1}>
+        Nukevaults.com
+      </Pool>
+      <Pool color={'blue'}>Sheldon.1</Pool>
+      <ButtonContainer>
+        <MoreButton>See more</MoreButton>
+      </ButtonContainer>
+    </CollapsibleBlock>
   )
 }
 

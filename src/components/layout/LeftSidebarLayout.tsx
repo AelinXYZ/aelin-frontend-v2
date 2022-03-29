@@ -6,6 +6,7 @@ import MyPools from '@/src/components/sidebar/MyPools'
 
 const Wrapper = styled.div`
   --left-column-width: 290px;
+
   column-gap: 30px;
   display: grid;
   flex-grow: 1;
@@ -20,27 +21,34 @@ const Wrapper = styled.div`
 `
 
 const SidebarWrapper = styled(BaseCard)`
+  background: none;
+  border: none;
   display: flex;
   flex-direction: column;
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: ${({ theme }) => theme.layout.columnGap};
-  }
+  padding: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    display: flex;
-  }
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    border: none;
-    background: none;
-    padding: 0;
+    background-color: ${(props) => props.theme.card.backgroundColor};
+    border: ${(props) => props.theme.card.borderColor};
   }
 `
+
 const Main = styled.main`
   display: flex;
   flex-direction: column;
   min-width: 0;
+`
+
+const Break = styled.div`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    background-color: ${({ theme }) => theme.colors.borderColor};
+    display: block;
+    height: 1px;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
 `
 
 export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
@@ -48,6 +56,7 @@ export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
     <Wrapper {...restProps}>
       <SidebarWrapper as="nav">
         <MyPools />
+        <Break />
         <Aelin />
       </SidebarWrapper>
       <Main>{children}</Main>
