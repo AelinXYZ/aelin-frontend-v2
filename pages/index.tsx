@@ -7,7 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
-import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { Button } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
@@ -31,9 +31,9 @@ const Home: NextPage = () => {
 
   return (
     <LeftSidebarLayout>
-      <LinkButton href="/pool/create" passHref>
-        <a>Create Pool</a>
-      </LinkButton>
+      <Button as="a" href="/pool/create">
+        Create Pool
+      </Button>
       <InfiniteScroll
         dataLength={data.length}
         endMessage={

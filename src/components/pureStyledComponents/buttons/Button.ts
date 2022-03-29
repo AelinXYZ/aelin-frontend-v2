@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 export const DisabledButtonCSS = css`
@@ -29,7 +28,7 @@ export const ButtonCSS = css`
   white-space: nowrap;
 
   &:active {
-    opacity: 0.7;
+    opacity: 0.5;
   }
 `
 
@@ -49,7 +48,21 @@ export const ButtonPrimaryCSS = css`
     background-color: ${({ theme }) => theme.buttonPrimary.borderColor};
     border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
     color: ${({ theme }) => theme.buttonPrimary.color};
-    ${DisabledButtonCSS}
+  }
+`
+
+export const ButtonGradientCSS = css`
+  background: linear-gradient(93.12deg, #0064a0 14.06%, #3cbff0 81.77%);
+  border: none;
+  color: ${({ theme }) => theme.colors.textColor};
+
+  &:hover {
+    /* ? */
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    /* ? */
   }
 `
 
@@ -67,6 +80,28 @@ export const Button = styled(BaseButton)`
 export const ButtonPrimary = styled(BaseButton)`
   ${ButtonPrimaryCSS}
 `
-export const LinkButton = styled(Link)`
-  ${ButtonPrimaryCSS}
+
+export const GradientButton = styled(BaseButton)`
+  ${ButtonGradientCSS}
+`
+
+export const TabButton = styled(ButtonPrimary)<{ isActive?: boolean }>`
+  background-color: transparent;
+  border-color: #babcc1;
+  color: #babcc1;
+  font-size: 1rem;
+  font-weight: 400;
+  height: 24px;
+  margin: 0;
+  opacity: 0.7;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  ${({ isActive, theme }) =>
+    isActive &&
+    `
+      background-color: ${theme.buttonPrimary.backgroundColorHover};
+      border-color: ${theme.buttonPrimary.borderColorHover};
+      color: ${theme.buttonPrimary.colorHover};
+  `}
 `
