@@ -32,6 +32,7 @@ export type ParsedAelinPool = {
   investmentDeadline: Date
   purchaseExpiry: Date
   dealDeadline: Date
+  dealAddress: string | null
   sponsor: string
   sponsorFee: DetailedNumber
   poolCap: DetailedNumber
@@ -73,6 +74,7 @@ export default function useAelinPool(
       investmentTokenDecimals: purchaseTokenDecimals,
       investmentDeadline: pool.purchaseDuration,
       sponsor: pool.sponsor,
+      dealAddress: pool.dealAddress ? (pool.dealAddress as string) : null,
       sponsorFee: getSponsorFee(pool),
       poolCap: getPurchaseTokenCap({ ...pool, purchaseTokenDecimals }),
       purchaseExpiry: getPurchaseExpiry(pool),
