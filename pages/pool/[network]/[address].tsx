@@ -1,76 +1,31 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 
-import isAfter from 'date-fns/isAfter'
-import isEmpty from 'lodash/isEmpty'
+import { isAddress } from '@ethersproject/address'
 import nullthrows from 'nullthrows'
 
-import CountDown from '@/src/components/countdown'
-import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
-import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { Chains, ChainsKeys } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
-import useAelinPoolMachine from '@/src/hooks/aelin/useAelinPoolMachine'
-import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+import PoolDetails from '@/src/page_helpers/PoolDetails'
 
-const PoolDetails: NextPage = () => {
+const PoolDetailsPage: NextPage = () => {
   const router = useRouter()
-  const { address, network } = router.query
+  const { address: poolAddress, network } = router.query
+
+  if (!poolAddress || !network) {
+    return null
+  }
 
   const chainId = nullthrows(
     Object.keys(Chains).includes(network as string) ? Chains[network as ChainsKeys] : null,
     'Unsupported chain passed as url parameter.',
   )
 
-  const {
-    state: {
-      context: { pool },
-    },
-  } = useAelinPoolMachine(chainId, address as string)
-
-  if (isEmpty(pool)) {
-    return null
+  if (!isAddress((poolAddress as string).toLowerCase())) {
+    throw Error('Pool address is not a valid address.')
   }
 
-  return (
-    <RightTimelineLayout timeline={<>Timeline stuff</>}>
-      <BaseCard>
-        <div>Pool details: {address}</div>
-        <div>Investment</div>
-        <div>token: {pool.investmentToken}</div>
-        <div>
-          deadline: {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
-          {isAfter(pool.purchaseExpiry, Date.now()) && (
-            <CountDown date={pool.purchaseExpiry} format={CountDownDHMS} />
-          )}
-        </div>
-        <hr />
-        <div>Sponsor </div>
-        {pool.sponsor}
-        <hr />
-        <div>Pool cap </div>
-        {pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
-        <hr />
-        <div>Sponsor fee </div>
-        {pool.sponsorFee.formatted}
-        <hr />
-        <div>Deal </div>
-        <div>
-          deadline: {formatDate(pool.dealDeadline, DATE_DETAILED)}
-          {isAfter(pool.dealDeadline, Date.now()) && (
-            <CountDown date={pool.dealDeadline} format={CountDownDHMS} />
-          )}
-        </div>
-        <hr />
-        <div>Pool details: {address}</div>
-        <div>Funded: {pool.funded.formatted}</div>
-        <div>Withdrawn: {pool.withdrawn.formatted}</div>
-        <div>Amount in Pool: {pool.amountInPool.formatted}</div>
-      </BaseCard>
-    </RightTimelineLayout>
-  )
+  return <PoolDetails chainId={chainId} poolAddress={poolAddress as string} />
 }
 
-export default genericSuspense(PoolDetails, () => <div>Loading..</div>)
+export default genericSuspense(PoolDetailsPage, () => <div>Loading..</div>)

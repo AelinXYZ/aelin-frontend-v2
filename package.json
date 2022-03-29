@@ -16,6 +16,7 @@
     "postinstall": "yarn typechain && yarn sdk"
   },
   "dependencies": {
+    "@ethersproject/address": "^5.6.0",
     "@ethersproject/bignumber": "^5.4.1",
     "@ethersproject/contracts": "^5.5.0",
     "@ethersproject/providers": "^5.4.5",
@@ -23,7 +24,7 @@
     "@graphql-codegen/typescript-graphql-request": "^4.4.3",
     "@synthetixio/wei": "^2.63.1",
     "@xstate/react": "^2.0.1",
-    "bignumber.js": "^9.0.2",
+    "big-number-input": "^1.0.3",
     "bnc-onboard": "^1.38.2",
     "date-fns": "^2.28.0",
     "graphiql": "^1.0.0-alpha.13",

@@ -1,5 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import formatFNS from 'date-fns/format'
+import intervalToDuration from 'date-fns/intervalToDuration'
+import isAfter from 'date-fns/isAfter'
 
 export const DATE_FORMAT_SIMPLE = 'yyyy-MM-dd'
 export const DATE_DETAILED = 'MMM dd, yyyy hh:mm a'
@@ -24,4 +26,16 @@ export function secondsToDhm(seconds = 0) {
 
 export default function getDailyValueFromValuePerSecond(vps: BigNumber): BigNumber {
   return vps.mul(60).mul(60).mul(24)
+}
+
+export const getFormattedDurationFromDateToNow = (date: Date | number, message: string) => {
+  if (isAfter(new Date(date), new Date())) {
+    const duration = intervalToDuration({
+      start: new Date(date),
+      end: new Date(),
+    })
+
+    return `~${duration.days}d ${duration.hours}h ${duration.minutes}m`
+  }
+  return message
 }

@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import addSeconds from 'date-fns/addSeconds'
 
+import { PoolStatus } from '@/graphql-schema'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type PoolDates = {
@@ -26,19 +27,21 @@ export function getDealDeadline<P extends PoolDates>(pool: P): Date {
   return addSeconds(created, Number(pool.duration) + Number(pool.purchaseDuration))
 }
 
+// returns the max amount a pool can be funded
 export function getPurchaseTokenCap<
-  P extends { purchaseTokenCap: string; purchaseTokenDecimals: number },
+  P extends { purchaseTokenCap: string; purchaseTokenDecimals?: number },
 >(pool: P) {
   return {
     raw: BigNumber.from(pool.purchaseTokenCap),
-    formatted: formatToken(pool.purchaseTokenCap, pool.purchaseTokenDecimals),
+    formatted: formatToken(pool.purchaseTokenCap, pool.purchaseTokenDecimals || 0),
   }
 }
 
+// returns the sponsor's fee amount (max is 98%)
 export function getSponsorFee<P extends { sponsorFee: string }>(pool: P) {
   return {
     raw: BigNumber.from(pool.sponsorFee),
-    formatted: `${BigNumber.from(pool.sponsorFee)}%`,
+    formatted: `${formatToken(pool.sponsorFee, 18, 2)}%`,
   }
 }
 
@@ -66,4 +69,8 @@ export function getAmountWithdrawn(amount: BigNumber) {
     raw: amount,
     formatted: formatToken(amount),
   }
+}
+
+export function getStatusText<P extends { poolStatus: PoolStatus }>(pool: P) {
+  return pool.poolStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
 }
