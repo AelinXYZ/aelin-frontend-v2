@@ -7,7 +7,7 @@ import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
 
 const Wrapper = styled.div`
-  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  border-bottom: 1px solid ${({ theme: { colors } }) => colors.borderColor};
   color: ${({ theme: { colors } }) => colors.textColor};
   margin-bottom: 20px;
   text-align: center;
@@ -74,7 +74,7 @@ const CollapseButton = styled.button`
   }
 `
 
-const CollapseComponents: React.FC<{ title: string }> = ({ children, title, ...restProps }) => {
+const CollapsibleBlock: React.FC<{ title: string }> = ({ children, title, ...restProps }) => {
   const [isExpanded, setExpanded] = useState(true)
   const { getCollapseProps, getToggleProps } = useCollapse({ isExpanded })
 
@@ -95,4 +95,4 @@ const CollapseComponents: React.FC<{ title: string }> = ({ children, title, ...r
   )
 }
 
-export default CollapseComponents
+export default CollapsibleBlock
