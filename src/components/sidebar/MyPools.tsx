@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import CollapsibleBlock from './CollapsibleBlock'
-import Pool from './Pool'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
+import Pool from '@/src/components/sidebar/Pool'
 
 const Filters = styled.div`
   display: flex;

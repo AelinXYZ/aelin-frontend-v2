@@ -15,7 +15,7 @@ const State = styled.span`
   --dimensions: 8px;
 
   border-radius: 5px;
-  display: inline-block;
+  display: block;
   height: var(--dimensions);
   margin: 0 8px 0 14px;
   width: var(--dimensions);

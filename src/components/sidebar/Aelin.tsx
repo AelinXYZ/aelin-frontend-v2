@@ -1,33 +1,33 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import AelinNumbers from './AelinNumbers'
-import CollapsibleBlock from './CollapsibleBlock'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import GraphComponent from '@/src/components/sidebar/GraphComponent'
+import AelinDataRow from '@/src/components/sidebar/AelinDataRow'
+import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
+import Graph from '@/src/components/sidebar/Graph'
 
-const GradientButtonClaim = styled(GradientButton)`
-  margin: 1.2em auto 0;
+const DataRows = styled.div`
+  margin-bottom: 20px;
+`
 
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    margin: 1em 0 0 0;
-  }
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    margin: 1em auto;
-  }
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
 `
 
 const Aelin = ({ ...restProps }) => {
   return (
     <CollapsibleBlock title={'Aelin'} {...restProps}>
-      <section>
-        <AelinNumbers label={'Aelin balance:'} value={0.25465487} />
-        <AelinNumbers label={'Aelin staking:'} value={1.7548656} />
-        <AelinNumbers label={'My rewards:'} value={0.0005468} />
-        <GradientButtonClaim>Claim</GradientButtonClaim>
-        <GraphComponent />
-        <GradientButtonClaim>Buy Aelins</GradientButtonClaim>
-      </section>
+      <DataRows>
+        <AelinDataRow label={'Aelin balance:'} value={0.25465487} />
+        <AelinDataRow label={'Aelin staking:'} value={1.7548656} />
+        <AelinDataRow label={'My rewards:'} value={0.0005468} />
+      </DataRows>
+      <ButtonContainer>
+        <GradientButton>Claim</GradientButton>
+      </ButtonContainer>
+      <Graph />
     </CollapsibleBlock>
   )
 }

@@ -18,7 +18,6 @@ const Header = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
   width: 100%;
 `
 
@@ -29,6 +28,10 @@ const Title = styled.h3`
   line-height: 1.2;
   margin: 0;
   padding: 0;
+`
+
+const Contents = styled.section`
+  padding-top 20px;
 `
 
 const Button = styled.button`
@@ -57,7 +60,7 @@ const CollapsibleBlock: React.FC<{ title: string }> = ({ children, title, ...res
   return (
     <Wrapper {...restProps}>
       <Header>
-        <Title> {title} </Title>
+        <Title>{title}</Title>
         <Button
           {...getToggleProps({
             onClick: () => setExpanded((prevExpanded) => !prevExpanded),
@@ -66,7 +69,7 @@ const CollapsibleBlock: React.FC<{ title: string }> = ({ children, title, ...res
           {isExpanded ? <ArrowUp /> : <ArrowDown />}
         </Button>
       </Header>
-      <section {...getCollapseProps()}>{children}</section>
+      <Contents {...getCollapseProps()}>{children}</Contents>
     </Wrapper>
   )
 }
