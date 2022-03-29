@@ -55,7 +55,7 @@ const Title = styled.h3`
   padding: 0;
 `
 
-const CollapseButton = styled.button`
+const Button = styled.button`
   --dimensions: 30px;
 
   align-items: center;
@@ -82,13 +82,13 @@ const CollapsibleBlock: React.FC<{ title: string }> = ({ children, title, ...res
     <Wrapper {...restProps}>
       <Header>
         <Title> {title} </Title>
-        <CollapseButton
+        <Button
           {...getToggleProps({
             onClick: () => setExpanded((prevExpanded) => !prevExpanded),
           })}
         >
           {isExpanded ? <ArrowUp /> : <ArrowDown />}
-        </CollapseButton>
+        </Button>
       </Header>
       <section {...getCollapseProps()}>{children}</section>
     </Wrapper>
