@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import AelinNumbers from './AelinNumbers'
-import CollapseComponents from './CollapseComponents'
+import CollapseComponents from './CollapsibleBlock'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import GraphComponent from '@/src/components/sidebar/GraphComponent'
 

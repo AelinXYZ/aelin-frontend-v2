@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import CollapseComponents from './CollapseComponents'
+import CollapseComponents from './CollapsibleBlock'
 import { RoundedButton } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const MyPoolsItems = styled.div`

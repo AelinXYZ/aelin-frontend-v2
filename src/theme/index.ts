@@ -29,6 +29,7 @@ export const theme = {
     borderRadius: componentBorderRadius,
   },
   colors: {
+    borderColor: componentBorderColor,
     componentBackgroundColor: componentBackgroundColor,
     error: error,
     mainBodyBackground: mainBodyBackground,
