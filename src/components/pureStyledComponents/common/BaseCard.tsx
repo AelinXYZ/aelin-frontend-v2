@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components'
 
 export const BaseCardCSS = css`
-  background-color: ${(props) => props.theme.card.backgroundColor};
-  border-radius: ${({ theme }) => theme.card.borderRadius};
-  border: ${(props) => props.theme.card.borderColor};
+  background-color: ${({ theme: { card } }) => card.backgroundColor};
+  border-radius: ${({ theme: { card } }) => card.borderRadius};
+  border: ${({ theme: { card } }) => card.borderColor};
   padding: 20px 20px;
 `
 
