@@ -17,9 +17,8 @@ const GraphWrapper = styled.div`
 `
 
 const Total = styled.h3`
-  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0;
   padding: 0;
 `

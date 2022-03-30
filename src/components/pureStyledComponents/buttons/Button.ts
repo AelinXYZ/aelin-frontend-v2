@@ -52,7 +52,11 @@ export const ButtonPrimaryCSS = css`
 `
 
 export const ButtonGradientCSS = css`
-  background: linear-gradient(93.12deg, #0064a0 14.06%, #3cbff0 81.77%);
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.colors.gradientStart} 9.37%,
+    ${({ theme }) => theme.colors.gradientEnd} 100%
+  );
   border: none;
   color: ${({ theme }) => theme.colors.textColor};
   font-weight: 500;

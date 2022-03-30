@@ -11,7 +11,7 @@ import { TopMenu as BaseTopMenu } from '@/src/components/navigation/TopMenu'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
-import { chainsConfig, getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
+import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
@@ -104,7 +104,7 @@ const DropdownButton = styled.div`
 `
 
 const NetworkError = styled.p`
-  color: red;
+  color: ${({ theme }) => theme.colors.error};
 `
 
 export const Header: React.FC = (props) => {
@@ -113,15 +113,12 @@ export const Header: React.FC = (props) => {
     appChainId,
     connectWallet,
     disconnectWallet,
-    isAppConnected,
     isWalletConnected,
     isWalletNetworkSupported,
     pushNetwork,
-    setAppChainId,
     walletChainId,
   } = useWeb3Connection()
 
-  const chainOptions = Object.values(chainsConfig)
   const currentChain = getNetworkConfig(appChainId)
 
   return (

@@ -15,6 +15,8 @@ const green = '#A2FF00'
 const yellow = '#F1C40F'
 const blue = '#469FFF'
 const gray = '#282E3B'
+const gradientStart = '#5452C3'
+const gradientEnd = '#01A0D3'
 
 export const theme = {
   buttonPrimary: {
@@ -34,6 +36,8 @@ export const theme = {
     borderColor: componentBorderColor,
     componentBackgroundColor: componentBackgroundColor,
     error: error,
+    gradientEnd: gradientEnd,
+    gradientStart: gradientStart,
     gray: gray,
     mainBodyBackground: mainBodyBackground,
     primary: primary,

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
@@ -52,7 +52,7 @@ const Description = styled.p`
   }
 `
 
-const Button = styled(ButtonPrimary)`
+const Button = styled(GradientButton)`
   margin: 0 auto;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
