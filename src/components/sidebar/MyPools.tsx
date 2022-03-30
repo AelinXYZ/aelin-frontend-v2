@@ -27,6 +27,26 @@ const MyPools: React.FC = ({ ...restProps }) => {
   const [activeFilter, setActiveFilter] = useState<'invested' | 'sponsored' | 'funded' | undefined>(
     'invested',
   )
+  const pools = [
+    {
+      color: 'green',
+      name: 'Kwenta DAO',
+      href: 'pool/kovan/0xd357ef5070637a862268f9601ab8d60c7c5c0241',
+      notifications: 0,
+    },
+    {
+      color: 'yellow',
+      name: 'Nukevaults.com',
+      href: 'pool/kovan/0xd357ef5070637a862268f9601ab8d60c7c5c0241',
+      notifications: 2,
+    },
+    {
+      color: 'blue',
+      name: 'Sheldon.1',
+      href: 'pool/kovan/0xd357ef5070637a862268f9601ab8d60c7c5c0241',
+      notifications: 0,
+    },
+  ]
 
   return (
     <CollapsibleBlock title={'My pools'} {...restProps}>
@@ -56,11 +76,11 @@ const MyPools: React.FC = ({ ...restProps }) => {
           Funded (0)
         </TabButton>
       </Filters>
-      <Pool color={'green'}>Kwenta DAO</Pool>
-      <Pool color={'yellow'} notifications={1}>
-        Nukevaults.com
-      </Pool>
-      <Pool color={'blue'}>Sheldon.1</Pool>
+      {pools.map(({ color, href, name, notifications }, index) => (
+        <Pool color={color} href={href} key={index} notifications={notifications}>
+          {name}
+        </Pool>
+      ))}
       <ButtonContainer>
         <MoreButton>See more</MoreButton>
       </ButtonContainer>

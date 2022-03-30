@@ -14,6 +14,7 @@ const mainBodyBackground = '#101826'
 const green = '#A2FF00'
 const yellow = '#F1C40F'
 const blue = '#469FFF'
+const gray = '#282E3B'
 
 export const theme = {
   buttonPrimary: {
@@ -33,6 +34,7 @@ export const theme = {
     borderColor: componentBorderColor,
     componentBackgroundColor: componentBackgroundColor,
     error: error,
+    gray: gray,
     mainBodyBackground: mainBodyBackground,
     primary: primary,
     secondary: secondary,
