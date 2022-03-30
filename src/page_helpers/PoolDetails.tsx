@@ -72,9 +72,7 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
             <div>Amount in Pool: {pool.amountInPool.formatted}</div>
           </PoolInfo>
 
-          {isFunding(currentState) && (
-            <FundingActions chainId={chainId} pool={pool} poolHelpers={currentState} />
-          )}
+          {isFunding(currentState) && <FundingActions pool={pool} poolHelpers={currentState} />}
         </Wrapper>
       </BaseCard>
     </RightTimelineLayout>
