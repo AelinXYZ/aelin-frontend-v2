@@ -5,7 +5,7 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: ${({ theme: { card } }) => card.backgroundColor};
   background-image: url('resources/svg/background-1.svg');
   background-position: 50% 20px;
   background-repeat: no-repeat;
