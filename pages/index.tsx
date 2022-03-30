@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -10,7 +11,6 @@ import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import {
   Cell,
   Row,
-  TH,
   Table,
   TableHead,
   TableWrapper,
@@ -18,6 +18,7 @@ import {
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { NameCell } from '@/src/components/table/NameCell'
+import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { shortenAddr } from '@/src/web3/utils'
@@ -38,7 +39,46 @@ const Home: NextPage = () => {
       investmentToken: 'center',
       network: 'center',
     },
-    widths: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+    widths: '120px 120px 90px 1fr 1fr 165px 80px',
+  }
+
+  const tableHeaderCells = [
+    {
+      title: 'Name',
+      sortKey: 'name',
+    },
+    {
+      title: 'Sponsor',
+      sortKey: 'sponsor',
+    },
+    {
+      title: 'Network',
+      justifyContent: columns.alignment.network,
+      sortKey: 'network',
+    },
+    {
+      title: 'Amount in Pool',
+      sortKey: 'amountInPool',
+    },
+    {
+      title: 'Investment deadline',
+      sortKey: 'invesmentDeadline',
+    },
+    {
+      title: 'Investment token',
+      justifyContent: columns.alignment.investmentToken,
+      sortKey: 'investmentToken',
+    },
+    {
+      title: 'Stage',
+      sortKey: 'stage',
+    },
+  ]
+
+  const [sortBy, setSortBy] = useState('')
+
+  const handleSort = (sortBy: string) => {
+    setSortBy(sortBy)
   }
 
   return (
@@ -64,13 +104,16 @@ const Home: NextPage = () => {
             next={nextPage}
           >
             <TableHead columns={columns.widths}>
-              <TH>Name</TH>
-              <TH>Sponsor</TH>
-              <TH justifyContent={columns.alignment.network}>Network</TH>
-              <TH>Amount in Pool</TH>
-              <TH>Investment deadline</TH>
-              <TH justifyContent={columns.alignment.investmentToken}>Investment token</TH>
-              <TH>Stage</TH>
+              {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
+                <SortableTH
+                  isActive={sortBy === sortKey}
+                  justifyContent={justifyContent}
+                  key={index}
+                  onClick={() => handleSort(sortKey)}
+                >
+                  {title}
+                </SortableTH>
+              ))}
             </TableHead>
             {data.map((pool) => {
               const {

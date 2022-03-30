@@ -67,6 +67,7 @@ export const Cell = styled.span<{ justifyContent?: string }>`
   justify-content: ${({ justifyContent }) => justifyContent};
   line-height: 1.2;
   margin-top: 3px;
+  min-width: 0;
   white-space: nowrap;
 `
 
@@ -76,6 +77,7 @@ Cell.defaultProps = {
 
 export const TH = styled(Cell)`
   color: ${({ theme }) => theme.colors.textColor};
+  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 1.2;
