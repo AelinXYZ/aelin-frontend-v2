@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 
+import ms from 'ms'
+
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { getAelinPoolCurrentStatus } from '@/src/utils/getAelinPoolCurrentStatus'
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch } = useAelinPool(chainId, poolAddress, {
-    refreshInterval: 1000 * 10,
+    refreshInterval: ms('10s'),
   })
   const [currentState, setCurrentState] = useState(getAelinPoolCurrentStatus(poolResponse))
 
