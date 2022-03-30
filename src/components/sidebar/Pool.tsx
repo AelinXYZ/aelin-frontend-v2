@@ -3,6 +3,8 @@ import { lighten } from 'polished'
 import React from 'react'
 import styled from 'styled-components'
 
+import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
+
 const Wrapper = styled.a`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.gray};
@@ -11,9 +13,11 @@ const Wrapper = styled.a`
   display: flex;
   font-size: 1.4rem;
   font-weight: 500;
+  gap: 14px;
   height: 36px;
   margin-bottom: 10px;
   overflow: hidden;
+  padding: 0 20px;
   text-decoration: none;
   text-overflow: ellipsis;
   transition: background-color 0.1s linear;
@@ -34,7 +38,6 @@ const State = styled.span`
   border-radius: 5px;
   display: block;
   height: var(--dimensions);
-  margin: 0 8px 0 14px;
   width: var(--dimensions);
 
   ${({ color, theme }) => color && `background-color: ${theme.states[color]};`}
@@ -50,8 +53,9 @@ const Pool: React.FC<Props> = ({ children, color, href, notifications, ...restPr
   return (
     <Link href={href} passHref>
       <Wrapper {...restProps}>
-        <State color={color} /> {children}
-        {/* <Badge> {notifications} </Badge> */}
+        <State color={color} />
+        {children}
+        {notifications && <Badge>{notifications}</Badge>}
       </Wrapper>
     </Link>
   )
