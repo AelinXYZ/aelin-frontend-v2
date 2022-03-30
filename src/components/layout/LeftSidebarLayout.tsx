@@ -29,6 +29,7 @@ const SidebarWrapper = styled(BaseCard)`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: ${(props) => props.theme.card.backgroundColor};
+    border-radius: 12px;
     border: ${(props) => props.theme.card.borderColor};
   }
 `

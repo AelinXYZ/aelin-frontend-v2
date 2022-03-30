@@ -55,6 +55,7 @@ export const ButtonGradientCSS = css`
   background: linear-gradient(93.12deg, #0064a0 14.06%, #3cbff0 81.77%);
   border: none;
   color: ${({ theme }) => theme.colors.textColor};
+  font-weight: 500;
 
   &:hover {
     /* ? */
@@ -100,8 +101,8 @@ export const TabButton = styled(ButtonPrimary)<{ isActive?: boolean }>`
   ${({ isActive, theme }) =>
     isActive &&
     `
-      background-color: ${theme.buttonPrimary.backgroundColorHover};
-      border-color: ${theme.buttonPrimary.borderColorHover};
+      background-color: ${theme.buttonPrimary.backgroundColor};
+      border-color: ${theme.buttonPrimary.borderColor};
       color: ${theme.buttonPrimary.colorHover};
   `}
 `

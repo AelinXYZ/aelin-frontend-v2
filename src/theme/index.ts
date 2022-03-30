@@ -1,7 +1,7 @@
 import { rgba } from 'polished'
 
-const componentBackgroundColor = 'rgba(255, 255, 255, 0.04)'
-const componentBorderColor = 'rgba(255, 255, 255, 0.25)'
+const componentBackgroundColor = '#1A212F'
+const componentBorderColor = '#555C65'
 const componentBorder = `0.5px solid ${componentBorderColor}`
 const componentBorderRadius = '8px'
 const error = '#db3a3d'
