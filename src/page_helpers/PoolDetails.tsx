@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
 import isAfter from 'date-fns/isAfter'
-import isEmpty from 'lodash/isEmpty'
 
 import CountDown from '@/src/components/countdown'
 import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
@@ -9,9 +8,10 @@ import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
-import useAelinPoolMachine from '@/src/hooks/aelin/useAelinPoolMachine'
-import ApproveDeposit from '@/src/page_helpers/ApproveDeposit'
+import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
+import FundingActions from '@/src/page_helpers/FundingActions'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+import { isFunding } from '@/src/utils/getAelinPoolCurrentStatus'
 
 const Wrapper = styled.div`
   display: flex;
@@ -28,13 +28,9 @@ type Props = {
 }
 
 export default function PoolDetails({ chainId, poolAddress }: Props) {
-  const {
-    state: {
-      context: { isMaxCapReached, pool },
-    },
-  } = useAelinPoolMachine(chainId, poolAddress as string)
+  const { currentState, pool } = useAelinPoolStatus(chainId, poolAddress as string)
 
-  if (isEmpty(pool)) {
+  if (!currentState) {
     return null
   }
 
@@ -75,14 +71,9 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
             <div>Withdrawn: {pool.withdrawn.formatted}</div>
             <div>Amount in Pool: {pool.amountInPool.formatted}</div>
           </PoolInfo>
-          {isMaxCapReached ? (
-            'Max cap reached'
-          ) : (
-            <ApproveDeposit
-              chainId={chainId}
-              investmentToken={pool.investmentToken}
-              investmentTokenDecimals={pool.investmentTokenDecimals}
-            />
+
+          {isFunding(currentState) && (
+            <FundingActions chainId={chainId} pool={pool} poolHelpers={currentState} />
           )}
         </Wrapper>
       </BaseCard>
