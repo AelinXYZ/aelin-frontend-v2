@@ -28,7 +28,7 @@ function FundingActions({ pool, poolHelpers }: Props) {
   }
 
   if (allowance.gt(ZERO_ADDRESS)) {
-    return <DepositPool pool={pool} />
+    return <DepositPool pool={pool} poolHelpers={poolHelpers} />
   }
 
   return <ApprovePool pool={pool} refetchAllowance={refetch} />

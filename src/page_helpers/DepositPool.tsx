@@ -4,19 +4,19 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { TokenInput } from '@/src/components/TokenInput'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
-import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { FundingState } from '@/src/utils/getAelinPoolCurrentStatus'
 import { formatToken } from '@/src/web3/bigNumber'
 
 type Props = {
   pool: ParsedAelinPool
+  poolHelpers: FundingState
 }
-export default function DepositPool({ pool }: Props) {
+export default function DepositPool({ pool, poolHelpers }: Props) {
   const { chainId, investmentToken, investmentTokenDecimals } = pool
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
@@ -44,17 +44,36 @@ export default function DepositPool({ pool }: Props) {
     setInputError('')
   }
 
+  if (poolHelpers.meta.capReached) {
+    return <div>Max cap has been reached</div>
+  }
+
+  const balances = [
+    // user balance
+    {
+      raw: balance || ZERO_BN,
+      formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals),
+    },
+    // max allowed to deposit in the pool
+    poolHelpers.meta.maxDepositAllowed,
+    // todo: private list
+    //{ raw: balance, formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals) },
+  ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+
   return (
     <>
       <TokenInput
-        balance={balance?.toString() || '0'}
-        balanceFormatted={formatToken(balance || ZERO_BN, investmentTokenDecimals) as string}
         decimals={investmentTokenDecimals}
         error={Boolean(inputError)}
+        maxValue={balances[0].raw.toString()}
+        maxValueFormatted={balances[0].formatted || '0'}
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
-      <ButtonPrimary disabled={!address || !isAppConnected} onClick={approveInvestmentToken}>
+      <ButtonPrimary
+        disabled={!address || !isAppConnected || poolHelpers.meta.capReached}
+        onClick={approveInvestmentToken}
+      >
         Deposit
       </ButtonPrimary>
     </>
