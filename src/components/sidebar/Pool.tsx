@@ -55,7 +55,7 @@ const Pool: React.FC<Props> = ({ children, color, href, notifications, ...restPr
       <Wrapper {...restProps}>
         <State color={color} />
         {children}
-        {notifications && <Badge>{notifications}</Badge>}
+        {notifications !== 0 && <Badge>{notifications}</Badge>}
       </Wrapper>
     </Link>
   )
