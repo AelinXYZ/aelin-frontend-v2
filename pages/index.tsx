@@ -31,15 +31,21 @@ const Filters = styled.div`
   --gap: 20px;
 
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: var(--gap);
   margin-bottom: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: 1fr 1fr;
+  }
 `
 
 const FiltersDropdowns = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
   gap: var(--gap);
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 `
 
 const Home: NextPage = () => {

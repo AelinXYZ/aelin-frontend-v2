@@ -26,6 +26,7 @@ const SidebarWrapper = styled(BaseCard)`
   display: flex;
   flex-direction: column;
   height: fit-content;
+  margin-bottom: 20px;
   min-height: calc(100vh - 120px);
   padding: 0;
 
@@ -33,6 +34,7 @@ const SidebarWrapper = styled(BaseCard)`
     background-color: ${(props) => props.theme.card.backgroundColor};
     border-radius: 12px;
     border: ${(props) => props.theme.card.borderColor};
+    margin-bottom: 0;
   }
 `
 

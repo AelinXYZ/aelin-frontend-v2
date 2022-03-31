@@ -6,9 +6,16 @@ import { ArrowUp } from '@/src/components/assets/ArrowUp'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)`
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: transparent;
     border: none;
+    margin-bottom: 0;
   }
 `
 
