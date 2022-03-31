@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import styled from 'styled-components'
 
 import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -15,6 +16,7 @@ import {
   TableHead,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
+import { Search } from '@/src/components/pureStyledComponents/form/Search'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { NameCell } from '@/src/components/table/NameCell'
@@ -22,6 +24,15 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { shortenAddr } from '@/src/web3/utils'
+
+const Filters = styled.div`
+  --gap: 20px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+  margin-bottom: 20px;
+`
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -81,8 +92,6 @@ const Home: NextPage = () => {
     setSortBy(sortBy)
   }
 
-  console.log(data)
-
   return (
     <LeftSidebarLayout>
       <SectionIntro
@@ -91,6 +100,9 @@ const Home: NextPage = () => {
         description="Aelin is a fully decentralized and community-based fundraising protocol. Invest in a pool to access deals brought by sponsors. Aelin does not endorse any pools, follow an investor's best practices in our docs, and do your own research."
         title="Pools"
       />
+      <Filters>
+        <Search placeholder="Pool name, sponsor, currency..." />
+      </Filters>
       <TableWrapper>
         <Table>
           <InfiniteScroll

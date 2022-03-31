@@ -4,12 +4,12 @@ const componentBackgroundColor = '#1A212F'
 const componentBorderColor = '#555C65'
 const componentBorder = `0.5px solid ${componentBorderColor}`
 const componentBorderRadius = '8px'
+const lightGray = '#BABCC1'
 const error = '#db3a3d'
 const primary = '#8280FF'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
 const textColor = '#fff'
-const textColorLight = '#BABCC1'
 const mainBodyBackground = '#101826'
 const green = '#A2FF00'
 const yellow = '#F1C40F'
@@ -44,12 +44,7 @@ export const theme = {
     secondary: secondary,
     tertiary: tertiary,
     textColor: textColor,
-    textColorLight: textColorLight,
-  },
-  states: {
-    green: green,
-    yellow: yellow,
-    blue: blue,
+    textColorLight: lightGray,
   },
   dropdown: {
     background: mainBodyBackground,
@@ -82,6 +77,32 @@ export const theme = {
     paddingDesktopStart: '20px',
     paddingDesktopWideStart: '20px 40px',
     paddingMobile: '0 10px 10px 10px',
+  },
+  states: {
+    green: green,
+    yellow: yellow,
+    blue: blue,
+  },
+  textField: {
+    backgroundColor: componentBackgroundColor,
+    borderColor: lightGray,
+    borderRadius: '25px',
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    color: textColor,
+    errorColor: error,
+    fontSize: '1.4rem',
+    fontWeight: '400',
+    height: '36px',
+    paddingHorizontal: '15px',
+    active: {
+      color: textColor,
+      backgroundColor: componentBackgroundColor,
+      borderColor: lightGray,
+    },
+    placeholder: {
+      color: 'rgba(255, 255, 255, 0.5)',
+    },
   },
   themeBreakPoints: {
     desktopWideStart: '1281px',
