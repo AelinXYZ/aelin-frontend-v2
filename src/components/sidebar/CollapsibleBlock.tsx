@@ -39,15 +39,21 @@ const Button = styled.button`
   background: rgba(255, 255, 255, 0.06);
   border-radius: 50%;
   border: none;
+  cursor: pointer;
   display: flex;
   height: var(--dimensions);
   justify-content: center;
   margin: 0;
   padding: 0;
+  transition: 0.1s linear all;
   width: var(--dimensions);
 
   & svg {
     margin: 0 0 0 -2px;
+  }
+
+  &:active {
+    opacity: 0.7;
   }
 `
 
