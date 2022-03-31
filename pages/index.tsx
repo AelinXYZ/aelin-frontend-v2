@@ -102,7 +102,6 @@ const Home: NextPage = () => {
               </Row>
             }
             next={nextPage}
-            scrollableTarget="__next"
           >
             <TableHead columns={columns.widths}>
               {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (

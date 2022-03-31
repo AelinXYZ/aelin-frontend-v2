@@ -23,7 +23,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     line-height: 1.2;
     min-height: 100vh;
     outline-color: ${({ theme }) => theme.colors.secondary};
-    overflow: hidden;
     width: 100%;
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
@@ -38,8 +37,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   #__next {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow: auto;
     padding: ${({ theme }) => theme.layout.paddingMobile};
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
