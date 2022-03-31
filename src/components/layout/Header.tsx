@@ -21,8 +21,6 @@ const Wrapper = styled.header`
   flex-grow: 0;
   height: ${({ theme }) => theme.header.height};
   margin: 0 0 15px;
-  /* position: sticky;
-  top: 20px; */
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     margin-bottom: 20px;

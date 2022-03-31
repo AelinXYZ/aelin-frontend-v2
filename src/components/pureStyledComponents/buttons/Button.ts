@@ -60,37 +60,9 @@ export const ButtonGradientCSS = css`
   border: none;
   color: ${({ theme }) => theme.colors.textColor};
   font-weight: 500;
-
-  &:hover {
-    /* ? */
-  }
-
-  &[disabled],
-  &[disabled]:hover {
-    /* ? */
-  }
 `
 
-const BaseButton = styled.button`
-  ${ButtonCSS}
-`
-
-export const Button = styled(BaseButton)`
-  &[disabled],
-  &[disabled]:hover {
-    ${DisabledButtonCSS}
-  }
-`
-
-export const ButtonPrimary = styled(BaseButton)`
-  ${ButtonPrimaryCSS}
-`
-
-export const GradientButton = styled(BaseButton)`
-  ${ButtonGradientCSS}
-`
-
-export const TabButton = styled(ButtonPrimary)<{ isActive?: boolean }>`
+export const TabButtonCSS = css<{ isActive?: boolean }>`
   background-color: transparent;
   border-color: #babcc1;
   color: #babcc1;
@@ -109,4 +81,71 @@ export const TabButton = styled(ButtonPrimary)<{ isActive?: boolean }>`
       border-color: ${theme.buttonPrimary.borderColor};
       color: ${theme.buttonPrimary.colorHover};
   `}
+`
+
+export const ButtonDropdownIsOpenCSS = css`
+  background-color: ${({ theme }) => theme.buttonDropdown.backgroundColorHover};
+  border-color: ${({ theme }) => theme.buttonDropdown.borderColorHover};
+  color: ${({ theme }) => theme.buttonDropdown.colorHover};
+`
+
+export const ButtonDropdownCSS = css<{ isOpen?: boolean }>`
+  background-color: ${({ theme }) => theme.buttonDropdown.backgroundColor};
+  border-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+  color: ${({ theme }) => theme.buttonDropdown.color};
+  position: relative;
+  width: 100%;
+
+  &::after {
+    --dimensions: 8px;
+
+    content: '';
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00IDZMLjUzNiAwaDYuOTI4TDQgNnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=');
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    gap: 10px;
+    height: var(--dimensions);
+    width: var(--dimensions);
+  }
+
+  &:hover,
+  &:active {
+    ${ButtonDropdownIsOpenCSS}
+  }
+
+  ${({ isOpen }) => isOpen && ButtonDropdownIsOpenCSS}
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+    border-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+    color: ${({ theme }) => theme.buttonDropdown.color};
+  }
+`
+
+const BaseButton = styled.button`
+  ${ButtonCSS}
+`
+
+export const Button = styled(BaseButton)`
+  &[disabled],
+  &[disabled]:hover {
+    ${DisabledButtonCSS}
+  }
+`
+
+export const ButtonPrimary = styled(Button)`
+  ${ButtonPrimaryCSS}
+`
+
+export const GradientButton = styled(Button)`
+  ${ButtonGradientCSS}
+`
+
+export const TabButton = styled(ButtonPrimary)<{ isActive?: boolean }>`
+  ${TabButtonCSS}
+`
+
+export const ButtonDropdown = styled(Button)`
+  ${ButtonDropdownCSS}
 `

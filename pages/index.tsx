@@ -8,7 +8,9 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
 import { SectionIntro } from '@/src/components/common/SectionIntro'
+import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
+import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   Cell,
   Row,
@@ -32,6 +34,12 @@ const Filters = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: var(--gap);
   margin-bottom: 20px;
+`
+
+const FiltersDropdowns = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--gap);
 `
 
 const Home: NextPage = () => {
@@ -92,6 +100,15 @@ const Home: NextPage = () => {
     setSortBy(sortBy)
   }
 
+  const [poolFilter, setPoolFilter] = useState('')
+  const [networkFilter, setNetworkFilter] = useState('')
+  const [stateFilter, setStateFilter] = useState('')
+  const mockedPools = ['All pools', 'pool 1', 'pool 2', 'pool 3']
+  const mockedNetworks = ['All networks', 'Ethereum', 'Optimism', 'Avalanche']
+  const mockedStates = ['All pools', 'Open', 'Awaiting deal', 'Deal ready', 'Vesting']
+
+  const getCurrentItem = (index: number) => (index < 0 ? 0 : index)
+
   return (
     <LeftSidebarLayout>
       <SectionIntro
@@ -102,6 +119,42 @@ const Home: NextPage = () => {
       />
       <Filters>
         <Search placeholder="Pool name, sponsor, currency..." />
+        <FiltersDropdowns>
+          <Dropdown
+            currentItem={getCurrentItem(mockedPools.indexOf(poolFilter))}
+            dropdownButtonContent={
+              <ButtonDropdown>{poolFilter ? poolFilter : mockedPools[0]}</ButtonDropdown>
+            }
+            items={mockedPools.map((item, key) => (
+              <DropdownItem key={key} onClick={() => setPoolFilter(item)}>
+                {item}
+              </DropdownItem>
+            ))}
+          />
+          <Dropdown
+            currentItem={getCurrentItem(mockedNetworks.indexOf(networkFilter))}
+            dropdownButtonContent={
+              <ButtonDropdown>{networkFilter ? networkFilter : mockedNetworks[0]}</ButtonDropdown>
+            }
+            items={mockedNetworks.map((item, key) => (
+              <DropdownItem key={key} onClick={() => setNetworkFilter(item)}>
+                {item}
+              </DropdownItem>
+            ))}
+          />
+          <Dropdown
+            currentItem={getCurrentItem(mockedStates.indexOf(stateFilter))}
+            dropdownButtonContent={
+              <ButtonDropdown>{stateFilter ? stateFilter : mockedStates[0]}</ButtonDropdown>
+            }
+            dropdownPosition={DropdownPosition.right}
+            items={mockedStates.map((item, key) => (
+              <DropdownItem key={key} onClick={() => setStateFilter(item)}>
+                {item}
+              </DropdownItem>
+            ))}
+          />
+        </FiltersDropdowns>
       </Filters>
       <TableWrapper>
         <Table>

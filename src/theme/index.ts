@@ -1,4 +1,4 @@
-import { rgba } from 'polished'
+import { lighten, rgba } from 'polished'
 
 const componentBackgroundColor = '#1A212F'
 const componentBorderColor = '#555C65'
@@ -26,6 +26,14 @@ export const theme = {
     borderColorHover: primary,
     color: primary,
     colorHover: primary,
+  },
+  buttonDropdown: {
+    backgroundColor: componentBackgroundColor,
+    backgroundColorHover: lighten(0.1, componentBackgroundColor),
+    borderColor: lightGray,
+    borderColorHover: lightGray,
+    color: textColor,
+    colorHover: textColor,
   },
   card: {
     backgroundColor: componentBackgroundColor,
