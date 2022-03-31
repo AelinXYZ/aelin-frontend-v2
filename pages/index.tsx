@@ -81,6 +81,8 @@ const Home: NextPage = () => {
     setSortBy(sortBy)
   }
 
+  console.log(data)
+
   return (
     <LeftSidebarLayout>
       <SectionIntro
@@ -93,15 +95,14 @@ const Home: NextPage = () => {
         <Table>
           <InfiniteScroll
             dataLength={data.length}
-            endMessage={
-              <p style={{ textAlign: 'center' }}>
-                <b>Yay! You have seen it all</b>
-              </p>
-            }
             hasMore={hasMore}
-            height={500}
-            loader={<h4>Loading...</h4>}
+            loader={
+              <Row columns={'1fr'}>
+                <Cell justifyContent="center">Loading...</Cell>
+              </Row>
+            }
             next={nextPage}
+            scrollableTarget="__next"
           >
             <TableHead columns={columns.widths}>
               {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (

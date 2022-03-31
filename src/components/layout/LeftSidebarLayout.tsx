@@ -25,6 +25,8 @@ const SidebarWrapper = styled(BaseCard)`
   border: none;
   display: flex;
   flex-direction: column;
+  height: fit-content;
+  min-height: calc(100vh - 120px);
   padding: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
