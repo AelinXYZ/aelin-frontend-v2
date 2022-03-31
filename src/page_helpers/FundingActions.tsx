@@ -1,24 +1,37 @@
-import { ChainsValues } from '@/src/constants/chains'
+import { genericSuspense } from '@/src/components/safeSuspense'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import ApproveDeposit from '@/src/page_helpers/ApproveDeposit'
+import useERC20Call from '@/src/hooks/contracts/useERC20Call'
+import ApprovePool from '@/src/page_helpers/ApprovePool'
+import DepositPool from '@/src/page_helpers/DepositPool'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { FundingState } from '@/src/utils/getAelinPoolCurrentStatus'
 
 type Props = {
-  chainId: ChainsValues
   pool: ParsedAelinPool
   poolHelpers: FundingState
 }
 
-export default function FundingActions({ chainId, pool, poolHelpers }: Props) {
+function FundingActions({ pool, poolHelpers }: Props) {
+  const { address } = useWeb3Connection()
+  const [allowance, refetch] = useERC20Call(pool.chainId, pool.investmentToken, 'allowance', [
+    address || ZERO_ADDRESS,
+    pool.address,
+  ])
+
+  if (!allowance) {
+    return <div>There was an error, try again!</div>
+  }
+
   if (poolHelpers.meta.capReached) {
     return <div>Max cap reached</div>
   }
 
-  return (
-    <ApproveDeposit
-      chainId={chainId}
-      investmentToken={pool.investmentToken}
-      investmentTokenDecimals={pool.investmentTokenDecimals}
-    />
-  )
+  if (allowance.gt(ZERO_ADDRESS)) {
+    return <DepositPool pool={pool} poolHelpers={poolHelpers} />
+  }
+
+  return <ApprovePool pool={pool} refetchAllowance={refetch} />
 }
+
+export default genericSuspense(FundingActions)
