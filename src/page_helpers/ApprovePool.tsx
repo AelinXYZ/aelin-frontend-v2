@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -11,17 +13,27 @@ type Props = {
 export default function ApprovePool({ pool, refetchAllowance }: Props) {
   const { address: poolAddress, investmentToken } = pool
   const { address, isAppConnected } = useWeb3Connection()
+  const [isLoading, setIsLoading] = useState(false)
 
   const approve = useERC20Transaction(investmentToken, 'approve')
 
   const approveInvestmentToken = async () => {
-    await approve(poolAddress, MAX_BN)
-    refetchAllowance()
+    setIsLoading(true)
+    try {
+      await approve(poolAddress, MAX_BN)
+      refetchAllowance()
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false)
+    }
   }
 
   return (
     <>
-      <ButtonPrimary disabled={!address || !isAppConnected} onClick={approveInvestmentToken}>
+      <ButtonPrimary
+        disabled={!address || !isAppConnected || isLoading}
+        onClick={approveInvestmentToken}
+      >
         Approve
       </ButtonPrimary>
     </>

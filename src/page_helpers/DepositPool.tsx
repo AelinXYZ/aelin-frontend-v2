@@ -20,6 +20,7 @@ export default function DepositPool({ pool, poolHelpers }: Props) {
   const { chainId, investmentToken, investmentTokenDecimals } = pool
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
   const [balance, refetchBalance] = useERC20Call(chainId, investmentToken as string, 'balanceOf', [
     address || ZERO_ADDRESS,
@@ -34,14 +35,22 @@ export default function DepositPool({ pool, poolHelpers }: Props) {
     }
   }, [tokenInputValue])
 
-  const approveInvestmentToken = async () => {
+  const depositTokens = async () => {
     if (inputError) {
       return
     }
-    await purchasePoolTokens(tokenInputValue)
-    refetchBalance()
-    setTokenInputValue('')
-    setInputError('')
+
+    setIsLoading(true)
+
+    try {
+      await purchasePoolTokens(tokenInputValue)
+      refetchBalance()
+      setTokenInputValue('')
+      setInputError('')
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false)
+    }
   }
 
   if (poolHelpers.meta.capReached) {
@@ -71,8 +80,15 @@ export default function DepositPool({ pool, poolHelpers }: Props) {
         value={tokenInputValue}
       />
       <ButtonPrimary
-        disabled={!address || !isAppConnected || poolHelpers.meta.capReached}
-        onClick={approveInvestmentToken}
+        disabled={
+          !address ||
+          !isAppConnected ||
+          poolHelpers.meta.capReached ||
+          isLoading ||
+          !tokenInputValue ||
+          Boolean(inputError)
+        }
+        onClick={depositTokens}
       >
         Deposit
       </ButtonPrimary>
