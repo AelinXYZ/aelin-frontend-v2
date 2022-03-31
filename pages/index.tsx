@@ -1,95 +1,18 @@
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import styled from 'styled-components'
 
-import InfiniteScroll from 'react-infinite-scroll-component'
-
-import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
-import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { Button } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
-import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
-import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-
-const PoolRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`
+import PoolsListWithFilters from '@/src/page_helpers/PoolsListWithFilters'
 
 const Home: NextPage = () => {
-  const router = useRouter()
-  const { data, error, hasMore, nextPage } = useAelinPools({
-    orderBy: PoolCreated_OrderBy.Timestamp,
-    orderDirection: OrderDirection.Desc,
-  })
-
-  if (error) {
-    throw error
-  }
-
   return (
     <LeftSidebarLayout>
       <Button as="a" href="/pool/create">
-        Create Pool
+        <a>Create Pool</a>
       </Button>
-      <InfiniteScroll
-        dataLength={data.length}
-        endMessage={
-          <p style={{ textAlign: 'center' }}>
-            <b>Yay! You have seen it all</b>
-          </p>
-        }
-        hasMore={hasMore}
-        height={500}
-        loader={<h4>Loading...</h4>}
-        next={nextPage}
-      >
-        {!data
-          ? 'Loading...'
-          : data.map((pool) => {
-              const {
-                amountInPool,
-                id,
-                investmentDeadline,
-                investmentToken,
-                name,
-                network,
-                sponsor,
-                stage,
-              } = pool
-              return (
-                <PoolRow
-                  key={id}
-                  onClick={() => router.push(`/pool/${getKeyChainByValue(network)}/${id}`)}
-                >
-                  {/*Pool name */}
-                  <span>{name}</span>
-
-                  {/* Sponsor name */}
-                  <ENSOrAddress address={sponsor} />
-
-                  {/* Network Logo */}
-                  <span title={getNetworkConfig(network).name}>
-                    {getNetworkConfig(network).icon}
-                  </span>
-
-                  {/* Amount in pool */}
-                  <span>${amountInPool.formatted}</span>
-
-                  {/* Investment deadLine */}
-                  <span>{investmentDeadline}</span>
-
-                  {/* Investment token */}
-                  <span>{investmentToken}</span>
-
-                  {/* poolStage */}
-                  <span>{stage}</span>
-                </PoolRow>
-              )
-            })}
-      </InfiniteScroll>
+      <br />
+      <PoolsListWithFilters />
     </LeftSidebarLayout>
   )
 }
