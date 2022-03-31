@@ -17,7 +17,8 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
     background-image: ${({ backgroundImage }) =>
       backgroundImage ? `url(${backgroundImage})` : 'none'};
     background-position: ${({ backgroundImage }) => (backgroundImage ? `100% 100%` : 'initial')};
-    padding: 20px 40px 25px;
+    background-size: auto auto;
+    padding: 20px 320px 25px 40px;
   }
 `
 
