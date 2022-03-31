@@ -1,6 +1,9 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import isBefore from 'date-fns/isBefore'
 
+import { MAX_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { formatToken } from '@/src/web3/bigNumber'
 
 export enum AelinPoolState {
   Funding = 'Funding',
@@ -17,7 +20,12 @@ interface BaseState {
 export interface FundingState extends BaseState {
   state: AelinPoolState
   meta: {
+    isCap: boolean
     capReached: boolean
+    maxDepositAllowed: {
+      raw: BigNumber
+      formatted: string | undefined
+    }
   }
 }
 
@@ -33,10 +41,19 @@ interface WaitingForDealState extends BaseState {
 }
 
 function getFundingState(pool: ParsedAelinPool): FundingState {
+  const isCap = pool.poolCap.raw.eq(0)
+  const capAmount = pool.poolCap.raw
+  const funded = pool.funded.raw
+  const maxDepositAllowed = capAmount.sub(funded)
   return {
     state: AelinPoolState.Funding,
     meta: {
-      capReached: pool.poolCap.raw.eq(0) ? false : pool.poolCap.raw.eq(pool.funded.raw),
+      isCap,
+      capReached: isCap ? false : capAmount.eq(funded),
+      maxDepositAllowed: {
+        raw: isCap ? MAX_BN : maxDepositAllowed,
+        formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
+      },
     },
   }
 }

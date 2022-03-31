@@ -134,8 +134,8 @@ const Input: any = styled.input<{ error: boolean }>`
 `
 
 interface Props {
-  balance: string
-  balanceFormatted: string
+  maxValue: string
+  maxValueFormatted: string
   decimals: number
   disabled?: boolean
   error: boolean
@@ -149,21 +149,21 @@ interface Props {
 }
 
 export const TokenInput = ({
-  balance,
-  balanceFormatted,
   decimals,
   disabled,
   error,
-  // icon,
   hideMax,
   maxDisabled,
+  // icon,
+  maxValue,
+  maxValueFormatted,
   setValue,
   // tokenSymbol,
   value,
   // valueInUSD,
   ...restProps
 }: Props) => {
-  const setMax = () => setValue(balance)
+  const setMax = () => setValue(maxValue)
 
   return (
     <Wrapper error={error} {...restProps}>
@@ -171,7 +171,7 @@ export const TokenInput = ({
         {/* {icon && <TokenIcon size="24px">{icon}</TokenIcon>} */}
         <Balance>
           <BalanceValueWrapper>
-            <BalanceValue>{balanceFormatted}</BalanceValue>
+            <BalanceValue>{maxValueFormatted}</BalanceValue>
             {/* <BalanceSymbol>{tokenSymbol}</BalanceSymbol> */}
           </BalanceValueWrapper>
           {!hideMax && (

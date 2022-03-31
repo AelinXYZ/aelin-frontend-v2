@@ -26,6 +26,8 @@ type DetailedNumber = {
 }
 
 export type ParsedAelinPool = {
+  chainId: ChainsValues
+  address: string
   start: Date
   investmentToken: string
   investmentTokenDecimals: number
@@ -69,6 +71,8 @@ export default function useAelinPool(
 
   const memoizedPool = useMemo(() => {
     return {
+      chainId,
+      address: poolAddress,
       start: getPoolCreatedDate(pool),
       investmentToken: pool.purchaseToken,
       investmentTokenDecimals: purchaseTokenDecimals,
@@ -83,7 +87,7 @@ export default function useAelinPool(
       funded: getAmountFunded({ ...pool, purchaseTokenDecimals }),
       withdrawn: getAmountWithdrawn(poolTotalWithdrawn || ZERO_BN),
     }
-  }, [pool, purchaseTokenDecimals, poolTotalWithdrawn])
+  }, [pool, purchaseTokenDecimals, poolTotalWithdrawn, poolAddress, chainId])
 
   return {
     refetch: mutate,
