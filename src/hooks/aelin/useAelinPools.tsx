@@ -39,7 +39,7 @@ function isSuccessful<T>(response: PromiseSettledResult<T>): response is Promise
 function parsedPool(pool: PoolCreatedWithChainId): ParsedPool {
   return {
     id: pool.id,
-    name: pool.name.replace('aePool-', '').slice(0, 20),
+    name: pool.name.split('aePool-').pop() as string,
     sponsor: pool.sponsor,
     network: pool.chainId,
     amountInPool: getAmountInPool({
@@ -56,33 +56,20 @@ function parsedPool(pool: PoolCreatedWithChainId): ParsedPool {
 export async function fetcherPools(variables: PoolsCreatedQueryVariables, network: ChainsValues) {
   const allSDK = getAllGqlSDK()
 
-  const chainsIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
+  const chainIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
+
+  const networks = network ? [network] : chainIds
 
   // Inject chainId in each pool when promise resolve
-  const queryPromises = () => {
-    if (!network) {
-      return chainsIds.map((chainId: ChainsValues) => {
-        return allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
-          .then((res) => res.poolCreateds.map((pool) => parsedPool({ ...pool, chainId })))
-          .catch((e) => {
-            console.error(`fetch pools on chain ${chainId} was failed`, e)
-            return []
-          })
-      })
-    }
-    if (chainsIds.includes(network)) {
-      return [
-        allSDK[network][POOLS_CREATED_QUERY_NAME](variables)
-          .then((res) => res.poolCreateds.map((pool) => parsedPool({ ...pool, chainId: network })))
-          .catch((e) => {
-            console.error(`fetch pools on chain ${network} was failed`, e)
-            return []
-          }),
-      ]
-    } else {
-      throw Error('Invalid network to request pools')
-    }
-  }
+  const queryPromises = () =>
+    networks.map((chainId: ChainsValues) =>
+      allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
+        .then((res) => res.poolCreateds.map((pool) => parsedPool({ ...pool, chainId })))
+        .catch((e) => {
+          console.error(`fetch pools on chain ${chainId} was failed`, e)
+          return []
+        }),
+    )
 
   // ChainIds promise array.
   // Each item will have an array of pools of a single chain

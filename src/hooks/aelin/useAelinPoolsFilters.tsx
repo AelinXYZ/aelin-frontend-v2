@@ -1,6 +1,6 @@
 import { useReducer, useState } from 'react'
 
-import { cloneDeep } from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 import { OrderDirection, PoolCreated_Filter, PoolCreated_OrderBy } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
@@ -55,6 +55,8 @@ export default function useAelinPoolsFilters() {
   const [state, dispatch] = useReducer(reducer, defaultFilters)
   const [network, setNetwork] = useState<ChainsValues | null>(null)
 
+  const resetFilters = () => dispatch({ type: 'reset', payload: undefined })
+
   const setOrderBy = (value: PoolCreated_OrderBy) =>
     dispatch({ type: 'setOrderBy', payload: value })
 
@@ -79,5 +81,13 @@ export default function useAelinPoolsFilters() {
     dispatch({ type: 'setWhere', payload: where })
   }
 
-  return { setOrderBy, setOrderDirection, setWhere, setNetwork, network, variables: state }
+  return {
+    setOrderBy,
+    setOrderDirection,
+    setWhere,
+    setNetwork,
+    network,
+    variables: state,
+    resetFilters,
+  }
 }
