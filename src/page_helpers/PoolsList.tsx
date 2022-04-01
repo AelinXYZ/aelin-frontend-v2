@@ -13,6 +13,7 @@ import {
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { genericSuspense } from '@/src/components/safeSuspense'
+import { Deadline } from '@/src/components/table/Deadline'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
@@ -138,7 +139,7 @@ const PoolsList = ({ filters }: { filters: FiltersProp }) => {
                   </span>
                 </Cell>
                 <Cell>${amountInPool.formatted}</Cell>
-                <Cell>{investmentDeadline}</Cell>
+                <Deadline progress="33">{investmentDeadline}</Deadline>
                 <Cell justifyContent={columns.alignment.investmentToken}>{investmentToken}</Cell>
                 <Cell>{stage}</Cell>
               </Row>

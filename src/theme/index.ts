@@ -17,6 +17,7 @@ const blue = '#469FFF'
 const gray = '#282E3B'
 const gradientStart = '#5452C3'
 const gradientEnd = '#01A0D3'
+const blueishGray = '#484d58'
 
 export const theme = {
   buttonPrimary: {
@@ -41,6 +42,7 @@ export const theme = {
     borderRadius: componentBorderRadius,
   },
   colors: {
+    blueishGray: blueishGray,
     borderColor: componentBorderColor,
     componentBackgroundColor: componentBackgroundColor,
     error: error,
