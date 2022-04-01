@@ -18,14 +18,14 @@ import { getDuration } from '@/src/utils/date'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
 
 export enum CreatePoolSteps {
-  PoolName = 'PoolName',
-  PoolSymbol = 'PoolSymbol',
-  InvestmentToken = 'InvestmentToken',
-  InvestmentDeadLine = 'InvestmentDeadLine',
-  DealDeadline = 'DealDeadline',
-  PoolCap = 'PoolCap',
-  SponsorFee = 'SponsorFee',
-  PoolPrivacy = 'PoolPrivacy',
+  poolName = 'poolName',
+  poolSymbol = 'poolSymbol',
+  investmentToken = 'investmentToken',
+  investmentDeadLine = 'investmentDeadLine',
+  dealDeadline = 'dealDeadline',
+  poolCap = 'poolCap',
+  sponsorFee = 'sponsorFee',
+  poolPrivacy = 'poolPrivacy',
 }
 
 interface CreatePoolStepInfo {
@@ -37,14 +37,14 @@ interface CreatePoolStepInfo {
 }
 
 export interface CreatePoolState {
-  [CreatePoolSteps.PoolName]: string
-  [CreatePoolSteps.PoolSymbol]: string
-  [CreatePoolSteps.InvestmentToken]: Token | undefined
-  [CreatePoolSteps.InvestmentDeadLine]: Duration | undefined
-  [CreatePoolSteps.DealDeadline]: Duration | undefined
-  [CreatePoolSteps.PoolCap]: number | undefined
-  [CreatePoolSteps.SponsorFee]: number | undefined
-  [CreatePoolSteps.PoolPrivacy]: Privacy | undefined
+  poolName: string
+  poolSymbol: string
+  investmentToken: Token | undefined
+  investmentDeadLine: Duration | undefined
+  dealDeadline: Duration | undefined
+  poolCap: number | undefined
+  sponsorFee: number | undefined
+  poolPrivacy: Privacy | undefined
   currentStep: CreatePoolSteps
   whitelist: {
     address: string
@@ -54,57 +54,57 @@ export interface CreatePoolState {
 }
 
 export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
-  [CreatePoolSteps.PoolName]: {
-    id: CreatePoolSteps.PoolName,
+  [CreatePoolSteps.poolName]: {
+    id: CreatePoolSteps.poolName,
     order: 1,
     title: 'Pool name',
     text: 'The name investors will see for the pool. This can be anything and will be one of the first values investors see.',
     placeholder: 'Choose a pool name...',
   },
-  [CreatePoolSteps.PoolSymbol]: {
-    id: CreatePoolSteps.PoolSymbol,
+  [CreatePoolSteps.poolSymbol]: {
+    id: CreatePoolSteps.poolSymbol,
     order: 2,
     title: 'Pool symbol',
     text: 'Symbol that pool tokens will be named, should be similar to the pool name so investors can associate the two together.',
     placeholder: 'Enter pool symbol...',
   },
-  [CreatePoolSteps.InvestmentToken]: {
-    id: CreatePoolSteps.InvestmentToken,
+  [CreatePoolSteps.investmentToken]: {
+    id: CreatePoolSteps.investmentToken,
     order: 3,
     title: 'Investment token',
     text: 'Copy and paste the address of the tokens investors will contribute to the pool in exchange for deal tokens. This can be any ERC-20 token. Some commonly used tokens, such as USDC, USDT, ETH, are already provided in the dropdown.',
     placeholder: 'USDC, USDT, ETH, etc...',
   },
-  [CreatePoolSteps.InvestmentDeadLine]: {
-    id: CreatePoolSteps.InvestmentDeadLine,
+  [CreatePoolSteps.investmentDeadLine]: {
+    id: CreatePoolSteps.investmentDeadLine,
     order: 4,
     title: 'Investment deadline',
     text: 'Deadline investors will have to contribute investment tokens to the pool. Note - If this is a capped pool, investors will be unable to contribute if the cap is hit.',
     placeholder: 'USDC, USDT, ETH, etc...',
   },
-  [CreatePoolSteps.DealDeadline]: {
-    id: CreatePoolSteps.DealDeadline,
+  [CreatePoolSteps.dealDeadline]: {
+    id: CreatePoolSteps.dealDeadline,
     order: 5,
     title: 'Deal deadline',
     text: 'Deadline sponsor will have to present a deal to the pool. Investors will be able to withdraw investment tokens if a deal is not presented by this time. Note - Deals can be presented after the deal deadline, though investors may have already withdrawn their investment tokens.',
     placeholder: undefined,
   },
-  [CreatePoolSteps.PoolCap]: {
-    id: CreatePoolSteps.PoolCap,
+  [CreatePoolSteps.poolCap]: {
+    id: CreatePoolSteps.poolCap,
     order: 6,
     title: 'Pool cap',
     text: 'Maximum amount of investment tokens that can be contributed to the pool. Aelin protocol recommends to not set a cap so all investors have ample time to join the pool.',
     placeholder: 'Enter pool cap...',
   },
-  [CreatePoolSteps.SponsorFee]: {
-    id: CreatePoolSteps.SponsorFee,
+  [CreatePoolSteps.sponsorFee]: {
+    id: CreatePoolSteps.sponsorFee,
     order: 7,
     title: 'Sponsor fee',
     text: "Fee that you, as the sponsor, will receive when investors accept the deal you've presented. If an investor declines the deal, they will not be charged a sponsor fee.",
     placeholder: 'Enter sponsor fee...',
   },
-  [CreatePoolSteps.PoolPrivacy]: {
-    id: CreatePoolSteps.PoolPrivacy,
+  [CreatePoolSteps.poolPrivacy]: {
+    id: CreatePoolSteps.poolPrivacy,
     order: 8,
     title: 'Pool privacy',
     text: 'If you select Public, anyone will be able to join your pool, if you select Private you will input whitelisted addresses that can join this pool.',
@@ -115,25 +115,25 @@ export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
 export const createPoolConfigArr = Object.values(createPoolConfig)
 
 const defaultErrors = {
-  [CreatePoolSteps.PoolName]: '',
-  [CreatePoolSteps.PoolSymbol]: '',
-  [CreatePoolSteps.InvestmentToken]: '',
-  [CreatePoolSteps.InvestmentDeadLine]: '',
-  [CreatePoolSteps.DealDeadline]: '',
-  [CreatePoolSteps.PoolCap]: '',
-  [CreatePoolSteps.SponsorFee]: '',
-  [CreatePoolSteps.PoolPrivacy]: '',
+  [CreatePoolSteps.poolName]: '',
+  [CreatePoolSteps.poolSymbol]: '',
+  [CreatePoolSteps.investmentToken]: '',
+  [CreatePoolSteps.investmentDeadLine]: '',
+  [CreatePoolSteps.dealDeadline]: '',
+  [CreatePoolSteps.poolCap]: '',
+  [CreatePoolSteps.sponsorFee]: '',
+  [CreatePoolSteps.poolPrivacy]: '',
   whiteList: '',
 }
 
 type createPoolValues = {
-  PoolName: string
-  PoolSymbol: string
-  PoolCap: BigNumber
-  SponsorFee: BigNumber
+  poolName: string
+  poolSymbol: string
+  poolCap: BigNumber
+  sponsorFee: BigNumber
   investmentDeadLineDuration: number
   dealDeadLineDuration: number
-  InvestmentToken: string
+  investmentToken: string
   poolAddresses: string[]
   poolAddressesAmounts: BigNumber[]
 }
@@ -143,38 +143,38 @@ const parseValuesToCreatePool = async (
   provider: JsonRpcProvider,
 ): Promise<createPoolValues> => {
   const {
-    DealDeadline,
-    InvestmentDeadLine,
-    InvestmentToken,
-    PoolCap,
-    PoolName,
-    PoolPrivacy,
-    PoolSymbol,
-    SponsorFee,
+    dealDeadline,
+    investmentDeadLine,
+    investmentToken,
+    poolCap,
+    poolName,
+    poolPrivacy,
+    poolSymbol,
+    sponsorFee,
     whitelist,
   } = createPoolState
   const now = new Date()
-  const purchaseContract = new Contract(InvestmentToken?.address as string, erc20Abi, provider)
+  const purchaseContract = new Contract(investmentToken?.address as string, erc20Abi, provider)
   const purchaseTokenDecimals = await purchaseContract.decimals()
 
   const investmentDeadLineDuration = getDuration(
     now,
-    InvestmentDeadLine?.days as number,
-    InvestmentDeadLine?.hours as number,
-    InvestmentDeadLine?.minutes as number,
+    investmentDeadLine?.days as number,
+    investmentDeadLine?.hours as number,
+    investmentDeadLine?.minutes as number,
   )
 
   const dealDeadLineDuration = getDuration(
     now,
-    DealDeadline?.days as number,
-    DealDeadline?.hours as number,
-    DealDeadline?.minutes as number,
+    dealDeadline?.days as number,
+    dealDeadline?.hours as number,
+    dealDeadline?.minutes as number,
   )
 
   let poolAddresses: string[] = []
   let poolAddressesAmounts: BigNumber[] = []
 
-  if (PoolPrivacy === Privacy.PRIVATE) {
+  if (poolPrivacy === Privacy.PRIVATE) {
     const formattedWhiteList = whitelist.reduce((accum, curr) => {
       const { address, amount } = curr
 
@@ -193,28 +193,28 @@ const parseValuesToCreatePool = async (
   }
 
   return {
-    PoolName,
-    PoolSymbol,
-    PoolCap: parseUnits((PoolCap as number).toString(), purchaseTokenDecimals),
-    SponsorFee: parseEther((SponsorFee as number).toString()),
+    poolName,
+    poolSymbol,
+    poolCap: parseUnits((poolCap as number).toString(), purchaseTokenDecimals),
+    sponsorFee: parseEther((sponsorFee as number).toString()),
     investmentDeadLineDuration,
     dealDeadLineDuration,
-    InvestmentToken: InvestmentToken?.address as string,
+    investmentToken: investmentToken?.address as string,
     poolAddressesAmounts,
     poolAddresses,
   }
 }
 
 const initialState: CreatePoolState = {
-  [CreatePoolSteps.PoolName]: '',
-  [CreatePoolSteps.PoolSymbol]: '',
-  [CreatePoolSteps.InvestmentToken]: undefined,
-  [CreatePoolSteps.InvestmentDeadLine]: { days: undefined, hours: undefined, minutes: undefined },
-  [CreatePoolSteps.DealDeadline]: { days: undefined, hours: undefined, minutes: undefined },
-  [CreatePoolSteps.PoolCap]: undefined,
-  [CreatePoolSteps.SponsorFee]: undefined,
-  [CreatePoolSteps.PoolPrivacy]: undefined,
-  currentStep: CreatePoolSteps.PoolName,
+  [CreatePoolSteps.poolName]: '',
+  [CreatePoolSteps.poolSymbol]: '',
+  [CreatePoolSteps.investmentToken]: undefined,
+  [CreatePoolSteps.investmentDeadLine]: { days: undefined, hours: undefined, minutes: undefined },
+  [CreatePoolSteps.dealDeadline]: { days: undefined, hours: undefined, minutes: undefined },
+  [CreatePoolSteps.poolCap]: undefined,
+  [CreatePoolSteps.sponsorFee]: undefined,
+  [CreatePoolSteps.poolPrivacy]: undefined,
+  currentStep: CreatePoolSteps.poolName,
   whitelist: [],
 }
 
@@ -252,7 +252,7 @@ const createPoolReducer = (state: CreatePoolState, action: CreatePoolAction) => 
 export default function useAelinCreatePool(chainId: ChainsValues) {
   const { readOnlyAppProvider } = useWeb3Connection()
   const [createPoolState, dispatch] = useReducer(createPoolReducer, initialState)
-  const [errors, setErrors] = useState<poolErrors>(defaultErrors)
+  const [errors, setErrors] = useState<poolErrors>()
 
   const createPoolTx = useAelinPoolCreateTransaction(
     contracts.POOL_CREATE.address[chainId],
@@ -278,25 +278,25 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
   const handleSubmit = async () => {
     const {
-      InvestmentToken,
-      PoolCap,
-      PoolName,
-      PoolSymbol,
-      SponsorFee,
       dealDeadLineDuration,
       investmentDeadLineDuration,
+      investmentToken,
       poolAddresses,
       poolAddressesAmounts,
+      poolCap,
+      poolName,
+      poolSymbol,
+      sponsorFee,
     } = await parseValuesToCreatePool(createPoolState, readOnlyAppProvider)
 
     try {
       await createPoolTx(
-        PoolName,
-        PoolSymbol,
-        PoolCap,
-        InvestmentToken,
+        poolName,
+        poolSymbol,
+        poolCap,
+        investmentToken,
         investmentDeadLineDuration,
-        SponsorFee,
+        sponsorFee,
         dealDeadLineDuration,
         poolAddresses,
         poolAddressesAmounts,
@@ -315,11 +315,38 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     [],
   )
 
-  const isFinalStep = createPoolState.currentStep === CreatePoolSteps.PoolPrivacy
-  const isFirstStep = createPoolState.currentStep === CreatePoolSteps.PoolName
+  const isFinalStep = createPoolState.currentStep === CreatePoolSteps.poolPrivacy
+  const isFirstStep = createPoolState.currentStep === CreatePoolSteps.poolName
 
   useEffect(() => {
-    setErrors(validateCreatePool(createPoolState, chainId))
+    const {
+      dealDeadline,
+      investmentDeadLine,
+      investmentToken,
+      poolCap,
+      poolName,
+      poolPrivacy,
+      poolSymbol,
+      sponsorFee,
+      whitelist,
+    } = createPoolState
+
+    setErrors(
+      validateCreatePool(
+        {
+          dealDeadline: dealDeadline as Duration,
+          investmentDeadLine: investmentDeadLine as Duration,
+          investmentToken: investmentToken as Token,
+          poolCap: poolCap as number,
+          poolName,
+          poolPrivacy: poolPrivacy as Privacy,
+          poolSymbol,
+          sponsorFee: sponsorFee as number,
+          whitelist,
+        },
+        chainId,
+      ),
+    )
   }, [createPoolState, chainId])
 
   return { setPoolField, createPoolState, moveStep, isFinalStep, errors, isFirstStep, handleSubmit }

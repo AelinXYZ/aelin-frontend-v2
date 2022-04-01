@@ -61,7 +61,7 @@ const StepInput = ({
 }) => {
   const step = currentState.currentStep
   switch (step) {
-    case CreatePoolSteps.PoolName:
+    case CreatePoolSteps.poolName:
       return (
         <input
           name={step}
@@ -71,7 +71,7 @@ const StepInput = ({
           value={currentState[step]}
         />
       )
-    case CreatePoolSteps.PoolSymbol:
+    case CreatePoolSteps.poolSymbol:
       return (
         <input
           name={step}
@@ -81,15 +81,15 @@ const StepInput = ({
           value={currentState[step]}
         />
       )
-    case CreatePoolSteps.DealDeadline:
-    case CreatePoolSteps.InvestmentDeadLine:
+    case CreatePoolSteps.dealDeadline:
+    case CreatePoolSteps.investmentDeadLine:
       return (
         <DeadlineInput
           defaultValue={currentState[step]}
           onChange={(value) => setPoolField(CreatePoolSteps[step], value)}
         />
       )
-    case CreatePoolSteps.PoolCap:
+    case CreatePoolSteps.poolCap:
       return (
         <>
           <input
@@ -101,13 +101,13 @@ const StepInput = ({
           />
         </>
       )
-    case CreatePoolSteps.PoolPrivacy:
+    case CreatePoolSteps.poolPrivacy:
       return (
         <>
           <label htmlFor="public_pool">
             Public
             <input
-              checked={currentState[CreatePoolSteps.PoolPrivacy] === 'public'}
+              checked={currentState[CreatePoolSteps.poolPrivacy] === 'public'}
               id="public_pool"
               onChange={(e) => setPoolField(CreatePoolSteps[step], e.target.value)}
               type="radio"
@@ -117,7 +117,7 @@ const StepInput = ({
           <label htmlFor="private_pool">
             Private
             <input
-              checked={currentState[CreatePoolSteps.PoolPrivacy] === 'private'}
+              checked={currentState[CreatePoolSteps.poolPrivacy] === 'private'}
               id="private_pool"
               onChange={(e) => setPoolField(CreatePoolSteps[step], e.target.value)}
               type="radio"
@@ -126,7 +126,7 @@ const StepInput = ({
           </label>
         </>
       )
-    case CreatePoolSteps.SponsorFee:
+    case CreatePoolSteps.sponsorFee:
       return (
         <>
           <input
@@ -138,12 +138,12 @@ const StepInput = ({
           />
         </>
       )
-    case CreatePoolSteps.InvestmentToken:
+    case CreatePoolSteps.investmentToken:
       return (
         <TokenDropdown
           onChange={(token: Token) => setPoolField(CreatePoolSteps[step], token)}
           placeholder={createPoolConfig[step].placeholder}
-          selectedAddress={currentState[CreatePoolSteps.InvestmentToken]?.address}
+          selectedAddress={currentState[CreatePoolSteps.investmentToken]?.address}
         />
       )
   }
@@ -157,15 +157,15 @@ const CreatePoolSummary = ({ currentState }: { currentState: CreatePoolState }) 
           let value = currentState[step.id] || '--'
 
           if (
-            step.id === CreatePoolSteps.InvestmentDeadLine ||
-            step.id === CreatePoolSteps.DealDeadline
+            step.id === CreatePoolSteps.investmentDeadLine ||
+            step.id === CreatePoolSteps.dealDeadline
           ) {
             value = Object.values(value as Duration).some((val) => !!val)
               ? format(add(Date.now(), value as Duration), 'LLL dd, yyyy HH:mma')
               : '--'
           }
 
-          if (step.id === CreatePoolSteps.InvestmentToken) {
+          if (step.id === CreatePoolSteps.investmentToken) {
             value = currentState[step.id]?.symbol as string
           }
 
@@ -195,7 +195,7 @@ const CreatePool: NextPage = () => {
 
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
 
-  const currentStepError = errors[createPoolState.currentStep]
+  const currentStepError = errors ? errors[createPoolState.currentStep] : null
 
   return (
     <>
@@ -227,7 +227,7 @@ const CreatePool: NextPage = () => {
                   </button>
                 ) : (
                   <button
-                    disabled={Object.values(errors).some((err) => !!err)}
+                    disabled={errors ? Object.values(errors).some((err) => !!err) : false}
                     key={`${step}_button`}
                     onClick={handleSubmit}
                   >

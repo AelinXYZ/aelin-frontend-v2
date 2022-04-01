@@ -1,90 +1,103 @@
 import { isAddress } from '@ethersproject/address'
 
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { Privacy } from '@/src/constants/pool'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
-import { CreatePoolState, CreatePoolSteps } from '@/src/hooks/aelin/useAelinCreatePool'
+import { Token } from '@/src/constants/token'
+import { CreatePoolSteps } from '@/src/hooks/aelin/useAelinCreatePool'
 import { convertToSeconds } from '@/src/utils/date'
 
 export type poolErrors = {
-  [CreatePoolSteps.PoolName]: string
-  [CreatePoolSteps.PoolSymbol]: string
-  [CreatePoolSteps.InvestmentToken]: string
-  [CreatePoolSteps.InvestmentDeadLine]: string
-  [CreatePoolSteps.DealDeadline]: string
-  [CreatePoolSteps.PoolCap]: string
-  [CreatePoolSteps.SponsorFee]: string
-  [CreatePoolSteps.PoolPrivacy]: string
+  poolName: string
+  poolSymbol: string
+  investmentToken: Token
+  investmentDeadLine: Duration
+  dealDeadline: Duration
+  poolCap: number
+  sponsorFee: number
+  poolPrivacy: Privacy
+  whitelist: {
+    address: string
+    amount: number | null
+    isSaved: boolean
+  }[]
+}
+export type poolErrorsReturn = {
+  poolName: string
+  poolSymbol: string
+  investmentToken: string
+  investmentDeadLine: string
+  dealDeadline: string
+  poolCap: string
+  sponsorFee: string
+  poolPrivacy: string
   whiteList: string
 }
 
-const validateCreatePool = (values: CreatePoolState, chainId: ChainsValues): poolErrors => {
+const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
   const network = chainsConfig[chainId]
   const errors: any = {}
 
-  if (!values[CreatePoolSteps.InvestmentToken]) {
-    errors[CreatePoolSteps.InvestmentToken] = 'Required'
-  } else if (!isAddress(values[CreatePoolSteps.InvestmentToken]?.address as string)) {
-    errors[CreatePoolSteps.InvestmentToken] = 'Invalid Ethereum address'
+  if (!values.investmentToken) {
+    errors.investmentToken = 'Required'
+  } else if (!isAddress(values.investmentToken?.address as string)) {
+    errors.investmentToken = 'Invalid Ethereum address'
   }
 
-  if (!values[CreatePoolSteps.PoolName]) {
-    errors[CreatePoolSteps.PoolName] = 'Required'
-  } else if (values[CreatePoolSteps.PoolName].length > 15) {
-    errors[CreatePoolSteps.PoolName] = 'No more than 15 chars'
+  if (!values.poolName) {
+    errors.poolName = 'Required'
+  } else if (values.poolName.length > 15) {
+    errors.poolName = 'No more than 15 chars'
   }
 
-  if (!values[CreatePoolSteps.PoolSymbol]) {
-    errors[CreatePoolSteps.PoolSymbol] = 'Required'
-  } else if (values[CreatePoolSteps.PoolSymbol].length > 7) {
-    errors[CreatePoolSteps.PoolSymbol] = 'No more than 7 chars'
+  if (!values.poolSymbol) {
+    errors.poolSymbol = 'Required'
+  } else if (values.poolSymbol.length > 7) {
+    errors[CreatePoolSteps.poolSymbol] = 'No more than 7 chars'
   }
 
-  if (Number(values[CreatePoolSteps.SponsorFee]) > 98) {
-    errors[CreatePoolSteps.SponsorFee] = 'Must be <= 98'
+  if (Number(values.sponsorFee) > 98) {
+    errors.sponsorFee = 'Must be <= 98'
   }
 
   if (
-    !values[CreatePoolSteps.InvestmentDeadLine]?.days &&
-    !values[CreatePoolSteps.InvestmentDeadLine]?.hours &&
-    !values[CreatePoolSteps.InvestmentDeadLine]?.minutes
+    !values.investmentDeadLine?.days &&
+    !values.investmentDeadLine?.hours &&
+    !values.investmentDeadLine?.minutes
   ) {
-    errors[CreatePoolSteps.InvestmentDeadLine] = 'Required'
+    errors.investmentDeadLine = 'Required'
   } else {
     const durationSeconds = convertToSeconds({
-      days: values[CreatePoolSteps.InvestmentDeadLine]?.days ?? 0,
-      hours: values[CreatePoolSteps.InvestmentDeadLine]?.hours ?? 0,
-      minutes: values[CreatePoolSteps.InvestmentDeadLine]?.minutes ?? 0,
+      days: values.investmentDeadLine?.days ?? 0,
+      hours: values.investmentDeadLine?.hours ?? 0,
+      minutes: values.investmentDeadLine?.minutes ?? 0,
     })
     if (durationSeconds > ONE_YEAR_IN_SECS) {
-      errors[CreatePoolSteps.InvestmentDeadLine] = 'Max duration is 365 days'
+      errors.investmentDeadLine = 'Max duration is 365 days'
     }
   }
 
-  if (
-    !values[CreatePoolSteps.DealDeadline]?.days &&
-    !values[CreatePoolSteps.DealDeadline]?.hours &&
-    !values[CreatePoolSteps.DealDeadline]?.minutes
-  ) {
-    errors[CreatePoolSteps.DealDeadline] = 'Required'
+  if (!values.dealDeadline?.days && !values.dealDeadline?.hours && !values.dealDeadline?.minutes) {
+    errors.dealDeadline = 'Required'
   } else {
     const purchaseDurationSeconds = convertToSeconds({
-      days: values[CreatePoolSteps.DealDeadline]?.days ?? 0,
-      hours: values[CreatePoolSteps.DealDeadline]?.hours ?? 0,
-      minutes: values[CreatePoolSteps.DealDeadline]?.days ?? 0,
+      days: values.dealDeadline?.days ?? 0,
+      hours: values.dealDeadline?.hours ?? 0,
+      minutes: values.dealDeadline?.days ?? 0,
     })
     if (purchaseDurationSeconds > ONE_DAY_IN_SECS * 30) {
-      errors[CreatePoolSteps.DealDeadline] = 'Max purchase expiry is 30 days'
+      errors.dealDeadline = 'Max purchase expiry is 30 days'
     } else if (
       !network.isProd
         ? purchaseDurationSeconds < ONE_MINUTE_IN_SECS
         : purchaseDurationSeconds < ONE_MINUTE_IN_SECS * 30
     ) {
-      errors[CreatePoolSteps.DealDeadline] = 'Min purchase expiry is 30 mins'
+      errors.dealDeadline = 'Min purchase expiry is 30 mins'
     }
   }
 
-  if (!values[CreatePoolSteps.PoolPrivacy]) {
-    errors[CreatePoolSteps.PoolPrivacy] = 'Select an option'
+  if (!values.poolPrivacy) {
+    errors.poolPrivacy = 'Select an option'
   }
 
   return errors
