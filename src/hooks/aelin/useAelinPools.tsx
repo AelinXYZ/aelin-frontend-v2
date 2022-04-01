@@ -5,7 +5,7 @@ import useSWRInfinite from 'swr/infinite'
 
 import { PoolCreated, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pools'
+import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import { getAmountInPool, getPurchaseExpiry, getStatusText } from '@/src/utils/aelinPool'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'

@@ -32,6 +32,7 @@ export type ChainConfig = {
   name: string
   rpcUrl: string
   shortName: string
+  tokenListUrl: string
 }
 
 export const chainsConfig: Record<ChainsValues, ChainConfig> = {
@@ -46,6 +47,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Mainnet',
     rpcUrl: 'https://main-light.eth.linkpool.io',
     shortName: 'Mainnet',
+    tokenListUrl: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
   },
   [Chains.goerli]: {
     blockExplorerUrls: ['https://goerli.etherscan.io/'],
@@ -58,6 +60,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Görli Testnet',
     rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     shortName: 'Goerli',
+    tokenListUrl: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
   },
   [Chains.kovan]: {
     blockExplorerUrls: ['https://kovan.etherscan.io/'],
@@ -70,6 +73,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Kovan',
     rpcUrl: 'https://kovan.infura.io/v3/ecb81cbe2f03436cb39236e4160311fe',
     shortName: 'Kovan',
+    tokenListUrl: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
   },
   [Chains.optimism]: {
     id: Chains.optimism,
@@ -83,6 +87,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     iconUrls: [],
     isProd: true,
     icon: <Optimism />,
+    tokenListUrl: 'https://static.optimism.io/optimism.tokenlist.json',
   },
 }
 
