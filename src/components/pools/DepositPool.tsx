@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { TokenInput } from '@/src/components/TokenInput'
+import { TokenInput } from '@/src/components/pools/TokenInput'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'

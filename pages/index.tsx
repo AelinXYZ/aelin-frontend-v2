@@ -3,8 +3,8 @@ import { useRouter } from 'next/router'
 
 import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
+import PoolsListWithFilters from '@/src/components/pools/PoolsListWithFilters'
 import { genericSuspense } from '@/src/components/safeSuspense'
-import PoolsListWithFilters from '@/src/pools/PoolsListWithFilters'
 
 const Home: NextPage = () => {
   const router = useRouter()

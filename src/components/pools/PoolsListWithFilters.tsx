@@ -6,11 +6,11 @@ import debounce from 'lodash/debounce'
 
 import { PoolCreated_Filter } from '@/graphql-schema'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
+import PoolsList from '@/src/components/pools/PoolsList'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search } from '@/src/components/pureStyledComponents/form/Search'
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
-import PoolsList from '@/src/pools/PoolsList'
 
 const Wrapper = styled.div`
   --gap: 20px;
