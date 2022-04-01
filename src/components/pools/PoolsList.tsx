@@ -5,6 +5,7 @@ import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { PoolsCreatedQueryVariables } from '@/graphql-schema'
+import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
   Row,
@@ -108,45 +109,49 @@ const PoolsList = ({ filters }: { filters: FiltersProp }) => {
               </SortableTH>
             ))}
           </TableHead>
-          {data.map((pool) => {
-            const {
-              amountInPool,
-              id,
-              investmentDeadline,
-              investmentToken,
-              name,
-              network,
-              sponsor,
-              stage,
-            } = pool
-            return (
-              <Row
-                columns={columns.widths}
-                hasHover
-                key={id}
-                onClick={() => {
-                  router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                }}
-              >
-                <NameCell badge="3">{name.replace('aePool-', '')}</NameCell>
-                <Cell>
-                  <ExternalLink href={`https://etherscan.io/address/${getAddress(sponsor)}`}>
-                    {shortenAddr(getAddress(sponsor))}
-                  </ExternalLink>
-                </Cell>
-                <Cell
-                  justifyContent={columns.alignment.network}
-                  title={getNetworkConfig(network).name}
+          {!data.length ? (
+            <BaseCard>No data.</BaseCard>
+          ) : (
+            data.map((pool) => {
+              const {
+                amountInPool,
+                id,
+                investmentDeadline,
+                investmentToken,
+                name,
+                network,
+                sponsor,
+                stage,
+              } = pool
+              return (
+                <Row
+                  columns={columns.widths}
+                  hasHover
+                  key={id}
+                  onClick={() => {
+                    router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
+                  }}
                 >
-                  {getNetworkConfig(network).icon}
-                </Cell>
-                <Cell>${amountInPool.formatted}</Cell>
-                <Deadline progress="33">{investmentDeadline}</Deadline>
-                <Cell justifyContent={columns.alignment.investmentToken}>{investmentToken}</Cell>
-                <Stage stage={stage.replace(' ', '').toLowerCase()}>{stage}</Stage>
-              </Row>
-            )
-          })}
+                  <NameCell badge="3">{name.replace('aePool-', '')}</NameCell>
+                  <Cell>
+                    <ExternalLink href={`https://etherscan.io/address/${getAddress(sponsor)}`}>
+                      {shortenAddr(getAddress(sponsor))}
+                    </ExternalLink>
+                  </Cell>
+                  <Cell
+                    justifyContent={columns.alignment.network}
+                    title={getNetworkConfig(network).name}
+                  >
+                    {getNetworkConfig(network).icon}
+                  </Cell>
+                  <Cell>${amountInPool.formatted}</Cell>
+                  <Deadline progress="33">{investmentDeadline}</Deadline>
+                  <Cell justifyContent={columns.alignment.investmentToken}>{investmentToken}</Cell>
+                  <Stage stage={stage.replace(' ', '').toLowerCase()}>{stage}</Stage>
+                </Row>
+              )
+            })
+          )}
         </InfiniteScroll>
       </Table>
     </TableWrapper>
