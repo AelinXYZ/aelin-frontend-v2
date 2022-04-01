@@ -15,6 +15,7 @@ const green = '#A2FF00'
 const yellow = '#F1C40F'
 const blue = '#469FFF'
 const gray = '#282E3B'
+const pink = '#FF50B9'
 const gradientStart = '#5452C3'
 const gradientEnd = '#01A0D3'
 const blueishGray = '#484d58'
@@ -50,6 +51,7 @@ export const theme = {
     gradientStart: gradientStart,
     gray: gray,
     mainBodyBackground: mainBodyBackground,
+    pink: pink,
     primary: primary,
     secondary: secondary,
     tertiary: tertiary,
@@ -87,6 +89,16 @@ export const theme = {
     paddingDesktopStart: '20px',
     paddingDesktopWideStart: '20px 40px',
     paddingMobile: '0 10px 10px 10px',
+  },
+  stages: {
+    awaitingdeal: yellow,
+    complete: '#fff',
+    dealopen: green,
+    dealready: blue,
+    fundingdeal: yellow,
+    open: green,
+    poolopen: green,
+    vesting: pink,
   },
   states: {
     green: green,

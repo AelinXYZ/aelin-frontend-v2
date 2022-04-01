@@ -6,6 +6,7 @@ import { TH } from '@/src/components/pureStyledComponents/common/Table'
 const Wrapper = styled(TH)`
   cursor: pointer;
   gap: 10px;
+  user-select: none;
 
   &:active {
     opacity: 0.7;

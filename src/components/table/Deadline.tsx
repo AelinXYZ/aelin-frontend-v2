@@ -20,6 +20,7 @@ const Value = styled.div`
   font-size: 12px;
   line-height: 1.2;
   font-weight: 500;
+  text-transform: capitalize;
 `
 
 export const Deadline: React.FC<{ progress: string }> = ({ children, progress, ...restProps }) => {

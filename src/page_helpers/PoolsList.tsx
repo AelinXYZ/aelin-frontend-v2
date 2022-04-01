@@ -17,6 +17,7 @@ import { Deadline } from '@/src/components/table/Deadline'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
+import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { shortenAddr } from '@/src/web3/utils'
@@ -133,15 +134,16 @@ const PoolsList = ({ filters }: { filters: FiltersProp }) => {
                     {shortenAddr(getAddress(sponsor))}
                   </ExternalLink>
                 </Cell>
-                <Cell justifyContent={columns.alignment.network}>
-                  <span title={getNetworkConfig(network).name}>
-                    {getNetworkConfig(network).icon}
-                  </span>
+                <Cell
+                  justifyContent={columns.alignment.network}
+                  title={getNetworkConfig(network).name}
+                >
+                  {getNetworkConfig(network).icon}
                 </Cell>
                 <Cell>${amountInPool.formatted}</Cell>
                 <Deadline progress="33">{investmentDeadline}</Deadline>
                 <Cell justifyContent={columns.alignment.investmentToken}>{investmentToken}</Cell>
-                <Cell>{stage}</Cell>
+                <Stage stage={stage.replace(' ', '').toLowerCase()}>{stage}</Stage>
               </Row>
             )
           })}

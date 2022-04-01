@@ -29,6 +29,8 @@ export const Row = styled.div<RowProps>`
   border: ${(props) => props.theme.card.borderColor};
   margin-bottom: 10px;
   min-height: 48px;
+  padding-bottom: 10px;
+  padding-top: 10px;
   transition: background-color 0.1s linear;
 
   &:last-child {
@@ -68,7 +70,6 @@ export const Cell = styled.span<{ justifyContent?: string }>`
   line-height: 1.2;
   margin-top: 3px;
   min-width: 0;
-  white-space: nowrap;
 `
 
 Cell.defaultProps = {
