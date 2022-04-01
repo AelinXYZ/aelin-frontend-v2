@@ -12,7 +12,7 @@ import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chain
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
 import PoolsList from '@/src/page_helpers/PoolsList'
 
-const Wrapper = styled.form`
+const Wrapper = styled.div`
   --gap: 20px;
 
   display: grid;
@@ -55,8 +55,8 @@ const PoolsListWithFilters: React.FC = () => {
   const [networkFilter, setNetworkFilter] = useState('')
   const [stateFilter, setStateFilter] = useState('')
   const mockedPools = ['All pools', 'pool 1', 'pool 2', 'pool 3']
-  const mockedNetworks = ['All networks', 'Ethereum', 'Optimism', 'Avalanche']
-  const mockedStates = ['All pools', 'Open', 'Awaiting deal', 'Deal ready', 'Vesting']
+  const networks = [{ id: undefined, name: 'All networks' }, ...getChainsByEnvironmentArray()]
+  const mockedStates = ['All stages', 'Open', 'Awaiting deal', 'Deal ready', 'Vesting']
 
   const getCurrentItem = (index: number) => (index < 0 ? 0 : index)
 
@@ -85,13 +85,13 @@ const PoolsListWithFilters: React.FC = () => {
             ))}
           />
           <Dropdown
-            currentItem={getCurrentItem(mockedNetworks.indexOf(networkFilter))}
+            currentItem={!network ? 0 : networks.findIndex(({ id }) => id === network)}
             dropdownButtonContent={
-              <ButtonDropdown>{networkFilter ? networkFilter : mockedNetworks[0]}</ButtonDropdown>
+              <ButtonDropdown>{networkFilter ? networkFilter : networks[0].name}</ButtonDropdown>
             }
-            items={mockedNetworks.map((item, key) => (
-              <DropdownItem key={key} onClick={() => setNetworkFilter(item)}>
-                {item}
+            items={networks.map(({ id, name }, key) => (
+              <DropdownItem key={key} onClick={() => setNetwork(Number(id) as ChainsValues)}>
+                {name}
               </DropdownItem>
             ))}
           />
@@ -111,47 +111,6 @@ const PoolsListWithFilters: React.FC = () => {
       </Wrapper>
       <PoolsList filters={{ variables, network }} />
     </>
-    //   <form>
-    //     <FiltersRow>
-    //       <div>
-    //         Sponsor:
-    //         <input
-    //           onChange={(evt) => debouncedChangeHandler(evt, 'sponsor_contains', 3)}
-    //           type="text"
-    //           value={variables?.where?.sponsor_contains}
-    //         />
-    //       </div>
-    //       <div>
-    //         Pool name:
-    //         <input
-    //           onChange={(evt) => debouncedChangeHandler(evt, 'name_contains_nocase', 3)}
-    //           type="text"
-    //         />
-    //       </div>
-    //       <div>
-    //         Currency:
-    //         <input
-    //           onChange={(evt) =>
-    //             debouncedChangeHandler(evt, 'purchaseTokenSymbol_contains_nocase', 2)
-    //           }
-    //           type="text"
-    //         />
-    //       </div>
-
-    //       <div>
-    //         Network:
-    //         <select
-    //           defaultValue={undefined}
-    //           onChange={({ target }) => setNetwork(Number(target.value) as ChainsValues)}
-    //         >
-    //           <option value={undefined}>All pools</option>
-    //           {getChainsByEnvironmentArray().map((chain) => (
-    //             <option key={chain.id} value={chain.id}>
-    //               {chain.name}
-    //             </option>
-    //           ))}
-    //         </select>
-    //       </div>
 
     //       <div>
     //         OrderBy:
@@ -179,11 +138,6 @@ const PoolsListWithFilters: React.FC = () => {
     //           ))}
     //         </select>
     //       </div>
-    //       <div>
-    //         <input onClick={resetFilters} type="reset" value="Reset filters" />
-    //       </div>
-    //     </FiltersRow>
-    //   </form>
   )
 }
 
