@@ -51,8 +51,10 @@ const Break = styled.div`
     background-color: ${({ theme }) => theme.colors.borderColor};
     display: block;
     height: 1px;
+    margin-bottom: 5px;
     margin-left: 20px;
     margin-right: 20px;
+    margin-top: 10px;
   }
 `
 
