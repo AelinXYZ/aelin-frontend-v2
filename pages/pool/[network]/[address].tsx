@@ -6,7 +6,7 @@ import nullthrows from 'nullthrows'
 
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { Chains, ChainsKeys } from '@/src/constants/chains'
-import PoolDetails from '@/src/page_helpers/PoolDetails'
+import PoolDetails from '@/src/pools/PoolDetails'
 
 const PoolDetailsPage: NextPage = () => {
   const router = useRouter()

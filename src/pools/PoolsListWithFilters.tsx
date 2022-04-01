@@ -10,7 +10,7 @@ import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Bu
 import { Search } from '@/src/components/pureStyledComponents/form/Search'
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
-import PoolsList from '@/src/page_helpers/PoolsList'
+import PoolsList from '@/src/pools/PoolsList'
 
 const Wrapper = styled.div`
   --gap: 20px;

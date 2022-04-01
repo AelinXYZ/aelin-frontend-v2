@@ -9,7 +9,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
-import FundingActions from '@/src/page_helpers/FundingActions'
+import FundingActions from '@/src/pools/FundingActions'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { isFunding } from '@/src/utils/getAelinPoolCurrentStatus'
 
