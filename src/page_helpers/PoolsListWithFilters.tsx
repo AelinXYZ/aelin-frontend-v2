@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import debounce from 'lodash/debounce'
 
-import { OrderDirection, PoolCreated_Filter, PoolCreated_OrderBy } from '@/graphql-schema'
+import { PoolCreated_Filter } from '@/graphql-schema'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search } from '@/src/components/pureStyledComponents/form/Search'
@@ -36,8 +36,7 @@ const FiltersDropdowns = styled.div`
 const DEBOUNCED_TIME = 500
 
 const PoolsListWithFilters: React.FC = () => {
-  const { network, resetFilters, setNetwork, setOrderBy, setOrderDirection, setWhere, variables } =
-    useAelinPoolsFilters()
+  const { network, setNetwork, setWhere, variables } = useAelinPoolsFilters()
 
   const changeHandler = useCallback(
     (evt: ChangeEvent<HTMLInputElement>, whereKey: keyof PoolCreated_Filter, minLength: number) => {
@@ -52,7 +51,6 @@ const PoolsListWithFilters: React.FC = () => {
   const debouncedChangeHandler = debounce(changeHandler, DEBOUNCED_TIME)
 
   const [poolFilter, setPoolFilter] = useState('')
-  const [networkFilter, setNetworkFilter] = useState('')
   const [stateFilter, setStateFilter] = useState('')
   const mockedPools = ['All pools', 'pool 1', 'pool 2', 'pool 3']
   const networks = [{ id: undefined, name: 'All networks' }, ...getChainsByEnvironmentArray()]
@@ -87,7 +85,9 @@ const PoolsListWithFilters: React.FC = () => {
           <Dropdown
             currentItem={!network ? 0 : networks.findIndex(({ id }) => id === network)}
             dropdownButtonContent={
-              <ButtonDropdown>{networkFilter ? networkFilter : networks[0].name}</ButtonDropdown>
+              <ButtonDropdown>
+                {network ? networks.find(({ id }) => id === network)?.name : networks[0].name}
+              </ButtonDropdown>
             }
             items={networks.map(({ id, name }, key) => (
               <DropdownItem key={key} onClick={() => setNetwork(Number(id) as ChainsValues)}>
@@ -111,33 +111,6 @@ const PoolsListWithFilters: React.FC = () => {
       </Wrapper>
       <PoolsList filters={{ variables, network }} />
     </>
-
-    //       <div>
-    //         OrderBy:
-    //         <select
-    //           defaultValue={PoolCreated_OrderBy.Timestamp}
-    //           onChange={({ target }) => setOrderBy(target.value as PoolCreated_OrderBy)}
-    //         >
-    //           {Object.values(PoolCreated_OrderBy).map((orderBy) => (
-    //             <option key={orderBy} value={orderBy}>
-    //               {orderBy}
-    //             </option>
-    //           ))}
-    //         </select>
-    //       </div>
-    //       <div>
-    //         OrderDirection:
-    //         <select
-    //           defaultValue={OrderDirection.Desc}
-    //           onChange={({ target }) => setOrderDirection(target.value as OrderDirection)}
-    //         >
-    //           {Object.values(OrderDirection).map((orderBy) => (
-    //             <option key={orderBy} value={orderBy}>
-    //               {orderBy}
-    //             </option>
-    //           ))}
-    //         </select>
-    //       </div>
   )
 }
 
