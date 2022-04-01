@@ -62,16 +62,15 @@ const PoolsListWithFilters: React.FC = () => {
 
   return (
     <>
-      {/* <input
-        onChange={(evt) => debouncedChangeHandler(evt, 'sponsor_contains', 3)}
-        type="text"
-        value={variables?.where?.sponsor_contains}
-      /> */}
       <Wrapper>
         <Search
-          onChange={(evt) => debouncedChangeHandler(evt, 'sponsor_contains', 3)}
+          onChange={(evt) => {
+            debouncedChangeHandler(evt, 'name_contains_nocase', 3)
+            // Obviously these don't work
+            // debouncedChangeHandler(evt, 'sponsor_contains', 3)
+            // debouncedChangeHandler(evt, 'purchaseTokenSymbol_contains_nocase', 2)
+          }}
           placeholder="Pool name, sponsor, currency..."
-          value={variables?.where?.sponsor_contains}
         />
         <FiltersDropdowns>
           <Dropdown
