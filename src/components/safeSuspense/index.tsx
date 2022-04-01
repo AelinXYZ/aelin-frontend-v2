@@ -2,6 +2,7 @@ import React, { FC, Suspense } from 'react'
 
 import { ErrorBoundary } from 'react-error-boundary'
 
+import { Loading } from '@/src/components/common/Loading'
 import { GeneralError } from '@/src/components/generalError'
 import isDev from '@/src/utils/isDev'
 
@@ -11,7 +12,7 @@ type Props = {
 }
 
 function DefaultFallback(): JSX.Element {
-  return <>default loader</>
+  return <Loading />
 }
 
 export function SafeSuspense({ children, fallback = <DefaultFallback /> }: Props): JSX.Element {
