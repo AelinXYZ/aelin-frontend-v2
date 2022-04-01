@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import { PoolsCreatedQueryVariables } from '@/graphql-schema'
 import {
   Cell,
   Row,
@@ -18,7 +18,6 @@ import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
 import { shortenAddr } from '@/src/web3/utils'
 
 interface FiltersProp {
@@ -29,8 +28,6 @@ interface FiltersProp {
 const PoolsList = ({ filters }: { filters: FiltersProp }) => {
   const router = useRouter()
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
-  const { network, setNetwork, setOrderBy, setOrderDirection, setWhere, variables } =
-    useAelinPoolsFilters()
 
   if (error) {
     throw error
@@ -76,31 +73,11 @@ const PoolsList = ({ filters }: { filters: FiltersProp }) => {
     },
   ]
 
-  const [sortBy, setSortBy] = useState('')
+  const [sortBy, setSortBy] = useState<string | undefined>()
 
-  const handleSort = (sortBy: string) => {
+  const handleSort = (sortBy: string | undefined) => {
     setSortBy(sortBy)
   }
-
-  //         <select
-  //           defaultValue={PoolCreated_OrderBy.Timestamp}
-  //           onChange={({ target }) => setOrderBy(target.value as PoolCreated_OrderBy)}
-  //         >
-  //           {Object.values(PoolCreated_OrderBy).map((orderBy) => (
-  //             <option key={orderBy} value={orderBy}>
-  //               {orderBy}
-  //             </option>
-  //           ))}
-
-  //         <select
-  //           defaultValue={OrderDirection.Desc}
-  //           onChange={({ target }) => setOrderDirection(target.value as OrderDirection)}
-  //         >
-  //           {Object.values(OrderDirection).map((orderBy) => (
-  //             <option key={orderBy} value={orderBy}>
-  //               {orderBy}
-  //             </option>
-  //           ))}
 
   return (
     <TableWrapper>
@@ -122,8 +99,7 @@ const PoolsList = ({ filters }: { filters: FiltersProp }) => {
                 justifyContent={justifyContent}
                 key={index}
                 onClick={() => {
-                  console.log(sortKey)
-                  setOrderBy(sortKey as PoolCreated_OrderBy)
+                  handleSort(sortKey)
                 }}
               >
                 {title}
