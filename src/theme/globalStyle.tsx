@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 
 import { theme } from '@/src/theme/index'
+import { onBoardCSS } from '@/src/theme/onBoard'
 
 type ThemeType = typeof theme
 
@@ -47,4 +48,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
       padding: ${({ theme }) => theme.layout.paddingDesktopWideStart};
     }
   }
+
+  ${onBoardCSS}
 `
