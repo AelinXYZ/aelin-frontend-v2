@@ -7,7 +7,6 @@ export function isToken(token: any): token is Token {
     'address' in token &&
     'chainId' in token &&
     'decimals' in token &&
-    'logoURI' in token &&
     'name' in token &&
     'symbol' in token
   )
