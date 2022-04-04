@@ -1,9 +1,9 @@
+import ApprovePool from '@/src/components/pools/ApprovePool'
+import DepositPool from '@/src/components/pools/DepositPool'
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
-import ApprovePool from '@/src/page_helpers/ApprovePool'
-import DepositPool from '@/src/page_helpers/DepositPool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { FundingState } from '@/src/utils/getAelinPoolCurrentStatus'
 

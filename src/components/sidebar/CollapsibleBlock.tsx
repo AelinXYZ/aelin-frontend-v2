@@ -1,16 +1,21 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import useCollapse from 'react-collapsed'
-
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)`
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: transparent;
     border: none;
+    margin-bottom: 0;
   }
 `
 
@@ -31,7 +36,7 @@ const Title = styled.h3`
 `
 
 const Contents = styled.section`
-  padding-top 20px;
+  padding-top: 20px;
 `
 
 const Button = styled.button`
@@ -41,35 +46,36 @@ const Button = styled.button`
   background: rgba(255, 255, 255, 0.06);
   border-radius: 50%;
   border: none;
+  cursor: pointer;
   display: flex;
   height: var(--dimensions);
   justify-content: center;
   margin: 0;
   padding: 0;
+  transition: 0.1s linear all;
   width: var(--dimensions);
 
   & svg {
     margin: 0 0 0 -2px;
   }
+
+  &:active {
+    opacity: 0.7;
+  }
 `
 
 const CollapsibleBlock: React.FC<{ title: string }> = ({ children, title, ...restProps }) => {
-  const [isExpanded, setExpanded] = useState(true)
-  const { getCollapseProps, getToggleProps } = useCollapse({ isExpanded })
+  const [isExpanded, setIsExpanded] = useState(true)
 
   return (
     <Wrapper {...restProps}>
       <Header>
         <Title>{title}</Title>
-        <Button
-          {...getToggleProps({
-            onClick: () => setExpanded((prevExpanded) => !prevExpanded),
-          })}
-        >
+        <Button onClick={() => setIsExpanded(!isExpanded)}>
           {isExpanded ? <ArrowUp /> : <ArrowDown />}
         </Button>
       </Header>
-      <Contents {...getCollapseProps()}>{children}</Contents>
+      {isExpanded && <Contents>{children}</Contents>}
     </Wrapper>
   )
 }

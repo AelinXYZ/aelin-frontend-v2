@@ -25,11 +25,16 @@ const SidebarWrapper = styled(BaseCard)`
   border: none;
   display: flex;
   flex-direction: column;
+  height: fit-content;
+  margin-bottom: 20px;
+  min-height: calc(100vh - 120px);
   padding: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: ${(props) => props.theme.card.backgroundColor};
+    border-radius: 12px;
     border: ${(props) => props.theme.card.borderColor};
+    margin-bottom: 0;
   }
 `
 
@@ -46,8 +51,10 @@ const Break = styled.div`
     background-color: ${({ theme }) => theme.colors.borderColor};
     display: block;
     height: 1px;
+    margin-bottom: 5px;
     margin-left: 20px;
     margin-right: 20px;
+    margin-top: 10px;
   }
 `
 

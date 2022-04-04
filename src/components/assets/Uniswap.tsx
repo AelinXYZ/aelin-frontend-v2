@@ -16,20 +16,20 @@ export const Uniswap: React.FC<{ className?: string }> = (props) => (
   >
     <mask
       height="18"
-      id="mask0_533_25983"
+      id="masdkajfdjkdgkjdg"
       maskUnits="userSpaceOnUse"
       style={{ maskType: 'alpha' }}
       width="18"
       x="0"
       y="0"
     >
-      <rect fill="url(#pattern0)" height="18" width="18" />
+      <rect fill="url(#patt9349943)" height="18" width="18" />
     </mask>
-    <g mask="url(#mask0_533_25983)">
+    <g mask="url(#masdkajfdjkdgkjdg)">
       <rect fill="white" height="18" width="18" />
     </g>
     <defs>
-      <pattern height="1" id="pattern0" patternContentUnits="objectBoundingBox" width="1">
+      <pattern height="1" id="patt9349943" patternContentUnits="objectBoundingBox" width="1">
         <use transform="translate(-0.000976563) scale(0.000976562)" xlinkHref="#image0_533_25983" />
       </pattern>
       <image

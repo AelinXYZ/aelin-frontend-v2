@@ -1,11 +1,12 @@
-import { rgba } from 'polished'
+import { lighten, rgba } from 'polished'
 
-const componentBackgroundColor = 'rgba(255, 255, 255, 0.04)'
-const componentBorderColor = 'rgba(255, 255, 255, 0.25)'
+const componentBackgroundColor = '#1A212F'
+const componentBorderColor = '#555C65'
 const componentBorder = `0.5px solid ${componentBorderColor}`
 const componentBorderRadius = '8px'
+const lightGray = '#BABCC1'
 const error = '#db3a3d'
-const primary = '#3CBFF0'
+const primary = '#8280FF'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
 const textColor = '#fff'
@@ -13,6 +14,11 @@ const mainBodyBackground = '#101826'
 const green = '#A2FF00'
 const yellow = '#F1C40F'
 const blue = '#469FFF'
+const gray = '#282E3B'
+const pink = '#FF50B9'
+const gradientStart = '#5452C3'
+const gradientEnd = '#01A0D3'
+const blueishGray = '#484d58'
 
 export const theme = {
   buttonPrimary: {
@@ -23,25 +29,34 @@ export const theme = {
     color: primary,
     colorHover: primary,
   },
+  buttonDropdown: {
+    backgroundColor: componentBackgroundColor,
+    backgroundColorHover: lighten(0.1, componentBackgroundColor),
+    borderColor: lightGray,
+    borderColorHover: lightGray,
+    color: textColor,
+    colorHover: textColor,
+  },
   card: {
     backgroundColor: componentBackgroundColor,
     borderColor: componentBorder,
     borderRadius: componentBorderRadius,
   },
   colors: {
+    blueishGray: blueishGray,
     borderColor: componentBorderColor,
     componentBackgroundColor: componentBackgroundColor,
     error: error,
+    gradientEnd: gradientEnd,
+    gradientStart: gradientStart,
+    gray: gray,
     mainBodyBackground: mainBodyBackground,
+    pink: pink,
     primary: primary,
     secondary: secondary,
     tertiary: tertiary,
     textColor: textColor,
-  },
-  states: {
-    green: green,
-    yellow: yellow,
-    blue: blue,
+    textColorLight: lightGray,
   },
   dropdown: {
     background: mainBodyBackground,
@@ -74,6 +89,42 @@ export const theme = {
     paddingDesktopStart: '20px',
     paddingDesktopWideStart: '20px 40px',
     paddingMobile: '0 10px 10px 10px',
+  },
+  stages: {
+    awaitingdeal: yellow,
+    complete: '#fff',
+    dealopen: green,
+    dealready: blue,
+    fundingdeal: yellow,
+    open: green,
+    poolopen: green,
+    vesting: pink,
+  },
+  states: {
+    green: green,
+    yellow: yellow,
+    blue: blue,
+  },
+  textField: {
+    backgroundColor: componentBackgroundColor,
+    borderColor: lightGray,
+    borderRadius: '25px',
+    borderStyle: 'solid',
+    borderWidth: '1px',
+    color: textColor,
+    errorColor: error,
+    fontSize: '1.4rem',
+    fontWeight: '400',
+    height: '36px',
+    paddingHorizontal: '15px',
+    active: {
+      color: textColor,
+      backgroundColor: componentBackgroundColor,
+      borderColor: lightGray,
+    },
+    placeholder: {
+      color: 'rgba(255, 255, 255, 0.5)',
+    },
   },
   themeBreakPoints: {
     desktopWideStart: '1281px',

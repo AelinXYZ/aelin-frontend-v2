@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 
 import { theme } from '@/src/theme/index'
+import { onBoardCSS } from '@/src/theme/onBoard'
 
 type ThemeType = typeof theme
 
@@ -16,11 +17,18 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     background-color: ${({ theme }) => theme.colors.mainBodyBackground};
+
     color: ${({ theme }) => theme.colors.textColor};
     font-family: ${({ theme }) => theme.fonts.fontFamily};
     font-size: ${({ theme }) => theme.fonts.defaultSize};
+    line-height: 1.2;
     min-height: 100vh;
     outline-color: ${({ theme }) => theme.colors.secondary};
+    width: 100%;
+
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+      background-image: url('resources/svg/bg-main.svg');
+    }
   }
 
   code {
@@ -40,4 +48,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
       padding: ${({ theme }) => theme.layout.paddingDesktopWideStart};
     }
   }
+
+  ${onBoardCSS}
 `

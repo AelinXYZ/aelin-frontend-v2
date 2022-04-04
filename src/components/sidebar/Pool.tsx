@@ -1,14 +1,35 @@
+import Link from 'next/link'
+import { lighten } from 'polished'
 import React from 'react'
 import styled from 'styled-components'
 
-const Invest = styled.a`
+import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
+
+const Wrapper = styled.a`
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: ${({ theme }) => theme.colors.gray};
   border-radius: 8px;
   color: ${({ theme: { colors } }) => colors.textColor};
   display: flex;
+  font-size: 1.4rem;
+  font-weight: 500;
+  gap: 14px;
   height: 36px;
   margin-bottom: 10px;
+  overflow: hidden;
+  padding: 0 20px;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  transition: background-color 0.1s linear;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: ${({ theme }) => lighten(0.1, theme.colors.gray)};
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
 `
 
 const State = styled.span`
@@ -17,23 +38,26 @@ const State = styled.span`
   border-radius: 5px;
   display: block;
   height: var(--dimensions);
-  margin: 0 8px 0 14px;
   width: var(--dimensions);
 
   ${({ color, theme }) => color && `background-color: ${theme.states[color]};`}
 `
 
 interface Props {
-  color: 'green' | 'yellow' | 'blue'
+  color: 'green' | 'yellow' | 'blue' | string
+  href: string
   notifications?: number
 }
 
-const Pool: React.FC<Props> = ({ children, color, notifications }) => {
+const Pool: React.FC<Props> = ({ children, color, href, notifications, ...restProps }) => {
   return (
-    <Invest>
-      <State color={color} /> {children}
-      {/* <Badge> {notifications} </Badge> */}
-    </Invest>
+    <Link href={href} passHref>
+      <Wrapper {...restProps}>
+        <State color={color} />
+        {children}
+        {notifications !== 0 && <Badge>{notifications}</Badge>}
+      </Wrapper>
+    </Link>
   )
 }
 
