@@ -1,21 +1,18 @@
-import { useCallback, useEffect, useReducer, useState } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
-import { Contract } from '@ethersproject/contracts'
-import { JsonRpcProvider } from '@ethersproject/providers'
-import { parseEther, parseUnits } from '@ethersproject/units'
+import { parseEther } from '@ethersproject/units'
 
-import erc20Abi from '@/src/abis/ERC20.json'
-import { Duration } from '@/src/components/DeadlineInput'
 import { ChainsValues } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
+import { ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
-import { Token } from '@/src/constants/token'
+import { Token, isToken } from '@/src/constants/token'
 import useAelinPoolCreateTransaction from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { getDuration } from '@/src/utils/date'
+import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
+import { formatToken } from '@/src/web3/bigNumber'
 
 export enum CreatePoolSteps {
   poolName = 'poolName',
@@ -42,8 +39,8 @@ export interface CreatePoolState {
   investmentToken: Token | undefined
   investmentDeadLine: Duration | undefined
   dealDeadline: Duration | undefined
-  poolCap: number | undefined
-  sponsorFee: number | undefined
+  poolCap: string | undefined
+  sponsorFee: string | undefined
   poolPrivacy: Privacy | undefined
   currentStep: CreatePoolSteps
   whitelist: {
@@ -114,18 +111,6 @@ export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
 
 export const createPoolConfigArr = Object.values(createPoolConfig)
 
-const defaultErrors = {
-  [CreatePoolSteps.poolName]: '',
-  [CreatePoolSteps.poolSymbol]: '',
-  [CreatePoolSteps.investmentToken]: '',
-  [CreatePoolSteps.investmentDeadLine]: '',
-  [CreatePoolSteps.dealDeadline]: '',
-  [CreatePoolSteps.poolCap]: '',
-  [CreatePoolSteps.sponsorFee]: '',
-  [CreatePoolSteps.poolPrivacy]: '',
-  whiteList: '',
-}
-
 type createPoolValues = {
   poolName: string
   poolSymbol: string
@@ -140,7 +125,6 @@ type createPoolValues = {
 
 const parseValuesToCreatePool = async (
   createPoolState: CreatePoolState,
-  provider: JsonRpcProvider,
 ): Promise<createPoolValues> => {
   const {
     dealDeadline,
@@ -154,8 +138,6 @@ const parseValuesToCreatePool = async (
     whitelist,
   } = createPoolState
   const now = new Date()
-  const purchaseContract = new Contract(investmentToken?.address as string, erc20Abi, provider)
-  const purchaseTokenDecimals = await purchaseContract.decimals()
 
   const investmentDeadLineDuration = getDuration(
     now,
@@ -182,7 +164,7 @@ const parseValuesToCreatePool = async (
 
       accum.push({
         address,
-        amount: amount ? parseUnits(String(amount), purchaseTokenDecimals) : MaxUint256,
+        amount: amount ? BigNumber.from(amount) : MaxUint256,
       })
 
       return accum
@@ -195,8 +177,8 @@ const parseValuesToCreatePool = async (
   return {
     poolName,
     poolSymbol,
-    poolCap: parseUnits((poolCap as number).toString(), purchaseTokenDecimals),
-    sponsorFee: parseEther((sponsorFee as number).toString()),
+    poolCap: BigNumber.from(poolCap),
+    sponsorFee: sponsorFee ? parseEther(sponsorFee as string) : ZERO_BN,
     investmentDeadLineDuration,
     dealDeadLineDuration,
     investmentToken: investmentToken?.address as string,
@@ -249,10 +231,87 @@ const createPoolReducer = (state: CreatePoolState, action: CreatePoolAction) => 
   throw new Error(`Unknown action type: ${type}`)
 }
 
+// Guard to check if var is Duration type
+export function isDuration(
+  duration: string | number | Token | Duration | undefined,
+): duration is Duration {
+  return (
+    typeof duration === 'object' &&
+    'days' in duration &&
+    'hours' in duration &&
+    'minutes' in duration
+  )
+}
+
+export const getCreatePoolSummaryData = (
+  createPoolState: CreatePoolState,
+): { title: string; value: string }[] =>
+  createPoolConfigArr.map((step) => {
+    let value = createPoolState[step.id]
+
+    if (isDuration(value)) {
+      try {
+        value = Object.values(value).some((val) => !!val)
+          ? getFormattedDurationFromNowToDuration(value, 'LLL dd, yyyy HH:mma')
+          : undefined
+      } catch (e) {
+        value = undefined
+      }
+    }
+
+    if (isToken(value)) {
+      value = value?.symbol
+    }
+
+    if (step.id === CreatePoolSteps.poolCap && value) {
+      value = formatToken(
+        BigNumber.from(value),
+        createPoolState[CreatePoolSteps.investmentToken]?.decimals,
+      )
+    }
+
+    if (step.id === CreatePoolSteps.sponsorFee && value) {
+      // TODO hardcoded decimals here
+      value = `${formatToken(BigNumber.from(value), 18)}%`
+    }
+
+    if (!value) value = '--'
+
+    return {
+      title: step.title,
+      value: value as string,
+    }
+  })
+
+export const getCreatePoolStepIndicatorData = (
+  currentStep: CreatePoolSteps,
+): { title: string; isActive: boolean }[] =>
+  Object.values(CreatePoolSteps).map((step) => ({
+    isActive: currentStep === step,
+    title: createPoolConfig[step].title,
+  }))
+
+function removeNulls(obj: any): any {
+  if (obj === null) {
+    return undefined
+  }
+  if (typeof obj === 'object') {
+    for (const key in obj) {
+      obj[key] = removeNulls(obj[key])
+    }
+  }
+  return obj
+}
+
+const LOCAL_STORAGE_STATE_KEY = 'aelin-createPoolState'
 export default function useAelinCreatePool(chainId: ChainsValues) {
-  const { readOnlyAppProvider } = useWeb3Connection()
-  const [createPoolState, dispatch] = useReducer(createPoolReducer, initialState)
+  // Get saved state in localstorage only once
+  const { current: savedState } = useRef(
+    removeNulls(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
+  )
+  const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
   const [errors, setErrors] = useState<poolErrors>()
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   const createPoolTx = useAelinPoolCreateTransaction(
     contracts.POOL_CREATE.address[chainId],
@@ -277,6 +336,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   }
 
   const handleSubmit = async () => {
+    setIsSubmitting(true)
     const {
       dealDeadLineDuration,
       investmentDeadLineDuration,
@@ -287,7 +347,19 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       poolName,
       poolSymbol,
       sponsorFee,
-    } = await parseValuesToCreatePool(createPoolState, readOnlyAppProvider)
+    } = await parseValuesToCreatePool(createPoolState)
+
+    console.log({
+      dealDeadLineDuration,
+      investmentDeadLineDuration,
+      investmentToken,
+      poolAddresses,
+      poolAddressesAmounts,
+      poolCap,
+      poolName,
+      poolSymbol,
+      sponsorFee,
+    })
 
     try {
       await createPoolTx(
@@ -301,18 +373,21 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         poolAddresses,
         poolAddressesAmounts,
       )
+      setIsSubmitting(false)
+      localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
     } catch (e) {
       console.log(e)
+      setIsSubmitting(false)
     }
   }
 
   const setPoolField = useCallback(
-    (field: CreatePoolSteps, value: unknown) =>
+    (value: unknown) =>
       dispatch({
         type: 'updatePool',
-        payload: { field, value },
+        payload: { field: createPoolState.currentStep, value },
       }),
-    [],
+    [createPoolState.currentStep],
   )
 
   const isFinalStep = createPoolState.currentStep === CreatePoolSteps.poolPrivacy
@@ -332,22 +407,32 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     } = createPoolState
 
     setErrors(
-      validateCreatePool(
-        {
-          dealDeadline: dealDeadline as Duration,
-          investmentDeadLine: investmentDeadLine as Duration,
-          investmentToken: investmentToken as Token,
-          poolCap: poolCap as number,
-          poolName,
-          poolPrivacy: poolPrivacy as Privacy,
-          poolSymbol,
-          sponsorFee: sponsorFee as number,
-          whitelist,
-        },
-        chainId,
-      ),
+      validateCreatePool({
+        dealDeadline: dealDeadline as Duration,
+        investmentDeadLine: investmentDeadLine as Duration,
+        investmentToken: investmentToken as Token,
+        poolCap: poolCap as string,
+        poolName,
+        poolPrivacy: poolPrivacy as Privacy,
+        poolSymbol,
+        sponsorFee: sponsorFee as string,
+        whitelist,
+      }),
+    )
+    localStorage.setItem(
+      LOCAL_STORAGE_STATE_KEY,
+      JSON.stringify(createPoolState, (k, v) => (v === undefined ? null : v)),
     )
   }, [createPoolState, chainId])
 
-  return { setPoolField, createPoolState, moveStep, isFinalStep, errors, isFirstStep, handleSubmit }
+  return {
+    setPoolField,
+    createPoolState,
+    moveStep,
+    isFinalStep,
+    errors,
+    isFirstStep,
+    handleSubmit,
+    isSubmitting,
+  }
 }

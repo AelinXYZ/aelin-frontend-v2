@@ -1,13 +1,23 @@
-import { Provider } from '@ethersproject/providers'
-
 import { Chains } from '@/src/constants/chains'
-import { getERC20Data } from '@/src/utils/getERC20Data'
+
+// Guard to check if var is Token type
+export function isToken(token: any): token is Token {
+  return (
+    typeof token === 'object' &&
+    'address' in token &&
+    'chainId' in token &&
+    'decimals' in token &&
+    'logoURI' in token &&
+    'name' in token &&
+    'symbol' in token
+  )
+}
 
 export type Token = {
   address: string
   chainId: number
   decimals: number
-  logoURI: string
+  logoURI?: string
   name: string
   symbol: string
 }
@@ -49,40 +59,4 @@ export const TestnetTokens: { [chainId: number]: Token } = {
     name: 'wETH',
     symbol: 'wETH',
   },
-}
-
-type ValidateErc20AddressReturn =
-  | { result: 'success'; token: Token }
-  | { result: 'failure'; errorMessage: string }
-
-export const validateErc20Address = async (
-  address: string,
-  provider: Provider | undefined,
-): Promise<ValidateErc20AddressReturn> => {
-  if (!provider) return { result: 'failure', errorMessage: 'Wallet not connected' }
-
-  const { decimals, name, symbol, totalSupply } = await getERC20Data({ address, provider })
-
-  if (
-    typeof name === 'string' &&
-    typeof symbol === 'string' &&
-    typeof decimals === 'number' &&
-    totalSupply !== undefined
-  ) {
-    const token: Token = {
-      address,
-      symbol,
-      name,
-      decimals,
-      chainId: 1,
-      logoURI: '',
-    }
-
-    return {
-      result: 'success',
-      token,
-    }
-  }
-
-  return { result: 'failure', errorMessage: 'Not a valid ERC20 address' }
 }

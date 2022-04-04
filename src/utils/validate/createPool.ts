@@ -1,8 +1,8 @@
 import { isAddress } from '@ethersproject/address'
+import { formatEther } from '@ethersproject/units'
 
-import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import { Privacy } from '@/src/constants/pool'
-import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
+import { ONE_DAY_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
 import { Token } from '@/src/constants/token'
 import { CreatePoolSteps } from '@/src/hooks/aelin/useAelinCreatePool'
 import { convertToSeconds } from '@/src/utils/date'
@@ -13,8 +13,8 @@ export type poolErrors = {
   investmentToken: Token
   investmentDeadLine: Duration
   dealDeadline: Duration
-  poolCap: number
-  sponsorFee: number
+  poolCap: string
+  sponsorFee: string
   poolPrivacy: Privacy
   whitelist: {
     address: string
@@ -22,20 +22,8 @@ export type poolErrors = {
     isSaved: boolean
   }[]
 }
-export type poolErrorsReturn = {
-  poolName: string
-  poolSymbol: string
-  investmentToken: string
-  investmentDeadLine: string
-  dealDeadline: string
-  poolCap: string
-  sponsorFee: string
-  poolPrivacy: string
-  whiteList: string
-}
 
-const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
-  const network = chainsConfig[chainId]
+const validateCreatePool = (values: poolErrors) => {
   const errors: any = {}
 
   if (!values.investmentToken) {
@@ -56,7 +44,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     errors[CreatePoolSteps.poolSymbol] = 'No more than 7 chars'
   }
 
-  if (Number(values.sponsorFee) > 98) {
+  if (Number(formatEther(values.sponsorFee || 0)) > 98) {
     errors.sponsorFee = 'Must be <= 98'
   }
 
@@ -87,12 +75,6 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     })
     if (purchaseDurationSeconds > ONE_DAY_IN_SECS * 30) {
       errors.dealDeadline = 'Max purchase expiry is 30 days'
-    } else if (
-      !network.isProd
-        ? purchaseDurationSeconds < ONE_MINUTE_IN_SECS
-        : purchaseDurationSeconds < ONE_MINUTE_IN_SECS * 30
-    ) {
-      errors.dealDeadline = 'Min purchase expiry is 30 mins'
     }
   }
 

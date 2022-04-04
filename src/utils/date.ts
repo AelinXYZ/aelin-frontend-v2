@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import add from 'date-fns/add'
+import format from 'date-fns/format'
 import formatFNS from 'date-fns/format'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import isAfter from 'date-fns/isAfter'
@@ -62,3 +63,6 @@ export const getDuration = (startDate: Date, days: number, hours: number, minute
   }).getTime()
   return (endTimestamp - startTimestamp) / 1000
 }
+
+export const getFormattedDurationFromNowToDuration = (value: Duration, dateFormat: string) =>
+  format(add(Date.now(), value), dateFormat)
