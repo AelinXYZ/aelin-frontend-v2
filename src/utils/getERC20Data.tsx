@@ -1,23 +1,45 @@
+import { isAddress } from '@ethersproject/address'
 import { Contract } from '@ethersproject/contracts'
 import { Provider, getDefaultProvider } from '@ethersproject/providers'
 
 import erc20Abi from '@/src/abis/ERC20.json'
+import { Token } from '@/src/constants/token'
 
 export const getERC20Data = async ({
   address,
   provider,
 }: {
   address: string
-  provider: Provider | undefined
-}) => {
+  provider?: Provider
+}): Promise<Token | null> => {
+  if (!isAddress(address)) {
+    console.log('Invalid ERC20 address to get information')
+    return null
+  }
   const contract = new Contract(address, erc20Abi, provider || getDefaultProvider())
 
-  const [name, symbol, decimals, totalSupply] = await Promise.all([
+  const [name, symbol, decimals, totalSupply, chainId] = await Promise.all([
     contract.name(),
     contract.symbol(),
     contract.decimals(),
     contract.totalSupply(),
+    provider?.getNetwork(),
   ]).catch(() => [])
 
-  return { name, symbol, decimals, totalSupply }
+  if (
+    typeof name === 'string' &&
+    typeof symbol === 'string' &&
+    typeof decimals === 'number' &&
+    totalSupply !== undefined
+  ) {
+    return {
+      address,
+      symbol,
+      name,
+      decimals,
+      chainId: Number(chainId),
+    }
+  }
+
+  return null
 }
