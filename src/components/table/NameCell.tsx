@@ -8,10 +8,16 @@ const Wrapper = styled(Cell)`
   gap: 10px;
 `
 
+const Text = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
 export const NameCell: React.FC<{ badge?: string }> = ({ badge, children, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      {children} {badge && <Badge>{badge}</Badge>}
+      <Text>{children}</Text> {badge && <Badge>{badge}</Badge>}
     </Wrapper>
   )
 }
