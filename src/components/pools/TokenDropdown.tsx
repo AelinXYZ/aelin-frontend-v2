@@ -31,10 +31,13 @@ type TokenDropdownProps = {
 
 function TokenDropdown(props: TokenDropdownProps) {
   const { onChange, placeholder, tokenSelected } = props
+  const { readOnlyAppProvider } = useWeb3Connection()
 
   const [customToken, setCustomToken] = useState<Token | undefined>(undefined)
   const [inputError, setInputError] = useState<string>('')
   const [searchToken, setSearchToken] = useState<string>('')
+  const [searchingToken, setSearchingToken] = useState<boolean>(false)
+
   const { tokens = [] } = useAelinTokenList() || {}
 
   const options = useMemo(
@@ -51,27 +54,28 @@ function TokenDropdown(props: TokenDropdownProps) {
     options.find((token) => token.value.address === tokenSelected?.address),
   )
 
-  const handlerSearchAddress = useCallback(async (value: string) => {
-    if (isAddress(value)) {
-      const tokenData = await getERC20Data({ address: value })
-
-      if (tokenData) {
-        setCustomToken(tokenData)
-        setInputError('')
+  const handlerSearchAddress = useCallback(
+    async (value: string) => {
+      if (isAddress(value)) {
+        setSearchingToken(true)
+        const tokenData = await getERC20Data({ address: value, provider: readOnlyAppProvider })
+        if (tokenData) {
+          setCustomToken(tokenData)
+          setInputError('')
+        } else {
+          setInputError('Invalid address')
+        }
+        setSearchingToken(false)
       } else {
-        setInputError('Invalid address')
+        setSearchToken(value)
       }
-    } else {
-      setSearchToken(value)
-    }
-  }, [])
+    },
+    [readOnlyAppProvider],
+  )
 
   useEffect(() => {
-    const selectedOption = options.find((token) => token.value.address === tokenSelected?.address)
-    if (tokenSelected?.address && !selectedOption) {
-      setSelectedToken(tokenToOption(tokenSelected))
-    }
-  }, [options, tokenSelected])
+    if (tokenSelected) setSelectedToken(tokenToOption(tokenSelected))
+  }, [tokenSelected])
 
   useEffect(() => {
     if (selectedToken) onChange(selectedToken.value)
@@ -82,15 +86,15 @@ function TokenDropdown(props: TokenDropdownProps) {
     <div>
       <p>{inputError}</p>
       <Dropdown
+        disabled={searchingToken}
         dropdownButtonContent={
           <DropdownButton>
             {!selectedToken ? (
               <input
-                onChange={(e) =>
-                  e.target.value !== null
-                    ? handlerSearchAddress(e.target.value)
-                    : setCustomToken(undefined)
-                }
+                disabled={searchingToken}
+                onChange={(e) => {
+                  e.target.value ? handlerSearchAddress(e.target.value) : setCustomToken(undefined)
+                }}
                 placeholder={placeholder}
                 type="text"
               />

@@ -1,6 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 import { Contract } from '@ethersproject/contracts'
-import { Provider, getDefaultProvider } from '@ethersproject/providers'
+import { Provider } from '@ethersproject/providers'
 
 import erc20Abi from '@/src/abis/ERC20.json'
 import { Token } from '@/src/constants/token'
@@ -10,20 +10,24 @@ export const getERC20Data = async ({
   provider,
 }: {
   address: string
-  provider?: Provider
+  provider: Provider
 }): Promise<Token | null> => {
   if (!isAddress(address)) {
     console.log('Invalid ERC20 address to get information')
     return null
   }
-  const contract = new Contract(address, erc20Abi, provider || getDefaultProvider())
+  if (!provider) {
+    console.log('No web3 provider detected')
+    return null
+  }
+  const contract = new Contract(address, erc20Abi, provider)
 
-  const [name, symbol, decimals, totalSupply, chainId] = await Promise.all([
+  const [name, symbol, decimals, totalSupply, network] = await Promise.all([
     contract.name(),
     contract.symbol(),
     contract.decimals(),
     contract.totalSupply(),
-    provider?.getNetwork(),
+    provider.getNetwork(),
   ]).catch(() => [])
 
   if (
@@ -37,7 +41,7 @@ export const getERC20Data = async ({
       symbol,
       name,
       decimals,
-      chainId: Number(chainId),
+      chainId: network.chainId,
     }
   }
 
