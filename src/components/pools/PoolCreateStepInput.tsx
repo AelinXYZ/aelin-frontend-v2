@@ -1,13 +1,12 @@
 import { BigNumberInput } from 'big-number-input'
 
 import { HMSInput } from '@/src/components/HMSInput'
-import { TokenInput } from '@/src/components/TokenInput'
+import TokenDropdown from '@/src/components/pools/TokenDropdown'
 import {
   CreatePoolState,
   CreatePoolSteps,
   createPoolConfig,
 } from '@/src/hooks/aelin/useAelinCreatePool'
-import TokenDropdown from '@/src/page_helpers/TokenDropdown'
 
 const PoolCreateStepInput = ({
   currentState,

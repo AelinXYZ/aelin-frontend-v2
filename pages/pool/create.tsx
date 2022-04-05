@@ -1,18 +1,17 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useCallback } from 'react'
 import styled from 'styled-components'
 
 import { StepIndicator } from '@/src/components/StepIndicator'
 import { Summary } from '@/src/components/Summary'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
+import PoolCreateStepInput from '@/src/components/pools/PoolCreateStepInput'
 import useAelinCreatePool, {
   CreatePoolSteps,
   createPoolConfig,
   getCreatePoolStepIndicatorData,
   getCreatePoolSummaryData,
 } from '@/src/hooks/aelin/useAelinCreatePool'
-import PoolCreateStepInput from '@/src/page_helpers/PoolCreateStepInput'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const PoolRow = styled.div`
