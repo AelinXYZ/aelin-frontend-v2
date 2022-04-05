@@ -44,8 +44,8 @@ const CreatePool: NextPage = () => {
   return (
     <>
       <Head>Create Pool</Head>
+      <PageTitle title={'Create pool'} />
       <RightTimelineLayout timeline={<>Timeline stuff</>}>
-        <PageTitle title={'Create pool'} />
         <CardWithTitle title={'Pool creation'}>
           <StepIndicator data={getCreatePoolStepIndicatorData(createPoolState.currentStep)} />
           <p>{currentStepConfig.title}</p>
