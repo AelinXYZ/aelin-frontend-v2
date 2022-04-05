@@ -105,6 +105,14 @@ export const theme = {
     yellow: yellow,
     blue: blue,
   },
+  stepCircle: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2);',
+    backgroundColorActive: 'rgba(130, 128, 255, 0.2);',
+    backgroundColorMain: '#fff',
+    backgroundColorMainActive: '#8280ff',
+    backgroundColorMiddle: 'rgba(255, 255, 255, 0.4);',
+    backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4);',
+  },
   textField: {
     backgroundColor: componentBackgroundColor,
     borderColor: lightGray,

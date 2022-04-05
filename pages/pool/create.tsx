@@ -2,10 +2,10 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styled from 'styled-components'
 
-import { StepIndicator } from '@/src/components/StepIndicator'
 import { Summary } from '@/src/components/Summary'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import PoolCreateStepInput from '@/src/components/pools/PoolCreateStepInput'
+import { StepIndicator } from '@/src/components/timeline/StepIndicator'
 import useAelinCreatePool, {
   CreatePoolSteps,
   createPoolConfig,
