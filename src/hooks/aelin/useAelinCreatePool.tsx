@@ -372,6 +372,8 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         dealDeadLineDuration,
         poolAddresses,
         poolAddressesAmounts,
+        // TODO hardcoded gasLimit
+        { gasLimit: 500000 },
       )
       setIsSubmitting(false)
       localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
