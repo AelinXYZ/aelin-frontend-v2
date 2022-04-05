@@ -3,6 +3,7 @@ import Head from 'next/head'
 import styled from 'styled-components'
 
 import { Summary } from '@/src/components/Summary'
+import { CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import PoolCreateStepInput from '@/src/components/pools/PoolCreateStepInput'
 import { StepIndicator } from '@/src/components/timeline/StepIndicator'
@@ -43,49 +44,48 @@ const CreatePool: NextPage = () => {
     <>
       <Head>Create Pool</Head>
       <RightTimelineLayout timeline={<>Timeline stuff</>}>
-        <StepIndicator data={getCreatePoolStepIndicatorData(createPoolState.currentStep)} />
-        <br />
-        <br />
-        <br />
-        <p>{currentStepConfig.title}</p>
-        <p>{currentStepConfig.text}</p>
+        <CardWithTitle title={'Pool creation'}>
+          <StepIndicator data={getCreatePoolStepIndicatorData(createPoolState.currentStep)} />
+          <p>{currentStepConfig.title}</p>
+          <p>{currentStepConfig.text}</p>
 
-        {Object.values(CreatePoolSteps).map((step) => {
-          const isStepVisible = createPoolState.currentStep === step
-          if (!isStepVisible) return null
+          {Object.values(CreatePoolSteps).map((step) => {
+            const isStepVisible = createPoolState.currentStep === step
+            if (!isStepVisible) return null
 
-          return (
-            <div key={step}>
-              <PoolCreateStepInput currentState={createPoolState} setPoolField={setPoolField} />
+            return (
+              <div key={step}>
+                <PoolCreateStepInput currentState={createPoolState} setPoolField={setPoolField} />
 
-              {currentStepError && <p>{currentStepError}</p>}
+                {currentStepError && <p>{currentStepError}</p>}
 
-              {!isFinalStep ? (
-                <button
-                  disabled={!!currentStepError}
-                  key={`${step}_button`}
-                  onClick={() => moveStep('next')}
-                >
-                  Next
-                </button>
-              ) : (
-                <button disabled={disableSubmit} key={`${step}_button`} onClick={handleSubmit}>
-                  Create Pool
-                </button>
-              )}
-            </div>
-          )
-        })}
+                {!isFinalStep ? (
+                  <button
+                    disabled={!!currentStepError}
+                    key={`${step}_button`}
+                    onClick={() => moveStep('next')}
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button disabled={disableSubmit} key={`${step}_button`} onClick={handleSubmit}>
+                    Create Pool
+                  </button>
+                )}
+              </div>
+            )
+          })}
 
-        <PoolRow>
-          {!isFirstStep && <button onClick={() => moveStep('prev')}>Prev</button>}
+          <PoolRow>
+            {!isFirstStep && <button onClick={() => moveStep('prev')}>Prev</button>}
 
-          {isFirstStep && !currentStepError && (
-            <button onClick={() => moveStep('next')}>Next</button>
-          )}
-        </PoolRow>
+            {isFirstStep && !currentStepError && (
+              <button onClick={() => moveStep('next')}>Next</button>
+            )}
+          </PoolRow>
 
-        <Summary data={getCreatePoolSummaryData(createPoolState)} />
+          <Summary data={getCreatePoolSummaryData(createPoolState)} />
+        </CardWithTitle>
       </RightTimelineLayout>
     </>
   )
