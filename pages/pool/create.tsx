@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import { Summary } from '@/src/components/Summary'
 import { CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import PoolCreateStepInput from '@/src/components/pools/PoolCreateStepInput'
 import { StepIndicator } from '@/src/components/timeline/StepIndicator'
@@ -44,6 +45,7 @@ const CreatePool: NextPage = () => {
     <>
       <Head>Create Pool</Head>
       <RightTimelineLayout timeline={<>Timeline stuff</>}>
+        <PageTitle title={'Create pool'} />
         <CardWithTitle title={'Pool creation'}>
           <StepIndicator data={getCreatePoolStepIndicatorData(createPoolState.currentStep)} />
           <p>{currentStepConfig.title}</p>
