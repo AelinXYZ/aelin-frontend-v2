@@ -36,9 +36,7 @@ const CreatePool: NextPage = () => {
   } = useAelinCreatePool(appChainId)
 
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
-
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
-
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
 
   return (
@@ -47,7 +45,10 @@ const CreatePool: NextPage = () => {
       <PageTitle title={'Create pool'} />
       <RightTimelineLayout timeline={<>Timeline stuff</>}>
         <CardWithTitle title={'Pool creation'}>
-          <StepIndicator data={getCreatePoolStepIndicatorData(createPoolState.currentStep)} />
+          <StepIndicator
+            currentStepOrder={currentStepConfig.order}
+            data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
+          />
           <p>{currentStepConfig.title}</p>
           <p>{currentStepConfig.text}</p>
 

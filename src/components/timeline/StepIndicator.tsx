@@ -22,23 +22,37 @@ const Wrapper = styled.div`
   }
 `
 
-const Step = styled(BaseStep)`
+const Step = styled(BaseStep)<{ isDone?: boolean }>`
   position: relative;
   width: var(--step-width);
   z-index: 5;
+
+  &:not(:last-child)::after {
+    background-color: ${({ isDone, theme: { colors } }) =>
+      isDone ? colors.primary : 'transparent'};
+    content: '';
+    height: 2px;
+    left: calc(var(--step-width) / 2);
+    position: absolute;
+    top: 11px;
+    transition: background-color 0.15s linear;
+    width: calc(var(--step-width));
+    z-index: 5;
+  }
 `
 
 const Timeline = styled.div``
 
 interface Props {
   data: { title: string; isActive: boolean }[]
+  currentStepOrder?: number
 }
 
-export const StepIndicator: React.FC<Props> = ({ data, ...restProps }) => {
+export const StepIndicator: React.FC<Props> = ({ currentStepOrder = 0, data, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
       {data.map(({ isActive, title }, index) => (
-        <Step isActive={isActive} key={index}>
+        <Step isActive={isActive} isDone={index + 1 < currentStepOrder} key={index}>
           {title}
         </Step>
       ))}

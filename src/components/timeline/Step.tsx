@@ -1,13 +1,19 @@
 import styled from 'styled-components'
 
-import { StepCircle } from '@/src/components/timeline/StepCircle'
+import { StepCircle as BaseStepCircle } from '@/src/components/timeline/StepCircle'
 
 const Wrapper = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  position: relative;
   width: 80px;
+`
+
+const StepCircle = styled(BaseStepCircle)`
+  position: relative;
+  z-index: 10;
 `
 
 const Text = styled.div<{ isActive?: boolean; isDone?: boolean }>`
@@ -17,8 +23,11 @@ const Text = styled.div<{ isActive?: boolean; isDone?: boolean }>`
   font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.3;
-  padding: 6px 15px 0;
+  padding: 6px 16px 0;
+  position: relative;
   text-align: center;
+  transition: color 0.15s linear;
+  z-index: 10;
 `
 
 export const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
