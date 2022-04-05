@@ -37,6 +37,9 @@ function TokenDropdown(props: TokenDropdownProps) {
   const [inputError, setInputError] = useState<string>('')
   const [searchToken, setSearchToken] = useState<string>('')
   const [searchingToken, setSearchingToken] = useState<boolean>(false)
+  const [selectedToken, setSelectedToken] = useState<Option | undefined>(
+    tokenSelected ? tokenToOption(tokenSelected) : undefined,
+  )
 
   const { tokens = [] } = useAelinTokenList() || {}
 
@@ -50,32 +53,21 @@ function TokenDropdown(props: TokenDropdownProps) {
     [customToken, searchToken, tokens],
   )
 
-  const [selectedToken, setSelectedToken] = useState<Option | undefined>(
-    options.find((token) => token.value.address === tokenSelected?.address),
-  )
-
   const handlerSearchAddress = useCallback(
     async (value: string) => {
-      if (isAddress(value)) {
-        setSearchingToken(true)
-        const tokenData = await getERC20Data({ address: value, provider: readOnlyAppProvider })
-        if (tokenData) {
-          setCustomToken(tokenData)
-          setInputError('')
-        } else {
-          setInputError('Invalid address')
-        }
-        setSearchingToken(false)
+      if (!isAddress(value)) return setSearchToken(value)
+      setSearchingToken(true)
+      const tokenData = await getERC20Data({ address: value, provider: readOnlyAppProvider })
+      if (tokenData) {
+        setCustomToken(tokenData)
+        setInputError('')
       } else {
-        setSearchToken(value)
+        setInputError('Invalid address')
       }
+      return setSearchingToken(false)
     },
     [readOnlyAppProvider],
   )
-
-  useEffect(() => {
-    if (tokenSelected) setSelectedToken(tokenToOption(tokenSelected))
-  }, [tokenSelected])
 
   useEffect(() => {
     if (selectedToken) onChange(selectedToken.value)
@@ -93,7 +85,11 @@ function TokenDropdown(props: TokenDropdownProps) {
               <input
                 disabled={searchingToken}
                 onChange={(e) => {
-                  e.target.value ? handlerSearchAddress(e.target.value) : setCustomToken(undefined)
+                  if (!e.target.value) {
+                    setCustomToken(undefined)
+                    setSearchToken('')
+                  }
+                  handlerSearchAddress(e.target.value)
                 }}
                 placeholder={placeholder}
                 type="text"
