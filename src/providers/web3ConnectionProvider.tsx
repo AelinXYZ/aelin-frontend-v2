@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 
+import { getAddress } from '@ethersproject/address'
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
 import Onboard from 'bnc-onboard'
 import { API, Wallet } from 'bnc-onboard/dist/src/interfaces'
@@ -29,12 +30,12 @@ const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME
 
 // Default chain id from env var
-const INITAL_APP_CHAIN_ID = Number(
+const INITIAL_APP_CHAIN_ID = Number(
   process.env.NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID || 4,
 ) as ChainsValues
 
 nullthrows(
-  Object.values(Chains).includes(INITAL_APP_CHAIN_ID) ? INITAL_APP_CHAIN_ID : null,
+  Object.values(Chains).includes(INITIAL_APP_CHAIN_ID) ? INITIAL_APP_CHAIN_ID : null,
   'No default chain ID is defined or is not supported',
 )
 
@@ -146,15 +147,16 @@ export default function Web3ConnectionProvider({ children }: Props) {
   const [walletChainId, setWalletChainId] = useState<number | null>(null)
   const [tmpWallet, setTmpWallet] = useState<Wallet | null>(null)
   const [wallet, setWallet] = useState<Wallet | null>(null)
-  const [appChainId, setAppChainId] = useState<ChainsValues>(INITAL_APP_CHAIN_ID)
+  const [appChainId, setAppChainId] = useState<ChainsValues>(INITIAL_APP_CHAIN_ID)
   const supportedChainIds = getChainsByEnvironmentArray().map(({ chainId }) => chainId)
-  const web3Provider = wallet?.provider != null ? new Web3Provider(wallet.provider) : null
+  const web3Provider =
+    wallet !== null && wallet.provider !== null ? new Web3Provider(wallet.provider) : null
 
-  const isWalletConnected = web3Provider != null && address != null
+  const isWalletConnected = web3Provider !== null && address !== null
 
   const isAppConnected = walletChainId === appChainId && address !== null && web3Provider !== null
 
-  const isWalletNetworkSupported = supportedChainIds.includes(walletChainId as any)
+  const isWalletNetworkSupported = supportedChainIds.includes(walletChainId as ChainsValues)
 
   const readOnlyAppProvider = useMemo(
     () => new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl, appChainId),
@@ -180,12 +182,16 @@ export default function Web3ConnectionProvider({ children }: Props) {
 
   // Instantiate Onboard
   useEffect(() => {
-    initOnboard(INITAL_APP_CHAIN_ID, {
+    initOnboard(INITIAL_APP_CHAIN_ID, {
       network: (network: number) => {
         setWalletChainId(network || null)
       },
       address: async (address: string | undefined) => {
-        setAddress(address || null)
+        if (address) {
+          setAddress(getAddress(address))
+        } else {
+          setAddress(null)
+        }
       },
       wallet: async (wallet: Wallet) => {
         if (wallet.name === undefined) {
@@ -241,7 +247,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
       const isWalletCheck = await onboard.walletCheck()
       if (isWalletCheck) {
         const { address } = onboard.getState()
-        setAddress(address)
+        setAddress(getAddress(address))
       }
     }
   }
