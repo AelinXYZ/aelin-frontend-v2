@@ -128,7 +128,7 @@ export const theme = {
     active: {
       color: textColor,
       backgroundColor: componentBackgroundColor,
-      borderColor: lightGray,
+      borderColor: primary,
     },
     placeholder: {
       color: lightGray,

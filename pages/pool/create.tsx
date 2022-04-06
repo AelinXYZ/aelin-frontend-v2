@@ -8,6 +8,10 @@ import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import PoolCreateStepInput from '@/src/components/pools/PoolCreateStepInput'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonNext,
+  ButtonPrev,
+} from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { StepIndicator } from '@/src/components/timeline/StepIndicator'
 import useAelinCreatePool, {
   CreatePoolSteps,
@@ -18,7 +22,6 @@ import useAelinCreatePool, {
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const WrapperGrid = styled.div`
-  align-items: center;
   display: grid;
   grid-template-columns: 30px 1fr 30px;
   width: 100%;
@@ -29,6 +32,10 @@ const StepContents = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 20px;
+`
+
+const PrevNextWrapper = styled.div`
+  padding-top: 150px;
 `
 
 const Title = styled.h2`
@@ -82,19 +89,17 @@ const CreatePool: NextPage = () => {
             currentStepOrder={order}
             data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
           />
-          <Title>{title}</Title>
-          <Description>{text}</Description>
           {Object.values(CreatePoolSteps).map((step) => {
             const isStepVisible = createPoolState.currentStep === step
 
             return !isStepVisible ? null : (
               <WrapperGrid>
-                {
-                  <button disabled={isFirstStep} onClick={() => moveStep('prev')}>
-                    Prev
-                  </button>
-                }
+                <PrevNextWrapper>
+                  {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
+                </PrevNextWrapper>
                 <StepContents>
+                  <Title>{title}</Title>
+                  <Description>{text}</Description>
                   <PoolCreateStepInput
                     currentState={createPoolState}
                     key={step}
@@ -120,9 +125,11 @@ const CreatePool: NextPage = () => {
                   )}
                   <Summary data={getCreatePoolSummaryData(createPoolState)} />
                 </StepContents>
-                {isFirstStep && !currentStepError && (
-                  <button onClick={() => moveStep('next')}>Next</button>
-                )}
+                <PrevNextWrapper>
+                  {!isFinalStep && (
+                    <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
+                  )}
+                </PrevNextWrapper>
               </WrapperGrid>
             )
           })}

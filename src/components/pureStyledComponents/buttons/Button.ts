@@ -40,6 +40,7 @@ export const ButtonPrimaryCSS = css`
   &:hover {
     background-color: ${({ theme }) => theme.buttonPrimary.backgroundColorHover};
     border-color: ${({ theme }) => theme.buttonPrimary.borderColorHover};
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
     color: ${({ theme }) => theme.buttonPrimary.colorHover};
   }
 
@@ -60,6 +61,10 @@ export const ButtonGradientCSS = css`
   border: none;
   color: ${({ theme }) => theme.colors.textColor};
   font-weight: 500;
+
+  &:hover {
+    box-shadow: 0 0 10px #000;
+  }
 `
 
 export const TabButtonCSS = css<{ isActive?: boolean }>`
