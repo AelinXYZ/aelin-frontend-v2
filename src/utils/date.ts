@@ -1,7 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import add from 'date-fns/add'
+import format from 'date-fns/format'
 import formatFNS from 'date-fns/format'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import isAfter from 'date-fns/isAfter'
+
+import { ONE_DAY_IN_SECS, ONE_HOUR_IN_SECS, ONE_MINUTE_IN_SECS } from '@/src/constants/time'
 
 export const DATE_FORMAT_SIMPLE = 'yyyy-MM-dd'
 export const DATE_DETAILED = 'MMM dd, yyyy hh:mm a'
@@ -39,3 +43,26 @@ export const getFormattedDurationFromDateToNow = (date: Date | number, message: 
   }
   return message
 }
+
+export const convertToSeconds = ({
+  days,
+  hours,
+  minutes,
+}: {
+  days: number
+  hours: number
+  minutes: number
+}) => days * ONE_DAY_IN_SECS + hours * ONE_HOUR_IN_SECS + minutes * ONE_MINUTE_IN_SECS
+
+export const getDuration = (startDate: Date, days: number, hours: number, minutes: number) => {
+  const startTimestamp = startDate.getTime()
+  const endTimestamp = add(startDate, {
+    days,
+    hours,
+    minutes,
+  }).getTime()
+  return (endTimestamp - startTimestamp) / 1000
+}
+
+export const getFormattedDurationFromNowToDuration = (value: Duration, dateFormat: string) =>
+  format(add(Date.now(), value), dateFormat)
