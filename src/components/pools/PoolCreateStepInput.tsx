@@ -1,26 +1,36 @@
+import styled from 'styled-components'
+
 import { BigNumberInput } from 'big-number-input'
 
 import { HMSInput } from '@/src/components/HMSInput'
 import TokenDropdown from '@/src/components/pools/TokenDropdown'
+import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import {
   CreatePoolState,
   CreatePoolSteps,
   createPoolConfig,
 } from '@/src/hooks/aelin/useAelinCreatePool'
 
-const PoolCreateStepInput = ({
-  currentState,
-  setPoolField,
-}: {
+const Wrapper = styled.div`
+  margin: 0 auto 40px;
+  max-width: 100%;
+  width: 320px;
+`
+
+const Textfield = styled(BaseTextField)`
+  width: 100%;
+`
+
+const PoolCreateStepInput: React.FC<{
   setPoolField: (value: unknown) => void
   currentState: CreatePoolState
-}) => {
+}> = ({ currentState, setPoolField, ...restProps }) => {
   const step = currentState.currentStep
 
-  switch (step) {
-    case CreatePoolSteps.poolName:
-      return (
-        <input
+  return (
+    <Wrapper {...restProps}>
+      {step === CreatePoolSteps.poolName ? (
+        <Textfield
           maxLength={16}
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
@@ -28,10 +38,8 @@ const PoolCreateStepInput = ({
           type="text"
           value={currentState[step]}
         />
-      )
-    case CreatePoolSteps.poolSymbol:
-      return (
-        <input
+      ) : step === CreatePoolSteps.poolSymbol ? (
+        <Textfield
           maxLength={8}
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
@@ -39,14 +47,9 @@ const PoolCreateStepInput = ({
           type="text"
           value={currentState[step]}
         />
-      )
-    case CreatePoolSteps.dealDeadline:
-    case CreatePoolSteps.investmentDeadLine:
-      return (
+      ) : step === CreatePoolSteps.dealDeadline || step === CreatePoolSteps.investmentDeadLine ? (
         <HMSInput defaultValue={currentState[step]} onChange={(value) => setPoolField(value)} />
-      )
-    case CreatePoolSteps.poolCap:
-      return (
+      ) : step === CreatePoolSteps.poolCap ? (
         <>
           <BigNumberInput
             decimals={currentState[CreatePoolSteps.investmentToken]?.decimals as number}
@@ -56,13 +59,11 @@ const PoolCreateStepInput = ({
             value={currentState[step] ? (currentState[step] as string) : ''}
           />
         </>
-      )
-    case CreatePoolSteps.poolPrivacy:
-      return (
+      ) : step === CreatePoolSteps.poolPrivacy ? (
         <>
           <label htmlFor="public_pool">
             Public
-            <input
+            <Textfield
               checked={currentState[CreatePoolSteps.poolPrivacy] === 'public'}
               id="public_pool"
               onChange={(e) => setPoolField(e.target.value)}
@@ -72,7 +73,7 @@ const PoolCreateStepInput = ({
           </label>
           <label htmlFor="private_pool">
             Private
-            <input
+            <Textfield
               checked={currentState[CreatePoolSteps.poolPrivacy] === 'private'}
               id="private_pool"
               onChange={(e) => setPoolField(e.target.value)}
@@ -81,9 +82,7 @@ const PoolCreateStepInput = ({
             />
           </label>
         </>
-      )
-    case CreatePoolSteps.sponsorFee:
-      return (
+      ) : step === CreatePoolSteps.sponsorFee ? (
         <>
           <BigNumberInput
             decimals={18}
@@ -93,16 +92,15 @@ const PoolCreateStepInput = ({
             value={currentState[step] ? (currentState[step] as string) : ''}
           />
         </>
-      )
-    case CreatePoolSteps.investmentToken:
-      return (
+      ) : step === CreatePoolSteps.investmentToken ? (
         <TokenDropdown
           onChange={(token) => setPoolField(token)}
           placeholder={createPoolConfig[step].placeholder}
           tokenSelected={currentState[CreatePoolSteps.investmentToken]}
         />
-      )
-  }
+      ) : null}
+    </Wrapper>
+  )
 }
 
 export default PoolCreateStepInput

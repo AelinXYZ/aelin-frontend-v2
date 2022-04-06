@@ -31,7 +31,7 @@ const Inner = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 20px 20px 20px 40px;
+  padding: 20px 45px 40px;
 `
 
 export const CardWithTitle: React.FC<{ title: string }> = ({ children, title, ...restProps }) => (

@@ -116,7 +116,7 @@ export const theme = {
   textField: {
     backgroundColor: componentBackgroundColor,
     borderColor: lightGray,
-    borderRadius: '25px',
+    borderRadius: '8px',
     borderStyle: 'solid',
     borderWidth: '1px',
     color: textColor,
@@ -131,7 +131,7 @@ export const theme = {
       borderColor: lightGray,
     },
     placeholder: {
-      color: 'rgba(255, 255, 255, 0.5)',
+      color: lightGray,
     },
   },
   themeBreakPoints: {
