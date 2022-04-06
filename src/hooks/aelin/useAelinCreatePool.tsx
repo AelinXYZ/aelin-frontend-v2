@@ -12,6 +12,8 @@ import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
 import useAelinPoolCreateTransaction from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
+import { isDuration } from '@/src/utils/isDuration'
+import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -232,18 +234,6 @@ const createPoolReducer = (state: CreatePoolState, action: CreatePoolAction) => 
   throw new Error(`Unknown action type: ${type}`)
 }
 
-// Guard to check if var is Duration type
-export function isDuration(
-  duration: string | number | Token | Duration | undefined,
-): duration is Duration {
-  return (
-    typeof duration === 'object' &&
-    'days' in duration &&
-    'hours' in duration &&
-    'minutes' in duration
-  )
-}
-
 export const getCreatePoolSummaryData = (
   createPoolState: CreatePoolState,
 ): { title: string; value: string }[] =>
@@ -292,23 +282,11 @@ export const getCreatePoolStepIndicatorData = (
     title: createPoolConfig[step].title,
   }))
 
-function removeNulls(obj: any): any {
-  if (obj === null) {
-    return undefined
-  }
-  if (typeof obj === 'object') {
-    for (const key in obj) {
-      obj[key] = removeNulls(obj[key])
-    }
-  }
-  return obj
-}
-
 const LOCAL_STORAGE_STATE_KEY = 'aelin-createPoolState'
 export default function useAelinCreatePool(chainId: ChainsValues) {
   // Get saved state in localstorage only once
   const { current: savedState } = useRef(
-    removeNulls(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
+    removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
   )
   const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
   const [errors, setErrors] = useState<poolErrors>()
@@ -362,7 +340,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         poolAddresses,
         poolAddressesAmounts,
         // TODO hardcoded gasLimit
-        { gasLimit: 500000 },
+        { gasLimit: 5000000 },
       )
       setIsSubmitting(false)
       localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
