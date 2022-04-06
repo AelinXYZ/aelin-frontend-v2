@@ -26,7 +26,7 @@ const Text = styled.div<{ isActive?: boolean; isDone?: boolean }>`
   padding: 6px 16px 0;
   position: relative;
   text-align: center;
-  transition: color 0.15s linear;
+  transition: color 0.25s linear;
   z-index: 10;
 `
 

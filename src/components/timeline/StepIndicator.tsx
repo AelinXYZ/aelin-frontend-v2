@@ -35,8 +35,8 @@ const Step = styled(BaseStep)<{ isDone?: boolean }>`
     left: calc(var(--step-width) / 2);
     position: absolute;
     top: 11px;
-    transition: background-color 0.15s linear;
-    width: calc(var(--step-width));
+    transition: all 0.25s linear;
+    width: ${({ isDone }) => (isDone ? 'calc(var(--step-width))' : '0')};
     z-index: 5;
   }
 `

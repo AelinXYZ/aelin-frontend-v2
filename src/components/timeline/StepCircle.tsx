@@ -5,7 +5,7 @@ interface Props {
 }
 
 const StepCSS = css<Props>`
-  --transition: background-color linear 0.15s;
+  --transition: background-color linear 0.25s;
 
   background-color: ${({ isActive, theme: { stepCircle } }) =>
     isActive ? stepCircle.backgroundColorActive : stepCircle.backgroundColor};
