@@ -1,7 +1,9 @@
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
-  margin: 0 0 30px;
+  margin: 0 auto 30px;
+  max-width: 100%;
+  width: ${({ theme }) => theme.layout.maxWidth};
 `
 
 const Title = styled.h1`
