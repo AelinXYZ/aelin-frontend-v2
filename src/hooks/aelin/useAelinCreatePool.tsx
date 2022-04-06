@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther } from '@ethersproject/units'
 
@@ -114,8 +115,8 @@ export const createPoolConfigArr = Object.values(createPoolConfig)
 type createPoolValues = {
   poolName: string
   poolSymbol: string
-  poolCap: BigNumber
-  sponsorFee: BigNumber
+  poolCap: BigNumberish
+  sponsorFee: BigNumberish
   investmentDeadLineDuration: number
   dealDeadLineDuration: number
   investmentToken: string
@@ -177,8 +178,8 @@ const parseValuesToCreatePool = async (
   return {
     poolName,
     poolSymbol,
-    poolCap: BigNumber.from(poolCap),
-    sponsorFee: sponsorFee ? parseEther(sponsorFee as string) : ZERO_BN,
+    poolCap: (poolCap || ZERO_BN) as BigNumberish,
+    sponsorFee: (sponsorFee || ZERO_BN) as BigNumberish,
     investmentDeadLineDuration,
     dealDeadLineDuration,
     investmentToken: investmentToken?.address as string,
@@ -263,16 +264,16 @@ export const getCreatePoolSummaryData = (
       value = value?.symbol
     }
 
-    if (step.id === CreatePoolSteps.poolCap && value) {
+    if (step.id === CreatePoolSteps.poolCap) {
       value = formatToken(
-        BigNumber.from(value),
+        BigNumber.from(value || 0),
         createPoolState[CreatePoolSteps.investmentToken]?.decimals,
       )
     }
 
-    if (step.id === CreatePoolSteps.sponsorFee && value) {
+    if (step.id === CreatePoolSteps.sponsorFee) {
       // TODO hardcoded decimals here
-      value = `${formatToken(BigNumber.from(value), 18)}%`
+      value = `${formatToken(BigNumber.from(value || 0), 18)}%`
     }
 
     if (!value) value = '--'
@@ -349,27 +350,15 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       sponsorFee,
     } = await parseValuesToCreatePool(createPoolState)
 
-    console.log({
-      dealDeadLineDuration,
-      investmentDeadLineDuration,
-      investmentToken,
-      poolAddresses,
-      poolAddressesAmounts,
-      poolCap,
-      poolName,
-      poolSymbol,
-      sponsorFee,
-    })
-
     try {
       await createPoolTx(
         poolName,
         poolSymbol,
         poolCap,
         investmentToken,
-        investmentDeadLineDuration,
-        sponsorFee,
         dealDeadLineDuration,
+        sponsorFee,
+        investmentDeadLineDuration,
         poolAddresses,
         poolAddressesAmounts,
         // TODO hardcoded gasLimit
@@ -409,17 +398,20 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     } = createPoolState
 
     setErrors(
-      validateCreatePool({
-        dealDeadline: dealDeadline as Duration,
-        investmentDeadLine: investmentDeadLine as Duration,
-        investmentToken: investmentToken as Token,
-        poolCap: poolCap as string,
-        poolName,
-        poolPrivacy: poolPrivacy as Privacy,
-        poolSymbol,
-        sponsorFee: sponsorFee as string,
-        whitelist,
-      }),
+      validateCreatePool(
+        {
+          dealDeadline: dealDeadline as Duration,
+          investmentDeadLine: investmentDeadLine as Duration,
+          investmentToken: investmentToken as Token,
+          poolCap: poolCap as string,
+          poolName,
+          poolPrivacy: poolPrivacy as Privacy,
+          poolSymbol,
+          sponsorFee: sponsorFee as string,
+          whitelist,
+        },
+        chainId,
+      ),
     )
     localStorage.setItem(
       LOCAL_STORAGE_STATE_KEY,
