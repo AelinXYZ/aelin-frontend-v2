@@ -134,6 +134,7 @@ export const theme = {
     },
     placeholder: {
       color: lightGray,
+      fontSize: '1.4rem',
     },
   },
   themeBreakPoints: {

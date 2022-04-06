@@ -41,8 +41,6 @@ const Step = styled(BaseStep)<{ isDone?: boolean }>`
   }
 `
 
-const Timeline = styled.div``
-
 interface Props {
   data: { title: string; isActive: boolean }[]
   currentStepOrder?: number

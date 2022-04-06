@@ -36,6 +36,7 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
 
   &::placeholder {
     color: ${({ theme }) => theme.textField.placeholder.color};
+    font-size: ${({ theme }) => theme.textField.placeholder.fontSize};
     font-style: normal;
     font-weight: 400;
     opacity: 1;

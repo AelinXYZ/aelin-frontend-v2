@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { BigNumberInput } from 'big-number-input'
 
 import { HMSInput } from '@/src/components/HMSInput'
+import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import TokenDropdown from '@/src/components/pools/TokenDropdown'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import {
@@ -12,13 +13,25 @@ import {
 } from '@/src/hooks/aelin/useAelinCreatePool'
 
 const Wrapper = styled.div`
-  margin: 0 auto 40px;
+  margin: 0 auto;
+  max-width: 100%;
+`
+
+const Textfield = styled(BaseTextField)`
   max-width: 100%;
   width: 320px;
 `
 
-const Textfield = styled(BaseTextField)`
-  width: 100%;
+const SponsorFeeTextfield = styled(Textfield)`
+  width: 160px;
+`
+
+const PrivacyGrid = styled.div`
+  display: grid;
+  gap: 40px;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 auto;
+  max-width: fit-content;
 `
 
 const PoolCreateStepInput: React.FC<{
@@ -50,48 +63,42 @@ const PoolCreateStepInput: React.FC<{
       ) : step === CreatePoolSteps.dealDeadline || step === CreatePoolSteps.investmentDeadLine ? (
         <HMSInput defaultValue={currentState[step]} onChange={(value) => setPoolField(value)} />
       ) : step === CreatePoolSteps.poolCap ? (
-        <>
-          <BigNumberInput
-            decimals={currentState[CreatePoolSteps.investmentToken]?.decimals as number}
-            min="0"
-            onChange={(value) => setPoolField(value)}
-            placeholder={createPoolConfig[step].placeholder}
-            value={currentState[step] ? (currentState[step] as string) : ''}
-          />
-        </>
+        <BigNumberInput
+          decimals={currentState[CreatePoolSteps.investmentToken]?.decimals as number}
+          min="0"
+          onChange={(value) => setPoolField(value)}
+          placeholder={createPoolConfig[step].placeholder}
+          renderInput={(props) => {
+            const { onChange, placeholder } = props
+            return <Textfield onChange={onChange} placeholder={placeholder} />
+          }}
+          value={currentState[step] ? (currentState[step] as string) : ''}
+        />
       ) : step === CreatePoolSteps.poolPrivacy ? (
-        <>
-          <label htmlFor="public_pool">
-            Public
-            <Textfield
-              checked={currentState[CreatePoolSteps.poolPrivacy] === 'public'}
-              id="public_pool"
-              onChange={(e) => setPoolField(e.target.value)}
-              type="radio"
-              value="public"
-            />
-          </label>
-          <label htmlFor="private_pool">
-            Private
-            <Textfield
-              checked={currentState[CreatePoolSteps.poolPrivacy] === 'private'}
-              id="private_pool"
-              onChange={(e) => setPoolField(e.target.value)}
-              type="radio"
-              value="private"
-            />
-          </label>
-        </>
-      ) : step === CreatePoolSteps.sponsorFee ? (
-        <>
-          <BigNumberInput
-            decimals={18}
-            min="0"
-            onChange={(value) => setPoolField(value)}
-            placeholder={createPoolConfig[step].placeholder}
-            value={currentState[step] ? (currentState[step] as string) : ''}
+        <PrivacyGrid>
+          <LabeledRadioButton
+            checked={currentState[CreatePoolSteps.poolPrivacy] === 'public'}
+            label={'Public'}
+            onClick={() => setPoolField('public')}
           />
-        </>
+          <LabeledRadioButton
+            checked={currentState[CreatePoolSteps.poolPrivacy] === 'private'}
+            label="Private"
+            onClick={() => setPoolField('private')}
+          />
+        </PrivacyGrid>
+      ) : step === CreatePoolSteps.sponsorFee ? (
+        <BigNumberInput
+          decimals={18}
+          min="0"
+          onChange={(value) => setPoolField(value)}
+          placeholder={createPoolConfig[step].placeholder}
+          renderInput={(props) => {
+            const { onChange, placeholder } = props
+            return <SponsorFeeTextfield onChange={onChange} placeholder={placeholder} />
+          }}
+          value={currentState[step] ? (currentState[step] as string) : ''}
+        />
       ) : step === CreatePoolSteps.investmentToken ? (
         <TokenDropdown
           onChange={(token) => setPoolField(token)}

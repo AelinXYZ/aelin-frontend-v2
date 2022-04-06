@@ -64,6 +64,7 @@ const Description = styled.p`
 
 const ButtonWrapper = styled.div`
   margin-bottom: 40px;
+  margin-top: 40px;
 `
 
 const CreatePool: NextPage = () => {
