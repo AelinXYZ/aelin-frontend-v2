@@ -54,9 +54,8 @@ const CreatePool: NextPage = () => {
 
           {Object.values(CreatePoolSteps).map((step) => {
             const isStepVisible = createPoolState.currentStep === step
-            if (!isStepVisible) return null
 
-            return (
+            return !isStepVisible ? null : (
               <div key={step}>
                 <PoolCreateStepInput currentState={createPoolState} setPoolField={setPoolField} />
 
@@ -78,7 +77,6 @@ const CreatePool: NextPage = () => {
               </div>
             )
           })}
-
           <PoolRow>
             {!isFirstStep && <button onClick={() => moveStep('prev')}>Prev</button>}
 
@@ -86,7 +84,6 @@ const CreatePool: NextPage = () => {
               <button onClick={() => moveStep('next')}>Next</button>
             )}
           </PoolRow>
-
           <Summary data={getCreatePoolSummaryData(createPoolState)} />
         </CardWithTitle>
       </RightTimelineLayout>
