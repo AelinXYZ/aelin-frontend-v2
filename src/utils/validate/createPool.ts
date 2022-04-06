@@ -1,8 +1,9 @@
 import { isAddress } from '@ethersproject/address'
 import { formatEther } from '@ethersproject/units'
 
+import { ChainsValues, chainsConfig, getNetworkConfig } from '@/src/constants/chains'
 import { Privacy } from '@/src/constants/pool'
-import { ONE_DAY_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
+import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
 import { Token } from '@/src/constants/token'
 import { CreatePoolSteps } from '@/src/hooks/aelin/useAelinCreatePool'
 import { convertToSeconds } from '@/src/utils/date'
@@ -23,8 +24,10 @@ export type poolErrors = {
   }[]
 }
 
-const validateCreatePool = (values: poolErrors) => {
+const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
   const errors: any = {}
+
+  const currentNetwork = getNetworkConfig(chainId)
 
   if (!values.investmentToken) {
     errors.investmentToken = 'Required'
@@ -55,26 +58,32 @@ const validateCreatePool = (values: poolErrors) => {
   ) {
     errors.investmentDeadLine = 'Required'
   } else {
-    const durationSeconds = convertToSeconds({
+    const investmentDeadLineSeconds = convertToSeconds({
       days: values.investmentDeadLine?.days ?? 0,
       hours: values.investmentDeadLine?.hours ?? 0,
       minutes: values.investmentDeadLine?.minutes ?? 0,
     })
-    if (durationSeconds > ONE_YEAR_IN_SECS) {
-      errors.investmentDeadLine = 'Max duration is 365 days'
+    if (investmentDeadLineSeconds > ONE_DAY_IN_SECS * 30) {
+      errors.investmentDeadLine = 'Max purchase expiry is 30 days'
+    } else if (
+      !currentNetwork.isProd
+        ? investmentDeadLineSeconds < ONE_MINUTE_IN_SECS // min purchase expiry in test networks 1 min
+        : investmentDeadLineSeconds < ONE_MINUTE_IN_SECS * 30 // min purchase expiry in main networks 30 min
+    ) {
+      errors.investmentDeadLine = 'Min purchase expiry is 30 mins'
     }
   }
 
   if (!values.dealDeadline?.days && !values.dealDeadline?.hours && !values.dealDeadline?.minutes) {
     errors.dealDeadline = 'Required'
   } else {
-    const purchaseDurationSeconds = convertToSeconds({
+    const dealDeadlineSeconds = convertToSeconds({
       days: values.dealDeadline?.days ?? 0,
       hours: values.dealDeadline?.hours ?? 0,
       minutes: values.dealDeadline?.days ?? 0,
     })
-    if (purchaseDurationSeconds > ONE_DAY_IN_SECS * 30) {
-      errors.dealDeadline = 'Max purchase expiry is 30 days'
+    if (dealDeadlineSeconds > ONE_YEAR_IN_SECS) {
+      errors.dealDeadline = 'Max duration is 365 days'
     }
   }
 
