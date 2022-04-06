@@ -2,11 +2,12 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styled from 'styled-components'
 
-import { Summary } from '@/src/components/Summary'
 import { CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import PoolCreateStepInput from '@/src/components/pools/PoolCreateStepInput'
+import { Summary } from '@/src/components/pools/Summary'
+import { Timeline } from '@/src/components/pools/Timeline'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
@@ -89,7 +90,7 @@ const CreatePool: NextPage = () => {
     <>
       <Head>Create Pool</Head>
       <PageTitle title={'Create pool'} />
-      <RightTimelineLayout timeline={<>Right timeline</>}>
+      <RightTimelineLayout timeline={<Timeline activeItem={1} />}>
         <CardWithTitle title={'Pool creation'}>
           <StepIndicator
             currentStepOrder={order}

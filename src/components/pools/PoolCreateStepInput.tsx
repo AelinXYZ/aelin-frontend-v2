@@ -2,8 +2,8 @@ import styled from 'styled-components'
 
 import { BigNumberInput } from 'big-number-input'
 
-import { HMSInput } from '@/src/components/HMSInput'
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
+import { HMSInput } from '@/src/components/pools/HMSInput'
 import TokenDropdown from '@/src/components/pools/TokenDropdown'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import {

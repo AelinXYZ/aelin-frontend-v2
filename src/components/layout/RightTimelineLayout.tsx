@@ -2,9 +2,9 @@ import { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
-  --timeline-width: 200px;
+  --timeline-width: 296px;
 
-  column-gap: 30px;
+  column-gap: 60px;
   display: grid;
   flex-grow: 1;
   flex-shrink: 0;
