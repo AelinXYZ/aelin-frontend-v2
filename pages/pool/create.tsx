@@ -31,7 +31,6 @@ const StepContents = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 0 20px;
 `
 
 const PrevNextWrapper = styled.div`
@@ -46,6 +45,7 @@ const Title = styled.h2`
   line-height: 1.2;
   margin: 0 0 18px;
   max-width: 100%;
+  padding: 0 20px;
   text-align: center;
   width: 690px;
 `
@@ -57,8 +57,13 @@ const Description = styled.p`
   line-height: 1.4;
   margin: 0 0 50px;
   max-width: 100%;
+  padding: 0 20px;
   text-align: center;
   width: 690px;
+`
+
+const ButtonWrapper = styled.div`
+  margin-bottom: 40px;
 `
 
 const CreatePool: NextPage = () => {
@@ -106,23 +111,25 @@ const CreatePool: NextPage = () => {
                     setPoolField={setPoolField}
                   />
                   {/* {currentStepError && <p>{currentStepError}</p>} */}
-                  {!isFinalStep ? (
-                    <GradientButton
-                      disabled={!!currentStepError}
-                      key={`${step}_button`}
-                      onClick={() => moveStep('next')}
-                    >
-                      Next
-                    </GradientButton>
-                  ) : (
-                    <GradientButton
-                      disabled={disableSubmit}
-                      key={`${step}_button`}
-                      onClick={handleSubmit}
-                    >
-                      Create Pool
-                    </GradientButton>
-                  )}
+                  <ButtonWrapper>
+                    {!isFinalStep ? (
+                      <GradientButton
+                        disabled={!!currentStepError}
+                        key={`${step}_button`}
+                        onClick={() => moveStep('next')}
+                      >
+                        Next
+                      </GradientButton>
+                    ) : (
+                      <GradientButton
+                        disabled={disableSubmit}
+                        key={`${step}_button`}
+                        onClick={handleSubmit}
+                      >
+                        Create Pool
+                      </GradientButton>
+                    )}
+                  </ButtonWrapper>
                   <Summary data={getCreatePoolSummaryData(createPoolState)} />
                 </StepContents>
                 <PrevNextWrapper>

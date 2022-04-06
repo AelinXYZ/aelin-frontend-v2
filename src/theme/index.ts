@@ -19,6 +19,7 @@ const pink = '#FF50B9'
 const gradientStart = '#5452C3'
 const gradientEnd = '#01A0D3'
 const blueishGray = '#484d58'
+const transparentWhite = 'rgba(255, 255, 255, 0.4)'
 
 export const theme = {
   buttonPrimary: {
@@ -57,6 +58,7 @@ export const theme = {
     tertiary: tertiary,
     textColor: textColor,
     textColorLight: lightGray,
+    transparentWhite: transparentWhite,
   },
   dropdown: {
     background: mainBodyBackground,
@@ -110,7 +112,7 @@ export const theme = {
     backgroundColorActive: 'rgba(130, 128, 255, 0.2);',
     backgroundColorMain: '#fff',
     backgroundColorMainActive: '#8280ff',
-    backgroundColorMiddle: 'rgba(255, 255, 255, 0.4);',
+    backgroundColorMiddle: transparentWhite,
     backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4);',
   },
   textField: {
