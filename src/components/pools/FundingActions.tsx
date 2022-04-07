@@ -1,4 +1,4 @@
-import { genericSuspense } from '@/src/components/helpers/safeSuspense'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import ApprovePool from '@/src/components/pools/ApprovePool'
 import DepositPool from '@/src/components/pools/DepositPool'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
