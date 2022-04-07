@@ -69,7 +69,7 @@ export const theme = {
     transparentWhite: transparentWhite,
   },
   dropdown: {
-    background: mainBodyBackground,
+    background: componentBackgroundColor,
     borderColor: lightGray,
     borderRadius: '6px',
     boxShadow: 'none',

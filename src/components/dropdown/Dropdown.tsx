@@ -53,7 +53,7 @@ const PositionCenterCSS = css`
 `
 
 const DirectionDownwardsCSS = css`
-  top: calc(100%);
+  top: calc(100% - 1px);
 `
 
 const DirectionUpwardsCSS = css`
