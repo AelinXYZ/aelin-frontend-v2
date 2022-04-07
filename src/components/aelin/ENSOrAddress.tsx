@@ -1,6 +1,6 @@
 import { getAddress } from '@ethersproject/address'
 
-import { truncateStringInTheMiddle } from '@/src/utils/tools'
+import { shortenAddress } from '@/src/utils/string'
 
 type Props = {
   address: string
@@ -9,5 +9,5 @@ type Props = {
 export default function ENSOrAddress({ address }: Props) {
   const _address = getAddress(address)
 
-  return <>{truncateStringInTheMiddle(_address, 6, 6)}</>
+  return <>{shortenAddress(_address)}</>
 }
