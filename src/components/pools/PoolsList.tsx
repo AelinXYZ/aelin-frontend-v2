@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
@@ -31,9 +31,11 @@ interface FiltersProp {
 const PoolsList = ({
   filters,
   setOrderBy,
+  setOrderDirection,
 }: {
   filters: FiltersProp
   setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
+  setOrderDirection: (value: OrderDirection) => void
 }) => {
   const router = useRouter()
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
@@ -86,11 +88,18 @@ const PoolsList = ({
 
   const handleSort = (sortBy: PoolCreated_OrderBy | undefined) => {
     if (sortBy === filters.variables.orderBy) {
-      setOrderBy(undefined)
-      return setSortBy(undefined)
+      if (filters.variables.orderDirection === OrderDirection.Desc) {
+        setOrderDirection(OrderDirection.Asc)
+      } else {
+        setOrderDirection(OrderDirection.Desc)
+        setOrderBy(undefined)
+        return setSortBy(undefined)
+      }
+    } else {
+      setSortBy(sortBy)
+      setOrderDirection(OrderDirection.Desc)
+      setOrderBy(sortBy as PoolCreated_OrderBy)
     }
-    setSortBy(sortBy)
-    setOrderBy(sortBy as PoolCreated_OrderBy)
   }
 
   return (

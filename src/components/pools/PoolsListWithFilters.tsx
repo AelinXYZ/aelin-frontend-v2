@@ -91,7 +91,8 @@ const DEBOUNCED_TIME = 500
 
 const PoolsListWithFilters: React.FC = () => {
   const { address } = useWeb3Connection()
-  const { network, setNetwork, setOrderBy, setWhere, variables } = useAelinPoolsFilters()
+  const { network, setNetwork, setOrderBy, setOrderDirection, setWhere, variables } =
+    useAelinPoolsFilters()
 
   const [searchFilter, setSearchFilter] = useState<SearchOptionsType>({
     filter: searchOptions[0].filter,
@@ -232,7 +233,11 @@ const PoolsListWithFilters: React.FC = () => {
         </FiltersDropdowns>
       </Wrapper>
 
-      <PoolsList filters={{ variables, network }} setOrderBy={setOrderBy} />
+      <PoolsList
+        filters={{ variables, network }}
+        setOrderBy={setOrderBy}
+        setOrderDirection={setOrderDirection}
+      />
     </>
   )
 }
