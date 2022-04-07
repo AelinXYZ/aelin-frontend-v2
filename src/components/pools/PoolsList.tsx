@@ -33,7 +33,7 @@ const PoolsList = ({
   setOrderBy,
 }: {
   filters: FiltersProp
-  setOrderBy: (value: PoolCreated_OrderBy) => void
+  setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
 }) => {
   const router = useRouter()
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
@@ -85,6 +85,10 @@ const PoolsList = ({
   const [sortBy, setSortBy] = useState<string | undefined>()
 
   const handleSort = (sortBy: PoolCreated_OrderBy | undefined) => {
+    if (sortBy === filters.variables.orderBy) {
+      setOrderBy(undefined)
+      return setSortBy(undefined)
+    }
     setSortBy(sortBy)
     setOrderBy(sortBy as PoolCreated_OrderBy)
   }
