@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { isAddress } from '@ethersproject/address'
 import nullthrows from 'nullthrows'
 
-import { genericSuspense } from '@/src/components/helpers/safeSuspense'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import PoolDetails from '@/src/components/pools/PoolDetails'
 import { Chains, ChainsKeys } from '@/src/constants/chains'
 

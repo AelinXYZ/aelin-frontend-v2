@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 
 import { SectionIntro } from '@/src/components/common/SectionIntro'
-import { genericSuspense } from '@/src/components/helpers/safeSuspense'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import PoolsListWithFilters from '@/src/components/pools/PoolsListWithFilters'
 

@@ -6,7 +6,7 @@ import { ThemeProvider } from 'styled-components'
 import { SWRConfig } from 'swr'
 
 import 'sanitize.css'
-import { SafeSuspense } from '@/src/components/helpers/safeSuspense'
+import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 import { theme } from '@/src/theme'
