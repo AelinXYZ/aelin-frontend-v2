@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
 
+import { Close } from '@/src/components/assets/Close'
 import { Loading as BaseLoading } from '@/src/components/common/Loading'
 import { Modal } from '@/src/components/common/Modal'
 import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -31,9 +32,39 @@ const Description = styled.p`
   ${WidthCSS}
 `
 
-const Textfield = styled(BaseTextfield)`
+const TextfieldWrapper = styled.div`
   margin: 0 auto 20px;
+  position: relative;
   ${WidthCSS}
+`
+
+const Textfield = styled(BaseTextfield)`
+  overflow: hidden;
+  padding-right: 40px;
+  position: relative;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  z-index: 5;
+`
+
+const Delete = styled.button`
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  height: ${({ theme }) => theme.textField.height};
+  justify-content: center;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity 0.15s linear;
+  width: ${({ theme }) => theme.textField.height};
+  z-index: 10;
+
+  &:active {
+    opacity: 0.7;
+  }
 `
 
 const Tokens = styled.div`
@@ -178,34 +209,36 @@ function TokenDropdown(props: TokenDropdownProps) {
       <ButtonDropdown onClick={() => setShowModal(true)}>
         {selectedToken ? selectedToken.label : placeholder}
       </ButtonDropdown>
-      {/* <button
-          onClick={() => {
-            onChange(undefined as unknown as Token)
-            setSelectedToken(undefined)
-            setCustomToken(undefined)
-          }}
-        >
-          x
-        </button> */}
-
       {showModal && (
         <Modal onClose={closeModal} title="Select a token">
           <Description>
             Address of any ERC-20 tokens investors will contribute to the pool. Or choose from some
             of the commonly used tokens already provided in the below list.
           </Description>
-          <Textfield
-            disabled={searchingToken}
-            onChange={(e) => {
-              if (!e.target.value) {
+          <TextfieldWrapper>
+            <Textfield
+              disabled={searchingToken}
+              onChange={(e) => {
+                if (!e.target.value) {
+                  setCustomToken(undefined)
+                  setSearchToken('')
+                }
+                handlerSearchAddress(e.target.value)
+              }}
+              placeholder={placeholder}
+              type="text"
+            />
+            <Delete
+              onClick={() => {
+                onChange(undefined as unknown as Token)
                 setCustomToken(undefined)
+                setInputError('')
                 setSearchToken('')
-              }
-              handlerSearchAddress(e.target.value)
-            }}
-            placeholder={placeholder}
-            type="text"
-          />
+              }}
+            >
+              <Close />
+            </Delete>
+          </TextfieldWrapper>
           <Tokens>
             {searchingToken && <Loading />}
             {!searchingToken &&
