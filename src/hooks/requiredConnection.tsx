@@ -26,17 +26,20 @@ const withRequiredConnection = (Component: React.FC) =>
 type RequiredConnectionProps = {
   children: ReactElement
   text?: string
+  minHeight?: number
 }
 
-const RequiredConnection = ({ children, text }: RequiredConnectionProps) => {
+const RequiredConnection = ({ children, minHeight, text }: RequiredConnectionProps) => {
   const { address, connectWallet, isWalletConnected } = useWeb3Connection()
 
   const isConnected = isWalletConnected && address
 
   if (!isConnected) {
     return (
-      <Wrapper>
-        <p>{text || 'You must be logged to see this'}</p>
+      <Wrapper style={{ minHeight }}>
+        <p style={{ textAlign: 'center', maxWidth: '80%' }}>
+          {text || 'You must be logged to see this'}
+        </p>
         <ButtonPrimary onClick={connectWallet}>Connect Wallet</ButtonPrimary>
       </Wrapper>
     )

@@ -51,14 +51,16 @@ const reducer = (state: State, action: Action): State => {
   }
 }
 
+const DEFAULT_ORDERBY = PoolCreated_OrderBy.Timestamp
+
 export default function useAelinPoolsFilters() {
   const [state, dispatch] = useReducer(reducer, defaultFilters)
   const [network, setNetwork] = useState<ChainsValues | null>(null)
 
   const resetFilters = () => dispatch({ type: 'reset', payload: undefined })
 
-  const setOrderBy = (value: PoolCreated_OrderBy) =>
-    dispatch({ type: 'setOrderBy', payload: value })
+  const setOrderBy = (value: PoolCreated_OrderBy | undefined) =>
+    dispatch({ type: 'setOrderBy', payload: value || DEFAULT_ORDERBY })
 
   const setOrderDirection = (value: OrderDirection) =>
     dispatch({ type: 'setOrderDirection', payload: value })
