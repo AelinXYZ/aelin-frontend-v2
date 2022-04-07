@@ -1,4 +1,4 @@
-import { HTMLAttributes, useEffect } from 'react'
+import { HTMLAttributes } from 'react'
 import ReactDOM from 'react-dom'
 import styled from 'styled-components'
 
@@ -52,7 +52,7 @@ const Contents = styled.div`
 export type modalSize = 'sm' | 'md' | 'lg' | string
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  onClose: () => void
+  onClose?: () => void
   size?: modalSize
   title?: string
 }
@@ -66,13 +66,12 @@ export const Modal: React.FC<Props> = ({
 }: Props) => {
   const portal: HTMLElement | null = document.getElementById('modals')
 
-  useEffect(() => {
-    document.body.style.overflow = 'hidden'
-  }, [])
+  const validOnClose = onClose && typeof onClose === 'function'
 
   const close = () => {
-    document.body.style.overflow = 'auto'
-    onClose()
+    if (validOnClose) {
+      onClose()
+    }
   }
 
   return (
@@ -88,7 +87,7 @@ export const Modal: React.FC<Props> = ({
           <Title>{title}</Title>
           <Contents>
             {children}
-            <ButtonPrimaryLight onClick={close}>Cancel</ButtonPrimaryLight>
+            {validOnClose && <ButtonPrimaryLight onClick={close}>Cancel</ButtonPrimaryLight>}
           </Contents>
         </Card>
       </Wrapper>,
