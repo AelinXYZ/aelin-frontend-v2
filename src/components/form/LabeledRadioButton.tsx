@@ -15,7 +15,8 @@ const Label = styled.span<{ checked?: boolean }>`
     checked ? colors.textColor : colors.textColorLight};
   font-size: 1.4rem;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.2;
+  margin-top: 1px;
   transition: color 0.15s linear;
 `
 
