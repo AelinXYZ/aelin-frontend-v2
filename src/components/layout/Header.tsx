@@ -5,10 +5,12 @@ import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { Ellipsis } from '@/src/components/assets/Ellipsis'
 import { BootNodeLogo } from '@/src/components/assets/Logo'
 import { Metamask } from '@/src/components/assets/Metamask'
+import { Modal } from '@/src/components/common/Modal'
 import { Notifications } from '@/src/components/common/Notifications'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
 import { TopMenu as BaseTopMenu } from '@/src/components/navigation/TopMenu'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
@@ -62,6 +64,17 @@ const StartWrapper = styled.div`
   display: flex;
 `
 
+const HeaderDropdown = styled(Dropdown)`
+  .dropdownItems {
+    border-bottom-color: ${({ theme }) => theme.colors.borderColor};
+    border-left-color: ${({ theme }) => theme.colors.borderColor};
+    border-right-color: ${({ theme }) => theme.colors.borderColor};
+    left: -20px;
+    top: calc(100% + 20px);
+    transform: none;
+  }
+`
+
 const EndWrapper = styled.div`
   display: none;
 
@@ -104,6 +117,14 @@ const DropdownButton = styled.div`
 
 const NetworkError = styled.p`
   color: ${({ theme }) => theme.colors.error};
+  font-size: 1.6rem;
+  line-height: 1.4;
+  margin: 0 auto 30px;
+`
+
+const ButtonDropdown = styled(BaseButtonDropdown)`
+  max-width: 100%;
+  width: 250px;
 `
 
 export const Header: React.FC = (props) => {
@@ -119,79 +140,110 @@ export const Header: React.FC = (props) => {
   } = useWeb3Connection()
 
   const currentChain = getNetworkConfig(appChainId)
+  const wrongNetwork = isWalletConnected && !isWalletNetworkSupported
+
+  const networksDropdownItems = getChainsByEnvironmentArray().map((item, index) => (
+    <DropdownItem
+      key={index}
+      onClick={() => {
+        pushNetwork(item.chainId)
+      }}
+    >
+      {getNetworkConfig(item.chainId).icon}
+      {item.name}
+    </DropdownItem>
+  ))
 
   return (
-    <Wrapper {...props}>
-      <InnerContainer>
-        <StartWrapper>
-          <Link href="/" passHref>
-            <HomeLink>
-              <Logo />
-            </HomeLink>
-          </Link>
-        </StartWrapper>
-        <TopMenu />
-        <EndWrapper>
-          {isWalletConnected && !isWalletNetworkSupported && (
-            <NetworkError>Wrong wallet network</NetworkError>
-          )}
+    <>
+      <Wrapper {...props}>
+        <InnerContainer>
+          <StartWrapper>
+            <Link href="/" passHref>
+              <HomeLink>
+                <Logo />
+              </HomeLink>
+            </Link>
+          </StartWrapper>
+          <TopMenu />
+          <EndWrapper>
+            <HeaderDropdown
+              currentItem={getChainsByEnvironmentArray().findIndex(
+                ({ chainId }) => chainId === walletChainId,
+              )}
+              disabled={!isWalletConnected}
+              dropdownButtonContent={
+                <DropdownButton>
+                  {wrongNetwork ? (
+                    'Select Network'
+                  ) : (
+                    <>
+                      {currentChain.icon}
+                      {currentChain.name}
+                    </>
+                  )}
+                  <ChevronDown />
+                </DropdownButton>
+              }
+              items={networksDropdownItems}
+            />
+            {isWalletConnected && (
+              <>
+                <Line />
+                <HeaderDropdown
+                  dropdownButtonContent={
+                    <DropdownButton>
+                      <Metamask />
+                      {address && <Item>{shortenAddress(address)}</Item>}
+                      <ChevronDown />
+                    </DropdownButton>
+                  }
+                  dropdownPosition={DropdownPosition.right}
+                  items={[
+                    <DropdownItem key={'btn_disconnect'} onClick={disconnectWallet}>
+                      Disconnect
+                    </DropdownItem>,
+                  ]}
+                />
+                <Line />
+                <Notifications />
+                <Line />
+                <Ellipsis />
+              </>
+            )}
+            {!isWalletConnected && (
+              <>
+                <Line />
+                <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
+              </>
+            )}
+          </EndWrapper>
+        </InnerContainer>
+      </Wrapper>
+      {wrongNetwork && (
+        <Modal title="Wrong network">
+          <NetworkError>Please connect to a valid network.</NetworkError>
           <Dropdown
             currentItem={getChainsByEnvironmentArray().findIndex(
               ({ chainId }) => chainId === walletChainId,
             )}
             disabled={!isWalletConnected}
             dropdownButtonContent={
-              <DropdownButton>
-                {currentChain.icon}
-                {currentChain.name}
-                <ChevronDown />
-              </DropdownButton>
+              <ButtonDropdown>
+                {wrongNetwork ? (
+                  'Select Network'
+                ) : (
+                  <>
+                    {currentChain.icon}
+                    {currentChain.name}
+                  </>
+                )}
+              </ButtonDropdown>
             }
-            dropdownPosition={DropdownPosition.right}
-            items={getChainsByEnvironmentArray().map((item, index) => (
-              <DropdownItem
-                key={index}
-                onClick={() => {
-                  pushNetwork(item.chainId)
-                }}
-              >
-                {getNetworkConfig(item.chainId).icon}
-                {item.name}
-              </DropdownItem>
-            ))}
+            items={networksDropdownItems}
           />
-          {isWalletConnected && (
-            <>
-              <Line />
-              <Dropdown
-                dropdownButtonContent={
-                  <DropdownButton>
-                    <Metamask />
-                    {address && <Item>{shortenAddress(address)}</Item>}
-                    <ChevronDown />
-                  </DropdownButton>
-                }
-                dropdownPosition={DropdownPosition.right}
-                items={[
-                  <DropdownItem key={'btn_disconnect'} onClick={disconnectWallet}>
-                    Disconnect
-                  </DropdownItem>,
-                ]}
-              />
-              <Line />
-              <Notifications />
-              <Line />
-              <Ellipsis />
-            </>
-          )}
-          {!isWalletConnected && (
-            <>
-              <Line />
-              <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
-            </>
-          )}
-        </EndWrapper>
-      </InnerContainer>
-    </Wrapper>
+        </Modal>
+      )}
+    </>
   )
 }
