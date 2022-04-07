@@ -13,7 +13,7 @@ import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCa
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { truncateStringInTheMiddle } from '@/src/utils/tools'
+import { shortenAddress } from '@/src/utils/string'
 
 const Wrapper = styled.header`
   align-items: center;
@@ -166,7 +166,7 @@ export const Header: React.FC = (props) => {
                 dropdownButtonContent={
                   <DropdownButton>
                     <Metamask />
-                    {address && <Item>{truncateStringInTheMiddle(address, 6, 6)}</Item>}
+                    {address && <Item>{shortenAddress(address)}</Item>}
                     <ChevronDown />
                   </DropdownButton>
                 }

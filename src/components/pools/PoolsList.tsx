@@ -21,7 +21,7 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { shortenAddr } from '@/src/web3/utils'
+import { shortenAddress } from '@/src/utils/string'
 
 interface FiltersProp {
   network: ChainsValues | null
@@ -155,7 +155,7 @@ const PoolsList = ({
                   <NameCell badge="3">{name.replace('aePool-', '')}</NameCell>
                   <Cell>
                     <ExternalLink href={`https://etherscan.io/address/${getAddress(sponsor)}`}>
-                      {shortenAddr(getAddress(sponsor))}
+                      {shortenAddress(getAddress(sponsor))}
                     </ExternalLink>
                   </Cell>
                   <Cell
