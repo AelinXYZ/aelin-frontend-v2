@@ -14,8 +14,8 @@ export type poolErrors = {
   investmentToken: Token
   investmentDeadLine: Duration
   dealDeadline: Duration
-  poolCap: string
-  sponsorFee: string
+  poolCap: number
+  sponsorFee: number
   poolPrivacy: Privacy
   whitelist: {
     address: string
@@ -47,7 +47,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     errors[CreatePoolSteps.poolSymbol] = 'No more than 7 chars'
   }
 
-  if (Number(formatEther(values.sponsorFee || 0)) > 98) {
+  if (Number(values.sponsorFee) > 98) {
     errors.sponsorFee = 'Must be <= 98'
   }
 
