@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { PoolsCreatedQueryVariables } from '@/graphql-schema'
+import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/safeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
@@ -21,14 +21,22 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { shortenAddr } from '@/src/web3/utils'
+import { shortenAddress } from '@/src/utils/string'
 
 interface FiltersProp {
   network: ChainsValues | null
   variables: PoolsCreatedQueryVariables
 }
 
-const PoolsList = ({ filters }: { filters: FiltersProp }) => {
+const PoolsList = ({
+  filters,
+  setOrderBy,
+  setOrderDirection,
+}: {
+  filters: FiltersProp
+  setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
+  setOrderDirection: (value: OrderDirection) => void
+}) => {
   const router = useRouter()
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
 
@@ -47,11 +55,11 @@ const PoolsList = ({ filters }: { filters: FiltersProp }) => {
   const tableHeaderCells = [
     {
       title: 'Name',
-      sortKey: 'name',
+      sortKey: PoolCreated_OrderBy.Name,
     },
     {
       title: 'Sponsor',
-      sortKey: 'sponsor',
+      sortKey: PoolCreated_OrderBy.Sponsor,
     },
     {
       title: 'Network',
@@ -59,27 +67,39 @@ const PoolsList = ({ filters }: { filters: FiltersProp }) => {
     },
     {
       title: 'Amount in Pool',
-      sortKey: 'totalSupply',
+      sortKey: PoolCreated_OrderBy.TotalSupply,
     },
     {
       title: 'Investment deadline',
-      sortKey: 'timestamp',
+      sortKey: PoolCreated_OrderBy.PurchaseExpiry,
     },
     {
       title: 'Investment token',
       justifyContent: columns.alignment.investmentToken,
-      sortKey: 'purchaseToken',
+      sortKey: PoolCreated_OrderBy.PurchaseToken,
     },
     {
       title: 'Stage',
-      sortKey: 'poolStatus',
+      sortKey: PoolCreated_OrderBy.PoolStatus,
     },
   ]
 
   const [sortBy, setSortBy] = useState<string | undefined>()
 
-  const handleSort = (sortBy: string | undefined) => {
-    setSortBy(sortBy)
+  const handleSort = (sortBy: PoolCreated_OrderBy | undefined) => {
+    if (sortBy === filters.variables.orderBy) {
+      if (filters.variables.orderDirection === OrderDirection.Desc) {
+        setOrderDirection(OrderDirection.Asc)
+      } else {
+        setOrderDirection(OrderDirection.Desc)
+        setOrderBy(undefined)
+        return setSortBy(undefined)
+      }
+    } else {
+      setSortBy(sortBy)
+      setOrderDirection(OrderDirection.Desc)
+      setOrderBy(sortBy as PoolCreated_OrderBy)
+    }
   }
 
   return (
@@ -135,7 +155,7 @@ const PoolsList = ({ filters }: { filters: FiltersProp }) => {
                   <NameCell badge="3">{name.replace('aePool-', '')}</NameCell>
                   <Cell>
                     <ExternalLink href={`https://etherscan.io/address/${getAddress(sponsor)}`}>
-                      {shortenAddr(getAddress(sponsor))}
+                      {shortenAddress(getAddress(sponsor))}
                     </ExternalLink>
                   </Cell>
                   <Cell
