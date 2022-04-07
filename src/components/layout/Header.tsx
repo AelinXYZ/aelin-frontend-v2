@@ -31,6 +31,7 @@ const InnerContainer = styled(BaseInnerContainer)`
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
+  max-height: 100%;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     ${BaseCardCSS}

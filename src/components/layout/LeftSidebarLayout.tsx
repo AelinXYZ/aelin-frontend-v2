@@ -4,7 +4,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import Aelin from '@/src/components/sidebar/Aelin'
 import MyPools from '@/src/components/sidebar/MyPools'
 
-const Wrapper = styled.div`
+const Wrapper = styled.main`
   --left-column-width: 290px;
 
   column-gap: 30px;
@@ -38,7 +38,7 @@ const SidebarWrapper = styled(BaseCard)`
   }
 `
 
-const Main = styled.main`
+const Main = styled.section`
   display: flex;
   flex-direction: column;
   min-width: 0;

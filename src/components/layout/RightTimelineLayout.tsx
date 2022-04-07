@@ -1,7 +1,7 @@
 import { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
-const Wrapper = styled.div`
+const Wrapper = styled.main`
   --timeline-width: 296px;
 
   column-gap: 60px;
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
   }
 `
 
-const Main = styled.main`
+const Main = styled.section`
   display: flex;
   flex-direction: column;
   min-width: 0;

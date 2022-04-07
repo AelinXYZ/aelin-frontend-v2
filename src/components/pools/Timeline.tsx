@@ -67,13 +67,13 @@ export const Timeline: React.FC<{ activeItem?: number }> = ({ activeItem, ...res
           <Value>Jan 1, 2022, 10.00AM</Value>
         </Info>
       </Item>
-      <Item>
+      {/* <Item>
         <StepCircleBig />
         <Info>
           <Title>Pool Creation</Title>
           <Value>Jan 1, 2022, 10.00AM</Value>
         </Info>
-      </Item>
+      </Item> */}
     </Wrapper>
   )
 }

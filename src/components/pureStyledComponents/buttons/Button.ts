@@ -9,7 +9,7 @@ export const ButtonCSS = css`
   align-items: center;
   border-radius: 25px;
   border-style: solid;
-  border-width: 1px;
+  border-width: 0.5px;
   cursor: pointer;
   display: flex;
   font-family: ${({ theme }) => theme.fonts.fontFamily};
@@ -52,6 +52,26 @@ export const ButtonPrimaryCSS = css`
   }
 `
 
+export const ButtonPrimaryLightCSS = css`
+  background-color: ${({ theme }) => theme.buttonPrimaryLight.backgroundColor};
+  border-color: ${({ theme }) => theme.buttonPrimaryLight.borderColor};
+  color: ${({ theme }) => theme.buttonPrimaryLight.color};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonPrimaryLight.backgroundColorHover};
+    border-color: ${({ theme }) => theme.buttonPrimaryLight.borderColorHover};
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+    color: ${({ theme }) => theme.buttonPrimaryLight.colorHover};
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: ${({ theme }) => theme.buttonPrimaryLight.borderColor};
+    border-color: ${({ theme }) => theme.buttonPrimaryLight.borderColor};
+    color: ${({ theme }) => theme.buttonPrimaryLight.color};
+  }
+`
+
 export const ButtonGradientCSS = css`
   background: linear-gradient(
     90deg,
@@ -89,17 +109,38 @@ export const TabButtonCSS = css<{ isActive?: boolean }>`
 `
 
 export const ButtonDropdownIsOpenCSS = css`
-  background-color: ${({ theme }) => theme.buttonDropdown.backgroundColorHover};
-  border-color: ${({ theme }) => theme.buttonDropdown.borderColorHover};
-  color: ${({ theme }) => theme.buttonDropdown.colorHover};
+  background-color: ${({ theme }) => theme.buttonDropdown.backgroundColor};
+  border-bottom-color: transparent;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-left-color: ${({ theme }) => theme.textField.borderColor};
+  border-right-color: ${({ theme }) => theme.textField.borderColor};
+  border-top-color: ${({ theme }) => theme.textField.borderColor};
+  color: ${({ theme }) => theme.buttonDropdown.color};
+
+  &::after {
+    transform: rotate(180deg);
+  }
 `
 
-export const ButtonDropdownCSS = css<{ isOpen?: boolean }>`
+export const ButtonDropdownCSS = css`
   background-color: ${({ theme }) => theme.buttonDropdown.backgroundColor};
-  border-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+  border-bottom: none;
+  border-color: ${({ theme }) => theme.textField.borderColor};
+  border-radius: ${({ theme }) => theme.textField.borderRadius};
+  border-style: ${({ theme }) => theme.textField.borderStyle};
+  border-width: ${({ theme }) => theme.textField.borderWidth};
   color: ${({ theme }) => theme.buttonDropdown.color};
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 14px;
   position: relative;
+  transition: transform 0.15s linear;
   width: 100%;
+
+  &:active {
+    opacity: 1;
+  }
 
   &::after {
     --dimensions: 8px;
@@ -113,12 +154,9 @@ export const ButtonDropdownCSS = css<{ isOpen?: boolean }>`
     width: var(--dimensions);
   }
 
-  &:hover,
-  &:active {
+  .isOpen & {
     ${ButtonDropdownIsOpenCSS}
   }
-
-  ${({ isOpen }) => isOpen && ButtonDropdownIsOpenCSS}
 
   &[disabled],
   &[disabled]:hover {
@@ -141,6 +179,10 @@ export const Button = styled(BaseButton)`
 
 export const ButtonPrimary = styled(Button)`
   ${ButtonPrimaryCSS}
+`
+
+export const ButtonPrimaryLight = styled(Button)`
+  ${ButtonPrimaryLightCSS}
 `
 
 export const GradientButton = styled(Button)`
