@@ -1,4 +1,14 @@
 import { ChangeEvent, useEffect, useState } from 'react'
+import styled from 'styled-components'
+
+import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
+
+const Grid = styled.div`
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 376px;
+`
 
 interface InputDeadlineProps {
   defaultValue?: Duration
@@ -16,12 +26,12 @@ export const HMSInput = ({
   defaultValue = { days: undefined, hours: undefined, minutes: undefined },
   onChange,
   inputNames = [durationTypes.days, durationTypes.hours, durationTypes.minutes],
+  ...restProps
 }: InputDeadlineProps) => {
   const [duration, setDuration] = useState(defaultValue)
 
   const handleSetDuration = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-
     setDuration({ ...duration, [name]: Number(value) })
   }
 
@@ -31,8 +41,8 @@ export const HMSInput = ({
   }, [duration])
 
   return (
-    <>
-      <input
+    <Grid {...restProps}>
+      <Textfield
         defaultValue={duration?.days}
         id="durationDays"
         min={0}
@@ -41,7 +51,7 @@ export const HMSInput = ({
         placeholder="Days"
         type="number"
       />
-      <input
+      <Textfield
         defaultValue={duration?.hours}
         id="durationHours"
         name={inputNames[1]}
@@ -49,7 +59,7 @@ export const HMSInput = ({
         placeholder="Hours"
         type="number"
       />
-      <input
+      <Textfield
         defaultValue={duration?.minutes}
         id="durationMinutes"
         name={inputNames[2]}
@@ -57,6 +67,6 @@ export const HMSInput = ({
         placeholder="Mins"
         type="number"
       />
-    </>
+    </Grid>
   )
 }

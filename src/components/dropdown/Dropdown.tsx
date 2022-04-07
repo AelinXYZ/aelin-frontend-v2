@@ -53,7 +53,7 @@ const PositionCenterCSS = css`
 `
 
 const DirectionDownwardsCSS = css`
-  top: calc(100% + 10px);
+  top: calc(100% - 1px);
 `
 
 const DirectionUpwardsCSS = css`
@@ -65,9 +65,12 @@ const Items = styled.div<{
   dropdownPosition?: DropdownPosition
   isOpen: boolean
 }>`
-  background: ${({ theme }) => theme.dropdown.background};
-  border: 1px solid ${({ theme }) => theme.dropdown.borderColor};
-  border-radius: ${({ theme }) => theme.dropdown.borderRadius};
+  background-color: ${({ theme }) => theme.dropdown.background};
+  border-bottom-left-radius: ${({ theme }) => theme.dropdown.borderRadius};
+  border-bottom-right-radius: ${({ theme }) => theme.dropdown.borderRadius};
+  border-bottom: 0.5px solid ${({ theme }) => theme.dropdown.borderColor};
+  border-left: 0.5px solid ${({ theme }) => theme.dropdown.borderColor};
+  border-right: 0.5px solid ${({ theme }) => theme.dropdown.borderColor};
   box-shadow: ${({ theme }) => theme.dropdown.boxShadow};
   display: ${(props) => (props.isOpen ? 'block' : 'none')};
   min-width: 150px;
@@ -101,16 +104,16 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   color: ${({ theme }) => theme.dropdown.item.color};
   cursor: pointer;
   display: flex;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 400;
   gap: 10px;
-  justify-content: ${(props) => props.justifyContent};
+  justify-content: ${({ justifyContent }) => justifyContent};
   line-height: 1.4;
   min-height: ${({ theme }) => theme.dropdown.item.height};
   overflow: hidden;
-  padding: 10px 15px;
+  padding: 10px ${({ theme }) => theme.dropdown.item.paddingHorizontal};
   text-decoration: none;
-  transition: background-color 0.2s linear;
+  transition: background-color 0.15s linear;
   user-select: none;
 
   &.isActive {
@@ -120,8 +123,8 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   }
 
   &:first-child {
-    border-top-left-radius: ${({ theme }) => theme.dropdown.borderRadius};
-    border-top-right-radius: ${({ theme }) => theme.dropdown.borderRadius};
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 
   &:last-child {

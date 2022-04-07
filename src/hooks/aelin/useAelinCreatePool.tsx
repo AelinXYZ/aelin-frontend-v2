@@ -3,7 +3,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
-import { parseEther } from '@ethersproject/units'
+import { parseEther, parseUnits } from '@ethersproject/units'
 
 import { ChainsValues } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
@@ -40,8 +40,8 @@ export interface CreatePoolState {
   investmentToken: Token | undefined
   investmentDeadLine: Duration | undefined
   dealDeadline: Duration | undefined
-  poolCap: string | undefined
-  sponsorFee: string | undefined
+  poolCap: number | undefined
+  sponsorFee: number | undefined
   poolPrivacy: Privacy | undefined
   currentStep: CreatePoolSteps
   whitelist: {
@@ -178,8 +178,8 @@ const parseValuesToCreatePool = async (
   return {
     poolName,
     poolSymbol,
-    poolCap: (poolCap || ZERO_BN) as BigNumberish,
-    sponsorFee: (sponsorFee || ZERO_BN) as BigNumberish,
+    poolCap: parseUnits(poolCap?.toString() as string, investmentToken?.decimals),
+    sponsorFee: parseEther(sponsorFee?.toString() || ZERO_BN.toString()),
     investmentDeadLineDuration,
     dealDeadLineDuration,
     investmentToken: investmentToken?.address as string,
@@ -264,16 +264,16 @@ export const getCreatePoolSummaryData = (
       value = value?.symbol
     }
 
-    if (step.id === CreatePoolSteps.poolCap) {
-      value = formatToken(
-        BigNumber.from(value || 0),
-        createPoolState[CreatePoolSteps.investmentToken]?.decimals,
-      )
-    }
-
+    // if (step.id === CreatePoolSteps.poolCap) {
+    //   value = formatToken(
+    //     BigNumber.from(value || 0),
+    //     createPoolState[CreatePoolSteps.investmentToken]?.decimals,
+    //   )
+    // }
+    //
     if (step.id === CreatePoolSteps.sponsorFee) {
       // TODO hardcoded decimals here
-      value = `${formatToken(BigNumber.from(value || 0), 18)}%`
+      value = `${value}%`
     }
 
     if (!value) value = '--'
@@ -403,11 +403,11 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
           dealDeadline: dealDeadline as Duration,
           investmentDeadLine: investmentDeadLine as Duration,
           investmentToken: investmentToken as Token,
-          poolCap: poolCap as string,
+          poolCap: poolCap as number,
           poolName,
           poolPrivacy: poolPrivacy as Privacy,
           poolSymbol,
-          sponsorFee: sponsorFee as string,
+          sponsorFee: sponsorFee as number,
           whitelist,
         },
         chainId,

@@ -1,6 +1,6 @@
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import ApprovePool from '@/src/components/pools/ApprovePool'
 import DepositPool from '@/src/components/pools/DepositPool'
-import { genericSuspense } from '@/src/components/safeSuspense'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'

@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
 
@@ -37,6 +37,12 @@ const FiltersDropdowns = styled.div`
 
 const SearchWrapper = styled.div`
   position: relative;
+
+  .dropdownItems {
+    background-color: ${({ theme }) => theme.colors.gray};
+    min-width: 0;
+    max-width: 100%;
+  }
 `
 
 const Search = styled(BaseSearch)`
@@ -54,10 +60,12 @@ const SearchDropdown = styled(Dropdown)`
 `
 
 const SearchDropdownButton = styled(ButtonDropdown)`
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
   &,
-  &:hover {
-    background: none;
-    border: none;
+  .isOpen & {
+    background-color: ${({ theme }) => theme.colors.gray};
   }
 `
 
@@ -157,10 +165,13 @@ const PoolsListWithFilters: React.FC = () => {
             placeholder={`Enter ${searchFilter.label.toLocaleLowerCase()}...`}
           />
           <SearchDropdown
-            currentItem={getCurrentItem(myPools.indexOf(poolFilter))}
+            currentItem={getCurrentItem(
+              searchOptions.findIndex((item) => item.filter === searchFilter.filter),
+            )}
             dropdownButtonContent={
               <SearchDropdownButton>{searchFilter.label}</SearchDropdownButton>
             }
+            dropdownPosition={DropdownPosition.right}
             items={searchOptions.map((item, key) => (
               <DropdownItem
                 disabled={item.filter === 'sponsor_contains' && poolFilter === myPools[1]}

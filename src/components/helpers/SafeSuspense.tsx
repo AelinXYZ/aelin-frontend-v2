@@ -3,7 +3,7 @@ import React, { FC, Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { Loading } from '@/src/components/common/Loading'
-import { GeneralError } from '@/src/components/generalError'
+import { GeneralError } from '@/src/components/helpers/GeneralError'
 import isDev from '@/src/utils/isDev'
 
 type Props = {

@@ -5,6 +5,7 @@ import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
@@ -13,7 +14,6 @@ import {
   TableHead,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
-import { genericSuspense } from '@/src/components/safeSuspense'
 import { Deadline } from '@/src/components/table/Deadline'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { NameCell } from '@/src/components/table/NameCell'

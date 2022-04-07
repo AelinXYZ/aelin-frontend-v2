@@ -1,10 +1,10 @@
 import { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
-const Wrapper = styled.div`
-  --timeline-width: 200px;
+const Wrapper = styled.main`
+  --timeline-width: 296px;
 
-  column-gap: 30px;
+  column-gap: 60px;
   display: grid;
   flex-grow: 1;
   flex-shrink: 0;
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
   }
 `
 
-const Main = styled.main`
+const Main = styled.section`
   display: flex;
   flex-direction: column;
   min-width: 0;
