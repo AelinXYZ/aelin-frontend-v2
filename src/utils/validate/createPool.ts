@@ -30,19 +30,19 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
   const currentNetwork = getNetworkConfig(chainId)
 
   if (!values.investmentToken) {
-    errors.investmentToken = 'Required'
+    errors.investmentToken = true
   } else if (!isAddress(values.investmentToken?.address as string)) {
     errors.investmentToken = 'Invalid Ethereum address'
   }
 
   if (!values.poolName) {
-    errors.poolName = 'Required'
+    errors.poolName = true
   } else if (values.poolName.length > 15) {
     errors.poolName = 'No more than 15 chars'
   }
 
   if (!values.poolSymbol) {
-    errors.poolSymbol = 'Required'
+    errors.poolSymbol = true
   } else if (values.poolSymbol.length > 7) {
     errors[CreatePoolSteps.poolSymbol] = 'No more than 7 chars'
   }
@@ -56,7 +56,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     !values.investmentDeadLine?.hours &&
     !values.investmentDeadLine?.minutes
   ) {
-    errors.investmentDeadLine = 'Required'
+    errors.investmentDeadLine = true
   } else {
     const investmentDeadLineSeconds = convertToSeconds({
       days: values.investmentDeadLine?.days ?? 0,
@@ -75,7 +75,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
   }
 
   if (!values.dealDeadline?.days && !values.dealDeadline?.hours && !values.dealDeadline?.minutes) {
-    errors.dealDeadline = 'Required'
+    errors.dealDeadline = true
   } else {
     const dealDeadlineSeconds = convertToSeconds({
       days: values.dealDeadline?.days ?? 0,
@@ -88,7 +88,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
   }
 
   if (!values.poolPrivacy) {
-    errors.poolPrivacy = 'Select an option'
+    errors.poolPrivacy = true
   }
 
   return errors

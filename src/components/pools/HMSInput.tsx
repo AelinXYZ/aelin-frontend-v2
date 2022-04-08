@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
@@ -14,6 +14,7 @@ interface InputDeadlineProps {
   defaultValue?: Duration
   onChange: (duration: Duration) => void
   inputNames?: string[]
+  autofocusOnRender?: boolean
 }
 
 enum durationTypes {
@@ -26,14 +27,22 @@ export const HMSInput = ({
   defaultValue = { days: undefined, hours: undefined, minutes: undefined },
   onChange,
   inputNames = [durationTypes.days, durationTypes.hours, durationTypes.minutes],
+  autofocusOnRender,
   ...restProps
 }: InputDeadlineProps) => {
   const [duration, setDuration] = useState(defaultValue)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleSetDuration = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setDuration({ ...duration, [name]: Number(value) })
   }
+
+  useEffect(() => {
+    if (inputRef.current && autofocusOnRender) {
+      inputRef.current?.focus()
+    }
+  })
 
   useEffect(() => {
     onChange(duration)
@@ -49,6 +58,7 @@ export const HMSInput = ({
         name={inputNames[0]}
         onChange={handleSetDuration}
         placeholder="Days"
+        ref={inputRef}
         type="number"
       />
       <Textfield

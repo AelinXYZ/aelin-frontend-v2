@@ -93,7 +93,7 @@ const searchOptions: Array<SearchOptionsType> = [
   },
 ]
 
-const myPools = ['All pools', 'Sponsored', 'Founded', 'Invested']
+const myPools = ['All pools', 'Sponsored', 'Funded', 'Invested']
 
 const DEBOUNCED_TIME = 500
 
