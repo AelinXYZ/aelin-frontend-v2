@@ -78,7 +78,7 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
               </div>
               <hr />
               <div>Pool details</div>
-              <div>Funded: {pool.funded.formatted}</div>
+              <div>Funded: {pool.investmentRaisedAmount.formatted}</div>
               <div>Withdrawn: {pool.withdrawn.formatted}</div>
               <div>Amount in Pool: {pool.amountInPool.formatted}</div>
             </PoolInfo>

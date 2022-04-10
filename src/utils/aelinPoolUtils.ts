@@ -1,6 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import Wei from '@synthetixio/wei'
 import addSeconds from 'date-fns/addSeconds'
+import isBefore from 'date-fns/isBefore'
 
+import { PoolStatus } from '@/graphql-schema'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { ExtendedStatus } from '@/src/constants/pool'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -28,7 +32,7 @@ export function getDealDeadline<P extends PoolDates>(pool: P): Date {
   return addSeconds(created, Number(pool.duration) + Number(pool.purchaseDuration))
 }
 
-// returns the max amount a pool can be funded
+// returns the max amount a pool can raise from investors
 export function getPurchaseTokenCap<
   P extends { purchaseTokenCap: string; purchaseTokenDecimals?: number },
 >(pool: P) {
@@ -56,9 +60,9 @@ export function getAmountInPool<P extends { totalSupply: string; purchaseTokenDe
   }
 }
 
-export function getAmountFunded<P extends { purchaseTokenDecimals: number; contributions: string }>(
-  pool: P,
-) {
+export function getInvestmentRaisedAmount<
+  P extends { purchaseTokenDecimals: number; contributions: string },
+>(pool: P) {
   return {
     raw: BigNumber.from(pool.contributions),
     formatted: formatToken(pool.contributions, pool.purchaseTokenDecimals),
@@ -74,6 +78,71 @@ export function getAmountWithdrawn(amount: BigNumber) {
 
 export function getStatusText<P extends { poolStatus: ExtendedStatus }>(pool: P) {
   return pool.poolStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
+}
+
+export function getDetailedNumber(amount: string, decimals: number) {
+  return {
+    raw: BigNumber.from(amount),
+    formatted: formatToken(amount, decimals),
+  }
+}
+
+export function dealExchangeRates(
+  investmentTokenAmount: string,
+  investmentTokenDecimals: number,
+  dealTokenAmount: string,
+  dealTokenDecimals: number,
+) {
+  const investmentToken = new Wei(investmentTokenAmount, investmentTokenDecimals, true)
+  const dealToken = new Wei(dealTokenAmount, dealTokenDecimals, true)
+
+  const investmentRate = dealToken.div(investmentToken)
+  const dealRate = new Wei(1).div(investmentRate)
+
+  return {
+    investmentPerDeal: {
+      raw: investmentRate.toBN(),
+      formatted: formatToken(investmentRate.toBN(), dealTokenDecimals, 3),
+    },
+    dealPerInvestment: {
+      raw: dealRate.toBN(),
+      formatted: formatToken(dealRate.toBN(), 18),
+    },
+  }
+}
+
+export function hasDealOpenPeriod(
+  investmentRaisedAmount: string,
+  acceptedInvestmentTokensAmount: string,
+) {
+  return !BigNumber.from(investmentRaisedAmount).eq(BigNumber.from(acceptedInvestmentTokensAmount))
+}
+
+export function getProRataRedemptionDates(
+  proRataRedemptionPeriodStart: string,
+  proRataRedemptionPeriod: string,
+  openRedemptionPeriod: string,
+) {
+  const now = Date.now()
+
+  const proRataRedemptionStart = new Date(Number(proRataRedemptionPeriodStart) * 1000)
+  const proRataRedemptionEnd = addSeconds(proRataRedemptionStart, Number(proRataRedemptionPeriod))
+
+  const openRedemptionEnd =
+    openRedemptionPeriod !== '0' ? new Date(Number(openRedemptionPeriod) * 1000) : null
+
+  const stage = isBefore(now, proRataRedemptionEnd)
+    ? 1
+    : openRedemptionEnd && isBefore(now, openRedemptionEnd)
+    ? 2
+    : null
+
+  return {
+    stage,
+    proRataRedemptionStart,
+    proRataRedemptionEnd,
+    openRedemptionEnd,
+  }
 }
 
 export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start: Date) {

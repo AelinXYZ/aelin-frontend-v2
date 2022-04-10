@@ -5,7 +5,6 @@ import useSWRInfinite from 'swr/infinite'
 
 import {
   InputMaybe,
-  OrderDirection,
   PoolCreated_OrderBy,
   PoolStatus,
   PoolsCreatedQueryVariables,
@@ -15,11 +14,9 @@ import { ZERO_BN } from '@/src/constants/misc'
 import { ExtendedStatus, POOLS_RESULTS_PER_CHAIN, allStages } from '@/src/constants/pool'
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
-import { PoolState } from '@/src/utils/getAelinPoolCurrentStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
 export interface PoolParsedWithState extends ParsedAelinPool {
-  state: PoolState
   stage: ExtendedStatus
 }
 
@@ -99,7 +96,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
   // Each item will have an array of pools of a single chain
   try {
     const poolsByChainResponses = await Promise.allSettled(queryPromises())
-    console.log(poolsByChainResponses)
+
     let result = poolsByChainResponses
       .filter(isSuccessful)
       .reduce((resultAcc: PoolParsedWithState[], { value }) => [...resultAcc, ...value], [])

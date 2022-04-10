@@ -71,7 +71,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     id: Chains.kovan,
     isProd: false,
     name: 'Kovan',
-    rpcUrl: 'https://kovan.infura.io/v3/84842078b09946638c03157f83405213',
+    rpcUrl: 'https://eth-kovan.alchemyapi.io/v2/4FmY4vIgkyIWj8usKirqN_zT83xsHjlE',
     shortName: 'Kovan',
     tokenListUrl: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
   },

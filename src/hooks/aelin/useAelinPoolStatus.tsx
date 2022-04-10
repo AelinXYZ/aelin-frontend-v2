@@ -8,7 +8,7 @@ import { getAelinPoolCurrentStatus } from '@/src/utils/getAelinPoolCurrentStatus
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch } = useAelinPool(chainId, poolAddress, {
-    refreshInterval: ms('10s'),
+    refreshInterval: ms('30s'),
   })
   const [currentState, setCurrentState] = useState(getAelinPoolCurrentStatus(poolResponse))
 
