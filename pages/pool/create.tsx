@@ -88,7 +88,9 @@ const CreatePool: NextPage = () => {
 
   return (
     <>
-      <Head>Create Pool</Head>
+      <Head>
+        <title>Aelin - Create Pool</title>
+      </Head>
       <PageTitle title={'Create pool'} />
       <RightTimelineLayout timeline={<Timeline activeItem={1} />}>
         <CardWithTitle title={'Pool creation'}>
