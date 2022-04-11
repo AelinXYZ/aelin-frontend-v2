@@ -1,6 +1,6 @@
 import { getAddress } from '@ethersproject/address'
 
-import { shortenAddr } from '@/src/web3/utils'
+import { shortenAddress } from '@/src/utils/string'
 
 type Props = {
   address: string
@@ -9,5 +9,5 @@ type Props = {
 export default function ENSOrAddress({ address }: Props) {
   const _address = getAddress(address)
 
-  return <>{shortenAddr(_address)}</>
+  return <>{shortenAddress(_address)}</>
 }

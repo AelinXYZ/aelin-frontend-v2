@@ -14,6 +14,7 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
     border-color: ${({ theme }) =>
       (props) =>
         props.error ? theme.textField.errorColor : theme.textField.active.borderColor};
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
     color: ${({ theme }) =>
       (props) =>
         props.error ? theme.textField.errorColor : theme.textField.color};
@@ -35,6 +36,7 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
 
   &::placeholder {
     color: ${({ theme }) => theme.textField.placeholder.color};
+    font-size: ${({ theme }) => theme.textField.placeholder.fontSize};
     font-style: normal;
     font-weight: 400;
     opacity: 1;

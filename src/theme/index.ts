@@ -19,6 +19,7 @@ const pink = '#FF50B9'
 const gradientStart = '#5452C3'
 const gradientEnd = '#01A0D3'
 const blueishGray = '#484d58'
+const transparentWhite = 'rgba(255, 255, 255, 0.4)'
 
 export const theme = {
   buttonPrimary: {
@@ -28,6 +29,14 @@ export const theme = {
     borderColorHover: primary,
     color: primary,
     colorHover: primary,
+  },
+  buttonPrimaryLight: {
+    backgroundColor: 'transparent',
+    backgroundColorHover: 'transparent',
+    borderColor: '#fff',
+    borderColorHover: '#fff',
+    color: textColor,
+    colorHover: textColor,
   },
   buttonDropdown: {
     backgroundColor: componentBackgroundColor,
@@ -57,21 +66,22 @@ export const theme = {
     tertiary: tertiary,
     textColor: textColor,
     textColorLight: lightGray,
+    transparentWhite: transparentWhite,
   },
   dropdown: {
-    background: mainBodyBackground,
-    borderColor: componentBorderColor,
+    background: componentBackgroundColor,
+    borderColor: lightGray,
     borderRadius: '6px',
     boxShadow: 'none',
     item: {
       backgroundColor: 'transparent',
-      backgroundColorActive: rgba(primary, 0.08),
-      backgroundColorHover: rgba(primary, 0.08),
-      borderColor: componentBorderColor,
-      color: '#fff',
-      colorActive: primary,
+      backgroundColorActive: 'rgba(255, 255, 255, 0.12)',
+      backgroundColorHover: 'rgba(255, 255, 255, 0.12)',
+      borderColor: 'transparent',
+      color: textColor,
+      colorActive: textColor,
       height: '36px',
-      paddingHorizontal: '12px',
+      paddingHorizontal: '20px',
     },
   },
   fonts: {
@@ -105,12 +115,20 @@ export const theme = {
     yellow: yellow,
     blue: blue,
   },
+  stepCircle: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2);',
+    backgroundColorActive: 'rgba(130, 128, 255, 0.2);',
+    backgroundColorMain: '#fff',
+    backgroundColorMainActive: '#8280ff',
+    backgroundColorMiddle: transparentWhite,
+    backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4);',
+  },
   textField: {
     backgroundColor: componentBackgroundColor,
     borderColor: lightGray,
-    borderRadius: '25px',
+    borderRadius: '8px',
     borderStyle: 'solid',
-    borderWidth: '1px',
+    borderWidth: '0.5px',
     color: textColor,
     errorColor: error,
     fontSize: '1.4rem',
@@ -120,10 +138,11 @@ export const theme = {
     active: {
       color: textColor,
       backgroundColor: componentBackgroundColor,
-      borderColor: lightGray,
+      borderColor: primary,
     },
     placeholder: {
-      color: 'rgba(255, 255, 255, 0.5)',
+      color: lightGray,
+      fontSize: '1.4rem',
     },
   },
   themeBreakPoints: {

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
 import Pool from '@/src/components/sidebar/Pool'
+import { RequiredConnection } from '@/src/hooks/requiredConnection'
 
 const Filters = styled.div`
   display: flex;
@@ -76,14 +77,18 @@ const MyPools: React.FC = ({ ...restProps }) => {
           Funded (0)
         </TabButton>
       </Filters>
-      {pools.map(({ color, href, name, notifications }, index) => (
-        <Pool color={color} href={href} key={index} notifications={notifications}>
-          {name}
-        </Pool>
-      ))}
-      <ButtonContainer>
-        <MoreButton>See more</MoreButton>
-      </ButtonContainer>
+      <RequiredConnection text={`You must be logged to see the pools you ${activeFilter} in`}>
+        <>
+          {pools.map(({ color, href, name, notifications }, index) => (
+            <Pool color={color} href={href} key={index} notifications={notifications}>
+              {name}
+            </Pool>
+          ))}
+          <ButtonContainer>
+            <MoreButton>See more</MoreButton>
+          </ButtonContainer>
+        </>
+      </RequiredConnection>
     </CollapsibleBlock>
   )
 }

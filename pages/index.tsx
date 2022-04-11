@@ -2,9 +2,9 @@ import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 
 import { SectionIntro } from '@/src/components/common/SectionIntro'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import PoolsListWithFilters from '@/src/components/pools/PoolsListWithFilters'
-import { genericSuspense } from '@/src/components/safeSuspense'
 
 const Home: NextPage = () => {
   const router = useRouter()
@@ -13,7 +13,7 @@ const Home: NextPage = () => {
     <LeftSidebarLayout>
       <SectionIntro
         backgroundImage="resources/svg/bg-pools.svg"
-        button={{ title: 'Create pool', onClick: () => router.push('/create-pool') }}
+        button={{ title: 'Create pool', onClick: () => router.push('/pool/create') }}
         description="Aelin is a fully decentralized and community-based fundraising protocol. Invest in a pool to access deals brought by sponsors. Aelin does not endorse any pools, follow an investor's best practices in our docs, and do your own research."
         title="Pools"
       />
