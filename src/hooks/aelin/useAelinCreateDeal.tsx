@@ -1,20 +1,21 @@
 import { ReactElement, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { parseUnits } from '@ethersproject/units'
 import { Duration } from 'date-fns'
-import ms from 'ms'
 
 import { ChainsValues } from '@/src/constants/chains'
-import { contracts } from '@/src/constants/contracts'
+import { ZERO_BN } from '@/src/constants/misc'
 import { Token, isToken } from '@/src/constants/token'
-import { CreatePoolSteps } from '@/src/hooks/aelin/useAelinCreatePool'
-import useAelinPool from '@/src/hooks/aelin/useAelinPool'
-import useAelinPoolCreateTransaction from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
-import { getFormattedDurationFromNowToDuration } from '@/src/utils/date'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
+import { getERC20Data } from '@/src/utils/getERC20Data'
 import { isDuration } from '@/src/utils/isDuration'
 import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
+import { shortenAddress } from '@/src/utils/string'
 import validateCreateDeal, { dealErrors } from '@/src/utils/validate/createDeal'
-import { formatToken } from '@/src/web3/bigNumber'
 
 export enum CreateDealSteps {
   dealToken = 'dealToken',
@@ -37,7 +38,7 @@ interface CreateDealStepInfo {
 }
 
 export interface CreateDealState {
-  dealToken: string | undefined
+  dealToken: Token | undefined
   dealTokenTotal: string | undefined
   totalPurchaseAmount: string | undefined
   vestingCliff: Duration | undefined
@@ -53,14 +54,14 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
   [CreateDealSteps.dealToken]: {
     id: CreateDealSteps.dealToken,
     order: 1,
-    title: 'Deal token',
+    title: 'Underlying deal token',
     text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool as your deal. Examples - SNX Address (0x8700daec35af8ff88c16bdf0418774cb3d7599b4)',
     placeholder: 'Enter deal token address',
   },
   [CreateDealSteps.dealTokenTotal]: {
     id: CreateDealSteps.dealTokenTotal,
     order: 2,
-    title: 'Deal token total',
+    title: 'Underlying deal token total',
     text: 'Total amount of deal tokens that are being distributed to the pool. This determines the exchange rate between investment tokens and deal tokens.',
     placeholder: 'Enter deal token total...',
   },
@@ -130,18 +131,17 @@ type createDealValues = {
   underlyingDealToken: string
   underlyingDealTokenTotal: BigNumber
   purchaseTokenTotal: BigNumber
-  purchaseTokenDecimals: number
-  underlyingDealTokenDecimals: number
-  vestingPeriodDuration: Duration
-  vestingCliffDuration: Duration
-  proRataRedemptionDuration: Duration
-  openRedemptionDuration: Duration
+  vestingPeriodDuration: number
+  vestingCliffDuration: number
+  proRataRedemptionDuration: number
+  openRedemptionDuration: number
   holderAddress: string
-  holderFundingDuration: Duration
+  holderFundingDuration: number
 }
 
 const parseValuesToCreateDeal = async (
   createDealState: CreateDealState,
+  investmentTokenDecimals: number,
 ): Promise<createDealValues> => {
   const {
     counterPartyAddress,
@@ -156,29 +156,54 @@ const parseValuesToCreateDeal = async (
   } = createDealState
   const now = new Date()
 
-  const underlyingDealToken = dealToken
-  const underlyingDealTokenTotal = dealTokenTotal
-  const purchaseTokenTotal = totalPurchaseAmount
-  const purchaseTokenDecimals = 18
-  const underlyingDealTokenDecimals = 18
-  const vestingPeriodDuration = vestingPeriod
-  const vestingCliffDuration = vestingCliff
-  const proRataRedemptionDuration = proRataPeriod
-  const openRedemptionDuration = openPeriod
-  const holderAddress = counterPartyAddress
-  const holderFundingDuration = counterPartyFundingPeriod
+  const proRataRedemptionDuration = getDuration(
+    now,
+    proRataPeriod?.days as number,
+    proRataPeriod?.hours as number,
+    proRataPeriod?.minutes as number,
+  )
+
+  const holderFundingDuration = getDuration(
+    now,
+    counterPartyFundingPeriod?.days as number,
+    counterPartyFundingPeriod?.hours as number,
+    counterPartyFundingPeriod?.minutes as number,
+  )
+
+  const openRedemptionDuration = getDuration(
+    now,
+    openPeriod?.days as number,
+    openPeriod?.hours as number,
+    openPeriod?.minutes as number,
+  )
+
+  const vestingPeriodDuration = getDuration(
+    now,
+    vestingPeriod?.days as number,
+    vestingPeriod?.hours as number,
+    vestingPeriod?.minutes as number,
+  )
+
+  const vestingCliffDuration = getDuration(
+    now,
+    vestingCliff?.days as number,
+    vestingCliff?.hours as number,
+    vestingCliff?.minutes as number,
+  )
 
   return {
-    underlyingDealToken,
-    underlyingDealTokenTotal,
-    purchaseTokenTotal,
-    purchaseTokenDecimals,
-    underlyingDealTokenDecimals,
+    underlyingDealToken: dealToken?.address as string,
+    underlyingDealTokenTotal: dealTokenTotal
+      ? parseUnits(dealTokenTotal.toString(), dealToken?.decimals)
+      : ZERO_BN,
+    purchaseTokenTotal: totalPurchaseAmount
+      ? parseUnits(totalPurchaseAmount.toString(), 18)
+      : ZERO_BN,
     vestingPeriodDuration,
     vestingCliffDuration,
     proRataRedemptionDuration,
     openRedemptionDuration,
-    holderAddress,
+    holderAddress: counterPartyAddress as string,
     holderFundingDuration,
   }
 }
@@ -247,15 +272,8 @@ export const getCreateDealSummaryData = (
       }
     }
 
-    if (
-      value &&
-      (step.id === CreateDealSteps.totalPurchaseAmount ||
-        step.id === CreateDealSteps.dealTokenTotal)
-    ) {
-      value = formatToken(
-        BigNumber.from(value),
-        createPoolState[CreatePoolSteps.investmentToken]?.decimals,
-      )
+    if (isToken(value)) {
+      value = shortenAddress(value?.address)
     }
 
     if (!value) value = '--'
@@ -275,19 +293,19 @@ export const getCreateDealStepIndicatorData = (
   }))
 
 const LOCAL_STORAGE_STATE_KEY = 'aelin-createDealState'
-export default function useAelinCreateDeal(chainId: ChainsValues, poolAddress: string) {
+export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAelinPool) {
+  const { readOnlyAppProvider } = useWeb3Connection()
   // Get saved state in localstorage only once
   const { current: savedState } = useRef(
     removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
   )
+
   const [createDealState, dispatch] = useReducer(createDealReducer, savedState || initialState)
   const [errors, setErrors] = useState<dealErrors>()
+  const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-  const createDealTx = useAelinPoolCreateTransaction(
-    contracts.POOL_CREATE.address[chainId],
-    'createPool',
-  )
+  const createDealTx = useAelinPoolTransaction(pool.address, 'createDeal')
 
   const moveStep = (value: 'next' | 'prev' | CreateDealSteps) => {
     const { currentStep } = createDealState
@@ -313,22 +331,18 @@ export default function useAelinCreateDeal(chainId: ChainsValues, poolAddress: s
       holderFundingDuration,
       openRedemptionDuration,
       proRataRedemptionDuration,
-      purchaseTokenDecimals,
       purchaseTokenTotal,
       underlyingDealToken,
-      underlyingDealTokenDecimals,
       underlyingDealTokenTotal,
       vestingCliffDuration,
       vestingPeriodDuration,
-    } = await parseValuesToCreateDeal(createDealState)
+    } = await parseValuesToCreateDeal(createDealState, pool.investmentTokenDecimals)
 
     try {
       await createDealTx(
         underlyingDealToken,
-        underlyingDealTokenTotal,
         purchaseTokenTotal,
-        purchaseTokenDecimals,
-        underlyingDealTokenDecimals,
+        underlyingDealTokenTotal,
         vestingPeriodDuration,
         vestingCliffDuration,
         proRataRedemptionDuration,
@@ -336,7 +350,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, poolAddress: s
         holderAddress,
         holderFundingDuration,
         // TODO hardcoded gasLimit
-        { gasLimit: 500000 },
+        { gasLimit: 5000000 },
       )
       setIsSubmitting(false)
       localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
@@ -372,23 +386,41 @@ export default function useAelinCreateDeal(chainId: ChainsValues, poolAddress: s
     } = createDealState
 
     setErrors(
-      validateCreateDeal({
-        dealToken: dealToken as string,
-        dealTokenTotal: dealTokenTotal as string,
-        totalPurchaseAmount: totalPurchaseAmount as string,
-        vestingCliff: vestingCliff as Duration,
-        vestingPeriod: vestingPeriod as Duration,
-        proRataPeriod: proRataPeriod as Duration,
-        openPeriod: openPeriod as Duration,
-        counterPartyFundingPeriod: counterPartyFundingPeriod as Duration,
-        counterPartyAddress: counterPartyAddress as string,
-      }),
+      validateCreateDeal(
+        {
+          dealToken: dealToken?.address as string,
+          dealTokenTotal: dealTokenTotal as string,
+          totalPurchaseAmount: totalPurchaseAmount as string,
+          vestingCliff: vestingCliff as Duration,
+          vestingPeriod: vestingPeriod as Duration,
+          proRataPeriod: proRataPeriod as Duration,
+          openPeriod: openPeriod as Duration,
+          counterPartyFundingPeriod: counterPartyFundingPeriod as Duration,
+          counterPartyAddress: counterPartyAddress as string,
+        },
+        pool,
+        chainId,
+      ),
     )
     localStorage.setItem(
       LOCAL_STORAGE_STATE_KEY,
       JSON.stringify(createDealState, (k, v) => (v === undefined ? null : v)),
     )
-  }, [createDealState, chainId])
+  }, [createDealState, chainId, pool])
+
+  useEffect(() => {
+    const investmentTokenInfo = async () => {
+      if (readOnlyAppProvider) {
+        const investmentTokenData = await getERC20Data({
+          address: pool.investmentToken,
+          provider: readOnlyAppProvider,
+        })
+        setInvestmentTokenInfo(investmentTokenData)
+      }
+      return null
+    }
+    investmentTokenInfo()
+  }, [pool.investmentToken, readOnlyAppProvider])
 
   return {
     setDealField,
@@ -399,5 +431,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, poolAddress: s
     isFirstStep,
     handleSubmit,
     isSubmitting,
+    investmentTokenInfo,
   }
 }

@@ -1,11 +1,14 @@
 import { BigNumberInput } from 'big-number-input'
 
-import { HMSInput } from '@/src/components/HMSInput'
+import { HMSInput } from '@/src/components/pools/HMSInput'
+import TokenDropdown from '@/src/components/pools/TokenDropdown'
+import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import {
   CreateDealState,
   CreateDealSteps,
   createDealConfig,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
+import { CreatePoolSteps, createPoolConfig } from '@/src/hooks/aelin/useAelinCreatePool'
 
 const DealCreateStepInput = ({
   currentState,
@@ -18,6 +21,13 @@ const DealCreateStepInput = ({
 
   switch (step) {
     case CreateDealSteps.dealToken:
+      return (
+        <TokenDropdown
+          onChange={(token) => setDealField(token)}
+          placeholder={createDealConfig[step].placeholder}
+          tokenSelected={currentState[CreateDealSteps.dealToken]}
+        />
+      )
     case CreateDealSteps.counterPartyAddress:
       return (
         <input
@@ -30,23 +40,14 @@ const DealCreateStepInput = ({
         />
       )
     case CreateDealSteps.dealTokenTotal:
-      return (
-        <BigNumberInput
-          decimals={18}
-          min="0"
-          onChange={(value) => setDealField(value)}
-          placeholder={createDealConfig[step].placeholder}
-          value={currentState[step] ? (currentState[step] as string) : ''}
-        />
-      )
     case CreateDealSteps.totalPurchaseAmount:
       return (
-        <BigNumberInput
-          decimals={18}
-          min="0"
-          onChange={(value) => setDealField(value)}
+        <Textfield
+          name={step}
+          onChange={(e) => setDealField(e.target.value)}
           placeholder={createDealConfig[step].placeholder}
-          value={currentState[step] ? (currentState[step] as string) : ''}
+          type="number"
+          value={currentState[step]}
         />
       )
     case CreateDealSteps.counterPartyFundingPeriod:

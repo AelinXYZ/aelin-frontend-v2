@@ -6,7 +6,7 @@ type StageTypes =
   | 'poolopen'
   | 'open'
   | 'fundingdeal'
-  | 'awaitingdeal'
+  | 'seekingdeal'
   | 'dealopen'
   | 'dealready'
   | 'vesting'
@@ -29,7 +29,7 @@ export const StageColor = styled.span<{ stage: StageTypes }>`
       ? stages.open
       : stage === 'fundingdeal'
       ? stages.fundingdeal
-      : stage === 'awaitingdeal'
+      : stage === 'seekingdeal'
       ? stages.awaitingdeal
       : stage === 'dealopen'
       ? stages.dealopen

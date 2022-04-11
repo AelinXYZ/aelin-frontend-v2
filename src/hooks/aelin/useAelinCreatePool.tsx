@@ -180,8 +180,10 @@ const parseValuesToCreatePool = async (
   return {
     poolName,
     poolSymbol,
-    poolCap: parseUnits(poolCap?.toString() as string, investmentToken?.decimals),
-    sponsorFee: parseEther(sponsorFee?.toString() || ZERO_BN.toString()),
+    poolCap: poolCap
+      ? parseUnits(poolCap?.toString() as string, investmentToken?.decimals)
+      : ZERO_BN,
+    sponsorFee: sponsorFee ? parseEther(sponsorFee?.toString()) : ZERO_BN,
     investmentDeadLineDuration,
     dealDeadLineDuration,
     investmentToken: investmentToken?.address as string,
@@ -254,13 +256,6 @@ export const getCreatePoolSummaryData = (
       value = value?.symbol
     }
 
-    // if (step.id === CreatePoolSteps.poolCap) {
-    //   value = formatToken(
-    //     BigNumber.from(value || 0),
-    //     createPoolState[CreatePoolSteps.investmentToken]?.decimals,
-    //   )
-    // }
-    //
     if (step.id === CreatePoolSteps.sponsorFee) {
       // TODO hardcoded decimals here
       value = `${value}%`
