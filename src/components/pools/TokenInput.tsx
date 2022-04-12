@@ -13,7 +13,8 @@ const InputWrapper = styled.div`
   position: relative;
 `
 
-const Textfield = styled(BaseTextField)`
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Textfield: any = styled(BaseTextField)`
   padding-right: 40px;
   position: relative;
   width: 100%;
@@ -25,17 +26,20 @@ const MaxButton = styled.button`
   border-radius: 3px;
   border: none;
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 0.9rem;
+  cursor: pointer;
   font-size: 1rem;
   font-weight: 400;
-  font-weight: 500;
-  height: 14px;
   padding: 0;
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+  transition: opacity 0.15s linear;
   z-index: 10;
+
+  &:active {
+    opacity: 0.7;
+  }
 `
 
 const Balance = styled.div`
@@ -76,8 +80,8 @@ export const TokenInput = ({
         <BigNumberInput
           decimals={decimals}
           onChange={setValue}
-          renderInput={() => (
-            <Textfield disabled={disabled} error={error} placeholder="0" type="number" />
+          renderInput={(props) => (
+            <Textfield disabled={disabled} error={error} placeholder="0" type="number" {...props} />
           )}
           value={value}
         />
