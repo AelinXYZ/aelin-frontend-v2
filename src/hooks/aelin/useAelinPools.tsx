@@ -1,56 +1,62 @@
 import { useCallback } from 'react'
 
-import { BigNumber } from '@ethersproject/bignumber'
+import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
-import { PoolCreated, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import {
+  InputMaybe,
+  OrderDirection,
+  PoolCreated_OrderBy,
+  PoolStatus,
+  PoolsCreatedQueryVariables,
+} from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
+import { ZERO_BN } from '@/src/constants/misc'
+import { ExtendedStatus, POOLS_RESULTS_PER_CHAIN, allStages } from '@/src/constants/pool'
+import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
-import { getAmountInPool, getPurchaseExpiry, getStatusText } from '@/src/utils/aelinPool'
-import { calculateStatus } from '@/src/utils/calculatePoolStatus'
-import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+import { PoolState } from '@/src/utils/getAelinPoolCurrentStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
-type DetailedNumber = {
-  raw: BigNumber
-  formatted: string | undefined
-}
-
-type ParsedPool = {
-  id: string
-  name: string
-  sponsor: string
-  network: ChainsValues
-  amountInPool: DetailedNumber
-  investmentDeadline: string
-  investmentToken: string
-  stage: string
-  timestamp: number
-}
-
-interface PoolCreatedWithChainId extends PoolCreated {
-  chainId: ChainsValues
+export interface PoolParsedWithState extends ParsedAelinPool {
+  state: PoolState
+  stage: ExtendedStatus
 }
 
 function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
   return 'value' in response
 }
 
-function parsedPool(pool: PoolCreatedWithChainId): ParsedPool {
-  return {
-    id: pool.id,
-    name: pool.name.split('aePool-').pop() as string,
-    sponsor: pool.sponsor,
-    network: pool.chainId,
-    amountInPool: getAmountInPool({
-      ...pool,
-      purchaseTokenDecimals: pool.purchaseTokenDecimals || 0,
-    }),
-    investmentDeadline: getFormattedDurationFromDateToNow(getPurchaseExpiry(pool), 'ended'),
-    investmentToken: pool.purchaseTokenSymbol,
-    stage: getStatusText({ poolStatus: calculateStatus(pool) }),
-    timestamp: pool.timestamp,
+export const calculateStatus = ({
+  poolStatus,
+  purchaseExpiry,
+}: {
+  poolStatus: PoolStatus
+  purchaseExpiry: number
+}): ExtendedStatus => {
+  const now = Date.now()
+  if (poolStatus === PoolStatus.PoolOpen && now > purchaseExpiry) {
+    return allStages.SeekingDeal
+  }
+  return poolStatus
+}
+
+const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) => {
+  switch (orderBy) {
+    case PoolCreated_OrderBy.Name:
+    case PoolCreated_OrderBy.PoolStatus:
+    case PoolCreated_OrderBy.Sponsor:
+      return orderBy
+    case PoolCreated_OrderBy.Timestamp:
+      return 'start'
+    case PoolCreated_OrderBy.TotalSupply:
+      return 'amountInPool'
+    case PoolCreated_OrderBy.PurchaseExpiry:
+      return 'investmentDeadline'
+    case PoolCreated_OrderBy.PurchaseToken:
+      return 'investmentToken'
+    default:
+      return PoolCreated_OrderBy.Timestamp
   }
 }
 
@@ -62,10 +68,27 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
   const networks = network ? [network] : chainIds
 
   // Inject chainId in each pool when promise resolve
-  const queryPromises = () =>
+  const queryPromises = (): Promise<any>[] =>
     networks.map((chainId: ChainsValues) =>
       allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
-        .then((res) => res.poolCreateds.map((pool) => parsedPool({ ...pool, chainId })))
+        .then((res) =>
+          res.poolCreateds.map((pool) => {
+            const parsedPool = getParsedPool({
+              chainId,
+              poolAddress: pool.id,
+              pool,
+              purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+              poolTotalWithdrawn: ZERO_BN,
+            })
+            return {
+              ...parsedPool,
+              stage: calculateStatus({
+                poolStatus: parsedPool.poolStatus,
+                purchaseExpiry: pool.purchaseExpiry,
+              }),
+            }
+          }),
+        )
         .catch((e) => {
           console.error(`fetch pools on chain ${chainId} was failed`, e)
           return []
@@ -76,13 +99,20 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
   // Each item will have an array of pools of a single chain
   try {
     const poolsByChainResponses = await Promise.allSettled(queryPromises())
+    console.log(poolsByChainResponses)
+    let result = poolsByChainResponses
+      .filter(isSuccessful)
+      .reduce((resultAcc: PoolParsedWithState[], { value }) => [...resultAcc, ...value], [])
+
+    result = orderBy(
+      result,
+      [getLocalKeySort(variables.orderBy)],
+      variables.orderDirection ? [variables.orderDirection] : ['desc'],
+    )
 
     // Return Merged all pools by chain in unique array. Only success promises
     // & Sorting by timestamp
-    return poolsByChainResponses
-      .filter(isSuccessful)
-      .reduce((resultAcc: ParsedPool[], { value }) => [...resultAcc, ...value], [])
-      .sort((pool1, pool2) => pool2.timestamp - pool1.timestamp)
+    return result
   } catch (e) {
     console.error(e)
     return []
@@ -91,7 +121,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
 
 const getSwrKey = (
   currentPage: number,
-  previousPageData: PoolCreatedWithChainId[],
+  previousPageData: PoolParsedWithState[],
   variables: PoolsCreatedQueryVariables,
   network: ChainsValues | null,
 ) => {
@@ -129,5 +159,13 @@ export default function useAelinPools(
     [],
   )
 
-  return { data: paginatedResult, error, nextPage, currentPage, hasMore, isValidating, mutate }
+  return {
+    data: paginatedResult,
+    error,
+    nextPage,
+    currentPage,
+    hasMore,
+    isValidating,
+    mutate,
+  }
 }
