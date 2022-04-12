@@ -11,6 +11,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { AelinPoolState, isFunding } from '@/src/utils/getAelinPoolCurrentStatus'
 
@@ -30,15 +31,14 @@ type Props = {
 
 export default function PoolDetails({ chainId, poolAddress }: Props) {
   const { currentState, pool } = useAelinPoolStatus(chainId, poolAddress as string)
-
-  console.log(currentState, pool)
+  const { address } = useWeb3Connection()
 
   if (!currentState) {
     return null
   }
 
   const showCreateDealForm =
-    pool.isSponsor &&
+    address?.toLowerCase() === pool.sponsor.toLowerCase() &&
     currentState.state === AelinPoolState.WaitingForDeal &&
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

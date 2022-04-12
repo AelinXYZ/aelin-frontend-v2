@@ -4,11 +4,10 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ClientError } from 'graphql-request'
 import { KeyedMutator, SWRConfiguration } from 'swr'
 
-import { PoolByIdQuery } from '@/graphql-schema'
+import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import useAelinPoolCall from '@/src/hooks/aelin/useAelinPoolCall'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import {
   getAmountFunded,
   getAmountInPool,
@@ -27,10 +26,12 @@ type DetailedNumber = {
 }
 
 export type ParsedAelinPool = {
+  name: string
   chainId: ChainsValues
   address: string
   start: Date
   investmentToken: string
+  investmentTokenSymbol: string
   investmentTokenDecimals: number
   investmentDeadline: Date
   purchaseExpiry: Date
@@ -42,7 +43,42 @@ export type ParsedAelinPool = {
   amountInPool: DetailedNumber
   funded: DetailedNumber
   withdrawn: DetailedNumber
-  isSponsor: boolean
+  poolStatus: PoolStatus
+}
+
+export const getParsedPool = ({
+  chainId,
+  pool,
+  poolAddress,
+  poolTotalWithdrawn,
+  purchaseTokenDecimals,
+}: {
+  chainId: ChainsValues
+  pool: PoolCreated
+  poolAddress: string
+  poolTotalWithdrawn: BigNumber | null
+  purchaseTokenDecimals: number
+}) => {
+  return {
+    chainId,
+    poolStatus: pool.poolStatus,
+    name: pool.name,
+    address: poolAddress,
+    start: getPoolCreatedDate(pool),
+    investmentToken: pool.purchaseToken,
+    investmentTokenSymbol: pool.purchaseTokenSymbol,
+    investmentTokenDecimals: purchaseTokenDecimals,
+    investmentDeadline: pool.purchaseDuration,
+    sponsor: pool.sponsor,
+    dealAddress: pool.dealAddress ? (pool.dealAddress as string) : null,
+    sponsorFee: getSponsorFee(pool),
+    poolCap: getPurchaseTokenCap({ ...pool, purchaseTokenDecimals }),
+    purchaseExpiry: getPurchaseExpiry(pool),
+    dealDeadline: getDealDeadline(pool),
+    amountInPool: getAmountInPool({ ...pool, purchaseTokenDecimals }),
+    funded: getAmountFunded({ ...pool, purchaseTokenDecimals }),
+    withdrawn: getAmountWithdrawn(poolTotalWithdrawn || ZERO_BN),
+  }
 }
 
 export default function useAelinPool(
@@ -50,7 +86,6 @@ export default function useAelinPool(
   poolAddress: string,
   config?: SWRConfiguration<PoolByIdQuery, ClientError>,
 ): { refetch: KeyedMutator<PoolByIdQuery>; pool: ParsedAelinPool } {
-  const { address } = useWeb3Connection()
   const allSDK = getAllGqlSDK()
   const { usePoolById } = allSDK[chainId]
   const { data, mutate } = usePoolById({ poolCreatedId: poolAddress }, config)
@@ -72,26 +107,17 @@ export default function useAelinPool(
     throw Error('PurchaseTokenDecimals is null or undefined for pool: ' + poolAddress)
   }
 
-  const memoizedPool = useMemo(() => {
-    return {
-      chainId,
-      address: poolAddress,
-      start: getPoolCreatedDate(pool),
-      investmentToken: pool.purchaseToken,
-      investmentTokenDecimals: purchaseTokenDecimals,
-      investmentDeadline: pool.purchaseDuration,
-      sponsor: pool.sponsor,
-      dealAddress: pool.dealAddress ? (pool.dealAddress as string) : null,
-      sponsorFee: getSponsorFee(pool),
-      poolCap: getPurchaseTokenCap({ ...pool, purchaseTokenDecimals }),
-      purchaseExpiry: getPurchaseExpiry(pool),
-      dealDeadline: getDealDeadline(pool),
-      amountInPool: getAmountInPool({ ...pool, purchaseTokenDecimals }),
-      funded: getAmountFunded({ ...pool, purchaseTokenDecimals }),
-      withdrawn: getAmountWithdrawn(poolTotalWithdrawn || ZERO_BN),
-      isSponsor: address?.toLowerCase() === pool.sponsor.toLowerCase(),
-    }
-  }, [chainId, poolAddress, pool, purchaseTokenDecimals, poolTotalWithdrawn, address])
+  const memoizedPool = useMemo(
+    () =>
+      getParsedPool({
+        pool,
+        purchaseTokenDecimals,
+        poolTotalWithdrawn,
+        poolAddress,
+        chainId,
+      }),
+    [pool, purchaseTokenDecimals, poolTotalWithdrawn, poolAddress, chainId],
+  )
 
   return {
     refetch: mutate,
