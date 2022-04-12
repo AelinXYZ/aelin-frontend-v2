@@ -1,17 +1,14 @@
 import Head from 'next/head'
 import styled from 'styled-components'
 
-import isAfter from 'date-fns/isAfter'
-
 import { CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
-import CountDown from '@/src/components/countdown'
-import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import CreateDealForm from '@/src/components/pools/CreateDealForm'
 import FundingActions from '@/src/components/pools/FundingActions'
 import { PoolInfoItem, Value } from '@/src/components/pools/PoolInfoItem'
 import { Timeline } from '@/src/components/pools/Timeline'
+import { Deadline } from '@/src/components/table/Deadline'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
@@ -102,8 +99,12 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
                   <PoolInfoItem
                     title="Investment deadline"
                     tooltip="Investment deadline tooltip"
-                    value={formatDate(pool.purchaseExpiry, DATE_DETAILED)}
-                  />
+                    // value={formatDate(pool.purchaseExpiry, DATE_DETAILED)}
+                  >
+                    <Deadline progress="75" width="180px">
+                      <Value>{formatDate(pool.purchaseExpiry, DATE_DETAILED)}</Value>
+                    </Deadline>
+                  </PoolInfoItem>
                   <PoolInfoItem
                     title="Deal deadline"
                     tooltip="Deal deadline tooltip"
@@ -119,6 +120,7 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
               </ContentGrid>
             </CardWithTitle>
             <div>
+              {/* <FundingActions pool={pool} poolHelpers={currentState} /> */}
               {isFunding(currentState) && <FundingActions pool={pool} poolHelpers={currentState} />}
             </div>
           </MainGrid>
