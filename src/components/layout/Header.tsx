@@ -66,12 +66,12 @@ const StartWrapper = styled.div`
 
 const HeaderDropdown = styled(Dropdown)`
   .dropdownItems {
-    border-bottom-color: ${({ theme }) => theme.colors.borderColor};
-    border-left-color: ${({ theme }) => theme.colors.borderColor};
-    border-right-color: ${({ theme }) => theme.colors.borderColor};
-    left: -20px;
-    top: calc(100% + 20px);
-    transform: none;
+    background-color: ${({ theme }) => theme.colors.gray};
+    border-color: ${({ theme }) => theme.colors.lightGray};
+    border-radius: 6px;
+    border-style: solid;
+    border-width: 0.5px;
+    top: calc(100% + 10px);
   }
 `
 
@@ -185,6 +185,7 @@ export const Header: React.FC = (props) => {
                   <ChevronDown />
                 </DropdownButton>
               }
+              dropdownPosition={DropdownPosition.center}
               items={networksDropdownItems}
             />
             {isWalletConnected && (
@@ -198,7 +199,7 @@ export const Header: React.FC = (props) => {
                       <ChevronDown />
                     </DropdownButton>
                   }
-                  dropdownPosition={DropdownPosition.right}
+                  dropdownPosition={DropdownPosition.center}
                   items={[
                     <DropdownItem key={'btn_disconnect'} onClick={disconnectWallet}>
                       Disconnect
