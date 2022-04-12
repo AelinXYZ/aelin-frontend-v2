@@ -127,6 +127,14 @@ const ButtonDropdown = styled(BaseButtonDropdown)`
   width: 250px;
 `
 
+const WalletDropdownContents = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 17px;
+`
+
 export const Header: React.FC = (props) => {
   const {
     address = '',
@@ -201,9 +209,16 @@ export const Header: React.FC = (props) => {
                   }
                   dropdownPosition={DropdownPosition.center}
                   items={[
-                    <DropdownItem key={'btn_disconnect'} onClick={disconnectWallet}>
-                      Disconnect
-                    </DropdownItem>,
+                    <WalletDropdownContents key={'wallet_dopdown'}>
+                      <Metamask />
+                      {address && shortenAddress(address)}
+                      <div>
+                        <button>Copy</button>
+                        <button>Explorer</button>
+                      </div>
+                      <button>Change wallet</button>
+                      <button onClick={disconnectWallet}>Disconnect</button>
+                    </WalletDropdownContents>,
                   ]}
                 />
                 <Line />
