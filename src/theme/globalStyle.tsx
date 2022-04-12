@@ -27,7 +27,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     width: 100%;
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-      background-image: url('resources/svg/bg-main.svg');
+      background-image: url('/resources/svg/bg-main.svg');
     }
   }
 
@@ -47,6 +47,45 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopWideStart}) {
       padding: ${({ theme }) => theme.layout.paddingDesktopWideStart};
+    }
+  }
+
+  .__react_component_tooltip.show.customTooltip {
+    color: ${({ theme }) => theme.colors.textColor};
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.25);
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.5;
+    max-width: 280px;
+    opacity: 1;
+    overflow-wrap: break-word;
+    padding: 7px 10px 6px;
+    text-align: left;
+    text-transform: none;
+    white-space: normal;
+    word-wrap: break-word;
+
+    &::before,
+    &::after {
+      display: none !important;
+    }
+
+    p {
+      margin: 0 0 10px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    > a {
+      color: ${({ theme }) => theme.colors.textColor};
+      text-decoration: underline;
+    }
+
+    > a:hover {
+      color: ${({ theme }) => theme.colors.textColor};
     }
   }
 

@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { Tooltip } from '@/src/components/tooltip/Tooltip'
+
 const Wrapper = styled.div`
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
@@ -55,6 +57,7 @@ export const PoolInfoItem: React.FC<{
     <Wrapper {...restProps}>
       <TitleWrapper>
         <Title>{title}</Title>
+        {tooltip && <Tooltip text={tooltip} />}
       </TitleWrapper>
       <Contents>{value ? <Value>{value}</Value> : children}</Contents>
     </Wrapper>

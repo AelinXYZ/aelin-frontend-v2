@@ -76,30 +76,45 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
             <CardWithTitle title="Pool information">
               <ContentGrid>
                 <Column>
-                  <PoolInfoItem title="Investment token" value={pool.investmentTokenSymbol} />
+                  <PoolInfoItem
+                    title="Investment token"
+                    tooltip="Investment token tooltip contents"
+                    value={pool.investmentTokenSymbol}
+                  />
                   <PoolInfoItem
                     title="Pool cap"
+                    tooltip="Pool cap tooltip"
                     value={pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
                   />
-                  <PoolInfoItem title="Pool stats">
+                  <PoolInfoItem title="Pool stats" tooltip="Pool stats tooltip">
                     <Value>Funded: {pool.funded.formatted}</Value>
                     <Value>Withdrawn: {pool.withdrawn.formatted}</Value>
                     <Value>Amount in Pool: {pool.amountInPool.formatted}</Value>
                   </PoolInfoItem>
                   <PoolInfoItem title={`My ${pool.investmentTokenSymbol} balance`} value={'0.00'} />
-                  <PoolInfoItem title="My pool balance" value={'0.00'} />
+                  <PoolInfoItem
+                    title="My pool balance"
+                    tooltip="My pool balance tooltip"
+                    value={'0.00'}
+                  />
                 </Column>
                 <Column>
                   <PoolInfoItem
                     title="Investment deadline"
+                    tooltip="Investment deadline tooltip"
                     value={formatDate(pool.purchaseExpiry, DATE_DETAILED)}
                   />
                   <PoolInfoItem
                     title="Deal deadline"
+                    tooltip="Deal deadline tooltip"
                     value={formatDate(pool.dealDeadline, DATE_DETAILED)}
                   />
-                  <PoolInfoItem title="Sponsor" value={pool.sponsor} />
-                  <PoolInfoItem title="Sponsor fee" value={pool.sponsorFee.formatted} />
+                  <PoolInfoItem title="Sponsor" tooltip="Sponsor tooltip" value={pool.sponsor} />
+                  <PoolInfoItem
+                    title="Sponsor fee"
+                    tooltip="Sponsor fee tooltip"
+                    value={pool.sponsorFee.formatted}
+                  />
                 </Column>
               </ContentGrid>
             </CardWithTitle>
