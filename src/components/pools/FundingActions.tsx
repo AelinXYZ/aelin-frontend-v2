@@ -19,19 +19,15 @@ function FundingActions({ pool, poolHelpers }: Props) {
     pool.address,
   ])
 
-  if (!allowance) {
-    return <div>There was an error, try again!</div>
-  }
-
-  if (poolHelpers.meta.capReached) {
-    return <div>Max cap reached</div>
-  }
-
-  if (allowance.gt(ZERO_ADDRESS)) {
-    return <DepositPool pool={pool} poolHelpers={poolHelpers} />
-  }
-
-  return <ApprovePool pool={pool} refetchAllowance={refetch} />
+  return !allowance ? (
+    <>There was an error, try again!</>
+  ) : poolHelpers.meta.capReached ? (
+    <>Max cap reached</>
+  ) : allowance.gt(ZERO_ADDRESS) ? (
+    <DepositPool pool={pool} poolHelpers={poolHelpers} />
+  ) : (
+    <ApprovePool pool={pool} refetchAllowance={refetch} />
+  )
 }
 
 export default genericSuspense(FundingActions)

@@ -8,6 +8,7 @@ import CreateDealForm from '@/src/components/pools/CreateDealForm'
 import FundingActions from '@/src/components/pools/FundingActions'
 import { PoolInfoItem, Value } from '@/src/components/pools/PoolInfoItem'
 import { Timeline } from '@/src/components/pools/Timeline'
+import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { Deadline } from '@/src/components/table/Deadline'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -35,6 +36,16 @@ const Column = styled.div`
   flex-direction: column;
   min-width: 0;
   row-gap: 20px;
+`
+
+const ActionsCard = styled(BaseCard)`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  justify-content: center;
+  min-height: 236px;
+  padding: 30px 40px;
 `
 
 type Props = {
@@ -119,10 +130,13 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
                 </Column>
               </ContentGrid>
             </CardWithTitle>
-            <div>
-              {/* <FundingActions pool={pool} poolHelpers={currentState} /> */}
-              {isFunding(currentState) && <FundingActions pool={pool} poolHelpers={currentState} />}
-            </div>
+            <ActionsCard>
+              {isFunding(currentState) ? (
+                <FundingActions pool={pool} poolHelpers={currentState} />
+              ) : (
+                <>No actions available now.</>
+              )}
+            </ActionsCard>
           </MainGrid>
         )}
       </RightTimelineLayout>
