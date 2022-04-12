@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
@@ -37,6 +38,13 @@ const PoolCreateStepInput: React.FC<{
   currentState: CreatePoolState
 }> = ({ currentState, setPoolField, ...restProps }) => {
   const step = currentState.currentStep
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current?.focus()
+    }
+  }, [step])
 
   return (
     <Wrapper {...restProps}>
@@ -46,6 +54,7 @@ const PoolCreateStepInput: React.FC<{
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
           placeholder={createPoolConfig[step].placeholder}
+          ref={inputRef}
           type="text"
           value={currentState[step]}
         />
@@ -55,17 +64,23 @@ const PoolCreateStepInput: React.FC<{
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
           placeholder={createPoolConfig[step].placeholder}
+          ref={inputRef}
           type="text"
           value={currentState[step]}
         />
       ) : step === CreatePoolSteps.dealDeadline || step === CreatePoolSteps.investmentDeadLine ? (
-        <HMSInput defaultValue={currentState[step]} onChange={(value) => setPoolField(value)} />
+        <HMSInput
+          autofocusOnRender
+          defaultValue={currentState[step]}
+          onChange={(value) => setPoolField(value)}
+        />
       ) : step === CreatePoolSteps.poolCap ? (
         <Textfield
           maxLength={8}
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
           placeholder={createPoolConfig[step].placeholder}
+          ref={inputRef}
           type="number"
           value={currentState[step]}
         />
@@ -88,6 +103,7 @@ const PoolCreateStepInput: React.FC<{
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
           placeholder={createPoolConfig[step].placeholder}
+          ref={inputRef}
           type="number"
           value={currentState[step]}
         />

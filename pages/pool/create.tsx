@@ -86,64 +86,76 @@ const Create: NextPage = () => {
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.code === 'Enter' && !currentStepError) {
+      moveStep('next')
+    }
+  }
+
   return (
     <>
       <Head>
-        <title>Aelin - Create Pool</title>
+        <title>{`${createPoolState.poolName || 'Create Pool'}`}</title>
       </Head>
-      <PageTitle title={'Create pool'} />
+      <PageTitle title={`${createPoolState.poolName || 'Create Pool'}`} />
       <RightTimelineLayout timeline={<Timeline activeItem={1} />}>
         <CardWithTitle title={'Pool creation'}>
           <StepIndicator
             currentStepOrder={order}
             data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
           />
-          {Object.values(CreatePoolSteps).map((step) => {
-            const isStepVisible = createPoolState.currentStep === step
+          <div onKeyUp={handleKeyDown} role="none">
+            {Object.values(CreatePoolSteps).map((step) => {
+              const isStepVisible = createPoolState.currentStep === step
 
-            return !isStepVisible ? null : (
-              <WrapperGrid>
-                <PrevNextWrapper>
-                  {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
-                </PrevNextWrapper>
-                <StepContents>
-                  <Title>{title}</Title>
-                  <Description>{text}</Description>
-                  <PoolCreateStepInput
-                    currentState={createPoolState}
-                    key={step}
-                    setPoolField={setPoolField}
-                  />
-                  {/* {currentStepError && <p>{currentStepError}</p>} */}
-                  <ButtonWrapper>
-                    {!isFinalStep ? (
-                      <GradientButton
-                        disabled={!!currentStepError}
-                        key={`${step}_button`}
-                        onClick={() => moveStep('next')}
-                      >
-                        Next
-                      </GradientButton>
-                    ) : (
-                      <GradientButton
-                        disabled={disableSubmit}
-                        key={`${step}_button`}
-                        onClick={handleSubmit}
-                      >
-                        Create Pool
-                      </GradientButton>
+              return !isStepVisible ? null : (
+                <WrapperGrid>
+                  <PrevNextWrapper>
+                    {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
+                  </PrevNextWrapper>
+                  <StepContents>
+                    <Title>{title}</Title>
+                    <Description>{text}</Description>
+                    <PoolCreateStepInput
+                      currentState={createPoolState}
+                      key={step}
+                      setPoolField={setPoolField}
+                    />
+                    {currentStepError && typeof currentStepError === 'string' && (
+                      <p style={{ marginBottom: 0 }}>{currentStepError}</p>
                     )}
-                  </ButtonWrapper>
-                  <Summary data={getCreatePoolSummaryData(createPoolState)} />
-                </StepContents>
-                <PrevNextWrapper>
-                  {!isFinalStep && (
-                    <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
-                  )}
-                </PrevNextWrapper>
-              </WrapperGrid>
-            )
-          })}
+                    <ButtonWrapper>
+                      {!isFinalStep ? (
+                        <GradientButton
+                          disabled={!!currentStepError}
+                          key={`${step}_button`}
+                          onClick={() => moveStep('next')}
+                        >
+                          Next
+                        </GradientButton>
+                      ) : (
+                        <GradientButton
+                          disabled={disableSubmit}
+                          key={`${step}_button`}
+                          onClick={handleSubmit}
+                        >
+                          Create Pool
+                        </GradientButton>
+                      )}
+                    </ButtonWrapper>
+                    <Summary data={getCreatePoolSummaryData(createPoolState)} />
+                  </StepContents>
+                  <PrevNextWrapper>
+                    {!isFinalStep && (
+                      <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
+                    )}
+                  </PrevNextWrapper>
+                </WrapperGrid>
+              )
+            })}
+          </div>
         </CardWithTitle>
       </RightTimelineLayout>
     </>

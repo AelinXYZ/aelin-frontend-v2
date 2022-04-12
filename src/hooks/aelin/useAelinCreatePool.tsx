@@ -15,7 +15,6 @@ import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/
 import { isDuration } from '@/src/utils/isDuration'
 import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
-import { formatToken } from '@/src/web3/bigNumber'
 
 export enum CreatePoolSteps {
   poolName = 'poolName',
@@ -256,9 +255,12 @@ export const getCreatePoolSummaryData = (
       value = value?.symbol
     }
 
-    if (step.id === CreatePoolSteps.sponsorFee) {
-      // TODO hardcoded decimals here
+    if (step.id === CreatePoolSteps.sponsorFee && value) {
       value = `${value}%`
+    }
+
+    if (step.id === CreatePoolSteps.poolCap && !value) {
+      value = 'Uncapped'
     }
 
     if (!value) value = '--'

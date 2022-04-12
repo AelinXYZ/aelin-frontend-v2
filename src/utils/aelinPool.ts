@@ -1,8 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import addSeconds from 'date-fns/addSeconds'
 
-import { PoolStatus } from '@/graphql-schema'
 import { ExtendedStatus } from '@/src/constants/pool'
+import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type PoolDates = {
@@ -74,4 +74,19 @@ export function getAmountWithdrawn(amount: BigNumber) {
 
 export function getStatusText<P extends { poolStatus: ExtendedStatus }>(pool: P) {
   return pool.poolStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
+}
+
+export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start: Date) {
+  if (getFormattedDurationFromDateToNow(purchaseExpiry, 'ended') === 'ended') {
+    return '0'
+  }
+
+  const end = purchaseExpiry
+  const today = new Date()
+
+  //use Math.abs to avoid sign
+  const q = Math.abs(today.getTime() - start.getTime())
+  const d = Math.abs(end.getTime() - start.getTime())
+
+  return Math.round((q / d) * 100).toString()
 }

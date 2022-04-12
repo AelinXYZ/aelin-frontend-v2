@@ -7,6 +7,7 @@ import { formatToken } from '@/src/web3/bigNumber'
 
 export enum AelinPoolState {
   Funding = 'Funding',
+  Open = 'Open',
   WaitingForDeal = 'WaitingForDeal',
   Vesting = 'Vesting',
   Closed = 'Closed',
