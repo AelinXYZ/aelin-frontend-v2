@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 import nullthrows from 'nullthrows'

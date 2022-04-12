@@ -68,7 +68,7 @@ const ButtonWrapper = styled.div`
   margin-top: 40px;
 `
 
-const CreatePool: NextPage = () => {
+const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
   const {
     createPoolState,
@@ -150,4 +150,4 @@ const CreatePool: NextPage = () => {
   )
 }
 
-export default CreatePool
+export default Create
