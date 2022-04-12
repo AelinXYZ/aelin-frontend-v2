@@ -34,9 +34,10 @@ const ContentGrid = styled.div`
 `
 
 const Column = styled.div`
-  display: grid;
-  row-gap: 20px;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  row-gap: 20px;
 `
 
 type Props = {
@@ -52,7 +53,6 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
     return null
   }
 
-  const mockedPoolName = 'The Pool Name'
   const mockedPoolVisibility = 'Public pool'
 
   const showCreateDealForm =
@@ -65,9 +65,9 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
   return (
     <>
       <Head>
-        <title>Aelin - {mockedPoolName}</title>
+        <title>Aelin - {pool.name}</title>
       </Head>
-      <PageTitle subTitle={mockedPoolVisibility} title={mockedPoolName} />
+      <PageTitle subTitle={mockedPoolVisibility} title={pool.name} />
       <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 3 : 2} />}>
         {showCreateDealForm ? (
           <CreateDealForm pool={pool} />
@@ -76,7 +76,7 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
             <CardWithTitle title="Pool information">
               <ContentGrid>
                 <Column>
-                  <PoolInfoItem title="Investment token" value={pool.investmentToken} />
+                  <PoolInfoItem title="Investment token" value={pool.investmentTokenSymbol} />
                   <PoolInfoItem
                     title="Pool cap"
                     value={pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
@@ -86,7 +86,7 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
                     <Value>Withdrawn: {pool.withdrawn.formatted}</Value>
                     <Value>Amount in Pool: {pool.amountInPool.formatted}</Value>
                   </PoolInfoItem>
-                  <PoolInfoItem title={`My ${pool.investmentToken} balance`} value={'0.00'} />
+                  <PoolInfoItem title={`My ${pool.investmentTokenSymbol} balance`} value={'0.00'} />
                   <PoolInfoItem title="My pool balance" value={'0.00'} />
                 </Column>
                 <Column>
