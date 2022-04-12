@@ -7,17 +7,6 @@ import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
-const Title = styled.h4`
-  color: ${({ theme }) => theme.colors.textColor};
-  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
-  font-weight: 600;
-  line-height: 1.4;
-  margin: 0 0 20px;
-  text-align: left;
-  width: 100%;
-`
-
 const Description = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
   display: flex;
@@ -54,7 +43,6 @@ export default function ApprovePool({ pool, refetchAllowance }: Props) {
 
   return (
     <>
-      <Title>Deposit tokens</Title>
       <Description>
         Before you deposit, the pool needs your permission to transfer your {investmentTokenSymbol}
       </Description>
