@@ -8,6 +8,7 @@ import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import { getAmountInPool, getPurchaseExpiry, getStatusText } from '@/src/utils/aelinPool'
+import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
@@ -48,7 +49,7 @@ function parsedPool(pool: PoolCreatedWithChainId): ParsedPool {
     }),
     investmentDeadline: getFormattedDurationFromDateToNow(getPurchaseExpiry(pool), 'ended'),
     investmentToken: pool.purchaseTokenSymbol,
-    stage: getStatusText(pool),
+    stage: getStatusText({ poolStatus: calculateStatus(pool) }),
     timestamp: pool.timestamp,
   }
 }
@@ -112,7 +113,8 @@ export default function useAelinPools(
     setSize: setPage,
     size: currentPage,
   } = useSWRInfinite((...args) => getSwrKey(...args, variables, network), fetcherPools, {
-    revalidateFirstPage: false,
+    revalidateFirstPage: true,
+    revalidateOnMount: true,
   })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0

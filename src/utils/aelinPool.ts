@@ -2,6 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import addSeconds from 'date-fns/addSeconds'
 
 import { PoolStatus } from '@/graphql-schema'
+import { ExtendedStatus } from '@/src/constants/pool'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type PoolDates = {
@@ -71,6 +72,6 @@ export function getAmountWithdrawn(amount: BigNumber) {
   }
 }
 
-export function getStatusText<P extends { poolStatus: PoolStatus }>(pool: P) {
+export function getStatusText<P extends { poolStatus: ExtendedStatus }>(pool: P) {
   return pool.poolStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
 }
