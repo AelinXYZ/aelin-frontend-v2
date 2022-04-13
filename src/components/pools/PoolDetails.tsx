@@ -7,6 +7,8 @@ import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import CreateDealForm from '@/src/components/pools/CreateDealForm'
 import FundingActions from '@/src/components/pools/FundingActions'
+import DealInfo from '@/src/components/pools/poolDetails/DealInfo'
+import PoolInfo from '@/src/components/pools/poolDetails/PoolInfo'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -18,10 +20,6 @@ import { AelinPoolState, isFunding } from '@/src/utils/getAelinPoolCurrentStatus
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
-`
-
-const PoolInfo = styled.div`
-  width: 500px;
 `
 
 type Props = {
@@ -47,45 +45,21 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
   return (
     <RightTimelineLayout timeline={<>Timeline stuff</>}>
       {!showCreateDealForm ? (
-        <BaseCard>
-          <Wrapper>
-            <PoolInfo>
-              <div>Pool details: {poolAddress}</div>
-              <div>Investment</div>
-              <div>token: {pool.investmentToken}</div>
-              <div>
-                deadline: {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
-                {isAfter(pool.purchaseExpiry, Date.now()) && (
-                  <CountDown date={pool.purchaseExpiry} format={CountDownDHMS} />
-                )}
-              </div>
-              <hr />
-              <div>Sponsor </div>
-              {pool.sponsor}
-              <hr />
-              <div>Pool cap </div>
-              {pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
-              <hr />
-              <div>Sponsor fee </div>
-              {pool.sponsorFee.formatted}
-              <hr />
-              <div>Deal </div>
-              <div>
-                deadline: {formatDate(pool.dealDeadline, DATE_DETAILED)}
-                {isAfter(pool.dealDeadline, Date.now()) && (
-                  <CountDown date={pool.dealDeadline} format={CountDownDHMS} />
-                )}
-              </div>
-              <hr />
-              <div>Pool details</div>
-              <div>Funded: {pool.funded.formatted}</div>
-              <div>Withdrawn: {pool.withdrawn.formatted}</div>
-              <div>Amount in Pool: {pool.amountInPool.formatted}</div>
-            </PoolInfo>
+        <>
+          <BaseCard>
+            <Wrapper>
+              <PoolInfo pool={pool} poolAddress={poolAddress} />
 
-            {isFunding(currentState) && <FundingActions pool={pool} poolHelpers={currentState} />}
-          </Wrapper>
-        </BaseCard>
+              {isFunding(currentState) && <FundingActions pool={pool} poolHelpers={currentState} />}
+            </Wrapper>
+          </BaseCard>
+          <br />
+          <BaseCard>
+            <Wrapper>
+              <DealInfo pool={pool} poolAddress={poolAddress} />
+            </Wrapper>
+          </BaseCard>
+        </>
       ) : (
         <CreateDealForm pool={pool} />
       )}

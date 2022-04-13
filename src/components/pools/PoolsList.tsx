@@ -25,7 +25,7 @@ import {
   calculateInvestmentDeadlineProgress,
   getPurchaseExpiry,
   getStatusText,
-} from '@/src/utils/aelinPool'
+} from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { shortenAddress } from '@/src/utils/string'
 
