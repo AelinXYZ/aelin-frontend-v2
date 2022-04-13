@@ -70,9 +70,9 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
   return (
     <>
       <Head>
-        <title>Create Pool</title>
+        <title>Deal creation</title>
       </Head>
-      <CardWithTitle title={'Pool creation'}>
+      <CardWithTitle title={'Deal creation'}>
         <StepIndicator
           currentStepOrder={order}
           data={getCreateDealStepIndicatorData(createDealState.currentStep)}
