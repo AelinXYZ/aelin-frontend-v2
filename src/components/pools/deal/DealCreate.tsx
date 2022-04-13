@@ -41,6 +41,7 @@ const StepIndicator = styled(BaseStepIndicator)`
 const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
   const { appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
+  const [totalPurchase, setTotalPurchase] = useState<string | undefined>()
   const {
     createDealState,
     errors,
@@ -66,8 +67,6 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
     }
   }
 
-  console.log(currentStepError)
-
   return (
     <>
       <Head>
@@ -91,19 +90,17 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
                 <Description>{text}</Description>
                 <DealCreateStepInput
                   currentState={createDealState}
+                  onCalculateDealModal={() => setShowDealCalculationModal(true)}
                   onKeyUp={handleKeyUp}
+                  onSetDealField={setDealField}
+                  onSetTotalPurchase={setTotalPurchase}
                   role="none"
-                  setDealField={setDealField}
+                  totalPurchase={totalPurchase}
                 />
                 {currentStepError && typeof currentStepError === 'string' && (
                   <Error>{currentStepError}</Error>
                 )}
                 <ButtonWrapper>
-                  {createDealState.currentStep === CreateDealSteps.totalPurchaseAmount && (
-                    <GradientButton onClick={() => setShowDealCalculationModal(true)}>
-                      Calculate
-                    </GradientButton>
-                  )}
                   {!isFinalStep ? (
                     <GradientButton disabled={!!currentStepError} onClick={() => moveStep('next')}>
                       Next

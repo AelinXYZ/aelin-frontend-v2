@@ -26,9 +26,8 @@ const SponsorFeeTextfield = styled(Textfield)`
 `
 
 const PrivacyGrid = styled.div`
-  display: grid;
+  display: flex;
   gap: 40px;
-  grid-template-columns: 1fr 1fr;
   margin: 0 auto;
   max-width: fit-content;
 `
