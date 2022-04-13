@@ -1,5 +1,5 @@
-import { HMSInput } from '@/src/components/pools/HMSInput'
-import TokenDropdown from '@/src/components/pools/TokenDropdown'
+import { HMSInput } from '@/src/components/pools/common/HMSInput'
+import TokenDropdown from '@/src/components/pools/common/TokenDropdown'
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import {
   CreateDealState,

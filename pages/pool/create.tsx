@@ -5,9 +5,9 @@ import styled from 'styled-components'
 import { CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import PoolCreateStepInput from '@/src/components/pools/PoolCreateStepInput'
-import { Summary } from '@/src/components/pools/Summary'
-import { Timeline } from '@/src/components/pools/Timeline'
+import { Summary } from '@/src/components/pools/common/Summary'
+import { Timeline } from '@/src/components/pools/common/Timeline'
+import PoolCreateStepInput from '@/src/components/pools/main/PoolCreateStepInput'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,

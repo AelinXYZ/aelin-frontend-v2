@@ -2,9 +2,9 @@ import Head from 'next/head'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import DealCalculationModal from '@/src/components/pools/DealCalculationModal'
-import DealCreateStepInput from '@/src/components/pools/DealCreateStepInput'
-import { Summary } from '@/src/components/pools/Summary'
+import { Summary } from '@/src/components/pools/common/Summary'
+import DealConfirmationModal from '@/src/components/pools/deal/DealConfirmationModal'
+import DealCreateStepInput from '@/src/components/pools/deal/DealCreateStepInput'
 import { StepIndicator } from '@/src/components/timeline/StepIndicator'
 import { Token } from '@/src/constants/token'
 import useAelinCreateDeal, {
@@ -22,7 +22,7 @@ const PoolRow = styled.div`
   justify-content: space-between;
 `
 
-const CreateDealForm = ({ pool }: { pool: ParsedAelinPool }) => {
+const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
   const { appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
   const {
@@ -67,7 +67,7 @@ const CreateDealForm = ({ pool }: { pool: ParsedAelinPool }) => {
               <>
                 <button onClick={() => setShowDealCalculationModal(true)}>Calculate</button>
                 {showDealCalculationModal && (
-                  <DealCalculationModal
+                  <DealConfirmationModal
                     dealToken={createDealState.dealToken as Token}
                     dealTokenAmount={createDealState.dealTokenTotal as string}
                     investmentToken={investmentTokenInfo as Token}
@@ -110,4 +110,4 @@ const CreateDealForm = ({ pool }: { pool: ParsedAelinPool }) => {
   )
 }
 
-export default CreateDealForm
+export default DealCreate

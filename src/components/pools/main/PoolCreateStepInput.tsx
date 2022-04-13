@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
-import { HMSInput } from '@/src/components/pools/HMSInput'
-import TokenDropdown from '@/src/components/pools/TokenDropdown'
+import { HMSInput } from '@/src/components/pools/common/HMSInput'
+import TokenDropdown from '@/src/components/pools/common/TokenDropdown'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import {
   CreatePoolState,

@@ -6,7 +6,7 @@ import debounce from 'lodash/debounce'
 
 import { PoolCreated_Filter, PoolStatus } from '@/graphql-schema'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
-import PoolsList from '@/src/components/pools/PoolsList'
+import { List } from '@/src/components/pools/list/List'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
@@ -94,10 +94,9 @@ const searchOptions: Array<SearchOptionsType> = [
 ]
 
 const myPools = ['All pools', 'Sponsored', 'Funded', 'Invested']
-
 const DEBOUNCED_TIME = 500
 
-const PoolsListWithFilters: React.FC = () => {
+export const ListWithFilters: React.FC = () => {
   const { address } = useWeb3Connection()
   const { network, setNetwork, setOrderBy, setOrderDirection, setWhere, variables } =
     useAelinPoolsFilters()
@@ -243,8 +242,7 @@ const PoolsListWithFilters: React.FC = () => {
           />
         </FiltersDropdowns>
       </Wrapper>
-
-      <PoolsList
+      <List
         filters={{ variables, network }}
         setOrderBy={setOrderBy}
         setOrderDirection={setOrderDirection}
@@ -253,4 +251,4 @@ const PoolsListWithFilters: React.FC = () => {
   )
 }
 
-export default PoolsListWithFilters
+export default ListWithFilters

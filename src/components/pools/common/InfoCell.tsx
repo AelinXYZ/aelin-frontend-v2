@@ -48,7 +48,7 @@ export const Value = styled.div`
   word-break: break-word;
 `
 
-export const PoolInfoItem: React.FC<{
+export const InfoCell: React.FC<{
   title: string
   tooltip?: string
   value?: React.ReactNode
