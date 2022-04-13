@@ -59,9 +59,9 @@ const Create: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{`${createPoolState.poolName || 'Create Pool'}`}</title>
+        <title>{`${createPoolState.poolName || 'Create pool'}`}</title>
       </Head>
-      <PageTitle title={`${createPoolState.poolName || 'Create Pool'}`} />
+      <PageTitle title={`${createPoolState.poolName || 'Pool creation'}`} />
       <RightTimelineLayout timeline={<Timeline activeItem={1} />}>
         <CardWithTitle title={'Pool creation'}>
           <StepIndicator
