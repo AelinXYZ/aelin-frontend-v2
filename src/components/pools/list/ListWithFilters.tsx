@@ -46,10 +46,15 @@ const SearchWrapper = styled.div`
 `
 
 const Search = styled(BaseSearch)`
+  background-color: ${({ theme }) => theme.colors.componentBackgroundColor};
   padding-right: 125px;
   position: relative;
   width: 100%;
   z-index: 1;
+
+  &:focus {
+    background-color: ${({ theme }) => theme.colors.componentBackgroundColor};
+  }
 `
 
 const SearchDropdown = styled(Dropdown)`

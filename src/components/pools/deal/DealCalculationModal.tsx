@@ -1,24 +1,41 @@
 import React, { ChangeEvent, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
-import { Modal } from '@/src/components/common/Modal'
-import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
-import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
+import { Modal, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
+import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Token } from '@/src/constants/token'
 
-const WidthCSS = css`
-  max-width: 100%;
-  width: 320px;
+const Text = styled(ModalText)`
+  margin-bottom: 40px;
 `
 
-const Description = styled.p`
-  color: ${({ theme }) => theme.colors.textColorLight};
+const TokenValue = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+`
+
+const Textfield = styled(BaseTextField)`
+  ${WidthLimitsCSS}
+`
+
+const Label = styled.p`
+  color: ${({ theme }) => theme.colors.textColor};
   font-size: 1.4rem;
-  font-weight: 400;
   line-height: 1.2;
-  margin: 0 auto 20px;
-  text-align: center;
-  ${WidthCSS}
+  margin: 0 0 8px;
+  text-align: left;
+  ${WidthLimitsCSS}
+`
+
+const Note = styled(Label)`
+  text-align: right;
+  margin-bottom: 20px;
+  margin-top: 8px;
+`
+
+const Button = styled(GradientButton)`
+  margin: 40px auto 10px;
+  min-width: 160px;
 `
 
 export const DealCalculationModal: React.FC<{
@@ -47,10 +64,13 @@ export const DealCalculationModal: React.FC<{
 
   return (
     <Modal onClose={onClose} title="Deal Calculation">
-      <Description>
-        Total Purchase Token ({investmentToken?.symbol}): {investmentTokenAmount}
-      </Description>
-      Exchange rate: ${dealToken?.symbol} per ${investmentToken?.symbol}
+      <Text>
+        Total Purchase Token ({investmentToken?.symbol}):{' '}
+        <TokenValue>{investmentTokenAmount}</TokenValue>
+      </Text>
+      <Label>
+        Exchange rate: {dealToken?.symbol} per {investmentToken?.symbol}
+      </Label>
       <Textfield
         onChange={(e) => {
           setExchangeRate(Number(e.target.value))
@@ -61,16 +81,13 @@ export const DealCalculationModal: React.FC<{
         type="number"
         value={exchangeRate || undefined}
       />
-      <legend>
-        {exchangeRate ? 1 / exchangeRate : 0} {investmentToken?.symbol} = 1 {dealToken?.symbol}
-        <br />
-        {exchangeRate} {dealToken?.symbol} = 1 {investmentToken?.symbol}
-      </legend>
-      <br />
-      <br />
-      {dealToken?.symbol} Total
+      <Note>
+        ({exchangeRate ? 1 / exchangeRate : 0} {investmentToken?.symbol} = 1 {dealToken?.symbol})
+        {/* {exchangeRate} {dealToken?.symbol} = 1 {investmentToken?.symbol} */}
+      </Note>
+      <Label>{dealToken?.symbol} Total</Label>
       <Textfield readOnly type="number" value={dealTokenTotal || undefined} />
-      <ButtonPrimary onClick={() => onConfirm(dealTokenTotal)}>OK</ButtonPrimary>
+      <Button onClick={() => onConfirm(dealTokenTotal)}>OK</Button>
     </Modal>
   )
 }
