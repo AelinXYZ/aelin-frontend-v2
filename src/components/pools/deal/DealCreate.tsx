@@ -2,10 +2,24 @@ import Head from 'next/head'
 import { useState } from 'react'
 import styled from 'styled-components'
 
+import { CardWithTitle } from '@/src/components/common/CardWithTitle'
+import {
+  ButtonWrapper,
+  Description,
+  PrevNextWrapper,
+  StepContents,
+  Title,
+  WrapperGrid,
+} from '@/src/components/pools/common/Create'
 import { Summary } from '@/src/components/pools/common/Summary'
-import DealConfirmationModal from '@/src/components/pools/deal/DealConfirmationModal'
+import DealCalculationModal from '@/src/components/pools/deal/DealCalculationModal'
 import DealCreateStepInput from '@/src/components/pools/deal/DealCreateStepInput'
-import { StepIndicator } from '@/src/components/timeline/StepIndicator'
+import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonNext,
+  ButtonPrev,
+} from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
+import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
 import { Token } from '@/src/constants/token'
 import useAelinCreateDeal, {
   CreateDealSteps,
@@ -16,10 +30,11 @@ import useAelinCreateDeal, {
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
-const PoolRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+const StepIndicator = styled(BaseStepIndicator)`
+  .stepText {
+    padding-left: 0;
+    padding-right: 0;
+  }
 `
 
 const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
@@ -38,74 +53,90 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
   } = useAelinCreateDeal(appChainId, pool)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
-
+  const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createDealState.currentStep] : null
-
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const handleKeyUp = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.code === 'Enter' && !currentStepError) {
+      moveStep('next')
+    }
+  }
 
   return (
     <>
-      <Head>Create Pool</Head>
-      <StepIndicator data={getCreateDealStepIndicatorData(createDealState.currentStep)} />
-      <br />
-      <br />
-      <br />
-      <p>{currentStepConfig.title}</p>
-      <p>{currentStepConfig.text}</p>
+      <Head>
+        <title>Create Pool</title>
+      </Head>
+      <CardWithTitle title={'Pool creation'}>
+        <StepIndicator
+          currentStepOrder={order}
+          data={getCreateDealStepIndicatorData(createDealState.currentStep)}
+        />
+        {Object.values(CreateDealSteps).map((step) => {
+          const isStepVisible = createDealState.currentStep === step
 
-      {Object.values(CreateDealSteps).map((step) => {
-        const isStepVisible = createDealState.currentStep === step
-        if (!isStepVisible) return null
-
-        return (
-          <div key={step}>
-            <DealCreateStepInput currentState={createDealState} setDealField={setDealField} />
-
-            {currentStepError && <p>{currentStepError}</p>}
-
-            {createDealState.currentStep === CreateDealSteps.totalPurchaseAmount && (
-              <>
-                <button onClick={() => setShowDealCalculationModal(true)}>Calculate</button>
-                {showDealCalculationModal && (
-                  <DealConfirmationModal
-                    dealToken={createDealState.dealToken as Token}
-                    dealTokenAmount={createDealState.dealTokenTotal as string}
-                    investmentToken={investmentTokenInfo as Token}
-                    investmentTokenAmount={pool.amountInPool.formatted as string}
-                    onClose={() => setShowDealCalculationModal(false)}
-                    onConfirm={(value) => {
-                      setDealField(value)
-                      setShowDealCalculationModal(false)
-                    }}
-                  />
+          return !isStepVisible ? null : (
+            <WrapperGrid>
+              <PrevNextWrapper>
+                {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
+              </PrevNextWrapper>
+              <StepContents>
+                <Title>{title}</Title>
+                <Description>{text}</Description>
+                <DealCreateStepInput
+                  currentState={createDealState}
+                  onKeyUp={handleKeyUp}
+                  role="none"
+                  setDealField={setDealField}
+                />
+                {currentStepError && <p>{currentStepError}</p>}
+                <ButtonWrapper>
+                  {createDealState.currentStep === CreateDealSteps.totalPurchaseAmount && (
+                    <GradientButton onClick={() => setShowDealCalculationModal(true)}>
+                      Calculate
+                    </GradientButton>
+                  )}
+                  {!isFinalStep ? (
+                    <GradientButton disabled={!!currentStepError} onClick={() => moveStep('next')}>
+                      Next
+                    </GradientButton>
+                  ) : (
+                    <GradientButton
+                      disabled={disableSubmit}
+                      key={`${step}_button`}
+                      onClick={handleSubmit}
+                    >
+                      Create Deal
+                    </GradientButton>
+                  )}
+                </ButtonWrapper>
+                <Summary data={getCreateDealSummaryData(createDealState)} />
+              </StepContents>
+              <PrevNextWrapper>
+                {!isFinalStep && (
+                  <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
                 )}
-              </>
-            )}
-
-            {!isFinalStep ? (
-              <button
-                disabled={!!currentStepError}
-                key={`${step}_button`}
-                onClick={() => moveStep('next')}
-              >
-                Next
-              </button>
-            ) : (
-              <button disabled={disableSubmit} key={`${step}_button`} onClick={handleSubmit}>
-                Create Deal
-              </button>
-            )}
-          </div>
-        )
-      })}
-
-      <PoolRow>
-        {!isFirstStep && <button onClick={() => moveStep('prev')}>Prev</button>}
-
-        {isFirstStep && !currentStepError && <button onClick={() => moveStep('next')}>Next</button>}
-      </PoolRow>
-
-      <Summary data={getCreateDealSummaryData(createDealState)} />
+              </PrevNextWrapper>
+            </WrapperGrid>
+          )
+        })}
+      </CardWithTitle>
+      {showDealCalculationModal && (
+        <DealCalculationModal
+          dealToken={createDealState.dealToken as Token}
+          dealTokenAmount={createDealState.dealTokenTotal as string}
+          investmentToken={investmentTokenInfo as Token}
+          investmentTokenAmount={pool.amountInPool.formatted as string}
+          onClose={() => setShowDealCalculationModal(false)}
+          onConfirm={(value) => {
+            setDealField(value)
+            setShowDealCalculationModal(false)
+          }}
+        />
+      )}
     </>
   )
 }

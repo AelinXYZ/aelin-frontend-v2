@@ -21,20 +21,20 @@ const Description = styled.p`
   ${WidthCSS}
 `
 
-const DealCalculationModal = ({
-  dealToken,
-  dealTokenAmount,
-  investmentToken,
-  investmentTokenAmount,
-  onClose,
-  onConfirm,
-}: {
+export const DealCalculationModal: React.FC<{
   dealToken: Token
   investmentToken: Token
   dealTokenAmount: string
   investmentTokenAmount: string
   onClose: () => void
   onConfirm: (dealTokenTotal: number | undefined) => void
+}> = ({
+  dealToken,
+  dealTokenAmount,
+  investmentToken,
+  investmentTokenAmount,
+  onClose,
+  onConfirm,
 }) => {
   const [dealTokenTotal, setDealTokenTotal] = useState<number | undefined>(undefined)
   const [exchangeRate, setExchangeRate] = useState<number | undefined>(undefined)
@@ -48,9 +48,9 @@ const DealCalculationModal = ({
   return (
     <Modal onClose={onClose} title="Deal Calculation">
       <Description>
-        Total Purchase Token ({investmentToken.symbol}): {investmentTokenAmount}
+        Total Purchase Token ({investmentToken?.symbol}): {investmentTokenAmount}
       </Description>
-      Exchange rate: ${dealToken.symbol} per ${investmentToken.symbol}
+      Exchange rate: ${dealToken?.symbol} per ${investmentToken?.symbol}
       <Textfield
         onChange={(e) => {
           setExchangeRate(Number(e.target.value))
@@ -62,13 +62,13 @@ const DealCalculationModal = ({
         value={exchangeRate || undefined}
       />
       <legend>
-        {exchangeRate ? 1 / exchangeRate : 0} {investmentToken.symbol} = 1 {dealToken.symbol}
+        {exchangeRate ? 1 / exchangeRate : 0} {investmentToken?.symbol} = 1 {dealToken?.symbol}
         <br />
-        {exchangeRate} {dealToken.symbol} = 1 {investmentToken.symbol}
+        {exchangeRate} {dealToken?.symbol} = 1 {investmentToken?.symbol}
       </legend>
       <br />
       <br />
-      {dealToken.symbol} Total
+      {dealToken?.symbol} Total
       <Textfield readOnly type="number" value={dealTokenTotal || undefined} />
       <ButtonPrimary onClick={() => onConfirm(dealTokenTotal)}>OK</ButtonPrimary>
     </Modal>

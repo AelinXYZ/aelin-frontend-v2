@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { HTMLAttributes, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
@@ -33,10 +33,17 @@ const PrivacyGrid = styled.div`
   max-width: fit-content;
 `
 
-const PoolCreateStepInput: React.FC<{
+interface Props extends HTMLAttributes<HTMLDivElement> {
   setPoolField: (value: unknown) => void
   currentState: CreatePoolState
-}> = ({ currentState, setPoolField, ...restProps }) => {
+}
+
+const PoolCreateStepInput: React.FC<Props> = ({
+  currentState,
+  onKeyUp,
+  setPoolField,
+  ...restProps
+}) => {
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -47,7 +54,7 @@ const PoolCreateStepInput: React.FC<{
   }, [step])
 
   return (
-    <Wrapper {...restProps}>
+    <Wrapper onKeyUp={onKeyUp} {...restProps}>
       {step === CreatePoolSteps.poolName ? (
         <Textfield
           maxLength={16}

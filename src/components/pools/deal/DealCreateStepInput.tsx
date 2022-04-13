@@ -1,33 +1,48 @@
+import { HTMLAttributes } from 'react'
+import styled from 'styled-components'
+
 import { HMSInput } from '@/src/components/pools/common/HMSInput'
 import TokenDropdown from '@/src/components/pools/common/TokenDropdown'
-import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
+import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import {
   CreateDealState,
   CreateDealSteps,
   createDealConfig,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
 
-const DealCreateStepInput = ({
-  currentState,
-  setDealField,
-}: {
+const Wrapper = styled.div`
+  margin: 0 auto;
+  max-width: 100%;
+`
+
+const Textfield = styled(BaseTextField)`
+  max-width: 100%;
+  width: 320px;
+`
+
+interface Props extends HTMLAttributes<HTMLDivElement> {
   setDealField: (value: unknown) => void
   currentState: CreateDealState
+}
+
+export const DealCreateStepInput: React.FC<Props> = ({
+  currentState,
+  onKeyUp,
+  setDealField,
+  ...restProps
 }) => {
   const step = currentState.currentStep
 
-  switch (step) {
-    case CreateDealSteps.dealToken:
-      return (
+  return (
+    <Wrapper onKeyUp={onKeyUp} {...restProps}>
+      {step === CreateDealSteps.dealToken ? (
         <TokenDropdown
           onChange={(token) => setDealField(token)}
           placeholder={createDealConfig[step].placeholder}
           tokenSelected={currentState[CreateDealSteps.dealToken]}
         />
-      )
-    case CreateDealSteps.counterPartyAddress:
-      return (
-        <input
+      ) : step === CreateDealSteps.counterPartyAddress ? (
+        <Textfield
           maxLength={42}
           name={step}
           onChange={(e) => setDealField(e.target.value)}
@@ -35,10 +50,8 @@ const DealCreateStepInput = ({
           type="text"
           value={currentState[step]}
         />
-      )
-    case CreateDealSteps.dealTokenTotal:
-    case CreateDealSteps.totalPurchaseAmount:
-      return (
+      ) : step === CreateDealSteps.dealTokenTotal ||
+        step === CreateDealSteps.totalPurchaseAmount ? (
         <Textfield
           name={step}
           onChange={(e) => setDealField(e.target.value)}
@@ -46,16 +59,15 @@ const DealCreateStepInput = ({
           type="number"
           value={currentState[step]}
         />
-      )
-    case CreateDealSteps.counterPartyFundingPeriod:
-    case CreateDealSteps.vestingCliff:
-    case CreateDealSteps.proRataPeriod:
-    case CreateDealSteps.openPeriod:
-    case CreateDealSteps.vestingPeriod:
-      return (
+      ) : step === CreateDealSteps.counterPartyFundingPeriod ||
+        step === CreateDealSteps.vestingCliff ||
+        step === CreateDealSteps.proRataPeriod ||
+        step === CreateDealSteps.openPeriod ||
+        step === CreateDealSteps.vestingPeriod ? (
         <HMSInput defaultValue={currentState[step]} onChange={(value) => setDealField(value)} />
-      )
-  }
+      ) : null}
+    </Wrapper>
+  )
 }
 
 export default DealCreateStepInput

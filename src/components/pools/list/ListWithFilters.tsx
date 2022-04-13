@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import debounce from 'lodash/debounce'
 
 import { PoolCreated_Filter, PoolStatus } from '@/graphql-schema'
-import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
+import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
 import { List } from '@/src/components/pools/list/List'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
