@@ -21,7 +21,11 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { calculateInvestmentDeadlineProgress, getStatusText } from '@/src/utils/aelinPool'
+import {
+  calculateInvestmentDeadlineProgress,
+  getPurchaseExpiry,
+  getStatusText,
+} from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { shortenAddress } from '@/src/utils/string'
 
@@ -168,10 +172,7 @@ const PoolsList = ({
                     {getNetworkConfig(network).icon}
                   </Cell>
                   <Cell>${amountInPool.formatted}</Cell>
-                  <Deadline
-                    progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}
-                    width="120px"
-                  >
+                  <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
                     {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
                   </Deadline>
                   <Cell justifyContent={columns.alignment.investmentToken}>

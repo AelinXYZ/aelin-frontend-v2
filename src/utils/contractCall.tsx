@@ -13,9 +13,9 @@ export default async function contractCall<
 ): Promise<ReturnType<MyContract[Method]> | null> {
   const contract = new Contract(address as string, abi, provider) as MyContract
   try {
-    const deployedContract = await contract.deployed()
-    const contractMethod = deployedContract[method]
-    const result = Array.isArray(params) ? await contractMethod(...params) : await contractMethod()
+    const result = Array.isArray(params)
+      ? await contract[method](...params)
+      : await contract[method]()
     return result
   } catch (e) {
     return null
