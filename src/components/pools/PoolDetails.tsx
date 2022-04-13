@@ -67,12 +67,14 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
     // @ts-ignore
     !currentState?.meta.dealPresented
 
+  const poolName = pool.name.split('aePool-').pop() || ''
+
   return (
     <>
       <Head>
-        <title>Aelin - {pool.name}</title>
+        <title>Aelin - {poolName}</title>
       </Head>
-      <PageTitle subTitle={mockedPoolVisibility} title={pool.name} />
+      <PageTitle subTitle={mockedPoolVisibility} title={poolName} />
       <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 3 : 2} />}>
         {showCreateDealForm ? (
           <CreateDealForm pool={pool} />
