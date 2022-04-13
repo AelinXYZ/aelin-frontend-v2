@@ -1,3 +1,5 @@
+import styled from 'styled-components'
+
 import isAfter from 'date-fns/isAfter'
 
 import CountDown from '@/src/components/countdown'
@@ -6,18 +8,26 @@ import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
+const Container = styled.div`
+  width: 500px;
+`
+
 type Props = {
   pool: ParsedAelinPool
   poolAddress: string
 }
 
 export default function DealInfo({ pool, poolAddress }: Props) {
-  if (!pool.deal || !pool.deal.proRataRedemption) {
+  console.log(pool)
+  // if (!pool.deal || !pool.deal.proRataRedemption) {
+  if (!pool.deal) {
     return <div>No Deal presented yet.</div>
   }
   const deal = pool.deal
   return (
-    <>
+    <Container>
+      <div>Deal details</div>
+
       <div>Name: {deal.name}</div>
       <div>Symbol: {deal.symbol}</div>
 
@@ -32,27 +42,27 @@ export default function DealInfo({ pool, poolAddress }: Props) {
 
       <br />
       <div>Deal stage</div>
-      {pool.deal.proRataRedemption.stage === 1
-        ? 'Round 1: Pro Rata Redemption'
-        : pool.deal.proRataRedemption.stage === 2
-        ? 'Round 2: Open Redemption'
-        : 'Redemption closed'}
+      {/*{pool.deal.proRataRedemption.stage === 1*/}
+      {/*  ? 'Round 1: Pro Rata Redemption'*/}
+      {/*  : pool.deal.proRataRedemption.stage === 2*/}
+      {/*  ? 'Round 2: Open Redemption'*/}
+      {/*  : 'Redemption closed'}*/}
 
-      <br />
-      <div>Round 1 Deadline</div>
-      {pool.deal.proRataRedemption.proRataRedemptionEnd.toString()}
+      {/*<br />*/}
+      {/*<div>Round 1 Deadline</div>*/}
+      {/*{pool.deal.proRataRedemption.proRataRedemptionEnd.toString()}*/}
 
-      <br />
-      <div>Round 2 Deadline</div>
-      {pool.deal.proRataRedemption.openRedemptionEnd
-        ? pool.deal.proRataRedemption.openRedemptionEnd.toString()
-        : ' - No Open period'}
+      {/*<br />*/}
+      {/*<div>Round 2 Deadline</div>*/}
+      {/*{pool.deal.proRataRedemption.openRedemptionEnd*/}
+      {/*  ? pool.deal.proRataRedemption.openRedemptionEnd.toString()*/}
+      {/*  : ' - No Open period'}*/}
 
       <br />
       <div>Pool stats</div>
       <div>Amount in pool: {pool.amountInPool.formatted}</div>
       <div>Total redeem: </div>
-      {/* {pool.investmentRaisedAmount.formatted} */}
+      {pool.investmentRaisedAmount.formatted}
       <div>Total withdrawn: {pool.withdrawn.formatted}</div>
 
       <br />
@@ -99,6 +109,6 @@ export default function DealInfo({ pool, poolAddress }: Props) {
       <div>Funded: {pool.funded.formatted}</div>
       <div>Withdrawn: {pool.withdrawn.formatted}</div>
       <div>Amount in Pool: {pool.amountInPool.formatted}</div> */}
-    </>
+    </Container>
   )
 }

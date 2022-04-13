@@ -1,3 +1,5 @@
+import styled from 'styled-components'
+
 import isAfter from 'date-fns/isAfter'
 
 import CountDown from '@/src/components/countdown'
@@ -11,9 +13,13 @@ type Props = {
   poolAddress: string
 }
 
+const Container = styled.div`
+  width: 500px;
+`
+
 export default function PoolInfo({ pool, poolAddress }: Props) {
   return (
-    <>
+    <Container>
       <div>Pool details: {poolAddress}</div>
       <div>Investment</div>
       <div>token: {pool.investmentToken}</div>
@@ -45,6 +51,6 @@ export default function PoolInfo({ pool, poolAddress }: Props) {
       <div>Funded: {pool.investmentRaisedAmount.formatted}</div>
       <div>Withdrawn: {pool.withdrawn.formatted}</div>
       <div>Amount in Pool: {pool.amountInPool.formatted}</div>
-    </>
+    </Container>
   )
 }
