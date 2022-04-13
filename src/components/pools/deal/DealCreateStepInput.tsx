@@ -15,9 +15,14 @@ const Wrapper = styled.div`
   max-width: 100%;
 `
 
-const Textfield = styled(BaseTextField)`
+const TextfieldWide = styled(BaseTextField)`
   max-width: 100%;
-  width: 320px;
+  width: 360px;
+`
+
+const TextfieldNarrow = styled(BaseTextField)`
+  max-width: 100%;
+  width: 220px;
 `
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -49,7 +54,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
           tokenSelected={currentState[CreateDealSteps.dealToken]}
         />
       ) : step === CreateDealSteps.counterPartyAddress ? (
-        <Textfield
+        <TextfieldWide
           maxLength={42}
           name={step}
           onChange={(e) => setDealField(e.target.value)}
@@ -60,7 +65,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
         />
       ) : step === CreateDealSteps.dealTokenTotal ||
         step === CreateDealSteps.totalPurchaseAmount ? (
-        <Textfield
+        <TextfieldNarrow
           name={step}
           onChange={(e) => setDealField(e.target.value)}
           placeholder={createDealConfig[step].placeholder}
