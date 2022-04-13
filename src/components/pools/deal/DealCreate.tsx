@@ -65,6 +65,8 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
     }
   }
 
+  console.log(currentStepError)
+
   return (
     <>
       <Head>
@@ -92,7 +94,9 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
                   role="none"
                   setDealField={setDealField}
                 />
-                {currentStepError && <p>{currentStepError}</p>}
+                {currentStepError !== undefined && currentStepError !== true && (
+                  <p>{currentStepError}</p>
+                )}
                 <ButtonWrapper>
                   {createDealState.currentStep === CreateDealSteps.totalPurchaseAmount && (
                     <GradientButton onClick={() => setShowDealCalculationModal(true)}>

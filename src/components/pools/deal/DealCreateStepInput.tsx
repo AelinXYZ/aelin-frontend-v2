@@ -1,4 +1,4 @@
-import { HTMLAttributes } from 'react'
+import { HTMLAttributes, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { HMSInput } from '@/src/components/pools/common/HMSInput'
@@ -32,6 +32,13 @@ export const DealCreateStepInput: React.FC<Props> = ({
   ...restProps
 }) => {
   const step = currentState.currentStep
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current?.focus()
+    }
+  }, [step])
 
   return (
     <Wrapper onKeyUp={onKeyUp} {...restProps}>
@@ -47,6 +54,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
           name={step}
           onChange={(e) => setDealField(e.target.value)}
           placeholder={createDealConfig[step].placeholder}
+          ref={inputRef}
           type="text"
           value={currentState[step]}
         />
@@ -56,6 +64,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
           name={step}
           onChange={(e) => setDealField(e.target.value)}
           placeholder={createDealConfig[step].placeholder}
+          ref={inputRef}
           type="number"
           value={currentState[step]}
         />
@@ -64,7 +73,11 @@ export const DealCreateStepInput: React.FC<Props> = ({
         step === CreateDealSteps.proRataPeriod ||
         step === CreateDealSteps.openPeriod ||
         step === CreateDealSteps.vestingPeriod ? (
-        <HMSInput defaultValue={currentState[step]} onChange={(value) => setDealField(value)} />
+        <HMSInput
+          autofocusOnRender
+          defaultValue={currentState[step]}
+          onChange={(value) => setDealField(value)}
+        />
       ) : null}
     </Wrapper>
   )
