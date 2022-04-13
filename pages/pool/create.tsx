@@ -20,6 +20,7 @@ import {
   ButtonNext,
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
+import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator } from '@/src/components/timeline/StepIndicator'
 import useAelinCreatePool, {
   CreatePoolSteps,
@@ -85,7 +86,7 @@ const Create: NextPage = () => {
                     setPoolField={setPoolField}
                   />
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <p style={{ marginBottom: 0 }}>{currentStepError}</p>
+                    <Error>{currentStepError}</Error>
                   )}
                   <ButtonWrapper>
                     {isFinalStep ? (

@@ -19,6 +19,7 @@ import {
   ButtonNext,
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
+import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
 import { Token } from '@/src/constants/token'
 import useAelinCreateDeal, {
@@ -94,8 +95,8 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
                   role="none"
                   setDealField={setDealField}
                 />
-                {currentStepError !== undefined && currentStepError !== true && (
-                  <p>{currentStepError}</p>
+                {currentStepError && typeof currentStepError === 'string' && (
+                  <Error>{currentStepError}</Error>
                 )}
                 <ButtonWrapper>
                   {createDealState.currentStep === CreateDealSteps.totalPurchaseAmount && (
