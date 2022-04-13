@@ -2,10 +2,14 @@ import Link from 'next/link'
 import styled from 'styled-components'
 
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
+import { Docs } from '@/src/components/assets/Docs'
 import { Ellipsis } from '@/src/components/assets/Ellipsis'
+import { Eth } from '@/src/components/assets/Eth'
+import { LightMode } from '@/src/components/assets/LightMode'
 import { Link as LinkSVG } from '@/src/components/assets/Link'
 import { BootNodeLogo } from '@/src/components/assets/Logo'
 import { Metamask } from '@/src/components/assets/Metamask'
+import { Optimism } from '@/src/components/assets/Optimism'
 import { CopyButton } from '@/src/components/common/CopyButton'
 import { Modal } from '@/src/components/common/Modal'
 import { Notifications } from '@/src/components/common/Notifications'
@@ -145,7 +149,7 @@ const WalletDropdownRow = styled.div`
   display: flex;
   flex-shrink: 0;
   font-size: 1.4rem;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
   margin-bottom: 10px;
   width: 100%;
@@ -179,6 +183,22 @@ const ExternalLink = styled.a`
     height: 100%;
     width: 100%;
   }
+
+  &:active {
+    opacity: 0.7;
+  }
+`
+
+const EllipsisButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  transition: opacity 0.15s linear;
+  width: fit-content;
 
   &:active {
     opacity: 0.7;
@@ -283,7 +303,52 @@ export const Header: React.FC = (props) => {
                 <Line />
                 <Notifications />
                 <Line />
-                <Ellipsis />
+                <HeaderDropdown
+                  activeItemHighlight={false}
+                  disabled={!isWalletConnected}
+                  dropdownButtonContent={
+                    <EllipsisButton>
+                      <Ellipsis />
+                    </EllipsisButton>
+                  }
+                  dropdownPosition={DropdownPosition.center}
+                  items={[
+                    <DropdownItem
+                      as="a"
+                      href="https://docs.aelin.xyz/"
+                      key={'external_links_1'}
+                      target="_blank"
+                    >
+                      <Docs />
+                      Docs
+                    </DropdownItem>,
+                    <DropdownItem
+                      as="a"
+                      href="https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=kovan"
+                      key={'external_links_2'}
+                      target="_blank"
+                    >
+                      <Eth />
+                      Buy Aelin L1
+                    </DropdownItem>,
+                    <DropdownItem
+                      as="a"
+                      href="https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism"
+                      key={'external_links_3'}
+                      target="_blank"
+                    >
+                      <Optimism />
+                      Buy Aelin OP
+                    </DropdownItem>,
+                    <DropdownItem
+                      key={'external_links_4'}
+                      onClick={() => console.log('Light / Dark mode switching coming soon...')}
+                    >
+                      <LightMode />
+                      Light mode
+                    </DropdownItem>,
+                  ]}
+                />
               </>
             )}
             {!isWalletConnected && (
