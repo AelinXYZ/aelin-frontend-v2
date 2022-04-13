@@ -10,8 +10,12 @@ const Wrapper = styled(Cell)<{ width?: string }>`
   gap: 0;
   justify-content: center;
   max-width: 100%;
-  width: ${({ width }) => width || '100%'};
+  width: ${({ width }) => width};
 `
+
+Wrapper.defaultProps = {
+  width: '100%',
+}
 
 const ProgressBar = styled(BaseProgressBar)`
   margin-bottom: 6.5px;

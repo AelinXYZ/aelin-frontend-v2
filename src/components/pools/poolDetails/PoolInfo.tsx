@@ -38,13 +38,8 @@ export const PoolInfo: React.FC<{
         <PoolInfoItem title={`My ${pool.investmentTokenSymbol} balance`} value={'0.00'} />
         <PoolInfoItem title="My pool balance" tooltip="My pool balance tooltip" value={'0.00'} />
       </Column>
-
       <Column>
-        <PoolInfoItem
-          title="Investment deadline"
-          tooltip="Investment deadline tooltip"
-          value={formatDate(pool.purchaseExpiry, DATE_DETAILED)}
-        >
+        <PoolInfoItem title="Investment deadline" tooltip="Investment deadline tooltip">
           <Deadline progress="75" width="180px">
             <Value>{formatDate(pool.purchaseExpiry, DATE_DETAILED)}</Value>
           </Deadline>
