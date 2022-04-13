@@ -18,15 +18,21 @@ import { AelinPoolState, isFunding } from '@/src/utils/getAelinPoolCurrentStatus
 const MainGrid = styled.div`
   column-gap: 65px;
   display: grid;
-  grid-template-columns: 1fr 310px;
   row-gap: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: 1fr 310px;
+  }
 `
 
 const ContentGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
   row-gap: 20px;
   column-gap: 70px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: 1fr 1fr;
+  }
 `
 
 const ActionsCard = styled(BaseCard)`
