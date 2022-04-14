@@ -21,6 +21,12 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
+import {
+  calculateInvestmentDeadlineProgress,
+  getPurchaseExpiry,
+  getStatusText,
+} from '@/src/utils/aelinPoolUtils'
+import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { shortenAddress } from '@/src/utils/string'
 
 interface FiltersProp {
@@ -134,14 +140,15 @@ const PoolsList = ({
           ) : (
             data.map((pool) => {
               const {
+                address: id,
                 amountInPool,
-                id,
-                investmentDeadline,
-                investmentToken,
+                chainId: network,
+                investmentTokenSymbol,
                 name,
-                network,
+                purchaseExpiry,
                 sponsor,
                 stage,
+                start,
               } = pool
               return (
                 <Row
@@ -152,7 +159,7 @@ const PoolsList = ({
                     router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                   }}
                 >
-                  <NameCell badge="3">{name.replace('aePool-', '')}</NameCell>
+                  <NameCell badge="3">{name.split('aePool-').pop()}</NameCell>
                   <Cell>
                     <ExternalLink href={`https://etherscan.io/address/${getAddress(sponsor)}`}>
                       {shortenAddress(getAddress(sponsor))}
@@ -165,9 +172,13 @@ const PoolsList = ({
                     {getNetworkConfig(network).icon}
                   </Cell>
                   <Cell>${amountInPool.formatted}</Cell>
-                  <Deadline progress="33">{investmentDeadline}</Deadline>
-                  <Cell justifyContent={columns.alignment.investmentToken}>{investmentToken}</Cell>
-                  <Stage stage={stage.replace(' ', '').toLowerCase()}>{stage}</Stage>
+                  <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
+                    {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
+                  </Deadline>
+                  <Cell justifyContent={columns.alignment.investmentToken}>
+                    {investmentTokenSymbol}
+                  </Cell>
+                  <Stage stage={stage.toLowerCase()}> {getStatusText({ poolStatus: stage })}</Stage>
                 </Row>
               )
             })

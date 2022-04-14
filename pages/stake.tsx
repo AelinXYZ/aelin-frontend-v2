@@ -6,7 +6,9 @@ import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 const Stake: NextPage = () => {
   return (
     <>
-      <Head>Stake</Head>
+      <Head>
+        <title>Aelin - Stake</title>
+      </Head>
       <LeftSidebarLayout>Stake workflow and more!</LeftSidebarLayout>
     </>
   )

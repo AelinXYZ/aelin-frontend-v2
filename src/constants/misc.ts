@@ -21,3 +21,4 @@ export const WAD_DECIMALS = 18
 export const WAIT_BLOCKS = 8
 
 export const DEFAULT_DECIMALS = 2
+export const EXCHANGE_DECIMALS = 4

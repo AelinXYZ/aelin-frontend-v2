@@ -18,7 +18,6 @@ const Title = styled.h1`
 
 const SubTitle = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.4rem;
   font-weight: 500;
   line-height: 1.3;

@@ -12,7 +12,7 @@ import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { getStatusText } from '@/src/utils/aelinPool'
+import { getStatusText } from '@/src/utils/aelinPoolUtils'
 
 const Wrapper = styled.div`
   --gap: 20px;
@@ -93,7 +93,7 @@ const searchOptions: Array<SearchOptionsType> = [
   },
 ]
 
-const myPools = ['All pools', 'Sponsored', 'Founded', 'Invested']
+const myPools = ['All pools', 'Sponsored', 'Funded', 'Invested']
 
 const DEBOUNCED_TIME = 500
 

@@ -6,7 +6,9 @@ import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 const History: NextPage = () => {
   return (
     <>
-      <Head>History</Head>
+      <Head>
+        <title>Aelin - History</title>
+      </Head>
       <LeftSidebarLayout>We have some history.</LeftSidebarLayout>
     </>
   )
