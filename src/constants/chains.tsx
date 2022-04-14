@@ -45,7 +45,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     id: Chains.mainnet,
     isProd: true,
     name: 'Mainnet',
-    rpcUrl: 'https://main-light.eth.linkpool.io',
+    rpcUrl: 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161',
     shortName: 'Mainnet',
     tokenListUrl: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
   },
