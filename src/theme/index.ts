@@ -59,6 +59,7 @@ export const theme = {
     gradientEnd: gradientEnd,
     gradientStart: gradientStart,
     gray: gray,
+    lightGray: lightGray,
     mainBodyBackground: mainBodyBackground,
     pink: pink,
     primary: primary,

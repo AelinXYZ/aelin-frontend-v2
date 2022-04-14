@@ -1,5 +1,3 @@
-import { BigNumberInput } from 'big-number-input'
-
 import { HMSInput } from '@/src/components/pools/HMSInput'
 import TokenDropdown from '@/src/components/pools/TokenDropdown'
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
@@ -8,7 +6,6 @@ import {
   CreateDealSteps,
   createDealConfig,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
-import { CreatePoolSteps, createPoolConfig } from '@/src/hooks/aelin/useAelinCreatePool'
 
 const DealCreateStepInput = ({
   currentState,

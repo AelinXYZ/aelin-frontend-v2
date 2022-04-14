@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { TokenInput } from '@/src/components/pools/TokenInput'
-import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
@@ -53,20 +54,12 @@ export default function DepositPool({ pool, poolHelpers }: Props) {
     }
   }
 
-  if (poolHelpers.meta.capReached) {
-    return <div>Max cap has been reached</div>
-  }
-
   const balances = [
-    // user balance
     {
       raw: balance || ZERO_BN,
       formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals),
     },
-    // max allowed to deposit in the pool
     poolHelpers.meta.maxDepositAllowed,
-    // todo: private list
-    //{ raw: balance, formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals) },
   ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
   return (
@@ -79,7 +72,7 @@ export default function DepositPool({ pool, poolHelpers }: Props) {
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
-      <ButtonPrimary
+      <GradientButton
         disabled={
           !address ||
           !isAppConnected ||
@@ -91,7 +84,7 @@ export default function DepositPool({ pool, poolHelpers }: Props) {
         onClick={depositTokens}
       >
         Deposit
-      </ButtonPrimary>
+      </GradientButton>
     </>
   )
 }

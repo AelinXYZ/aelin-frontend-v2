@@ -1,56 +1,63 @@
 import styled from 'styled-components'
 
-import isAfter from 'date-fns/isAfter'
-
-import CountDown from '@/src/components/countdown'
-import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
+import { PoolInfoItem, Value } from '@/src/components/pools/PoolInfoItem'
+import { Deadline } from '@/src/components/table/Deadline'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
-type Props = {
-  pool: ParsedAelinPool
-  poolAddress: string
-}
-
-const Container = styled.div`
-  width: 500px;
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  row-gap: 20px;
 `
 
-export default function PoolInfo({ pool, poolAddress }: Props) {
+export const PoolInfo: React.FC<{
+  pool: ParsedAelinPool
+  poolAddress: string
+}> = ({ pool }) => {
   return (
-    <Container>
-      <div>Pool details: {poolAddress}</div>
-      <div>Investment</div>
-      <div>token: {pool.investmentToken}</div>
-      <div>
-        deadline: {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
-        {isAfter(pool.purchaseExpiry, Date.now()) && (
-          <CountDown date={pool.purchaseExpiry} format={CountDownDHMS} />
-        )}
-      </div>
-      <hr />
-      <div>Sponsor </div>
-      {pool.sponsor}
-      <hr />
-      <div>Pool cap </div>
-      {pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
-      <hr />
-      <div>Sponsor fee </div>
-      {pool.sponsorFee.formatted}
-      <hr />
-      <div>Deal </div>
-      <div>
-        deadline: {formatDate(pool.dealDeadline, DATE_DETAILED)}
-        {isAfter(pool.dealDeadline, Date.now()) && (
-          <CountDown date={pool.dealDeadline} format={CountDownDHMS} />
-        )}
-      </div>
-      <hr />
-      <div>Pool details</div>
-      <div>Funded: {pool.investmentRaisedAmount.formatted}</div>
-      <div>Withdrawn: {pool.withdrawn.formatted}</div>
-      <div>Amount in Pool: {pool.amountInPool.formatted}</div>
-    </Container>
+    <>
+      <Column>
+        <PoolInfoItem
+          title="Investment token"
+          tooltip="Investment token tooltip contents"
+          value={pool.investmentTokenSymbol}
+        />
+        <PoolInfoItem
+          title="Pool cap"
+          tooltip="Pool cap tooltip"
+          value={pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
+        />
+        <PoolInfoItem title="Pool stats" tooltip="Pool stats tooltip">
+          <Value>Funded: {pool.investmentRaisedAmount.formatted}</Value>
+          <Value>Withdrawn: {pool.withdrawn.formatted}</Value>
+          <Value>Amount in Pool: {pool.amountInPool.formatted}</Value>
+        </PoolInfoItem>
+        <PoolInfoItem title={`My ${pool.investmentTokenSymbol} balance`} value={'0.00'} />
+        <PoolInfoItem title="My pool balance" tooltip="My pool balance tooltip" value={'0.00'} />
+      </Column>
+      <Column>
+        <PoolInfoItem title="Investment deadline" tooltip="Investment deadline tooltip">
+          <Deadline progress="75" width="180px">
+            <Value>{formatDate(pool.purchaseExpiry, DATE_DETAILED)}</Value>
+          </Deadline>
+        </PoolInfoItem>
+        <PoolInfoItem
+          title="Deal deadline"
+          tooltip="Deal deadline tooltip"
+          value={formatDate(pool.dealDeadline, DATE_DETAILED)}
+        />
+        <PoolInfoItem title="Sponsor" tooltip="Sponsor tooltip" value={pool.sponsor} />
+        <PoolInfoItem
+          title="Sponsor fee"
+          tooltip="Sponsor fee tooltip"
+          value={pool.sponsorFee.formatted}
+        />
+      </Column>
+    </>
   )
 }
+
+export default PoolInfo

@@ -4,8 +4,8 @@ import addSeconds from 'date-fns/addSeconds'
 import isBefore from 'date-fns/isBefore'
 
 import { PoolStatus } from '@/graphql-schema'
-import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { ExtendedStatus } from '@/src/constants/pool'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 

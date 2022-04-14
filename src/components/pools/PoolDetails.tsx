@@ -1,25 +1,48 @@
+import Head from 'next/head'
 import styled from 'styled-components'
 
-import isAfter from 'date-fns/isAfter'
-
-import CountDown from '@/src/components/countdown'
-import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
+import { CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import CreateDealForm from '@/src/components/pools/CreateDealForm'
 import FundingActions from '@/src/components/pools/FundingActions'
+import { Timeline } from '@/src/components/pools/Timeline'
 import DealInfo from '@/src/components/pools/poolDetails/DealInfo'
 import PoolInfo from '@/src/components/pools/poolDetails/PoolInfo'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { AelinPoolState, isFunding } from '@/src/utils/getAelinPoolCurrentStatus'
 
-const Wrapper = styled.div`
+const MainGrid = styled.div`
+  column-gap: 65px;
+  display: grid;
+  row-gap: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: 1fr 310px;
+  }
+`
+
+const ContentGrid = styled.div`
+  display: grid;
+  row-gap: 20px;
+  column-gap: 70px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: 1fr 1fr;
+  }
+`
+
+const ActionsCard = styled(BaseCard)`
+  align-items: center;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  height: fit-content;
+  justify-content: center;
+  min-height: 236px;
+  padding: 30px 40px;
 `
 
 type Props = {
@@ -35,6 +58,8 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
     return null
   }
 
+  const mockedPoolVisibility = 'Public pool'
+
   const showCreateDealForm =
     address?.toLowerCase() === pool.sponsor.toLowerCase() &&
     currentState.state === AelinPoolState.WaitingForDeal &&
@@ -42,27 +67,39 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
     // @ts-ignore
     !currentState?.meta.dealPresented
 
-  return (
-    <RightTimelineLayout timeline={<>Timeline stuff</>}>
-      {!showCreateDealForm ? (
-        <>
-          <BaseCard>
-            <Wrapper>
-              <PoolInfo pool={pool} poolAddress={poolAddress} />
+  const poolName = pool.name.split('aePool-').pop() || ''
 
-              {isFunding(currentState) && <FundingActions pool={pool} poolHelpers={currentState} />}
-            </Wrapper>
-          </BaseCard>
-          <br />
-          <BaseCard>
-            <Wrapper>
-              <DealInfo pool={pool} poolAddress={poolAddress} />
-            </Wrapper>
-          </BaseCard>
-        </>
-      ) : (
-        <CreateDealForm pool={pool} />
-      )}
-    </RightTimelineLayout>
+  return (
+    <>
+      <Head>
+        <title>Aelin - {poolName}</title>
+      </Head>
+      <PageTitle subTitle={mockedPoolVisibility} title={poolName} />
+      <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 3 : 2} />}>
+        {showCreateDealForm ? (
+          <CreateDealForm pool={pool} />
+        ) : (
+          <MainGrid>
+            <CardWithTitle title="Pool information">
+              <ContentGrid>
+                <PoolInfo pool={pool} poolAddress={poolAddress} />
+                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                {/* @ts-ignore */}
+                {currentState?.meta.dealPresented && (
+                  <DealInfo pool={pool} poolAddress={poolAddress} />
+                )}
+              </ContentGrid>
+            </CardWithTitle>
+            <ActionsCard>
+              {isFunding(currentState) ? (
+                <FundingActions pool={pool} poolHelpers={currentState} />
+              ) : (
+                <>No actions available now.</>
+              )}
+            </ActionsCard>
+          </MainGrid>
+        )}
+      </RightTimelineLayout>
+    </>
   )
 }
