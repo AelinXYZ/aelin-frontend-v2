@@ -8,6 +8,7 @@ import { SWRConfig } from 'swr'
 import 'sanitize.css'
 import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
+import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
@@ -56,6 +57,7 @@ function App({ Component, pageProps }: AppProps) {
               <SafeSuspense>
                 <Component {...pageProps} />
               </SafeSuspense>
+              <TooltipConfig />
             </GeneralContextProvider>
           </Web3ConnectionProvider>
         </SWRConfig>

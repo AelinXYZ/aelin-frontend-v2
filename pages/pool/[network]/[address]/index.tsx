@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { isAddress } from '@ethersproject/address'
 import nullthrows from 'nullthrows'
 
+import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import PoolDetails from '@/src/components/pools/PoolDetails'
 import { Chains, ChainsKeys } from '@/src/constants/chains'
@@ -28,4 +29,4 @@ const PoolDetailsPage: NextPage = () => {
   return <PoolDetails chainId={chainId} poolAddress={poolAddress as string} />
 }
 
-export default genericSuspense(PoolDetailsPage, () => <div>Loading..</div>)
+export default genericSuspense(PoolDetailsPage, () => <Loading />)

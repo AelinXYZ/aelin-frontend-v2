@@ -10,6 +10,7 @@ const Wrapper = styled.main`
   flex-shrink: 0;
   margin: 0 auto;
   max-width: 100%;
+  row-gap: 20px;
   width: ${({ theme }) => theme.layout.maxWidth};
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {

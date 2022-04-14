@@ -6,7 +6,9 @@ import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 const Sponsors: NextPage = () => {
   return (
     <>
-      <Head>Sponsors</Head>
+      <Head>
+        <title>Aelin - Sponsors</title>
+      </Head>
       <LeftSidebarLayout>Sponsors</LeftSidebarLayout>
     </>
   )
