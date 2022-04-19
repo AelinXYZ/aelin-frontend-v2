@@ -1,9 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import React, { useEffect, useState } from 'react'
+
+import Wei from '@synthetixio/wei'
 
 import { CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
+import ModalSubmitTx from '@/src/components/pools/ModalSubmitTx'
 import {
   ButtonWrapper,
   Description,
@@ -35,13 +39,18 @@ const Create: NextPage = () => {
   const {
     createPoolState,
     errors,
+    gasLimitEstimate,
+    handleCreatePool,
     handleSubmit,
     isFinalStep,
     isFirstStep,
     isSubmitting,
     moveStep,
+    setGasPrice,
     setPoolField,
   } = useAelinCreatePool(appChainId)
+
+  const [showSubmitModal, setShowSubmitModal] = useState<boolean>(false)
 
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
   const { order, text, title } = currentStepConfig
@@ -55,6 +64,11 @@ const Create: NextPage = () => {
       moveStep('next')
     }
   }
+
+  useEffect(() => {
+    if (showSubmitModal) handleCreatePool()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showSubmitModal])
 
   return (
     <>
@@ -81,6 +95,7 @@ const Create: NextPage = () => {
                   <Description>{text}</Description>
                   <PoolCreateStepInput
                     currentState={createPoolState}
+                    key={step}
                     onKeyUp={handleKeyUp}
                     role="none"
                     setPoolField={setPoolField}
@@ -93,7 +108,7 @@ const Create: NextPage = () => {
                       <GradientButton
                         disabled={disableSubmit}
                         key={`${step}_button`}
-                        onClick={handleSubmit}
+                        onClick={() => setShowSubmitModal(true)}
                       >
                         Create Pool
                       </GradientButton>
@@ -119,6 +134,15 @@ const Create: NextPage = () => {
           })}
         </CardWithTitle>
       </RightTimelineLayout>
+      <ModalSubmitTx
+        disableButton={isSubmitting}
+        gasLimitEstimate={gasLimitEstimate}
+        onClose={() => setShowSubmitModal(false)}
+        onSubmit={handleSubmit}
+        setGasPrice={(gasPrice: Wei) => setGasPrice(gasPrice)}
+        showModal={showSubmitModal}
+        title={'Create pool'}
+      />
     </>
   )
 }
