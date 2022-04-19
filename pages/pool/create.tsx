@@ -7,7 +7,7 @@ import Wei from '@synthetixio/wei'
 import { CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import ModalSubmitTx from '@/src/components/pools/ModalSubmitTx'
+import PoolConfirmTransactionModal from '@/src/components/pools/PoolConfirmTransactionModal'
 import {
   ButtonWrapper,
   Description,
@@ -134,15 +134,16 @@ const Create: NextPage = () => {
           })}
         </CardWithTitle>
       </RightTimelineLayout>
-      <ModalSubmitTx
-        disableButton={isSubmitting}
-        gasLimitEstimate={gasLimitEstimate}
-        onClose={() => setShowSubmitModal(false)}
-        onSubmit={handleSubmit}
-        setGasPrice={(gasPrice: Wei) => setGasPrice(gasPrice)}
-        showModal={showSubmitModal}
-        title={'Create pool'}
-      />
+      {showSubmitModal && (
+        <PoolConfirmTransactionModal
+          disableButton={isSubmitting}
+          gasLimitEstimate={gasLimitEstimate}
+          onClose={() => setShowSubmitModal(false)}
+          onSubmit={handleSubmit}
+          setGasPrice={(gasPrice: Wei) => setGasPrice(gasPrice)}
+          title={'Create pool'}
+        />
+      )}
     </>
   )
 }

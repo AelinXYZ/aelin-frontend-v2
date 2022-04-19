@@ -1,29 +1,96 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import styled, { css } from 'styled-components'
 
 import Wei, { wei } from '@synthetixio/wei'
 import debounce from 'lodash/debounce'
 
-import { Dropdown, DropdownItem } from '@/src/components/common/Dropdown'
+import { ChevronDown } from '@/src/components/assets/ChevronDown'
+import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
-import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
+import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
 import useExchangeRate from '@/src/hooks/useExchangeRate'
 import useEthGasPrice, { GAS_SPEEDS } from '@/src/hooks/useGasPirce'
 import { getExchangeRatesForCurrencies, getTransactionPrice } from '@/src/utils/gasUtils'
 import { GasLimitEstimate, GasPrices, GasSpeed } from '@/types/utils'
 
-const ButtonDropdown = styled(BaseButtonDropdown)`
-  max-width: 100%;
-  width: 250px;
+const Wrapper = styled.div`
+  align-items: center;
+  display: flex;
+`
+
+const Text = styled.span`
+  color: ${({ theme }) => theme.colors.textColorLight};
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+`
+
+const ValueCSS = css`
+  color: ${({ theme }) => theme.colors.primary};
+  font-weight: 500;
+`
+
+const GasInput = styled.input`
+  ${ValueCSS}
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  outline: none;
+  text-align: right;
+  width: 50px;
+
+  &[readonly] {
+    cursor: default;
+  }
+
+  -moz-appearance: textfield;
+  ::-webkit-inner-spin-button,
+  ::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`
+
+const DollarValue = styled.span`
+  ${ValueCSS}
+  margin-left: 3px;
+`
+
+const ButtonDropdown = styled.button`
+  --dimensions: 30px;
+
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  height: var(--dimensions);
+  justify-content: center;
+  width: var(--dimensions);
+
+  transition: opacity 0.15s linear;
+
+  &:active {
+    opacity: 0.7;
+  }
+`
+
+const EditButton = styled(ButtonPrimaryLight)`
+  font-size: 1rem;
+  font-weight: 400;
+  height: 24px;
+  margin-left: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
 `
 
 const GasSelector = ({
   gasLimitEstimate,
   initialGasSpeed = 'fast',
   onChange,
+  ...restProps
 }: {
   gasLimitEstimate: GasLimitEstimate
   initialGasSpeed?: GasSpeed
@@ -32,12 +99,10 @@ const GasSelector = ({
   const { data: ethGasPriceData, isValidating: ethGasPriceIsValidating } = useEthGasPrice()
   const { data: exchangeRateData, isValidating: exchangeRateIsValidating } = useExchangeRate()
 
-  const [customGasPrice, setCustomGasPrice] = useState<string>('')
   const [gasSpeed, setGasSpeed] = useState<GasSpeed>(initialGasSpeed)
-  const [isOpen, setIsOpen] = useState(false)
+  const [customGasPrice, setCustomGasPrice] = useState<string>('')
 
   const gasPrices = useMemo(() => ethGasPriceData ?? ({} as GasPrices), [ethGasPriceData])
-
   const isValidating = ethGasPriceIsValidating || exchangeRateIsValidating
 
   const gasPrice: Wei | null = useMemo(() => {
@@ -81,37 +146,58 @@ const GasSelector = ({
     // eslint-disable-next-line
   }, [gasPrice, customGasPrice])
 
+  const [isEditing, setIsEditing] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const onEdit = () => {
+    setIsEditing(true)
+
+    if (inputRef.current) {
+      inputRef.current?.focus()
+    }
+  }
+
   return (
-    <Dropdown
-      closeOnClick={false}
-      dropdownButtonContent={
-        <ButtonDropdown>{`Gas price (GWEI) ≈ ${formattedGasPrice} ($${transactionFee})`}</ButtonDropdown>
-      }
-      items={[
-        <Textfield
-          key="custom-gas"
-          onChange={(e) => {
-            setCustomGasPrice(e.target.value)
-          }}
-          placeholder="Or type custom gas..."
-          type="number"
-        />,
-      ].concat(
-        GAS_SPEEDS.map((gasSpeed) => (
+    <Wrapper {...restProps}>
+      <Text>Gas Price:</Text>&nbsp;
+      <GasInput
+        disabled={isValidating}
+        onBlur={() => {
+          setIsEditing(false)
+        }}
+        onChange={(e) => {
+          setCustomGasPrice(e.target.value)
+        }}
+        readOnly={!isEditing}
+        ref={inputRef}
+        type="number"
+        value={isEditing ? customGasPrice : formattedGasPrice}
+      />
+      &nbsp;
+      <DollarValue>(${transactionFee})</DollarValue>
+      <Dropdown
+        dropdownButtonContent={
+          <ButtonDropdown>
+            <ChevronDown />
+          </ButtonDropdown>
+        }
+        dropdownPosition={DropdownPosition.right}
+        items={GAS_SPEEDS.map((gasSpeed) => (
           <DropdownItem
             key={gasSpeed}
             onClick={() => {
               setCustomGasPrice('')
+              setIsEditing(false)
               setGasSpeed(gasSpeed)
-              setIsOpen(!isOpen)
             }}
           >
             {`${gasSpeed[0].toUpperCase()}${gasSpeed.slice(1)}`}:{' '}
             {Number(gasPrices[gasSpeed]).toFixed(3)}
           </DropdownItem>
-        )),
-      )}
-    />
+        ))}
+      />
+      <EditButton onClick={onEdit}>Edit</EditButton>
+    </Wrapper>
   )
 }
 
