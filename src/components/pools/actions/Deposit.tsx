@@ -16,7 +16,8 @@ type Props = {
   pool: ParsedAelinPool
   poolHelpers: FundingState
 }
-export default function DepositPool({ pool, poolHelpers }: Props) {
+
+export default function Deposit({ pool, poolHelpers }: Props) {
   const { chainId, investmentToken, investmentTokenDecimals } = pool
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')

@@ -11,9 +11,9 @@ import { BootNodeLogo } from '@/src/components/assets/Logo'
 import { Metamask } from '@/src/components/assets/Metamask'
 import { Optimism } from '@/src/components/assets/Optimism'
 import { CopyButton } from '@/src/components/common/CopyButton'
+import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
 import { Modal } from '@/src/components/common/Modal'
 import { Notifications } from '@/src/components/common/Notifications'
-import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
 import { TopMenu as BaseTopMenu } from '@/src/components/navigation/TopMenu'
 import {
   ButtonPrimary,
