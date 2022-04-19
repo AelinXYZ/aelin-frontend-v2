@@ -6,7 +6,7 @@ import nullthrows from 'nullthrows'
 
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import PoolDetails from '@/src/components/pools/PoolDetails'
+import PoolDetails from '@/src/components/pools/PoolMain'
 import { Chains, ChainsKeys } from '@/src/constants/chains'
 
 const PoolDetailsPage: NextPage = () => {

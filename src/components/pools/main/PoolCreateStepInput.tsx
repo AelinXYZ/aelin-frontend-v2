@@ -1,9 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { HTMLAttributes, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
-import { HMSInput } from '@/src/components/pools/HMSInput'
-import TokenDropdown from '@/src/components/pools/TokenDropdown'
+import { HMSInput } from '@/src/components/pools/common/HMSInput'
+import TokenDropdown from '@/src/components/pools/common/TokenDropdown'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import {
   CreatePoolState,
@@ -26,17 +26,23 @@ const SponsorFeeTextfield = styled(Textfield)`
 `
 
 const PrivacyGrid = styled.div`
-  display: grid;
+  display: flex;
   gap: 40px;
-  grid-template-columns: 1fr 1fr;
   margin: 0 auto;
   max-width: fit-content;
 `
 
-const PoolCreateStepInput: React.FC<{
+interface Props extends HTMLAttributes<HTMLDivElement> {
   setPoolField: (value: unknown) => void
   currentState: CreatePoolState
-}> = ({ currentState, setPoolField, ...restProps }) => {
+}
+
+const PoolCreateStepInput: React.FC<Props> = ({
+  currentState,
+  onKeyUp,
+  setPoolField,
+  ...restProps
+}) => {
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -47,7 +53,7 @@ const PoolCreateStepInput: React.FC<{
   }, [step])
 
   return (
-    <Wrapper {...restProps}>
+    <Wrapper onKeyUp={onKeyUp} {...restProps}>
       {step === CreatePoolSteps.poolName ? (
         <Textfield
           maxLength={16}

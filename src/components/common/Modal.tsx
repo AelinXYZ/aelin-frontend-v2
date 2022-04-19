@@ -1,6 +1,6 @@
 import { HTMLAttributes } from 'react'
 import ReactDOM from 'react-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -32,11 +32,11 @@ const Card = styled(BaseCard)<{ size?: modalSize }>`
 
 const Title = styled.h1`
   color: ${({ theme }) => theme.colors.textColor};
-  font-family: ${({ theme }) => theme.fonts.textColor};
+  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.8rem;
   font-weight: 700;
   line-height: 1.2;
-  margin: 0 0 30px;
+  margin: 0 0 20px;
   text-align: center;
   width: 100%;
 `
@@ -47,6 +47,25 @@ const Contents = styled.div`
   flex-direction: column;
   flex-grow: 1;
   justify-content: center;
+`
+
+const Cancel = styled(ButtonPrimaryLight)`
+  min-width: 160px;
+`
+
+export const WidthLimitsCSS = css`
+  max-width: 100%;
+  width: 320px;
+`
+
+export const ModalText = styled.p`
+  color: ${({ theme }) => theme.colors.textColorLight};
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 auto 20px;
+  text-align: center;
+  ${WidthLimitsCSS}
 `
 
 export type modalSize = 'sm' | 'md' | 'lg' | string
@@ -87,7 +106,7 @@ export const Modal: React.FC<Props> = ({
           <Title>{title}</Title>
           <Contents>
             {children}
-            {validOnClose && <ButtonPrimaryLight onClick={close}>Cancel</ButtonPrimaryLight>}
+            {validOnClose && <Cancel onClick={close}>Cancel</Cancel>}
           </Contents>
         </Card>
       </Wrapper>,

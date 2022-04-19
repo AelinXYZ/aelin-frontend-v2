@@ -125,7 +125,7 @@ export const theme = {
     backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4);',
   },
   textField: {
-    backgroundColor: componentBackgroundColor,
+    backgroundColor: gray,
     borderColor: lightGray,
     borderRadius: '8px',
     borderStyle: 'solid',
@@ -138,7 +138,7 @@ export const theme = {
     paddingHorizontal: '15px',
     active: {
       color: textColor,
-      backgroundColor: componentBackgroundColor,
+      backgroundColor: gray,
       borderColor: primary,
     },
     placeholder: {
