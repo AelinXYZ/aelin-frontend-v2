@@ -12,8 +12,7 @@ import PoolInfo from '@/src/components/pools/poolDetails/PoolInfo'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { AelinPoolState, isFunding } from '@/src/utils/getAelinPoolCurrentStatus'
+import { isFunding, isWaitingForDeal } from '@/types/AelinPoolStatus'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -51,48 +50,43 @@ type Props = {
 }
 
 export default function PoolDetails({ chainId, poolAddress }: Props) {
-  const { currentState, pool } = useAelinPoolStatus(chainId, poolAddress as string)
-  const { address } = useWeb3Connection()
+  const { currentStatus, pool } = useAelinPoolStatus(chainId, poolAddress as string)
 
-  if (!currentState) {
+  if (!currentStatus) {
     return null
   }
 
-  const mockedPoolVisibility = 'Public pool'
+  const mockedPoolVisibility = '???'
 
   const showCreateDealForm =
-    address?.toLowerCase() === pool.sponsor.toLowerCase() &&
-    currentState.state === AelinPoolState.WaitingForDeal &&
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    !currentState?.meta.dealPresented
-
-  const poolName = pool.name.split('aePool-').pop() || ''
+    isWaitingForDeal(currentStatus) && currentStatus.meta.showCreateDealForm
 
   return (
     <>
       <Head>
-        <title>Aelin - {poolName}</title>
+        <title>Aelin - {pool.nameFormatted}</title>
       </Head>
-      <PageTitle subTitle={mockedPoolVisibility} title={poolName} />
+      <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
       <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 3 : 2} />}>
         {showCreateDealForm ? (
           <CreateDealForm pool={pool} />
         ) : (
           <MainGrid>
             <CardWithTitle title="Pool information">
+              {/* PoolInfo is always visible */}
               <ContentGrid>
                 <PoolInfo pool={pool} poolAddress={poolAddress} />
-                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                {/* @ts-ignore */}
-                {currentState?.meta.dealPresented && (
-                  <DealInfo pool={pool} poolAddress={poolAddress} />
-                )}
               </ContentGrid>
+              {/* Show Deal info, if pool already has a dealAddress */}
+              {pool.dealAddress && (
+                <ContentGrid>
+                  <DealInfo pool={pool} poolAddress={poolAddress} />
+                </ContentGrid>
+              )}
             </CardWithTitle>
             <ActionsCard>
-              {isFunding(currentState) ? (
-                <FundingActions pool={pool} poolHelpers={currentState} />
+              {isFunding(currentStatus) ? (
+                <FundingActions pool={pool} poolHelpers={currentStatus} />
               ) : (
                 <>No actions available now.</>
               )}

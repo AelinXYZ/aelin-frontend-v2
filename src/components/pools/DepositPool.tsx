@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
@@ -10,8 +9,8 @@ import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { FundingState } from '@/src/utils/getAelinPoolCurrentStatus'
 import { formatToken } from '@/src/web3/bigNumber'
+import { FundingState } from '@/types/AelinPoolStatus'
 
 type Props = {
   pool: ParsedAelinPool

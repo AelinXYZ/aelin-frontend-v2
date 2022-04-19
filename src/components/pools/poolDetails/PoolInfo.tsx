@@ -31,7 +31,7 @@ export const PoolInfo: React.FC<{
           value={pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
         />
         <PoolInfoItem title="Pool stats" tooltip="Pool stats tooltip">
-          <Value>Funded: {pool.investmentRaisedAmount.formatted}</Value>
+          <Value>Funded: {pool.funded.formatted}</Value>
           <Value>Withdrawn: {pool.withdrawn.formatted}</Value>
           <Value>Amount in Pool: {pool.amountInPool.formatted}</Value>
         </PoolInfoItem>

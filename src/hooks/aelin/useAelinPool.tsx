@@ -7,14 +7,14 @@ import { SWRConfiguration } from 'swr'
 import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
-import useAelinPoolCall from '@/src/hooks/aelin/useAelinPoolCall'
 import {
   dealExchangeRates,
   getAmountInPool,
+  getAmountRedeem,
   getAmountWithdrawn,
   getDealDeadline,
   getDetailedNumber,
-  getInvestmentRaisedAmount,
+  getFunded,
   getPoolCreatedDate,
   getProRataRedemptionDates,
   getPurchaseExpiry,
@@ -29,41 +29,9 @@ type DetailedNumber = {
   formatted: string | undefined
 }
 
-type ParsedDeal = {
-  name: string
-  symbol: string
-  underlyingToken: {
-    token: string
-    symbol: string
-    decimals: number
-    // totalSupply: DetailedNumber
-    // The amount of underlying tokens for the deal, for example the Sponsor offers 500k USD in exchange of the invested tokens.
-    dealAmount: DetailedNumber
-  }
-  //purchaseTokensForDeal:
-  exchangeRates: {
-    investmentPerDeal: DetailedNumber
-    dealPerInvestment: DetailedNumber
-  }
-  vesting: {
-    cliff: number
-    linear: number
-  }
-  hasDealOpenPeriod: boolean
-  proRataRedemption: {
-    stage: number | null
-    proRataRedemptionStart: Date
-    proRataRedemptionEnd: Date
-    openRedemptionEnd: Date | null
-  } | null
-  holderAlreadyDeposited: boolean
-  holderDepositExpiration: Date
-  holderDepositDuration: Date
-  holderAddress: string
-}
-
 export type ParsedAelinPool = {
   name: string
+  nameFormatted: string
   chainId: ChainsValues
   address: string
   start: Date
@@ -78,29 +46,60 @@ export type ParsedAelinPool = {
   sponsorFee: DetailedNumber
   poolCap: DetailedNumber
   amountInPool: DetailedNumber
-  investmentRaisedAmount: DetailedNumber
+  funded: DetailedNumber
+  redeem: DetailedNumber
   withdrawn: DetailedNumber
-  deal: undefined | ParsedDeal
   poolStatus: PoolStatus
+  deal?: {
+    name: string
+    symbol: string
+    underlyingToken: {
+      token: string
+      symbol: string
+      decimals: number
+      // totalSupply: DetailedNumber
+      // The amount of underlying tokens for the deal, for example the Sponsor offers 500k USD in exchange of the invested tokens.
+      dealAmount: DetailedNumber
+    }
+    //purchaseTokensForDeal:
+    exchangeRates: {
+      investmentPerDeal: DetailedNumber
+      dealPerInvestment: DetailedNumber
+    }
+    vesting: {
+      cliff: number
+      linear: number
+    }
+    hasDealOpenPeriod: boolean
+    proRataRedemption: {
+      stage: number | null
+      proRataRedemptionStart: Date
+      proRataRedemptionEnd: Date
+      openRedemptionEnd: Date | null
+    } | null
+    holderAlreadyDeposited: boolean
+    holderDepositExpiration: Date
+    holderDepositDuration: Date
+    holderAddress: string
+  }
 }
 
 export const getParsedPool = ({
   chainId,
   pool,
   poolAddress,
-  poolTotalWithdrawn,
   purchaseTokenDecimals,
 }: {
   chainId: ChainsValues
   pool: PoolCreated
   poolAddress: string
-  poolTotalWithdrawn: BigNumber | null
   purchaseTokenDecimals: number
 }) => {
-  return {
+  const res: ParsedAelinPool = {
     chainId,
     poolStatus: pool.poolStatus,
     name: pool.name,
+    nameFormatted: pool.name.split('aePool-').pop() || '',
     address: poolAddress,
     start: getPoolCreatedDate(pool),
     investmentToken: pool.purchaseToken,
@@ -114,10 +113,56 @@ export const getParsedPool = ({
     purchaseExpiry: getPurchaseExpiry(pool),
     dealDeadline: getDealDeadline(pool),
     amountInPool: getAmountInPool({ ...pool, purchaseTokenDecimals }),
-    investmentRaisedAmount: getInvestmentRaisedAmount({ ...pool, purchaseTokenDecimals }),
-    withdrawn: getAmountWithdrawn(poolTotalWithdrawn || ZERO_BN),
+    funded: getFunded({ ...pool, purchaseTokenDecimals }),
+    withdrawn: getAmountWithdrawn(pool.totalAmountWithdrawn || ZERO_BN),
+    redeem: getAmountRedeem(pool.totalAmountAccepted || ZERO_BN),
     deal: undefined,
   }
+
+  const dealDetails = pool.deal
+  if (dealDetails) {
+    res.deal = {
+      name: 'todo name',
+      symbol: 'todo symbol',
+      underlyingToken: {
+        token: dealDetails.underlyingDealToken,
+        symbol: dealDetails.underlyingDealTokenSymbol,
+        decimals: dealDetails.underlyingDealTokenDecimals,
+        dealAmount: getDetailedNumber(
+          dealDetails.underlyingDealTokenTotal,
+          dealDetails.underlyingDealTokenDecimals,
+        ),
+      },
+      exchangeRates: dealExchangeRates(
+        pool.contributions,
+        purchaseTokenDecimals,
+        dealDetails.underlyingDealTokenTotal,
+        dealDetails.underlyingDealTokenDecimals,
+      ),
+      vesting: {
+        cliff: dealDetails.vestingCliff,
+        linear: dealDetails.vestingPeriod,
+      },
+      hasDealOpenPeriod: hasDealOpenPeriod(
+        pool.contributions,
+        dealDetails.purchaseTokenTotalForDeal,
+      ),
+      proRataRedemption: dealDetails.proRataRedemptionPeriodStart
+        ? getProRataRedemptionDates(
+            // proRataRedemptionPeriodStart is set when Deal is founded by the Holder
+            dealDetails.proRataRedemptionPeriodStart,
+            dealDetails.proRataRedemptionPeriod,
+            dealDetails.openRedemptionPeriod,
+          )
+        : null,
+      holderAlreadyDeposited: false,
+      holderDepositExpiration: new Date(),
+      holderDepositDuration: new Date(),
+      holderAddress: dealDetails.holder,
+    }
+  }
+
+  return res
 }
 
 export default function useAelinPool(
@@ -126,7 +171,7 @@ export default function useAelinPool(
   config?: SWRConfiguration<PoolByIdQuery, ClientError>,
 ): { refetch: () => void; pool: ParsedAelinPool } {
   const allSDK = getAllGqlSDK()
-  const { useDealById, useDealDetailsById, usePoolById } = allSDK[chainId]
+  const { usePoolById } = allSDK[chainId]
   const { data: poolCreatedData, mutate: poolCreatedMutate } = usePoolById(
     {
       poolCreatedId: poolAddress,
@@ -134,38 +179,15 @@ export default function useAelinPool(
     config,
   )
 
-  // TODO: Fetch from subgraph
-  const { data: dealCreatedData, mutate: dealCreatedMutate } = useDealById(
-    {
-      dealAddress: poolCreatedData?.poolCreated?.dealAddress || '',
-    },
-    config,
-  )
-  // TODO: Fetch from subgraph
-  const { data: dealDetailsData, mutate: dealDetailsMutate } = useDealDetailsById(
-    {
-      dealAddress: poolCreatedData?.poolCreated?.dealAddress || '',
-    },
-    config,
-  )
-
   const refetch = () => {
     poolCreatedMutate()
-    dealCreatedMutate()
-    dealDetailsMutate()
   }
-
-  const [poolTotalWithdrawn] = useAelinPoolCall(chainId, poolAddress, 'totalAmountWithdrawn', [])
 
   if (!poolCreatedData?.poolCreated) {
     throw Error('There was not possible to fetch pool id: ' + poolAddress)
   }
 
-  if (!poolTotalWithdrawn) {
-    throw Error('There was not possible to fetch poolTotalWithdrawn: ' + poolAddress)
-  }
-
-  const pool = poolCreatedData.poolCreated
+  const pool = poolCreatedData.poolCreated as PoolCreated
   const purchaseTokenDecimals = pool.purchaseTokenDecimals
 
   // prevent TS error
@@ -177,67 +199,12 @@ export default function useAelinPool(
     const poolInfo: ParsedAelinPool = getParsedPool({
       pool,
       purchaseTokenDecimals,
-      poolTotalWithdrawn,
       poolAddress,
       chainId,
     })
 
-    // Add deal info
-    const dealCreated = dealCreatedData?.dealCreated
-    const dealDetails = dealDetailsData?.dealDetail
-
-    if (poolInfo.dealAddress && dealCreated && dealDetails) {
-      poolInfo.deal = {
-        name: dealCreated.name,
-        symbol: dealCreated.symbol,
-        underlyingToken: {
-          token: dealDetails.underlyingDealToken,
-          symbol: dealDetails.underlyingDealTokenSymbol,
-          decimals: dealDetails.underlyingDealTokenDecimals,
-          dealAmount: getDetailedNumber(
-            dealDetails.underlyingDealTokenTotal,
-            dealDetails.underlyingDealTokenDecimals,
-          ),
-        },
-        exchangeRates: dealExchangeRates(
-          pool.contributions,
-          purchaseTokenDecimals,
-          dealDetails.underlyingDealTokenTotal,
-          dealDetails.underlyingDealTokenDecimals,
-        ),
-        vesting: {
-          cliff: dealDetails.vestingCliff,
-          linear: dealDetails.vestingPeriod,
-        },
-        hasDealOpenPeriod: hasDealOpenPeriod(
-          pool.contributions,
-          dealDetails.purchaseTokenTotalForDeal,
-        ),
-        proRataRedemption: dealDetails.proRataRedemptionPeriodStart
-          ? getProRataRedemptionDates(
-              // proRataRedemptionPeriodStart is set when Deal is founded by the Holder
-              dealDetails.proRataRedemptionPeriodStart,
-              dealDetails.proRataRedemptionPeriod,
-              dealDetails.openRedemptionPeriod,
-            )
-          : null,
-        holderAlreadyDeposited: false,
-        holderDepositExpiration: new Date(),
-        holderDepositDuration: new Date(),
-        holderAddress: dealDetails.holder,
-      }
-    }
-
     return poolInfo
-  }, [
-    pool,
-    purchaseTokenDecimals,
-    poolTotalWithdrawn,
-    poolAddress,
-    chainId,
-    dealCreatedData,
-    dealDetailsData,
-  ])
+  }, [pool, purchaseTokenDecimals, poolAddress, chainId])
 
   return {
     refetch,

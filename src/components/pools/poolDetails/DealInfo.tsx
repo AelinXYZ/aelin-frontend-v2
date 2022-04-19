@@ -1,12 +1,6 @@
 import styled from 'styled-components'
 
-import isAfter from 'date-fns/isAfter'
-
-import CountDown from '@/src/components/countdown'
-import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
-import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
 const Container = styled.div`
   width: 500px;
@@ -17,9 +11,7 @@ type Props = {
   poolAddress: string
 }
 
-export default function DealInfo({ pool, poolAddress }: Props) {
-  console.log(pool)
-  // if (!pool.deal || !pool.deal.proRataRedemption) {
+export default function DealInfo({ pool }: Props) {
   if (!pool.deal) {
     return <div>No Deal presented yet.</div>
   }
@@ -61,13 +53,13 @@ export default function DealInfo({ pool, poolAddress }: Props) {
       <br />
       <div>Pool stats</div>
       <div>Amount in pool: {pool.amountInPool.formatted}</div>
-      <div>Total redeem: </div>
-      {pool.investmentRaisedAmount.formatted}
+      <div>Total redeem: {pool.redeem.formatted}</div>
       <div>Total withdrawn: {pool.withdrawn.formatted}</div>
 
       <br />
       <div>User stats</div>
-      <div>Waiting for the user subgraph</div>
+      <div>Remaining pro-rata allocation: TBD</div>
+      <div>Withdrawn: TBD</div>
 
       <br />
       <div>Vesting data</div>

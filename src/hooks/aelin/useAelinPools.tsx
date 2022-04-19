@@ -75,7 +75,6 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
               poolAddress: pool.id,
               pool,
               purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-              poolTotalWithdrawn: ZERO_BN,
             })
             return {
               ...parsedPool,
