@@ -1,59 +1,142 @@
-import { FC, useMemo } from 'react'
+import { FC } from 'react'
+import styled from 'styled-components'
 
-import { contracts as contractsConfig } from '@/src/constants/contracts'
-import { ZERO_ADDRESS } from '@/src/constants/misc'
-import useERC20Call from '@/src/hooks/contracts/useERC20Call'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import ClaimBox from './ClaimBox'
+import StakeTabContent from './StakeTabContent'
+import { DEPOSIT_TYPE, WITHDRAW_TYPE } from './kind'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
+import Tabs, { Tab } from '@/src/components/tabs/Tabs'
+import { Tooltip } from '@/src/components/tooltip/Tooltip'
+import { AelinStakingResponse } from '@/src/hooks/aelin/useAelinStakingRewards'
+import { GelatoStakingResponse } from '@/src/hooks/aelin/useGelatoStakingRewards'
+import { UniswapStakingResponse } from '@/src/hooks/aelin/useUniswapStakingRewards'
 
-type ContractsType = { staking: string; token: string }
+const SubTitle = styled.p`
+  color: ${({ theme }) => theme.colors.textColorLight};
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-align: center;
+`
+
+const Wrapper = styled(BaseCard)`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`
+
+const InfoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  min-height: 120px;
+`
+
+const Value = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+`
+
+const Text = styled.p`
+  color: ${({ theme }) => theme.colors.textColorLight};
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 5px;
+`
+
+type StakingRewardsResponse = GelatoStakingResponse | AelinStakingResponse | UniswapStakingResponse
 
 interface StakeSectionProps {
+  contractAddresses: {
+    stakingAddress: string
+    tokenAddress: string
+  }
   isPool2: boolean
-  useAelinStakingRewards: ({
-    stakingRewardsContract,
-    tokenContract,
+  textTooltip: string
+  textTooltipAPY: string
+  title: string
+  useStakingRewards: ({
+    stakingAddress,
+    tokenAddress,
   }: {
-    stakingRewardsContract: string
-    tokenContract: string
-  }) => { eth?: number; aelin?: number; totalAelinStake?: number; APY: number } | null
+    stakingAddress: string
+    tokenAddress: string
+  }) => StakingRewardsResponse
 }
 
-export const StakeSection: FC<StakeSectionProps> = ({
+const StakeSection: FC<StakeSectionProps> = ({
+  contractAddresses,
   isPool2 = false,
-  useAelinStakingRewards,
+  textTooltip,
+  textTooltipAPY,
+  title,
+  useStakingRewards,
 }) => {
-  const { address, appChainId } = useWeb3Connection()
+  const { stakingAddress, tokenAddress } = contractAddresses
 
-  const memoizedContracts: ContractsType = useMemo(() => {
-    if (isPool2) {
-      return {
-        staking: contractsConfig.LP_STAKING_REWARDS.address[appChainId],
-        token: contractsConfig.LP_TOKEN.address[appChainId],
-      }
-    }
-
-    return {
-      staking: contractsConfig.STAKING_REWARDS.address[appChainId],
-      token: contractsConfig.AELIN_TOKEN.address[appChainId],
-    }
-  }, [appChainId, isPool2])
-
-  const [allowance] = useERC20Call(appChainId, memoizedContracts.token, 'allowance', [
-    address || ZERO_ADDRESS,
-    memoizedContracts.staking,
-  ])
-
-  const rewards = useAelinStakingRewards({
-    stakingRewardsContract: memoizedContracts.staking,
-    tokenContract: memoizedContracts.token,
-  })
-
-  console.log('allowance: ', allowance)
-  console.log('rewards: ', rewards)
+  const rewards: StakingRewardsResponse = useStakingRewards({ stakingAddress, tokenAddress })
 
   return (
-    <div>
-      <></>
-    </div>
+    <Wrapper>
+      <BaseTitle>
+        {`${title} `}
+        <Tooltip text={textTooltip} />
+      </BaseTitle>
+      <SubTitle>
+        APY: {`${Math.round(rewards?.APY ?? 0)}% `}
+        <Tooltip text={textTooltipAPY} />
+      </SubTitle>
+      <Tabs defaultIndex={0}>
+        <Tab label="Deposit">
+          <StakeTabContent
+            decimals={rewards?.decimals ?? 18}
+            stakingAddress={stakingAddress}
+            symbol={rewards?.symbol ?? ''}
+            tokenAddress={tokenAddress}
+            type={DEPOSIT_TYPE}
+          />
+        </Tab>
+        <Tab label="Withdraw">
+          <StakeTabContent
+            decimals={rewards?.decimals ?? 18}
+            stakingAddress={stakingAddress}
+            symbol={rewards?.symbol ?? ''}
+            tokenAddress={tokenAddress}
+            type={WITHDRAW_TYPE}
+          />
+        </Tab>
+      </Tabs>
+      <InfoWrapper>
+        {isPool2 && (
+          <>
+            <Text>
+              ETH in pool via G-UNI: <Value>{`${rewards?.ethInPool?.toFixed(2) ?? 0}`}</Value>
+            </Text>
+            <Text>
+              Aelin in pool via G-UNI: <Value>{`${rewards?.aelinInPool?.toFixed(2) ?? 0}`}</Value>
+            </Text>
+            <Text>
+              My stake: <Value>{`${rewards?.userStake ?? 0} ${rewards?.symbol}`}</Value>
+            </Text>
+          </>
+        )}
+        {!isPool2 && (
+          <>
+            <Text>
+              Aelin staking:{' '}
+              <Value>{`${rewards?.totalAelinStaked?.toFixed(2) ?? 0} ${rewards?.symbol}`}</Value>
+            </Text>
+            <Text>
+              My stake: <Value>{`${rewards?.userStake ?? 0} ${rewards?.symbol}`}</Value>
+            </Text>
+          </>
+        )}
+      </InfoWrapper>
+      <ClaimBox stakingAddress={stakingAddress} userRewards={rewards?.userRewards ?? 0} />
+    </Wrapper>
   )
 }
+
+export default genericSuspense(StakeSection)
