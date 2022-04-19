@@ -8,16 +8,12 @@ import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
-const Container = styled.div`
-  width: 500px;
-`
+const Container = styled.div``
 
-type Props = {
+export const DealInformation: React.FC<{
   pool: ParsedAelinPool
   poolAddress: string
-}
-
-export default function DealInfo({ pool, poolAddress }: Props) {
+}> = ({ pool, poolAddress }) => {
   console.log(pool)
   // if (!pool.deal || !pool.deal.proRataRedemption) {
   if (!pool.deal) {
@@ -112,3 +108,5 @@ export default function DealInfo({ pool, poolAddress }: Props) {
     </Container>
   )
 }
+
+export default DealInformation

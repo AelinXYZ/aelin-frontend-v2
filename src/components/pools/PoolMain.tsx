@@ -4,11 +4,11 @@ import styled from 'styled-components'
 import { CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import CreateDealForm from '@/src/components/pools/CreateDealForm'
-import FundingActions from '@/src/components/pools/FundingActions'
-import { Timeline } from '@/src/components/pools/Timeline'
-import DealInfo from '@/src/components/pools/poolDetails/DealInfo'
-import PoolInfo from '@/src/components/pools/poolDetails/PoolInfo'
+import Funding from '@/src/components/pools/actions/Funding'
+import { Timeline } from '@/src/components/pools/common/Timeline'
+import DealCreate from '@/src/components/pools/deal/DealCreate'
+import DealInformation from '@/src/components/pools/deal/DealInformation'
+import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
@@ -50,7 +50,7 @@ type Props = {
   poolAddress: string
 }
 
-export default function PoolDetails({ chainId, poolAddress }: Props) {
+export default function PoolMain({ chainId, poolAddress }: Props) {
   const { currentState, pool } = useAelinPoolStatus(chainId, poolAddress as string)
   const { address } = useWeb3Connection()
 
@@ -77,22 +77,22 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
       <PageTitle subTitle={mockedPoolVisibility} title={poolName} />
       <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 3 : 2} />}>
         {showCreateDealForm ? (
-          <CreateDealForm pool={pool} />
+          <DealCreate pool={pool} />
         ) : (
           <MainGrid>
             <CardWithTitle title="Pool information">
               <ContentGrid>
-                <PoolInfo pool={pool} poolAddress={poolAddress} />
+                <PoolInformation pool={pool} poolAddress={poolAddress} />
                 {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                 {/* @ts-ignore */}
                 {currentState?.meta.dealPresented && (
-                  <DealInfo pool={pool} poolAddress={poolAddress} />
+                  <DealInformation pool={pool} poolAddress={poolAddress} />
                 )}
               </ContentGrid>
             </CardWithTitle>
             <ActionsCard>
               {isFunding(currentState) ? (
-                <FundingActions pool={pool} poolHelpers={currentState} />
+                <Funding pool={pool} poolHelpers={currentState} />
               ) : (
                 <>No actions available now.</>
               )}
