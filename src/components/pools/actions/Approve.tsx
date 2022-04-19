@@ -23,7 +23,8 @@ type Props = {
   pool: ParsedAelinPool
   refetchAllowance: () => void
 }
-export default function ApprovePool({ pool, refetchAllowance }: Props) {
+
+export default function Approve({ pool, refetchAllowance }: Props) {
   const { address: poolAddress, investmentToken, investmentTokenSymbol } = pool
   const { address, isAppConnected } = useWeb3Connection()
   const [isLoading, setIsLoading] = useState(false)

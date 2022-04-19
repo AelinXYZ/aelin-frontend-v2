@@ -1,18 +1,26 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import styled from 'styled-components'
 
 import { CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import PoolCreateStepInput from '@/src/components/pools/PoolCreateStepInput'
-import { Summary } from '@/src/components/pools/Summary'
-import { Timeline } from '@/src/components/pools/Timeline'
+import {
+  ButtonWrapper,
+  Description,
+  PrevNextWrapper,
+  StepContents,
+  Title,
+  WrapperGrid,
+} from '@/src/components/pools/common/Create'
+import { Summary } from '@/src/components/pools/common/Summary'
+import { Timeline } from '@/src/components/pools/common/Timeline'
+import PoolCreateStepInput from '@/src/components/pools/main/PoolCreateStepInput'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
+import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator } from '@/src/components/timeline/StepIndicator'
 import useAelinCreatePool, {
   CreatePoolSteps,
@@ -21,52 +29,6 @@ import useAelinCreatePool, {
   getCreatePoolSummaryData,
 } from '@/src/hooks/aelin/useAelinCreatePool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-
-const WrapperGrid = styled.div`
-  display: grid;
-  grid-template-columns: 30px 1fr 30px;
-  width: 100%;
-`
-
-const StepContents = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-`
-
-const PrevNextWrapper = styled.div`
-  padding-top: 150px;
-`
-
-const Title = styled.h2`
-  color: ${({ theme }) => theme.colors.textColor};
-  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0 0 18px;
-  max-width: 100%;
-  padding: 0 20px;
-  text-align: center;
-  width: 690px;
-`
-
-const Description = styled.p`
-  color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
-  font-weight: 400;
-  line-height: 1.4;
-  margin: 0 0 50px;
-  max-width: 100%;
-  padding: 0 20px;
-  text-align: center;
-  width: 690px;
-`
-
-const ButtonWrapper = styled.div`
-  margin-bottom: 40px;
-  margin-top: 40px;
-`
 
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
@@ -88,7 +50,7 @@ const Create: NextPage = () => {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyUp = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.code === 'Enter' && !currentStepError) {
       moveStep('next')
     }
@@ -97,65 +59,64 @@ const Create: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{`${createPoolState.poolName || 'Create Pool'}`}</title>
+        <title>{`${createPoolState.poolName || 'Create pool'}`}</title>
       </Head>
-      <PageTitle title={`${createPoolState.poolName || 'Create Pool'}`} />
+      <PageTitle title={`${createPoolState.poolName || 'Pool creation'}`} />
       <RightTimelineLayout timeline={<Timeline activeItem={1} />}>
         <CardWithTitle title={'Pool creation'}>
           <StepIndicator
             currentStepOrder={order}
             data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
           />
-          <div onKeyUp={handleKeyDown} role="none">
-            {Object.values(CreatePoolSteps).map((step) => {
-              const isStepVisible = createPoolState.currentStep === step
+          {Object.values(CreatePoolSteps).map((step) => {
+            const isStepVisible = createPoolState.currentStep === step
 
-              return !isStepVisible ? null : (
-                <WrapperGrid>
-                  <PrevNextWrapper>
-                    {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
-                  </PrevNextWrapper>
-                  <StepContents>
-                    <Title>{title}</Title>
-                    <Description>{text}</Description>
-                    <PoolCreateStepInput
-                      currentState={createPoolState}
-                      key={step}
-                      setPoolField={setPoolField}
-                    />
-                    {currentStepError && typeof currentStepError === 'string' && (
-                      <p style={{ marginBottom: 0 }}>{currentStepError}</p>
+            return !isStepVisible ? null : (
+              <WrapperGrid>
+                <PrevNextWrapper>
+                  {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
+                </PrevNextWrapper>
+                <StepContents>
+                  <Title>{title}</Title>
+                  <Description>{text}</Description>
+                  <PoolCreateStepInput
+                    currentState={createPoolState}
+                    onKeyUp={handleKeyUp}
+                    role="none"
+                    setPoolField={setPoolField}
+                  />
+                  {currentStepError && typeof currentStepError === 'string' && (
+                    <Error>{currentStepError}</Error>
+                  )}
+                  <ButtonWrapper>
+                    {isFinalStep ? (
+                      <GradientButton
+                        disabled={disableSubmit}
+                        key={`${step}_button`}
+                        onClick={handleSubmit}
+                      >
+                        Create Pool
+                      </GradientButton>
+                    ) : (
+                      <GradientButton
+                        disabled={!!currentStepError}
+                        key={`${step}_button`}
+                        onClick={() => moveStep('next')}
+                      >
+                        Next
+                      </GradientButton>
                     )}
-                    <ButtonWrapper>
-                      {!isFinalStep ? (
-                        <GradientButton
-                          disabled={!!currentStepError}
-                          key={`${step}_button`}
-                          onClick={() => moveStep('next')}
-                        >
-                          Next
-                        </GradientButton>
-                      ) : (
-                        <GradientButton
-                          disabled={disableSubmit}
-                          key={`${step}_button`}
-                          onClick={handleSubmit}
-                        >
-                          Create Pool
-                        </GradientButton>
-                      )}
-                    </ButtonWrapper>
-                    <Summary data={getCreatePoolSummaryData(createPoolState)} />
-                  </StepContents>
-                  <PrevNextWrapper>
-                    {!isFinalStep && (
-                      <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
-                    )}
-                  </PrevNextWrapper>
-                </WrapperGrid>
-              )
-            })}
-          </div>
+                  </ButtonWrapper>
+                  <Summary data={getCreatePoolSummaryData(createPoolState)} />
+                </StepContents>
+                <PrevNextWrapper>
+                  {!isFinalStep && (
+                    <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
+                  )}
+                </PrevNextWrapper>
+              </WrapperGrid>
+            )
+          })}
         </CardWithTitle>
       </RightTimelineLayout>
     </>

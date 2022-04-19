@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { TokenInput } from '@/src/components/pools/TokenInput'
+import { TokenInput } from '@/src/components/pools/common/TokenInput'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -16,7 +16,8 @@ type Props = {
   pool: ParsedAelinPool
   poolHelpers: FundingState
 }
-export default function DepositPool({ pool, poolHelpers }: Props) {
+
+export default function Deposit({ pool, poolHelpers }: Props) {
   const { chainId, investmentToken, investmentTokenDecimals } = pool
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')

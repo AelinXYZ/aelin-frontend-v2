@@ -2,16 +2,12 @@ import styled from 'styled-components'
 
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 
-const Container = styled.div`
-  width: 500px;
-`
+const Container = styled.div``
 
-type Props = {
+export const DealInformation: React.FC<{
   pool: ParsedAelinPool
   poolAddress: string
-}
-
-export default function DealInfo({ pool }: Props) {
+}> = ({ pool }) => {
   if (!pool.deal) {
     return <div>No Deal presented yet.</div>
   }
@@ -104,3 +100,5 @@ export default function DealInfo({ pool }: Props) {
     </Container>
   )
 }
+
+export default DealInformation

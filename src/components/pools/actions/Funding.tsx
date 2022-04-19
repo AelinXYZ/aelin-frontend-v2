@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import ApprovePool from '@/src/components/pools/ApprovePool'
-import DepositPool from '@/src/components/pools/DepositPool'
+import Approve from '@/src/components/pools/actions/Approve'
+import Deposit from '@/src/components/pools/actions/Deposit'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { FundingState } from '@/types/AelinPoolStatus'
@@ -23,7 +23,7 @@ type Props = {
   poolHelpers: FundingState
 }
 
-function FundingActions({ pool, poolHelpers }: Props) {
+function Funding({ pool, poolHelpers }: Props) {
   return (
     <>
       <Title>Deposit tokens</Title>
@@ -32,12 +32,12 @@ function FundingActions({ pool, poolHelpers }: Props) {
       ) : poolHelpers.meta.capReached ? (
         <>Max cap reached</>
       ) : poolHelpers.meta.userAllowance.gt(ZERO_ADDRESS) ? (
-        <DepositPool pool={pool} poolHelpers={poolHelpers} />
+        <Deposit pool={pool} poolHelpers={poolHelpers} />
       ) : (
-        <ApprovePool pool={pool} refetchAllowance={poolHelpers.meta.refetchAllowance} />
+        <Approve pool={pool} refetchAllowance={poolHelpers.meta.refetchAllowance} />
       )}
     </>
   )
 }
 
-export default genericSuspense(FundingActions)
+export default genericSuspense(Funding)

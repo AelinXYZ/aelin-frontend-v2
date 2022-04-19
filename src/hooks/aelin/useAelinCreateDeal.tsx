@@ -54,14 +54,14 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
   [CreateDealSteps.dealToken]: {
     id: CreateDealSteps.dealToken,
     order: 1,
-    title: 'Underlying deal token',
+    title: 'Deal token',
     text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool as your deal. Examples - SNX Address (0x8700daec35af8ff88c16bdf0418774cb3d7599b4)',
     placeholder: 'Enter deal token address',
   },
   [CreateDealSteps.dealTokenTotal]: {
     id: CreateDealSteps.dealTokenTotal,
     order: 2,
-    title: 'Underlying deal token total',
+    title: 'Deal token total',
     text: 'Total amount of deal tokens that are being distributed to the pool. This determines the exchange rate between investment tokens and deal tokens.',
     placeholder: 'Enter deal token total...',
   },

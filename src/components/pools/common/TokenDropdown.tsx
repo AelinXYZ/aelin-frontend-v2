@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
 
 import { Close } from '@/src/components/assets/Close'
 import { Loading as BaseLoading } from '@/src/components/common/Loading'
-import { Modal } from '@/src/components/common/Modal'
+import { Modal, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Token } from '@/src/constants/token'
@@ -13,29 +13,14 @@ import useAelinTokenList from '@/src/hooks/aelin/useAelinTokenList'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getERC20Data } from '@/src/utils/getERC20Data'
 
-const WidthCSS = css`
-  max-width: 100%;
-  width: 320px;
-`
-
 const ButtonDropdown = styled(BaseButtonDropdown)`
-  ${WidthCSS}
-`
-
-const Description = styled.p`
-  color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 0 auto 20px;
-  text-align: center;
-  ${WidthCSS}
+  ${WidthLimitsCSS}
 `
 
 const TextfieldWrapper = styled.div`
   margin: 0 auto 20px;
   position: relative;
-  ${WidthCSS}
+  ${WidthLimitsCSS}
 `
 
 const Textfield = styled(BaseTextfield)`
@@ -76,7 +61,7 @@ const Tokens = styled.div`
   height: 300px;
   margin: 0 auto 30px;
   overflow: hidden;
-  ${WidthCSS}
+  ${WidthLimitsCSS}
 `
 
 const Item = styled.div`
@@ -211,10 +196,10 @@ function TokenDropdown(props: TokenDropdownProps) {
       </ButtonDropdown>
       {showModal && (
         <Modal onClose={closeModal} title="Select a token">
-          <Description>
+          <ModalText>
             Address of any ERC-20 tokens investors will contribute to the pool. Or choose from some
             of the commonly used tokens already provided in the below list.
-          </Description>
+          </ModalText>
           <TextfieldWrapper>
             <Textfield
               disabled={searchingToken}

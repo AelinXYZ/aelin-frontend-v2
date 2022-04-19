@@ -5,6 +5,7 @@ import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import { Deadline } from '@/src/components/common/Deadline'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
@@ -14,35 +15,26 @@ import {
   TableHead,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
-import { Deadline } from '@/src/components/table/Deadline'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import {
-  calculateInvestmentDeadlineProgress,
-  getPurchaseExpiry,
-  getStatusText,
-} from '@/src/utils/aelinPoolUtils'
+import { calculateInvestmentDeadlineProgress, getStatusText } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { shortenAddress } from '@/src/utils/string'
 
-interface FiltersProp {
+interface FiltersProps {
   network: ChainsValues | null
   variables: PoolsCreatedQueryVariables
 }
 
-const PoolsList = ({
-  filters,
-  setOrderBy,
-  setOrderDirection,
-}: {
-  filters: FiltersProp
+export const List: React.FC<{
+  filters: FiltersProps
   setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
   setOrderDirection: (value: OrderDirection) => void
-}) => {
+}> = ({ filters, setOrderBy, setOrderDirection }) => {
   const router = useRouter()
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
 
@@ -189,4 +181,4 @@ const PoolsList = ({
   )
 }
 
-export default genericSuspense(PoolsList)
+export default genericSuspense(List)
