@@ -5,6 +5,11 @@ type AelinRatesResponse = {
   ethereum: { usd: number }
 }
 
+export type UseCoingeckoRatesResponse = {
+  aelinRate: number
+  ethRate: number
+}
+
 const getAelinETHRates = (): Promise<AelinRatesResponse> => {
   return fetch(
     `https://api.coingecko.com/api/v3/simple/price?ids=aelin%2Cethereum&vs_currencies=usd`,
@@ -12,7 +17,7 @@ const getAelinETHRates = (): Promise<AelinRatesResponse> => {
 }
 
 export const useCoingeckoRates = () => {
-  return useSWR(['aelinETHRate'], async () => {
+  return useSWR(['AELIN-ETH-Rate'], async () => {
     const response: AelinRatesResponse = await getAelinETHRates()
     const { usd: aelinRate } = response.aelin
     const { usd: ethRate } = response.ethereum
