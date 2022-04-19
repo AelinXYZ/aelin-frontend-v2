@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { TokenInput } from '@/src/components/pools/TokenInput'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
