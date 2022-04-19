@@ -62,7 +62,7 @@ const StakeSection: FC<StakeSectionProps> = ({
   return (
     <Wrapper>
       <BaseTitle>
-        {`${title} `}
+        ${title}
         <Tooltip text={textTooltip} />
       </BaseTitle>
       <SubTitle>

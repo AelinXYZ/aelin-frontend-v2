@@ -9,7 +9,7 @@ const StakeBannerByNetwork = {
         title: 'Go to Uniswap',
         onClick: () =>
           window.open(
-            'https://www.sorbet.finance/#/pools/0x665d8D87ac09Bdbc1222B8B9E72Ddcb82f76B54A',
+            'https://app.uniswap.org/#/add/v2/0xa9c125bf4c8bb26f299c00969532b66732b1f758/ETH?chain=mainnet',
             '_blank',
           ),
       }}
