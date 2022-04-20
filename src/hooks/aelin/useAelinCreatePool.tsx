@@ -4,6 +4,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { parseEther, parseUnits } from '@ethersproject/units'
 import Wei, { wei } from '@synthetixio/wei'
 
@@ -14,6 +15,7 @@ import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
 import useAelinPoolCreateTransaction from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import contractCall from '@/src/utils/contractCall'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 import { isDuration } from '@/src/utils/isDuration'
@@ -340,22 +342,25 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       sponsorFee,
     } = await parseValuesToCreatePool(createPoolState)
 
-    const createPoolContract = signer
-      ? AelinPoolCreate__factory.connect(contracts.POOL_CREATE.address[chainId], signer)
-      : null
-
     try {
       const gasLimitEstimate = wei(
-        await createPoolContract?.estimateGas.createPool(
-          poolName,
-          poolSymbol,
-          poolCap,
-          investmentToken,
-          dealDeadLineDuration,
-          sponsorFee,
-          investmentDeadLineDuration,
-          poolAddresses,
-          poolAddressesAmounts,
+        await contractCall(
+          contracts.POOL_CREATE.address[chainId],
+          AelinPoolCreate__factory.createInterface(),
+          signer as JsonRpcSigner,
+          'createPool',
+          [
+            poolName,
+            poolSymbol,
+            poolCap,
+            investmentToken,
+            dealDeadLineDuration,
+            sponsorFee,
+            investmentDeadLineDuration,
+            poolAddresses,
+            poolAddressesAmounts,
+          ],
+          true,
         ),
         0,
       )

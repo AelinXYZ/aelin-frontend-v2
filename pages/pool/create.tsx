@@ -7,7 +7,7 @@ import Wei from '@synthetixio/wei'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import ConfirmTransactionModal from '@/src/components/pools/ConfirmTransactionModal'
+import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
   Description,

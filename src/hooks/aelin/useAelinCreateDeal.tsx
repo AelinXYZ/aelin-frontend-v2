@@ -2,16 +2,19 @@ import { ReactElement, useCallback, useEffect, useReducer, useRef, useState } fr
 
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import Wei, { wei } from '@synthetixio/wei'
 import { Duration } from 'date-fns'
 
 import { ChainsValues } from '@/src/constants/chains'
+import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token, isToken } from '@/src/constants/token'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import contractCall from '@/src/utils/contractCall'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 import { getERC20Data } from '@/src/utils/getERC20Data'
@@ -19,7 +22,7 @@ import { isDuration } from '@/src/utils/isDuration'
 import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import { shortenAddress } from '@/src/utils/string'
 import validateCreateDeal, { dealErrors } from '@/src/utils/validate/createDeal'
-import { AelinPool__factory } from '@/types/typechain'
+import { AelinPoolCreate__factory, AelinPool__factory } from '@/types/typechain'
 import { GasLimitEstimate } from '@/types/utils'
 
 export enum CreateDealSteps {
@@ -144,10 +147,7 @@ type createDealValues = {
   holderFundingDuration: number
 }
 
-const parseValuesToCreateDeal = async (
-  createDealState: CreateDealState,
-  investmentTokenDecimals: number,
-): Promise<createDealValues> => {
+const parseValuesToCreateDeal = (createDealState: CreateDealState): createDealValues => {
   const {
     counterPartyAddress,
     counterPartyFundingPeriod,
@@ -350,22 +350,27 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
       underlyingDealTokenTotal,
       vestingCliffDuration,
       vestingPeriodDuration,
-    } = await parseValuesToCreateDeal(createDealState, pool.investmentTokenDecimals)
-
-    const poolContract = signer ? AelinPool__factory.connect(pool.address, signer) : null
+    } = parseValuesToCreateDeal(createDealState)
 
     try {
       const gasLimitEstimate = wei(
-        await poolContract?.estimateGas.createDeal(
-          underlyingDealToken,
-          purchaseTokenTotal,
-          underlyingDealTokenTotal,
-          vestingPeriodDuration,
-          vestingCliffDuration,
-          proRataRedemptionDuration,
-          openRedemptionDuration,
-          holderAddress,
-          holderFundingDuration,
+        await contractCall(
+          pool.address,
+          AelinPool__factory.createInterface(),
+          signer as JsonRpcSigner,
+          'createDeal',
+          [
+            underlyingDealToken,
+            purchaseTokenTotal,
+            underlyingDealTokenTotal,
+            vestingPeriodDuration,
+            vestingCliffDuration,
+            proRataRedemptionDuration,
+            openRedemptionDuration,
+            holderAddress,
+            holderFundingDuration,
+          ],
+          true,
         ),
         0,
       )
@@ -390,7 +395,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
       underlyingDealTokenTotal,
       vestingCliffDuration,
       vestingPeriodDuration,
-    } = await parseValuesToCreateDeal(createDealState, pool.investmentTokenDecimals)
+    } = parseValuesToCreateDeal(createDealState)
 
     try {
       await createDealTx(

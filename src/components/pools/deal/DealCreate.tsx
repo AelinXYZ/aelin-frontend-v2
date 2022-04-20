@@ -6,7 +6,7 @@ import { formatUnits } from '@ethersproject/units'
 import Wei from '@synthetixio/wei'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
-import ConfirmTransactionModal from '@/src/components/pools/ConfirmTransactionModal'
+import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
   Description,
