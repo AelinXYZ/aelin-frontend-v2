@@ -1,0 +1,2 @@
+export const DEPOSIT_TYPE = 'DEPOSIT_TYPE'
+export const WITHDRAW_TYPE = 'WITHDRAW_TYPE'
