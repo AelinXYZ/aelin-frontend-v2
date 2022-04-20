@@ -181,4 +181,4 @@ export const List: React.FC<{
   )
 }
 
-export default genericSuspense(List)
+export default List
