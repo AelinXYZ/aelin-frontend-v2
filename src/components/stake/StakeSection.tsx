@@ -1,10 +1,10 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
+import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
 import ClaimBox from './ClaimBox'
 import StakeInfo from './StakeInfo'
 import StakeTabContent from './StakeTabContent'
-import { DEPOSIT_TYPE, WITHDRAW_TYPE } from './kind'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
@@ -14,11 +14,26 @@ import { AelinStakingResponse } from '@/src/hooks/aelin/useAelinStakingRewards'
 import { GelatoStakingResponse } from '@/src/hooks/aelin/useGelatoStakingRewards'
 import { UniswapStakingResponse } from '@/src/hooks/aelin/useUniswapStakingRewards'
 
-const SubTitle = styled.p`
+const TitleWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 0 0 5px;
+`
+
+const APYWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 0 0 10px;
+`
+
+const APYValue = styled.span`
   color: ${({ theme }) => theme.colors.textColorLight};
   font-size: 1.6rem;
   font-weight: 600;
-  text-align: center;
 `
 
 const Wrapper = styled(BaseCard)`
@@ -61,14 +76,14 @@ const StakeSection: FC<StakeSectionProps> = ({
 
   return (
     <Wrapper>
-      <BaseTitle>
-        ${title}
+      <TitleWrapper>
+        <BaseTitle>{title}</BaseTitle>
         <Tooltip text={textTooltip} />
-      </BaseTitle>
-      <SubTitle>
-        APY: {`${Math.round(rewards?.APY ?? 0)}% `}
+      </TitleWrapper>
+      <APYWrapper>
+        <APYValue>APY: {`${Math.round(rewards?.APY ?? 0)}% `}</APYValue>
         <Tooltip text={textTooltipAPY} />
-      </SubTitle>
+      </APYWrapper>
       <Tabs defaultIndex={0}>
         <Tab label="Deposit">
           <StakeTabContent

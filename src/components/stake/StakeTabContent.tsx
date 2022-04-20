@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 
-import { DEPOSIT_TYPE, WITHDRAW_TYPE } from './kind'
+import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TabContent } from '@/src/components/tabs/Tabs'
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
