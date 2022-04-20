@@ -12,6 +12,7 @@ const Wrapper = styled.div`
   display: grid;
   gap: 40px;
   grid-template-columns: 1fr 1fr;
+  flex-grow: 1;
 `
 
 const StakeGrid = ({ ...restProps }) => {

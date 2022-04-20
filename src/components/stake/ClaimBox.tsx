@@ -43,8 +43,8 @@ const Value = styled.span`
   color: ${({ theme }) => theme.colors.primary};
 `
 
-const StyledGradientButton = styled(GradientButton)`
-  width: 160px;
+const Button = styled(GradientButton)`
+  min-width: 160px;
 `
 
 type ClaimBoxProps = {
@@ -74,12 +74,12 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
       <Text>
         My Rewards: <Value>{rewardsToClaim} AELIN</Value>
       </Text>
-      <StyledGradientButton
+      <Button
         disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isLoading}
         onClick={handleClaim}
       >
         Claim
-      </StyledGradientButton>
+      </Button>
     </Wrapper>
   )
 }
