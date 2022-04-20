@@ -73,7 +73,7 @@ export const SectionIntro: React.FC<{
   return (
     <Wrapper backgroundImage={backgroundImage} {...restProps}>
       <Title>{title}</Title>
-      <Description>{description}</Description>
+      <Description dangerouslySetInnerHTML={{ __html: description }}></Description>
       {button && <Button onClick={button.onClick}>{button.title}</Button>}
     </Wrapper>
   )

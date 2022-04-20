@@ -21,6 +21,7 @@ export default function useContractCall<
   options?: SWRConfiguration,
 ): [Awaited<Return> | null, KeyedMutator<Return>] {
   const { address: walletAddress } = useWeb3Connection()
+
   const { data = skip ?? null, mutate: refetch } = useSWR(
     skip ? null : [method, address, JSON.stringify(params), walletAddress],
     async (method, address) => contractCall(address, abi, provider, method, params),
