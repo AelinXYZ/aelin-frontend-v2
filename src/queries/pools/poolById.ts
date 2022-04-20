@@ -5,7 +5,7 @@ export const POOL_CREATED_BY_ID = gql`
     poolCreated(id: $poolCreatedId) {
       ...PoolDetails
       deal {
-        ...PoolDealDetail
+        ...PoolDeal
       }
     }
   }

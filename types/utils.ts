@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import Wei from '@synthetixio/wei'
 
 export type ObjectValues<T> = T[keyof T]
 
@@ -14,3 +15,13 @@ export type DetailedNumber = {
   raw: BigNumber
   formatted: string | undefined
 }
+export type GasLimitEstimate = Wei | null
+
+export type GasPrices = {
+  fastest: number
+  fast: number
+  average: number
+}
+
+export type GasSpeed = keyof GasPrices
+export type Rates = Record<string, Wei>

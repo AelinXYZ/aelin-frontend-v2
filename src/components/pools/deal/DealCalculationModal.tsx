@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState } from 'react'
 import styled from 'styled-components'
 
-import { Modal, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
+import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Token } from '@/src/constants/token'
@@ -34,8 +34,7 @@ const Note = styled(Label)`
 `
 
 const Button = styled(GradientButton)`
-  margin: 40px auto 10px;
-  min-width: 160px;
+  ${ModalButtonCSS}
 `
 
 export const DealCalculationModal: React.FC<{

@@ -10,6 +10,7 @@ import { List } from '@/src/components/pools/list/List'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
+import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getStatusText } from '@/src/utils/aelinPoolUtils'
@@ -99,7 +100,6 @@ const searchOptions: Array<SearchOptionsType> = [
 ]
 
 const myPools = ['All pools', 'Sponsored', 'Funded', 'Invested']
-const DEBOUNCED_TIME = 500
 
 export const ListWithFilters: React.FC = () => {
   const { address } = useWeb3Connection()
@@ -131,7 +131,7 @@ export const ListWithFilters: React.FC = () => {
     [searchFilter.filter, setWhere],
   )
 
-  const debouncedChangeHandler = debounce(changeHandler, DEBOUNCED_TIME)
+  const debouncedChangeHandler = debounce(changeHandler, DEBOUNCED_INPUT_TIME)
 
   const networks = [{ id: undefined, name: 'All networks' }, ...getChainsByEnvironmentArray()]
 

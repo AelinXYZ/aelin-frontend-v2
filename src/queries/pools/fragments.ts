@@ -24,11 +24,12 @@ gql`
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
+    totalAmountEarnedBySponsor
   }
 `
 
 gql`
-  fragment PoolDealDetail on DealDetail {
+  fragment PoolDeal on Deal {
     id
     underlyingDealToken
     underlyingDealTokenSymbol
