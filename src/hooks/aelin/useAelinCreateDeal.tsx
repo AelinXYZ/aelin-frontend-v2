@@ -319,7 +319,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null)
   const [gasPrice, setGasPrice] = useState<Wei>(wei(0))
 
-  const createDealTx = useAelinPoolTransaction(pool.address, 'createDeal')
+  const createDealTx = useAelinPoolTransaction(pool.address, 'createDeal', !gasLimitEstimate)
 
   const moveStep = (value: 'next' | 'prev' | CreateDealSteps) => {
     const { currentStep } = createDealState
@@ -354,23 +354,16 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
 
     try {
       const gasLimitEstimate = wei(
-        await contractCall(
-          pool.address,
-          AelinPool__factory.createInterface(),
-          signer as JsonRpcSigner,
-          'createDeal',
-          [
-            underlyingDealToken,
-            purchaseTokenTotal,
-            underlyingDealTokenTotal,
-            vestingPeriodDuration,
-            vestingCliffDuration,
-            proRataRedemptionDuration,
-            openRedemptionDuration,
-            holderAddress,
-            holderFundingDuration,
-          ],
-          true,
+        await createDealTx(
+          underlyingDealToken,
+          purchaseTokenTotal,
+          underlyingDealTokenTotal,
+          vestingPeriodDuration,
+          vestingCliffDuration,
+          proRataRedemptionDuration,
+          openRedemptionDuration,
+          holderAddress,
+          holderFundingDuration,
         ),
         0,
       )
@@ -398,7 +391,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     } = parseValuesToCreateDeal(createDealState)
 
     try {
-      await createDealTx(
+      const tx = await createDealTx(
         underlyingDealToken,
         purchaseTokenTotal,
         underlyingDealTokenTotal,
@@ -411,8 +404,10 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
         { gasLimit: getGasEstimateWithBuffer(gasLimitEstimate)?.toBN(), gasPrice: gasPrice.toBN() },
       )
       setIsSubmitting(false)
-      dispatch({ type: 'reset' })
-      localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
+      if (tx) {
+        dispatch({ type: 'reset' })
+        localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
+      }
     } catch (e) {
       console.log(e)
       setIsSubmitting(false)

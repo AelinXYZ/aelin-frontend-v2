@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 
 import { Contract, ContractTransaction } from '@ethersproject/contracts'
 
+import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { TransactionError } from '@/src/utils/TransactionError'
 
@@ -13,7 +14,7 @@ export default function useTransaction<
   MyContract extends Contract,
   Method extends keyof MyContract,
   Params extends Parameters<MyContract[Method]>,
->(address: string, abi: any[], method: Method) {
+>(address: string, abi: any[], method: Method, onlyEstimate?: boolean) {
   const { getExplorerUrl, isAppConnected, web3Provider } = useWeb3Connection()
 
   return useCallback(
@@ -31,6 +32,16 @@ export default function useTransaction<
       }
 
       const contract = new Contract(address, abi, signer) as MyContract
+
+      // estimate tx gas if onlyEstimate is true
+      if (onlyEstimate) {
+        try {
+          console.info('Calculating transaction gas.')
+          return await contract.estimateGas[method as string](...params)
+        } catch (e: any) {
+          return ZERO_BN
+        }
+      }
 
       let tx: ContractTransaction
       try {
@@ -65,6 +76,6 @@ export default function useTransaction<
         return null
       }
     },
-    [web3Provider, isAppConnected, address, abi, method, getExplorerUrl],
+    [web3Provider, isAppConnected, address, abi, onlyEstimate, method, getExplorerUrl],
   )
 }

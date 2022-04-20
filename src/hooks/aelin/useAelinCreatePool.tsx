@@ -309,6 +309,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const createPoolTx = useAelinPoolCreateTransaction(
     contracts.POOL_CREATE.address[chainId],
     'createPool',
+    !gasLimitEstimate,
   )
 
   const moveStep = (value: 'next' | 'prev' | CreatePoolSteps) => {
@@ -344,23 +345,16 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
     try {
       const gasLimitEstimate = wei(
-        await contractCall(
-          contracts.POOL_CREATE.address[chainId],
-          AelinPoolCreate__factory.createInterface(),
-          signer as JsonRpcSigner,
-          'createPool',
-          [
-            poolName,
-            poolSymbol,
-            poolCap,
-            investmentToken,
-            dealDeadLineDuration,
-            sponsorFee,
-            investmentDeadLineDuration,
-            poolAddresses,
-            poolAddressesAmounts,
-          ],
-          true,
+        await createPoolTx(
+          poolName,
+          poolSymbol,
+          poolCap,
+          investmentToken,
+          dealDeadLineDuration,
+          sponsorFee,
+          investmentDeadLineDuration,
+          poolAddresses,
+          poolAddressesAmounts,
         ),
         0,
       )
@@ -388,7 +382,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     } = await parseValuesToCreatePool(createPoolState)
 
     try {
-      await createPoolTx(
+      const tx = await createPoolTx(
         poolName,
         poolSymbol,
         poolCap,
@@ -401,8 +395,10 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         { gasLimit: getGasEstimateWithBuffer(gasLimitEstimate)?.toBN(), gasPrice: gasPrice.toBN() },
       )
       setIsSubmitting(false)
-      dispatch({ type: 'reset' })
-      router.push('/')
+      if (tx) {
+        dispatch({ type: 'reset' })
+        router.push('/')
+      }
     } catch (e) {
       console.log(e)
       setIsSubmitting(false)
