@@ -11,7 +11,7 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
 import useExchangeRate from '@/src/hooks/useExchangeRate'
-import useEthGasPrice, { GAS_SPEEDS } from '@/src/hooks/useGasPirce'
+import useEthGasPrice, { GAS_SPEEDS } from '@/src/hooks/useGasPrice'
 import { getExchangeRatesForCurrencies, getTransactionPrice } from '@/src/utils/gasUtils'
 import { GasLimitEstimate, GasPrices, GasSpeed } from '@/types/utils'
 
