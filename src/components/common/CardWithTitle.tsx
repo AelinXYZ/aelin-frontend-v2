@@ -1,4 +1,5 @@
-import styled from 'styled-components'
+import React from 'react'
+import styled, { css } from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
@@ -6,26 +7,60 @@ const Wrapper = styled(BaseCard)`
   padding: 0;
 `
 
-const Title = styled.h2`
-  align-items: center;
-  background: linear-gradient(
+const Titles = styled.div`
+  display: flex;
+  width: 100%;
+`
+
+const TitleActiveCSS = css`
+  background-image: linear-gradient(
     90deg,
     ${({ theme }) => theme.colors.gradientStart} 9.37%,
     ${({ theme }) => theme.colors.gradientEnd} 100%
   );
-  border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
-  border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
-  color: ${({ theme }) => theme.colors.textColor};
-  display: flex;
-  font-size: 1.6rem;
+  cursor: default;
   font-weight: 600;
+
+  &:active {
+    opacity: 1;
+  }
+`
+
+export const CardTitle = styled.h2<{ isActive?: boolean }>`
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.transparentWhite2};
+  color: ${({ theme }) => theme.colors.textColor};
+  cursor: pointer;
+  display: flex;
+  flex-grow: 1;
+  font-size: 1.6rem;
+  font-weight: 400;
   justify-content: center;
   line-height: 1.4;
   margin: 0;
   min-height: 50px;
   padding: 0 20px;
   text-align: center;
+  transition: opacity 0.15s linear;
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  ${({ isActive }) => isActive && TitleActiveCSS}
+
+  &:first-child {
+    border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
+  }
+
+  &:last-child {
+    border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
+  }
 `
+
+CardTitle.defaultProps = {
+  isActive: true,
+}
 
 const Inner = styled.div`
   align-items: center;
@@ -34,9 +69,13 @@ const Inner = styled.div`
   padding: 20px 45px 40px;
 `
 
-export const CardWithTitle: React.FC<{ title: string }> = ({ children, title, ...restProps }) => (
+export const CardWithTitle: React.FC<{ titles: React.ReactNode }> = ({
+  children,
+  titles,
+  ...restProps
+}) => (
   <Wrapper {...restProps}>
-    <Title>{title}</Title>
+    <Titles>{titles}</Titles>
     <Inner className="cardWithTitleInner">{children}</Inner>
   </Wrapper>
 )

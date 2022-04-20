@@ -1,30 +1,50 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
-import ClaimBox from './ClaimBox'
-import StakeInfo from './StakeInfo'
-import StakeTabContent from './StakeTabContent'
-import { DEPOSIT_TYPE, WITHDRAW_TYPE } from './kind'
+import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
+import { Etherscan } from '@/src/components/assets/Etherscan'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
+import ClaimBox from '@/src/components/stake/ClaimBox'
+import StakeInfo from '@/src/components/stake/StakeInfo'
+import StakeTabContent from '@/src/components/stake/StakeTabContent'
 import Tabs, { Tab } from '@/src/components/tabs/Tabs'
 import { Tooltip } from '@/src/components/tooltip/Tooltip'
 import { AelinStakingResponse } from '@/src/hooks/aelin/useAelinStakingRewards'
 import { GelatoStakingResponse } from '@/src/hooks/aelin/useGelatoStakingRewards'
 import { UniswapStakingResponse } from '@/src/hooks/aelin/useUniswapStakingRewards'
 
-const SubTitle = styled.p`
-  color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.6rem;
-  font-weight: 600;
-  text-align: center;
-`
-
 const Wrapper = styled(BaseCard)`
   display: flex;
   align-items: center;
   flex-direction: column;
+`
+
+const Icon = styled(Etherscan)`
+  margin: 0 auto 10px;
+`
+
+const TitleWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 0 0 5px;
+`
+
+const APYWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 0 0 10px;
+`
+
+const APYValue = styled.span`
+  color: ${({ theme }) => theme.colors.textColorLight};
+  font-size: 1.6rem;
+  font-weight: 600;
 `
 
 type StakingRewardsResponse = GelatoStakingResponse | AelinStakingResponse | UniswapStakingResponse
@@ -54,22 +74,24 @@ const StakeSection: FC<StakeSectionProps> = ({
   textTooltipAPY,
   title,
   useStakingRewards,
+  ...restProps
 }) => {
   const { stakingAddress, tokenAddress } = contractAddresses
 
   const rewards: StakingRewardsResponse = useStakingRewards({ stakingAddress, tokenAddress })
 
   return (
-    <Wrapper>
-      <BaseTitle>
-        ${title}
+    <Wrapper {...restProps}>
+      <Icon />
+      <TitleWrapper>
+        <BaseTitle>{title}</BaseTitle>
         <Tooltip text={textTooltip} />
-      </BaseTitle>
-      <SubTitle>
-        APY: {`${Math.round(rewards?.APY ?? 0)}% `}
+      </TitleWrapper>
+      <APYWrapper>
+        <APYValue>APY: {`${Math.round(rewards?.APY ?? 0)}% `}</APYValue>
         <Tooltip text={textTooltipAPY} />
-      </SubTitle>
-      <Tabs defaultIndex={0}>
+      </APYWrapper>
+      <Tabs>
         <Tab label="Deposit">
           <StakeTabContent
             decimals={rewards?.decimals ?? 18}

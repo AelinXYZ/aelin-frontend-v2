@@ -4,40 +4,47 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
 
 const Wrapper = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.transparentWhite2};
+  border-radius: ${({ theme: { card } }) => card.borderRadius};
+  border: 1px solid ${({ theme: { card } }) => card.borderColor};
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px;
   min-width: 320px;
-  background-color: rgba(255, 255, 255, 0.04);
-  border: ${({ theme: { card } }) => card.borderColor};
-  border-radius: ${({ theme: { card } }) => card.borderRadius};
+  padding: 20px;
 `
 
-const SubTitle = styled(BaseTitle)`
-  font-size: 2rem;
-  margin: 0;
-  margin-top: 15px;
+const Title = styled.h2`
+  color: ${({ theme }) => theme.colors.textColor};
+  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 20px;
+  text-align: center;
+  width: 100%;
+`
+
+const Text = styled.p`
+  color: ${({ theme }) => theme.colors.textColorLight};
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 0 15px;
+  text-align: center;
+  width: 100%;
 `
 
 const Value = styled.span`
   color: ${({ theme }) => theme.colors.primary};
 `
 
-const Text = styled.p`
-  color: #babcc1;
-  font-size: 1.4rem;
-  font-weight: 400;
-  line-height: 1.2;
-`
-
-const StyledGradientButton = styled(GradientButton)`
-  width: 160px;
+const Button = styled(GradientButton)`
+  min-width: 160px;
 `
 
 type ClaimBoxProps = {
@@ -63,16 +70,16 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
 
   return (
     <Wrapper>
-      <SubTitle>Claim rewards</SubTitle>
+      <Title>Claim rewards</Title>
       <Text>
         My Rewards: <Value>{rewardsToClaim} AELIN</Value>
       </Text>
-      <StyledGradientButton
+      <Button
         disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isLoading}
         onClick={handleClaim}
       >
         Claim
-      </StyledGradientButton>
+      </Button>
     </Wrapper>
   )
 }

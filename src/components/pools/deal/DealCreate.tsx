@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import {
   ButtonWrapper,
   Description,
@@ -72,7 +72,7 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
       <Head>
         <title>Deal creation</title>
       </Head>
-      <CardWithTitle title={'Deal creation'}>
+      <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
         <StepIndicator
           currentStepOrder={order}
           data={getCreateDealStepIndicatorData(createDealState.currentStep)}

@@ -1,7 +1,8 @@
 import Head from 'next/head'
+import { useState } from 'react'
 import styled from 'styled-components'
 
-import { CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import Funding from '@/src/components/pools/actions/Funding'
@@ -51,18 +52,16 @@ type Props = {
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
   const { currentStatus, pool } = useAelinPoolStatus(chainId, poolAddress as string)
-
-  if (!currentStatus) {
-    return null
-  }
-
   const mockedPoolVisibility = '???'
-
   const showCreateDealForm =
     currentStatus.state === PoolState.WaitingForDeal &&
     currentStatus.waitingForDealStatus.showCreateDealForm
 
-  return (
+  type TabType = 'poolInformation' | 'dealInformation'
+
+  const [tab, setTab] = useState<TabType>('poolInformation')
+
+  return !currentStatus ? null : (
     <>
       <Head>
         <title>Aelin - {pool.nameFormatted}</title>
@@ -73,20 +72,37 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
           <DealCreate pool={pool} />
         ) : (
           <MainGrid>
-            <CardWithTitle title="Pool information">
-              {/* PoolInfo is always visible */}
+            <CardWithTitle
+              titles={
+                <>
+                  <CardTitle
+                    isActive={tab === 'poolInformation'}
+                    onClick={() => setTab('poolInformation')}
+                  >
+                    Pool information
+                  </CardTitle>
+                  {pool.dealAddress && (
+                    <CardTitle
+                      isActive={tab === 'dealInformation'}
+                      onClick={() => setTab('dealInformation')}
+                    >
+                      Deal information
+                    </CardTitle>
+                  )}
+                </>
+              }
+            >
               <ContentGrid>
-                <PoolInformation pool={pool} poolAddress={poolAddress} />
-              </ContentGrid>
-              {/* Show Deal info, if pool already has a dealAddress */}
-              {pool.dealAddress && (
-                <ContentGrid>
+                {tab === 'poolInformation' && (
+                  <PoolInformation pool={pool} poolAddress={poolAddress} />
+                )}
+                {pool.dealAddress && tab === 'dealInformation' && (
                   <DealInformation
                     pool={pool}
                     poolStatusHelper={currentStatus.waitingForDealStatus}
                   />
-                </ContentGrid>
-              )}
+                )}
+              </ContentGrid>
             </CardWithTitle>
             <ActionsCard>
               {currentStatus.state === PoolState.Funding ? (

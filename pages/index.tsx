@@ -19,9 +19,12 @@ const Home: NextPage = () => {
         <SectionIntro
           backgroundImage="resources/svg/bg-pools.svg"
           button={{ title: 'Create pool', onClick: () => router.push('/pool/create') }}
-          description="Aelin is a fully decentralized and community-based fundraising protocol. Invest in a pool to access deals brought by sponsors. Aelin does not endorse any pools, follow an investor's best practices in our docs, and do your own research."
           title="Pools"
-        />
+        >
+          Aelin is a fully decentralized and community-based fundraising protocol. Invest in a pool
+          to access deals brought by sponsors. Aelin does not endorse any pools, follow an
+          investor's best practices in our docs, and do your own research.
+        </SectionIntro>
         <ListWithFilters />
       </LeftSidebarLayout>
     </>

@@ -4,10 +4,10 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 
-import { DEPOSIT_TYPE, WITHDRAW_TYPE } from './kind'
+import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TabContent } from '@/src/components/tabs/Tabs'
-import { TokenInput } from '@/src/components/tokenInput/TokenInput'
+import { TokenInput as BaseTokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
@@ -16,6 +16,22 @@ import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingReward
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
+const TokenInput = styled(BaseTokenInput)`
+  margin: 0 auto 20px;
+  max-width: 230px;
+`
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 auto;
+`
+
+const Button = styled(GradientButton)`
+  min-width: 160px;
+`
+
 interface StakeTabContentProps {
   type: typeof DEPOSIT_TYPE | typeof WITHDRAW_TYPE
   decimals: number
@@ -23,10 +39,6 @@ interface StakeTabContentProps {
   symbol?: string
   tokenAddress: string
 }
-
-const StyledGradientButton = styled(GradientButton)`
-  width: 160px;
-`
 
 const StakeTabContent: FC<StakeTabContentProps> = ({
   decimals,
@@ -140,26 +152,27 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
         symbol={symbol}
         value={tokenInputValue}
       />
-      <StyledGradientButton
-        disabled={!address || !isAppConnected || hasAllowance || isLoading}
-        onClick={handleApprove}
-      >
-        Approve
-      </StyledGradientButton>
-      <br />
-      <StyledGradientButton
-        disabled={
-          !address ||
-          !isAppConnected ||
-          !tokenInputValue ||
-          Boolean(inputError) ||
-          !hasAllowance ||
-          isLoading
-        }
-        onClick={type === DEPOSIT_TYPE ? handleDeposit : handleWithdraw}
-      >
-        {type === DEPOSIT_TYPE ? 'Deposit' : 'Withdraw'}
-      </StyledGradientButton>
+      <ButtonsWrapper>
+        <Button
+          disabled={!address || !isAppConnected || hasAllowance || isLoading}
+          onClick={handleApprove}
+        >
+          Approve
+        </Button>
+        <Button
+          disabled={
+            !address ||
+            !isAppConnected ||
+            !tokenInputValue ||
+            Boolean(inputError) ||
+            !hasAllowance ||
+            isLoading
+          }
+          onClick={type === DEPOSIT_TYPE ? handleDeposit : handleWithdraw}
+        >
+          {type === DEPOSIT_TYPE ? 'Deposit' : 'Withdraw'}
+        </Button>
+      </ButtonsWrapper>
     </TabContent>
   )
 }

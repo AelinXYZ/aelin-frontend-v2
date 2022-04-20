@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-interface TabsProps {
-  children: React.ReactNode
-  defaultIndex: number
-  onSelect?: (newIndex: number) => void
+const Wrapper = styled.div<{ label?: string; disabled?: boolean }>``
+
+Wrapper.defaultProps = {
+  role: 'tabpanel',
 }
 
 const TabList = styled.ul`
@@ -12,17 +12,21 @@ const TabList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
 `
 
 const TabListItem = styled.li`
   align-items: center;
   display: flex;
+  flex-grow: 1;
   justify-content: center;
   margin: 0;
   min-height: 36px;
   text-align: center;
 
   &:first-child {
+    border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
+
     > button {
       border: ${({ theme: { card } }) => card.borderColor};
       border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
@@ -30,6 +34,8 @@ const TabListItem = styled.li`
   }
 
   &:last-child {
+    border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
+
     > button {
       border: ${({ theme: { card } }) => card.borderColor};
       border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
@@ -38,23 +44,23 @@ const TabListItem = styled.li`
 `
 
 const TabLink = styled.button`
-  width: 100%;
-  height: 100%;
-  outline: none;
+  background-color: ${({ theme }) => theme.colors.transparentWhite2};
   border: 0;
-  padding: 0.5rem 0;
-  font-weight: 600;
-  line-height: 1.4;
   color: ${({ theme }) => theme.colors.textColor};
   cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-  background-color: rgba(255, 255, 255, 0.04);
+  font-size: 1.2rem;
+  font-weight: 600;
+  height: 100%;
+  line-height: 1.2;
+  outline: none;
+  padding: 0;
+  width: 100%;
 
   ${(props) =>
     props['aria-selected'] &&
     css`
       cursor: default;
       color: ${({ theme }) => theme.colors.textColor};
-
       background: linear-gradient(
         90deg,
         ${({ theme }) => theme.colors.gradientStart} 9.37%,
@@ -64,56 +70,54 @@ const TabLink = styled.button`
 `
 
 export const TabContent = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.transparentWhite2};
+  border-bottom-left-radius: ${({ theme: { card } }) => card.borderRadius};
+  border-bottom-right-radius: ${({ theme: { card } }) => card.borderRadius};
+  border-top: 0;
+  border: ${({ theme: { card } }) => card.borderColor};
   display: flex;
   flex-direction: column;
-  align-items: center;
   min-width: 320px;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.04);
-  border: ${({ theme: { card } }) => card.borderColor};
-  border-top: 0;
-  border-bottom-right-radius: ${({ theme: { card } }) => card.borderRadius};
-  border-bottom-left-radius: ${({ theme: { card } }) => card.borderRadius};
 `
 
-const Tab = styled.div<{ label?: string; disabled?: boolean }>``
+interface TabsProps {
+  children: React.ReactNode
+  defaultIndex?: number
+  onSelect?: (newIndex: number) => void
+}
 
-const Tabs: FC<TabsProps> = ({ children, defaultIndex, onSelect }) => {
+const Tabs: FC<TabsProps> = ({ children, defaultIndex = 0, onSelect, ...restProps }) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(defaultIndex ?? 0)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [tabs, setTabs] = useState<any[]>(() => React.Children.toArray(children))
 
   useEffect(() => {
     setTabs(React.Children.toArray(children))
-  }, [children])
-
-  useEffect(() => {
     setSelectedIndex(defaultIndex)
-  }, [defaultIndex])
+  }, [children, defaultIndex])
 
   const onChangeTab = (nextIndex: number) => {
     if (selectedIndex === nextIndex) {
       return
     }
+
     setSelectedIndex(nextIndex)
+
     if (onSelect) {
       onSelect(nextIndex)
     }
   }
 
-  const tabWidth = useMemo(() => {
-    const fullWidth = 100
-    return fullWidth / tabs.length
-  }, [tabs.length])
-
   return (
-    <Tab>
+    <Wrapper {...restProps}>
       <TabList role="tablist">
         {tabs.map((tab, index) => {
           const tabIsSelected = selectedIndex === index
 
           return (
-            <TabListItem key={`${index}-tab`} role="presentation" style={{ width: `${tabWidth}%` }}>
+            <TabListItem key={`${index}-tab`} role="presentation">
               <TabLink
                 aria-controls={index + '-tab'}
                 aria-selected={tabIsSelected}
@@ -132,12 +136,11 @@ const Tabs: FC<TabsProps> = ({ children, defaultIndex, onSelect }) => {
       </TabList>
       {tabs[selectedIndex] &&
         React.cloneElement(tabs[selectedIndex], {
-          role: 'tabpanel',
           'aria-labelledby': `${tabs[selectedIndex].props.label}-${selectedIndex}`,
         })}
-    </Tab>
+    </Wrapper>
   )
 }
 
 export default Tabs
-export { Tab }
+export { Wrapper as Tab }

@@ -47,6 +47,10 @@ const Description = styled.p`
     margin-bottom: 0;
   }
 
+  a {
+    color: ${({ theme: { colors } }) => colors.textColor};
+  }
+
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     font-size: 1.4rem;
     margin-bottom: 18px;
@@ -67,13 +71,12 @@ export const SectionIntro: React.FC<{
     onClick: () => void
     title: string
   }
-  description: string
   title: string
-}> = ({ backgroundImage, button, description, title, ...restProps }) => {
+}> = ({ backgroundImage, button, children, title, ...restProps }) => {
   return (
     <Wrapper backgroundImage={backgroundImage} {...restProps}>
       <Title>{title}</Title>
-      <Description dangerouslySetInnerHTML={{ __html: description }}></Description>
+      <Description>{children}</Description>
       {button && <Button onClick={button.onClick}>{button.title}</Button>}
     </Wrapper>
   )

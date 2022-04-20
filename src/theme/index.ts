@@ -20,6 +20,7 @@ const gradientStart = '#5452C3'
 const gradientEnd = '#01A0D3'
 const blueishGray = '#484d58'
 const transparentWhite = 'rgba(255, 255, 255, 0.4)'
+const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 
 export const theme = {
   buttonPrimary: {
@@ -68,6 +69,7 @@ export const theme = {
     textColor: textColor,
     textColorLight: lightGray,
     transparentWhite: transparentWhite,
+    transparentWhite2: transparentWhite2,
   },
   dropdown: {
     background: componentBackgroundColor,

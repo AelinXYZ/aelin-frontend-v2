@@ -8,7 +8,9 @@ import StakeGrid from '@/src/components/stake/StakeGrid'
 const Stake: NextPage = () => {
   return (
     <>
-      <Head>Stake</Head>
+      <Head>
+        <title>Stake</title>
+      </Head>
       <LeftSidebarLayout>
         <StakeBanner />
         <StakeGrid />

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 import Wei from '@synthetixio/wei'
 
-import { CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import PoolConfirmTransactionModal from '@/src/components/pools/PoolConfirmTransactionModal'
@@ -77,7 +77,7 @@ const Create: NextPage = () => {
       </Head>
       <PageTitle title={`${createPoolState.poolName || 'Pool creation'}`} />
       <RightTimelineLayout timeline={<Timeline activeItem={1} />}>
-        <CardWithTitle title={'Pool creation'}>
+        <CardWithTitle titles={<CardTitle>Pool creation</CardTitle>}>
           <StepIndicator
             currentStepOrder={order}
             data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
