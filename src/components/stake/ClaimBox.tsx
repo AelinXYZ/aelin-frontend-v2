@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
 
