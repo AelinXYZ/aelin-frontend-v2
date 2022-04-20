@@ -1,7 +1,9 @@
 import { ReactElement, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
+import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
+import Wei, { wei } from '@synthetixio/wei'
 import { Duration } from 'date-fns'
 
 import { ChainsValues } from '@/src/constants/chains'
@@ -11,11 +13,14 @@ import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
+import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 import { getERC20Data } from '@/src/utils/getERC20Data'
 import { isDuration } from '@/src/utils/isDuration'
 import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import { shortenAddress } from '@/src/utils/string'
 import validateCreateDeal, { dealErrors } from '@/src/utils/validate/createDeal'
+import { AelinPool__factory } from '@/types/typechain'
+import { GasLimitEstimate } from '@/types/utils'
 
 export enum CreateDealSteps {
   dealToken = 'dealToken',
@@ -276,6 +281,10 @@ export const getCreateDealSummaryData = (
       value = shortenAddress(value?.address)
     }
 
+    if (value && isAddress(value)) {
+      value = shortenAddress(value)
+    }
+
     if (!value) value = '--'
 
     return {
@@ -294,7 +303,10 @@ export const getCreateDealStepIndicatorData = (
 
 const LOCAL_STORAGE_STATE_KEY = 'aelin-createDealState'
 export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAelinPool) {
-  const { readOnlyAppProvider } = useWeb3Connection()
+  const { readOnlyAppProvider, web3Provider } = useWeb3Connection()
+
+  const signer = web3Provider?.getSigner()
+
   // Get saved state in localstorage only once
   const { current: savedState } = useRef(
     removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
@@ -304,6 +316,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   const [errors, setErrors] = useState<dealErrors>()
   const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null)
+  const [gasPrice, setGasPrice] = useState<Wei>(wei(0))
 
   const createDealTx = useAelinPoolTransaction(pool.address, 'createDeal')
 
@@ -322,6 +336,46 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     }
 
     return dispatch({ type: 'updateStep', payload: value })
+  }
+
+  const handleCreateDeal = async () => {
+    setIsSubmitting(true)
+    const {
+      holderAddress,
+      holderFundingDuration,
+      openRedemptionDuration,
+      proRataRedemptionDuration,
+      purchaseTokenTotal,
+      underlyingDealToken,
+      underlyingDealTokenTotal,
+      vestingCliffDuration,
+      vestingPeriodDuration,
+    } = await parseValuesToCreateDeal(createDealState, pool.investmentTokenDecimals)
+
+    const poolContract = signer ? AelinPool__factory.connect(pool.address, signer) : null
+
+    try {
+      const gasLimitEstimate = wei(
+        await poolContract?.estimateGas.createDeal(
+          underlyingDealToken,
+          purchaseTokenTotal,
+          underlyingDealTokenTotal,
+          vestingPeriodDuration,
+          vestingCliffDuration,
+          proRataRedemptionDuration,
+          openRedemptionDuration,
+          holderAddress,
+          holderFundingDuration,
+        ),
+        0,
+      )
+      setGasLimitEstimate(gasLimitEstimate)
+      setIsSubmitting(false)
+    } catch (e) {
+      console.log(e)
+      setGasLimitEstimate(null)
+      setIsSubmitting(false)
+    }
   }
 
   const handleSubmit = async () => {
@@ -349,10 +403,10 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
         openRedemptionDuration,
         holderAddress,
         holderFundingDuration,
-        // TODO hardcoded gasLimit
-        { gasLimit: 5000000 },
+        { gasLimit: getGasEstimateWithBuffer(gasLimitEstimate)?.toBN(), gasPrice: gasPrice.toBN() },
       )
       setIsSubmitting(false)
+      dispatch({ type: 'reset' })
       localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
     } catch (e) {
       console.log(e)
@@ -432,5 +486,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     handleSubmit,
     isSubmitting,
     investmentTokenInfo,
+    gasLimitEstimate,
+    handleCreateDeal,
+    setGasPrice,
   }
 }

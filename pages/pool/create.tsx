@@ -7,7 +7,7 @@ import Wei from '@synthetixio/wei'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import PoolConfirmTransactionModal from '@/src/components/pools/PoolConfirmTransactionModal'
+import ConfirmTransactionModal from '@/src/components/pools/ConfirmTransactionModal'
 import {
   ButtonWrapper,
   Description,
@@ -135,7 +135,7 @@ const Create: NextPage = () => {
         </CardWithTitle>
       </RightTimelineLayout>
       {showSubmitModal && (
-        <PoolConfirmTransactionModal
+        <ConfirmTransactionModal
           disableButton={isSubmitting}
           gasLimitEstimate={gasLimitEstimate}
           onClose={() => setShowSubmitModal(false)}
