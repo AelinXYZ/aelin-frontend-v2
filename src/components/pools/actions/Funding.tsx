@@ -5,7 +5,7 @@ import Approve from '@/src/components/pools/actions/Approve'
 import Deposit from '@/src/components/pools/actions/Deposit'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { FundingState } from '@/types/AelinPoolStatus'
+import { FundingState } from '@/types/aelinPool'
 
 const Title = styled.h4`
   color: ${({ theme }) => theme.colors.textColor};
@@ -27,14 +27,14 @@ function Funding({ pool, poolHelpers }: Props) {
   return (
     <>
       <Title>Deposit tokens</Title>
-      {!poolHelpers.meta.userAllowance ? (
+      {!poolHelpers.userAllowance ? (
         <>There was an error, try again!</>
-      ) : poolHelpers.meta.capReached ? (
+      ) : poolHelpers.capReached ? (
         <>Max cap reached</>
-      ) : poolHelpers.meta.userAllowance.gt(ZERO_ADDRESS) ? (
+      ) : poolHelpers.userAllowance.gt(ZERO_ADDRESS) ? (
         <Deposit pool={pool} poolHelpers={poolHelpers} />
       ) : (
-        <Approve pool={pool} refetchAllowance={poolHelpers.meta.refetchAllowance} />
+        <Approve pool={pool} refetchAllowance={poolHelpers.refetchAllowance} />
       )}
     </>
   )

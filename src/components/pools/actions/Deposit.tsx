@@ -10,7 +10,7 @@ import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransacti
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
-import { FundingState } from '@/types/AelinPoolStatus'
+import { FundingState } from '@/types/aelinPool'
 
 type Props = {
   pool: ParsedAelinPool
@@ -59,7 +59,7 @@ export default function Deposit({ pool, poolHelpers }: Props) {
       raw: balance || ZERO_BN,
       formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals),
     },
-    poolHelpers.meta.maxDepositAllowed,
+    poolHelpers.maxDepositAllowed,
   ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
   return (
@@ -76,7 +76,7 @@ export default function Deposit({ pool, poolHelpers }: Props) {
         disabled={
           !address ||
           !isAppConnected ||
-          poolHelpers.meta.capReached ||
+          poolHelpers.capReached ||
           isLoading ||
           !tokenInputValue ||
           Boolean(inputError)

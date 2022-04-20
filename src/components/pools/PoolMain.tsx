@@ -12,7 +12,7 @@ import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
-import { isFunding, isWaitingForDeal } from '@/types/AelinPoolStatus'
+import { PoolState } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -49,7 +49,7 @@ type Props = {
   poolAddress: string
 }
 
-export default function PoolDetails({ chainId, poolAddress }: Props) {
+export default function PoolMain({ chainId, poolAddress }: Props) {
   const { currentStatus, pool } = useAelinPoolStatus(chainId, poolAddress as string)
 
   if (!currentStatus) {
@@ -59,7 +59,8 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
   const mockedPoolVisibility = '???'
 
   const showCreateDealForm =
-    isWaitingForDeal(currentStatus) && currentStatus.meta.showCreateDealForm
+    currentStatus.state === PoolState.WaitingForDeal &&
+    currentStatus.waitingForDealStatus.showCreateDealForm
 
   return (
     <>
@@ -80,13 +81,16 @@ export default function PoolDetails({ chainId, poolAddress }: Props) {
               {/* Show Deal info, if pool already has a dealAddress */}
               {pool.dealAddress && (
                 <ContentGrid>
-                  <DealInformation pool={pool} poolAddress={poolAddress} />
+                  <DealInformation
+                    pool={pool}
+                    poolStatusHelper={currentStatus.waitingForDealStatus}
+                  />
                 </ContentGrid>
               )}
             </CardWithTitle>
             <ActionsCard>
-              {isFunding(currentStatus) ? (
-                <Funding pool={pool} poolHelpers={currentStatus} />
+              {currentStatus.state === PoolState.Funding ? (
+                <Funding pool={pool} poolHelpers={currentStatus.fundingStatus} />
               ) : (
                 <>No actions available now.</>
               )}

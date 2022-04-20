@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 
@@ -23,11 +24,7 @@ import {
   hasDealOpenPeriod,
 } from '@/src/utils/aelinPoolUtils'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
-
-type DetailedNumber = {
-  raw: BigNumber
-  formatted: string | undefined
-}
+import { DetailedNumber } from '@/types/utils'
 
 export type ParsedAelinPool = {
   name: string
@@ -67,8 +64,8 @@ export type ParsedAelinPool = {
       dealPerInvestment: DetailedNumber
     }
     vesting: {
-      cliff: number
-      linear: number
+      cliff: string
+      linear: string
     }
     hasDealOpenPeriod: boolean
     proRataRedemption: {
@@ -120,10 +117,13 @@ export const getParsedPool = ({
   }
 
   const dealDetails = pool.deal
+
+  const now = Date.now()
+
   if (dealDetails) {
     res.deal = {
-      name: 'todo name',
-      symbol: 'todo symbol',
+      name: 'TODO: name',
+      symbol: 'TODO: symbol',
       underlyingToken: {
         token: dealDetails.underlyingDealToken,
         symbol: dealDetails.underlyingDealTokenSymbol,
@@ -140,8 +140,8 @@ export const getParsedPool = ({
         dealDetails.underlyingDealTokenDecimals,
       ),
       vesting: {
-        cliff: dealDetails.vestingCliff,
-        linear: dealDetails.vestingPeriod,
+        cliff: formatDistanceStrict(now, now + Number(dealDetails.vestingCliff ?? 0) * 60),
+        linear: formatDistanceStrict(now, now + Number(dealDetails.vestingPeriod ?? 0) * 60),
       },
       hasDealOpenPeriod: hasDealOpenPeriod(
         pool.contributions,
@@ -155,7 +155,7 @@ export const getParsedPool = ({
             dealDetails.openRedemptionPeriod,
           )
         : null,
-      holderAlreadyDeposited: false,
+      holderAlreadyDeposited: dealDetails.isDealFunded,
       holderDepositExpiration: new Date(),
       holderDepositDuration: new Date(),
       holderAddress: dealDetails.holder,
