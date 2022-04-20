@@ -91,9 +91,11 @@ export function getAelinPoolCurrentStatus(pool: ParsedAelinPool): PoolState {
     return getFundingState(pool)
   }
   // waiting for deal
-  // if (isAfter(now, pool.purchaseExpiry) && isBefore(now, pool.dealDeadline)) {
-  return getWaitingForDealState(pool)
-  // }
+  if (isAfter(now, pool.purchaseExpiry) && isBefore(now, pool.dealDeadline)) {
+    return getWaitingForDealState(pool)
+  }
+
+  return getPoolInfoAndDealInfoState(pool)
 
   // WaitingForDeal
   //   if (isBefore(now, pool.dealDeadline)) {
