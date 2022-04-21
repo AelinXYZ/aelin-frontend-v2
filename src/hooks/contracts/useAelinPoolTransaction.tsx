@@ -1,12 +1,22 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { ContractReceipt } from '@ethersproject/contracts'
 
 import useTransaction from './useTransaction'
 import aelinPool from '@/src/abis/AelinPool.json'
 import { AelinPool } from '@/types/typechain'
 
-export default function useAelinPoolTransaction<
+export function useAelinPoolTransaction<
   MethodName extends keyof AelinPool['functions'],
   Params extends Parameters<AelinPool[MethodName]>,
 >(address: string, method: MethodName): (...params: Params) => Promise<ContractReceipt | null> {
-  return useTransaction(address, aelinPool, method)
+  const { execute } = useTransaction(address, aelinPool, method)
+  return execute
+}
+
+export function useAelinPoolEstimate<
+  MethodName extends keyof AelinPool['functions'],
+  Params extends Parameters<AelinPool[MethodName]>,
+>(address: string, method: MethodName): (...params: Params) => Promise<BigNumber | null> {
+  const { estimate } = useTransaction(address, aelinPool, method)
+  return estimate
 }

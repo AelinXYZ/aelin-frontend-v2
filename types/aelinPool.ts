@@ -2,6 +2,13 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { DetailedNumber } from '@/types/utils'
 
+export enum UserRole {
+  Visitor,
+  Investor,
+  Sponsor,
+  Holder,
+}
+
 export enum PoolStatus {
   Funding = 'Funding',
   Dealing = 'Waiting Deal',

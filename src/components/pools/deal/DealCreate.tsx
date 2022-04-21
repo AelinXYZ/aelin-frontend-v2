@@ -1,8 +1,11 @@
 import Head from 'next/head'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import Wei, { wei } from '@synthetixio/wei'
+
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
+import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
   Description,
@@ -45,6 +48,9 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
   const {
     createDealState,
     errors,
+    gasLimitEstimate,
+    gasPrice,
+    handleCreateDeal,
     handleSubmit,
     investmentTokenInfo,
     isFinalStep,
@@ -52,7 +58,10 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
     isSubmitting,
     moveStep,
     setDealField,
+    setGasPrice,
   } = useAelinCreateDeal(appChainId, pool)
+
+  const [showSubmitModal, setShowSubmitModal] = useState<boolean>(false)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
   const { order, text, title } = currentStepConfig
@@ -66,6 +75,16 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
       moveStep('next')
     }
   }
+
+  useEffect(() => {
+    if (totalPurchase === 'all') {
+      try {
+        setDealField(wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber())
+      } catch (e) {
+        setDealField(0)
+      }
+    }
+  }, [pool.amountInPool.raw, pool.investmentTokenDecimals, setDealField, totalPurchase])
 
   return (
     <>
@@ -109,7 +128,10 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
                     <GradientButton
                       disabled={disableSubmit}
                       key={`${step}_button`}
-                      onClick={handleSubmit}
+                      onClick={() => {
+                        handleCreateDeal()
+                        setShowSubmitModal(true)
+                      }}
                     >
                       Create Deal
                     </GradientButton>
@@ -137,6 +159,16 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
             setDealField(value)
             setShowDealCalculationModal(false)
           }}
+        />
+      )}
+      {showSubmitModal && (
+        <ConfirmTransactionModal
+          disableButton={isSubmitting || !gasPrice.gt(wei(0))}
+          gasLimitEstimate={gasLimitEstimate}
+          onClose={() => setShowSubmitModal(false)}
+          onSubmit={handleSubmit}
+          setGasPrice={(gasPrice: Wei) => setGasPrice(gasPrice)}
+          title={'Create deal'}
         />
       )}
     </>

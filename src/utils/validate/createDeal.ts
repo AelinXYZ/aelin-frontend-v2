@@ -25,7 +25,9 @@ const validateCreateDeal = (values: dealErrors, pool: ParsedAelinPool, chainId: 
 
   const currentNetwork = getNetworkConfig(chainId)
 
-  if (
+  if (!values.totalPurchaseAmount) {
+    errors.totalPurchaseAmount = true
+  } else if (
     values.totalPurchaseAmount &&
     parseUnits(values.totalPurchaseAmount?.toString(), pool.investmentTokenDecimals).gt(
       pool.amountInPool.raw,

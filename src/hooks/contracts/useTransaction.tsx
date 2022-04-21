@@ -1,7 +1,9 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
-import { Contract, ContractTransaction } from '@ethersproject/contracts'
+import { BigNumber } from '@ethersproject/bignumber'
+import { Contract, ContractReceipt, ContractTransaction } from '@ethersproject/contracts'
 
+import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { TransactionError } from '@/src/utils/TransactionError'
 
@@ -16,7 +18,7 @@ export default function useTransaction<
 >(address: string, abi: any[], method: Method) {
   const { getExplorerUrl, isAppConnected, web3Provider } = useWeb3Connection()
 
-  return useCallback(
+  const execute = useCallback(
     async (...params: Params) => {
       const signer = web3Provider?.getSigner()
       if (!signer) {
@@ -67,4 +69,34 @@ export default function useTransaction<
     },
     [web3Provider, isAppConnected, address, abi, method, getExplorerUrl],
   )
+
+  const estimate = useCallback(
+    async (...params: Params) => {
+      const signer = web3Provider?.getSigner()
+      if (!signer) {
+        // TODO replace console with some notification or toast
+        console.error('Transaction failed, there is no provider')
+        return null
+      }
+
+      if (!isAppConnected) {
+        console.error('App is not connected')
+        return null
+      }
+
+      const contract = new Contract(address, abi, signer) as MyContract
+      // estimate tx gas if onlyEstimate is true
+      try {
+        console.info('Calculating transaction gas.')
+        return await contract.estimateGas[method as string](...params)
+      } catch (e: any) {
+        return ZERO_BN
+      }
+    },
+    [abi, address, isAppConnected, method, web3Provider],
+  )
+
+  return useMemo(() => {
+    return { execute, estimate }
+  }, [execute, estimate])
 }

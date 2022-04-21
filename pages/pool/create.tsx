@@ -1,13 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
-import Wei from '@synthetixio/wei'
+import Wei, { wei } from '@synthetixio/wei'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import PoolConfirmTransactionModal from '@/src/components/pools/PoolConfirmTransactionModal'
+import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
   Description,
@@ -40,6 +40,7 @@ const Create: NextPage = () => {
     createPoolState,
     errors,
     gasLimitEstimate,
+    gasPrice,
     handleCreatePool,
     handleSubmit,
     isFinalStep,
@@ -64,11 +65,6 @@ const Create: NextPage = () => {
       moveStep('next')
     }
   }
-
-  useEffect(() => {
-    if (showSubmitModal) handleCreatePool()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showSubmitModal])
 
   return (
     <>
@@ -108,7 +104,10 @@ const Create: NextPage = () => {
                       <GradientButton
                         disabled={disableSubmit}
                         key={`${step}_button`}
-                        onClick={() => setShowSubmitModal(true)}
+                        onClick={() => {
+                          handleCreatePool()
+                          setShowSubmitModal(true)
+                        }}
                       >
                         Create Pool
                       </GradientButton>
@@ -135,8 +134,8 @@ const Create: NextPage = () => {
         </CardWithTitle>
       </RightTimelineLayout>
       {showSubmitModal && (
-        <PoolConfirmTransactionModal
-          disableButton={isSubmitting}
+        <ConfirmTransactionModal
+          disableButton={isSubmitting || !gasPrice.gt(wei(0))}
           gasLimitEstimate={gasLimitEstimate}
           onClose={() => setShowSubmitModal(false)}
           onSubmit={handleSubmit}

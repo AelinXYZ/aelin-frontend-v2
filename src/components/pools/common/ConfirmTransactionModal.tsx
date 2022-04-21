@@ -12,7 +12,7 @@ const Button = styled(GradientButton)`
   ${ModalButtonCSS}
 `
 
-const PoolConfirmTransactionModal = ({
+const ConfirmTransactionModal = ({
   disableButton,
   gasLimitEstimate,
   onClose,
@@ -39,4 +39,4 @@ const PoolConfirmTransactionModal = ({
   )
 }
 
-export default PoolConfirmTransactionModal
+export default ConfirmTransactionModal
