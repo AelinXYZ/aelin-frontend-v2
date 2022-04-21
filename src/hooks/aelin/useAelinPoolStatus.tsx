@@ -12,7 +12,7 @@ import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { formatToken } from '@/src/web3/bigNumber'
-import { Funding, PoolStatus, ProRata, WaitingForDeal } from '@/types/aelinPool'
+import { Funding, PoolStatus, ProRata, UserRole, WaitingForDeal } from '@/types/aelinPool'
 
 function useFundingStatus(pool: ParsedAelinPool): Funding {
   const { address } = useWeb3Connection()
@@ -39,7 +39,7 @@ function useFundingStatus(pool: ParsedAelinPool): Funding {
   }
 }
 
-function useWaitingForDealStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
+function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
   const { address } = useWeb3Connection()
   const allSDK = getAllGqlSDK()
   const { useUserAllocationStat } = allSDK[chainId]
@@ -73,52 +73,96 @@ function useProRataStatus(pool: ParsedAelinPool): ProRata {
   return {}
 }
 
-function deriveCurrentStatus(pool: ParsedAelinPool): {
-  currentStatus: PoolStatus
-  prevStatuses: PoolStatus[]
-} {
-  const prevStatuses: PoolStatus[] = []
-  let currentStatus: PoolStatus = PoolStatus.Funding
+type DerivedStatus = {
+  current: PoolStatus
+  history: PoolStatus[]
+}
+
+function deriveStatus(pool: ParsedAelinPool): DerivedStatus {
   const now = Date.now()
+
+  // funding
+  if (isBefore(now, pool.purchaseExpiry)) {
+    return {
+      current: PoolStatus.Funding,
+      history: [PoolStatus.Funding],
+    }
+  }
 
   // dealing
   if (isAfter(now, pool.purchaseExpiry) && isBefore(now, pool.dealDeadline)) {
-    prevStatuses.push(PoolStatus.Funding)
-    currentStatus = PoolStatus.Dealing
+    return {
+      current: PoolStatus.Dealing,
+      history: [PoolStatus.Funding, PoolStatus.Dealing],
+    }
   }
 
   // pro-rata
-  //if(pool.) {
-  prevStatuses.push(PoolStatus.Funding)
-  prevStatuses.push(PoolStatus.Dealing)
-  currentStatus = PoolStatus.ProRata
-  // }
-
   return {
-    currentStatus,
-    prevStatuses,
+    current: PoolStatus.ProRata,
+    history: [PoolStatus.Funding, PoolStatus.Dealing, PoolStatus.ProRata],
   }
+}
+
+function deriveUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserRole {
+  if (!walletAddress) {
+    return UserRole.Visitor
+  }
+
+  if (walletAddress === pool.sponsor) {
+    return UserRole.Sponsor
+  }
+
+  if (walletAddress === pool.deal?.holderAddress) {
+    return UserRole.Investor
+  }
+
+  return UserRole.Visitor
+}
+
+function deriveUserTabs(
+  userRole: UserRole,
+  pool: ParsedAelinPool,
+  derivedStatus: DerivedStatus,
+): PoolStatus[] {
+  const currentStatus = derivedStatus.current
+
+  if (currentStatus === PoolStatus.Funding) {
+    return [PoolStatus.Funding]
+  }
+
+  if (currentStatus === PoolStatus.Dealing) {
+    return pool.dealAddress ? [PoolStatus.Funding, PoolStatus.Dealing] : [PoolStatus.Funding]
+  }
+
+  return [PoolStatus.Funding, PoolStatus.Dealing]
 }
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
   })
-  const { currentStatus, prevStatuses } = deriveCurrentStatus(poolResponse)
+  const { address } = useWeb3Connection()
+
+  const derivedStatus = deriveStatus(poolResponse)
+  const userRole = deriveUserRole(address, poolResponse)
+  const tabs = deriveUserTabs(userRole, poolResponse, derivedStatus)
 
   const funding = useFundingStatus(poolResponse)
-  const dealing = useWaitingForDealStatus(poolResponse, chainId)
+  const dealing = useDealingStatus(poolResponse, chainId)
   const proRata = useProRataStatus(poolResponse)
 
-  const status = useMemo(
+  return useMemo(
     () => ({
-      current: currentStatus,
+      refetchPool,
+      pool: poolResponse,
+      userRole,
+      ...derivedStatus,
       funding,
       dealing,
       proRata,
+      tabs,
     }),
-    [currentStatus, funding, dealing, proRata],
+    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs],
   )
-
-  return { refetchPool, status, prevStatuses, pool: poolResponse }
 }
