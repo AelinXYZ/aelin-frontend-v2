@@ -6,6 +6,8 @@ import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { SectionTabs } from '@/src/components/common/SectionTabs'
 import { DealsAccepted } from '@/src/components/history/DealsAccepted'
 import { Deposits } from '@/src/components/history/Deposits'
+import { Vests } from '@/src/components/history/Vests'
+import { Withdraws } from '@/src/components/history/Withdraws'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 
 const History: NextPage = () => {
@@ -35,8 +37,8 @@ const History: NextPage = () => {
         <SectionTabs items={items} onClick={onSetActiveTab} />
         {activeTab === items[0] && <Deposits />}
         {activeTab === items[1] && <DealsAccepted />}
-        {activeTab === items[2] && <>Withdraws</>}
-        {activeTab === items[3] && <>Vests</>}
+        {activeTab === items[2] && <Withdraws />}
+        {activeTab === items[3] && <Vests />}
         {activeTab === items[4] && <>Deals sponsored</>}
         {activeTab === items[5] && <>Deals funded</>}
       </LeftSidebarLayout>

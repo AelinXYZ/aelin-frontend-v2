@@ -17,14 +17,14 @@ import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Chains, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 
-export const DealsAccepted: React.FC = ({ ...restProps }) => {
+export const Withdraws: React.FC = ({ ...restProps }) => {
   const router = useRouter()
   const columns = {
     alignment: {
       network: 'center',
       seePool: 'right',
     },
-    widths: '140px 140px 170px 150px 120px 1fr',
+    widths: '140px 140px 170px 120px 1fr',
   }
 
   const tableHeaderCells = [
@@ -37,11 +37,7 @@ export const DealsAccepted: React.FC = ({ ...restProps }) => {
       sortKey: '',
     },
     {
-      title: 'Investment Amount',
-      sortKey: '',
-    },
-    {
-      title: 'Deal token amount',
+      title: 'Amount withdrawn',
       sortKey: '',
     },
     {
@@ -66,64 +62,7 @@ export const DealsAccepted: React.FC = ({ ...restProps }) => {
     {
       date: 'Dec 1, 2021 10:00AM',
       poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
+      amountWithdrawn: '1,000,000 USDC',
       network: Chains.kovan,
       id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
     },
@@ -160,7 +99,7 @@ export const DealsAccepted: React.FC = ({ ...restProps }) => {
             <BaseCard>No data.</BaseCard>
           ) : (
             data.map((item) => {
-              const { date, dealTokenAmount, id, investmentAmount, network, poolName } = item
+              const { amountWithdrawn, date, id, network, poolName } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -172,8 +111,7 @@ export const DealsAccepted: React.FC = ({ ...restProps }) => {
                 >
                   <Cell>{date}</Cell>
                   <Cell light>{poolName}</Cell>
-                  <Cell light>{investmentAmount}</Cell>
-                  <Cell light>{dealTokenAmount}</Cell>
+                  <Cell light>{amountWithdrawn}</Cell>
                   <Cell justifyContent={columns.alignment.network} light>
                     {getNetworkConfig(network).icon}
                   </Cell>
@@ -197,4 +135,4 @@ export const DealsAccepted: React.FC = ({ ...restProps }) => {
   )
 }
 
-export default genericSuspense(DealsAccepted)
+export default genericSuspense(Withdraws)
