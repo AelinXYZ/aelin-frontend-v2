@@ -10,11 +10,11 @@ import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransacti
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
-import { FundingState } from '@/types/aelinPool'
+import { Funding } from '@/types/aelinPool'
 
 type Props = {
   pool: ParsedAelinPool
-  poolHelpers: FundingState
+  poolHelpers: Funding
 }
 
 export default function Deposit({ pool, poolHelpers }: Props) {

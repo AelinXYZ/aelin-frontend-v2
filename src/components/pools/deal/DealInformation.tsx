@@ -8,7 +8,7 @@ import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
-import { WaitingForDealState } from '@/types/aelinPool'
+import { WaitingForDeal } from '@/types/aelinPool'
 
 const Column = styled.div`
   display: flex;
@@ -19,7 +19,7 @@ const Column = styled.div`
 
 export const DealInformation: React.FC<{
   pool: ParsedAelinPool
-  poolStatusHelper: WaitingForDealState
+  poolStatusHelper: WaitingForDeal
 }> = ({ pool, poolStatusHelper }) => {
   if (!pool.deal) {
     return <div>No Deal presented yet.</div>

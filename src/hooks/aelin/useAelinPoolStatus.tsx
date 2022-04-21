@@ -12,9 +12,9 @@ import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { formatToken } from '@/src/web3/bigNumber'
-import { FundingState, PoolState, ProRataState, WaitingForDealState } from '@/types/aelinPool'
+import { Funding, PoolStatus, ProRata, WaitingForDeal } from '@/types/aelinPool'
 
-function useFundingStatus(pool: ParsedAelinPool): FundingState {
+function useFundingStatus(pool: ParsedAelinPool): Funding {
   const { address } = useWeb3Connection()
 
   const [allowance, refetch] = useERC20Call(pool.chainId, pool.investmentToken, 'allowance', [
@@ -39,10 +39,7 @@ function useFundingStatus(pool: ParsedAelinPool): FundingState {
   }
 }
 
-function useWaitingForDealStatus(
-  pool: ParsedAelinPool,
-  chainId: ChainsValues,
-): WaitingForDealState {
+function useWaitingForDealStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
   const { address } = useWeb3Connection()
   const allSDK = getAllGqlSDK()
   const { useUserAllocationStat } = allSDK[chainId]
@@ -72,42 +69,56 @@ function useWaitingForDealStatus(
   }
 }
 
-function useProRataStatus(pool: ParsedAelinPool, currentStatusType: PoolState): ProRataState {
+function useProRataStatus(pool: ParsedAelinPool): ProRata {
   return {}
 }
 
-function deriveCurrentStatus(pool: ParsedAelinPool): PoolState {
+function deriveCurrentStatus(pool: ParsedAelinPool): {
+  currentStatus: PoolStatus
+  prevStatuses: PoolStatus[]
+} {
+  const prevStatuses: PoolStatus[] = []
+  let currentStatus: PoolStatus = PoolStatus.Funding
   const now = Date.now()
-  if (isBefore(now, pool.purchaseExpiry)) {
-    return PoolState.Funding
-  }
 
+  // dealing
   if (isAfter(now, pool.purchaseExpiry) && isBefore(now, pool.dealDeadline)) {
-    return PoolState.WaitingForDeal
+    prevStatuses.push(PoolStatus.Funding)
+    currentStatus = PoolStatus.Dealing
   }
 
-  return PoolState.ProRata
+  // pro-rata
+  //if(pool.) {
+  prevStatuses.push(PoolStatus.Funding)
+  prevStatuses.push(PoolStatus.Dealing)
+  currentStatus = PoolStatus.ProRata
+  // }
+
+  return {
+    currentStatus,
+    prevStatuses,
+  }
 }
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
   })
-  const currentStatusType = deriveCurrentStatus(poolResponse)
+  const { currentStatus, prevStatuses } = deriveCurrentStatus(poolResponse)
 
-  const fundingStatus = useFundingStatus(poolResponse)
-  const waitingForDealStatus = useWaitingForDealStatus(poolResponse, chainId)
-  const proRataStatus = useProRataStatus(poolResponse, currentStatusType)
+  const funding = useFundingStatus(poolResponse)
+  const dealing = useWaitingForDealStatus(poolResponse, chainId)
+  const proRata = useProRataStatus(poolResponse)
 
-  const currentStatus = useMemo(
+  const status = useMemo(
     () => ({
-      state: currentStatusType,
-      fundingStatus,
-      waitingForDealStatus,
-      proRataStatus,
+      current: currentStatus,
+      funding,
+      dealing,
+      proRata,
     }),
-    [currentStatusType, fundingStatus, waitingForDealStatus, proRataStatus],
+    [currentStatus, funding, dealing, proRata],
   )
 
-  return { refetchPool, currentStatus, pool: poolResponse }
+  return { refetchPool, status, prevStatuses, pool: poolResponse }
 }

@@ -2,21 +2,21 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { DetailedNumber } from '@/types/utils'
 
-export enum PoolState {
+export enum PoolStatus {
   Funding = 'Funding',
-  WaitingForDeal = 'Waiting Deal',
+  Dealing = 'Waiting Deal',
   ProRata = 'Pro Rata',
   Vesting = 'Vesting',
   Closed = 'Closed',
 }
 
-interface BaseState {
-  state: PoolState
-  prevStates: PoolState[]
-  meta: Record<string, unknown>
-}
+// interface BaseState {
+//   state: PoolState
+//   prevStates: PoolState[]
+//   meta: Record<string, unknown>
+// }
 
-export interface FundingState {
+export interface Funding {
   isCap: boolean
   capReached: boolean
   userAllowance: BigNumber
@@ -24,7 +24,7 @@ export interface FundingState {
   maxDepositAllowed: DetailedNumber
 }
 
-export interface WaitingForDealState {
+export interface WaitingForDeal {
   userTotalWithdrawn: DetailedNumber
   userProRataAllocation: DetailedNumber
   isUserSponsor: boolean
@@ -32,9 +32,9 @@ export interface WaitingForDealState {
   showCreateDealForm: boolean
 }
 
-export type ProRataState = Record<string, unknown>
+export type ProRata = Record<string, unknown>
 
-export type PoolStatus = FundingState | WaitingForDealState | ProRataState
+export type PoolStatusInfo = Funding | WaitingForDeal | ProRata
 
 // export function isFunding(pool: BaseState): pool is FundingState {
 //   return pool.state === AelinPoolState.Funding

@@ -5,7 +5,7 @@ import Approve from '@/src/components/pools/actions/Approve'
 import Deposit from '@/src/components/pools/actions/Deposit'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { FundingState } from '@/types/aelinPool'
+import { Funding } from '@/types/aelinPool'
 
 const Title = styled.h4`
   color: ${({ theme }) => theme.colors.textColor};
@@ -20,7 +20,7 @@ const Title = styled.h4`
 
 type Props = {
   pool: ParsedAelinPool
-  poolHelpers: FundingState
+  poolHelpers: Funding
 }
 
 function Funding({ pool, poolHelpers }: Props) {
