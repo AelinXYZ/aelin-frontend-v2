@@ -11,6 +11,7 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
   background-repeat: no-repeat;
   background-size: contain;
   margin: 0 0 20px;
+  min-height: 180px;
   padding: 20px 40px 18px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {

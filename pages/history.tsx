@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
+import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 
 const History: NextPage = () => {
@@ -9,7 +10,11 @@ const History: NextPage = () => {
       <Head>
         <title>Aelin - History</title>
       </Head>
-      <LeftSidebarLayout>We have some history.</LeftSidebarLayout>
+      <LeftSidebarLayout>
+        <SectionIntro backgroundImage="resources/svg/bg-history.svg" title="History">
+          All of your past investments are listed below.
+        </SectionIntro>
+      </LeftSidebarLayout>
     </>
   )
 }
