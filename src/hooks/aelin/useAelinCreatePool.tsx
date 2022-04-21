@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -6,14 +7,15 @@ import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
 import Wei, { wei } from '@synthetixio/wei'
 
-import AelinPoolCreateABI from '@/src/abis/AelinPoolCreate.json'
 import { ChainsValues } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
-import useAelinPoolCreateTransaction from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
-import useGasLimitEstimate from '@/src/hooks/contracts/useGasLimitEstimate'
+import {
+  useAelinPoolCreateEstimate,
+  useAelinPoolCreateTransaction,
+} from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 import { isDuration } from '@/src/utils/isDuration'
@@ -297,14 +299,16 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null)
   const [gasPrice, setGasPrice] = useState<Wei>(wei(0))
 
+  const router = useRouter()
+
   const createPoolTx = useAelinPoolCreateTransaction(
     contracts.POOL_CREATE.address[chainId],
     'createPool',
   )
 
-  const getGasLimitEstimate = useGasLimitEstimate(
+  const createPoolEstimate = useAelinPoolCreateEstimate(
     contracts.POOL_CREATE.address[chainId],
-    AelinPoolCreateABI,
+    'createPool',
   )
 
   const moveStep = (value: 'next' | 'prev' | CreatePoolSteps) => {
@@ -340,7 +344,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
     try {
       const gasLimitEstimate = wei(
-        await getGasLimitEstimate('createPool', [
+        await createPoolEstimate(
           poolName,
           poolSymbol,
           poolCap,
@@ -350,7 +354,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
           investmentDeadLineDuration,
           poolAddresses,
           poolAddressesAmounts,
-        ]),
+        ),
         0,
       )
       setGasLimitEstimate(gasLimitEstimate)
@@ -377,7 +381,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     } = await parseValuesToCreatePool(createPoolState)
 
     try {
-      await createPoolTx(
+      const tx = await createPoolTx(
         poolName,
         poolSymbol,
         poolCap,
@@ -390,7 +394,10 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         { gasLimit: getGasEstimateWithBuffer(gasLimitEstimate)?.toBN(), gasPrice: gasPrice.toBN() },
       )
       setIsSubmitting(false)
-      localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
+      if (tx) {
+        dispatch({ type: 'reset' })
+        router.push('/')
+      }
     } catch (e) {
       console.log(e)
       setIsSubmitting(false)
