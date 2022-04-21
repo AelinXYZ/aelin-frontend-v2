@@ -136,7 +136,9 @@ export function getProRataRedemptionDates(
   const proRataRedemptionEnd = addSeconds(proRataRedemptionStart, Number(proRataRedemptionPeriod))
 
   const openRedemptionEnd =
-    openRedemptionPeriod !== '0' ? new Date(Number(openRedemptionPeriod) * 1000) : null
+    openRedemptionPeriod !== '0'
+      ? addSeconds(proRataRedemptionEnd, Number(openRedemptionPeriod))
+      : null
 
   const stage = isBefore(now, proRataRedemptionEnd)
     ? 1
