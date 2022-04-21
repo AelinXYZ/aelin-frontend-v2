@@ -40,8 +40,8 @@ export const theme = {
     colorHover: textColor,
   },
   buttonPrimaryLighter: {
-    backgroundColor: 'transparent',
-    backgroundColorHover: 'transparent',
+    backgroundColor: mainBodyBackground,
+    backgroundColorHover: mainBodyBackground,
     borderColor: lightGray,
     borderColorHover: lightGray,
     color: lightGray,

@@ -58,9 +58,9 @@ export const TableHead = styled.div<RowProps>`
   margin-bottom: 18px;
 `
 
-export const Cell = styled.span<{ justifyContent?: string }>`
+export const Cell = styled.span<{ justifyContent?: string; light?: boolean }>`
   align-items: center;
-  color: ${({ theme }) => theme.colors.textColorLight};
+  color: ${({ light, theme: { colors } }) => (light ? colors.textColor : colors.textColorLight)};
   display: flex;
   font-size: 1.4rem;
   font-weight: 500;
@@ -74,7 +74,12 @@ export const Cell = styled.span<{ justifyContent?: string }>`
 
 Cell.defaultProps = {
   justifyContent: 'flex-start',
+  light: false,
 }
+
+export const LinkCell = styled(Cell)`
+  column-gap: 20px;
+`
 
 export const TH = styled(Cell)`
   color: ${({ theme }) => theme.colors.textColor};

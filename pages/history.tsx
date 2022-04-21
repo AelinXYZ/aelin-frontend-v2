@@ -4,10 +4,10 @@ import { useState } from 'react'
 
 import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { SectionTabs } from '@/src/components/common/SectionTabs'
+import { Deposits } from '@/src/components/history/Deposits'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 
 const History: NextPage = () => {
-  const [activeTab, setActiveTab] = useState('')
   const items = [
     'Deposits',
     'Deals accepted',
@@ -16,6 +16,7 @@ const History: NextPage = () => {
     'Deals sponsored',
     'Deals funded',
   ]
+  const [activeTab, setActiveTab] = useState(items[0])
 
   const onSetActiveTab = (item: string) => {
     setActiveTab(item)
@@ -31,7 +32,7 @@ const History: NextPage = () => {
           All of your past investments are listed below.
         </SectionIntro>
         <SectionTabs items={items} onClick={onSetActiveTab} />
-        {activeTab === items[0] && <>Deposits</>}
+        {activeTab === items[0] && <Deposits />}
         {activeTab === items[1] && <>Deals accepted</>}
         {activeTab === items[2] && <>Withdraws</>}
         {activeTab === items[3] && <>Vests</>}
