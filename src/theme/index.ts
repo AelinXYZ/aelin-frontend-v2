@@ -39,6 +39,14 @@ export const theme = {
     color: textColor,
     colorHover: textColor,
   },
+  buttonPrimaryLighter: {
+    backgroundColor: 'transparent',
+    backgroundColorHover: 'transparent',
+    borderColor: lightGray,
+    borderColorHover: lightGray,
+    color: lightGray,
+    colorHover: lightGray,
+  },
   buttonDropdown: {
     backgroundColor: componentBackgroundColor,
     backgroundColorHover: lighten(0.1, componentBackgroundColor),

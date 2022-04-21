@@ -72,6 +72,26 @@ export const ButtonPrimaryLightCSS = css`
   }
 `
 
+export const ButtonPrimaryLighterCSS = css`
+  background-color: ${({ theme }) => theme.buttonPrimaryLighter.backgroundColor};
+  border-color: ${({ theme }) => theme.buttonPrimaryLighter.borderColor};
+  color: ${({ theme }) => theme.buttonPrimaryLighter.color};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonPrimaryLighter.backgroundColorHover};
+    border-color: ${({ theme }) => theme.buttonPrimaryLighter.borderColorHover};
+    box-shadow: 0 0 10px rgba(205, 205, 205, 0.25);
+    color: ${({ theme }) => theme.buttonPrimaryLighter.colorHover};
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: ${({ theme }) => theme.buttonPrimaryLighter.borderColor};
+    border-color: ${({ theme }) => theme.buttonPrimaryLighter.borderColor};
+    color: ${({ theme }) => theme.buttonPrimaryLighter.color};
+  }
+`
+
 export const ButtonGradientCSS = css`
   background: linear-gradient(
     90deg,
@@ -183,6 +203,10 @@ export const ButtonPrimary = styled(Button)`
 
 export const ButtonPrimaryLight = styled(Button)`
   ${ButtonPrimaryLightCSS}
+`
+
+export const ButtonPrimaryLighter = styled(Button)`
+  ${ButtonPrimaryLighterCSS}
 `
 
 export const GradientButton = styled(Button)`
