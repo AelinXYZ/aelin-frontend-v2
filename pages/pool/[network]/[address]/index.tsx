@@ -6,7 +6,7 @@ import nullthrows from 'nullthrows'
 
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import PoolDetails from '@/src/components/pools/PoolMain'
+import PoolMain from '@/src/components/pools/PoolMain'
 import { Chains, ChainsKeys } from '@/src/constants/chains'
 
 const PoolDetailsPage: NextPage = () => {
@@ -26,7 +26,7 @@ const PoolDetailsPage: NextPage = () => {
     throw Error('Pool address is not a valid address.')
   }
 
-  return <PoolDetails chainId={chainId} poolAddress={poolAddress as string} />
+  return <PoolMain chainId={chainId} poolAddress={poolAddress as string} />
 }
 
 export default genericSuspense(PoolDetailsPage, () => <Loading />)

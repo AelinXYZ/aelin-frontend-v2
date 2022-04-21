@@ -5,6 +5,7 @@ import { BigNumberInput } from 'big-number-input'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 
 const Wrapper = styled.div`
+  margin-bottom: 40px;
   width: 100%;
 `
 
@@ -47,7 +48,7 @@ const Balance = styled.div`
   font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.2;
-  margin: 0 0 40px;
+  margin: 0;
 `
 
 interface Props {
