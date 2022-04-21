@@ -35,23 +35,24 @@ Item.defaultProps = {
 }
 
 export const SectionTabs: React.FC<{
-  onClick: (item: string) => void
-  items: Array<string>
-}> = ({ items, onClick, ...restProps }) => {
-  const [activeItem, setActiveItem] = useState(items[0])
+  items: Array<{ value: string; key: string; children: React.ReactNode }>
+}> = ({ items, ...restProps }) => {
+  const [activeItem, setActiveItem] = useState(items[0].key)
 
-  const onItemClick = (value: string) => {
-    setActiveItem(value)
-    onClick(value)
+  const onItemClick = (key: string) => {
+    setActiveItem(key)
   }
 
   return (
-    <Wrapper {...restProps}>
-      {items.map((item, index) => (
-        <Item isActive={activeItem === item} key={index} onClick={() => onItemClick(item)}>
-          {item}
-        </Item>
-      ))}
-    </Wrapper>
+    <>
+      <Wrapper {...restProps}>
+        {items.map(({ key, value }) => (
+          <Item isActive={activeItem === key} key={key} onClick={() => onItemClick(key)}>
+            {value}
+          </Item>
+        ))}
+      </Wrapper>
+      {items.map(({ children, key }) => (activeItem === key ? children : null))}
+    </>
   )
 }

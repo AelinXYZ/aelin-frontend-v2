@@ -141,13 +141,13 @@ export const Vests: React.FC = ({ ...restProps }) => {
           {!data.length ? (
             <BaseCard>No data.</BaseCard>
           ) : (
-            data.map((item) => {
+            data.map((item, index) => {
               const { amountVested, date, id, network } = item
               return (
                 <Row
                   columns={columns.widths}
                   hasHover
-                  key={id}
+                  key={index}
                   onClick={() => {
                     router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                   }}

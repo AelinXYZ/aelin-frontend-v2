@@ -126,14 +126,14 @@ export const DealsSponsored: React.FC = ({ ...restProps }) => {
           {!data.length ? (
             <BaseCard>No data.</BaseCard>
           ) : (
-            data.map((item) => {
+            data.map((item, index) => {
               const { amountEarned, date, id, network, poolName, totalAccepted, totalInvestment } =
                 item
               return (
                 <Row
                   columns={columns.widths}
                   hasHover
-                  key={id}
+                  key={index}
                   onClick={() => {
                     router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                   }}
