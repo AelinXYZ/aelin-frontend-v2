@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { SectionTabs } from '@/src/components/common/SectionTabs'
 import { DealsAccepted } from '@/src/components/history/DealsAccepted'
+import { DealsFunded } from '@/src/components/history/DealsFunded'
 import { DealsSponsored } from '@/src/components/history/DealsSponsored'
 import { Deposits } from '@/src/components/history/Deposits'
 import { Vests } from '@/src/components/history/Vests'
@@ -41,7 +42,7 @@ const History: NextPage = () => {
         {activeTab === items[2] && <Withdraws />}
         {activeTab === items[3] && <Vests />}
         {activeTab === items[4] && <DealsSponsored />}
-        {activeTab === items[5] && <>Deals funded</>}
+        {activeTab === items[5] && <DealsFunded />}
       </LeftSidebarLayout>
     </>
   )
