@@ -1,20 +1,21 @@
+import { useRouter } from 'next/router'
 import { ReactElement, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
-import { JsonRpcSigner } from '@ethersproject/providers'
 import { parseUnits } from '@ethersproject/units'
 import Wei, { wei } from '@synthetixio/wei'
 import { Duration } from 'date-fns'
 
 import { ChainsValues } from '@/src/constants/chains'
-import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token, isToken } from '@/src/constants/token'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
+import {
+  useAelinPoolEstimate,
+  useAelinPoolTransaction,
+} from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import contractCall from '@/src/utils/contractCall'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 import { getERC20Data } from '@/src/utils/getERC20Data'
@@ -22,7 +23,6 @@ import { isDuration } from '@/src/utils/isDuration'
 import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import { shortenAddress } from '@/src/utils/string'
 import validateCreateDeal, { dealErrors } from '@/src/utils/validate/createDeal'
-import { AelinPoolCreate__factory, AelinPool__factory } from '@/types/typechain'
 import { GasLimitEstimate } from '@/types/utils'
 
 export enum CreateDealSteps {
@@ -303,9 +303,9 @@ export const getCreateDealStepIndicatorData = (
 
 const LOCAL_STORAGE_STATE_KEY = 'aelin-createDealState'
 export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAelinPool) {
-  const { readOnlyAppProvider, web3Provider } = useWeb3Connection()
+  const { readOnlyAppProvider } = useWeb3Connection()
 
-  const signer = web3Provider?.getSigner()
+  const router = useRouter()
 
   // Get saved state in localstorage only once
   const { current: savedState } = useRef(
@@ -319,7 +319,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null)
   const [gasPrice, setGasPrice] = useState<Wei>(wei(0))
 
-  const createDealTx = useAelinPoolTransaction(pool.address, 'createDeal', !gasLimitEstimate)
+  const createDealTx = useAelinPoolTransaction(pool.address, 'createDeal')
+  const createDealEstimate = useAelinPoolEstimate(pool.address, 'createDeal')
 
   const moveStep = (value: 'next' | 'prev' | CreateDealSteps) => {
     const { currentStep } = createDealState
@@ -354,7 +355,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
 
     try {
       const gasLimitEstimate = wei(
-        await createDealTx(
+        await createDealEstimate(
           underlyingDealToken,
           purchaseTokenTotal,
           underlyingDealTokenTotal,
@@ -406,7 +407,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
       setIsSubmitting(false)
       if (tx) {
         dispatch({ type: 'reset' })
-        localStorage.removeItem(LOCAL_STORAGE_STATE_KEY)
+        router.reload()
       }
     } catch (e) {
       console.log(e)
@@ -489,5 +490,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     gasLimitEstimate,
     handleCreateDeal,
     setGasPrice,
+    gasPrice,
   }
 }

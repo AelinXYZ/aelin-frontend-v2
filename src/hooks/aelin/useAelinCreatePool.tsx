@@ -4,7 +4,6 @@ import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
-import { JsonRpcSigner } from '@ethersproject/providers'
 import { parseEther, parseUnits } from '@ethersproject/units'
 import Wei, { wei } from '@synthetixio/wei'
 
@@ -13,15 +12,15 @@ import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
-import useAelinPoolCreateTransaction from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import contractCall from '@/src/utils/contractCall'
+import {
+  useAelinPoolCreateEstimate,
+  useAelinPoolCreateTransaction,
+} from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 import { isDuration } from '@/src/utils/isDuration'
 import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
-import { AelinPoolCreate__factory } from '@/types/typechain'
 import { GasLimitEstimate } from '@/types/utils'
 
 export enum CreatePoolSteps {
@@ -289,14 +288,10 @@ export const getCreatePoolStepIndicatorData = (
 
 const LOCAL_STORAGE_STATE_KEY = 'aelin-createPoolState'
 export default function useAelinCreatePool(chainId: ChainsValues) {
-  const { web3Provider } = useWeb3Connection()
-
   // Get saved state in localstorage only once
   const { current: savedState } = useRef(
     removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
   )
-
-  const signer = web3Provider?.getSigner()
 
   const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
   const [errors, setErrors] = useState<poolErrors>()
@@ -309,7 +304,11 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const createPoolTx = useAelinPoolCreateTransaction(
     contracts.POOL_CREATE.address[chainId],
     'createPool',
-    !gasLimitEstimate,
+  )
+
+  const createPoolEstimate = useAelinPoolCreateEstimate(
+    contracts.POOL_CREATE.address[chainId],
+    'createPool',
   )
 
   const moveStep = (value: 'next' | 'prev' | CreatePoolSteps) => {
@@ -345,7 +344,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
     try {
       const gasLimitEstimate = wei(
-        await createPoolTx(
+        await createPoolEstimate(
           poolName,
           poolSymbol,
           poolCap,
