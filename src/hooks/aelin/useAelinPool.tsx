@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { BigNumber } from '@ethersproject/bignumber'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'

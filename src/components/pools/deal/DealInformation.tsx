@@ -4,12 +4,18 @@ import isAfter from 'date-fns/isAfter'
 
 import CountDown from '@/src/components/countdown'
 import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
+import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { WaitingForDealState } from '@/types/aelinPool'
 
-const Container = styled.div``
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  row-gap: 20px;
+`
 
 export const DealInformation: React.FC<{
   pool: ParsedAelinPool
@@ -18,99 +24,101 @@ export const DealInformation: React.FC<{
   if (!pool.deal) {
     return <div>No Deal presented yet.</div>
   }
+
   const deal = pool.deal
   return (
-    <Container>
-      <div>Deal details</div>
-
-      <div>Name: {deal.name}</div>
-      <div>Symbol: {deal.symbol}</div>
-
-      <br />
-      <div>Deal Address: {pool.dealAddress}</div>
-      <div>DealToken: {deal.underlyingToken.token}</div>
-      <div>Deal Tokens: {deal.underlyingToken.dealAmount.formatted}</div>
-
-      <br />
-      <div>ExchangeRates:</div>
-      <div>{`${pool.deal.exchangeRates.investmentPerDeal.formatted} ${pool.deal.underlyingToken.symbol}  per ${pool.investmentTokenSymbol}`}</div>
-      <div>{`${pool.deal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol}  per ${pool.deal.underlyingToken.symbol}`}</div>
-
-      <br />
-      <div>Deal stage</div>
-      {pool.deal.proRataRedemption?.stage === 1
-        ? 'Round 1: Pro Rata Redemption'
-        : pool.deal.proRataRedemption?.stage === 2
-        ? 'Round 2: Open Redemption'
-        : 'Redemption closed'}
-
-      <br />
-      <div>Round 1 Deadline</div>
-      {pool.deal.proRataRedemption?.proRataRedemptionEnd.toString()}
-
-      <br />
-      <div>Round 2 Deadline</div>
-      {pool.deal.proRataRedemption?.openRedemptionEnd
-        ? pool.deal.proRataRedemption?.openRedemptionEnd.toString()
-        : ' - No Open period'}
-
-      <br />
-      <br />
-      <div>Pool stats</div>
-      <div>Amount in pool: {pool.amountInPool.formatted}</div>
-      <div>Total redeem: {pool.redeem.formatted}</div>
-      <div>Total withdrawn: {pool.withdrawn.formatted}</div>
-
-      <br />
-      <div>User stats</div>
-      <div>Remaining pro-rata allocation: {poolStatusHelper.userProRataAllocation.formatted}</div>
-      <div>Withdrawn: {poolStatusHelper.userTotalWithdrawn.formatted}</div>
-
-      <br />
-      <div>Vesting data</div>
-      <div>Cliff: {pool.deal.vesting.cliff.toString()}</div>
-      <div>Linear period: {pool.deal.vesting.linear.toString()}</div>
-
-      <br />
-      <div>Fees charged on accept</div>
-      <div>Sponsor Fee: {pool.sponsorFee.formatted}</div>
-      <div>Aelin protocol fee: 2%</div>
-
-      <br />
-      <div>Has Open period: {pool.deal.hasDealOpenPeriod ? 'yes' : 'no'}</div>
-
-      <br />
-      <div>
-        deadline: {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
-        {isAfter(pool.purchaseExpiry, Date.now()) && (
-          <CountDown date={pool.purchaseExpiry} format={CountDownDHMS} />
-        )}
-      </div>
-
-      <br />
-      <div>Sponsor </div>
-      {pool.sponsor}
-
-      <br />
-      <br />
-      <div>Pool cap </div>
-      {pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
-
-      <br />
-      <br />
-      <div>Sponsor fee </div>
-      {pool.sponsorFee.formatted}
-
-      <br />
-      <br />
-      <div>Deal </div>
-      <div>
-        deadline: {formatDate(pool.dealDeadline, DATE_DETAILED)}
-        {isAfter(pool.dealDeadline, Date.now()) && (
-          <CountDown date={pool.dealDeadline} format={CountDownDHMS} />
-        )}
-      </div>
-    </Container>
+    <>
+      <Column>
+        <InfoCell title="Name" value={deal.name} />
+        <InfoCell title="Deal token" tooltip="??" value={deal.underlyingToken.token} />
+        <InfoCell
+          title="Exchange rates"
+          tooltip="??"
+          value={
+            <>
+              <div>{`${pool.deal.exchangeRates.investmentPerDeal.formatted} ${pool.deal.underlyingToken.symbol}  per ${pool.investmentTokenSymbol}`}</div>
+              <div>{`${pool.deal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol}  per ${pool.deal.underlyingToken.symbol}`}</div>
+            </>
+          }
+        />
+        <InfoCell
+          title="Deal stage"
+          tooltip="??"
+          value={
+            pool.deal.proRataRedemption?.stage === 1
+              ? 'Round 1: Pro Rata Redemption'
+              : pool.deal.proRataRedemption?.stage === 2
+              ? 'Round 2: Open Redemption'
+              : 'Redemption closed'
+          }
+        />
+        <InfoCell
+          title="Round 1 deadline"
+          tooltip="??"
+          value={formatDate(pool.deal.proRataRedemption!.proRataRedemptionEnd, DATE_DETAILED)}
+        />
+        <InfoCell
+          title="Pool stats"
+          tooltip="??"
+          value={
+            <>
+              <div>Amount in pool: {pool.amountInPool.formatted}</div>
+              <div>Total redeem: {pool.redeem.formatted}</div>
+              <div>Total withdrawn: {pool.withdrawn.formatted}</div>
+            </>
+          }
+        />
+      </Column>
+      <Column>
+        <InfoCell title="Symbol" value={deal.symbol} />
+        <InfoCell
+          title="Deal token amount"
+          tooltip="??"
+          value={deal.underlyingToken.dealAmount.formatted}
+        />
+        <InfoCell
+          title="Vesting data"
+          tooltip="??"
+          value={
+            <>
+              <div>Cliff: {pool.deal.vesting.cliff.toString()}</div>
+              <div>Linear period: {pool.deal.vesting.linear.toString()}</div>
+            </>
+          }
+        />
+        <InfoCell
+          title="Round 2 deadline"
+          tooltip="??"
+          value={
+            pool.deal.proRataRedemption?.openRedemptionEnd
+              ? formatDate(pool.deal.proRataRedemption!.openRedemptionEnd, DATE_DETAILED)
+              : ' - No Open period'
+          }
+        />
+        <InfoCell
+          title="User stats"
+          tooltip="??"
+          value={
+            <div>
+              <div>
+                Remaining pro-rata allocation: {poolStatusHelper.userProRataAllocation.formatted}
+              </div>
+              <div>Withdrawn: {poolStatusHelper.userTotalWithdrawn.formatted}</div>
+            </div>
+          }
+        />
+        <InfoCell
+          title="Fees charged on accept"
+          tooltip="??"
+          value={
+            <div>
+              <div>Sponsor Fee: {pool.sponsorFee.formatted}</div>
+              <div>Aelin protocol fee: 2%</div>
+            </div>
+          }
+        />
+      </Column>
+    </>
   )
 }
 
