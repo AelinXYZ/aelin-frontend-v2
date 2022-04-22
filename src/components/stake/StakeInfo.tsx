@@ -5,24 +5,24 @@ import { AelinStakingResponse } from '@/src/hooks/aelin/useAelinStakingRewards'
 import { GelatoStakingResponse } from '@/src/hooks/aelin/useGelatoStakingRewards'
 import { UniswapStakingResponse } from '@/src/hooks/aelin/useUniswapStakingRewards'
 
-const InfoWrapper = styled.div`
-  display: flex;
+const Wrapper = styled.div`
   align-items: center;
+  display: flex;
   flex-direction: column;
-  padding: 20px;
-  min-height: 120px;
-`
-
-const Value = styled.span`
-  color: ${({ theme }) => theme.colors.primary};
+  padding: 20px 0 10px;
 `
 
 const Text = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
   font-size: 1.4rem;
   font-weight: 400;
-  line-height: 1.2;
-  margin: 5px;
+  line-height: 1.6;
+  margin: 0;
+`
+
+const Value = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+  font-weight: 500;
 `
 
 type StakingRewardsResponse = GelatoStakingResponse | AelinStakingResponse | UniswapStakingResponse
@@ -32,9 +32,9 @@ type StakeInfoProps = {
   rewards: StakingRewardsResponse
 }
 
-const StakeInfo: FC<StakeInfoProps> = ({ isPool2, rewards }) => {
+const StakeInfo: FC<StakeInfoProps> = ({ isPool2, rewards, ...restProps }) => {
   return (
-    <InfoWrapper>
+    <Wrapper {...restProps}>
       {isPool2 && (
         <>
           <Text>
@@ -59,7 +59,7 @@ const StakeInfo: FC<StakeInfoProps> = ({ isPool2, rewards }) => {
           </Text>
         </>
       )}
-    </InfoWrapper>
+    </Wrapper>
   )
 }
 

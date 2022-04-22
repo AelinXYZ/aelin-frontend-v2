@@ -20,5 +20,36 @@ gql`
     poolStatus
     contributions
     totalSupply
+
+    totalAmountAccepted
+    totalAmountWithdrawn
+    totalAmountFunded
+    totalAmountEarnedBySponsor
+  }
+`
+
+gql`
+  fragment PoolDeal on Deal {
+    id
+    underlyingDealToken
+    underlyingDealTokenSymbol
+    underlyingDealTokenDecimals
+    underlyingDealTokenTotalSupply
+    underlyingDealTokenTotal
+
+    purchaseTokenTotalForDeal
+
+    proRataRedemptionPeriod
+    proRataRedemptionPeriodStart
+
+    openRedemptionPeriod
+
+    vestingPeriod
+    vestingCliff
+
+    holder
+    isDealFunded
+    holderFundingExpiration
+    holderFundingDuration
   }
 `

@@ -6,15 +6,15 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useAelinPoolTransaction from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { FundingState } from '@/src/utils/getAelinPoolCurrentStatus'
 import { formatToken } from '@/src/web3/bigNumber'
+import { Funding } from '@/types/aelinPool'
 
 type Props = {
   pool: ParsedAelinPool
-  poolHelpers: FundingState
+  poolHelpers: Funding
 }
 
 export default function Deposit({ pool, poolHelpers }: Props) {
@@ -59,7 +59,7 @@ export default function Deposit({ pool, poolHelpers }: Props) {
       raw: balance || ZERO_BN,
       formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals),
     },
-    poolHelpers.meta.maxDepositAllowed,
+    poolHelpers.maxDepositAllowed,
   ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
   return (
@@ -76,7 +76,7 @@ export default function Deposit({ pool, poolHelpers }: Props) {
         disabled={
           !address ||
           !isAppConnected ||
-          poolHelpers.meta.capReached ||
+          poolHelpers.capReached ||
           isLoading ||
           !tokenInputValue ||
           Boolean(inputError)

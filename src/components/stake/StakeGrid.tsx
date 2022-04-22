@@ -10,12 +10,12 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Wrapper = styled.div`
   display: grid;
+  gap: 40px;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: center;
+  flex-grow: 1;
 `
 
-const StakeGrid = () => {
+const StakeGrid = ({ ...restProps }) => {
   const { appChainId } = useWeb3Connection()
 
   const StakeBoxes = useMemo(
@@ -70,7 +70,7 @@ const StakeGrid = () => {
   )
 
   return (
-    <Wrapper>
+    <Wrapper {...restProps}>
       {StakeBoxes[appChainId].map(
         (
           { contractAddresses, isPool2, textTooltip, textTooltipAPY, title, useStakingRewards },

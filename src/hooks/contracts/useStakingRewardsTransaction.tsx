@@ -8,5 +8,7 @@ export default function useStakingRewardsTransaction<
   MethodName extends keyof AelinStaking['functions'],
   Params extends Parameters<AelinStaking[MethodName]>,
 >(address: string, method: MethodName): (...params: Params) => Promise<ContractReceipt | null> {
-  return useTransaction(address, aelinStaking, method)
+  const { execute } = useTransaction(address, aelinStaking, method)
+
+  return execute
 }

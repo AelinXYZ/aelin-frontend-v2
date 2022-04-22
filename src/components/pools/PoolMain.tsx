@@ -1,7 +1,8 @@
 import Head from 'next/head'
+import { useState } from 'react'
 import styled from 'styled-components'
 
-import { CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import Funding from '@/src/components/pools/actions/Funding'
@@ -12,8 +13,7 @@ import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { AelinPoolState, isFunding } from '@/src/utils/getAelinPoolCurrentStatus'
+import { PoolStatus } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -51,48 +51,64 @@ type Props = {
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
-  const { currentState, pool } = useAelinPoolStatus(chainId, poolAddress as string)
-  const { address } = useWeb3Connection()
+  const { current, dealing, funding, history, pool, tabs, userRole } = useAelinPoolStatus(
+    chainId,
+    poolAddress as string,
+  )
+  const mockedPoolVisibility = '???'
+  const showCreateDealForm = current === PoolStatus.Dealing && dealing.showCreateDealForm
 
-  if (!currentState) {
-    return null
+  if (!current) {
+    throw new Error('There was no possible to calculate pool current status')
   }
 
-  const mockedPoolVisibility = 'Public pool'
-
-  const showCreateDealForm =
-    address?.toLowerCase() === pool.sponsor.toLowerCase() &&
-    currentState.state === AelinPoolState.WaitingForDeal &&
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    !currentState?.meta.dealPresented
-
-  const poolName = pool.name.split('aePool-').pop() || ''
+  const [tab, setTab] = useState<PoolStatus>(tabs[tabs.length - 1])
 
   return (
     <>
       <Head>
-        <title>Aelin - {poolName}</title>
+        <title>Aelin - {pool.nameFormatted}</title>
       </Head>
-      <PageTitle subTitle={mockedPoolVisibility} title={poolName} />
+      <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
       <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 3 : 2} />}>
         {showCreateDealForm ? (
           <DealCreate pool={pool} />
         ) : (
           <MainGrid>
-            <CardWithTitle title="Pool information">
+            <CardWithTitle
+              titles={
+                <>
+                  {tabs.includes(PoolStatus.Funding) && (
+                    <CardTitle
+                      isActive={tab === PoolStatus.Funding}
+                      onClick={() => setTab(PoolStatus.Funding)}
+                    >
+                      Pool information
+                    </CardTitle>
+                  )}
+                  {tabs.includes(PoolStatus.Dealing) && (
+                    <CardTitle
+                      isActive={tab === PoolStatus.Dealing}
+                      onClick={() => setTab(PoolStatus.Dealing)}
+                    >
+                      Deal information
+                    </CardTitle>
+                  )}
+                </>
+              }
+            >
               <ContentGrid>
-                <PoolInformation pool={pool} poolAddress={poolAddress} />
-                {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-                {/* @ts-ignore */}
-                {currentState?.meta.dealPresented && (
-                  <DealInformation pool={pool} poolAddress={poolAddress} />
+                {tab === PoolStatus.Funding && (
+                  <PoolInformation pool={pool} poolAddress={poolAddress} />
+                )}
+                {tab === PoolStatus.Dealing && (
+                  <DealInformation pool={pool} poolStatusHelper={dealing} />
                 )}
               </ContentGrid>
             </CardWithTitle>
             <ActionsCard>
-              {isFunding(currentState) ? (
-                <Funding pool={pool} poolHelpers={currentState} />
+              {current === PoolStatus.Funding ? (
+                <Funding pool={pool} poolHelpers={funding} />
               ) : (
                 <>No actions available now.</>
               )}

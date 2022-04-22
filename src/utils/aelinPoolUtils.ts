@@ -50,7 +50,7 @@ export function getSponsorFee<P extends { sponsorFee: string }>(pool: P) {
   }
 }
 
-// returns the total amount of purchase tokens that the pool holds
+// returns the total amount of tokens the users deposited
 export function getAmountInPool<P extends { totalSupply: string; purchaseTokenDecimals: number }>(
   pool: P,
 ) {
@@ -60,9 +60,9 @@ export function getAmountInPool<P extends { totalSupply: string; purchaseTokenDe
   }
 }
 
-export function getInvestmentRaisedAmount<
-  P extends { purchaseTokenDecimals: number; contributions: string },
->(pool: P) {
+export function getFunded<P extends { purchaseTokenDecimals: number; contributions: string }>(
+  pool: P,
+) {
   return {
     raw: BigNumber.from(pool.contributions),
     formatted: formatToken(pool.contributions, pool.purchaseTokenDecimals),
@@ -70,6 +70,13 @@ export function getInvestmentRaisedAmount<
 }
 
 export function getAmountWithdrawn(amount: BigNumber) {
+  return {
+    raw: amount,
+    formatted: formatToken(amount),
+  }
+}
+
+export function getAmountRedeem(amount: BigNumber) {
   return {
     raw: amount,
     formatted: formatToken(amount),
@@ -129,7 +136,9 @@ export function getProRataRedemptionDates(
   const proRataRedemptionEnd = addSeconds(proRataRedemptionStart, Number(proRataRedemptionPeriod))
 
   const openRedemptionEnd =
-    openRedemptionPeriod !== '0' ? new Date(Number(openRedemptionPeriod) * 1000) : null
+    openRedemptionPeriod !== '0'
+      ? addSeconds(proRataRedemptionEnd, Number(openRedemptionPeriod))
+      : null
 
   const stage = isBefore(now, proRataRedemptionEnd)
     ? 1

@@ -73,10 +73,9 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
           res.poolCreateds.map((pool) => {
             const parsedPool: ParsedAelinPool = getParsedPool({
               chainId,
-              poolAddress: pool.id,
               pool,
+              poolAddress: pool.id,
               purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-              poolTotalWithdrawn: ZERO_BN,
             })
             return {
               ...parsedPool,
