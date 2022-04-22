@@ -183,6 +183,14 @@ function TokenDropdown(props: TokenDropdownProps) {
     setSearchingToken(false)
     setCustomToken(undefined)
   }
+  console.log(selectedToken)
+  // useEffect(() => {
+  //   tokenSelected
+
+  //   return () => {
+  //     second
+  //   }
+  // }, [third])
 
   return (
     <>

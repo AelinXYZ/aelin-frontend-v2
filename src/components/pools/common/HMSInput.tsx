@@ -31,6 +31,7 @@ export const HMSInput = ({
   ...restProps
 }: InputDeadlineProps) => {
   const [duration, setDuration] = useState(defaultValue)
+  const firstRender = useRef(true)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleSetDuration = (e: ChangeEvent<HTMLInputElement>) => {
@@ -39,8 +40,12 @@ export const HMSInput = ({
   }
 
   useEffect(() => {
-    if (inputRef.current && autofocusOnRender) {
-      inputRef.current?.focus()
+    // check if component first render
+    if (firstRender.current) {
+      firstRender.current = false
+      if (inputRef.current && autofocusOnRender && firstRender) {
+        inputRef.current?.focus()
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
