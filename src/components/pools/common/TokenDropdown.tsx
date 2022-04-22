@@ -174,11 +174,6 @@ function TokenDropdown(props: TokenDropdownProps) {
     [readOnlyAppProvider],
   )
 
-  useEffect(() => {
-    if (selectedToken) onChange(selectedToken.value)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedToken])
-
   const [showModal, setShowModal] = useState(false)
 
   const closeModal = () => {
@@ -188,6 +183,14 @@ function TokenDropdown(props: TokenDropdownProps) {
     setSearchingToken(false)
     setCustomToken(undefined)
   }
+  console.log(selectedToken)
+  // useEffect(() => {
+  //   tokenSelected
+
+  //   return () => {
+  //     second
+  //   }
+  // }, [third])
 
   return (
     <>
@@ -217,6 +220,7 @@ function TokenDropdown(props: TokenDropdownProps) {
               onClick={() => {
                 onChange(undefined as unknown as Token)
                 setCustomToken(undefined)
+                setSelectedToken(undefined)
                 setInputError('')
                 setSearchToken('')
               }}
@@ -233,6 +237,7 @@ function TokenDropdown(props: TokenDropdownProps) {
                     key={item.value.address}
                     onClick={() => {
                       setSelectedToken(item)
+                      onChange(item.value)
                       closeModal()
                     }}
                   >

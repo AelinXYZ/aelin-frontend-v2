@@ -1,7 +1,6 @@
 import { isAddress } from '@ethersproject/address'
-import { formatEther } from '@ethersproject/units'
 
-import { ChainsValues, chainsConfig, getNetworkConfig } from '@/src/constants/chains'
+import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { Privacy } from '@/src/constants/pool'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
 import { Token } from '@/src/constants/token'
@@ -9,18 +8,18 @@ import { CreatePoolSteps } from '@/src/hooks/aelin/useAelinCreatePool'
 import { convertToSeconds } from '@/src/utils/date'
 
 export type poolErrors = {
-  poolName: string
-  poolSymbol: string
-  investmentToken: Token
-  investmentDeadLine: Duration
-  dealDeadline: Duration
-  poolCap: number
-  sponsorFee: number
-  poolPrivacy: Privacy
-  whitelist: {
-    address: string
-    amount: number | null
-    isSaved: boolean
+  poolName?: string
+  poolSymbol?: string
+  investmentToken?: Token
+  investmentDeadLine?: Duration
+  dealDeadline?: Duration
+  poolCap?: number
+  sponsorFee?: number
+  poolPrivacy?: Privacy
+  whitelist?: {
+    address?: string
+    amount?: number
+    isSaved?: boolean
   }[]
 }
 
@@ -89,6 +88,10 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
 
   if (!values.poolPrivacy) {
     errors.poolPrivacy = true
+  }
+
+  if (values.poolPrivacy === Privacy.PRIVATE && !values.whitelist?.length) {
+    errors.poolPrivacy = 'Add white list addresses or change pool privacy to public'
   }
 
   return errors
