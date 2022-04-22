@@ -42,6 +42,7 @@
     "react-countdown": "^2.3.2",
     "react-dom": "17.0.2",
     "react-error-boundary": "^3.1.4",
+    "react-hot-toast": "^2.2.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-tooltip": "^4.2.21",
     "sanitize.css": "^13.0.0",
