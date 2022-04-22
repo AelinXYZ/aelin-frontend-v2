@@ -58,14 +58,30 @@ export const WidthLimitsCSS = css`
   width: 320px;
 `
 
-export const ModalText = styled.p`
+export const ModalButtonCSS = css`
+  margin: 40px auto 10px;
+  min-width: 160px;
+`
+
+export const ModalTextCSS = css`
   color: ${({ theme }) => theme.colors.textColorLight};
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.2;
   margin: 0 auto 20px;
   text-align: center;
+`
+
+export const ModalText = styled.p`
+  ${ModalTextCSS}
   ${WidthLimitsCSS}
+`
+
+export const ModalLine = styled.div`
+  background-color: ${({ theme }) => theme.colors.lightGray};
+  height: 1px;
+  margin: 0 auto 20px;
+  width: 180px;
 `
 
 export type modalSize = 'sm' | 'md' | 'lg' | string

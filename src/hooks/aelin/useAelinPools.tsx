@@ -29,10 +29,11 @@ export const calculateStatus = ({
   purchaseExpiry,
 }: {
   poolStatus: PoolStatus
-  purchaseExpiry: number
+  purchaseExpiry: Date
 }): ExtendedStatus => {
   const now = Date.now()
-  if (poolStatus === PoolStatus.PoolOpen && now > purchaseExpiry) {
+
+  if (poolStatus === PoolStatus.PoolOpen && now > purchaseExpiry.getTime()) {
     return allStages.SeekingDeal
   }
   return poolStatus
@@ -70,7 +71,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
       allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
         .then((res) =>
           res.poolCreateds.map((pool) => {
-            const parsedPool = getParsedPool({
+            const parsedPool: ParsedAelinPool = getParsedPool({
               chainId,
               poolAddress: pool.id,
               pool,
@@ -81,7 +82,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
               ...parsedPool,
               stage: calculateStatus({
                 poolStatus: parsedPool.poolStatus,
-                purchaseExpiry: pool.purchaseExpiry,
+                purchaseExpiry: parsedPool.purchaseExpiry,
               }),
             }
           }),
