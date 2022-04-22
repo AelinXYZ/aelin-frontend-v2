@@ -21,7 +21,7 @@ const ToastTypes: { [key: string]: (t: Toast, explorerUrl: string) => Renderable
   [ERROR_TYPE]: (t: Toast, explorerUrl: string) => (
     <ToastComponent
       icon={<FailedIcon />}
-      link={{ url: explorerUrl, text: 'Click to seey on Etherscan' }}
+      link={{ url: explorerUrl, text: 'Click to see on Etherscan' }}
       t={t}
       title="Transaction Failed"
     />
