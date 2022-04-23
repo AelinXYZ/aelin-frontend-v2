@@ -56,7 +56,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     poolAddress as string,
   )
   const mockedPoolVisibility = '???'
-  const showCreateDealForm = current === PoolStatus.Dealing && dealing.showCreateDealForm
+  const showCreateDealForm = current === PoolStatus.DealPresented && dealing.showCreateDealForm
 
   if (!current) {
     throw new Error('There was no possible to calculate pool current status')
@@ -86,12 +86,20 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                       Pool information
                     </CardTitle>
                   )}
-                  {tabs.includes(PoolStatus.Dealing) && (
+                  {tabs.includes(PoolStatus.DealPresented) && (
                     <CardTitle
-                      isActive={tab === PoolStatus.Dealing}
-                      onClick={() => setTab(PoolStatus.Dealing)}
+                      isActive={tab === PoolStatus.DealPresented}
+                      onClick={() => setTab(PoolStatus.DealPresented)}
                     >
                       Deal information
+                    </CardTitle>
+                  )}
+                  {tabs.includes(PoolStatus.Vesting) && (
+                    <CardTitle
+                      isActive={tab === PoolStatus.Vesting}
+                      onClick={() => setTab(PoolStatus.Vesting)}
+                    >
+                      Vest
                     </CardTitle>
                   )}
                 </>
@@ -101,17 +109,15 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 {tab === PoolStatus.Funding && (
                   <PoolInformation pool={pool} poolAddress={poolAddress} />
                 )}
-                {tab === PoolStatus.Dealing && (
+                {tab === PoolStatus.DealPresented && (
                   <DealInformation pool={pool} poolStatusHelper={dealing} />
                 )}
+                {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}
               </ContentGrid>
             </CardWithTitle>
             <ActionsCard>
-              {current === PoolStatus.Funding ? (
-                <Funding pool={pool} poolHelpers={funding} />
-              ) : (
-                <>No actions available now.</>
-              )}
+              <Funding pool={pool} poolHelpers={funding} />
+              {current === PoolStatus.Funding ? <div>asd</div> : <>No actions available now.</>}
             </ActionsCard>
           </MainGrid>
         )}

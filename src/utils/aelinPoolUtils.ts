@@ -3,9 +3,7 @@ import Wei from '@synthetixio/wei'
 import addSeconds from 'date-fns/addSeconds'
 import isBefore from 'date-fns/isBefore'
 
-import { PoolStatus } from '@/graphql-schema'
 import { ExtendedStatus } from '@/src/constants/pool'
-import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -104,7 +102,7 @@ export function dealExchangeRates(
   const dealToken = new Wei(dealTokenAmount, dealTokenDecimals, true)
 
   const investmentRate = dealToken.div(investmentToken)
-  const dealRate = new Wei(1).div(investmentRate)
+  const dealRate = new Wei(1) //.div(investmentRate)
 
   return {
     investmentPerDeal: {
@@ -146,8 +144,13 @@ export function getProRataRedemptionDates(
     ? 2
     : null
 
+  const start = proRataRedemptionStart
+  const end = openRedemptionEnd ? openRedemptionEnd : proRataRedemptionEnd
+
   return {
     stage,
+    start,
+    end,
     proRataRedemptionStart,
     proRataRedemptionEnd,
     openRedemptionEnd,

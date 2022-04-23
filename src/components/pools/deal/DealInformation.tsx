@@ -1,11 +1,6 @@
 import styled from 'styled-components'
 
-import isAfter from 'date-fns/isAfter'
-
-import CountDown from '@/src/components/countdown'
-import { CountDownDHMS } from '@/src/components/countdown/CountDownDHMS'
-import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
-import { ZERO_BN } from '@/src/constants/misc'
+import { InfoCell } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { WaitingForDeal } from '@/types/aelinPool'
@@ -29,7 +24,7 @@ export const DealInformation: React.FC<{
   return (
     <>
       <Column>
-        <InfoCell title="Name" value={deal.name} />
+        <InfoCell title="Name" value={`${deal.name} - ${pool.dealAddress}`} />
         <InfoCell title="Deal token" tooltip="??" value={deal.underlyingToken.token} />
         <InfoCell
           title="Exchange rates"
@@ -45,9 +40,9 @@ export const DealInformation: React.FC<{
           title="Deal stage"
           tooltip="??"
           value={
-            pool.deal.proRataRedemption?.stage === 1
+            pool.deal.redemption?.stage === 1
               ? 'Round 1: Pro Rata Redemption'
-              : pool.deal.proRataRedemption?.stage === 2
+              : pool.deal.redemption?.stage === 2
               ? 'Round 2: Open Redemption'
               : 'Redemption closed'
           }
@@ -55,7 +50,8 @@ export const DealInformation: React.FC<{
         <InfoCell
           title="Round 1 deadline"
           tooltip="??"
-          value={formatDate(pool.deal.proRataRedemption!.proRataRedemptionEnd, DATE_DETAILED)}
+          //value={formatDate(pool.deal.redemption!.proRataRedemptionEnd, DATE_DETAILED)}
+          value="asd"
         />
         <InfoCell
           title="Pool stats"
@@ -90,8 +86,8 @@ export const DealInformation: React.FC<{
           title="Round 2 deadline"
           tooltip="??"
           value={
-            pool.deal.proRataRedemption?.openRedemptionEnd
-              ? formatDate(pool.deal.proRataRedemption!.openRedemptionEnd, DATE_DETAILED)
+            pool.deal.redemption?.openRedemptionEnd
+              ? formatDate(pool.deal.redemption!.openRedemptionEnd, DATE_DETAILED)
               : ' - No Open period'
           }
         />

@@ -11,10 +11,19 @@ export enum UserRole {
 
 export enum PoolStatus {
   Funding = 'Funding',
-  Dealing = 'Waiting Deal',
-  ProRata = 'Pro Rata',
+  SeekingDeal = 'Seeking Deal',
+  DealPresented = 'Deal presented',
   Vesting = 'Vesting',
   Closed = 'Closed',
+}
+
+export enum PoolAction {
+  Invest,
+  CreateDeal,
+  FundDeal,
+  AcceptRejectDeal,
+  withdraw,
+  Claim,
 }
 
 // interface BaseState {

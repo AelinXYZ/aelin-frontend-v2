@@ -67,8 +67,10 @@ export type ParsedAelinPool = {
       linear: string
     }
     hasDealOpenPeriod: boolean
-    proRataRedemption: {
+    redemption: {
       stage: number | null
+      start: Date
+      end: Date
       proRataRedemptionStart: Date
       proRataRedemptionEnd: Date
       openRedemptionEnd: Date | null
@@ -120,6 +122,9 @@ export const getParsedPool = ({
   const now = Date.now()
 
   if (dealDetails) {
+    console.log('dealDetails.vestingCliff', dealDetails.vestingCliff)
+    console.log('dealDetails.vestingPeriod', dealDetails.vestingPeriod)
+
     res.deal = {
       name: 'TODO: name',
       symbol: 'TODO: symbol',
@@ -146,7 +151,7 @@ export const getParsedPool = ({
         pool.contributions,
         dealDetails.purchaseTokenTotalForDeal,
       ),
-      proRataRedemption: dealDetails.proRataRedemptionPeriodStart
+      redemption: dealDetails.proRataRedemptionPeriodStart
         ? getProRataRedemptionDates(
             // proRataRedemptionPeriodStart is set when Deal is founded by the Holder
             dealDetails.proRataRedemptionPeriodStart,
