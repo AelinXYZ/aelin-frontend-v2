@@ -7,7 +7,6 @@ import Wei, { wei } from '@synthetixio/wei'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import WhiteListModal, { WhitelistProps } from '@/src/components/pools/WhiteListModal'
 import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
@@ -20,6 +19,7 @@ import {
 import { Summary } from '@/src/components/pools/common/Summary'
 import { Timeline } from '@/src/components/pools/common/Timeline'
 import PoolCreateStepInput from '@/src/components/pools/main/PoolCreateStepInput'
+import WhiteListModal, { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
 import {
   ButtonPrimaryLight,
   GradientButton,
