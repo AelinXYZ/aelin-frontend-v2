@@ -31,4 +31,4 @@ const Home: NextPage = () => {
   )
 }
 
-export default genericSuspense(Home)
+export default Home

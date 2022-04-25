@@ -144,6 +144,7 @@ export const List: React.FC<{
               } = pool
               return (
                 <Row
+                  as="a"
                   columns={columns.widths}
                   hasHover
                   key={id}
@@ -181,4 +182,4 @@ export const List: React.FC<{
   )
 }
 
-export default genericSuspense(List)
+export default List
