@@ -11,9 +11,9 @@ export const Link: React.FC<{ className?: string }> = (props) => (
   <Wrapper
     className={`link ${props.className}`}
     fill="none"
-    height="10"
+    height="12.5"
     viewBox="0 0 10 10"
-    width="10"
+    width="12.5"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
