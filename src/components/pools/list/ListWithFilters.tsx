@@ -6,6 +6,8 @@ import debounce from 'lodash/debounce'
 
 import { PoolCreated_Filter, PoolStatus } from '@/graphql-schema'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
+import { Loading } from '@/src/components/common/Loading'
+import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { List } from '@/src/components/pools/list/List'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
@@ -247,11 +249,13 @@ export const ListWithFilters: React.FC = () => {
           />
         </FiltersDropdowns>
       </Wrapper>
-      <List
-        filters={{ variables, network }}
-        setOrderBy={setOrderBy}
-        setOrderDirection={setOrderDirection}
-      />
+      <SafeSuspense>
+        <List
+          filters={{ variables, network }}
+          setOrderBy={setOrderBy}
+          setOrderDirection={setOrderDirection}
+        />
+      </SafeSuspense>
     </>
   )
 }

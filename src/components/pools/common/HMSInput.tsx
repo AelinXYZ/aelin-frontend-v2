@@ -42,7 +42,8 @@ export const HMSInput = ({
     if (inputRef.current && autofocusOnRender) {
       inputRef.current?.focus()
     }
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     onChange(duration)

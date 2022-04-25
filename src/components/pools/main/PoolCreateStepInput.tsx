@@ -1,4 +1,4 @@
-import { HTMLAttributes, useEffect, useRef } from 'react'
+import { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
@@ -44,6 +44,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
   ...restProps
 }) => {
   const step = currentState.currentStep
+  const [disableCap, setDisableCap] = useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -81,15 +82,30 @@ const PoolCreateStepInput: React.FC<Props> = ({
           onChange={(value) => setPoolField(value)}
         />
       ) : step === CreatePoolSteps.poolCap ? (
-        <Textfield
-          maxLength={8}
-          name={step}
-          onChange={(e) => setPoolField(e.target.value)}
-          placeholder={createPoolConfig[step].placeholder}
-          ref={inputRef}
-          type="number"
-          value={currentState[step]}
-        />
+        <>
+          <Textfield
+            disabled={disableCap}
+            maxLength={8}
+            name={step}
+            onChange={(e) => setPoolField(e.target.value)}
+            placeholder={createPoolConfig[step].placeholder}
+            ref={inputRef}
+            type="number"
+            value={currentState[step]}
+          />
+          <br />
+          <br />
+          <PrivacyGrid>
+            <LabeledRadioButton
+              checked={disableCap}
+              label={'No cap'}
+              onClick={() => {
+                setPoolField('')
+                setDisableCap(!disableCap)
+              }}
+            />
+          </PrivacyGrid>
+        </>
       ) : step === CreatePoolSteps.poolPrivacy ? (
         <PrivacyGrid>
           <LabeledRadioButton

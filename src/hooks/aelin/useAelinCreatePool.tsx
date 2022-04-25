@@ -45,19 +45,38 @@ interface CreatePoolStepInfo {
 export interface CreatePoolState {
   poolName: string
   poolSymbol: string
-  investmentToken: Token | undefined
-  investmentDeadLine: Duration | undefined
-  dealDeadline: Duration | undefined
-  poolCap: number | undefined
-  sponsorFee: number | undefined
-  poolPrivacy: Privacy | undefined
+  investmentToken?: Token
+  investmentDeadLine?: Duration
+  dealDeadline?: Duration
+  poolCap?: number
+  sponsorFee?: number
+  poolPrivacy?: Privacy
   currentStep: CreatePoolSteps
   whitelist: {
     address: string
-    amount: number | null
+    amount: number
     isSaved: boolean
   }[]
 }
+
+export interface CreatePoolStateComplete {
+  poolName: string
+  poolSymbol: string
+  investmentToken: Token
+  investmentDeadLine: { days: number; hours: number; minutes: number }
+  dealDeadline: { days: number; hours: number; minutes: number }
+  poolCap?: number
+  sponsorFee?: number
+  poolPrivacy: Privacy
+  currentStep: CreatePoolSteps
+  whitelist: {
+    address: string
+    amount: number
+    isSaved: boolean
+  }[]
+}
+
+type CreatePoolValues = keyof CreatePoolState
 
 export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
   [CreatePoolSteps.poolName]: {
@@ -133,7 +152,7 @@ type createPoolValues = {
 }
 
 const parseValuesToCreatePool = async (
-  createPoolState: CreatePoolState,
+  createPoolState: CreatePoolStateComplete,
 ): Promise<createPoolValues> => {
   const {
     dealDeadline,
@@ -150,16 +169,16 @@ const parseValuesToCreatePool = async (
 
   const investmentDeadLineDuration = getDuration(
     now,
-    investmentDeadLine?.days as number,
-    investmentDeadLine?.hours as number,
-    investmentDeadLine?.minutes as number,
+    investmentDeadLine.days,
+    investmentDeadLine.hours,
+    investmentDeadLine.minutes,
   )
 
   const dealDeadLineDuration = getDuration(
     now,
-    dealDeadline?.days as number,
-    dealDeadline?.hours as number,
-    dealDeadline?.minutes as number,
+    dealDeadline.days,
+    dealDeadline.hours,
+    dealDeadline.minutes,
   )
 
   let poolAddresses: string[] = []
@@ -186,13 +205,11 @@ const parseValuesToCreatePool = async (
   return {
     poolName,
     poolSymbol,
-    poolCap: poolCap
-      ? parseUnits(poolCap?.toString() as string, investmentToken?.decimals)
-      : ZERO_BN,
+    poolCap: poolCap ? parseUnits(poolCap.toString(), investmentToken?.decimals) : ZERO_BN,
     sponsorFee: sponsorFee ? parseEther(sponsorFee?.toString()) : ZERO_BN,
     investmentDeadLineDuration,
     dealDeadLineDuration,
-    investmentToken: investmentToken?.address as string,
+    investmentToken: investmentToken.address,
     poolAddressesAmounts,
     poolAddresses,
   }
@@ -215,7 +232,7 @@ type CreatePoolAction =
   | {
       type: 'updatePool'
       payload: {
-        field: CreatePoolSteps
+        field: CreatePoolValues
         value: unknown
       }
     }
@@ -268,6 +285,10 @@ export const getCreatePoolSummaryData = (
 
     if (step.id === CreatePoolSteps.poolCap && !value) {
       value = 'Uncapped'
+    }
+
+    if (step.id === CreatePoolSteps.poolPrivacy && typeof value === 'string') {
+      value = value.charAt(0).toUpperCase() + value.slice(1)
     }
 
     if (!value) value = '--'
@@ -340,7 +361,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       poolName,
       poolSymbol,
       sponsorFee,
-    } = await parseValuesToCreatePool(createPoolState)
+    } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
     try {
       const gasLimitEstimate = wei(
@@ -378,7 +399,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       poolName,
       poolSymbol,
       sponsorFee,
-    } = await parseValuesToCreatePool(createPoolState)
+    } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
     try {
       const tx = await createPoolTx(
@@ -405,10 +426,10 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   }
 
   const setPoolField = useCallback(
-    (value: unknown) =>
+    (value: unknown, field?: CreatePoolValues) =>
       dispatch({
         type: 'updatePool',
-        payload: { field: createPoolState.currentStep, value },
+        payload: { field: field || createPoolState.currentStep, value },
       }),
     [createPoolState.currentStep],
   )
@@ -432,14 +453,14 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     setErrors(
       validateCreatePool(
         {
-          dealDeadline: dealDeadline as Duration,
-          investmentDeadLine: investmentDeadLine as Duration,
-          investmentToken: investmentToken as Token,
-          poolCap: poolCap as number,
+          dealDeadline,
+          investmentDeadLine,
+          investmentToken,
+          poolCap,
           poolName,
-          poolPrivacy: poolPrivacy as Privacy,
+          poolPrivacy,
           poolSymbol,
-          sponsorFee: sponsorFee as number,
+          sponsorFee,
           whitelist,
         },
         chainId,
