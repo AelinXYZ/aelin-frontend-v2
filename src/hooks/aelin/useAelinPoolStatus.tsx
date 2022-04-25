@@ -150,11 +150,12 @@ function deriveUserRole(walletAddress: string | null, pool: ParsedAelinPool): Us
     return UserRole.Visitor
   }
 
-  if (walletAddress === pool.sponsor) {
+  const wa = walletAddress.toLowerCase()
+  if (wa === pool.sponsor) {
     return UserRole.Sponsor
   }
 
-  if (walletAddress === pool.deal?.holderAddress) {
+  if (wa === pool.deal?.holderAddress) {
     return UserRole.Investor
   }
 
@@ -189,15 +190,23 @@ function deriveUserActions(
   derivedStatus: DerivedStatus,
 ): PoolAction[] {
   const currentStatus = derivedStatus.current
+  const now = new Date()
 
-  // Invest
+  // Funding
   if (currentStatus === PoolStatus.Funding) {
     return [PoolAction.Invest]
   }
 
-  // Create Deal
-  if (currentStatus === PoolStatus.SeekingDeal && userRole === UserRole.Sponsor) {
-    return [PoolAction.CreateDeal]
+  // Seeking Deal
+  if (currentStatus === PoolStatus.SeekingDeal) {
+    const actions: PoolAction[] = []
+    if (userRole === UserRole.Sponsor) {
+      actions.push(PoolAction.CreateDeal)
+    }
+    if (isAfter(now, pool.dealDeadline)) {
+      actions.push(PoolAction.Withdraw)
+    }
+    return actions
   }
 
   // TODO: override deal when is expired and amount of deals presented is < 5

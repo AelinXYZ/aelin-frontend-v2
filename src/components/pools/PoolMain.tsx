@@ -118,6 +118,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             <ActionsCard>
               {!actions.length && <div>No actions available</div>}
               {actions.includes(PoolAction.Invest) && <Invest pool={pool} poolHelpers={funding} />}
+              {actions.includes(PoolAction.Withdraw) && (
+                <div>Give me my tokens back!! (Withdraw form)</div>
+              )}
             </ActionsCard>
           </MainGrid>
         )}
