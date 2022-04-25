@@ -84,11 +84,11 @@ const Create: NextPage = () => {
             currentStepOrder={order}
             data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
           />
-          {Object.values(CreatePoolSteps).map((step) => {
+          {Object.values(CreatePoolSteps).map((step, index) => {
             const isStepVisible = createPoolState.currentStep === step
 
             return !isStepVisible ? null : (
-              <WrapperGrid>
+              <WrapperGrid key={index}>
                 <PrevNextWrapper>
                   {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
                 </PrevNextWrapper>
