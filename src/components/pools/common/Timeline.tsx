@@ -67,15 +67,15 @@ const Info = styled.div<{ isActive?: boolean; isDone?: boolean }>`
   border-radius: var(--border-radius);
   border: 1px solid
     ${({ isActive, theme: { colors } }) => (isActive ? 'transparent' : colors.borderColor)};
-  opacity: ${({ isActive, isDone }) => (isActive || isDone ? 1 : 0.5)};
   position: relative;
   z-index: 5;
 `
 
-const Contents = styled.div`
+const Contents = styled.div<{ isActive?: boolean; isDone?: boolean }>`
   background: ${({ theme: { colors } }) => colors.componentBackgroundColor};
   border-radius: var(--border-radius);
   height: 100%;
+  opacity: ${({ isActive, isDone }) => (isActive || isDone ? 1 : 0.5)};
   padding: 20px;
   width: 100%;
 `
@@ -107,7 +107,9 @@ const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
     <Item isActive={isActive} isDone={isDone} {...restProps}>
       <StepCircleBig isActive={isActive || isDone} />
       <Info className="info" isActive={isActive} isDone={isDone}>
-        <Contents>{children}</Contents>
+        <Contents isActive={isActive} isDone={isDone}>
+          {children}
+        </Contents>
       </Info>
     </Item>
   )
