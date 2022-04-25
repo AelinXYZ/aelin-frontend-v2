@@ -21,6 +21,7 @@ export const DealInformation: React.FC<{
   }
 
   const deal = pool.deal
+  console.log(deal)
   return (
     <>
       <Column>
@@ -50,8 +51,11 @@ export const DealInformation: React.FC<{
         <InfoCell
           title="Round 1 deadline"
           tooltip="??"
-          //value={formatDate(pool.deal.redemption!.proRataRedemptionEnd, DATE_DETAILED)}
-          value="asd"
+          value={
+            pool.deal.redemption
+              ? formatDate(pool.deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+              : 'N/A'
+          }
         />
         <InfoCell
           title="Pool stats"
@@ -77,8 +81,8 @@ export const DealInformation: React.FC<{
           tooltip="??"
           value={
             <>
-              <div>Cliff: {pool.deal.vesting.cliff.toString()}</div>
-              <div>Linear period: {pool.deal.vesting.linear.toString()}</div>
+              <div>Cliff: {pool.deal.vestingPeriod.cliff.formatted}</div>
+              <div>Linear period: {pool.deal.vestingPeriod.vesting.formatted}</div>
             </>
           }
         />
@@ -86,8 +90,8 @@ export const DealInformation: React.FC<{
           title="Round 2 deadline"
           tooltip="??"
           value={
-            pool.deal.redemption?.openRedemptionEnd
-              ? formatDate(pool.deal.redemption!.openRedemptionEnd, DATE_DETAILED)
+            pool.deal.redemption && pool.deal.redemption.openRedemptionEnd
+              ? formatDate(pool.deal.redemption.openRedemptionEnd, DATE_DETAILED)
               : ' - No Open period'
           }
         />

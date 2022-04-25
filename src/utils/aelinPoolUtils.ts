@@ -1,6 +1,8 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import Wei from '@synthetixio/wei'
+import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
+import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isBefore from 'date-fns/isBefore'
 
 import { ExtendedStatus } from '@/src/constants/pool'
@@ -154,6 +156,21 @@ export function getProRataRedemptionDates(
     proRataRedemptionStart,
     proRataRedemptionEnd,
     openRedemptionEnd,
+  }
+}
+export function getVestingDates(vestingCliff: string, vestingPeriod: string) {
+  const now = new Date()
+  const cliffMs = Number(vestingCliff ?? 0) * 1000
+  const vestingPeriodMs = Number(vestingPeriod ?? 0) * 1000
+  return {
+    cliff: {
+      ms: cliffMs,
+      formatted: formatDistanceStrict(now, addMilliseconds(now, cliffMs)),
+    },
+    vesting: {
+      ms: vestingPeriodMs,
+      formatted: formatDistanceStrict(now, addMilliseconds(now, vestingPeriodMs)),
+    },
   }
 }
 

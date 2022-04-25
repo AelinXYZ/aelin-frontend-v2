@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 
@@ -20,6 +19,7 @@ import {
   getPurchaseExpiry,
   getPurchaseTokenCap,
   getSponsorFee,
+  getVestingDates,
   hasDealOpenPeriod,
 } from '@/src/utils/aelinPoolUtils'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -62,9 +62,15 @@ export type ParsedAelinPool = {
       investmentPerDeal: DetailedNumber
       dealPerInvestment: DetailedNumber
     }
-    vesting: {
-      cliff: string
-      linear: string
+    vestingPeriod: {
+      cliff: {
+        ms: number
+        formatted: string
+      }
+      vesting: {
+        ms: number
+        formatted: string
+      }
     }
     hasDealOpenPeriod: boolean
     redemption: {
@@ -118,52 +124,42 @@ export const getParsedPool = ({
   }
 
   const dealDetails = pool.deal
+  if (!dealDetails) {
+    return res
+  }
 
-  const now = Date.now()
-
-  if (dealDetails) {
-    console.log('dealDetails.vestingCliff', dealDetails.vestingCliff)
-    console.log('dealDetails.vestingPeriod', dealDetails.vestingPeriod)
-
-    res.deal = {
-      name: 'TODO: name',
-      symbol: 'TODO: symbol',
-      underlyingToken: {
-        token: dealDetails.underlyingDealToken,
-        symbol: dealDetails.underlyingDealTokenSymbol,
-        decimals: dealDetails.underlyingDealTokenDecimals,
-        dealAmount: getDetailedNumber(
-          dealDetails.underlyingDealTokenTotal,
-          dealDetails.underlyingDealTokenDecimals,
-        ),
-      },
-      exchangeRates: dealExchangeRates(
-        pool.contributions,
-        purchaseTokenDecimals,
+  res.deal = {
+    name: 'TODO: name',
+    symbol: 'TODO: symbol',
+    underlyingToken: {
+      token: dealDetails.underlyingDealToken,
+      symbol: dealDetails.underlyingDealTokenSymbol,
+      decimals: dealDetails.underlyingDealTokenDecimals,
+      dealAmount: getDetailedNumber(
         dealDetails.underlyingDealTokenTotal,
         dealDetails.underlyingDealTokenDecimals,
       ),
-      vesting: {
-        cliff: formatDistanceStrict(now, now + Number(dealDetails.vestingCliff ?? 0) * 60),
-        linear: formatDistanceStrict(now, now + Number(dealDetails.vestingPeriod ?? 0) * 60),
-      },
-      hasDealOpenPeriod: hasDealOpenPeriod(
-        pool.contributions,
-        dealDetails.purchaseTokenTotalForDeal,
-      ),
-      redemption: dealDetails.proRataRedemptionPeriodStart
-        ? getProRataRedemptionDates(
-            // proRataRedemptionPeriodStart is set when Deal is founded by the Holder
-            dealDetails.proRataRedemptionPeriodStart,
-            dealDetails.proRataRedemptionPeriod,
-            dealDetails.openRedemptionPeriod,
-          )
-        : null,
-      holderAlreadyDeposited: dealDetails.isDealFunded,
-      holderDepositExpiration: new Date(),
-      holderDepositDuration: new Date(),
-      holderAddress: dealDetails.holder,
-    }
+    },
+    exchangeRates: dealExchangeRates(
+      pool.contributions,
+      purchaseTokenDecimals,
+      dealDetails.underlyingDealTokenTotal,
+      dealDetails.underlyingDealTokenDecimals,
+    ),
+    vestingPeriod: getVestingDates(dealDetails.vestingCliff, dealDetails.vestingPeriod),
+    hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
+    redemption: dealDetails.proRataRedemptionPeriodStart
+      ? getProRataRedemptionDates(
+          // proRataRedemptionPeriodStart is set when Deal is founded by the Holder
+          dealDetails.proRataRedemptionPeriodStart,
+          dealDetails.proRataRedemptionPeriod,
+          dealDetails.openRedemptionPeriod,
+        )
+      : null,
+    holderAlreadyDeposited: dealDetails.isDealFunded,
+    holderDepositExpiration: new Date(),
+    holderDepositDuration: new Date(),
+    holderAddress: dealDetails.holder,
   }
 
   return res

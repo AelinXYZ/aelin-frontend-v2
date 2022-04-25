@@ -21,8 +21,8 @@ export enum PoolAction {
   Invest,
   CreateDeal,
   FundDeal,
-  AcceptRejectDeal,
-  withdraw,
+  AcceptDeal,
+  Withdraw,
   Claim,
 }
 

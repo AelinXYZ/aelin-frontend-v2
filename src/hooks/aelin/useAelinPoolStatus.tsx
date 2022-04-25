@@ -121,17 +121,32 @@ function deriveStatus(pool: ParsedAelinPool): DerivedStatus {
   }
 
   // Vesting
-  // if (pool.dealAddress && ) {
-  // }
+  if (
+    pool.dealAddress &&
+    pool.deal?.redemption &&
+    isAfter(now, pool.deal?.redemption?.end) &&
+    pool.deal.holderAlreadyDeposited
+  ) {
+    return {
+      current: PoolStatus.Vesting,
+      history: [
+        PoolStatus.Funding,
+        PoolStatus.SeekingDeal,
+        PoolStatus.DealPresented,
+        PoolStatus.Vesting,
+      ],
+    }
+  }
 
+  // TODO: Handle different states of closed
   return {
     current: PoolStatus.Closed,
     history: [
       PoolStatus.Funding,
-      PoolStatus.SeekingDeal,
-      PoolStatus.DealPresented,
-      PoolStatus.Vesting,
-      PoolStatus.Closed,
+      // PoolStatus.SeekingDeal,
+      // PoolStatus.DealPresented,
+      // PoolStatus.Vesting,
+      // PoolStatus.Closed,
     ],
   }
 }
@@ -161,7 +176,14 @@ function deriveUserTabs(
   const tabs: PoolStatus[] = [PoolStatus.Funding]
 
   if (history.includes(PoolStatus.DealPresented)) {
-    tabs.push(PoolStatus.DealPresented)
+    // only show dealInformation if the deal was funded by the holder
+    if (pool.deal?.holderAlreadyDeposited) {
+      tabs.push(PoolStatus.DealPresented)
+    }
+  }
+
+  if (history.includes(PoolStatus.Vesting)) {
+    tabs.push(PoolStatus.Vesting)
   }
 
   return tabs
@@ -174,14 +196,34 @@ function deriveUserActions(
 ): PoolAction[] {
   const currentStatus = derivedStatus.current
 
+  // Invest
   if (currentStatus === PoolStatus.Funding) {
     return [PoolAction.Invest]
   }
 
-  // calculate vest
+  // Create Deal
+  if (currentStatus === PoolStatus.SeekingDeal && userRole === UserRole.Sponsor) {
+    return [PoolAction.CreateDeal]
+  }
+
+  // TODO: override deal when is expired and amount of deals presented is < 5
+
+  // Fund deal
+  if (
+    currentStatus === PoolStatus.DealPresented &&
+    !pool.deal?.holderAlreadyDeposited &&
+    userRole === UserRole.Investor
+  ) {
+    return [PoolAction.FundDeal]
+  }
+
+  // Accept or Reject deal
+  if (currentStatus === PoolStatus.DealPresented && pool.deal?.holderAlreadyDeposited) {
+    return [PoolAction.AcceptDeal, PoolAction.Withdraw]
+  }
 
   // default to Funding
-  return []
+  return [PoolAction.Withdraw]
 }
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
@@ -190,10 +232,13 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
   })
   const { address } = useWeb3Connection()
 
+  // derive data for UI
   const derivedStatus = deriveStatus(poolResponse)
   const userRole = deriveUserRole(address, poolResponse)
   const tabs = deriveUserTabs(userRole, poolResponse, derivedStatus)
+  const actions = deriveUserActions(userRole, poolResponse, derivedStatus)
 
+  // get info by pool status
   const funding = useFundingStatus(poolResponse)
   const dealing = useDealingStatus(poolResponse, chainId)
   const proRata = useProRataStatus(poolResponse)
@@ -208,7 +253,8 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
       dealing,
       proRata,
       tabs,
+      actions,
     }),
-    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs],
+    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs, actions],
   )
 }

@@ -41,7 +41,6 @@ gql`
 
     proRataRedemptionPeriod
     proRataRedemptionPeriodStart
-
     openRedemptionPeriod
 
     vestingPeriod
