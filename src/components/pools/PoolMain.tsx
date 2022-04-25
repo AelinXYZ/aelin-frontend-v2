@@ -51,7 +51,7 @@ type Props = {
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
-  const { current, dealing, funding, history, pool, tabs, userRole } = useAelinPoolStatus(
+  const { current, dealing, funding, pool, tabs } = useAelinPoolStatus(
     chainId,
     poolAddress as string,
   )
@@ -62,7 +62,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     throw new Error('There was no possible to calculate pool current status')
   }
 
-  const [tab, setTab] = useState<PoolStatus>(tabs[tabs.length - 1])
+  const [tab, setTab] = useState<PoolStatus>(tabs[0])
 
   return (
     <>
@@ -70,7 +70,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
       <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
-      <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 3 : 2} />}>
+      <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 2 : 1} />}>
         {showCreateDealForm ? (
           <DealCreate pool={pool} />
         ) : (
@@ -86,7 +86,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                       Pool information
                     </CardTitle>
                   )}
-                  {tabs.includes(PoolStatus.Dealing) && (
+                  {tabs.includes(PoolStatus.Dealing) && pool.deal && (
                     <CardTitle
                       isActive={tab === PoolStatus.Dealing}
                       onClick={() => setTab(PoolStatus.Dealing)}
@@ -101,7 +101,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 {tab === PoolStatus.Funding && (
                   <PoolInformation pool={pool} poolAddress={poolAddress} />
                 )}
-                {tab === PoolStatus.Dealing && (
+                {tab === PoolStatus.Dealing && pool.deal && (
                   <DealInformation pool={pool} poolStatusHelper={dealing} />
                 )}
               </ContentGrid>

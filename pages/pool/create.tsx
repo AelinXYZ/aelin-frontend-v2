@@ -78,7 +78,7 @@ const Create: NextPage = () => {
         <title>{`${createPoolState.poolName || 'Create pool'}`}</title>
       </Head>
       <PageTitle title={`${createPoolState.poolName || 'Pool creation'}`} />
-      <RightTimelineLayout timeline={<Timeline activeItem={1} />}>
+      <RightTimelineLayout timeline={<Timeline />}>
         <CardWithTitle titles={<CardTitle>Pool creation</CardTitle>}>
           <StepIndicator
             currentStepOrder={order}
