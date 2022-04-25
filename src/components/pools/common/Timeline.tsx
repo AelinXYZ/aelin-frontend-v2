@@ -25,27 +25,17 @@ const Item = styled.div<{ isActive?: boolean; isDone?: boolean }>`
   &:not(:first-child) {
     .info::before {
       background-color: ${({ isActive, isDone, theme: { colors } }) =>
-        isActive || isDone ? colors.primary : 'rgba(255, 255, 255, 0.2)'};
+        (isActive || isDone) && colors.primary};
       bottom: 50%;
-      content: '';
-      left: var(--left);
-      position: absolute;
       top: calc(var(--line-gap) / -2);
-      width: var(--line-width);
     }
   }
 
   &:not(:last-child) {
     .info::after {
-      background-color: ${({ isDone, theme: { colors } }) =>
-        isDone ? colors.primary : 'rgba(255, 255, 255, 0.2)'};
-      bottom: 50%;
+      background-color: ${({ isDone, theme: { colors } }) => isDone && colors.primary};
       bottom: calc(var(--line-gap) / -2);
-      content: '';
-      left: var(--left);
-      position: absolute;
       top: 50%;
-      width: var(--line-width);
     }
   }
 `
@@ -57,18 +47,25 @@ const StepCircleBig = styled(BaseStepCircle)`
 
 const Info = styled.div<{ isActive?: boolean; isDone?: boolean }>`
   --border-radius: 8px;
-  --line-width: 4px;
-  --left: -41px;
 
   background: ${({ isActive, theme: { colors } }) =>
     isActive
-      ? `linear-gradient(90deg, ${colors.gradientStart} 9.37%, ${colors.gradientEnd} 100%)`
+      ? `linear-gradient(90deg, ${colors.gradientStart} 0%, ${colors.gradientEnd} 100%)`
       : 'none'};
   border-radius: var(--border-radius);
   border: 1px solid
     ${({ isActive, theme: { colors } }) => (isActive ? 'transparent' : colors.borderColor)};
   position: relative;
   z-index: 5;
+
+  &::before,
+  &::after {
+    background-color: rgba(255, 255, 255, 0.2);
+    content: '';
+    left: -41px;
+    position: absolute;
+    width: 4px;
+  }
 `
 
 const Contents = styled.div<{ isActive?: boolean; isDone?: boolean }>`
