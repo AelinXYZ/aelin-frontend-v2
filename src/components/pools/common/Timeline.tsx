@@ -15,27 +15,22 @@ const Wrapper = styled.div`
   width: 100%;
 `
 
-const Item = styled.div<{ isActive?: boolean; isDone?: boolean }>`
+const Item = styled.div`
   align-items: center;
   column-gap: 20px;
   display: grid;
   grid-template-columns: 36px 1fr;
   position: relative;
 
-  &:not(:first-child) {
+  &:first-child {
     .info::before {
-      background-color: ${({ isActive, isDone, theme: { colors } }) =>
-        (isActive || isDone) && colors.primary};
-      bottom: 50%;
-      top: calc(var(--line-gap) / -2);
+      display: none;
     }
   }
 
-  &:not(:last-child) {
+  &:last-child {
     .info::after {
-      background-color: ${({ isDone, theme: { colors } }) => isDone && colors.primary};
-      bottom: calc(var(--line-gap) / -2);
-      top: 50%;
+      display: none;
     }
   }
 `
@@ -66,13 +61,29 @@ const Info = styled.div<{ isActive?: boolean; isDone?: boolean }>`
     position: absolute;
     width: 4px;
   }
+
+  &::before {
+    background-color: ${({ isActive, isDone, theme: { colors } }) =>
+      (isActive || isDone) && colors.primary};
+    bottom: 50%;
+    top: calc(var(--line-gap) / -2);
+  }
+
+  &::after {
+    background-color: ${({ isDone, theme: { colors } }) => isDone && colors.primary};
+    bottom: calc(var(--line-gap) / -2);
+    top: 50%;
+  }
+
+  .contents {
+    opacity: ${({ isActive, isDone }) => (isActive || isDone ? 1 : 0.5)};
+  }
 `
 
-const Contents = styled.div<{ isActive?: boolean; isDone?: boolean }>`
+const Contents = styled.div`
   background: ${({ theme: { colors } }) => colors.componentBackgroundColor};
   border-radius: var(--border-radius);
   height: 100%;
-  opacity: ${({ isActive, isDone }) => (isActive || isDone ? 1 : 0.5)};
   padding: 20px;
   width: 100%;
 `
@@ -101,12 +112,10 @@ const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
   ...restProps
 }) => {
   return (
-    <Item isActive={isActive} isDone={isDone} {...restProps}>
+    <Item {...restProps}>
       <StepCircleBig isActive={isActive || isDone} />
       <Info className="info" isActive={isActive} isDone={isDone}>
-        <Contents isActive={isActive} isDone={isDone}>
-          {children}
-        </Contents>
+        <Contents className="contents">{children}</Contents>
       </Info>
     </Item>
   )
