@@ -43,9 +43,6 @@ export interface Funding {
 export interface WaitingForDeal {
   userTotalWithdrawn: DetailedNumber
   userProRataAllocation: DetailedNumber
-  isUserSponsor: boolean
-  isDealPresent: boolean
-  showCreateDealForm: boolean
 }
 
 export type ProRata = Record<string, unknown>

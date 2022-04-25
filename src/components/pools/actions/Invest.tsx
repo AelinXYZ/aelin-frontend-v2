@@ -23,7 +23,7 @@ type Props = {
   poolHelpers: Funding
 }
 
-function Funding({ pool, poolHelpers }: Props) {
+function Invest({ pool, poolHelpers }: Props) {
   return (
     <>
       <Title>Deposit tokens</Title>
@@ -40,4 +40,4 @@ function Funding({ pool, poolHelpers }: Props) {
   )
 }
 
-export default genericSuspense(Funding)
+export default genericSuspense(Invest)

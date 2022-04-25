@@ -54,9 +54,6 @@ function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Waiting
     id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
   })
 
-  const isUserSponsor = address?.toLowerCase() === pool.sponsor.toLowerCase()
-  const isDealPresent = pool.deal !== undefined
-
   const userProRataAllocation =
     userAllocationStatRes?.userAllocationStat?.remainingProRataAllocation || ZERO_BN
   const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
@@ -70,9 +67,6 @@ function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Waiting
       raw: userAmountWithdrawn,
       formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
     },
-    isUserSponsor,
-    isDealPresent,
-    showCreateDealForm: isUserSponsor && !isDealPresent,
   }
 }
 
@@ -223,7 +217,7 @@ function deriveUserActions(
   }
 
   // default to Funding
-  return [PoolAction.Withdraw]
+  return []
 }
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {

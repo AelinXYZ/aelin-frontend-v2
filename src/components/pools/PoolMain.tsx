@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import Funding from '@/src/components/pools/actions/Funding'
+import Invest from '@/src/components/pools/actions/Invest'
 import { Timeline } from '@/src/components/pools/common/Timeline'
 import DealCreate from '@/src/components/pools/deal/DealCreate'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
@@ -13,7 +13,7 @@ import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
-import { PoolStatus } from '@/types/aelinPool'
+import { PoolAction, PoolStatus } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -51,18 +51,18 @@ type Props = {
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
-  const { current, dealing, funding, history, pool, tabs, userRole } = useAelinPoolStatus(
+  const { actions, current, dealing, funding, pool, tabs } = useAelinPoolStatus(
     chainId,
     poolAddress as string,
   )
   const mockedPoolVisibility = '???'
-  const showCreateDealForm = current === PoolStatus.DealPresented && dealing.showCreateDealForm
 
   if (!current) {
     throw new Error('There was no possible to calculate pool current status')
   }
 
   const [tab, setTab] = useState<PoolStatus>(tabs[tabs.length - 1])
+  const showCreateDealForm = actions.includes(PoolAction.CreateDeal)
 
   return (
     <>
@@ -116,8 +116,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               </ContentGrid>
             </CardWithTitle>
             <ActionsCard>
-              <Funding pool={pool} poolHelpers={funding} />
-              {current === PoolStatus.Funding ? <div>asd</div> : <>No actions available now.</>}
+              {!actions.length && <div>No actions available</div>}
+              {actions.includes(PoolAction.Invest) && <Invest pool={pool} poolHelpers={funding} />}
             </ActionsCard>
           </MainGrid>
         )}
