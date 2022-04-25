@@ -21,7 +21,6 @@ export const DealInformation: React.FC<{
   }
 
   const deal = pool.deal
-  console.log(deal)
   return (
     <>
       <Column>
