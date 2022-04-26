@@ -6,7 +6,6 @@ import debounce from 'lodash/debounce'
 
 import { PoolCreated_Filter, PoolStatus } from '@/graphql-schema'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
-import { Loading } from '@/src/components/common/Loading'
 import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { List } from '@/src/components/pools/list/List'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
