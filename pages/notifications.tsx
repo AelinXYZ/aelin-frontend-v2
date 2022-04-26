@@ -3,6 +3,7 @@ import Head from 'next/head'
 
 import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
+import { List } from '@/src/components/notifications/List'
 
 const Notifications: NextPage = () => {
   return (
@@ -16,6 +17,7 @@ const Notifications: NextPage = () => {
           vesting periods, and other important information. Check back often to stay up to date on
           your investments.
         </SectionIntro>
+        <List />
       </LeftSidebarLayout>
     </>
   )
