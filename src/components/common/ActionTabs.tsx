@@ -26,12 +26,13 @@ const Tabs = styled.div`
   width: 100%;
 `
 
-const TitleActiveCSS = css`
+const ActiveTabCSS = css`
   background-image: linear-gradient(
     90deg,
     ${({ theme }) => theme.colors.gradientStart} 9.37%,
     ${({ theme }) => theme.colors.gradientEnd} 100%
   );
+  border-bottom-color: transparent;
   cursor: default;
   font-weight: 600;
 
@@ -43,6 +44,7 @@ const TitleActiveCSS = css`
 const Tab = styled.h3<{ isActive?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.transparentWhite2};
+  border-bottom: 1px solid ${({ theme: { colors } }) => colors.borderColor};
   color: ${({ theme }) => theme.colors.textColor};
   cursor: pointer;
   display: flex;
@@ -61,7 +63,7 @@ const Tab = styled.h3<{ isActive?: boolean }>`
     opacity: 0.7;
   }
 
-  ${({ isActive }) => isActive && TitleActiveCSS}
+  ${({ isActive }) => isActive && ActiveTabCSS}
 
   &:first-child {
     border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
