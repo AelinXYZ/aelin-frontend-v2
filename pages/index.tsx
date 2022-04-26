@@ -3,7 +3,6 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import { SectionIntro } from '@/src/components/common/SectionIntro'
-import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { ListWithFilters } from '@/src/components/pools/list/ListWithFilters'
 
@@ -17,7 +16,7 @@ const Home: NextPage = () => {
       </Head>
       <LeftSidebarLayout>
         <SectionIntro
-          backgroundImage="resources/svg/bg-pools.svg"
+          backgroundImage="/resources/svg/bg-pools.svg"
           button={{ title: 'Create pool', onClick: () => router.push('/pool/create') }}
           title="Pools"
         >

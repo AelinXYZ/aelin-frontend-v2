@@ -1,10 +1,11 @@
-import React, { FC, useRef } from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { FC } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
-import { WhitelistProps } from '@/src/components/pools/WhiteListModal'
+import { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 
 export interface IUploadCSV {

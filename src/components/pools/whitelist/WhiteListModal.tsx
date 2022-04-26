@@ -3,10 +3,10 @@ import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
 
-import { ButtonPrimary, ButtonPrimaryLight } from '../pureStyledComponents/buttons/Button'
-import { Textfield } from '../pureStyledComponents/form/Textfield'
+import { ButtonPrimary, ButtonPrimaryLight } from '../../pureStyledComponents/buttons/Button'
+import { Textfield } from '../../pureStyledComponents/form/Textfield'
 import { Modal } from '@/src/components/common/Modal'
-import UploadCSV from '@/src/components/pools/UploadWhiteListCsv'
+import UploadCSV from '@/src/components/pools/whitelist/UploadWhiteListCsv'
 
 export interface WhitelistProps {
   address: string

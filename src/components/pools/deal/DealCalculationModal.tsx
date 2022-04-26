@@ -1,18 +1,15 @@
-import React, { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import Wei, { wei } from '@synthetixio/wei'
 
 import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import {
-  ButtonPrimaryLight,
   ButtonPrimaryLightSm,
   GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Token } from '@/src/constants/token'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { getERC20Data } from '@/src/utils/getERC20Data'
 
 const Text = styled(ModalText)`
   margin-bottom: 40px;

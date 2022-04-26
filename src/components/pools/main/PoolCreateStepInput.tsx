@@ -1,6 +1,7 @@
 import { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import { HMSInput } from '@/src/components/pools/common/HMSInput'
 import TokenDropdown from '@/src/components/pools/common/TokenDropdown'
@@ -30,6 +31,11 @@ const PrivacyGrid = styled.div`
   gap: 40px;
   margin: 0 auto;
   max-width: fit-content;
+`
+
+const Checkbox = styled(LabeledCheckbox)`
+  margin: 20px auto 0;
+  width: fit-content;
 `
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -93,18 +99,14 @@ const PoolCreateStepInput: React.FC<Props> = ({
             type="number"
             value={currentState[step]}
           />
-          <br />
-          <br />
-          <PrivacyGrid>
-            <LabeledRadioButton
-              checked={disableCap}
-              label={'No cap'}
-              onClick={() => {
-                setPoolField('')
-                setDisableCap(!disableCap)
-              }}
-            />
-          </PrivacyGrid>
+          <Checkbox
+            checked={disableCap}
+            label={'No cap'}
+            onClick={() => {
+              setPoolField('')
+              setDisableCap(!disableCap)
+            }}
+          />
         </>
       ) : step === CreatePoolSteps.poolPrivacy ? (
         <PrivacyGrid>

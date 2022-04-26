@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
-import { InfoCell } from '@/src/components/pools/common/InfoCell'
+import { Deadline } from '@/src/components/common/Deadline'
+import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { WaitingForDeal } from '@/types/aelinPool'
@@ -16,33 +17,26 @@ export const DealInformation: React.FC<{
   pool: ParsedAelinPool
   poolStatusHelper: WaitingForDeal
 }> = ({ pool, poolStatusHelper }) => {
-  if (!pool.deal) {
-    return <div>No Deal presented yet.</div>
-  }
+  const { deal, sponsorFee } = pool
 
-  const deal = pool.deal
-  return (
+  return !deal ? (
+    <div>No Deal presented yet.</div>
+  ) : (
     <>
       <Column>
         <InfoCell title="Name" value={`${deal.name} - ${pool.dealAddress}`} />
         <InfoCell title="Deal token" tooltip="??" value={deal.underlyingToken.token} />
-        <InfoCell
-          title="Exchange rates"
-          tooltip="??"
-          value={
-            <>
-              <div>{`${pool.deal.exchangeRates.investmentPerDeal.formatted} ${pool.deal.underlyingToken.symbol}  per ${pool.investmentTokenSymbol}`}</div>
-              <div>{`${pool.deal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol}  per ${pool.deal.underlyingToken.symbol}`}</div>
-            </>
-          }
-        />
+        <InfoCell title="Exchange rates" tooltip="??">
+          <Value>{`${deal.exchangeRates.investmentPerDeal.formatted} ${deal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
+          <Value>{`${deal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol} per ${deal.underlyingToken.symbol}`}</Value>
+        </InfoCell>
         <InfoCell
           title="Deal stage"
           tooltip="??"
           value={
-            pool.deal.redemption?.stage === 1
+            deal.redemption?.stage === 1
               ? 'Round 1: Pro Rata Redemption'
-              : pool.deal.redemption?.stage === 2
+              : deal.redemption?.stage === 2
               ? 'Round 2: Open Redemption'
               : 'Redemption closed'
           }
@@ -51,22 +45,16 @@ export const DealInformation: React.FC<{
           title="Round 1 deadline"
           tooltip="??"
           value={
-            pool.deal.redemption
-              ? formatDate(pool.deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+            deal.redemption
+              ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
               : 'N/A'
           }
         />
-        <InfoCell
-          title="Pool stats"
-          tooltip="??"
-          value={
-            <>
-              <div>Amount in pool: {pool.amountInPool.formatted}</div>
-              <div>Total redeem: {pool.redeem.formatted}</div>
-              <div>Total withdrawn: {pool.withdrawn.formatted}</div>
-            </>
-          }
-        />
+        <InfoCell title="Pool stats" tooltip="??">
+          <Value>Amount in pool: {pool.amountInPool.formatted}</Value>
+          <Value>Total redeem: {pool.redeem.formatted}</Value>
+          <Value>Total withdrawn: {pool.withdrawn.formatted}</Value>
+        </InfoCell>
       </Column>
       <Column>
         <InfoCell title="Symbol" value={deal.symbol} />
@@ -75,47 +63,29 @@ export const DealInformation: React.FC<{
           tooltip="??"
           value={deal.underlyingToken.dealAmount.formatted}
         />
-        <InfoCell
-          title="Vesting data"
-          tooltip="??"
-          value={
-            <>
-              <div>Cliff: {pool.deal.vestingPeriod.cliff.formatted}</div>
-              <div>Linear period: {pool.deal.vestingPeriod.vesting.formatted}</div>
-            </>
-          }
-        />
-        <InfoCell
-          title="Round 2 deadline"
-          tooltip="??"
-          value={
-            pool.deal.redemption && pool.deal.redemption.openRedemptionEnd
-              ? formatDate(pool.deal.redemption.openRedemptionEnd, DATE_DETAILED)
-              : ' - No Open period'
-          }
-        />
-        <InfoCell
-          title="User stats"
-          tooltip="??"
-          value={
-            <div>
-              <div>
-                Remaining pro-rata allocation: {poolStatusHelper.userProRataAllocation.formatted}
-              </div>
-              <div>Withdrawn: {poolStatusHelper.userTotalWithdrawn.formatted}</div>
-            </div>
-          }
-        />
-        <InfoCell
-          title="Fees charged on accept"
-          tooltip="??"
-          value={
-            <div>
-              <div>Sponsor Fee: {pool.sponsorFee.formatted}</div>
-              <div>Aelin protocol fee: 2%</div>
-            </div>
-          }
-        />
+        <InfoCell title="Vesting data" tooltip="??">
+          <Value>Cliff: {deal.vestingPeriod.cliff.formatted}</Value>
+          <Value>Linear period: {deal.vestingPeriod.vesting.formatted}</Value>
+        </InfoCell>
+        <InfoCell title="Round 2 deadline" tooltip="??">
+          {deal.redemption && deal.redemption.openRedemptionEnd ? (
+            <Deadline progress="75" width="180px">
+              <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
+            </Deadline>
+          ) : (
+            <Value>No open period</Value>
+          )}
+        </InfoCell>
+        <InfoCell title="User stats" tooltip="??">
+          <Value>
+            Remaining pro-rata allocation: {poolStatusHelper.userProRataAllocation.formatted}
+          </Value>
+          <Value>Withdrawn: {poolStatusHelper.userTotalWithdrawn.formatted}</Value>
+        </InfoCell>
+        <InfoCell title="Fees charged on accept" tooltip="??">
+          <Value>Sponsor Fee: {sponsorFee.formatted}</Value>
+          <Value>Aelin protocol fee: 2%</Value>
+        </InfoCell>
       </Column>
     </>
   )

@@ -29,7 +29,7 @@ gql`
 `
 
 gql`
-  fragment PoolDeal on DealDetail {
+  fragment PoolDeal on Deal {
     id
     underlyingDealToken
     underlyingDealTokenSymbol

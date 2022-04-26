@@ -12,6 +12,7 @@ import DealInformation from '@/src/components/pools/deal/DealInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
+import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { PoolAction, PoolStatus } from '@/types/aelinPool'
 
@@ -61,8 +62,14 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     throw new Error('There was no possible to calculate pool current status')
   }
 
-  const [tab, setTab] = useState<PoolStatus>(tabs[tabs.length - 1])
+  const [tab, setTab] = useState<PoolStatus>(tabs[0])
   const showCreateDealForm = actions.includes(PoolAction.CreateDeal)
+  const dealExists = pool.deal
+  const activeItem = dealExists
+    ? PoolTimelineState.dealWindow
+    : showCreateDealForm
+    ? PoolTimelineState.dealCreation
+    : PoolTimelineState.investmentWindow
 
   return (
     <>
@@ -70,7 +77,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
       <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
-      <RightTimelineLayout timeline={<Timeline activeItem={showCreateDealForm ? 3 : 2} />}>
+      <RightTimelineLayout timeline={<Timeline activeItem={activeItem} />}>
         {showCreateDealForm ? (
           <DealCreate pool={pool} />
         ) : (
@@ -86,7 +93,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                       Pool information
                     </CardTitle>
                   )}
-                  {tabs.includes(PoolStatus.DealPresented) && (
+                  {tabs.includes(PoolStatus.DealPresented) && dealExists && (
                     <CardTitle
                       isActive={tab === PoolStatus.DealPresented}
                       onClick={() => setTab(PoolStatus.DealPresented)}
@@ -109,7 +116,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 {tab === PoolStatus.Funding && (
                   <PoolInformation pool={pool} poolAddress={poolAddress} />
                 )}
-                {tab === PoolStatus.DealPresented && (
+                {tab === PoolStatus.DealPresented && dealExists && (
                   <DealInformation pool={pool} poolStatusHelper={dealing} />
                 )}
                 {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}

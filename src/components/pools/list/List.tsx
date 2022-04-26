@@ -6,7 +6,6 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { Deadline } from '@/src/components/common/Deadline'
-import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
