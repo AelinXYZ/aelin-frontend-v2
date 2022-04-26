@@ -9,21 +9,25 @@ import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { convertToSeconds } from '@/src/utils/date'
 
 export type dealErrors = {
-  dealToken: string
-  dealTokenTotal: BigNumberish
-  totalPurchaseAmount: BigNumberish
-  vestingCliff: Duration
-  vestingPeriod: Duration
-  proRataPeriod: Duration
-  openPeriod: Duration
-  counterPartyFundingPeriod: Duration
-  counterPartyAddress: string
+  dealToken?: string
+  dealTokenTotal?: BigNumberish
+  totalPurchaseAmount?: BigNumberish
+  vestingCliff?: Duration
+  vestingPeriod?: Duration
+  proRataPeriod?: Duration
+  openPeriod?: Duration
+  counterPartyFundingPeriod?: Duration
+  counterPartyAddress?: string
 }
 
 const validateCreateDeal = (values: dealErrors, pool: ParsedAelinPool, chainId: ChainsValues) => {
   const errors: any = {}
 
   const currentNetwork = getNetworkConfig(chainId)
+
+  if (!values.dealToken) {
+    errors.dealToken = true
+  }
 
   if (!values.totalPurchaseAmount) {
     errors.totalPurchaseAmount = true

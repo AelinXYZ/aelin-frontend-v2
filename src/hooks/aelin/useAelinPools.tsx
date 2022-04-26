@@ -10,7 +10,6 @@ import {
   PoolsCreatedQueryVariables,
 } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
 import { ExtendedStatus, POOLS_RESULTS_PER_CHAIN, allStages } from '@/src/constants/pool'
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
