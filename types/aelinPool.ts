@@ -11,10 +11,19 @@ export enum UserRole {
 
 export enum PoolStatus {
   Funding = 'Funding',
-  Dealing = 'Waiting Deal',
-  ProRata = 'Pro Rata',
+  SeekingDeal = 'Seeking Deal',
+  DealPresented = 'Deal presented',
   Vesting = 'Vesting',
   Closed = 'Closed',
+}
+
+export enum PoolAction {
+  Invest,
+  CreateDeal,
+  FundDeal,
+  AcceptDeal,
+  Withdraw,
+  Claim,
 }
 
 // interface BaseState {
@@ -34,9 +43,6 @@ export interface Funding {
 export interface WaitingForDeal {
   userTotalWithdrawn: DetailedNumber
   userProRataAllocation: DetailedNumber
-  isUserSponsor: boolean
-  isDealPresent: boolean
-  showCreateDealForm: boolean
 }
 
 export type ProRata = Record<string, unknown>

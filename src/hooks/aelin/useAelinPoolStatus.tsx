@@ -12,7 +12,14 @@ import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { formatToken } from '@/src/web3/bigNumber'
-import { Funding, PoolStatus, ProRata, UserRole, WaitingForDeal } from '@/types/aelinPool'
+import {
+  Funding,
+  PoolAction,
+  PoolStatus,
+  ProRata,
+  UserRole,
+  WaitingForDeal,
+} from '@/types/aelinPool'
 
 function useFundingStatus(pool: ParsedAelinPool): Funding {
   const { address } = useWeb3Connection()
@@ -47,9 +54,6 @@ function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Waiting
     id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
   })
 
-  const isUserSponsor = address?.toLowerCase() === pool.sponsor.toLowerCase()
-  const isDealPresent = pool.deal !== undefined
-
   const userProRataAllocation =
     userAllocationStatRes?.userAllocationStat?.remainingProRataAllocation || ZERO_BN
   const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
@@ -63,9 +67,6 @@ function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Waiting
       raw: userAmountWithdrawn,
       formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
     },
-    isUserSponsor,
-    isDealPresent,
-    showCreateDealForm: isUserSponsor && !isDealPresent,
   }
 }
 
@@ -89,18 +90,58 @@ function deriveStatus(pool: ParsedAelinPool): DerivedStatus {
     }
   }
 
-  // dealing
-  if (isAfter(now, pool.purchaseExpiry) && isBefore(now, pool.dealDeadline)) {
+  // Seeking deal
+  if (
+    (isAfter(now, pool.purchaseExpiry) && isBefore(now, pool.dealDeadline)) ||
+    (isAfter(now, pool.dealDeadline) && !pool.dealAddress)
+  ) {
     return {
-      current: PoolStatus.Dealing,
-      history: [PoolStatus.Funding, PoolStatus.Dealing],
+      current: PoolStatus.SeekingDeal,
+      history: [PoolStatus.Funding, PoolStatus.SeekingDeal],
     }
   }
 
-  // pro-rata
+  // Dealing
+  if (
+    pool.dealAddress &&
+    pool.deal?.redemption &&
+    isAfter(now, pool.deal?.redemption?.start) &&
+    isBefore(now, pool.deal?.redemption?.end)
+  ) {
+    return {
+      current: PoolStatus.DealPresented,
+      history: [PoolStatus.Funding, PoolStatus.SeekingDeal, PoolStatus.DealPresented],
+    }
+  }
+
+  // Vesting
+  if (
+    pool.dealAddress &&
+    pool.deal?.redemption &&
+    isAfter(now, pool.deal?.redemption?.end) &&
+    pool.deal.holderAlreadyDeposited
+  ) {
+    return {
+      current: PoolStatus.Vesting,
+      history: [
+        PoolStatus.Funding,
+        PoolStatus.SeekingDeal,
+        PoolStatus.DealPresented,
+        PoolStatus.Vesting,
+      ],
+    }
+  }
+
+  // TODO: Handle different states of closed
   return {
-    current: PoolStatus.ProRata,
-    history: [PoolStatus.Funding, PoolStatus.Dealing, PoolStatus.ProRata],
+    current: PoolStatus.Closed,
+    history: [
+      PoolStatus.Funding,
+      // PoolStatus.SeekingDeal,
+      // PoolStatus.DealPresented,
+      // PoolStatus.Vesting,
+      // PoolStatus.Closed,
+    ],
   }
 }
 
@@ -109,11 +150,12 @@ function deriveUserRole(walletAddress: string | null, pool: ParsedAelinPool): Us
     return UserRole.Visitor
   }
 
-  if (walletAddress === pool.sponsor) {
+  const wa = walletAddress.toLowerCase()
+  if (wa === pool.sponsor) {
     return UserRole.Sponsor
   }
 
-  if (walletAddress === pool.deal?.holderAddress) {
+  if (wa === pool.deal?.holderAddress) {
     return UserRole.Investor
   }
 
@@ -125,17 +167,66 @@ function deriveUserTabs(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
 ): PoolStatus[] {
+  const { history } = derivedStatus
+  const tabs: PoolStatus[] = [PoolStatus.Funding]
+
+  if (history.includes(PoolStatus.DealPresented)) {
+    // only show dealInformation if the deal was funded by the holder
+    if (pool.deal?.holderAlreadyDeposited) {
+      tabs.push(PoolStatus.DealPresented)
+    }
+  }
+
+  if (history.includes(PoolStatus.Vesting)) {
+    tabs.push(PoolStatus.Vesting)
+  }
+
+  return tabs
+}
+
+function deriveUserActions(
+  userRole: UserRole,
+  pool: ParsedAelinPool,
+  derivedStatus: DerivedStatus,
+): PoolAction[] {
   const currentStatus = derivedStatus.current
+  const now = new Date()
 
+  // Funding
   if (currentStatus === PoolStatus.Funding) {
-    return [PoolStatus.Funding]
+    return [PoolAction.Invest]
   }
 
-  if (currentStatus === PoolStatus.Dealing) {
-    return pool.dealAddress ? [PoolStatus.Funding, PoolStatus.Dealing] : [PoolStatus.Funding]
+  // Seeking Deal
+  if (currentStatus === PoolStatus.SeekingDeal) {
+    const actions: PoolAction[] = []
+    if (userRole === UserRole.Sponsor) {
+      actions.push(PoolAction.CreateDeal)
+    }
+    if (isAfter(now, pool.dealDeadline)) {
+      actions.push(PoolAction.Withdraw)
+    }
+    return actions
   }
 
-  return [PoolStatus.Funding, PoolStatus.Dealing]
+  // TODO: override deal when is expired and amount of deals presented is < 5
+
+  // Fund deal
+  if (
+    currentStatus === PoolStatus.DealPresented &&
+    !pool.deal?.holderAlreadyDeposited &&
+    userRole === UserRole.Investor
+  ) {
+    return [PoolAction.FundDeal]
+  }
+
+  // Accept or Reject deal
+  if (currentStatus === PoolStatus.DealPresented && pool.deal?.holderAlreadyDeposited) {
+    return [PoolAction.AcceptDeal, PoolAction.Withdraw]
+  }
+
+  // default to Funding
+  return []
 }
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
@@ -144,10 +235,13 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
   })
   const { address } = useWeb3Connection()
 
+  // derive data for UI
   const derivedStatus = deriveStatus(poolResponse)
   const userRole = deriveUserRole(address, poolResponse)
   const tabs = deriveUserTabs(userRole, poolResponse, derivedStatus)
+  const actions = deriveUserActions(userRole, poolResponse, derivedStatus)
 
+  // get info by pool status
   const funding = useFundingStatus(poolResponse)
   const dealing = useDealingStatus(poolResponse, chainId)
   const proRata = useProRataStatus(poolResponse)
@@ -162,7 +256,8 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
       dealing,
       proRata,
       tabs,
+      actions,
     }),
-    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs],
+    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs, actions],
   )
 }
