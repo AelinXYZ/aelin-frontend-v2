@@ -17,14 +17,14 @@ export const DealInformation: React.FC<{
   pool: ParsedAelinPool
   poolStatusHelper: WaitingForDeal
 }> = ({ pool, poolStatusHelper }) => {
-  const { deal } = pool
+  const { deal, sponsorFee } = pool
 
   return !deal ? (
     <div>No Deal presented yet.</div>
   ) : (
     <>
       <Column>
-        <InfoCell title="Name" value={deal.name} />
+        <InfoCell title="Name" value={`${deal.name} - ${pool.dealAddress}`} />
         <InfoCell title="Deal token" tooltip="??" value={deal.underlyingToken.token} />
         <InfoCell title="Exchange rates" tooltip="??">
           <Value>{`${deal.exchangeRates.investmentPerDeal.formatted} ${deal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
@@ -34,9 +34,9 @@ export const DealInformation: React.FC<{
           title="Deal stage"
           tooltip="??"
           value={
-            deal.proRataRedemption?.stage === 1
+            deal.redemption?.stage === 1
               ? 'Round 1: Pro Rata Redemption'
-              : deal.proRataRedemption?.stage === 2
+              : deal.redemption?.stage === 2
               ? 'Round 2: Open Redemption'
               : 'Redemption closed'
           }
@@ -44,7 +44,11 @@ export const DealInformation: React.FC<{
         <InfoCell
           title="Round 1 deadline"
           tooltip="??"
-          value={formatDate(deal.proRataRedemption!.proRataRedemptionEnd, DATE_DETAILED)}
+          value={
+            deal.redemption
+              ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+              : 'N/A'
+          }
         />
         <InfoCell title="Pool stats" tooltip="??">
           <Value>Amount in pool: {pool.amountInPool.formatted}</Value>
@@ -60,13 +64,13 @@ export const DealInformation: React.FC<{
           value={deal.underlyingToken.dealAmount.formatted}
         />
         <InfoCell title="Vesting data" tooltip="??">
-          <Value>Cliff: {deal.vesting.cliff.toString()}</Value>
-          <Value>Linear period: {deal.vesting.linear.toString()}</Value>
+          <Value>Cliff: {deal.vestingPeriod.cliff.formatted}</Value>
+          <Value>Linear period: {deal.vestingPeriod.vesting.formatted}</Value>
         </InfoCell>
         <InfoCell title="Round 2 deadline" tooltip="??">
-          {deal.proRataRedemption?.openRedemptionEnd ? (
+          {deal.redemption && deal.redemption.openRedemptionEnd ? (
             <Deadline progress="75" width="180px">
-              <Value>{formatDate(deal.proRataRedemption!.openRedemptionEnd, DATE_DETAILED)}</Value>
+              <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
             </Deadline>
           ) : (
             <Value>No Open period</Value>
@@ -79,7 +83,7 @@ export const DealInformation: React.FC<{
           <Value>Withdrawn: {poolStatusHelper.userTotalWithdrawn.formatted}</Value>
         </InfoCell>
         <InfoCell title="Fees charged on accept" tooltip="??">
-          <Value>Sponsor Fee: {pool.sponsorFee.formatted}</Value>
+          <Value>Sponsor Fee: {sponsorFee.formatted}</Value>
           <Value>Aelin protocol fee: 2%</Value>
         </InfoCell>
       </Column>

@@ -1,11 +1,11 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import Wei from '@synthetixio/wei'
+import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
+import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isBefore from 'date-fns/isBefore'
 
-import { PoolStatus } from '@/graphql-schema'
 import { ExtendedStatus } from '@/src/constants/pool'
-import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -104,7 +104,7 @@ export function dealExchangeRates(
   const dealToken = new Wei(dealTokenAmount, dealTokenDecimals, true)
 
   const investmentRate = dealToken.div(investmentToken)
-  const dealRate = new Wei(1).div(investmentRate)
+  const dealRate = new Wei(1) //.div(investmentRate)
 
   return {
     investmentPerDeal: {
@@ -146,11 +146,31 @@ export function getProRataRedemptionDates(
     ? 2
     : null
 
+  const start = proRataRedemptionStart
+  const end = openRedemptionEnd ? openRedemptionEnd : proRataRedemptionEnd
+
   return {
     stage,
+    start,
+    end,
     proRataRedemptionStart,
     proRataRedemptionEnd,
     openRedemptionEnd,
+  }
+}
+export function getVestingDates(vestingCliff: string, vestingPeriod: string) {
+  const now = new Date()
+  const cliffMs = Number(vestingCliff ?? 0) * 1000
+  const vestingPeriodMs = Number(vestingPeriod ?? 0) * 1000
+  return {
+    cliff: {
+      ms: cliffMs,
+      formatted: formatDistanceStrict(now, addMilliseconds(now, cliffMs)),
+    },
+    vesting: {
+      ms: vestingPeriodMs,
+      formatted: formatDistanceStrict(now, addMilliseconds(now, vestingPeriodMs)),
+    },
   }
 }
 
