@@ -1,4 +1,4 @@
-import { HTMLAttributes, useEffect, useRef } from 'react'
+import { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
@@ -38,7 +38,7 @@ const Button = styled(ButtonPrimaryLight)`
   font-size: 1rem;
   font-weight: 400;
   height: 24px;
-  margin: 0 auto -15px;
+  margin: 0 auto 10px;
   padding-left: 10px;
   padding-right: 10px;
 `
@@ -60,6 +60,8 @@ export const DealCreateStepInput: React.FC<Props> = ({
   totalPurchase,
   ...restProps
 }) => {
+  const [disablePurchaseAmount, setDisablePurchaseAmount] = useState<boolean>(false)
+
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -99,6 +101,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
       ) : step === CreateDealSteps.totalPurchaseAmount ? (
         <>
           <TextfieldNarrow
+            disabled={disablePurchaseAmount}
             name={step}
             onChange={(e) => onSetDealField(e.target.value)}
             placeholder={createDealConfig[step].placeholder}
@@ -110,12 +113,18 @@ export const DealCreateStepInput: React.FC<Props> = ({
             <LabeledRadioButton
               checked={totalPurchase === 'all'}
               label={'All'}
-              onClick={() => onSetTotalPurchase('all')}
+              onClick={() => {
+                setDisablePurchaseAmount(true)
+                onSetTotalPurchase('all')
+              }}
             />
             <LabeledRadioButton
               checked={totalPurchase === 'partial'}
               label="Partial"
-              onClick={() => onSetTotalPurchase('partial')}
+              onClick={() => {
+                setDisablePurchaseAmount(false)
+                onSetTotalPurchase('partial')
+              }}
             />
           </PrivacyGrid>
           <Button onClick={onCalculateDealModal}>Calculate</Button>
