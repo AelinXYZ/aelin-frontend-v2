@@ -52,16 +52,14 @@ const RequiredConnection: React.FC<RequiredConnectionProps> = ({
   const { address, connectWallet, isWalletConnected } = useWeb3Connection()
   const isConnected = isWalletConnected && address
 
-  if (!isConnected) {
-    return (
-      <Wrapper style={{ minHeight }} {...restProps}>
-        <Text>{text}</Text>
-        <ButtonPrimaryLight onClick={connectWallet}>Connect wallet</ButtonPrimaryLight>
-      </Wrapper>
-    )
-  }
-
-  return children
+  return !isConnected ? (
+    <Wrapper style={{ minHeight }} {...restProps}>
+      <Text>{text}</Text>
+      <ButtonPrimaryLight onClick={connectWallet}>Connect wallet</ButtonPrimaryLight>
+    </Wrapper>
+  ) : (
+    children
+  )
 }
 
 export { withRequiredConnection, RequiredConnection }
