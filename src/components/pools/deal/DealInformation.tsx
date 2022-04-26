@@ -73,7 +73,7 @@ export const DealInformation: React.FC<{
               <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
             </Deadline>
           ) : (
-            <Value>No Open period</Value>
+            <Value>No open period</Value>
           )}
         </InfoCell>
         <InfoCell title="User stats" tooltip="??">
