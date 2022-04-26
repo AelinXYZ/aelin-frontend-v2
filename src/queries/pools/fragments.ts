@@ -21,6 +21,7 @@ gql`
     contributions
     totalSupply
 
+    totalAmountEarnedBySponsor
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
