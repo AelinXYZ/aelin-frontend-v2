@@ -77,14 +77,23 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
   }
 
   useEffect(() => {
-    if (totalPurchase === 'all') {
+    if (
+      totalPurchase === 'all' &&
+      createDealState.currentStep === CreateDealSteps.totalPurchaseAmount
+    ) {
       try {
         setDealField(wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber())
       } catch (e) {
         setDealField(0)
       }
     }
-  }, [pool.amountInPool.raw, pool.investmentTokenDecimals, setDealField, totalPurchase])
+  }, [
+    createDealState.currentStep,
+    pool.amountInPool.raw,
+    pool.investmentTokenDecimals,
+    setDealField,
+    totalPurchase,
+  ])
 
   return (
     <>
@@ -151,9 +160,9 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
       {showDealCalculationModal && (
         <DealCalculationModal
           dealToken={createDealState.dealToken as Token}
-          dealTokenAmount={createDealState.dealTokenTotal as string}
+          dealTokenAmount={wei(createDealState.dealTokenTotal, createDealState.dealToken?.decimals)}
           investmentToken={investmentTokenInfo as Token}
-          investmentTokenAmount={pool.amountInPool.formatted as string}
+          investmentTokenAmount={wei(pool.amountInPool.raw, investmentTokenInfo?.decimals)}
           onClose={() => setShowDealCalculationModal(false)}
           onConfirm={(value) => {
             setDealField(value)

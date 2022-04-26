@@ -24,7 +24,6 @@ gql`
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
-    totalAmountEarnedBySponsor
   }
 `
 
