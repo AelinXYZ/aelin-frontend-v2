@@ -93,6 +93,13 @@ export const theme = {
     fontFamilyTitle: `'Montserrat', 'Helvetica Neue', 'Arial', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'`,
     fontFamilyCode: `'source-code-pro', 'Menlo', 'Monaco', 'Consolas', 'Courier New', 'monospace'`,
   },
+  toast: {
+    borderRadius: componentBorderRadius,
+    borderStyle: 'solid',
+    borderWidth: '0.5px',
+    backgroundColor: gray,
+    boxShadow: '0px 0px 10px rgba(255, 255, 255, 0.25)',
+  },
   footer: {},
   header: {
     height: '60px',

@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react'
 import { Contract, ContractTransaction } from '@ethersproject/contracts'
 
 import { notify } from '@/src/components/toast/Toast'
-import { ERROR_TYPE, SENT_TYPE, SUCCESS_TYPE } from '@/src/components/toast/types'
+import { ERROR_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { TransactionError } from '@/src/utils/TransactionError'
@@ -41,7 +41,7 @@ export default function useTransaction<
         tx = await contract[method](...params)
         console.info(getExplorerUrl(tx.hash), 'Awaiting tx execution')
 
-        notify({ type: SENT_TYPE, explorerUrl: getExplorerUrl(tx.hash) })
+        notify({ type: WAITING_TYPE, explorerUrl: getExplorerUrl(tx.hash) })
       } catch (e: any) {
         const error = new TransactionError(
           e.data?.message || e.message || 'Unable to decode revert reason',

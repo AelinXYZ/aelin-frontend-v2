@@ -1,18 +1,20 @@
+import Image from 'next/image'
+
 import ms from 'ms'
 import { Renderable, Toast, Toaster, toast } from 'react-hot-toast'
 
+import LoaderIcon from '@/public/resources/gif/toast-loader.gif'
 import { Failed as FailedIcon } from '@/src/components/assets/Failed'
-import { Sent as SentIcon } from '@/src/components/assets/Sent'
 import { Success as SuccessIcon } from '@/src/components/assets/Success'
 import { ToastComponent } from '@/src/components/toast/ToastComponent'
-import { ERROR_TYPE, SENT_TYPE, SUCCESS_TYPE } from '@/src/components/toast/types'
+import { ERROR_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 
-type ToastType = typeof ERROR_TYPE | typeof SUCCESS_TYPE | typeof SENT_TYPE
+type ToastType = typeof ERROR_TYPE | typeof SUCCESS_TYPE | typeof WAITING_TYPE
 
 const ToastTypes: { [key: string]: (t: Toast, explorerUrl: string) => Renderable } = {
-  [SENT_TYPE]: (t: Toast, explorerUrl: string) => (
+  [WAITING_TYPE]: (t: Toast, explorerUrl: string) => (
     <ToastComponent
-      icon={<SentIcon />}
+      icon={<Image alt="Loading..." src={LoaderIcon} />}
       link={{ url: explorerUrl, text: 'Click to verify on Etherscan' }}
       t={t}
       title="Transaction Sent"
@@ -44,7 +46,7 @@ const Toast = () => (
     containerStyle={{ position: 'absolute', marginBottom: '20px', marginLeft: '20px' }}
     position="bottom-right"
     toastOptions={{
-      duration: ms('5s'),
+      duration: ms('10s'),
     }}
   />
 )
