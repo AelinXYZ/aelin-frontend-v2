@@ -24,9 +24,9 @@ export const RowCSS = css<RowProps>`
 export const Row = styled.div<RowProps>`
   ${RowCSS}
 
-  background-color: ${(props) => props.theme.card.backgroundColor};
+  background-color: ${({ theme }) => theme.card.backgroundColor};
   border-radius: ${({ theme }) => theme.card.borderRadius};
-  border: ${(props) => props.theme.card.borderColor};
+  border: ${({ theme }) => theme.card.borderColor};
   margin-bottom: 10px;
   min-height: 48px;
   padding-bottom: 10px;
@@ -52,11 +52,21 @@ export const Row = styled.div<RowProps>`
   `}
 `
 
+Row.defaultProps = {
+  columns: '1fr',
+  hasHover: false,
+}
+
 export const TableHead = styled.div<RowProps>`
   ${RowCSS}
 
   margin-bottom: 18px;
 `
+
+TableHead.defaultProps = {
+  columns: '1fr',
+  hasHover: false,
+}
 
 export const Cell = styled.span<{ justifyContent?: string; light?: boolean }>`
   align-items: center;
