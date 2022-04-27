@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { ActionTabs } from '@/src/components/common/ActionTabs'
@@ -55,13 +55,12 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
 
   const [tab, setTab] = useState<PoolStatus>(tabs[0])
   const [action, setAction] = useState<PoolAction>(actions[0])
-  const showCreateDealForm = actions.includes(PoolAction.CreateDeal)
+
   const dealExists = pool.deal
-  const activeItem = dealExists
-    ? PoolTimelineState.dealWindow
-    : showCreateDealForm
-    ? PoolTimelineState.dealCreation
-    : PoolTimelineState.investmentWindow
+
+  useEffect(() => {
+    setAction(actions[0])
+  }, [actions])
 
   return (
     <>
@@ -69,7 +68,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
       <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
-      <RightTimelineLayout timeline={<Timeline activeItem={activeItem} />}>
+      <RightTimelineLayout timeline={<Timeline activeItem={PoolTimelineState.poolCreation} />}>
         <MainGrid>
           <CardWithTitle
             titles={
@@ -111,6 +110,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}
             </ContentGrid>
           </CardWithTitle>
+
           <ActionTabs active={action} onTitleClick={setAction} titles={actions}>
             {!actions.length && <div>No actions available</div>}
             {action === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}

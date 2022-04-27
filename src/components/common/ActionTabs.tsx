@@ -83,15 +83,11 @@ export const ActionTabs: React.FC<{
   active: PoolAction
   onTitleClick: (action: PoolAction) => void
 }> = ({ active, children, onTitleClick, titles, ...restProps }) => {
-  const onItemClick = (action: PoolAction) => {
-    onTitleClick(action)
-  }
-
   return (
     <Wrapper {...restProps}>
       <Tabs>
         {titles.map((action) => (
-          <Tab isActive={active === action} key={action} onClick={() => onItemClick(action)}>
+          <Tab isActive={active === action} key={action} onClick={() => onTitleClick(action)}>
             {action}
           </Tab>
         ))}
