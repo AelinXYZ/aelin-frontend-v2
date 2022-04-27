@@ -11,23 +11,22 @@ import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTrans
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
-import { Funding } from '@/types/aelinPool'
 
 type Props = {
   pool: ParsedAelinPool
-  poolHelpers: Funding
 }
 
-function Deposit({ pool, poolHelpers }: Props) {
-  const { chainId, investmentToken, investmentTokenDecimals } = pool
+function WithdrawFromPool({ pool }: Props) {
+  const { chainId, investmentTokenDecimals } = pool
+
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
-  const [balance, refetchBalance] = useERC20Call(chainId, investmentToken as string, 'balanceOf', [
+  const [balance, refetchBalance] = useERC20Call(chainId, pool.address, 'balanceOf', [
     address || ZERO_ADDRESS,
   ])
-  const purchasePoolTokens = useAelinPoolTransaction(pool.address, 'purchasePoolTokens')
+  const withdraw = useAelinPoolTransaction(pool.address, 'withdrawFromPool')
 
   useEffect(() => {
     if (tokenInputValue && BigNumber.from(tokenInputValue).gt(MAX_BN)) {
@@ -37,7 +36,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     }
   }, [tokenInputValue])
 
-  const depositTokens = async () => {
+  const withdrawFromPool = async () => {
     if (inputError) {
       return
     }
@@ -45,7 +44,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     setIsLoading(true)
 
     try {
-      await purchasePoolTokens(tokenInputValue)
+      await withdraw(tokenInputValue)
       refetchBalance()
       setTokenInputValue('')
       setInputError('')
@@ -55,39 +54,27 @@ function Deposit({ pool, poolHelpers }: Props) {
     }
   }
 
-  const balances = [
-    {
-      raw: balance || ZERO_BN,
-      formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals),
-    },
-    poolHelpers.maxDepositAllowed,
-  ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
-
   return (
     <>
+      <div>Withdraw</div>
       <TokenInput
         decimals={investmentTokenDecimals}
         error={Boolean(inputError)}
-        maxValue={balances[0].raw.toString()}
-        maxValueFormatted={balances[0].formatted || '0'}
+        maxValue={(balance || ZERO_BN).toString()}
+        maxValueFormatted={formatToken(balance || ZERO_BN, investmentTokenDecimals) || '0'}
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
       <GradientButton
         disabled={
-          !address ||
-          !isAppConnected ||
-          poolHelpers.capReached ||
-          isLoading ||
-          !tokenInputValue ||
-          Boolean(inputError)
+          !address || !isAppConnected || isLoading || !tokenInputValue || Boolean(inputError)
         }
-        onClick={depositTokens}
+        onClick={withdrawFromPool}
       >
-        Deposit
+        Withdraw
       </GradientButton>
     </>
   )
 }
 
-export default genericSuspense(Deposit)
+export default genericSuspense(WithdrawFromPool)

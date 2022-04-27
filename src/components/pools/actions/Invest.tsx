@@ -24,6 +24,7 @@ type Props = {
 }
 
 function Invest({ pool, poolHelpers }: Props) {
+  // TODO: bring userAllowance to this components using theGraph
   return (
     <>
       <Title>Deposit tokens</Title>

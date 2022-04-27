@@ -6,6 +6,7 @@ import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import Invest from '@/src/components/pools/actions/Invest'
+import WithdrawFromPool from '@/src/components/pools/actions/WithdrawFromPool'
 import { Timeline } from '@/src/components/pools/common/Timeline'
 import DealCreate from '@/src/components/pools/deal/DealCreate'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
@@ -125,9 +126,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             <ActionsCard>
               {!actions.length && <div>No actions available</div>}
               {actions.includes(PoolAction.Invest) && <Invest pool={pool} poolHelpers={funding} />}
-              {actions.includes(PoolAction.Withdraw) && (
-                <div>Give me my tokens back!! (Withdraw form)</div>
-              )}
+              {actions.includes(PoolAction.Withdraw) && <WithdrawFromPool pool={pool} />}
             </ActionsCard>
           </MainGrid>
         )}
