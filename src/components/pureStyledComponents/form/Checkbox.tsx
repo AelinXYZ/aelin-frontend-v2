@@ -3,9 +3,9 @@ import styled from 'styled-components'
 export const Checkbox = styled.div<{ checked?: boolean }>`
   --dimensions: 14px;
 
-  background-color: ${({ checked }) => (checked ? '#fff' : 'rgba(255, 255, 255, 0.04)')};
-  border-color: ${({ checked, theme: { colors } }) =>
-    checked ? colors.primary : colors.componentBorderColor};
+  background-color: ${({ checked, theme: { colors } }) =>
+    checked ? colors.primary : 'rgba(255, 255, 255, 0.04)'};
+  border-color: #fff;
   border-style: solid;
   border-width: 1px;
   box-sizing: border-box;
