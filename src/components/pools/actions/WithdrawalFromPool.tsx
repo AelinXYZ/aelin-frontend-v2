@@ -16,7 +16,7 @@ type Props = {
   pool: ParsedAelinPool
 }
 
-function WithdrawFromPool({ pool }: Props) {
+function WithdrawalFromPool({ pool }: Props) {
   const { chainId, investmentTokenDecimals } = pool
 
   const [tokenInputValue, setTokenInputValue] = useState('')
@@ -56,7 +56,6 @@ function WithdrawFromPool({ pool }: Props) {
 
   return (
     <>
-      <div>Withdraw</div>
       <TokenInput
         decimals={investmentTokenDecimals}
         error={Boolean(inputError)}
@@ -77,4 +76,4 @@ function WithdrawFromPool({ pool }: Props) {
   )
 }
 
-export default genericSuspense(WithdrawFromPool)
+export default genericSuspense(WithdrawalFromPool)

@@ -6,11 +6,10 @@ import { ActionTabs } from '@/src/components/common/ActionTabs'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
+import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import Invest from '@/src/components/pools/actions/Invest'
-import WithdrawFromPool from '@/src/components/pools/actions/WithdrawFromPool'
+import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPool'
 import { Timeline } from '@/src/components/pools/common/Timeline'
-import DealCreate from '@/src/components/pools/deal/DealCreate'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { ChainsValues } from '@/src/constants/chains'
@@ -71,57 +70,54 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       </Head>
       <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
       <RightTimelineLayout timeline={<Timeline activeItem={activeItem} />}>
-        {showCreateDealForm ? (
-          <DealCreate pool={pool} />
-        ) : (
-          <MainGrid>
-            <CardWithTitle
-              titles={
-                <>
-                  {tabs.includes(PoolStatus.Funding) && (
-                    <CardTitle
-                      isActive={tab === PoolStatus.Funding}
-                      onClick={() => setTab(PoolStatus.Funding)}
-                    >
-                      Pool information
-                    </CardTitle>
-                  )}
-                  {tabs.includes(PoolStatus.DealPresented) && dealExists && (
-                    <CardTitle
-                      isActive={tab === PoolStatus.DealPresented}
-                      onClick={() => setTab(PoolStatus.DealPresented)}
-                    >
-                      Deal information
-                    </CardTitle>
-                  )}
-                  {tabs.includes(PoolStatus.Vesting) && (
-                    <CardTitle
-                      isActive={tab === PoolStatus.Vesting}
-                      onClick={() => setTab(PoolStatus.Vesting)}
-                    >
-                      Vest
-                    </CardTitle>
-                  )}
-                </>
-              }
-            >
-              <ContentGrid>
-                {tab === PoolStatus.Funding && (
-                  <PoolInformation pool={pool} poolAddress={poolAddress} />
+        <MainGrid>
+          <CardWithTitle
+            titles={
+              <>
+                {tabs.includes(PoolStatus.Funding) && (
+                  <CardTitle
+                    isActive={tab === PoolStatus.Funding}
+                    onClick={() => setTab(PoolStatus.Funding)}
+                  >
+                    Pool information
+                  </CardTitle>
                 )}
-                {tab === PoolStatus.DealPresented && dealExists && (
-                  <DealInformation pool={pool} poolStatusHelper={dealing} />
+                {tabs.includes(PoolStatus.DealPresented) && dealExists && (
+                  <CardTitle
+                    isActive={tab === PoolStatus.DealPresented}
+                    onClick={() => setTab(PoolStatus.DealPresented)}
+                  >
+                    Deal information
+                  </CardTitle>
                 )}
-                {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}
-              </ContentGrid>
-            </CardWithTitle>
-            <ActionTabs active={action} onTitleClick={setAction} titles={actions}>
-              {!actions.length && <div>No actions available</div>}
-              {actions.includes(PoolAction.Invest) && <Invest pool={pool} poolHelpers={funding} />}
-              {actions.includes(PoolAction.Withdraw) && <WithdrawFromPool pool={pool} />}
-            </ActionTabs>
-          </MainGrid>
-        )}
+                {tabs.includes(PoolStatus.Vesting) && (
+                  <CardTitle
+                    isActive={tab === PoolStatus.Vesting}
+                    onClick={() => setTab(PoolStatus.Vesting)}
+                  >
+                    Vest
+                  </CardTitle>
+                )}
+              </>
+            }
+          >
+            <ContentGrid>
+              {tab === PoolStatus.Funding && (
+                <PoolInformation pool={pool} poolAddress={poolAddress} />
+              )}
+              {tab === PoolStatus.DealPresented && dealExists && (
+                <DealInformation pool={pool} poolStatusHelper={dealing} />
+              )}
+              {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}
+            </ContentGrid>
+          </CardWithTitle>
+          <ActionTabs active={action} onTitleClick={setAction} titles={actions}>
+            {!actions.length && <div>No actions available</div>}
+            {action === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
+            {action === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
+            {action === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
+          </ActionTabs>
+        </MainGrid>
       </RightTimelineLayout>
     </>
   )

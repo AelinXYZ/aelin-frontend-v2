@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Wei, { wei } from '@synthetixio/wei'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
@@ -24,6 +25,7 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
+import { ChainsValues } from '@/src/constants/chains'
 import { Token } from '@/src/constants/token'
 import useAelinCreateDeal, {
   CreateDealSteps,
@@ -31,7 +33,7 @@ import useAelinCreateDeal, {
   getCreateDealStepIndicatorData,
   getCreateDealSummaryData,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
-import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const StepIndicator = styled(BaseStepIndicator)`
@@ -41,7 +43,10 @@ const StepIndicator = styled(BaseStepIndicator)`
   }
 `
 
-const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
+type Props = { poolAddress: string; chainId: ChainsValues }
+
+const CreateDealForm = ({ chainId, poolAddress }: Props) => {
+  const { pool } = useAelinPool(chainId, poolAddress)
   const { appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
   const [totalPurchase, setTotalPurchase] = useState<string | undefined>()
@@ -184,4 +189,4 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
   )
 }
 
-export default DealCreate
+export default genericSuspense(CreateDealForm)
