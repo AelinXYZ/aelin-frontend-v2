@@ -2,15 +2,16 @@ import Head from 'next/head'
 import { useState } from 'react'
 import styled from 'styled-components'
 
+import { ActionTabs } from '@/src/components/common/ActionTabs'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
+import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import Invest from '@/src/components/pools/actions/Invest'
 import { Timeline } from '@/src/components/pools/common/Timeline'
 import DealCreate from '@/src/components/pools/deal/DealCreate'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
-import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
@@ -34,16 +35,6 @@ const ContentGrid = styled.div`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     grid-template-columns: 1fr 1fr;
   }
-`
-
-const ActionsCard = styled(BaseCard)`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  justify-content: center;
-  min-height: 236px;
-  padding: 30px 40px;
 `
 
 type Props = {
@@ -70,6 +61,19 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     : showCreateDealForm
     ? PoolTimelineState.dealCreation
     : PoolTimelineState.investmentWindow
+
+  const actionTabs = [
+    {
+      value: 'Accept deal',
+      key: 'accept-deal',
+      children: <AcceptDeal />,
+    },
+    {
+      value: 'Withdraw',
+      key: 'withdraw',
+      children: <>Give me my tokens back!! (Withdraw form)</>,
+    },
+  ]
 
   return (
     <>
@@ -122,13 +126,16 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}
               </ContentGrid>
             </CardWithTitle>
-            <ActionsCard>
-              {!actions.length && <div>No actions available</div>}
-              {actions.includes(PoolAction.Invest) && <Invest pool={pool} poolHelpers={funding} />}
-              {actions.includes(PoolAction.Withdraw) && (
-                <div>Give me my tokens back!! (Withdraw form)</div>
-              )}
-            </ActionsCard>
+            {actions.includes(PoolAction.Withdraw) ? (
+              <ActionTabs tabs={actionTabs} />
+            ) : (
+              <ActionTabs>
+                {!actions.length && <div>No actions available</div>}
+                {actions.includes(PoolAction.Invest) && (
+                  <Invest pool={pool} poolHelpers={funding} />
+                )}
+              </ActionTabs>
+            )}
           </MainGrid>
         )}
       </RightTimelineLayout>

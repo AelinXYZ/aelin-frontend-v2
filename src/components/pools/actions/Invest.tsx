@@ -1,42 +1,29 @@
-import styled from 'styled-components'
-
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import Approve from '@/src/components/pools/actions/Approve'
 import Deposit from '@/src/components/pools/actions/Deposit'
+import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { Funding } from '@/types/aelinPool'
-
-const Title = styled.h4`
-  color: ${({ theme }) => theme.colors.textColor};
-  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
-  font-weight: 600;
-  line-height: 1.4;
-  margin: 0 0 20px;
-  text-align: left;
-  width: 100%;
-`
 
 type Props = {
   pool: ParsedAelinPool
   poolHelpers: Funding
 }
 
-function Invest({ pool, poolHelpers }: Props) {
+const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
   return (
-    <>
-      <Title>Deposit tokens</Title>
+    <Wrapper title="Deposit tokens" {...restProps}>
       {!poolHelpers.userAllowance ? (
-        <>There was an error, try again!</>
+        <Contents>There was an error, try again!</Contents>
       ) : poolHelpers.capReached ? (
-        <>Max cap reached</>
+        <Contents>Max cap reached</Contents>
       ) : poolHelpers.userAllowance.gt(ZERO_ADDRESS) ? (
         <Deposit pool={pool} poolHelpers={poolHelpers} />
       ) : (
         <Approve pool={pool} refetchAllowance={poolHelpers.refetchAllowance} />
       )}
-    </>
+    </Wrapper>
   )
 }
 
