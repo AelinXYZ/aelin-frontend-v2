@@ -18,12 +18,12 @@ export enum PoolStatus {
 }
 
 export enum PoolAction {
-  Invest,
-  CreateDeal,
-  FundDeal,
-  AcceptDeal,
-  Withdraw,
-  Claim,
+  Invest = 'Invest',
+  CreateDeal = 'Create Deal',
+  FundDeal = 'Fund Deal',
+  AcceptDeal = 'Accept Deal',
+  Withdraw = 'Withdraw',
+  Claim = 'Claim',
 }
 
 // interface BaseState {

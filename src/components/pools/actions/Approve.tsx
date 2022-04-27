@@ -1,23 +1,11 @@
 import { useState } from 'react'
-import styled from 'styled-components'
 
+import { Contents } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-
-const Description = styled.p`
-  color: ${({ theme }) => theme.colors.textColorLight};
-  display: flex;
-  font-size: 1.4rem;
-  font-weight: 400;
-  line-height: 1.5;
-  margin: 0 0 40px;
-  text-align: left;
-  text-decoration: none;
-  width: 100%;
-`
 
 type Props = {
   pool: ParsedAelinPool
@@ -44,9 +32,9 @@ export default function Approve({ pool, refetchAllowance }: Props) {
 
   return (
     <>
-      <Description>
+      <Contents>
         Before you deposit, the pool needs your permission to transfer your {investmentTokenSymbol}
-      </Description>
+      </Contents>
       <GradientButton
         disabled={!address || !isAppConnected || isLoading}
         onClick={approveInvestmentToken}

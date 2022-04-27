@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
@@ -55,8 +56,11 @@ function AcceptDeal({ pool }: Props) {
   }
 
   return (
-    <>
-      <div>Withdraw</div>
+    <Wrapper title="Withdrawn">
+      <Contents>
+        The sponsor is looking for a deal. If a deal is found, investors will be able to either
+        accept or withdraw their tokens
+      </Contents>
       <TokenInput
         decimals={investmentTokenDecimals}
         error={Boolean(inputError)}
@@ -73,7 +77,7 @@ function AcceptDeal({ pool }: Props) {
       >
         Withdraw
       </GradientButton>
-    </>
+    </Wrapper>
   )
 }
 

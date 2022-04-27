@@ -2,16 +2,17 @@ import Head from 'next/head'
 import { useState } from 'react'
 import styled from 'styled-components'
 
+import { ActionTabs } from '@/src/components/common/ActionTabs'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
+import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import Invest from '@/src/components/pools/actions/Invest'
 import WithdrawFromPool from '@/src/components/pools/actions/WithdrawFromPool'
 import { Timeline } from '@/src/components/pools/common/Timeline'
 import DealCreate from '@/src/components/pools/deal/DealCreate'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
-import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ChainsValues } from '@/src/constants/chains'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
@@ -37,16 +38,6 @@ const ContentGrid = styled.div`
   }
 `
 
-const ActionsCard = styled(BaseCard)`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  justify-content: center;
-  min-height: 236px;
-  padding: 30px 40px;
-`
-
 type Props = {
   chainId: ChainsValues
   poolAddress: string
@@ -64,6 +55,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   }
 
   const [tab, setTab] = useState<PoolStatus>(tabs[0])
+  const [action, setAction] = useState<PoolAction>(actions[0])
   const showCreateDealForm = actions.includes(PoolAction.CreateDeal)
   const dealExists = pool.deal
   const activeItem = dealExists
@@ -123,11 +115,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}
               </ContentGrid>
             </CardWithTitle>
-            <ActionsCard>
+            <ActionTabs active={action} onTitleClick={setAction} titles={actions}>
               {!actions.length && <div>No actions available</div>}
               {actions.includes(PoolAction.Invest) && <Invest pool={pool} poolHelpers={funding} />}
               {actions.includes(PoolAction.Withdraw) && <WithdrawFromPool pool={pool} />}
-            </ActionsCard>
+            </ActionTabs>
           </MainGrid>
         )}
       </RightTimelineLayout>
