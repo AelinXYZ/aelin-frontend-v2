@@ -1,4 +1,6 @@
 import Head from 'next/head'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -18,7 +20,11 @@ import {
 import { Summary } from '@/src/components/pools/common/Summary'
 import DealCalculationModal from '@/src/components/pools/deal/DealCalculationModal'
 import DealCreateStepInput from '@/src/components/pools/deal/DealCreateStepInput'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  Button,
+  ButtonPrimary,
+  GradientButton,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
   ButtonPrev,
@@ -46,6 +52,9 @@ const StepIndicator = styled(BaseStepIndicator)`
 type Props = { poolAddress: string; chainId: ChainsValues }
 
 const CreateDealForm = ({ chainId, poolAddress }: Props) => {
+  const router = useRouter()
+  const { network } = router.query
+
   const { pool } = useAelinPool(chainId, poolAddress)
   const { appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
@@ -185,6 +194,9 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
           title={'Create deal'}
         />
       )}
+      <Link href={`/pool/${network}/${poolAddress}`} passHref>
+        <Button as="a">Cancel</Button>
+      </Link>
     </>
   )
 }
