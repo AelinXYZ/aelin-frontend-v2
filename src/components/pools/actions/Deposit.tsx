@@ -44,7 +44,7 @@ export default function Deposit({ pool, poolHelpers }: Props) {
     setIsLoading(true)
 
     try {
-      await purchasePoolTokens(tokenInputValue)
+      await purchasePoolTokens([tokenInputValue])
       refetchBalance()
       setTokenInputValue('')
       setInputError('')

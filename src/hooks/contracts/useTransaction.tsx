@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 
-import { Contract, ContractTransaction } from '@ethersproject/contracts'
+import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
 
 import { notify } from '@/src/components/toast/Toast'
 import { ERROR_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
@@ -20,7 +20,7 @@ export default function useTransaction<
   const { getExplorerUrl, isAppConnected, web3Provider } = useWeb3Connection()
 
   const execute = useCallback(
-    async (...params: Params) => {
+    async (params?: Params, options?: Overrides) => {
       const signer = web3Provider?.getSigner()
       if (!signer) {
         // TODO replace console with some notification or toast
@@ -35,10 +35,12 @@ export default function useTransaction<
 
       const contract = new Contract(address, abi, signer) as MyContract
 
+      const _params = Array.isArray(params) ? params : []
+
       let tx: ContractTransaction
       try {
         console.info('Please sign the transaction.')
-        tx = await contract[method](...params)
+        tx = await contract[method](..._params, { ...options })
         console.info(getExplorerUrl(tx.hash), 'Awaiting tx execution')
 
         notify({ type: WAITING_TYPE, explorerUrl: getExplorerUrl(tx.hash) })
@@ -77,7 +79,7 @@ export default function useTransaction<
   )
 
   const estimate = useCallback(
-    async (...params: Params) => {
+    async (params: Params) => {
       const signer = web3Provider?.getSigner()
       if (!signer) {
         // TODO replace console with some notification or toast
@@ -91,7 +93,6 @@ export default function useTransaction<
       }
 
       const contract = new Contract(address, abi, signer) as MyContract
-      // estimate tx gas if onlyEstimate is true
       try {
         console.info('Calculating transaction gas.')
         return await contract.estimateGas[method as string](...params)
