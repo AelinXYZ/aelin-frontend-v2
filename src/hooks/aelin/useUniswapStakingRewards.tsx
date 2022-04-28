@@ -5,13 +5,13 @@ import Wei from '@synthetixio/wei'
 
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ONE_YEAR_IN_SECS } from '@/src/constants/time'
-import { UseCoingeckoRatesResponse, useCoingeckoRates } from '@/src/hooks/aelin/useCoingeckoRates'
 import {
   UseUniswapPoolAmountResponse,
   useUniswapPoolAmount,
 } from '@/src/hooks/aelin/useUniswapPoolAmount'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useStakingRewardsCall from '@/src/hooks/contracts/useStakingRewardsCall'
+import { UseCoingeckoRatesResponse, useCoingeckoRates } from '@/src/hooks/useCoingeckoRates'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 interface UseUniswapStakingRewardsProps {

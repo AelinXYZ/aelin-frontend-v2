@@ -69,17 +69,17 @@ export function getFunded<P extends { purchaseTokenDecimals: number; contributio
   }
 }
 
-export function getAmountWithdrawn(amount: BigNumber) {
+export function getAmountWithdrawn(amount: BigNumber, purchaseTokenDecimals: number) {
   return {
     raw: amount,
-    formatted: formatToken(amount),
+    formatted: formatToken(amount, purchaseTokenDecimals),
   }
 }
 
-export function getAmountRedeem(amount: BigNumber) {
+export function getAmountRedeem(amount: BigNumber, purchaseTokenDecimals: number) {
   return {
     raw: amount,
-    formatted: formatToken(amount),
+    formatted: formatToken(amount, purchaseTokenDecimals),
   }
 }
 

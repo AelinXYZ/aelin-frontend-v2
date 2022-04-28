@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import addMilliseconds from 'date-fns/addMilliseconds'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 
@@ -71,6 +72,7 @@ export type ParsedAelinPool = {
         ms: number
         formatted: string
       }
+      end: Date | null
     }
     hasDealOpenPeriod: boolean
     redemption: {
@@ -118,8 +120,8 @@ export const getParsedPool = ({
     dealDeadline: getDealDeadline(pool),
     amountInPool: getAmountInPool({ ...pool, purchaseTokenDecimals }),
     funded: getFunded({ ...pool, purchaseTokenDecimals }),
-    withdrawn: getAmountWithdrawn(pool.totalAmountWithdrawn || ZERO_BN),
-    redeem: getAmountRedeem(pool.totalAmountAccepted || ZERO_BN),
+    withdrawn: getAmountWithdrawn(pool.totalAmountWithdrawn || ZERO_BN, purchaseTokenDecimals),
+    redeem: getAmountRedeem(pool.totalAmountAccepted || ZERO_BN, purchaseTokenDecimals),
     deal: undefined,
   }
 
@@ -127,6 +129,17 @@ export const getParsedPool = ({
   if (!dealDetails) {
     return res
   }
+
+  const redemptionInfo = dealDetails.proRataRedemptionPeriodStart
+    ? getProRataRedemptionDates(
+        // proRataRedemptionPeriodStart is set when Deal is founded by the Holder
+        dealDetails.proRataRedemptionPeriodStart,
+        dealDetails.proRataRedemptionPeriod,
+        dealDetails.openRedemptionPeriod,
+      )
+    : null
+
+  const vestingPeriod = getVestingDates(dealDetails.vestingCliff, dealDetails.vestingPeriod)
 
   res.deal = {
     name: 'TODO: name',
@@ -146,16 +159,14 @@ export const getParsedPool = ({
       dealDetails.underlyingDealTokenTotal,
       dealDetails.underlyingDealTokenDecimals,
     ),
-    vestingPeriod: getVestingDates(dealDetails.vestingCliff, dealDetails.vestingPeriod),
+    vestingPeriod: {
+      ...vestingPeriod,
+      end: redemptionInfo
+        ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms + vestingPeriod.vesting.ms)
+        : null,
+    },
     hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
-    redemption: dealDetails.proRataRedemptionPeriodStart
-      ? getProRataRedemptionDates(
-          // proRataRedemptionPeriodStart is set when Deal is founded by the Holder
-          dealDetails.proRataRedemptionPeriodStart,
-          dealDetails.proRataRedemptionPeriod,
-          dealDetails.openRedemptionPeriod,
-        )
-      : null,
+    redemption: redemptionInfo,
     holderAlreadyDeposited: dealDetails.isDealFunded,
     holderDepositExpiration: new Date(),
     holderDepositDuration: new Date(),

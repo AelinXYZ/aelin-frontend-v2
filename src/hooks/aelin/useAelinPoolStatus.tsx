@@ -103,9 +103,10 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
     // isAfter(now, pool.dealDeadline)
     // isBefore(now, pool.dealDeadline)
     if (
-      pool.dealAddress &&
-      pool.deal?.redemption &&
-      isBefore(now, pool.deal?.redemption?.start)
+      pool.deal &&
+      pool.deal.holderAlreadyDeposited &&
+      pool.deal.redemption &&
+      isBefore(now, pool.deal.redemption?.end)
       //isAfter(now, pool.deal?.redemption?.start) &&
       // isBefore(now, pool.deal?.redemption?.end)
     ) {
@@ -117,10 +118,12 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
 
     // Vesting
     if (
-      pool.dealAddress &&
-      pool.deal?.redemption &&
-      isAfter(now, pool.deal?.redemption?.end) &&
-      pool.deal.holderAlreadyDeposited
+      pool.deal &&
+      pool.deal.holderAlreadyDeposited &&
+      pool.deal.redemption &&
+      isAfter(now, pool.deal.redemption?.end) &&
+      pool.deal.vestingPeriod.end &&
+      isBefore(now, pool.deal.vestingPeriod.end)
     ) {
       return {
         current: PoolStatus.Vesting,
@@ -216,22 +219,32 @@ function useUserActions(
     // Deal Presented
     if (currentStatus === PoolStatus.DealPresented) {
       const actions: PoolAction[] = []
-      // ?? hay limite para cuando puede el holder depositar?
-      if (userRole === UserRole.Investor && !pool.deal?.holderAlreadyDeposited) {
+
+      if (userRole === UserRole.Holder && !pool.deal?.holderAlreadyDeposited) {
         actions.push(PoolAction.FundDeal)
       }
 
-      if (pool.deal && isAfter(now, pool.deal.holderDepositExpiration)) {
-        actions.push(PoolAction.Withdraw)
-
+      if (pool.deal) {
         if (pool.deal.redemption && isBefore(now, pool.deal.redemption?.end)) {
           actions.push(PoolAction.AcceptDeal)
+        }
+
+        if (isAfter(now, pool.deal.holderDepositExpiration)) {
+          actions.push(PoolAction.Withdraw)
+        }
+
+        if (pool.deal.holderAlreadyDeposited) {
+          actions.push(PoolAction.Withdraw)
         }
       }
 
       // TODO: override deal when is expired and amount of deals presented is < 5
 
       return actions
+    }
+
+    if (currentStatus === PoolStatus.Closed) {
+      return [PoolAction.Withdraw]
     }
 
     if (currentStatus === PoolStatus.Vesting) {

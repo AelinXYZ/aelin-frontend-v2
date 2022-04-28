@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
@@ -8,10 +8,12 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
+import { AelinPool } from '@/types/typechain'
 
 type Props = {
   pool: ParsedAelinPool
@@ -24,10 +26,20 @@ function AcceptDeal({ pool }: Props) {
   const [inputError, setInputError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
-  const [balance, refetchBalance] = useERC20Call(chainId, pool.address, 'balanceOf', [
-    address || ZERO_ADDRESS,
-  ])
-  const withdraw = useAelinPoolTransaction(pool.address, 'withdrawFromPool')
+
+  const stage = pool.deal?.redemption?.stage
+  if (!stage) {
+    throw new Error('There is not possible to accept deal at this pool stage.')
+  }
+
+  const [balance, refetchBalance] = useAelinPoolCall(
+    chainId,
+    pool.address,
+    (stage === 1 ? 'maxProRataAmount' : 'maxOpenAvail') as keyof AelinPool['functions'],
+    [address || ZERO_ADDRESS],
+  )
+
+  const acceptDeal = useAelinPoolTransaction(pool.address, 'acceptDealTokens')
 
   useEffect(() => {
     if (tokenInputValue && BigNumber.from(tokenInputValue).gt(MAX_BN)) {
@@ -45,7 +57,7 @@ function AcceptDeal({ pool }: Props) {
     setIsLoading(true)
 
     try {
-      await withdraw(tokenInputValue)
+      await acceptDeal(tokenInputValue)
       refetchBalance()
       setTokenInputValue('')
       setInputError('')
@@ -56,16 +68,20 @@ function AcceptDeal({ pool }: Props) {
   }
 
   return (
-    <Wrapper title="Withdrawn">
+    <Wrapper>
       <Contents>
-        The sponsor is looking for a deal. If a deal is found, investors will be able to either
-        accept or withdraw their tokens
+        <div>
+          <div>Deal Allocation stage {stage}</div>
+          <>By clicking "accept deal" you are agreeing to the negotiated exchange rate.</>
+        </div>
       </Contents>
       <TokenInput
         decimals={investmentTokenDecimals}
         error={Boolean(inputError)}
         maxValue={(balance || ZERO_BN).toString()}
-        maxValueFormatted={formatToken(balance || ZERO_BN, investmentTokenDecimals) || '0'}
+        maxValueFormatted={
+          formatToken((balance as BigNumberish) || ZERO_BN, investmentTokenDecimals) || '0'
+        }
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
@@ -75,7 +91,7 @@ function AcceptDeal({ pool }: Props) {
         }
         onClick={withdrawFromPool}
       >
-        Withdraw
+        Accept deal
       </GradientButton>
     </Wrapper>
   )

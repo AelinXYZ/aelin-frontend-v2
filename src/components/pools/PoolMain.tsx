@@ -6,6 +6,7 @@ import { ActionTabs } from '@/src/components/common/ActionTabs'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
+import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import Invest from '@/src/components/pools/actions/Invest'
 import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPool'
@@ -116,6 +117,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             {action === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
             {action === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
             {action === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
+            {action === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
           </ActionTabs>
         </MainGrid>
       </RightTimelineLayout>
