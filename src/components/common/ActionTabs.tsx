@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -101,7 +101,9 @@ export const ActionTabs: React.FC<{
       ) : null}
       <Content>
         {tabsExist
-          ? tabs.map(({ children, key }) => (activeItem === key ? children : null))
+          ? tabs.map(({ children, key }) =>
+              activeItem === key ? <Fragment key={key}>{children}</Fragment> : null,
+            )
           : children}
       </Content>
     </Wrapper>
