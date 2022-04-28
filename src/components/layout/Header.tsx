@@ -55,7 +55,7 @@ const InnerContainer = styled(BaseInnerContainer)`
   }
 `
 
-const HomeLink = styled.span`
+const HomeLink = styled.a`
   transition: opacity 0.05s linear;
 
   &:active {
