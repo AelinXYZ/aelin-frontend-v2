@@ -1,9 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
+import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { VestDealTokens } from '@/src/components/vest/VestDealTokens'
-import { VestSectionIntro } from '@/src/components/vest/VestSectionIntro'
 
 const Vest: NextPage = () => {
   return (
@@ -12,7 +12,10 @@ const Vest: NextPage = () => {
         <title>Aelin - Vest</title>
       </Head>
       <LeftSidebarLayout>
-        <VestSectionIntro />
+        <SectionIntro backgroundImage="/resources/svg/bg-vest.svg" title="Vest">
+          Many Aelin pools will utilize a vesting period for underlying deal tokens. View details
+          about your investments and vest your deal tokens below.
+        </SectionIntro>
         <VestDealTokens />
       </LeftSidebarLayout>
     </>
