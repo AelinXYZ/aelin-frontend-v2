@@ -82,6 +82,7 @@ type DerivedStatus = {
 function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
   return useMemo(() => {
     const now = Date.now()
+
     // funding
     if (isBefore(now, pool.purchaseExpiry)) {
       return {
@@ -91,10 +92,7 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
     }
 
     // Seeking deal
-    if (
-      (isAfter(now, pool.purchaseExpiry) && isBefore(now, pool.dealDeadline)) ||
-      (isAfter(now, pool.dealDeadline) && !pool.dealAddress)
-    ) {
+    if (isAfter(now, pool.purchaseExpiry) && !pool.dealAddress) {
       return {
         current: PoolStatus.SeekingDeal,
         history: [PoolStatus.Funding, PoolStatus.SeekingDeal],
@@ -102,11 +100,14 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
     }
 
     // Dealing
+    // isAfter(now, pool.dealDeadline)
+    // isBefore(now, pool.dealDeadline)
     if (
       pool.dealAddress &&
       pool.deal?.redemption &&
-      isAfter(now, pool.deal?.redemption?.start) &&
-      isBefore(now, pool.deal?.redemption?.end)
+      isBefore(now, pool.deal?.redemption?.start)
+      //isAfter(now, pool.deal?.redemption?.start) &&
+      // isBefore(now, pool.deal?.redemption?.end)
     ) {
       return {
         current: PoolStatus.DealPresented,
@@ -212,23 +213,31 @@ function useUserActions(
       return actions
     }
 
-    // TODO: override deal when is expired and amount of deals presented is < 5
+    // Deal Presented
+    if (currentStatus === PoolStatus.DealPresented) {
+      const actions: PoolAction[] = []
+      // ?? hay limite para cuando puede el holder depositar?
+      if (userRole === UserRole.Investor && !pool.deal?.holderAlreadyDeposited) {
+        actions.push(PoolAction.FundDeal)
+      }
 
-    // Fund deal
-    if (
-      currentStatus === PoolStatus.DealPresented &&
-      !pool.deal?.holderAlreadyDeposited &&
-      userRole === UserRole.Investor
-    ) {
-      return [PoolAction.FundDeal]
+      if (pool.deal && isAfter(now, pool.deal.holderDepositExpiration)) {
+        actions.push(PoolAction.Withdraw)
+
+        if (pool.deal.redemption && isBefore(now, pool.deal.redemption?.end)) {
+          actions.push(PoolAction.AcceptDeal)
+        }
+      }
+
+      // TODO: override deal when is expired and amount of deals presented is < 5
+
+      return actions
     }
 
-    // Accept or Reject deal
-    if (currentStatus === PoolStatus.DealPresented && pool.deal?.holderAlreadyDeposited) {
-      return [PoolAction.AcceptDeal, PoolAction.Withdraw]
+    if (currentStatus === PoolStatus.Vesting) {
+      return [PoolAction.Withdraw]
     }
 
-    // default to Funding
     return []
   }, [userRole, currentStatus, pool])
 }
