@@ -13,12 +13,15 @@ export const VESTING_DEALS = gql`
       tokenToVest
       tokenToVestSymbol
       investorDealTotal
-      amountToVest
+      remainingAmountToVest
       totalVested
       vestingPeriodEnds
       vestingPeriodStarts
       underlyingDealTokenDecimals
       poolAddress
+      pool {
+        dealAddress
+      }
     }
   }
 `

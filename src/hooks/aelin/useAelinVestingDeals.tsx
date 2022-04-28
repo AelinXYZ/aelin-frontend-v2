@@ -13,9 +13,11 @@ import { formatToken } from '@/src/web3/bigNumber'
 export type ParsedVestingDeal = {
   poolName: string
   poolAddress: string
+  dealAddress: string
   tokenToVest: string
   myDealTotal: string
-  amountToVest: string
+  remainingAmountToVest: string
+  canVest: boolean
   totalVested: string
   vestingPeriodEnds: Date
   vestingPeriodStarts: Date
@@ -39,26 +41,35 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
     chainIds.map((chainId: ChainsValues) =>
       allSDK[chainId][VESTING_DEALS_QUERY_NAME](variables)
         .then((res) =>
-          res.vestingDeals.map((vestingDeal) => ({
-            poolName: parsePoolName(vestingDeal.poolName),
-            tokenToVest: vestingDeal.tokenToVestSymbol,
-            myDealTotal: formatToken(
+          res.vestingDeals.map((vestingDeal) => {
+            const myDealTotal = formatToken(
               vestingDeal.investorDealTotal,
               vestingDeal.underlyingDealTokenDecimals || 0,
-            ),
-            amountToVest: formatToken(
-              vestingDeal.amountToVest,
-              vestingDeal.underlyingDealTokenDecimals || 0,
-            ),
-            totalVested: formatToken(
+            )
+            const totalVested = formatToken(
               vestingDeal.totalVested,
               vestingDeal.underlyingDealTokenDecimals || 0,
-            ),
-            vestingPeriodEnds: vestingDeal.vestingPeriodEnds,
-            vestingPeriodStarts: vestingDeal.vestingPeriodStarts,
-            poolAddress: vestingDeal.poolAddress,
-            chainId,
-          })),
+            )
+            const remainingAmountToVest = formatToken(
+              vestingDeal.remainingAmountToVest,
+              vestingDeal.underlyingDealTokenDecimals || 0,
+            )
+            const now = new Date().getTime()
+
+            return {
+              poolName: parsePoolName(vestingDeal.poolName),
+              tokenToVest: vestingDeal.tokenToVestSymbol,
+              myDealTotal,
+              totalVested,
+              canVest:
+                Number(remainingAmountToVest) > 0 && now > vestingDeal.vestingPeriodStarts * 1000,
+              vestingPeriodEnds: new Date(vestingDeal.vestingPeriodEnds * 1000),
+              vestingPeriodStarts: new Date(vestingDeal.vestingPeriodStarts * 1000),
+              poolAddress: vestingDeal.poolAddress,
+              dealAddress: vestingDeal.pool.dealAddress,
+              chainId,
+            }
+          }),
         )
         .catch((e) => {
           console.error(`fetch vestingDeals on chain ${chainId} was failed`, e)

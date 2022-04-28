@@ -45,6 +45,7 @@ gql`
 
     vestingPeriod
     vestingCliff
+    vestingPeriodStarts
 
     holder
     isDealFunded

@@ -71,6 +71,12 @@ export type ParsedAelinPool = {
         ms: number
         formatted: string
       }
+      starts: {
+        ms: number
+      }
+      ends: {
+        ms: number
+      }
     }
     hasDealOpenPeriod: boolean
     redemption: {
@@ -146,7 +152,11 @@ export const getParsedPool = ({
       dealDetails.underlyingDealTokenTotal,
       dealDetails.underlyingDealTokenDecimals,
     ),
-    vestingPeriod: getVestingDates(dealDetails.vestingCliff, dealDetails.vestingPeriod),
+    vestingPeriod: getVestingDates(
+      dealDetails.vestingCliff,
+      dealDetails.vestingPeriod,
+      dealDetails.vestingPeriodStarts,
+    ),
     hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
     redemption: dealDetails.proRataRedemptionPeriodStart
       ? getProRataRedemptionDates(
