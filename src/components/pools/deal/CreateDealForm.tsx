@@ -7,7 +7,9 @@ import styled from 'styled-components'
 import Wei, { wei } from '@synthetixio/wei'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { PageTitle } from '@/src/components/common/PageTitle'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
@@ -20,11 +22,7 @@ import {
 import { Summary } from '@/src/components/pools/common/Summary'
 import DealCalculationModal from '@/src/components/pools/deal/DealCalculationModal'
 import DealCreateStepInput from '@/src/components/pools/deal/DealCreateStepInput'
-import {
-  Button,
-  ButtonPrimary,
-  GradientButton,
-} from '@/src/components/pureStyledComponents/buttons/Button'
+import { Button, GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
   ButtonPrev,
@@ -33,6 +31,7 @@ import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
 import { Token } from '@/src/constants/token'
+import { PoolTimelineState } from '@/src/constants/types'
 import useAelinCreateDeal, {
   CreateDealSteps,
   createDealConfig,
@@ -114,63 +113,69 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       <Head>
         <title>Deal creation</title>
       </Head>
-      <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
-        <StepIndicator
-          currentStepOrder={order}
-          data={getCreateDealStepIndicatorData(createDealState.currentStep)}
-        />
-        {Object.values(CreateDealSteps).map((step) => {
-          const isStepVisible = createDealState.currentStep === step
+      <PageTitle subTitle={'???'} title={`${pool.nameFormatted}`} />
+      <RightTimelineLayout activeStep={PoolTimelineState.dealCreation}>
+        <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
+          <StepIndicator
+            currentStepOrder={order}
+            data={getCreateDealStepIndicatorData(createDealState.currentStep)}
+          />
+          {Object.values(CreateDealSteps).map((step) => {
+            const isStepVisible = createDealState.currentStep === step
 
-          return !isStepVisible ? null : (
-            <WrapperGrid>
-              <PrevNextWrapper>
-                {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
-              </PrevNextWrapper>
-              <StepContents>
-                <Title>{title}</Title>
-                <Description>{text}</Description>
-                <DealCreateStepInput
-                  currentState={createDealState}
-                  onCalculateDealModal={() => setShowDealCalculationModal(true)}
-                  onKeyUp={handleKeyUp}
-                  onSetDealField={setDealField}
-                  onSetTotalPurchase={setTotalPurchase}
-                  role="none"
-                  totalPurchase={totalPurchase}
-                />
-                {currentStepError && typeof currentStepError === 'string' && (
-                  <Error>{currentStepError}</Error>
-                )}
-                <ButtonWrapper>
-                  {!isFinalStep ? (
-                    <GradientButton disabled={!!currentStepError} onClick={() => moveStep('next')}>
-                      Next
-                    </GradientButton>
-                  ) : (
-                    <GradientButton
-                      disabled={disableSubmit}
-                      key={`${step}_button`}
-                      onClick={() => {
-                        handleCreateDeal()
-                        setShowSubmitModal(true)
-                      }}
-                    >
-                      Create Deal
-                    </GradientButton>
+            return !isStepVisible ? null : (
+              <WrapperGrid>
+                <PrevNextWrapper>
+                  {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
+                </PrevNextWrapper>
+                <StepContents>
+                  <Title>{title}</Title>
+                  <Description>{text}</Description>
+                  <DealCreateStepInput
+                    currentState={createDealState}
+                    onCalculateDealModal={() => setShowDealCalculationModal(true)}
+                    onKeyUp={handleKeyUp}
+                    onSetDealField={setDealField}
+                    onSetTotalPurchase={setTotalPurchase}
+                    role="none"
+                    totalPurchase={totalPurchase}
+                  />
+                  {currentStepError && typeof currentStepError === 'string' && (
+                    <Error>{currentStepError}</Error>
                   )}
-                </ButtonWrapper>
-                <Summary data={getCreateDealSummaryData(createDealState)} />
-              </StepContents>
-              <PrevNextWrapper>
-                {!isFinalStep && (
-                  <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
-                )}
-              </PrevNextWrapper>
-            </WrapperGrid>
-          )
-        })}
-      </CardWithTitle>
+                  <ButtonWrapper>
+                    {!isFinalStep ? (
+                      <GradientButton
+                        disabled={!!currentStepError}
+                        onClick={() => moveStep('next')}
+                      >
+                        Next
+                      </GradientButton>
+                    ) : (
+                      <GradientButton
+                        disabled={disableSubmit}
+                        key={`${step}_button`}
+                        onClick={() => {
+                          handleCreateDeal()
+                          setShowSubmitModal(true)
+                        }}
+                      >
+                        Create Deal
+                      </GradientButton>
+                    )}
+                  </ButtonWrapper>
+                  <Summary data={getCreateDealSummaryData(createDealState)} />
+                </StepContents>
+                <PrevNextWrapper>
+                  {!isFinalStep && (
+                    <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
+                  )}
+                </PrevNextWrapper>
+              </WrapperGrid>
+            )
+          })}
+        </CardWithTitle>
+      </RightTimelineLayout>
       {showDealCalculationModal && (
         <DealCalculationModal
           dealToken={createDealState.dealToken as Token}

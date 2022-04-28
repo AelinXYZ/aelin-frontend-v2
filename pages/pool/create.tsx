@@ -17,7 +17,6 @@ import {
   WrapperGrid,
 } from '@/src/components/pools/common/Create'
 import { Summary } from '@/src/components/pools/common/Summary'
-import { Timeline } from '@/src/components/pools/common/Timeline'
 import PoolCreateStepInput from '@/src/components/pools/main/PoolCreateStepInput'
 import WhiteListModal, { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
 import {
@@ -78,7 +77,7 @@ const Create: NextPage = () => {
         <title>{`${createPoolState.poolName || 'Create pool'}`}</title>
       </Head>
       <PageTitle title={`${createPoolState.poolName || 'Pool creation'}`} />
-      <RightTimelineLayout timeline={<Timeline />}>
+      <RightTimelineLayout>
         <CardWithTitle titles={<CardTitle>Pool creation</CardTitle>}>
           <StepIndicator
             currentStepOrder={order}

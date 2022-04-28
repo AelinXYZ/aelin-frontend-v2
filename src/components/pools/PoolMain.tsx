@@ -10,7 +10,6 @@ import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import Invest from '@/src/components/pools/actions/Invest'
 import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPool'
-import { Timeline } from '@/src/components/pools/common/Timeline'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { ChainsValues } from '@/src/constants/chains'
@@ -56,7 +55,6 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
 
   const [tab, setTab] = useState<PoolStatus>(tabs[0])
   const [action, setAction] = useState<PoolAction>(actions[0])
-
   const dealExists = pool.deal
 
   useEffect(() => {
@@ -69,7 +67,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
       <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
-      <RightTimelineLayout timeline={<Timeline activeItem={PoolTimelineState.poolCreation} />}>
+      <RightTimelineLayout activeStep={PoolTimelineState.poolCreation}>
         <MainGrid>
           <CardWithTitle
             titles={
@@ -111,8 +109,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}
             </ContentGrid>
           </CardWithTitle>
-
-          <ActionTabs active={action} onTitleClick={setAction} titles={actions}>
+          <ActionTabs
+            active={action}
+            onTabClick={setAction}
+            tabs={!actions.length || action === PoolAction.Invest ? undefined : actions}
+          >
             {!actions.length && <div>No actions available</div>}
             {action === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
             {action === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
