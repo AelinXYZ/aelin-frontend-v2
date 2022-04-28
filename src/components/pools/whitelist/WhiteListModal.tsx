@@ -3,10 +3,12 @@ import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
 
-import { ButtonPrimary, ButtonPrimaryLight } from '../../pureStyledComponents/buttons/Button'
+import { ButtonPrimaryLightSm, GradientButton } from '../../pureStyledComponents/buttons/Button'
+import { ButtonEdit, ButtonRemove } from '../../pureStyledComponents/buttons/ButtonCircle'
 import { Textfield } from '../../pureStyledComponents/form/Textfield'
-import { Modal } from '@/src/components/common/Modal'
+import { Modal as BaseModal, ModalButtonCSS } from '@/src/components/common/Modal'
 import UploadCSV from '@/src/components/pools/whitelist/UploadWhiteListCsv'
+import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
 
 export interface WhitelistProps {
   address: string
@@ -14,14 +16,55 @@ export interface WhitelistProps {
   isSaved: boolean
 }
 
-const ContentGrid = styled.div`
-  display: grid;
-  row-gap: 10px;
-  column-gap: 20px;
-  width: 100%;
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    grid-template-columns: 2fr 1fr 0.2fr 0.2fr;
+const Modal = styled(BaseModal)`
+  .modalCard {
+    padding-left: 60px;
+    padding-right: 60px;
   }
+`
+
+const Grid = styled.div`
+  align-items: center;
+  column-gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr 140px 74px;
+  margin: 0 0 22px;
+  max-height: 290px;
+  overflow: auto;
+  padding: 20px 0 0 0;
+  row-gap: 10px;
+  width: 100%;
+`
+
+const TitleGrid = styled.div`
+  align-items: center;
+  column-gap: 10px;
+  display: flex;
+  justify-content: space-between;
+`
+
+const Title = styled.h4`
+  color: ${({ theme }) => theme.colors.textColor};
+  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+`
+
+const ButtonsGrid = styled.div`
+  align-items: center;
+  column-gap: 10px;
+  display: grid;
+  grid-template-columns: 32px 32px;
+`
+
+const ButtonSave = styled(GradientButton)`
+  ${ModalButtonCSS}
+`
+
+const Error = styled(BaseError)`
+  margin-bottom: -28px;
 `
 
 const WhiteListRow = ({
@@ -54,9 +97,10 @@ const WhiteListRow = ({
         type="number"
         value={amount || ''}
       />
-
-      <button onClick={() => onChangeRow(false, 'isSaved', rowIndex)}>edit</button>
-      <button onClick={() => onDeleteRow(rowIndex)}>remove</button>
+      <ButtonsGrid>
+        <ButtonEdit onClick={() => onChangeRow(false, 'isSaved', rowIndex)} />
+        <ButtonRemove onClick={() => onDeleteRow(rowIndex)} />
+      </ButtonsGrid>
     </>
   )
 }
@@ -79,9 +123,7 @@ const WhiteListModal = ({
   onConfirm: (whitelist: WhitelistProps[]) => void
 }) => {
   const [error, setError] = useState<boolean>(false)
-
   const [list, setList] = useState(currentList.length ? currentList : initialWhitelistValues)
-
   const handleUploadCSV = (whitelist: WhitelistProps[]): void => {
     setList(whitelist)
   }
@@ -90,7 +132,6 @@ const WhiteListModal = ({
     const addresses = [...list]
 
     addresses[index] = { ...addresses[index], [key]: value }
-
     setList(addresses)
   }
 
@@ -116,7 +157,6 @@ const WhiteListModal = ({
         (row: WhitelistProps) => isAddress(row.address) && row.amount && row.amount > 0,
       ),
     ]
-
     const updateRows = filterRows.map((row) => ({ ...row, isSaved: true }))
 
     onConfirm(updateRows)
@@ -125,15 +165,12 @@ const WhiteListModal = ({
 
   return (
     <Modal onClose={onClose} size="lg" title="Whitelist">
-      <UploadCSV onUploadCSV={handleUploadCSV} />
-      <br />
-      <ContentGrid>
-        <>
-          <div>Address</div>
-          <div>Amount</div>
-          <div></div>
-          <div></div>
-        </>
+      <Grid>
+        <TitleGrid>
+          <Title>Address</Title> <UploadCSV onUploadCSV={handleUploadCSV} />
+        </TitleGrid>
+        <Title>Amount</Title>
+        <div>&nbsp;</div>
         {list.map((listItem: WhitelistProps, rowIndex: number) => (
           <WhiteListRow
             {...listItem}
@@ -143,16 +180,14 @@ const WhiteListModal = ({
             rowIndex={rowIndex}
           />
         ))}
-      </ContentGrid>
-      <ButtonPrimaryLight onClick={() => setList(list.concat(initialWhitelistValues))}>
+      </Grid>
+      <ButtonPrimaryLightSm onClick={() => setList(list.concat(initialWhitelistValues))}>
         Add more rows
-      </ButtonPrimaryLight>
-      <br />
-      {error && <p>There are some invalid address in the list</p>}
-      <ButtonPrimary disabled={error} onClick={handleSave}>
+      </ButtonPrimaryLightSm>
+      {error && <Error>There are some invalid address in the list</Error>}
+      <ButtonSave disabled={error} onClick={handleSave}>
         Save
-      </ButtonPrimary>
-      <br />
+      </ButtonSave>
     </Modal>
   )
 }
