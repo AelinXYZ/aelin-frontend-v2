@@ -6,7 +6,10 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Deadline } from '../common/Deadline'
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonPrimaryLightSm,
+  GradientButtonSm,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
@@ -18,8 +21,10 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue } from '@/src/constants/chains'
-import { ZERO_ADDRESS } from '@/src/constants/misc'
-import useAelinVestingDeals from '@/src/hooks/aelin/useAelinVestingDeals'
+import { DEFAULT_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
+import useAelinClaimableTokens from '@/src/hooks/aelin/useAelinClaimableTokens'
+import useAelinVestingDeals, { ParsedVestingDeal } from '@/src/hooks/aelin/useAelinVestingDeals'
+import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -27,6 +32,44 @@ import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 type Order = {
   orderBy: VestingDeal_OrderBy
   orderDirection: OrderDirection
+}
+
+const VestActionButton = ({
+  dealAddress,
+  disabled,
+  mutate,
+}: {
+  disabled: boolean
+  dealAddress: string
+  mutate: () => void
+}) => {
+  const vestTokens = useAelinDealTransaction(dealAddress, 'claim')
+
+  const handleVestTokens = async () => {
+    await vestTokens()
+    mutate()
+  }
+  return (
+    <GradientButtonSm disabled={disabled} onClick={handleVestTokens}>
+      Vest
+    </GradientButtonSm>
+  )
+}
+
+const AmountToVestCell = ({ ...item }: ParsedVestingDeal) => {
+  const { chainId, myDealTotal, poolAddress, totalVested } = item
+
+  const amountToVest = useAelinClaimableTokens(poolAddress, chainId, myDealTotal, totalVested)
+
+  return (
+    <Cell>
+      {amountToVest !== undefined
+        ? Intl.NumberFormat('en', {
+            maximumFractionDigits: DEFAULT_DECIMALS,
+          }).format(amountToVest)
+        : ''}
+    </Cell>
+  )
 }
 
 export const VestDealTokens: React.FC = ({ ...restProps }) => {
@@ -70,7 +113,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     },
     {
       title: 'Amount to vest',
-      sortKey: VestingDeal_OrderBy.AmountToVest,
+      sortKey: VestingDeal_OrderBy.RemainingAmountToVest,
     },
     {
       title: 'Total vested',
@@ -94,9 +137,6 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     }
   }
 
-  const handleVest = () => {
-    mutate()
-  }
   return (
     <TableWrapper {...restProps}>
       <Table>
@@ -128,8 +168,9 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
           ) : (
             data.map((item, index) => {
               const {
-                amountToVest,
+                canVest,
                 chainId,
+                dealAddress,
                 myDealTotal,
                 poolAddress,
                 poolName,
@@ -140,12 +181,19 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
               } = item
 
               return (
-                <Row columns={columns.widths} hasHover key={index}>
-                  <Cell>{poolName}</Cell>
-                  <Cell light>{tokenToVest}</Cell>
-                  <Cell light>{myDealTotal}</Cell>
-                  <Cell light>{amountToVest}</Cell>
-                  <Cell light>{totalVested}</Cell>
+                <Row
+                  // onClick={() => {
+                  //   router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                  // }}
+                  columns={columns.widths}
+                  hasHover
+                  key={index}
+                >
+                  <Cell light>{poolName}</Cell>
+                  <Cell>{tokenToVest}</Cell>
+                  <Cell>{myDealTotal}</Cell>
+                  <AmountToVestCell {...item} />
+                  <Cell>{totalVested}</Cell>
                   <Deadline
                     progress={calculateVestingDealLineProgress(
                       vestingPeriodEnds,
@@ -155,7 +203,11 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                     {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
                   </Deadline>
                   <LinkCell justifyContent={columns.alignment.seePool} light>
-                    <ButtonPrimaryLightSm onClick={handleVest}>Vest</ButtonPrimaryLightSm>
+                    <VestActionButton
+                      dealAddress={dealAddress}
+                      disabled={!canVest}
+                      mutate={mutate}
+                    />
                     <ButtonPrimaryLightSm
                       onClick={() => {
                         router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)

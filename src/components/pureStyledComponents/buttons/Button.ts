@@ -116,6 +116,15 @@ export const ButtonGradientCSS = css`
     box-shadow: 0 0 10px #000;
   }
 `
+export const ButtonGradientSmCSS = css`
+  ${ButtonGradientCSS}
+
+  height: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 1rem;
+  font-weight: 400;
+`
 
 export const TabButtonCSS = css<{ isActive?: boolean }>`
   background-color: transparent;
@@ -225,6 +234,9 @@ export const ButtonPrimaryLighter = styled(Button)`
 
 export const GradientButton = styled(Button)`
   ${ButtonGradientCSS}
+`
+export const GradientButtonSm = styled(Button)`
+  ${ButtonGradientSmCSS}
 `
 
 export const TabButton = styled(ButtonPrimary)<{ isActive?: boolean }>`
