@@ -8,7 +8,7 @@ import { RequiredConnection } from '@/src/hooks/requiredConnection'
 
 const Filters = styled.div`
   display: flex;
-  gap: 6px;
+  gap: 4px;
   justify-content: space-between;
   margin-bottom: 20px;
 `

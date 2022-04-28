@@ -135,8 +135,8 @@ export const TabButtonCSS = css<{ isActive?: boolean }>`
   height: 24px;
   margin: 0;
   opacity: 0.7;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 7px;
+  padding-right: 7px;
 
   ${({ isActive, theme }) =>
     isActive &&
