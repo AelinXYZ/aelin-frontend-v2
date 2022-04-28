@@ -20,6 +20,7 @@ gql`
     poolStatus
     contributions
     totalSupply
+    dealsCreated
 
     totalAmountEarnedBySponsor
     totalAmountAccepted
