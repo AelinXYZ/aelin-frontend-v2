@@ -5,6 +5,7 @@ export const Error = styled.p`
   font-size: 1.3rem;
   font-weight: normal;
   line-height: 1.4;
-  margin: 0;
+  margin: 10px auto 0;
   max-width: 100%;
+  text-align: center;
 `
