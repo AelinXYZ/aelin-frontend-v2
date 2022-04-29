@@ -56,7 +56,7 @@ function AcceptDeal({ pool }: Props) {
     setIsLoading(true)
 
     try {
-      await acceptDeal(tokenInputValue)
+      await acceptDeal([tokenInputValue])
       refetchBalance()
       setTokenInputValue('')
       setInputError('')
