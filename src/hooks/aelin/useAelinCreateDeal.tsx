@@ -355,7 +355,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
 
     try {
       const gasLimitEstimate = wei(
-        await createDealEstimate(
+        await createDealEstimate([
           underlyingDealToken,
           purchaseTokenTotal,
           underlyingDealTokenTotal,
@@ -365,7 +365,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
           openRedemptionDuration,
           holderAddress,
           holderFundingDuration,
-        ),
+        ]),
         0,
       )
       setGasLimitEstimate(gasLimitEstimate)
@@ -393,15 +393,17 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
 
     try {
       const tx = await createDealTx(
-        underlyingDealToken,
-        purchaseTokenTotal,
-        underlyingDealTokenTotal,
-        vestingPeriodDuration,
-        vestingCliffDuration,
-        proRataRedemptionDuration,
-        openRedemptionDuration,
-        holderAddress,
-        holderFundingDuration,
+        [
+          underlyingDealToken,
+          purchaseTokenTotal,
+          underlyingDealTokenTotal,
+          vestingPeriodDuration,
+          vestingCliffDuration,
+          proRataRedemptionDuration,
+          openRedemptionDuration,
+          holderAddress,
+          holderFundingDuration,
+        ],
         { gasLimit: getGasEstimateWithBuffer(gasLimitEstimate)?.toBN(), gasPrice: gasPrice.toBN() },
       )
       setIsSubmitting(false)

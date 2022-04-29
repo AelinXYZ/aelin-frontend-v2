@@ -6,7 +6,7 @@ import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
 import { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
-import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 
 export interface IUploadCSV {
   onUploadCSV: (data: WhitelistProps[]) => void
@@ -40,11 +40,9 @@ const UploadCSV: FC<IUploadCSV> = ({ onUploadCSV }) => {
       }}
     >
       {({ getRootProps }: any) => (
-        <>
-          <ButtonPrimaryLight type="button" {...getRootProps()}>
-            Upload CSV
-          </ButtonPrimaryLight>
-        </>
+        <ButtonPrimaryLightSm type="button" {...getRootProps()}>
+          Upload CSV
+        </ButtonPrimaryLightSm>
       )}
     </CSVReader>
   )

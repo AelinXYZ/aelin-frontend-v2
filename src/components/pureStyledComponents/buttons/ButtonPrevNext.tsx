@@ -7,12 +7,12 @@ const Wrapper = styled.button`
   background-position: 50% 50%;
   background-repeat: no-repeat;
   border-radius: 50%;
+  border: none;
   cursor: pointer;
   height: var(--dimensions);
+  padding: 0;
   transition: background-color linear 0.15s;
   width: var(--dimensions);
-  padding: 0;
-  border: none;
 
   &:hover {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);

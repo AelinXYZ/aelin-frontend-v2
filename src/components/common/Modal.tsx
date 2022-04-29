@@ -27,7 +27,7 @@ const Card = styled(BaseCard)<{ size?: modalSize }>`
   max-width: 100%;
   padding: 40px 25px;
   width: ${({ size }) =>
-    size === 'sm' ? '325px' : size === 'md' ? '500px' : size === 'lg' ? '800px' : `${size}`};
+    size === 'sm' ? '325px' : size === 'md' ? '500px' : size === 'lg' ? '720px' : `${size}`};
 `
 
 const Title = styled.h1`
@@ -100,7 +100,6 @@ export const Modal: React.FC<Props> = ({
   ...restProps
 }: Props) => {
   const portal: HTMLElement | null = document.getElementById('modals')
-
   const validOnClose = onClose && typeof onClose === 'function'
 
   const close = () => {
@@ -112,8 +111,9 @@ export const Modal: React.FC<Props> = ({
   return (
     portal &&
     ReactDOM.createPortal(
-      <Wrapper onClick={close} {...restProps}>
+      <Wrapper className="modal" onClick={close} {...restProps}>
         <Card
+          className="modalCard"
           onClick={(e) => {
             e.stopPropagation()
           }}

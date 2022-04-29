@@ -365,7 +365,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
     try {
       const gasLimitEstimate = wei(
-        await createPoolEstimate(
+        await createPoolEstimate([
           poolName,
           poolSymbol,
           poolCap,
@@ -375,7 +375,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
           investmentDeadLineDuration,
           poolAddresses,
           poolAddressesAmounts,
-        ),
+        ]),
         0,
       )
       setGasLimitEstimate(gasLimitEstimate)
@@ -403,15 +403,17 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
     try {
       const tx = await createPoolTx(
-        poolName,
-        poolSymbol,
-        poolCap,
-        investmentToken,
-        dealDeadLineDuration,
-        sponsorFee,
-        investmentDeadLineDuration,
-        poolAddresses,
-        poolAddressesAmounts,
+        [
+          poolName,
+          poolSymbol,
+          poolCap,
+          investmentToken,
+          dealDeadLineDuration,
+          sponsorFee,
+          investmentDeadLineDuration,
+          poolAddresses,
+          poolAddressesAmounts,
+        ],
         { gasLimit: getGasEstimateWithBuffer(gasLimitEstimate)?.toBN(), gasPrice: gasPrice.toBN() },
       )
       setIsSubmitting(false)
