@@ -2,13 +2,13 @@ import { useMemo } from 'react'
 
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
+import uniq from 'lodash/uniq'
 import ms from 'ms'
 
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -209,7 +209,7 @@ function useUserActions(
       if (isAfter(now, pool.dealDeadline)) {
         actions.push(PoolAction.Withdraw)
       }
-      return actions
+      return uniq(actions)
     }
 
     // Deal Presented
@@ -236,7 +236,7 @@ function useUserActions(
 
       // TODO: override deal when is expired and amount of deals presented is < 5
 
-      return actions
+      return uniq(actions)
     }
 
     if (currentStatus === PoolStatus.Closed) {
