@@ -61,7 +61,7 @@ export const DealInformation: React.FC<{
         <InfoCell
           title="Deal token amount"
           tooltip="??"
-          value={deal.underlyingToken.dealAmount.formatted}
+          value={`${deal.underlyingToken.dealAmount.formatted} ${deal.underlyingToken.symbol}`}
         />
         <InfoCell title="Vesting data" tooltip="??">
           <Value>Cliff: {deal.vestingPeriod.cliff.formatted}</Value>
