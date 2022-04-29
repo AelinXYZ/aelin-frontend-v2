@@ -47,6 +47,7 @@ export type ParsedAelinPool = {
   redeem: DetailedNumber
   withdrawn: DetailedNumber
   poolStatus: PoolStatus
+  isPublic: boolean
   deal?: {
     name: string
     symbol: string
@@ -122,6 +123,7 @@ export const getParsedPool = ({
     funded: getFunded({ ...pool, purchaseTokenDecimals }),
     withdrawn: getAmountWithdrawn(pool.totalAmountWithdrawn || ZERO_BN, purchaseTokenDecimals),
     redeem: getAmountRedeem(pool.totalAmountAccepted || ZERO_BN, purchaseTokenDecimals),
+    isPublic: pool.hasAllowList ? false : true,
     deal: undefined,
   }
 
@@ -142,8 +144,8 @@ export const getParsedPool = ({
   const vestingPeriod = getVestingDates(dealDetails.vestingCliff, dealDetails.vestingPeriod)
 
   res.deal = {
-    name: 'TODO: name',
-    symbol: 'TODO: symbol',
+    name: dealDetails.name,
+    symbol: dealDetails.symbol,
     underlyingToken: {
       token: dealDetails.underlyingDealToken,
       symbol: dealDetails.underlyingDealTokenSymbol,

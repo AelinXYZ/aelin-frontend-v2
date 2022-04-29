@@ -1,5 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
-
 import { DetailedNumber } from '@/types/utils'
 
 export enum UserRole {
@@ -35,8 +33,6 @@ export enum PoolAction {
 export interface Funding {
   isCap: boolean
   capReached: boolean
-  userAllowance: BigNumber
-  refetchAllowance: () => void
   maxDepositAllowed: DetailedNumber
 }
 

@@ -19,6 +19,8 @@ export const DealInformation: React.FC<{
 }> = ({ pool, poolStatusHelper }) => {
   const { deal, sponsorFee } = pool
 
+  console.log(poolStatusHelper.userProRataAllocation.formatted)
+
   return !deal ? (
     <div>No Deal presented yet.</div>
   ) : (

@@ -22,13 +22,6 @@ import {
 } from '@/types/aelinPool'
 
 function useFundingStatus(pool: ParsedAelinPool): Funding {
-  const { address } = useWeb3Connection()
-
-  const [allowance, refetch] = useERC20Call(pool.chainId, pool.investmentToken, 'allowance', [
-    address || ZERO_ADDRESS,
-    pool.address,
-  ])
-
   const isCap = pool.poolCap.raw.eq(0)
   const capAmount = pool.poolCap.raw
   const funded = pool.funded.raw
@@ -37,8 +30,6 @@ function useFundingStatus(pool: ParsedAelinPool): Funding {
   return {
     isCap,
     capReached: isCap ? false : capAmount.eq(funded),
-    userAllowance: allowance || ZERO_BN,
-    refetchAllowance: refetch,
     maxDepositAllowed: {
       raw: isCap ? MAX_BN : maxDepositAllowed,
       formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
@@ -50,9 +41,14 @@ function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Waiting
   const { address } = useWeb3Connection()
   const allSDK = getAllGqlSDK()
   const { useUserAllocationStat } = allSDK[chainId]
-  const { data: userAllocationStatRes } = useUserAllocationStat({
-    id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
-  })
+  const { data: userAllocationStatRes } = useUserAllocationStat(
+    {
+      id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
+    },
+    {
+      refreshInterval: ms('30s'),
+    },
+  )
 
   const userProRataAllocation =
     userAllocationStatRes?.userAllocationStat?.remainingProRataAllocation || ZERO_BN
@@ -61,11 +57,11 @@ function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Waiting
   return {
     userTotalWithdrawn: {
       raw: userProRataAllocation,
-      formatted: formatToken(userProRataAllocation, pool.investmentTokenDecimals),
+      formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
     },
     userProRataAllocation: {
       raw: userAmountWithdrawn,
-      formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
+      formatted: formatToken(userProRataAllocation, pool.investmentTokenDecimals),
     },
   }
 }

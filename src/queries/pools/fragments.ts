@@ -32,6 +32,9 @@ gql`
 gql`
   fragment PoolDeal on Deal {
     id
+    name
+    symbol
+
     underlyingDealToken
     underlyingDealTokenSymbol
     underlyingDealTokenDecimals

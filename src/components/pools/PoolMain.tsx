@@ -48,7 +48,6 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     chainId,
     poolAddress as string,
   )
-  const mockedPoolVisibility = '???'
 
   if (!current) {
     throw new Error('There was no possible to calculate pool current status')
@@ -68,7 +67,10 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       <Head>
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
-      <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
+      <PageTitle
+        subTitle={pool.isPublic ? 'Public pool' : 'Private pool'}
+        title={pool.nameFormatted}
+      />
       <RightTimelineLayout timeline={<Timeline activeItem={PoolTimelineState.poolCreation} />}>
         <MainGrid>
           <CardWithTitle
