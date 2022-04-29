@@ -145,7 +145,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
     <TabContent>
       <TokenInput
         decimals={decimals ?? 18}
-        error={Boolean(inputError)}
+        error={inputError}
         maxValue={totalBalance?.toString() ?? '0'}
         maxValueFormatted={formatToken(totalBalance ?? ZERO_BN, decimals ?? 18) ?? '0'}
         setValue={setTokenInputValue}

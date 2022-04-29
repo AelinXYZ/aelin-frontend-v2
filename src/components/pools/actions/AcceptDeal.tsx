@@ -42,12 +42,16 @@ function AcceptDeal({ pool }: Props) {
   const acceptDeal = useAelinPoolTransaction(pool.address, 'acceptDealTokens')
 
   useEffect(() => {
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(MAX_BN)) {
+    if (!balance) {
+      setInputError('User balance is not available!')
+      return
+    }
+    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance as BigNumberish)) {
       setInputError('Amount is too big')
     } else {
       setInputError('')
     }
-  }, [tokenInputValue])
+  }, [tokenInputValue, balance])
 
   const withdrawFromPool = async () => {
     if (inputError) {
@@ -77,7 +81,7 @@ function AcceptDeal({ pool }: Props) {
       </Contents>
       <TokenInput
         decimals={investmentTokenDecimals}
-        error={Boolean(inputError)}
+        error={inputError}
         maxValue={(balance || ZERO_BN).toString()}
         maxValueFormatted={
           formatToken((balance as BigNumberish) || ZERO_BN, investmentTokenDecimals) || '0'
