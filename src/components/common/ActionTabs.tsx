@@ -79,20 +79,25 @@ Tab.defaultProps = {
 }
 
 export const ActionTabs: React.FC<{
-  titles: PoolAction[]
   active: PoolAction
-  onTitleClick: (action: PoolAction) => void
-}> = ({ active, children, onTitleClick, titles, ...restProps }) => {
+  onTabClick: (action: PoolAction) => void
+  tabs?: PoolAction[]
+}> = ({ active, children, onTabClick, tabs, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      <Tabs>
-        {titles.map((action) => (
-          <Tab isActive={active === action} key={action} onClick={() => onTitleClick(action)}>
-            {action}
-          </Tab>
-        ))}
-      </Tabs>
-
+      {tabs && tabs.length && (
+        <Tabs>
+          {tabs.map((action, index) => (
+            <Tab
+              isActive={active === action}
+              key={`${action}_${index}`}
+              onClick={() => onTabClick(action)}
+            >
+              {action}
+            </Tab>
+          ))}
+        </Tabs>
+      )}
       <Content>{children}</Content>
     </Wrapper>
   )

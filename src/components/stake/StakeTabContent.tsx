@@ -102,7 +102,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   const handleApprove = async () => {
     setIsLoading(true)
     try {
-      await approve(stakingAddress, MaxUint256)
+      await approve([stakingAddress, MaxUint256])
       refetchAllowance()
       setIsLoading(false)
     } catch (error) {
@@ -114,7 +114,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   const handleDeposit = async () => {
     setIsLoading(true)
     try {
-      await stake(tokenInputValue)
+      await stake([tokenInputValue])
       refetchAllowance()
       refetchBalanceOf()
       setTokenInputValue('')
@@ -129,7 +129,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   const handleWithdraw = async () => {
     setIsLoading(true)
     try {
-      await withdraw(tokenInputValue)
+      await withdraw([tokenInputValue])
       refetchAllowance()
       refetchBalanceOf()
       setTokenInputValue('')

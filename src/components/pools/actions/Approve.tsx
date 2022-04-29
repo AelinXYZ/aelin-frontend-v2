@@ -22,7 +22,7 @@ export default function Approve({ pool, refetchAllowance }: Props) {
   const approveInvestmentToken = async () => {
     setIsLoading(true)
     try {
-      await approve(poolAddress, MAX_BN)
+      await approve([poolAddress, MAX_BN])
       refetchAllowance()
       setIsLoading(false)
     } catch (error) {

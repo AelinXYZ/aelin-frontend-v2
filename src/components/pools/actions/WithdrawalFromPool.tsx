@@ -48,7 +48,7 @@ function WithdrawalFromPool({ pool }: Props) {
     setIsLoading(true)
 
     try {
-      await withdraw(tokenInputValue)
+      await withdraw([tokenInputValue])
       refetchBalance()
       setTokenInputValue('')
       setInputError('')

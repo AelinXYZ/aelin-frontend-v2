@@ -121,8 +121,8 @@ const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
   )
 }
 
-export const Timeline: React.FC<{ activeItem?: PoolTimelineState }> = ({
-  activeItem = PoolTimelineState.poolCreation,
+export const Timeline: React.FC<{ activeStep?: PoolTimelineState }> = ({
+  activeStep = PoolTimelineState.poolCreation,
   ...restProps
 }) => {
   const items = [
@@ -201,7 +201,7 @@ export const Timeline: React.FC<{ activeItem?: PoolTimelineState }> = ({
   return (
     <Wrapper {...restProps}>
       {items.map(({ content, state }, index) => (
-        <Step isActive={activeItem === state} isDone={activeItem > state} key={index}>
+        <Step isActive={activeStep === state} isDone={activeStep > state} key={index}>
           {content}
         </Step>
       ))}

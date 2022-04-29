@@ -42,6 +42,11 @@ export const Description = styled.p`
 `
 
 export const ButtonWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
   margin-bottom: 40px;
   margin-top: 40px;
 `
