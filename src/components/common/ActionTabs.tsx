@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import { PoolAction } from '@/types/aelinPool'
 
 const Wrapper = styled(BaseCard)`
   align-items: center;
@@ -79,31 +79,26 @@ Tab.defaultProps = {
 }
 
 export const ActionTabs: React.FC<{
-  tabs?: Array<{ value: string; key: string; children: React.ReactNode }> | undefined
-}> = ({ tabs = undefined, children, ...restProps }) => {
-  const tabsExist = tabs && tabs.length
-  const [activeItem, setActiveItem] = useState(tabsExist ? tabs[0].key : undefined)
-
-  const onItemClick = (key: string) => {
-    setActiveItem(key)
-  }
-
+  active: PoolAction
+  onTabClick: (action: PoolAction) => void
+  tabs?: PoolAction[]
+}> = ({ active, children, onTabClick, tabs, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      {tabsExist ? (
+      {tabs && tabs.length && (
         <Tabs>
-          {tabs.map(({ key, value }) => (
-            <Tab isActive={activeItem === key} key={key} onClick={() => onItemClick(key)}>
-              {value}
+          {tabs.map((action, index) => (
+            <Tab
+              isActive={active === action}
+              key={`${action}_${index}`}
+              onClick={() => onTabClick(action)}
+            >
+              {action}
             </Tab>
           ))}
         </Tabs>
-      ) : null}
-      <Content>
-        {tabsExist
-          ? tabs.map(({ children, key }) => (activeItem === key ? children : null))
-          : children}
-      </Content>
+      )}
+      <Content>{children}</Content>
     </Wrapper>
   )
 }

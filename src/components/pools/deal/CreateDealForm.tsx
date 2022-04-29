@@ -1,10 +1,15 @@
 import Head from 'next/head'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import Wei, { wei } from '@synthetixio/wei'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
+import { PageTitle } from '@/src/components/common/PageTitle'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
@@ -17,21 +22,23 @@ import {
 import { Summary } from '@/src/components/pools/common/Summary'
 import DealCalculationModal from '@/src/components/pools/deal/DealCalculationModal'
 import DealCreateStepInput from '@/src/components/pools/deal/DealCreateStepInput'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { Button, GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
+import { ChainsValues } from '@/src/constants/chains'
 import { Token } from '@/src/constants/token'
+import { PoolTimelineState } from '@/src/constants/types'
 import useAelinCreateDeal, {
   CreateDealSteps,
   createDealConfig,
   getCreateDealStepIndicatorData,
   getCreateDealSummaryData,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
-import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const StepIndicator = styled(BaseStepIndicator)`
@@ -41,7 +48,13 @@ const StepIndicator = styled(BaseStepIndicator)`
   }
 `
 
-const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
+type Props = { poolAddress: string; chainId: ChainsValues }
+
+const CreateDealForm = ({ chainId, poolAddress }: Props) => {
+  const router = useRouter()
+  const { network } = router.query
+
+  const { pool } = useAelinPool(chainId, poolAddress)
   const { appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
   const [totalPurchase, setTotalPurchase] = useState<string | undefined>()
@@ -100,63 +113,69 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
       <Head>
         <title>Deal creation</title>
       </Head>
-      <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
-        <StepIndicator
-          currentStepOrder={order}
-          data={getCreateDealStepIndicatorData(createDealState.currentStep)}
-        />
-        {Object.values(CreateDealSteps).map((step) => {
-          const isStepVisible = createDealState.currentStep === step
+      <PageTitle subTitle={'???'} title={`${pool.nameFormatted}`} />
+      <RightTimelineLayout activeStep={PoolTimelineState.dealCreation}>
+        <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
+          <StepIndicator
+            currentStepOrder={order}
+            data={getCreateDealStepIndicatorData(createDealState.currentStep)}
+          />
+          {Object.values(CreateDealSteps).map((step) => {
+            const isStepVisible = createDealState.currentStep === step
 
-          return !isStepVisible ? null : (
-            <WrapperGrid>
-              <PrevNextWrapper>
-                {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
-              </PrevNextWrapper>
-              <StepContents>
-                <Title>{title}</Title>
-                <Description>{text}</Description>
-                <DealCreateStepInput
-                  currentState={createDealState}
-                  onCalculateDealModal={() => setShowDealCalculationModal(true)}
-                  onKeyUp={handleKeyUp}
-                  onSetDealField={setDealField}
-                  onSetTotalPurchase={setTotalPurchase}
-                  role="none"
-                  totalPurchase={totalPurchase}
-                />
-                {currentStepError && typeof currentStepError === 'string' && (
-                  <Error>{currentStepError}</Error>
-                )}
-                <ButtonWrapper>
-                  {!isFinalStep ? (
-                    <GradientButton disabled={!!currentStepError} onClick={() => moveStep('next')}>
-                      Next
-                    </GradientButton>
-                  ) : (
-                    <GradientButton
-                      disabled={disableSubmit}
-                      key={`${step}_button`}
-                      onClick={() => {
-                        handleCreateDeal()
-                        setShowSubmitModal(true)
-                      }}
-                    >
-                      Create Deal
-                    </GradientButton>
+            return !isStepVisible ? null : (
+              <WrapperGrid>
+                <PrevNextWrapper>
+                  {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
+                </PrevNextWrapper>
+                <StepContents>
+                  <Title>{title}</Title>
+                  <Description>{text}</Description>
+                  <DealCreateStepInput
+                    currentState={createDealState}
+                    onCalculateDealModal={() => setShowDealCalculationModal(true)}
+                    onKeyUp={handleKeyUp}
+                    onSetDealField={setDealField}
+                    onSetTotalPurchase={setTotalPurchase}
+                    role="none"
+                    totalPurchase={totalPurchase}
+                  />
+                  {currentStepError && typeof currentStepError === 'string' && (
+                    <Error>{currentStepError}</Error>
                   )}
-                </ButtonWrapper>
-                <Summary data={getCreateDealSummaryData(createDealState)} />
-              </StepContents>
-              <PrevNextWrapper>
-                {!isFinalStep && (
-                  <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
-                )}
-              </PrevNextWrapper>
-            </WrapperGrid>
-          )
-        })}
-      </CardWithTitle>
+                  <ButtonWrapper>
+                    {!isFinalStep ? (
+                      <GradientButton
+                        disabled={!!currentStepError}
+                        onClick={() => moveStep('next')}
+                      >
+                        Next
+                      </GradientButton>
+                    ) : (
+                      <GradientButton
+                        disabled={disableSubmit}
+                        key={`${step}_button`}
+                        onClick={() => {
+                          handleCreateDeal()
+                          setShowSubmitModal(true)
+                        }}
+                      >
+                        Create Deal
+                      </GradientButton>
+                    )}
+                  </ButtonWrapper>
+                  <Summary data={getCreateDealSummaryData(createDealState)} />
+                </StepContents>
+                <PrevNextWrapper>
+                  {!isFinalStep && (
+                    <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
+                  )}
+                </PrevNextWrapper>
+              </WrapperGrid>
+            )
+          })}
+        </CardWithTitle>
+      </RightTimelineLayout>
       {showDealCalculationModal && (
         <DealCalculationModal
           dealToken={createDealState.dealToken as Token}
@@ -180,8 +199,11 @@ const DealCreate = ({ pool }: { pool: ParsedAelinPool }) => {
           title={'Create deal'}
         />
       )}
+      <Link href={`/pool/${network}/${poolAddress}`} passHref>
+        <Button as="a">Cancel</Button>
+      </Link>
     </>
   )
 }
 
-export default DealCreate
+export default genericSuspense(CreateDealForm)

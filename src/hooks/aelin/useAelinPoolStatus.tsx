@@ -79,154 +79,180 @@ type DerivedStatus = {
   history: PoolStatus[]
 }
 
-function deriveStatus(pool: ParsedAelinPool): DerivedStatus {
-  const now = Date.now()
+function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
+  return useMemo(() => {
+    const now = Date.now()
 
-  // funding
-  if (isBefore(now, pool.purchaseExpiry)) {
-    return {
-      current: PoolStatus.Funding,
-      history: [PoolStatus.Funding],
+    // funding
+    if (isBefore(now, pool.purchaseExpiry)) {
+      return {
+        current: PoolStatus.Funding,
+        history: [PoolStatus.Funding],
+      }
     }
-  }
 
-  // Seeking deal
-  if (
-    (isAfter(now, pool.purchaseExpiry) && isBefore(now, pool.dealDeadline)) ||
-    (isAfter(now, pool.dealDeadline) && !pool.dealAddress)
-  ) {
-    return {
-      current: PoolStatus.SeekingDeal,
-      history: [PoolStatus.Funding, PoolStatus.SeekingDeal],
+    // Seeking deal
+    if (isAfter(now, pool.purchaseExpiry) && !pool.dealAddress) {
+      return {
+        current: PoolStatus.SeekingDeal,
+        history: [PoolStatus.Funding, PoolStatus.SeekingDeal],
+      }
     }
-  }
 
-  // Dealing
-  if (
-    pool.dealAddress &&
-    pool.deal?.redemption &&
-    isAfter(now, pool.deal?.redemption?.start) &&
-    isBefore(now, pool.deal?.redemption?.end)
-  ) {
-    return {
-      current: PoolStatus.DealPresented,
-      history: [PoolStatus.Funding, PoolStatus.SeekingDeal, PoolStatus.DealPresented],
+    // Dealing
+    // isAfter(now, pool.dealDeadline)
+    // isBefore(now, pool.dealDeadline)
+    if (
+      pool.deal &&
+      pool.deal.holderAlreadyDeposited &&
+      pool.deal.redemption &&
+      isBefore(now, pool.deal.redemption?.end)
+      //isAfter(now, pool.deal?.redemption?.start) &&
+      // isBefore(now, pool.deal?.redemption?.end)
+    ) {
+      return {
+        current: PoolStatus.DealPresented,
+        history: [PoolStatus.Funding, PoolStatus.SeekingDeal, PoolStatus.DealPresented],
+      }
     }
-  }
 
-  // Vesting
-  if (
-    pool.dealAddress &&
-    pool.deal?.redemption &&
-    isAfter(now, pool.deal?.redemption?.end) &&
-    pool.deal.holderAlreadyDeposited
-  ) {
+    // Vesting
+    if (
+      pool.deal &&
+      pool.deal.holderAlreadyDeposited &&
+      pool.deal.redemption &&
+      isAfter(now, pool.deal.redemption?.end) &&
+      pool.deal.vestingPeriod.end &&
+      isBefore(now, pool.deal.vestingPeriod.end)
+    ) {
+      return {
+        current: PoolStatus.Vesting,
+        history: [
+          PoolStatus.Funding,
+          PoolStatus.SeekingDeal,
+          PoolStatus.DealPresented,
+          PoolStatus.Vesting,
+        ],
+      }
+    }
+
+    // TODO: Handle different states of closed
     return {
-      current: PoolStatus.Vesting,
+      current: PoolStatus.Closed,
       history: [
         PoolStatus.Funding,
-        PoolStatus.SeekingDeal,
-        PoolStatus.DealPresented,
-        PoolStatus.Vesting,
+        // PoolStatus.SeekingDeal,
+        // PoolStatus.DealPresented,
+        // PoolStatus.Vesting,
+        // PoolStatus.Closed,
       ],
     }
-  }
-
-  // TODO: Handle different states of closed
-  return {
-    current: PoolStatus.Closed,
-    history: [
-      PoolStatus.Funding,
-      // PoolStatus.SeekingDeal,
-      // PoolStatus.DealPresented,
-      // PoolStatus.Vesting,
-      // PoolStatus.Closed,
-    ],
-  }
+  }, [pool])
 }
 
-function deriveUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserRole {
-  if (!walletAddress) {
-    return UserRole.Visitor
-  }
-
-  const wa = walletAddress.toLowerCase()
-  if (wa === pool.sponsor) {
-    return UserRole.Sponsor
-  }
-
-  if (wa === pool.deal?.holderAddress) {
-    return UserRole.Investor
-  }
-
-  return UserRole.Visitor
-}
-
-function deriveUserTabs(
-  userRole: UserRole,
-  pool: ParsedAelinPool,
-  derivedStatus: DerivedStatus,
-): PoolStatus[] {
-  const { history } = derivedStatus
-  const tabs: PoolStatus[] = [PoolStatus.Funding]
-
-  if (history.includes(PoolStatus.DealPresented)) {
-    // only show dealInformation if the deal was funded by the holder
-    if (pool.deal?.holderAlreadyDeposited) {
-      tabs.push(PoolStatus.DealPresented)
+function useUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserRole {
+  return useMemo(() => {
+    if (!walletAddress) {
+      return UserRole.Visitor
     }
-  }
 
-  if (history.includes(PoolStatus.Vesting)) {
-    tabs.push(PoolStatus.Vesting)
-  }
+    const wa = walletAddress.toLowerCase()
+    if (wa === pool.sponsor) {
+      return UserRole.Sponsor
+    }
 
-  return tabs
+    if (wa === pool.deal?.holderAddress) {
+      return UserRole.Investor
+    }
+
+    return UserRole.Visitor
+  }, [walletAddress, pool])
 }
 
-function deriveUserActions(
+function useUserTabs(pool: ParsedAelinPool, derivedStatus: DerivedStatus): PoolStatus[] {
+  const { history } = derivedStatus
+  return useMemo(() => {
+    const tabs: PoolStatus[] = [PoolStatus.Funding]
+
+    if (history.includes(PoolStatus.DealPresented)) {
+      // only show dealInformation if the deal was funded by the holder
+      if (pool.deal?.holderAlreadyDeposited) {
+        tabs.push(PoolStatus.DealPresented)
+      }
+    }
+
+    if (history.includes(PoolStatus.Vesting)) {
+      tabs.push(PoolStatus.Vesting)
+    }
+
+    return tabs
+  }, [pool, history])
+}
+
+function useUserActions(
   userRole: UserRole,
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
 ): PoolAction[] {
   const currentStatus = derivedStatus.current
-  const now = new Date()
 
-  // Funding
-  if (currentStatus === PoolStatus.Funding) {
-    return [PoolAction.Invest]
-  }
+  return useMemo(() => {
+    const now = new Date()
 
-  // Seeking Deal
-  if (currentStatus === PoolStatus.SeekingDeal) {
-    const actions: PoolAction[] = []
-    if (userRole === UserRole.Sponsor) {
-      actions.push(PoolAction.CreateDeal)
+    // Funding
+    if (currentStatus === PoolStatus.Funding) {
+      return [PoolAction.Invest]
     }
-    if (isAfter(now, pool.dealDeadline)) {
-      actions.push(PoolAction.Withdraw)
+
+    // Seeking Deal
+    if (currentStatus === PoolStatus.SeekingDeal) {
+      const actions: PoolAction[] = []
+      if (userRole === UserRole.Sponsor) {
+        actions.push(PoolAction.CreateDeal)
+      }
+      if (isAfter(now, pool.dealDeadline)) {
+        actions.push(PoolAction.Withdraw)
+      }
+      return actions
     }
-    return actions
-  }
 
-  // TODO: override deal when is expired and amount of deals presented is < 5
+    // Deal Presented
+    if (currentStatus === PoolStatus.DealPresented) {
+      const actions: PoolAction[] = []
 
-  // Fund deal
-  if (
-    currentStatus === PoolStatus.DealPresented &&
-    !pool.deal?.holderAlreadyDeposited &&
-    userRole === UserRole.Investor
-  ) {
-    return [PoolAction.FundDeal]
-  }
+      if (userRole === UserRole.Holder && !pool.deal?.holderAlreadyDeposited) {
+        actions.push(PoolAction.FundDeal)
+      }
 
-  // Accept or Reject deal
-  if (currentStatus === PoolStatus.DealPresented && pool.deal?.holderAlreadyDeposited) {
-    return [PoolAction.AcceptDeal, PoolAction.Withdraw]
-  }
+      if (pool.deal) {
+        if (pool.deal.redemption && isBefore(now, pool.deal.redemption?.end)) {
+          actions.push(PoolAction.AcceptDeal)
+        }
 
-  // default to Funding
-  return []
+        if (isAfter(now, pool.deal.holderDepositExpiration)) {
+          actions.push(PoolAction.Withdraw)
+        }
+
+        if (pool.deal.holderAlreadyDeposited) {
+          actions.push(PoolAction.Withdraw)
+        }
+      }
+
+      // TODO: override deal when is expired and amount of deals presented is < 5
+
+      return actions
+    }
+
+    if (currentStatus === PoolStatus.Closed) {
+      return [PoolAction.Withdraw]
+    }
+
+    if (currentStatus === PoolStatus.Vesting) {
+      return [PoolAction.Withdraw]
+    }
+
+    return []
+  }, [userRole, currentStatus, pool])
 }
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
@@ -236,10 +262,10 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
   const { address } = useWeb3Connection()
 
   // derive data for UI
-  const derivedStatus = deriveStatus(poolResponse)
-  const userRole = deriveUserRole(address, poolResponse)
-  const tabs = deriveUserTabs(userRole, poolResponse, derivedStatus)
-  const actions = deriveUserActions(userRole, poolResponse, derivedStatus)
+  const derivedStatus = useCurrentStatus(poolResponse)
+  const userRole = useUserRole(address, poolResponse)
+  const tabs = useUserTabs(poolResponse, derivedStatus)
+  const actions = useUserActions(userRole, poolResponse, derivedStatus)
 
   // get info by pool status
   const funding = useFundingStatus(poolResponse)
