@@ -4,13 +4,12 @@ import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import Wei, { wei } from '@synthetixio/wei'
+import { wei } from '@synthetixio/wei'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
-import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
 import {
   ButtonWrapper,
   Description,
@@ -61,20 +60,18 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const {
     createDealState,
     errors,
-    gasLimitEstimate,
-    gasPrice,
+    getModalTransaction,
     handleCreateDeal,
-    handleSubmit,
     investmentTokenInfo,
     isFinalStep,
     isFirstStep,
     isSubmitting,
     moveStep,
+    resetFields,
     setDealField,
-    setGasPrice,
+    setIsSubmitting,
+    setShowModalTransaction,
   } = useAelinCreateDeal(appChainId, pool)
-
-  const [showSubmitModal, setShowSubmitModal] = useState<boolean>(false)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
   const { order, text, title } = currentStepConfig
@@ -107,6 +104,17 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     setDealField,
     totalPurchase,
   ])
+
+  const onCompleteTx = () => {
+    resetFields()
+    setShowModalTransaction(false)
+    setIsSubmitting(false)
+    router.reload()
+  }
+
+  const onErrorTx = () => {
+    setIsSubmitting(false)
+  }
 
   return (
     <>
@@ -157,7 +165,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                         key={`${step}_button`}
                         onClick={() => {
                           handleCreateDeal()
-                          setShowSubmitModal(true)
+                          setShowModalTransaction(true)
                         }}
                       >
                         Create Deal
@@ -189,16 +197,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
           }}
         />
       )}
-      {showSubmitModal && (
-        <ConfirmTransactionModal
-          disableButton={isSubmitting || !gasPrice.gt(wei(0))}
-          gasLimitEstimate={gasLimitEstimate}
-          onClose={() => setShowSubmitModal(false)}
-          onSubmit={handleSubmit}
-          setGasPrice={(gasPrice: Wei) => setGasPrice(gasPrice)}
-          title={'Create deal'}
-        />
-      )}
+      {getModalTransaction('Create deal', onCompleteTx, onErrorTx)}
       <Link href={`/pool/${network}/${poolAddress}`} passHref>
         <Button as="a">Cancel</Button>
       </Link>

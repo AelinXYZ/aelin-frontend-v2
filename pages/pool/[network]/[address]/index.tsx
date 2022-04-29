@@ -13,7 +13,7 @@ const PoolDetailsPage: NextPage = () => {
   const router = useRouter()
   const { address: poolAddress, network } = router.query
 
-  if (!poolAddress || !network) {
+  if (!poolAddress || !network || Array.isArray(poolAddress)) {
     return null
   }
 
@@ -22,11 +22,11 @@ const PoolDetailsPage: NextPage = () => {
     'Unsupported chain passed as url parameter.',
   )
 
-  if (!isAddress((poolAddress as string).toLowerCase())) {
+  if (!isAddress(poolAddress.toLowerCase())) {
     throw Error('Pool address is not a valid address.')
   }
 
-  return <PoolMain chainId={chainId} poolAddress={poolAddress as string} />
+  return <PoolMain chainId={chainId} poolAddress={poolAddress.toLowerCase()} />
 }
 
 export default genericSuspense(PoolDetailsPage, () => <Loading />)

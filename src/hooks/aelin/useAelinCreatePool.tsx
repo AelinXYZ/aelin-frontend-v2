@@ -1,27 +1,20 @@
-import { useRouter } from 'next/router'
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
-import Wei, { wei } from '@synthetixio/wei'
 
 import { ChainsValues } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
-import {
-  useAelinPoolCreateEstimate,
-  useAelinPoolCreateTransaction,
-} from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
+import { useAelinPoolCreateTxWithModal } from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
-import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 import { isDuration } from '@/src/utils/isDuration'
 import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
-import { GasLimitEstimate } from '@/types/utils'
 
 export enum CreatePoolSteps {
   poolName = 'poolName',
@@ -166,7 +159,6 @@ const parseValuesToCreatePool = async (
     whitelist,
   } = createPoolState
   const now = new Date()
-
   const investmentDeadLineDuration = getDuration(
     now,
     investmentDeadLine.days,
@@ -192,7 +184,7 @@ const parseValuesToCreatePool = async (
 
       accum.push({
         address,
-        amount: amount ? BigNumber.from(amount) : MaxUint256,
+        amount: amount ? parseUnits(String(amount), investmentToken.decimals) : MaxUint256,
       })
 
       return accum
@@ -317,20 +309,12 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
   const [errors, setErrors] = useState<poolErrors>()
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null)
-  const [gasPrice, setGasPrice] = useState<Wei>(wei(0))
 
-  const router = useRouter()
-
-  const createPoolTx = useAelinPoolCreateTransaction(
-    contracts.POOL_CREATE.address[chainId],
-    'createPool',
-  )
-
-  const createPoolEstimate = useAelinPoolCreateEstimate(
-    contracts.POOL_CREATE.address[chainId],
-    'createPool',
-  )
+  const {
+    estimate: createPoolEstimate,
+    getModalTransaction,
+    setShowModalTransaction,
+  } = useAelinPoolCreateTxWithModal(contracts.POOL_CREATE.address[chainId], 'createPool')
 
   const moveStep = (value: 'next' | 'prev' | CreatePoolSteps) => {
     const { currentStep } = createPoolState
@@ -350,7 +334,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   }
 
   const handleCreatePool = async () => {
-    setIsSubmitting(true)
     const {
       dealDeadLineDuration,
       investmentDeadLineDuration,
@@ -363,67 +346,23 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       sponsorFee,
     } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
-    try {
-      const gasLimitEstimate = wei(
-        await createPoolEstimate([
-          poolName,
-          poolSymbol,
-          poolCap,
-          investmentToken,
-          dealDeadLineDuration,
-          sponsorFee,
-          investmentDeadLineDuration,
-          poolAddresses,
-          poolAddressesAmounts,
-        ]),
-        0,
-      )
-      setGasLimitEstimate(gasLimitEstimate)
-      setIsSubmitting(false)
-    } catch (e) {
-      console.log(e)
-      setGasLimitEstimate(null)
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleSubmit = async () => {
-    setIsSubmitting(true)
-    const {
-      dealDeadLineDuration,
-      investmentDeadLineDuration,
-      investmentToken,
-      poolAddresses,
-      poolAddressesAmounts,
-      poolCap,
-      poolName,
-      poolSymbol,
-      sponsorFee,
-    } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
+    setShowModalTransaction(true)
 
     try {
-      const tx = await createPoolTx(
-        [
-          poolName,
-          poolSymbol,
-          poolCap,
-          investmentToken,
-          dealDeadLineDuration,
-          sponsorFee,
-          investmentDeadLineDuration,
-          poolAddresses,
-          poolAddressesAmounts,
-        ],
-        { gasLimit: getGasEstimateWithBuffer(gasLimitEstimate)?.toBN(), gasPrice: gasPrice.toBN() },
-      )
-      setIsSubmitting(false)
-      if (tx) {
-        dispatch({ type: 'reset' })
-        router.push('/')
-      }
+      await createPoolEstimate([
+        poolName,
+        poolSymbol,
+        poolCap,
+        investmentToken,
+        dealDeadLineDuration,
+        sponsorFee,
+        investmentDeadLineDuration,
+        poolAddresses,
+        poolAddressesAmounts,
+      ])
     } catch (e) {
       console.log(e)
-      setIsSubmitting(false)
+      setShowModalTransaction(false)
     }
   }
 
@@ -481,11 +420,11 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     isFinalStep,
     errors,
     isFirstStep,
-    handleSubmit,
     isSubmitting,
-    gasLimitEstimate,
     handleCreatePool,
-    gasPrice,
-    setGasPrice,
+    getModalTransaction,
+    setShowModalTransaction,
+    setIsSubmitting,
+    resetFields: () => dispatch({ type: 'reset' }),
   }
 }

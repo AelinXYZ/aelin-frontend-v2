@@ -25,7 +25,13 @@ export const getTransactionPrice = (
   return gasPrice.mul(ethPrice).mul(gasLimit).div(GWEI_UNIT).toNumber().toFixed(4)
 }
 
+export const MIN_GAS_ESTIMATE = wei(21000, 18)
+
 export const getGasEstimateWithBuffer = (gasEstimate: GasLimitEstimate) => {
   if (!gasEstimate) return null
-  return gasEstimate?.add(gasEstimate?.mul(wei(GAS_LIMIT_BUFFER_MULTIPLIER, 0)).div(100)) ?? null
+  const estimateWithBuffer = gasEstimate?.add(
+    gasEstimate?.mul(wei(GAS_LIMIT_BUFFER_MULTIPLIER, 0)).div(100),
+  )
+
+  return estimateWithBuffer.gt(MIN_GAS_ESTIMATE) ? estimateWithBuffer : undefined
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import Wei, { wei } from '@synthetixio/wei'
@@ -201,4 +201,4 @@ const GasSelector = ({
   )
 }
 
-export default genericSuspense(GasSelector, () => <Loading />)
+export default genericSuspense(memo(GasSelector), () => <Loading />)
