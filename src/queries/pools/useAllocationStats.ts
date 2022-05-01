@@ -6,6 +6,8 @@ export const USER_ALLOCATION_STAT = gql`
       totalWithdrawn
       totalAccepted
       remainingProRataAllocation
+      poolTokenBalance
+      investmentTokenBalance
     }
   }
 `

@@ -9,6 +9,7 @@ import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -22,8 +23,9 @@ import {
   WaitingForDeal,
 } from '@/types/aelinPool'
 
-function useFundingStatus(pool: ParsedAelinPool): Funding {
+function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
   const { address } = useWeb3Connection()
+  const { data: userAllocationStatRes } = useUserAllocationStat(pool.dealAddress, chainId)
 
   const [allowance, refetch] = useERC20Call(pool.chainId, pool.investmentToken, 'allowance', [
     address || ZERO_ADDRESS,
@@ -44,16 +46,25 @@ function useFundingStatus(pool: ParsedAelinPool): Funding {
       raw: isCap ? MAX_BN : maxDepositAllowed,
       formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
     },
+    poolTokenBalance: {
+      raw: userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
+      formatted: formatToken(
+        userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
+        pool.investmentTokenDecimals,
+      ),
+    },
+    investmentTokenBalance: {
+      raw: userAllocationStatRes?.userAllocationStat?.investmentTokenBalance,
+      formatted: formatToken(
+        userAllocationStatRes?.userAllocationStat?.investmentTokenBalance,
+        pool.investmentTokenDecimals,
+      ),
+    },
   }
 }
 
 function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
-  const { address } = useWeb3Connection()
-  const allSDK = getAllGqlSDK()
-  const { useUserAllocationStat } = allSDK[chainId]
-  const { data: userAllocationStatRes } = useUserAllocationStat({
-    id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
-  })
+  const { data: userAllocationStatRes } = useUserAllocationStat(pool.dealAddress, chainId)
 
   const userProRataAllocation =
     userAllocationStatRes?.userAllocationStat?.remainingProRataAllocation || ZERO_BN
@@ -269,7 +280,7 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
   const actions = useUserActions(userRole, poolResponse, derivedStatus)
 
   // get info by pool status
-  const funding = useFundingStatus(poolResponse)
+  const funding = useFundingStatus(poolResponse, chainId)
   const dealing = useDealingStatus(poolResponse, chainId)
   const proRata = useProRataStatus(poolResponse)
 

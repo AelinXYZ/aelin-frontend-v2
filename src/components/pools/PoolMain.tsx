@@ -101,7 +101,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
           >
             <ContentGrid>
               {tab === PoolStatus.Funding && (
-                <PoolInformation pool={pool} poolAddress={poolAddress} />
+                <PoolInformation pool={pool} poolStatusHelper={funding} />
               )}
               {tab === PoolStatus.DealPresented && dealExists && (
                 <DealInformation pool={pool} poolStatusHelper={dealing} />

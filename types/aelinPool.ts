@@ -38,6 +38,8 @@ export interface Funding {
   userAllowance: BigNumber
   refetchAllowance: () => void
   maxDepositAllowed: DetailedNumber
+  poolTokenBalance: DetailedNumber
+  investmentTokenBalance: DetailedNumber
 }
 
 export interface WaitingForDeal {
