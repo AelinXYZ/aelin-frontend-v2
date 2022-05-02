@@ -30,12 +30,17 @@ function Deposit({ pool, poolHelpers }: Props) {
   const purchasePoolTokens = useAelinPoolTransaction(pool.address, 'purchasePoolTokens')
 
   useEffect(() => {
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(MAX_BN)) {
+    if (!balance) {
+      setInputError('There was an error calculating User balance')
+      return
+    }
+
+    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance)) {
       setInputError('Amount is too big')
     } else {
       setInputError('')
     }
-  }, [tokenInputValue])
+  }, [tokenInputValue, balance])
 
   const depositTokens = async () => {
     if (inputError) {
@@ -67,7 +72,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     <>
       <TokenInput
         decimals={investmentTokenDecimals}
-        error={Boolean(inputError)}
+        error={inputError}
         maxValue={balances[0].raw.toString()}
         maxValueFormatted={balances[0].formatted || '0'}
         setValue={setTokenInputValue}

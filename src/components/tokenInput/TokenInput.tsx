@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { BigNumberInput } from 'big-number-input'
 
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
+import { Error } from '@/src/components/pureStyledComponents/text/Error'
 
 const Wrapper = styled.div`
   margin-bottom: 40px;
@@ -54,7 +55,7 @@ const Balance = styled.div`
 interface Props {
   decimals: number
   disabled?: boolean
-  error: boolean
+  error: string
   maxDisabled?: boolean
   maxValue: string
   maxValueFormatted: string
@@ -91,6 +92,7 @@ export const TokenInput = ({
         <MaxButton disabled={maxDisabled} onClick={setMax}>
           Max
         </MaxButton>
+        {error && <Error>{error}</Error>}
       </InputWrapper>
       <Balance>
         Balance: {maxValueFormatted} {symbol ? symbol : 'Pool tokens'}

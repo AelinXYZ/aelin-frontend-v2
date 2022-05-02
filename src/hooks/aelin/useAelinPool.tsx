@@ -142,8 +142,8 @@ export const getParsedPool = ({
   const vestingPeriod = getVestingDates(dealDetails.vestingCliff, dealDetails.vestingPeriod)
 
   res.deal = {
-    name: 'TODO: name',
-    symbol: 'TODO: symbol',
+    name: dealDetails.name,
+    symbol: dealDetails.symbol,
     underlyingToken: {
       token: dealDetails.underlyingDealToken,
       symbol: dealDetails.underlyingDealTokenSymbol,

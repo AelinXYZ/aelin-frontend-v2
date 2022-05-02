@@ -5,6 +5,7 @@ import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+import { Funding } from '@/types/aelinPool'
 
 const Column = styled.div`
   display: flex;
@@ -15,8 +16,8 @@ const Column = styled.div`
 
 export const PoolInformation: React.FC<{
   pool: ParsedAelinPool
-  poolAddress: string
-}> = ({ pool }) => {
+  poolStatusHelper: Funding
+}> = ({ pool, poolStatusHelper }) => {
   return (
     <>
       <Column>
@@ -28,15 +29,22 @@ export const PoolInformation: React.FC<{
         <InfoCell
           title="Pool cap"
           tooltip="Pool cap tooltip"
-          value={pool.poolCap.raw.eq(ZERO_BN) ? 'unlimited' : pool.poolCap.formatted}
+          value={pool.poolCap.raw.eq(ZERO_BN) ? 'uncapped' : pool.poolCap.formatted}
         />
         <InfoCell title="Pool stats" tooltip="Pool stats tooltip">
           <Value>Funded: {pool.funded.formatted}</Value>
           <Value>Withdrawn: {pool.withdrawn.formatted}</Value>
           <Value>Amount in Pool: {pool.amountInPool.formatted}</Value>
         </InfoCell>
-        <InfoCell title={`My ${pool.investmentTokenSymbol} balance`} value={'0.00'} />
-        <InfoCell title="My pool balance" tooltip="My pool balance tooltip" value={'0.00'} />
+        <InfoCell
+          title={`My ${pool.investmentTokenSymbol} balance`}
+          value={poolStatusHelper.investmentTokenBalance.formatted}
+        />
+        <InfoCell
+          title="My pool balance"
+          tooltip="My pool balance tooltip"
+          value={poolStatusHelper.poolTokenBalance.formatted}
+        />
       </Column>
       <Column>
         <InfoCell title="Investment deadline" tooltip="Investment deadline tooltip">
