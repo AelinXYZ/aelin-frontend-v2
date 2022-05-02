@@ -36,10 +36,11 @@ export interface Funding {
   isCap: boolean
   capReached: boolean
   userAllowance: BigNumber
-  refetchAllowance: () => void
+  refetchUserAllowance: () => void
   maxDepositAllowed: DetailedNumber
   poolTokenBalance: DetailedNumber
-  investmentTokenBalance: DetailedNumber
+  userInvestmentTokenBalance: DetailedNumber
+  refetchUserInvestmentTokenBalance: () => void
 }
 
 export interface WaitingForDeal {

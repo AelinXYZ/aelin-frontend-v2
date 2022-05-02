@@ -38,7 +38,7 @@ export const PoolInformation: React.FC<{
         </InfoCell>
         <InfoCell
           title={`My ${pool.investmentTokenSymbol} balance`}
-          value={poolStatusHelper.investmentTokenBalance.formatted}
+          value={poolStatusHelper.userInvestmentTokenBalance.formatted}
         />
         <InfoCell
           title="My pool balance"

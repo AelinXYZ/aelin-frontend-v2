@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { BigNumber } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import uniq from 'lodash/uniq'
@@ -13,7 +12,6 @@ import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { formatToken } from '@/src/web3/bigNumber'
 import {
   Funding,
@@ -27,11 +25,19 @@ import {
 function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
   const { address } = useWeb3Connection()
   const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
+  const [userInvestmentTokenBalance, refetchUserInvestmentTokenBalance] = useERC20Call(
+    pool.chainId,
+    pool.investmentToken,
+    'balanceOf',
+    [address || ZERO_ADDRESS],
+  )
 
-  const [allowance, refetch] = useERC20Call(pool.chainId, pool.investmentToken, 'allowance', [
-    address || ZERO_ADDRESS,
-    pool.address,
-  ])
+  const [userAllowance, refetchUserAllowance] = useERC20Call(
+    pool.chainId,
+    pool.investmentToken,
+    'allowance',
+    [address || ZERO_ADDRESS, pool.address],
+  )
 
   const isCap = pool.poolCap.raw.eq(0)
   const capAmount = pool.poolCap.raw
@@ -41,8 +47,8 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
   return {
     isCap,
     capReached: isCap ? false : capAmount.eq(funded),
-    userAllowance: allowance || ZERO_BN,
-    refetchAllowance: refetch,
+    userAllowance: userAllowance || ZERO_BN,
+    refetchUserAllowance,
     maxDepositAllowed: {
       raw: isCap ? MAX_BN : maxDepositAllowed,
       formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
@@ -54,27 +60,27 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
         pool.investmentTokenDecimals,
       ),
     },
-    investmentTokenBalance: {
-      raw: ZERO_BN,
-      formatted: formatToken(ZERO_BN, pool.investmentTokenDecimals),
+    userInvestmentTokenBalance: {
+      raw: userInvestmentTokenBalance || ZERO_BN,
+      formatted: formatToken(userInvestmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals),
     },
+    refetchUserInvestmentTokenBalance,
   }
 }
 
 function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
   const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
 
-  const userProRataAllocation = ZERO_BN
   const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
 
   return {
     userTotalWithdrawn: {
-      raw: userProRataAllocation,
-      formatted: formatToken(userProRataAllocation, pool.investmentTokenDecimals),
-    },
-    userProRataAllocation: {
       raw: userAmountWithdrawn,
       formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
+    },
+    userProRataAllocation: {
+      raw: ZERO_BN,
+      formatted: formatToken(ZERO_BN, pool.investmentTokenDecimals),
     },
   }
 }
