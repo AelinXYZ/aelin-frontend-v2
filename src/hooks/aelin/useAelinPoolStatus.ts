@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import uniq from 'lodash/uniq'
@@ -54,11 +55,8 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
       ),
     },
     investmentTokenBalance: {
-      raw: userAllocationStatRes?.userAllocationStat?.investmentTokenBalance,
-      formatted: formatToken(
-        userAllocationStatRes?.userAllocationStat?.investmentTokenBalance,
-        pool.investmentTokenDecimals,
-      ),
+      raw: ZERO_BN,
+      formatted: formatToken(ZERO_BN, pool.investmentTokenDecimals),
     },
   }
 }
@@ -66,8 +64,7 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
 function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
   const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
 
-  const userProRataAllocation =
-    userAllocationStatRes?.userAllocationStat?.remainingProRataAllocation || ZERO_BN
+  const userProRataAllocation = ZERO_BN
   const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
 
   return {

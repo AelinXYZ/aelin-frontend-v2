@@ -5,9 +5,7 @@ export const USER_ALLOCATION_STAT = gql`
     userAllocationStat(id: $id) {
       totalWithdrawn
       totalAccepted
-      remainingProRataAllocation
       poolTokenBalance
-      investmentTokenBalance
     }
   }
 `

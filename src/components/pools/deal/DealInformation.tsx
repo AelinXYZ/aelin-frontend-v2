@@ -1,8 +1,11 @@
 import styled from 'styled-components'
 
+import { Link } from '@/src/components/assets/Link'
 import { Deadline } from '@/src/components/common/Deadline'
+import ExternalLink from '@/src/components/common/ExternalLink'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { WaitingForDeal } from '@/types/aelinPool'
 
@@ -18,14 +21,27 @@ export const DealInformation: React.FC<{
   poolStatusHelper: WaitingForDeal
 }> = ({ pool, poolStatusHelper }) => {
   const { deal, sponsorFee } = pool
+  const { getExplorerUrl } = useWeb3Connection()
 
   return !deal ? (
     <div>No Deal presented yet.</div>
   ) : (
     <>
       <Column>
-        <InfoCell title="Name" value={`${deal.name} - ${pool.dealAddress}`} />
-        <InfoCell title="Deal token" tooltip="??" value={deal.underlyingToken.token} />
+        <InfoCell
+          title="Name"
+          value={<ExternalLink href={getExplorerUrl(pool.dealAddress || '')} label={deal.name} />}
+        />
+        <InfoCell
+          title="Deal token"
+          tooltip="??"
+          value={
+            <ExternalLink
+              href={getExplorerUrl(deal.underlyingToken.token)}
+              label={deal.underlyingToken.symbol}
+            />
+          }
+        />
         <InfoCell title="Exchange rates" tooltip="??">
           <Value>{`${deal.exchangeRates.investmentPerDeal.formatted} ${deal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
           <Value>{`${deal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol} per ${deal.underlyingToken.symbol}`}</Value>
