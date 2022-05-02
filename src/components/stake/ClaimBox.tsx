@@ -53,22 +53,19 @@ type ClaimBoxProps = {
 }
 
 const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
-  const [isLoading, setIsLoading] = useState(false)
   const [rewardsToClaim, setRewardsToClaim] = useState(userRewards)
 
   const {
     estimate: estimateGetReward,
     getModalTransaction,
-    setShowModalTransaction,
+    isSubmitting,
   } = useStakingRewardsTransactionWithModal(stakingAddress, 'getReward')
 
   const handleClaim = async () => {
-    setShowModalTransaction(true)
-    setIsLoading(true)
     try {
       await estimateGetReward()
     } catch (error) {
-      setIsLoading(false)
+      console.log(error)
     }
   }
 
@@ -79,21 +76,14 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
         My Rewards: <Value>{rewardsToClaim} AELIN</Value>
       </Text>
       <Button
-        disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isLoading}
+        disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isSubmitting}
         onClick={handleClaim}
       >
         Claim
       </Button>
-      {getModalTransaction(
-        'Claim tokens',
-        () => {
-          setRewardsToClaim(0)
-          setIsLoading(false)
-        },
-        () => {
-          setIsLoading(false)
-        },
-      )}
+      {getModalTransaction('Claim tokens', () => {
+        setRewardsToClaim(0)
+      })}
     </Wrapper>
   )
 }

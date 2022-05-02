@@ -73,21 +73,18 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
     estimate: estimateApprove,
     getModalTransaction: getModalTransactionApprove,
     isSubmitting: isApproveSubmitting,
-    setShowModalTransaction: setShowModalTransactionApprove,
   } = useERC20TransactionWithModal(tokenAddress, 'approve')
 
   const {
     estimate: estimateStake,
     getModalTransaction: getModalTransactionStake,
     isSubmitting: isStakeSubmitting,
-    setShowModalTransaction: setShowModalTransactionStake,
   } = useStakingRewardsTransactionWithModal(stakingAddress, 'stake')
 
   const {
     estimate: estimateWithdraw,
     getModalTransaction: getModalTransactionWithdraw,
     isSubmitting: isWithdrawSubmitting,
-    setShowModalTransaction: setShowModalTransactionWithdraw,
   } = useStakingRewardsTransactionWithModal(stakingAddress, 'withdraw')
 
   const isSubmitting = useMemo(
@@ -125,7 +122,6 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   }, [totalBalance, tokenInputValue])
 
   const handleApprove = async () => {
-    setShowModalTransactionApprove(true)
     try {
       await estimateApprove([stakingAddress, MaxUint256])
     } catch (error) {
@@ -134,7 +130,6 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   }
 
   const handleDeposit = async () => {
-    setShowModalTransactionStake(true)
     try {
       await estimateStake([tokenInputValue])
     } catch (error) {
@@ -143,7 +138,6 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   }
 
   const handleWithdraw = async () => {
-    setShowModalTransactionWithdraw(true)
     try {
       await estimateWithdraw([tokenInputValue])
     } catch (error) {
