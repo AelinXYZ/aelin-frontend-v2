@@ -25,7 +25,7 @@ import {
 
 function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
   const { address } = useWeb3Connection()
-  const { data: userAllocationStatRes } = useUserAllocationStat(pool.dealAddress, chainId)
+  const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
 
   const [allowance, refetch] = useERC20Call(pool.chainId, pool.investmentToken, 'allowance', [
     address || ZERO_ADDRESS,
@@ -64,7 +64,7 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
 }
 
 function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
-  const { data: userAllocationStatRes } = useUserAllocationStat(pool.dealAddress, chainId)
+  const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
 
   const userProRataAllocation =
     userAllocationStatRes?.userAllocationStat?.remainingProRataAllocation || ZERO_BN
