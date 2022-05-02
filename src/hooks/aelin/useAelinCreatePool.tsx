@@ -304,16 +304,10 @@ export const getCreatePoolStepIndicatorData = (
     title: createPoolConfig[step].title,
   }))
 
-const LOCAL_STORAGE_STATE_KEY = 'aelin-createPoolState'
 export default function useAelinCreatePool(chainId: ChainsValues) {
-  // Get saved state in localstorage only once
-  const { current: savedState } = useRef(
-    removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
-  )
-
-  const router = useRouter()
-  const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
+  const [createPoolState, dispatch] = useReducer(createPoolReducer, initialState)
   const [errors, setErrors] = useState<poolErrors>()
+  const router = useRouter()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -429,10 +423,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         },
         chainId,
       ),
-    )
-    localStorage.setItem(
-      LOCAL_STORAGE_STATE_KEY,
-      JSON.stringify(createPoolState, (k, v) => (v === undefined ? null : v)),
     )
   }, [createPoolState, chainId])
 
