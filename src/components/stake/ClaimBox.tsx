@@ -5,7 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_BN } from '@/src/constants/misc'
-import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import { useStakingRewardsTransactionWithModal } from '@/src/hooks/contracts/useStakingRewardsTransaction'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -56,13 +56,17 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [rewardsToClaim, setRewardsToClaim] = useState(userRewards)
 
-  const getReward = useStakingRewardsTransaction(stakingAddress, 'getReward')
+  const {
+    estimate: estimateGetReward,
+    getModalTransaction,
+    setShowModalTransaction,
+  } = useStakingRewardsTransactionWithModal(stakingAddress, 'getReward')
 
   const handleClaim = async () => {
+    setShowModalTransaction(true)
+    setIsLoading(true)
     try {
-      await getReward()
-      setRewardsToClaim(0)
-      setIsLoading(false)
+      await estimateGetReward()
     } catch (error) {
       setIsLoading(false)
     }
@@ -80,6 +84,16 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
       >
         Claim
       </Button>
+      {getModalTransaction(
+        'Claim tokens',
+        () => {
+          setRewardsToClaim(0)
+          setIsLoading(false)
+        },
+        () => {
+          setIsLoading(false)
+        },
+      )}
     </Wrapper>
   )
 }

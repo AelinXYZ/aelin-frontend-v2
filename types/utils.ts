@@ -28,7 +28,7 @@ export type GasSpeed = keyof GasPrices
 export type Rates = Record<string, Wei>
 
 export type ReturnTransactionWithModalHook<Params> = {
-  estimate: (params: Params) => Promise<BigNumber | null>
+  estimate: (params?: Params) => Promise<BigNumber | null>
   setShowModalTransaction: (value: boolean) => void
   getModalTransaction: (
     modalTitle: string,

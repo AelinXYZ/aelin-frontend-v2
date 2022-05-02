@@ -5,7 +5,6 @@ import Wei, { wei } from '@synthetixio/wei'
 
 import useTransaction from './useTransaction'
 import ConfirmTransactionModal from '@/src/components/pools/common/ConfirmTransactionModal'
-import { ZERO_BN } from '@/src/constants/misc'
 import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 
 export type QueryOptions = {
@@ -61,6 +60,7 @@ export default function useTransactionWithModal<
             onError(error)
             setIsSubmitting(false)
             setTransactionParams(null)
+            setShowModalTransaction(false)
           }
         },
         setGasPrice,
@@ -71,9 +71,9 @@ export default function useTransactionWithModal<
   )
 
   const _estimate = useCallback(
-    async (params: Params) => {
+    async (params?: Params) => {
       setIsSubmitting(true)
-      setTransactionParams(params)
+      setTransactionParams(params || null)
       setEstimateError(false)
       try {
         const estimateGas = await estimate(params)

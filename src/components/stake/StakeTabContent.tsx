@@ -10,9 +10,13 @@ import { TabContent } from '@/src/components/tabs/Tabs'
 import { TokenInput as BaseTokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
-import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
+import useERC20Transaction, {
+  useERC20TransactionWithModal,
+} from '@/src/hooks/contracts/useERC20Transaction'
 import useStakingRewardsCall from '@/src/hooks/contracts/useStakingRewardsCall'
-import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import useStakingRewardsTransaction, {
+  useStakingRewardsTransactionWithModal,
+} from '@/src/hooks/contracts/useStakingRewardsTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -66,9 +70,23 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
     address || ZERO_ADDRESS,
   ])
 
-  const approve = useERC20Transaction(tokenAddress, 'approve')
-  const stake = useStakingRewardsTransaction(stakingAddress, 'stake')
-  const withdraw = useStakingRewardsTransaction(stakingAddress, 'withdraw')
+  const {
+    estimate: estimateApprove,
+    getModalTransaction: getModalTransactionApprove,
+    setShowModalTransaction: setShowModalTransactionApprove,
+  } = useERC20TransactionWithModal(tokenAddress, 'approve')
+
+  const {
+    estimate: estimateStake,
+    getModalTransaction: getModalTransactionStake,
+    setShowModalTransaction: setShowModalTransactionStake,
+  } = useStakingRewardsTransactionWithModal(stakingAddress, 'stake')
+
+  const {
+    estimate: estimateWithdraw,
+    getModalTransaction: getModalTransactionWithdraw,
+    setShowModalTransaction: setShowModalTransactionWithdraw,
+  } = useStakingRewardsTransactionWithModal(stakingAddress, 'withdraw')
 
   const totalBalance = useMemo(() => {
     if (type === DEPOSIT_TYPE) {
@@ -101,9 +119,9 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
 
   const handleApprove = async () => {
     setIsLoading(true)
+    setShowModalTransactionApprove(true)
     try {
-      await approve([stakingAddress, MaxUint256])
-      refetchAllowance()
+      await estimateApprove([stakingAddress, MaxUint256])
       setIsLoading(false)
     } catch (error) {
       console.error(error)
@@ -113,12 +131,9 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
 
   const handleDeposit = async () => {
     setIsLoading(true)
+    setShowModalTransactionStake(true)
     try {
-      await stake([tokenInputValue])
-      refetchAllowance()
-      refetchBalanceOf()
-      setTokenInputValue('')
-      setInputError('')
+      await estimateStake([tokenInputValue])
       setIsLoading(false)
     } catch (error) {
       console.error(error)
@@ -128,12 +143,9 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
 
   const handleWithdraw = async () => {
     setIsLoading(true)
+    setShowModalTransactionWithdraw(true)
     try {
-      await withdraw([tokenInputValue])
-      refetchAllowance()
-      refetchBalanceOf()
-      setTokenInputValue('')
-      setInputError('')
+      await estimateWithdraw([tokenInputValue])
       setIsLoading(false)
     } catch (error) {
       console.error(error)
@@ -173,6 +185,42 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
           {type === DEPOSIT_TYPE ? 'Deposit' : 'Withdraw'}
         </Button>
       </ButtonsWrapper>
+      {getModalTransactionApprove(
+        `Approve ${symbol}`,
+        () => {
+          refetchAllowance()
+          setIsLoading(false)
+        },
+        () => {
+          setIsLoading(false)
+        },
+      )}
+      {getModalTransactionWithdraw(
+        `Withdraw ${symbol}`,
+        () => {
+          refetchAllowance()
+          refetchBalanceOf()
+          setTokenInputValue('')
+          setInputError('')
+          setIsLoading(false)
+        },
+        () => {
+          setIsLoading(false)
+        },
+      )}
+      {getModalTransactionStake(
+        `Stake ${symbol}`,
+        () => {
+          refetchAllowance()
+          refetchBalanceOf()
+          setTokenInputValue('')
+          setInputError('')
+          setIsLoading(false)
+        },
+        () => {
+          setIsLoading(false)
+        },
+      )}
     </TabContent>
   )
 }

@@ -9,7 +9,10 @@ import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
-import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import {
+  useAelinPoolTransaction,
+  useAelinPoolTxWithModal,
+} from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { AelinPool } from '@/types/typechain'
@@ -38,7 +41,11 @@ function AcceptDeal({ pool }: Props) {
     [address || ZERO_ADDRESS],
   )
 
-  const acceptDeal = useAelinPoolTransaction(pool.address, 'acceptDealTokens')
+  const {
+    estimate: acceptDealEstimate,
+    getModalTransaction,
+    setShowModalTransaction,
+  } = useAelinPoolTxWithModal(pool.address, 'acceptDealTokens')
 
   useEffect(() => {
     if (!balance) {
@@ -58,13 +65,10 @@ function AcceptDeal({ pool }: Props) {
     }
 
     setIsLoading(true)
+    setShowModalTransaction(true)
 
     try {
-      await acceptDeal([tokenInputValue])
-      refetchBalance()
-      setTokenInputValue('')
-      setInputError('')
-      setIsLoading(false)
+      await acceptDealEstimate([tokenInputValue])
     } catch (error) {
       setIsLoading(false)
     }
@@ -96,6 +100,18 @@ function AcceptDeal({ pool }: Props) {
       >
         Accept deal
       </GradientButton>
+      {getModalTransaction(
+        'Accept deal',
+        () => {
+          refetchBalance()
+          setTokenInputValue('')
+          setInputError('')
+          setIsLoading(false)
+        },
+        () => {
+          setIsLoading(false)
+        },
+      )}
     </Wrapper>
   )
 }

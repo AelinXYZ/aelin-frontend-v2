@@ -7,7 +7,7 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useAelinPoolTxWithModal } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
@@ -18,14 +18,18 @@ type Props = {
 }
 
 function Deposit({ pool, poolHelpers }: Props) {
-  const { investmentTokenDecimals } = pool
+  const { investmentTokenDecimals, investmentTokenSymbol } = pool
   const { refetchUserInvestmentTokenBalance, userInvestmentTokenBalance: balance } = poolHelpers
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
 
-  const purchasePoolTokens = useAelinPoolTransaction(pool.address, 'purchasePoolTokens')
+  const {
+    estimate: purchasePoolTokensEstimate,
+    getModalTransaction,
+    setShowModalTransaction,
+  } = useAelinPoolTxWithModal(pool.address, 'purchasePoolTokens')
 
   useEffect(() => {
     if (!balance) {
@@ -46,12 +50,10 @@ function Deposit({ pool, poolHelpers }: Props) {
     }
 
     setIsLoading(true)
+    setShowModalTransaction(true)
 
     try {
-      await purchasePoolTokens([tokenInputValue])
-      refetchUserInvestmentTokenBalance()
-      setTokenInputValue('')
-      setInputError('')
+      await purchasePoolTokensEstimate([tokenInputValue])
       setIsLoading(false)
     } catch (error) {
       setIsLoading(false)
@@ -89,6 +91,18 @@ function Deposit({ pool, poolHelpers }: Props) {
       >
         Deposit
       </GradientButton>
+      {getModalTransaction(
+        `Deposit ${investmentTokenSymbol}`,
+        () => {
+          refetchUserInvestmentTokenBalance()
+          setTokenInputValue('')
+          setInputError('')
+          setIsLoading(false)
+        },
+        () => {
+          setIsLoading(false)
+        },
+      )}
     </>
   )
 }
