@@ -140,7 +140,10 @@ type createDealValues = {
   holderFundingDuration: number
 }
 
-const parseValuesToCreateDeal = (createDealState: CreateDealState): createDealValues => {
+const parseValuesToCreateDeal = (
+  createDealState: CreateDealState,
+  investmentTokenDecimals: number,
+): createDealValues => {
   const {
     counterPartyAddress,
     counterPartyFundingPeriod,
@@ -195,7 +198,7 @@ const parseValuesToCreateDeal = (createDealState: CreateDealState): createDealVa
       ? parseUnits(dealTokenTotal.toString(), dealToken?.decimals)
       : ZERO_BN,
     purchaseTokenTotal: totalPurchaseAmount
-      ? parseUnits(totalPurchaseAmount.toString(), 18)
+      ? parseUnits(totalPurchaseAmount.toString(), investmentTokenDecimals)
       : ZERO_BN,
     vestingPeriodDuration,
     vestingCliffDuration,
@@ -342,8 +345,18 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
       underlyingDealTokenTotal,
       vestingCliffDuration,
       vestingPeriodDuration,
-    } = parseValuesToCreateDeal(createDealState)
-
+    } = parseValuesToCreateDeal(createDealState, pool.investmentTokenDecimals)
+    console.log({
+      underlyingDealToken,
+      purchaseTokenTotal,
+      underlyingDealTokenTotal,
+      vestingPeriodDuration,
+      vestingCliffDuration,
+      proRataRedemptionDuration,
+      openRedemptionDuration,
+      holderAddress,
+      holderFundingDuration,
+    })
     try {
       await createDealEstimate([
         underlyingDealToken,
