@@ -78,7 +78,14 @@ const useEthGasPrice = () => {
         throw new Error('Cannot retrieve gas price from provider. ' + e)
       }
     },
-    { refreshInterval: 10000, refreshWhenHidden: false },
+    {
+      refreshWhenHidden: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
+      refreshWhenOffline: false,
+      refreshInterval: 10000,
+    },
   )
 }
 

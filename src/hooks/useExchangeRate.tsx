@@ -18,7 +18,7 @@ const useExchangeRates = () => {
   const snxjs = synthetix({ network: 'mainnet' })
 
   return useSWR<Rates>(
-    appChainId ? ['rates', 'exchangeRates', appChainId] : null,
+    ['rates', 'exchangeRates', appChainId],
     async () => {
       const exchangeRates: Rates = {}
 
@@ -40,7 +40,14 @@ const useExchangeRates = () => {
 
       return exchangeRates
     },
-    { refreshInterval: 10000, refreshWhenHidden: false },
+    {
+      refreshWhenHidden: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
+      refreshWhenOffline: false,
+      refreshInterval: 10000,
+    },
   )
 }
 

@@ -95,8 +95,10 @@ export default function useTransaction<
       const contract = new Contract(address, abi, signer) as MyContract
       try {
         console.info('Calculating transaction gas.')
-        return await contract.estimateGas[method as string](...params)
+        const result = await contract.estimateGas[method as string](...params)
+        return result
       } catch (e: any) {
+        console.log(e)
         return ZERO_BN
       }
     },
