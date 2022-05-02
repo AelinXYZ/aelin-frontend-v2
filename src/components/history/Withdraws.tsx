@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { OrderDirection, Withdraw_OrderBy } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -15,10 +17,26 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { Chains, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
+import useAelinWithdrawHistory from '@/src/hooks/aelin/history/useAelinWithdrawHistory'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+type Order = {
+  orderBy: Withdraw_OrderBy
+  orderDirection: OrderDirection
+}
 
 export const Withdraws: React.FC = ({ ...restProps }) => {
+  const { address } = useWeb3Connection()
   const router = useRouter()
+
+  const [order, setOrder] = useState<Order>({
+    orderBy: Withdraw_OrderBy.Timestamp,
+    orderDirection: OrderDirection.Desc,
+  })
+
   const columns = {
     alignment: {
       network: 'center',
@@ -30,43 +48,41 @@ export const Withdraws: React.FC = ({ ...restProps }) => {
   const tableHeaderCells = [
     {
       title: 'Date',
-      sortKey: 'date',
+      sortKey: Withdraw_OrderBy.Timestamp,
     },
     {
       title: 'Pool Name',
-      sortKey: '',
+      sortKey: Withdraw_OrderBy.PoolName,
     },
     {
       title: 'Amount withdrawn',
-      sortKey: '',
+      sortKey: Withdraw_OrderBy.AmountWithdrawn,
     },
     {
       title: 'Network',
-      sortKey: '',
       justifyContent: columns.alignment.network,
     },
-    {
-      title: '',
-      sortKey: '',
-      justifyContent: columns.alignment.seePool,
-    },
   ]
 
-  const handleSort = (sortBy: string) => {
-    console.log(sortBy)
+  const handleSort = (sortBy: Withdraw_OrderBy) => {
+    if (order.orderBy === sortBy) {
+      setOrder({
+        orderBy: sortBy,
+        orderDirection:
+          order.orderDirection === OrderDirection.Asc ? OrderDirection.Desc : OrderDirection.Asc,
+      })
+    } else {
+      setOrder({ orderBy: sortBy, orderDirection: OrderDirection.Desc })
+    }
   }
 
-  const sortBy = 'date'
+  const variables = {
+    where: { userAddress: address || ZERO_ADDRESS },
+    orderBy: order.orderBy,
+    orderDirection: order.orderDirection,
+  }
 
-  const data = [
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      amountWithdrawn: '1,000,000 USDC',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-  ]
+  const { data } = useAelinWithdrawHistory(variables)
 
   return (
     <TableWrapper {...restProps}>
@@ -84,11 +100,11 @@ export const Withdraws: React.FC = ({ ...restProps }) => {
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
               <SortableTH
-                isActive={sortBy === sortKey}
+                isActive={order.orderBy === sortKey}
                 justifyContent={justifyContent}
                 key={index}
                 onClick={() => {
-                  handleSort(sortKey)
+                  if (sortKey) handleSort(sortKey)
                 }}
               >
                 {title}
@@ -99,7 +115,7 @@ export const Withdraws: React.FC = ({ ...restProps }) => {
             <BaseCard>No data.</BaseCard>
           ) : (
             data.map((item, index) => {
-              const { amountWithdrawn, date, id, network, poolName } = item
+              const { amountWithdrawn, id, network, poolName, timestamp } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -109,7 +125,7 @@ export const Withdraws: React.FC = ({ ...restProps }) => {
                     router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                   }}
                 >
-                  <Cell>{date}</Cell>
+                  <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
                   <Cell light>{poolName}</Cell>
                   <Cell light>{amountWithdrawn}</Cell>
                   <Cell justifyContent={columns.alignment.network} light>
