@@ -30,12 +30,3 @@ export const DEPOSITS = gql`
     }
   }
 `
-
-/**
-  
- {
-	  "where": {
-      "userAddress": "0xa834e550B45B4a469a05B846fb637bfcB12e3Df8"
-    }
-  }
- */

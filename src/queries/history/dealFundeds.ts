@@ -34,11 +34,3 @@ export const DEAL_FUNDEDS = gql`
     }
   }
 `
-
-/**
- {
-	  "where": {
-      "holder": "0xa834e550B45B4a469a05B846fb637bfcB12e3Df8"
-    }
-  }
- */
