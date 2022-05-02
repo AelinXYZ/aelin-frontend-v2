@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 
-import { Link } from '@/src/components/assets/Link'
 import { Deadline } from '@/src/components/common/Deadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
