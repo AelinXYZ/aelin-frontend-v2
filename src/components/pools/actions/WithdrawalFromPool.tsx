@@ -5,12 +5,9 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
-import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import {
-  useAelinPoolTransaction,
-  useAelinPoolTxWithModal,
-} from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useAelinPoolTxWithModal } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -24,7 +21,6 @@ function WithdrawalFromPool({ pool }: Props) {
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
   const [balance, refetchBalance] = useERC20Call(chainId, pool.address, 'balanceOf', [
     address || ZERO_ADDRESS,
@@ -33,7 +29,7 @@ function WithdrawalFromPool({ pool }: Props) {
   const {
     estimate: withdrawFromPoolEstimate,
     getModalTransaction,
-    setShowModalTransaction,
+    isSubmitting,
   } = useAelinPoolTxWithModal(pool.address, 'withdrawFromPool')
 
   useEffect(() => {
@@ -53,13 +49,10 @@ function WithdrawalFromPool({ pool }: Props) {
       return
     }
 
-    setIsLoading(true)
-    setShowModalTransaction(true)
-
     try {
       await withdrawFromPoolEstimate([tokenInputValue])
     } catch (error) {
-      setIsLoading(false)
+      console.log(error)
     }
   }
 
@@ -75,24 +68,17 @@ function WithdrawalFromPool({ pool }: Props) {
       />
       <GradientButton
         disabled={
-          !address || !isAppConnected || isLoading || !tokenInputValue || Boolean(inputError)
+          !address || !isAppConnected || isSubmitting || !tokenInputValue || Boolean(inputError)
         }
         onClick={withdrawFromPool}
       >
         Withdraw
       </GradientButton>
-      {getModalTransaction(
-        `Withdraw ${investmentTokenSymbol} from pool`,
-        () => {
-          refetchBalance()
-          setTokenInputValue('')
-          setInputError('')
-          setIsLoading(false)
-        },
-        () => {
-          setIsLoading(false)
-        },
-      )}
+      {getModalTransaction(`Withdraw ${investmentTokenSymbol} from pool`, () => {
+        refetchBalance()
+        setTokenInputValue('')
+        setInputError('')
+      })}
     </>
   )
 }

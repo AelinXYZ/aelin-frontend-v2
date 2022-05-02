@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { Contract, ContractReceipt } from '@ethersproject/contracts'
 import Wei, { wei } from '@synthetixio/wei'
@@ -20,7 +20,7 @@ export default function useTransactionWithModal<
 
   const [showModalTransaction, setShowModalTransaction] = useState<boolean>(false)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const [transactionParams, setTransactionParams] = useState<Params | null>(null)
+  const [transactionParams, setTransactionParams] = useState<Params | undefined>(undefined)
   const [gasLimitEstimate, setGasLimitEstimate] = useState<Wei | null>(null)
   const [estimateError, setEstimateError] = useState<boolean>(false)
 
@@ -30,15 +30,13 @@ export default function useTransactionWithModal<
     (
       modalTitle: string,
       onComplete: (receipt: ContractReceipt) => void,
-      onError: (err: any) => void,
+      onError?: (err: any) => void,
     ) => {
       return {
         disableButton: isSubmitting,
         gasLimitEstimate: gasLimitEstimate,
         onClose: () => setShowModalTransaction(false),
         onSubmit: async () => {
-          if (transactionParams === null) throw new Error('Missing tx params')
-
           setIsSubmitting(true)
 
           const txOptions = {
@@ -49,18 +47,21 @@ export default function useTransactionWithModal<
                 : undefined,
           }
 
+          setShowModalTransaction(false)
           try {
             const receipt = await execute(transactionParams, txOptions)
             if (receipt) {
               onComplete(receipt)
-              setTransactionParams(null)
+              setTransactionParams(undefined)
             }
             setIsSubmitting(false)
           } catch (error) {
-            onError(error)
+            if (onError) {
+              onError(error)
+            }
+            console.log(error)
             setIsSubmitting(false)
-            setTransactionParams(null)
-            setShowModalTransaction(false)
+            setTransactionParams(undefined)
           }
         },
         setGasPrice,
@@ -73,8 +74,9 @@ export default function useTransactionWithModal<
   const _estimate = useCallback(
     async (params?: Params) => {
       setIsSubmitting(true)
-      setTransactionParams(params || null)
+      setTransactionParams(params)
       setEstimateError(false)
+      setShowModalTransaction(true)
       try {
         const estimateGas = await estimate(params)
         setGasLimitEstimate(wei(estimateGas, 0))
@@ -91,8 +93,18 @@ export default function useTransactionWithModal<
     [estimate],
   )
 
+  useEffect(() => {
+    return () => {
+      setTransactionParams(undefined)
+      setGasLimitEstimate(null)
+      setEstimateError(false)
+      setIsSubmitting(false)
+      setShowModalTransaction(false)
+    }
+  }, [])
+
   const getModalTransaction = useCallback(
-    (modalTitle, onComplete: (receipt: ContractReceipt) => void, onError: (err: any) => void) => {
+    (modalTitle, onComplete: (receipt: ContractReceipt) => void, onError?: (err: any) => void) => {
       return showModalTransaction ? (
         <ConfirmTransactionModal {...modalProps(modalTitle, onComplete, onError)} />
       ) : null
@@ -100,5 +112,11 @@ export default function useTransactionWithModal<
     [modalProps, showModalTransaction],
   )
 
-  return { getModalTransaction, setShowModalTransaction, estimate: _estimate, estimateError }
+  return {
+    getModalTransaction,
+    setShowModalTransaction,
+    estimate: _estimate,
+    estimateError,
+    isSubmitting,
+  }
 }

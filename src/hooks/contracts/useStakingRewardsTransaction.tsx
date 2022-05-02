@@ -22,11 +22,8 @@ export function useStakingRewardsTransactionWithModal<
   MethodName extends keyof AelinStaking['functions'],
   Params extends Parameters<AelinStaking[MethodName]>,
 >(address: string, method: MethodName): ReturnTransactionWithModalHook<Params> {
-  const { estimate, getModalTransaction, setShowModalTransaction } = useTransactionWithModal(
-    address,
-    aelinStaking,
-    method,
-  )
+  const { estimate, getModalTransaction, isSubmitting, setShowModalTransaction } =
+    useTransactionWithModal(address, aelinStaking, method)
 
-  return { estimate, setShowModalTransaction, getModalTransaction }
+  return { estimate, setShowModalTransaction, getModalTransaction, isSubmitting }
 }

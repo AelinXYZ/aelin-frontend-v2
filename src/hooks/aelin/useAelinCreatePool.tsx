@@ -308,12 +308,11 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
   const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
   const [errors, setErrors] = useState<poolErrors>()
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   const {
     estimate: createPoolEstimate,
     getModalTransaction,
-    setShowModalTransaction,
+    isSubmitting,
   } = useAelinPoolCreateTxWithModal(contracts.POOL_CREATE.address[chainId], 'createPool')
 
   const moveStep = (value: 'next' | 'prev' | CreatePoolSteps) => {
@@ -346,8 +345,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       sponsorFee,
     } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
-    setShowModalTransaction(true)
-
     try {
       await createPoolEstimate([
         poolName,
@@ -362,7 +359,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       ])
     } catch (e) {
       console.log(e)
-      setShowModalTransaction(false)
     }
   }
 
@@ -420,11 +416,9 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     isFinalStep,
     errors,
     isFirstStep,
-    isSubmitting,
     handleCreatePool,
     getModalTransaction,
-    setShowModalTransaction,
-    setIsSubmitting,
+    isSubmitting,
     resetFields: () => dispatch({ type: 'reset' }),
   }
 }

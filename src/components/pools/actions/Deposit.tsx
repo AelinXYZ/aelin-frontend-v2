@@ -22,13 +22,12 @@ function Deposit({ pool, poolHelpers }: Props) {
   const { refetchUserInvestmentTokenBalance, userInvestmentTokenBalance: balance } = poolHelpers
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
 
   const {
     estimate: purchasePoolTokensEstimate,
     getModalTransaction,
-    setShowModalTransaction,
+    isSubmitting,
   } = useAelinPoolTxWithModal(pool.address, 'purchasePoolTokens')
 
   useEffect(() => {
@@ -49,14 +48,10 @@ function Deposit({ pool, poolHelpers }: Props) {
       return
     }
 
-    setIsLoading(true)
-    setShowModalTransaction(true)
-
     try {
       await purchasePoolTokensEstimate([tokenInputValue])
-      setIsLoading(false)
     } catch (error) {
-      setIsLoading(false)
+      console.log(error)
     }
   }
 
@@ -83,7 +78,7 @@ function Deposit({ pool, poolHelpers }: Props) {
           !address ||
           !isAppConnected ||
           poolHelpers.capReached ||
-          isLoading ||
+          isSubmitting ||
           !tokenInputValue ||
           Boolean(inputError)
         }
@@ -91,18 +86,11 @@ function Deposit({ pool, poolHelpers }: Props) {
       >
         Deposit
       </GradientButton>
-      {getModalTransaction(
-        `Deposit ${investmentTokenSymbol}`,
-        () => {
-          refetchUserInvestmentTokenBalance()
-          setTokenInputValue('')
-          setInputError('')
-          setIsLoading(false)
-        },
-        () => {
-          setIsLoading(false)
-        },
-      )}
+      {getModalTransaction(`Deposit ${investmentTokenSymbol}`, () => {
+        refetchUserInvestmentTokenBalance()
+        setTokenInputValue('')
+        setInputError('')
+      })}
     </>
   )
 }

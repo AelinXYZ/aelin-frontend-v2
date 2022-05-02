@@ -51,7 +51,6 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   tokenAddress,
   type,
 }) => {
-  const [isLoading, setIsLoading] = useState(false)
   const [inputError, setInputError] = useState('')
   const [tokenInputValue, setTokenInputValue] = useState('')
 
@@ -73,20 +72,28 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   const {
     estimate: estimateApprove,
     getModalTransaction: getModalTransactionApprove,
+    isSubmitting: isApproveSubmitting,
     setShowModalTransaction: setShowModalTransactionApprove,
   } = useERC20TransactionWithModal(tokenAddress, 'approve')
 
   const {
     estimate: estimateStake,
     getModalTransaction: getModalTransactionStake,
+    isSubmitting: isStakeSubmitting,
     setShowModalTransaction: setShowModalTransactionStake,
   } = useStakingRewardsTransactionWithModal(stakingAddress, 'stake')
 
   const {
     estimate: estimateWithdraw,
     getModalTransaction: getModalTransactionWithdraw,
+    isSubmitting: isWithdrawSubmitting,
     setShowModalTransaction: setShowModalTransactionWithdraw,
   } = useStakingRewardsTransactionWithModal(stakingAddress, 'withdraw')
+
+  const isSubmitting = useMemo(
+    () => isApproveSubmitting || isStakeSubmitting || isWithdrawSubmitting,
+    [isApproveSubmitting, isStakeSubmitting, isWithdrawSubmitting],
+  )
 
   const totalBalance = useMemo(() => {
     if (type === DEPOSIT_TYPE) {
@@ -118,38 +125,29 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   }, [totalBalance, tokenInputValue])
 
   const handleApprove = async () => {
-    setIsLoading(true)
     setShowModalTransactionApprove(true)
     try {
       await estimateApprove([stakingAddress, MaxUint256])
-      setIsLoading(false)
     } catch (error) {
       console.error(error)
-      setIsLoading(false)
     }
   }
 
   const handleDeposit = async () => {
-    setIsLoading(true)
     setShowModalTransactionStake(true)
     try {
       await estimateStake([tokenInputValue])
-      setIsLoading(false)
     } catch (error) {
       console.error(error)
-      setIsLoading(false)
     }
   }
 
   const handleWithdraw = async () => {
-    setIsLoading(true)
     setShowModalTransactionWithdraw(true)
     try {
       await estimateWithdraw([tokenInputValue])
-      setIsLoading(false)
     } catch (error) {
       console.error(error)
-      setIsLoading(false)
     }
   }
 
@@ -166,7 +164,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       />
       <ButtonsWrapper>
         <Button
-          disabled={!address || !isAppConnected || hasAllowance || isLoading}
+          disabled={!address || !isAppConnected || hasAllowance || isSubmitting}
           onClick={handleApprove}
         >
           Approve
@@ -178,49 +176,28 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
             !tokenInputValue ||
             Boolean(inputError) ||
             !hasAllowance ||
-            isLoading
+            isSubmitting
           }
           onClick={type === DEPOSIT_TYPE ? handleDeposit : handleWithdraw}
         >
           {type === DEPOSIT_TYPE ? 'Deposit' : 'Withdraw'}
         </Button>
       </ButtonsWrapper>
-      {getModalTransactionApprove(
-        `Approve ${symbol}`,
-        () => {
-          refetchAllowance()
-          setIsLoading(false)
-        },
-        () => {
-          setIsLoading(false)
-        },
-      )}
-      {getModalTransactionWithdraw(
-        `Withdraw ${symbol}`,
-        () => {
-          refetchAllowance()
-          refetchBalanceOf()
-          setTokenInputValue('')
-          setInputError('')
-          setIsLoading(false)
-        },
-        () => {
-          setIsLoading(false)
-        },
-      )}
-      {getModalTransactionStake(
-        `Stake ${symbol}`,
-        () => {
-          refetchAllowance()
-          refetchBalanceOf()
-          setTokenInputValue('')
-          setInputError('')
-          setIsLoading(false)
-        },
-        () => {
-          setIsLoading(false)
-        },
-      )}
+      {getModalTransactionApprove(`Approve ${symbol}`, () => {
+        refetchAllowance()
+      })}
+      {getModalTransactionWithdraw(`Withdraw ${symbol}`, () => {
+        refetchAllowance()
+        refetchBalanceOf()
+        setTokenInputValue('')
+        setInputError('')
+      })}
+      {getModalTransactionStake(`Stake ${symbol}`, () => {
+        refetchAllowance()
+        refetchBalanceOf()
+        setTokenInputValue('')
+        setInputError('')
+      })}
     </TabContent>
   )
 }

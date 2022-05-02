@@ -33,13 +33,10 @@ export function useAelinPoolCreateTxWithModal<
   MethodName extends keyof AelinPoolCreate['functions'],
   Params extends Parameters<AelinPoolCreate[MethodName]>,
 >(address: string, method: MethodName): ReturnTransactionWithModalHook<Params> {
-  const { estimate, getModalTransaction, setShowModalTransaction } = useTransactionWithModal(
-    address,
-    aelinPoolCreate,
-    method,
-  )
+  const { estimate, getModalTransaction, isSubmitting, setShowModalTransaction } =
+    useTransactionWithModal(address, aelinPoolCreate, method)
 
-  return { estimate, setShowModalTransaction, getModalTransaction }
+  return { estimate, setShowModalTransaction, getModalTransaction, isSubmitting }
 }
 
 export const getPoolCreatedId = (receipt: ContractReceipt) => {

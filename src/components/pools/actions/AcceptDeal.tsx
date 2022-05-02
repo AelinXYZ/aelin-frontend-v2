@@ -26,7 +26,6 @@ function AcceptDeal({ pool }: Props) {
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
 
   const stage = pool.deal?.redemption?.stage
@@ -44,7 +43,7 @@ function AcceptDeal({ pool }: Props) {
   const {
     estimate: acceptDealEstimate,
     getModalTransaction,
-    setShowModalTransaction,
+    isSubmitting,
   } = useAelinPoolTxWithModal(pool.address, 'acceptDealTokens')
 
   useEffect(() => {
@@ -64,13 +63,10 @@ function AcceptDeal({ pool }: Props) {
       return
     }
 
-    setIsLoading(true)
-    setShowModalTransaction(true)
-
     try {
       await acceptDealEstimate([tokenInputValue])
     } catch (error) {
-      setIsLoading(false)
+      console.log(error)
     }
   }
 
@@ -94,24 +90,17 @@ function AcceptDeal({ pool }: Props) {
       />
       <GradientButton
         disabled={
-          !address || !isAppConnected || isLoading || !tokenInputValue || Boolean(inputError)
+          !address || !isAppConnected || isSubmitting || !tokenInputValue || Boolean(inputError)
         }
         onClick={withdrawFromPool}
       >
         Accept deal
       </GradientButton>
-      {getModalTransaction(
-        'Accept deal',
-        () => {
-          refetchBalance()
-          setTokenInputValue('')
-          setInputError('')
-          setIsLoading(false)
-        },
-        () => {
-          setIsLoading(false)
-        },
-      )}
+      {getModalTransaction('Accept deal', () => {
+        refetchBalance()
+        setTokenInputValue('')
+        setInputError('')
+      })}
     </Wrapper>
   )
 }

@@ -22,11 +22,8 @@ export function useERC20TransactionWithModal<
   MethodName extends keyof ERC20['functions'],
   Params extends Parameters<ERC20[MethodName]>,
 >(address: string, method: MethodName): ReturnTransactionWithModalHook<Params> {
-  const { estimate, getModalTransaction, setShowModalTransaction } = useTransactionWithModal(
-    address,
-    erc20,
-    method,
-  )
+  const { estimate, getModalTransaction, isSubmitting, setShowModalTransaction } =
+    useTransactionWithModal(address, erc20, method)
 
-  return { estimate, setShowModalTransaction, getModalTransaction }
+  return { estimate, setShowModalTransaction, getModalTransaction, isSubmitting }
 }

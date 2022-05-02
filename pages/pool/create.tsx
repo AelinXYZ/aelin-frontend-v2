@@ -51,11 +51,10 @@ const Create: NextPage = () => {
     handleCreatePool,
     isFinalStep,
     isFirstStep,
+    isSubmitting,
     moveStep,
     resetFields,
-    setIsSubmitting,
     setPoolField,
-    setShowModalTransaction,
   } = useAelinCreatePool(appChainId)
 
   const [showWhiteListModal, setShowWhiteListModal] = useState<boolean>(false)
@@ -63,7 +62,7 @@ const Create: NextPage = () => {
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
-  const disableSubmit = errors && Object.values(errors).some((err) => !!err)
+  const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -74,15 +73,11 @@ const Create: NextPage = () => {
   }
 
   const onCompleteTx = (receipt: ContractReceipt) => {
-    resetFields()
-    setShowModalTransaction(false)
-    setIsSubmitting(false)
-    getPoolCreatedId(receipt)
-    router.push(`/pool/${getKeyChainByValue(appChainId)}/${getPoolCreatedId(receipt)}`)
-  }
-
-  const onErrorTx = () => {
-    setIsSubmitting(false)
+    setTimeout(() => {
+      resetFields()
+      getPoolCreatedId(receipt)
+      router.push(`/pool/${getKeyChainByValue(appChainId)}/${getPoolCreatedId(receipt)}`)
+    }, 1000)
   }
 
   return (
@@ -130,7 +125,6 @@ const Create: NextPage = () => {
                         key={`${step}_button`}
                         onClick={() => {
                           handleCreatePool()
-                          setShowModalTransaction(true)
                         }}
                       >
                         Create Pool
@@ -157,7 +151,7 @@ const Create: NextPage = () => {
           })}
         </CardWithTitle>
       </RightTimelineLayout>
-      {getModalTransaction('Create Pool', onCompleteTx, onErrorTx)}
+      {getModalTransaction('Create Pool', onCompleteTx)}
       {showWhiteListModal && (
         <WhiteListModal
           currentList={createPoolState.whitelist}

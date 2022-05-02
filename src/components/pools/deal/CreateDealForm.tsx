@@ -69,8 +69,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     moveStep,
     resetFields,
     setDealField,
-    setIsSubmitting,
-    setShowModalTransaction,
   } = useAelinCreateDeal(appChainId, pool)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
@@ -107,13 +105,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
 
   const onCompleteTx = () => {
     resetFields()
-    setShowModalTransaction(false)
-    setIsSubmitting(false)
     router.reload()
-  }
-
-  const onErrorTx = () => {
-    setIsSubmitting(false)
   }
 
   return (
@@ -165,7 +157,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                         key={`${step}_button`}
                         onClick={() => {
                           handleCreateDeal()
-                          setShowModalTransaction(true)
                         }}
                       >
                         Create Deal
@@ -197,7 +188,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
           }}
         />
       )}
-      {getModalTransaction('Create deal', onCompleteTx, onErrorTx)}
+      {getModalTransaction('Create deal', onCompleteTx)}
       <Link href={`/pool/${network}/${poolAddress}`} passHref>
         <Button as="a">Cancel</Button>
       </Link>

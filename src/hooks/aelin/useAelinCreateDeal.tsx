@@ -306,11 +306,11 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   const [createDealState, dispatch] = useReducer(createDealReducer, savedState || initialState)
   const [errors, setErrors] = useState<dealErrors>()
   const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   const {
     estimate: createDealEstimate,
     getModalTransaction,
+    isSubmitting,
     setShowModalTransaction,
   } = useAelinPoolTxWithModal(pool.address, 'createDeal')
 
@@ -332,7 +332,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   }
 
   const handleCreateDeal = async () => {
-    setIsSubmitting(true)
     const {
       holderAddress,
       holderFundingDuration,
@@ -357,10 +356,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
         holderAddress,
         holderFundingDuration,
       ])
-      setIsSubmitting(false)
     } catch (e) {
       console.log(e)
-      setIsSubmitting(false)
     }
   }
 
@@ -438,7 +435,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     handleCreateDeal,
     getModalTransaction,
     setShowModalTransaction,
-    setIsSubmitting,
     resetFields: () => dispatch({ type: 'reset' }),
   }
 }

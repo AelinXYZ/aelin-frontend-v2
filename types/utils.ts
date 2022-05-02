@@ -33,6 +33,7 @@ export type ReturnTransactionWithModalHook<Params> = {
   getModalTransaction: (
     modalTitle: string,
     onComplete: (receipt: ContractReceipt) => void,
-    onError: (err: any) => void,
+    onError?: (err: any) => void,
   ) => JSX.Element | null
+  isSubmitting: boolean
 }

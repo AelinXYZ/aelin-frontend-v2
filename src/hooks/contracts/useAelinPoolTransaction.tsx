@@ -31,11 +31,8 @@ export function useAelinPoolTxWithModal<
   MethodName extends keyof AelinPool['functions'],
   Params extends Parameters<AelinPool[MethodName]>,
 >(address: string, method: MethodName): ReturnTransactionWithModalHook<Params> {
-  const { estimate, getModalTransaction, setShowModalTransaction } = useTransactionWithModal(
-    address,
-    aelinPool,
-    method,
-  )
+  const { estimate, getModalTransaction, isSubmitting, setShowModalTransaction } =
+    useTransactionWithModal(address, aelinPool, method)
 
-  return { estimate, setShowModalTransaction, getModalTransaction }
+  return { estimate, setShowModalTransaction, getModalTransaction, isSubmitting }
 }

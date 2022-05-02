@@ -17,20 +17,17 @@ type Props = {
 export default function Approve({ pool, refetchAllowance }: Props) {
   const { address: poolAddress, investmentToken, investmentTokenSymbol } = pool
   const { address, isAppConnected } = useWeb3Connection()
-  const [isLoading, setIsLoading] = useState(false)
 
-  const { estimate, getModalTransaction, setShowModalTransaction } = useERC20TransactionWithModal(
+  const { estimate, getModalTransaction, isSubmitting } = useERC20TransactionWithModal(
     investmentToken,
     'approve',
   )
 
   const approveInvestmentToken = async () => {
-    setIsLoading(true)
-    setShowModalTransaction(true)
     try {
       await estimate([poolAddress, MAX_BN])
     } catch (error) {
-      setIsLoading(false)
+      console.log(error)
     }
   }
 
@@ -40,21 +37,14 @@ export default function Approve({ pool, refetchAllowance }: Props) {
         Before you deposit, the pool needs your permission to transfer your {investmentTokenSymbol}
       </Contents>
       <GradientButton
-        disabled={!address || !isAppConnected || isLoading}
+        disabled={!address || !isAppConnected || isSubmitting}
         onClick={approveInvestmentToken}
       >
         Approve
       </GradientButton>
-      {getModalTransaction(
-        `Approve ${investmentTokenSymbol}`,
-        () => {
-          setIsLoading(false)
-          refetchAllowance()
-        },
-        () => {
-          setIsLoading(false)
-        },
-      )}
+      {getModalTransaction(`Approve ${investmentTokenSymbol}`, () => {
+        refetchAllowance()
+      })}
     </>
   )
 }
