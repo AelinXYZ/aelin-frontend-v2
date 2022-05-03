@@ -92,11 +92,11 @@ export const TokenInput = ({
         <MaxButton disabled={maxDisabled} onClick={setMax}>
           Max
         </MaxButton>
-        {error && <Error>{error}</Error>}
       </InputWrapper>
       <Balance>
         Balance: {maxValueFormatted} {symbol ? symbol : 'Pool tokens'}
       </Balance>
+      {error && <Error>{error}</Error>}
     </Wrapper>
   )
 }
