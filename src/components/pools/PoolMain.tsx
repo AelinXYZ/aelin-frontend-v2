@@ -15,6 +15,7 @@ import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { ChainsValues } from '@/src/constants/chains'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { PoolAction, PoolStatus } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
@@ -48,6 +49,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     chainId,
     poolAddress as string,
   )
+  const { getExplorerUrl } = useWeb3Connection()
   const mockedPoolVisibility = '???'
 
   if (!current) {
@@ -67,7 +69,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       <Head>
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
-      <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
+      <PageTitle
+        href={getExplorerUrl(pool.dealAddress || '')}
+        subTitle={mockedPoolVisibility}
+        title={pool.nameFormatted}
+      />
       <RightTimelineLayout activeStep={PoolTimelineState.poolCreation}>
         <MainGrid>
           <CardWithTitle
