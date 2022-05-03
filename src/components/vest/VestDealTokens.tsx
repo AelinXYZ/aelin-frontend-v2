@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
@@ -12,13 +13,16 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
-  Cell,
+  Cell as BaseCell,
   LinkCell,
   Row,
+  RowLink,
   Table,
   TableHead,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
+import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
+import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { DEFAULT_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
@@ -28,6 +32,18 @@ import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTrans
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+
+const TableCard = styled(BaseCard)`
+  padding: 40px 50px;
+`
+
+const Cell = styled(BaseCell)`
+  font-weight: 400;
+`
+
+const Title = styled(BaseTitle)`
+  margin-bottom: 20px;
+`
 
 type Order = {
   orderBy: VestingDeal_OrderBy
@@ -44,13 +60,19 @@ const VestActionButton = ({
   mutate: () => void
 }) => {
   const vestTokens = useAelinDealTransaction(dealAddress, 'claim')
-
   const handleVestTokens = async () => {
     await vestTokens()
     mutate()
   }
+
   return (
-    <GradientButtonSm disabled={disabled} onClick={handleVestTokens}>
+    <GradientButtonSm
+      disabled={disabled}
+      onClick={(e) => {
+        e.preventDefault()
+        handleVestTokens()
+      }}
+    >
       Vest
     </GradientButtonSm>
   )
@@ -58,7 +80,6 @@ const VestActionButton = ({
 
 const AmountToVestCell = ({ ...item }: ParsedVestingDeal) => {
   const { chainId, myDealTotal, poolAddress, totalVested } = item
-
   const amountToVest = useAelinClaimableTokens(poolAddress, chainId, myDealTotal, totalVested)
 
   return (
@@ -95,7 +116,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
       network: 'center',
       seePool: 'right',
     },
-    widths: '120px 120px 120px 120px 120px 150px 1fr',
+    widths: '110px 115px 115px 132px 105px 165px 1fr',
   }
 
   const tableHeaderCells = [
@@ -138,91 +159,91 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
   }
 
   return (
-    <TableWrapper {...restProps}>
-      <Table>
-        <InfiniteScroll
-          dataLength={data?.length}
-          hasMore={hasMore}
-          loader={
-            <Row columns={'1fr'}>
-              <Cell justifyContent="center">Loading...</Cell>
-            </Row>
-          }
-          next={nextPage}
-        >
-          <TableHead columns={columns.widths}>
-            {tableHeaderCells.map(({ sortKey, title }, index) => (
-              <SortableTH
-                isActive={order.orderBy === sortKey}
-                key={index}
-                onClick={() => {
-                  handleSort(sortKey)
-                }}
-              >
-                {title}
-              </SortableTH>
-            ))}
-          </TableHead>
-          {!data?.length ? (
-            <BaseCard>No data.</BaseCard>
-          ) : (
-            data.map((item, index) => {
-              const {
-                canVest,
-                chainId,
-                dealAddress,
-                myDealTotal,
-                poolAddress,
-                poolName,
-                tokenToVest,
-                totalVested,
-                vestingPeriodEnds,
-                vestingPeriodStarts,
-              } = item
-
-              return (
-                <Row
-                  // onClick={() => {
-                  //   router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                  // }}
-                  columns={columns.widths}
-                  hasHover
+    <TableCard {...restProps}>
+      <Title>Vest Deal Tokens</Title>
+      <TableWrapper>
+        <Table>
+          <InfiniteScroll
+            dataLength={data?.length}
+            hasMore={hasMore}
+            loader={
+              <Row columns={'1fr'}>
+                <Cell justifyContent="center">Loading...</Cell>
+              </Row>
+            }
+            next={nextPage}
+          >
+            <TableHead columns={columns.widths}>
+              {tableHeaderCells.map(({ sortKey, title }, index) => (
+                <SortableTH
+                  isActive={order.orderBy === sortKey}
                   key={index}
+                  onClick={() => {
+                    handleSort(sortKey)
+                  }}
                 >
-                  <Cell light>{poolName}</Cell>
-                  <Cell>{tokenToVest}</Cell>
-                  <Cell>{myDealTotal}</Cell>
-                  <AmountToVestCell {...item} />
-                  <Cell>{totalVested}</Cell>
-                  <Deadline
-                    progress={calculateVestingDealLineProgress(
-                      vestingPeriodEnds,
-                      vestingPeriodStarts,
-                    )}
+                  {title}
+                </SortableTH>
+              ))}
+            </TableHead>
+            {!data?.length ? (
+              <BaseCard>No data.</BaseCard>
+            ) : (
+              data.map((item, index) => {
+                const {
+                  canVest,
+                  chainId,
+                  dealAddress,
+                  myDealTotal,
+                  poolAddress,
+                  poolName,
+                  tokenToVest,
+                  totalVested,
+                  vestingPeriodEnds,
+                  vestingPeriodStarts,
+                } = item
+                return (
+                  <RowLink
+                    columns={columns.widths}
+                    href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
+                    key={index}
                   >
-                    {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
-                  </Deadline>
-                  <LinkCell justifyContent={columns.alignment.seePool} light>
-                    <VestActionButton
-                      dealAddress={dealAddress}
-                      disabled={!canVest}
-                      mutate={mutate}
-                    />
-                    <ButtonPrimaryLightSm
-                      onClick={() => {
-                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                      }}
+                    <NameCell>{poolName}</NameCell>
+                    <Cell>{tokenToVest}</Cell>
+                    <Cell>{myDealTotal}</Cell>
+                    <AmountToVestCell {...item} />
+                    <Cell>{totalVested}</Cell>
+                    <Deadline
+                      progress={calculateVestingDealLineProgress(
+                        vestingPeriodEnds,
+                        vestingPeriodStarts,
+                      )}
                     >
-                      See Pool
-                    </ButtonPrimaryLightSm>
-                  </LinkCell>
-                </Row>
-              )
-            })
-          )}
-        </InfiniteScroll>
-      </Table>
-    </TableWrapper>
+                      {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
+                    </Deadline>
+                    <LinkCell justifyContent={columns.alignment.seePool} light>
+                      <VestActionButton
+                        dealAddress={dealAddress}
+                        disabled={!canVest}
+                        mutate={mutate}
+                      />
+                      <ButtonPrimaryLightSm
+                        onClick={(e) => {
+                          e.preventDefault()
+                          router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                        }}
+                      >
+                        See Pool
+                      </ButtonPrimaryLightSm>
+                    </LinkCell>
+                  </RowLink>
+                )
+              })
+            )}
+          </InfiniteScroll>
+        </Table>
+      </TableWrapper>
+    </TableCard>
   )
 }
 

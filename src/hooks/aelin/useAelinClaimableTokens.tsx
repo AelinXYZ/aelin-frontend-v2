@@ -23,18 +23,18 @@ export default function useAelinClaimableTokens(
 
   useEffect(() => {
     const getAmountToVest = () => {
-      if (!vestingPeriods) {
+      if (!vestingPeriods || !vestingPeriods.start || !vestingPeriods.end) {
         return 0
       }
       const now = new Date().getTime()
-      if (now < vestingPeriods.starts.ms) {
+      if (now < vestingPeriods.start.getTime()) {
         return 0
       } else if (!vestingPeriods?.vesting.ms) {
         return Number(myDealTotal) - Number(totalVested)
       } else {
-        const maxTime = now > vestingPeriods.ends.ms ? vestingPeriods.ends.ms : now
+        const maxTime = now > vestingPeriods.end.getTime() ? vestingPeriods.end.getTime() : now
 
-        const timeElapsed = maxTime - vestingPeriods.starts.ms
+        const timeElapsed = maxTime - vestingPeriods.start.getTime()
         return (Number(myDealTotal) * timeElapsed) / vestingPeriods.vesting.ms - Number(totalVested)
       }
     }
