@@ -28,9 +28,10 @@ const MainGrid = styled.div`
 `
 
 const ContentGrid = styled.div`
+  column-gap: 70px;
   display: grid;
   row-gap: 20px;
-  column-gap: 70px;
+  width: 100%;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     grid-template-columns: 1fr 1fr;
