@@ -59,7 +59,7 @@ export const InfoCell: React.FC<{
         <Title>{title}</Title>
         {tooltip && <Tooltip text={tooltip} />}
       </TitleWrapper>
-      <Contents>{value ? <Value>{value}</Value> : children}</Contents>
+      <Contents>{value && !children ? <Value>{value}</Value> : children}</Contents>
     </Wrapper>
   )
 }
