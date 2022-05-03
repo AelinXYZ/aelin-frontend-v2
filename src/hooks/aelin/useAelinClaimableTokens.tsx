@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import ms from 'ms'
+
 import useAelinPool from './useAelinPool'
 import { ChainsValues } from '@/src/constants/chains'
 
@@ -13,11 +15,7 @@ export default function useAelinClaimableTokens(
     pool: { deal },
   } = useAelinPool(chainId, poolAddress)
 
-  const vestingPeriods = useMemo(() => {
-    if (deal) {
-      return deal.vestingPeriod
-    }
-  }, [deal])
+  const vestingPeriods = deal?.vestingPeriod
 
   const [amountToVest, setAmountToVest] = useState<number>(0)
 
@@ -41,7 +39,7 @@ export default function useAelinClaimableTokens(
 
     setAmountToVest(getAmountToVest())
 
-    const intervalId = setInterval(() => setAmountToVest(getAmountToVest()), 1000)
+    const intervalId = setInterval(() => setAmountToVest(getAmountToVest()), ms('1s'))
 
     return () => clearInterval(intervalId)
   }, [vestingPeriods, totalVested, myDealTotal])

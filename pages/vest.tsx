@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
-import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { VestDealTokens } from '@/src/components/vest/VestDealTokens'
 import { VestSectionIntro } from '@/src/components/vest/VestSectionIntro'

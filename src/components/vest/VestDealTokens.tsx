@@ -25,13 +25,14 @@ import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue } from '@/src/constants/chains'
-import { DEFAULT_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinClaimableTokens from '@/src/hooks/aelin/useAelinClaimableTokens'
 import useAelinVestingDeals, { ParsedVestingDeal } from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+import formatNumber from '@/src/utils/formatNumber'
 
 const TableCard = styled(BaseCard)`
   padding: 40px 50px;
@@ -82,15 +83,7 @@ const AmountToVestCell = ({ ...item }: ParsedVestingDeal) => {
   const { chainId, myDealTotal, poolAddress, totalVested } = item
   const amountToVest = useAelinClaimableTokens(poolAddress, chainId, myDealTotal, totalVested)
 
-  return (
-    <Cell>
-      {amountToVest !== undefined
-        ? Intl.NumberFormat('en', {
-            maximumFractionDigits: DEFAULT_DECIMALS,
-          }).format(amountToVest)
-        : ''}
-    </Cell>
-  )
+  return <Cell>{formatNumber(amountToVest)}</Cell>
 }
 
 export const VestDealTokens: React.FC = ({ ...restProps }) => {
