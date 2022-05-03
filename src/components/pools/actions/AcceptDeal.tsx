@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 
+import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'

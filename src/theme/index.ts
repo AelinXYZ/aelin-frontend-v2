@@ -149,6 +149,7 @@ export const theme = {
     borderWidth: '0.5px',
     color: textColor,
     errorColor: error,
+    successColor: green,
     fontSize: '1.4rem',
     fontWeight: '400',
     height: '36px',
