@@ -1,18 +1,23 @@
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
+import { Contents as BaseContents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { AelinPool } from '@/types/typechain'
+
+const Contents = styled(BaseContents)`
+  margin-bottom: 20px;
+`
 
 type Props = {
   pool: ParsedAelinPool
@@ -71,12 +76,9 @@ function AcceptDeal({ pool }: Props) {
   }
 
   return (
-    <Wrapper>
+    <Wrapper title={`Deal allocation stage ${stage}`}>
       <Contents>
-        <div>
-          <div>Deal Allocation stage {stage}</div>
-          <>By clicking "accept deal" you are agreeing to the negotiated exchange rate.</>
-        </div>
+        By clicking "accept deal" you are agreeing to the negotiated exchange rate.
       </Contents>
       <TokenInput
         decimals={investmentTokenDecimals}
