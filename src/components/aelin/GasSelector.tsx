@@ -201,4 +201,4 @@ const GasSelector = ({
   )
 }
 
-export default genericSuspense(memo(GasSelector), () => <Loading />)
+export default genericSuspense(GasSelector, () => <Loading />)
