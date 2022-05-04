@@ -7,7 +7,8 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinPoolTxWithModal } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
@@ -24,11 +25,12 @@ function Deposit({ pool, poolHelpers }: Props) {
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()
 
-  const {
-    estimate: purchasePoolTokensEstimate,
-    getModalTransaction,
-    isSubmitting,
-  } = useAelinPoolTxWithModal(pool.address, 'purchasePoolTokens')
+  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+
+  const { estimate: purchasePoolTokensEstimate, execute } = useAelinPoolTransaction(
+    pool.address,
+    'purchasePoolTokens',
+  )
 
   useEffect(() => {
     if (!balance) {
@@ -48,11 +50,18 @@ function Deposit({ pool, poolHelpers }: Props) {
       return
     }
 
-    try {
-      await purchasePoolTokensEstimate([tokenInputValue])
-    } catch (error) {
-      console.log(error)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await execute([tokenInputValue], txGasOptions)
+        if (receipt) {
+          refetchUserInvestmentTokenBalance()
+          setTokenInputValue('')
+          setInputError('')
+        }
+      },
+      title: `Deposit ${investmentTokenSymbol}`,
+      estimate: () => purchasePoolTokensEstimate([tokenInputValue]),
+    })
   }
 
   const balances = [
@@ -86,11 +95,6 @@ function Deposit({ pool, poolHelpers }: Props) {
       >
         Deposit
       </GradientButton>
-      {getModalTransaction(`Deposit ${investmentTokenSymbol}`, () => {
-        refetchUserInvestmentTokenBalance()
-        setTokenInputValue('')
-        setInputError('')
-      })}
     </>
   )
 }

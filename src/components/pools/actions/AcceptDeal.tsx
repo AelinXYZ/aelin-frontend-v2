@@ -6,13 +6,11 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
-import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
-import {
-  useAelinPoolTransaction,
-  useAelinPoolTxWithModal,
-} from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { AelinPool } from '@/types/typechain'
@@ -40,11 +38,12 @@ function AcceptDeal({ pool }: Props) {
     [address || ZERO_ADDRESS],
   )
 
-  const {
-    estimate: acceptDealEstimate,
-    getModalTransaction,
-    isSubmitting,
-  } = useAelinPoolTxWithModal(pool.address, 'acceptDealTokens')
+  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+
+  const { estimate: acceptDealEstimate, execute } = useAelinPoolTransaction(
+    pool.address,
+    'acceptDealTokens',
+  )
 
   useEffect(() => {
     if (!balance) {
@@ -63,11 +62,18 @@ function AcceptDeal({ pool }: Props) {
       return
     }
 
-    try {
-      await acceptDealEstimate([tokenInputValue])
-    } catch (error) {
-      console.log(error)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await execute([tokenInputValue], txGasOptions)
+        if (receipt) {
+          refetchBalance()
+          setTokenInputValue('')
+          setInputError('')
+        }
+      },
+      title: 'Create deal',
+      estimate: () => acceptDealEstimate([tokenInputValue]),
+    })
   }
 
   return (
@@ -96,11 +102,6 @@ function AcceptDeal({ pool }: Props) {
       >
         Accept deal
       </GradientButton>
-      {getModalTransaction('Accept deal', () => {
-        refetchBalance()
-        setTokenInputValue('')
-        setInputError('')
-      })}
     </Wrapper>
   )
 }

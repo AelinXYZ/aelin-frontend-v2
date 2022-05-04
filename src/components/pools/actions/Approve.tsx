@@ -1,12 +1,9 @@
-import { useState } from 'react'
-
 import { Contents } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useERC20Transaction, {
-  useERC20TransactionWithModal,
-} from '@/src/hooks/contracts/useERC20Transaction'
+import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
+import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 type Props = {
@@ -18,17 +15,21 @@ export default function Approve({ pool, refetchAllowance }: Props) {
   const { address: poolAddress, investmentToken, investmentTokenSymbol } = pool
   const { address, isAppConnected } = useWeb3Connection()
 
-  const { estimate, getModalTransaction, isSubmitting } = useERC20TransactionWithModal(
-    investmentToken,
-    'approve',
-  )
+  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+
+  const { estimate, execute } = useERC20Transaction(investmentToken, 'approve')
 
   const approveInvestmentToken = async () => {
-    try {
-      await estimate([poolAddress, MAX_BN])
-    } catch (error) {
-      console.log(error)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await execute([poolAddress, MAX_BN], txGasOptions)
+        if (receipt) {
+          refetchAllowance()
+        }
+      },
+      title: `Approve ${investmentTokenSymbol}`,
+      estimate: () => estimate([poolAddress, MAX_BN]),
+    })
   }
 
   return (
@@ -42,9 +43,6 @@ export default function Approve({ pool, refetchAllowance }: Props) {
       >
         Approve
       </GradientButton>
-      {getModalTransaction(`Approve ${investmentTokenSymbol}`, () => {
-        refetchAllowance()
-      })}
     </>
   )
 }

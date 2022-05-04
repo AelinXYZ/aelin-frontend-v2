@@ -7,8 +7,9 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinPoolTxWithModal } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
+import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -26,11 +27,12 @@ function WithdrawalFromPool({ pool }: Props) {
     address || ZERO_ADDRESS,
   ])
 
-  const {
-    estimate: withdrawFromPoolEstimate,
-    getModalTransaction,
-    isSubmitting,
-  } = useAelinPoolTxWithModal(pool.address, 'withdrawFromPool')
+  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+
+  const { estimate: withdrawFromPoolEstimate, execute } = useAelinPoolTransaction(
+    pool.address,
+    'withdrawFromPool',
+  )
 
   useEffect(() => {
     if (!balance) {
@@ -48,12 +50,18 @@ function WithdrawalFromPool({ pool }: Props) {
     if (inputError) {
       return
     }
-
-    try {
-      await withdrawFromPoolEstimate([tokenInputValue])
-    } catch (error) {
-      console.log(error)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await execute([tokenInputValue], txGasOptions)
+        if (receipt) {
+          refetchBalance()
+          setTokenInputValue('')
+          setInputError('')
+        }
+      },
+      title: `Deposit ${investmentTokenSymbol}`,
+      estimate: () => withdrawFromPoolEstimate([tokenInputValue]),
+    })
   }
 
   return (
@@ -74,11 +82,6 @@ function WithdrawalFromPool({ pool }: Props) {
       >
         Withdraw
       </GradientButton>
-      {getModalTransaction(`Withdraw ${investmentTokenSymbol} from pool`, () => {
-        refetchBalance()
-        setTokenInputValue('')
-        setInputError('')
-      })}
     </>
   )
 }

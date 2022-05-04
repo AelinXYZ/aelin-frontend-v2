@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { ReactElement, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
@@ -5,11 +6,12 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
 import { Duration } from 'date-fns'
 
+import { useAelinPoolTransaction } from '../contracts/useAelinPoolTransaction'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token, isToken } from '@/src/constants/token'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinPoolTxWithModal } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getERC20Data } from '@/src/utils/getERC20Data'
@@ -305,17 +307,18 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   const { current: savedState } = useRef(
     removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
   )
+  const router = useRouter()
 
   const [createDealState, dispatch] = useReducer(createDealReducer, savedState || initialState)
   const [errors, setErrors] = useState<dealErrors>()
   const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
 
-  const {
-    estimate: createDealEstimate,
-    getModalTransaction,
-    isSubmitting,
-    setShowModalTransaction,
-  } = useAelinPoolTxWithModal(pool.address, 'createDeal')
+  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+
+  const { estimate: createDealEstimate, execute } = useAelinPoolTransaction(
+    pool.address,
+    'createDeal',
+  )
 
   const moveStep = (value: 'next' | 'prev' | CreateDealSteps) => {
     const { currentStep } = createDealState
@@ -346,17 +349,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
       vestingCliffDuration,
       vestingPeriodDuration,
     } = parseValuesToCreateDeal(createDealState, pool.investmentTokenDecimals)
-    console.log({
-      underlyingDealToken,
-      purchaseTokenTotal,
-      underlyingDealTokenTotal,
-      vestingPeriodDuration,
-      vestingCliffDuration,
-      proRataRedemptionDuration,
-      openRedemptionDuration,
-      holderAddress,
-      holderFundingDuration,
-    })
+
     try {
       await createDealEstimate([
         underlyingDealToken,
@@ -372,6 +365,43 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     } catch (e) {
       console.log(e)
     }
+
+    setConfigAndOpenModal({
+      estimate: () =>
+        createDealEstimate([
+          underlyingDealToken,
+          purchaseTokenTotal,
+          underlyingDealTokenTotal,
+          vestingPeriodDuration,
+          vestingCliffDuration,
+          proRataRedemptionDuration,
+          openRedemptionDuration,
+          holderAddress,
+          holderFundingDuration,
+        ]),
+
+      title: 'Create deal',
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await execute(
+          [
+            underlyingDealToken,
+            purchaseTokenTotal,
+            underlyingDealTokenTotal,
+            vestingPeriodDuration,
+            vestingCliffDuration,
+            proRataRedemptionDuration,
+            openRedemptionDuration,
+            holderAddress,
+            holderFundingDuration,
+          ],
+          txGasOptions,
+        )
+        if (receipt) {
+          dispatch({ type: 'reset' })
+          router.reload()
+        }
+      },
+    })
   }
 
   const setDealField = useCallback(
@@ -446,8 +476,5 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     isSubmitting,
     investmentTokenInfo,
     handleCreateDeal,
-    getModalTransaction,
-    setShowModalTransaction,
-    resetFields: () => dispatch({ type: 'reset' }),
   }
 }

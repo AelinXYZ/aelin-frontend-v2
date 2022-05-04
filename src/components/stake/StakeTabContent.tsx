@@ -10,13 +10,10 @@ import { TabContent } from '@/src/components/tabs/Tabs'
 import { TokenInput as BaseTokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
-import useERC20Transaction, {
-  useERC20TransactionWithModal,
-} from '@/src/hooks/contracts/useERC20Transaction'
+import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import useStakingRewardsCall from '@/src/hooks/contracts/useStakingRewardsCall'
-import useStakingRewardsTransaction, {
-  useStakingRewardsTransactionWithModal,
-} from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -56,6 +53,8 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
 
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 
+  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+
   const [allowance, refetchAllowance] = useERC20Call(appChainId, tokenAddress, 'allowance', [
     address || ZERO_ADDRESS,
     stakingAddress,
@@ -69,27 +68,19 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
     address || ZERO_ADDRESS,
   ])
 
-  const {
-    estimate: estimateApprove,
-    getModalTransaction: getModalTransactionApprove,
-    isSubmitting: isApproveSubmitting,
-  } = useERC20TransactionWithModal(tokenAddress, 'approve')
+  const { estimate: estimateApprove, execute: executeApprove } = useERC20Transaction(
+    tokenAddress,
+    'approve',
+  )
 
-  const {
-    estimate: estimateStake,
-    getModalTransaction: getModalTransactionStake,
-    isSubmitting: isStakeSubmitting,
-  } = useStakingRewardsTransactionWithModal(stakingAddress, 'stake')
+  const { estimate: estimateStake, execute: executeStake } = useStakingRewardsTransaction(
+    stakingAddress,
+    'stake',
+  )
 
-  const {
-    estimate: estimateWithdraw,
-    getModalTransaction: getModalTransactionWithdraw,
-    isSubmitting: isWithdrawSubmitting,
-  } = useStakingRewardsTransactionWithModal(stakingAddress, 'withdraw')
-
-  const isSubmitting = useMemo(
-    () => isApproveSubmitting || isStakeSubmitting || isWithdrawSubmitting,
-    [isApproveSubmitting, isStakeSubmitting, isWithdrawSubmitting],
+  const { estimate: estimateWithdraw, execute: executeWithdraw } = useStakingRewardsTransaction(
+    stakingAddress,
+    'withdraw',
   )
 
   const totalBalance = useMemo(() => {
@@ -122,27 +113,48 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   }, [totalBalance, tokenInputValue])
 
   const handleApprove = async () => {
-    try {
-      await estimateApprove([stakingAddress, MaxUint256])
-    } catch (error) {
-      console.error(error)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await executeApprove([stakingAddress, MaxUint256], txGasOptions)
+        if (receipt) {
+          refetchAllowance()
+        }
+      },
+      title: `Approve ${symbol}`,
+      estimate: () => estimateApprove([stakingAddress, MaxUint256]),
+    })
   }
 
   const handleDeposit = async () => {
-    try {
-      await estimateStake([tokenInputValue])
-    } catch (error) {
-      console.error(error)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await executeStake([tokenInputValue], txGasOptions)
+        if (receipt) {
+          refetchAllowance()
+          refetchBalanceOf()
+          setTokenInputValue('')
+          setInputError('')
+        }
+      },
+      title: `Stake ${symbol}`,
+      estimate: () => estimateStake([tokenInputValue]),
+    })
   }
 
   const handleWithdraw = async () => {
-    try {
-      await estimateWithdraw([tokenInputValue])
-    } catch (error) {
-      console.error(error)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await executeWithdraw([tokenInputValue], txGasOptions)
+        if (receipt) {
+          refetchAllowance()
+          refetchBalanceOf()
+          setTokenInputValue('')
+          setInputError('')
+        }
+      },
+      title: `Withdraw ${symbol}`,
+      estimate: () => estimateWithdraw([tokenInputValue]),
+    })
   }
 
   return (
@@ -177,21 +189,6 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
           {type === DEPOSIT_TYPE ? 'Deposit' : 'Withdraw'}
         </Button>
       </ButtonsWrapper>
-      {getModalTransactionApprove(`Approve ${symbol}`, () => {
-        refetchAllowance()
-      })}
-      {getModalTransactionWithdraw(`Withdraw ${symbol}`, () => {
-        refetchAllowance()
-        refetchBalanceOf()
-        setTokenInputValue('')
-        setInputError('')
-      })}
-      {getModalTransactionStake(`Stake ${symbol}`, () => {
-        refetchAllowance()
-        refetchBalanceOf()
-        setTokenInputValue('')
-        setInputError('')
-      })}
     </TabContent>
   )
 }

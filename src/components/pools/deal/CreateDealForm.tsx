@@ -60,14 +60,12 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const {
     createDealState,
     errors,
-    getModalTransaction,
     handleCreateDeal,
     investmentTokenInfo,
     isFinalStep,
     isFirstStep,
     isSubmitting,
     moveStep,
-    resetFields,
     setDealField,
   } = useAelinCreateDeal(appChainId, pool)
 
@@ -102,11 +100,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     setDealField,
     totalPurchase,
   ])
-
-  const onCompleteTx = () => {
-    resetFields()
-    router.reload()
-  }
 
   return (
     <>
@@ -188,7 +181,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
           }}
         />
       )}
-      {getModalTransaction('Create deal', onCompleteTx)}
       <Link href={`/pool/${network}/${poolAddress}`} passHref>
         <Button as="a">Cancel</Button>
       </Link>
