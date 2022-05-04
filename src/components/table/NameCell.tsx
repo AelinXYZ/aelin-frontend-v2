@@ -5,6 +5,7 @@ import { Cell } from '@/src/components/pureStyledComponents/common/Table'
 
 const Wrapper = styled(Cell)`
   color: ${({ theme }) => theme.colors.textColor};
+  font-weight: 500;
   gap: 10px;
 `
 

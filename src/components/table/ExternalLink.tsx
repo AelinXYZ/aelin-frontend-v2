@@ -28,7 +28,6 @@ export const ExternalLink: React.FC<{ href: string }> = ({ children, href, ...re
     <Wrapper
       onClick={(e) => {
         e.stopPropagation()
-
         window.open(href, '_blank')
       }}
       {...restProps}
