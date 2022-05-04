@@ -4,7 +4,10 @@ import styled from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonPrimaryLight,
+  ButtonPrimaryLightSm,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { ButtonRemove as BaseButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
@@ -19,7 +22,7 @@ import useAelinNotifications from '@/src/hooks/aelin/useAelinNotifications'
 import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
-const ButtonClear = styled(ButtonPrimaryLightSm)`
+const ButtonClear = styled(ButtonPrimaryLight)`
   margin: 20px auto 0;
 `
 
