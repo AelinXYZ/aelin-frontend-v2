@@ -8,6 +8,7 @@ import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEAL_SPONSOREDS_QUERY_NAME } from '@/src/queries/history/dealSponsoreds'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
+import { isSuccessful } from '@/src/utils/isSuccessful'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type ParsedDealSponsoredHistory = {
@@ -18,10 +19,6 @@ export type ParsedDealSponsoredHistory = {
   amountEarned: string
   totalAccepted: string
   totalInvested: string
-}
-
-function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
-  return 'value' in response
 }
 
 const parsePoolName = (name: string) => name.slice(name.indexOf('-') + 1)

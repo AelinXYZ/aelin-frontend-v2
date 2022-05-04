@@ -8,6 +8,7 @@ import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEPOSITS_QUERY_NAME } from '@/src/queries/history/deposits'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
+import { isSuccessful } from '@/src/utils/isSuccessful'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type ParsedDepositsHistory = {
@@ -17,10 +18,6 @@ export type ParsedDepositsHistory = {
   timestamp: Date
   amountDeposited: string
   sponsor: string
-}
-
-function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
-  return 'value' in response
 }
 
 const parsePoolName = (name: string) => name.slice(name.indexOf('-') + 1)
