@@ -106,7 +106,12 @@ export const List: React.FC = ({ ...restProps }) => {
                     >
                       Go to pool
                     </ButtonPrimaryLightSm>
-                    <ButtonRemove onClick={() => handleClearSingleNotification(id)} />
+                    <ButtonRemove
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleClearSingleNotification(id)
+                      }}
+                    />
                   </LinkCell>
                 </Row>
               )
