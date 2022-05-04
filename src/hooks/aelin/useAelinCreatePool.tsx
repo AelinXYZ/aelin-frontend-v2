@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
@@ -18,7 +18,6 @@ import {
 import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { isDuration } from '@/src/utils/isDuration'
-import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
 
 export enum CreatePoolSteps {
