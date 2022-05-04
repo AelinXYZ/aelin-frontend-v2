@@ -7,12 +7,26 @@ import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/butt
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { Cell, Row, Table, TableWrapper } from '@/src/components/pureStyledComponents/common/Table'
 import { getKeyChainByValue } from '@/src/constants/chains'
-import useAelinNotifications from '@/src/hooks/aelin/useAelinNotifications'
+import useAelinNotifications, { ParsedNotification } from '@/src/hooks/aelin/useAelinNotifications'
+import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+type ClearedNotifications = {
+  [key: string]: boolean | undefined
+}
 
 export const List: React.FC = ({ ...restProps }) => {
   const router = useRouter()
-  const { data, error: errorNotification, hasMore, nextPage } = useAelinNotifications()
+  const [clearedNotifications, setClearedNotifications] = useLocalStorage<ClearedNotifications>(
+    'aelin-cleared-notifications',
+    {},
+  )
+  const {
+    data,
+    error: errorNotification,
+    hasMore,
+    nextPage,
+  } = useAelinNotifications(clearedNotifications)
 
   if (errorNotification) {
     throw errorNotification
@@ -24,6 +38,22 @@ export const List: React.FC = ({ ...restProps }) => {
     },
     widths: '140px 1fr 120px',
   }
+
+  const handleClearSingleNotification = (id: string) =>
+    setClearedNotifications((prevNotifications) => ({
+      ...prevNotifications,
+      [id]: true,
+    }))
+
+  const handleClearAllNotifications = () =>
+    setClearedNotifications(
+      data.reduce((resultAcc: ClearedNotifications, { id }) => {
+        return {
+          ...resultAcc,
+          [id]: true,
+        }
+      }, clearedNotifications),
+    )
 
   return (
     <TableWrapper {...restProps}>
@@ -41,8 +71,8 @@ export const List: React.FC = ({ ...restProps }) => {
           {!data?.length ? (
             <BaseCard>No data.</BaseCard>
           ) : (
-            data?.map((item, index) => {
-              const { chainId, message, poolAddress, triggerStart } = item
+            data.map((item, index) => {
+              const { chainId, id, message, poolAddress, triggerStart } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -62,6 +92,9 @@ export const List: React.FC = ({ ...restProps }) => {
                     >
                       Go to pool
                     </ButtonPrimaryLightSm>
+                    <ButtonPrimaryLightSm onClick={() => handleClearSingleNotification(id)}>
+                      Clear
+                    </ButtonPrimaryLightSm>
                   </Cell>
                 </Row>
               )
@@ -69,6 +102,7 @@ export const List: React.FC = ({ ...restProps }) => {
           )}
         </InfiniteScroll>
       </Table>
+      <ButtonPrimaryLightSm onClick={handleClearAllNotifications}>Clear All</ButtonPrimaryLightSm>
     </TableWrapper>
   )
 }

@@ -17,6 +17,7 @@ import { NOTIFICATIONS_QUERY_NAME } from '@/src/queries/pools/notification'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
 export type ParsedNotification = {
+  id: string
   message: string
   triggerStart: Date
   poolAddress: string
@@ -26,6 +27,11 @@ export type ParsedNotification = {
 
 interface FetcherProps extends NotificationsQueryVariables {
   user?: ParsedUser
+  clearedNotifications?: ClearedNotifications
+}
+
+type ClearedNotifications = {
+  [key: string]: boolean | undefined
 }
 
 function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
@@ -47,7 +53,7 @@ function isUserTarget(user: ParsedUser, notification: ParsedNotification): boole
 }
 
 export async function fetcherNotifications(props: FetcherProps) {
-  const { user, ...variables } = props
+  const { clearedNotifications, user, ...variables } = props
   const allSDK = getAllGqlSDK()
 
   if (!user) return []
@@ -61,6 +67,7 @@ export async function fetcherNotifications(props: FetcherProps) {
           res.notifications
             .map((notification) => {
               return {
+                id: notification.id,
                 message: notification.message,
                 triggerStart: new Date(notification.triggerStart * 1000),
                 poolAddress: notification.pool.id,
@@ -89,7 +96,9 @@ export async function fetcherNotifications(props: FetcherProps) {
       variables.orderDirection ? [variables.orderDirection] : ['desc'],
     )
 
-    return result
+    return result.filter(
+      (notification: ParsedNotification) => !clearedNotifications?.[notification.id],
+    )
   } catch (e) {
     console.error(e)
     return []
@@ -101,6 +110,7 @@ const getSwrKey = (
   previousPageData: ParsedNotification[],
   variables: NotificationsQueryVariables,
   user?: ParsedUser,
+  clearedNotifications?: ClearedNotifications,
 ) => {
   return [
     {
@@ -108,11 +118,12 @@ const getSwrKey = (
       skip: currentPage * NOTIFICATIONS_RESULTS_PER_CHAIN,
       first: NOTIFICATIONS_RESULTS_PER_CHAIN,
       user,
+      clearedNotifications,
     },
   ]
 }
 
-export default function useAelinNotifications() {
+export default function useAelinNotifications(clearedNotifications?: ClearedNotifications) {
   const { address: userAddress } = useWeb3Connection()
   const { data: userResponse, error: errorUser } = useAelinUser(userAddress)
 
@@ -140,7 +151,7 @@ export default function useAelinNotifications() {
     setSize: setPage,
     size: currentPage,
   } = useSWRInfinite(
-    (...args) => getSwrKey(...args, variables, userResponse),
+    (...args) => getSwrKey(...args, variables, userResponse, clearedNotifications),
     fetcherNotifications,
     {
       revalidateFirstPage: true,
