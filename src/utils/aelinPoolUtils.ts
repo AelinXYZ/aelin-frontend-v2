@@ -162,6 +162,7 @@ export function getVestingDates(vestingCliff: string, vestingPeriod: string) {
   const now = new Date()
   const cliffMs = Number(vestingCliff ?? 0) * 1000
   const vestingPeriodMs = Number(vestingPeriod ?? 0) * 1000
+
   return {
     cliff: {
       ms: cliffMs,

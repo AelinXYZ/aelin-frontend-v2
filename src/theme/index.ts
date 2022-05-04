@@ -5,7 +5,7 @@ const componentBorderColor = '#555C65'
 const componentBorder = `0.5px solid ${componentBorderColor}`
 const componentBorderRadius = '8px'
 const lightGray = '#BABCC1'
-const error = '#db3a3d'
+const error = '#FF7777'
 const primary = '#8280FF'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
@@ -149,6 +149,7 @@ export const theme = {
     borderWidth: '0.5px',
     color: textColor,
     errorColor: error,
+    successColor: green,
     fontSize: '1.4rem',
     fontWeight: '400',
     height: '36px',
