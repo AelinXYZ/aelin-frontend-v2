@@ -9,7 +9,6 @@ import {
 } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
-import { ContractReceipt } from '@ethersproject/contracts'
 import Wei, { wei } from '@synthetixio/wei'
 
 import ConfirmTransactionModal, {
@@ -43,7 +42,7 @@ type ModalConfig = {
   title: string
 }
 
-export default function ModalTransactionProvider({ children }: Props) {
+export default function TransactionModalProvider({ children }: Props) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null)
   const [gasPrice, setGasPrice] = useState<Wei | null>(null)
@@ -134,7 +133,7 @@ export default function ModalTransactionProvider({ children }: Props) {
   )
 }
 
-export function useModalTransaction() {
+export function useTransactionModal() {
   const context = useContext(ModalTransactionContext)
   if (!context) {
     throw new Error('Error on modal tx context')

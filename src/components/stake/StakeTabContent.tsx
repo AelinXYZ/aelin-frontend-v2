@@ -13,7 +13,7 @@ import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import useStakingRewardsCall from '@/src/hooks/contracts/useStakingRewardsCall'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
-import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -53,7 +53,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
 
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 
-  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const [allowance, refetchAllowance] = useERC20Call(appChainId, tokenAddress, 'allowance', [
     address || ZERO_ADDRESS,

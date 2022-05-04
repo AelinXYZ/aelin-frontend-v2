@@ -15,7 +15,7 @@ import {
   getPoolCreatedId,
   useAelinPoolCreateTransaction,
 } from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
-import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { isDuration } from '@/src/utils/isDuration'
 import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
@@ -315,7 +315,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
   const [errors, setErrors] = useState<poolErrors>()
 
-  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate: createPoolEstimate, execute } = useAelinPoolCreateTransaction(
     contracts.POOL_CREATE.address[chainId],

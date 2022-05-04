@@ -10,7 +10,7 @@ import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
-import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { AelinPool } from '@/types/typechain'
@@ -38,7 +38,7 @@ function AcceptDeal({ pool }: Props) {
     [address || ZERO_ADDRESS],
   )
 
-  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate: acceptDealEstimate, execute } = useAelinPoolTransaction(
     pool.address,

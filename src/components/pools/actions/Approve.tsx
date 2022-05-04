@@ -3,7 +3,7 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { MAX_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
-import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 type Props = {
@@ -15,7 +15,7 @@ export default function Approve({ pool, refetchAllowance }: Props) {
   const { address: poolAddress, investmentToken, investmentTokenSymbol } = pool
   const { address, isAppConnected } = useWeb3Connection()
 
-  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate, execute } = useERC20Transaction(investmentToken, 'approve')
 

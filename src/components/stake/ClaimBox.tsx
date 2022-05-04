@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
-import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -56,7 +56,7 @@ type ClaimBoxProps = {
 const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
   const [rewardsToClaim, setRewardsToClaim] = useState(userRewards)
 
-  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate: estimateGetReward, execute } = useStakingRewardsTransaction(
     stakingAddress,

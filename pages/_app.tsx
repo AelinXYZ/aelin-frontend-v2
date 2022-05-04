@@ -10,7 +10,7 @@ import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
 import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
-import ModalTransactionProvider from '@/src/providers/modalTransactionProvider'
+import TransactionModalProvider from '@/src/providers/modalTransactionProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
@@ -54,7 +54,7 @@ function App({ Component, pageProps }: AppProps) {
         >
           <Web3ConnectionProvider>
             <GeneralContextProvider>
-              <ModalTransactionProvider>
+              <TransactionModalProvider>
                 <GlobalStyle />
                 <Header />
                 <SafeSuspense>
@@ -62,7 +62,7 @@ function App({ Component, pageProps }: AppProps) {
                   <Toast />
                 </SafeSuspense>
                 <TooltipConfig />
-              </ModalTransactionProvider>
+              </TransactionModalProvider>
             </GeneralContextProvider>
           </Web3ConnectionProvider>
         </SWRConfig>

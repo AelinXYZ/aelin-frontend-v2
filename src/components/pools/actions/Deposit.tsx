@@ -8,7 +8,7 @@ import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
-import { GasOptions, useModalTransaction } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
@@ -25,7 +25,7 @@ function Deposit({ pool, poolHelpers }: Props) {
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()
 
-  const { isSubmitting, setConfigAndOpenModal } = useModalTransaction()
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate: purchasePoolTokensEstimate, execute } = useAelinPoolTransaction(
     pool.address,
