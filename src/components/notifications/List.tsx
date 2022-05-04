@@ -5,7 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
+import { ButtonRemove as BaseButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
@@ -21,6 +21,14 @@ import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
 const ButtonClear = styled(ButtonPrimaryLightSm)`
   margin: 20px auto 0;
+`
+
+const ButtonRemove = styled(BaseButtonRemove)`
+  --dimensions: 24px;
+
+  background-size: 12px;
+  height: var(--dimensions);
+  width: var(--dimensions);
 `
 
 type ClearedNotifications = {
