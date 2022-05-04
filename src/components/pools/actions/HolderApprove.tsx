@@ -9,24 +9,22 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 type Props = {
   pool: ParsedAelinPool
-  tokenAddress: string
-  tokenSymbol: string
   refetchAllowance: () => void
 }
 
-export default function Approve({ pool, refetchAllowance, tokenAddress, tokenSymbol }: Props) {
-  const { address: poolAddress } = pool
+export default function Approve({ pool, refetchAllowance }: Props) {
+  const { address: poolAddress, investmentToken, investmentTokenSymbol } = pool
   const { address, isAppConnected } = useWeb3Connection()
   const [isLoading, setIsLoading] = useState(false)
 
-  const approve = useERC20Transaction(tokenAddress, 'approve')
+  const approve = useERC20Transaction(investmentToken, 'approve')
 
   const approveInvestmentToken = async () => {
     setIsLoading(true)
     try {
       await approve([poolAddress, MAX_BN])
       refetchAllowance()
-      // setIsLoading(false)
+      setIsLoading(false)
     } catch (error) {
       setIsLoading(false)
     }
@@ -35,7 +33,7 @@ export default function Approve({ pool, refetchAllowance, tokenAddress, tokenSym
   return (
     <>
       <Contents>
-        Before you deposit, the pool needs your permission to transfer your {tokenSymbol}
+        Before you deposit, the pool needs your permission to transfer your {investmentTokenSymbol}
       </Contents>
       <GradientButton
         disabled={!address || !isAppConnected || isLoading}

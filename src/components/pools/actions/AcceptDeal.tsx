@@ -73,10 +73,9 @@ function AcceptDeal({ pool }: Props) {
   return (
     <Wrapper>
       <Contents>
-        <div>
-          <div>Deal Allocation stage {stage}</div>
-          <>By clicking "accept deal" you are agreeing to the negotiated exchange rate.</>
-        </div>
+        <>Deal Allocation stage {stage}</>
+        <br />
+        <>By clicking "accept deal" you are agreeing to the negotiated exchange rate.</>
       </Contents>
       <TokenInput
         decimals={investmentTokenDecimals}

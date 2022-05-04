@@ -47,6 +47,7 @@ export type ParsedAelinPool = {
   redeem: DetailedNumber
   withdrawn: DetailedNumber
   poolStatus: PoolStatus
+  poolType: string
   deal?: {
     name: string
     symbol: string
@@ -106,6 +107,7 @@ export const getParsedPool = ({
     poolStatus: pool.poolStatus,
     name: pool.name,
     nameFormatted: pool.name.split('aePool-').pop() || '',
+    poolType: pool.hasAllowList ? 'Private' : 'Public',
     address: poolAddress,
     start: getPoolCreatedDate(pool),
     investmentToken: pool.purchaseToken,
