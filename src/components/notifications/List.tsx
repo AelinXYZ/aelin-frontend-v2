@@ -102,7 +102,7 @@ export const List: React.FC = ({ ...restProps }) => {
                   hasHover
                   key={index}
                   onClick={(e) => {
-                    e.preventDefault()
+                    e.stopPropagation()
                     router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
                   }}
                 >
@@ -111,7 +111,7 @@ export const List: React.FC = ({ ...restProps }) => {
                   <LinkCell justifyContent={columns.alignment.seePool}>
                     <ButtonPrimaryLightSm
                       onClick={(e) => {
-                        e.preventDefault()
+                        e.stopPropagation()
                         router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
                       }}
                     >
@@ -119,7 +119,7 @@ export const List: React.FC = ({ ...restProps }) => {
                     </ButtonPrimaryLightSm>
                     <ButtonRemove
                       onClick={(e) => {
-                        e.preventDefault()
+                        e.stopPropagation()
                         handleClearSingleNotification(id)
                       }}
                     />
