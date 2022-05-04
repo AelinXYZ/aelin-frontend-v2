@@ -102,7 +102,11 @@ export const List: React.FC = ({ ...restProps }) => {
           )}
         </InfiniteScroll>
       </Table>
-      <ButtonPrimaryLightSm onClick={handleClearAllNotifications}>Clear All</ButtonPrimaryLightSm>
+      {data?.length ? (
+        <ButtonPrimaryLightSm onClick={handleClearAllNotifications}>Clear All</ButtonPrimaryLightSm>
+      ) : (
+        <></>
+      )}
     </TableWrapper>
   )
 }
