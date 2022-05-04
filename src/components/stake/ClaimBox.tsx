@@ -6,6 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -53,19 +54,26 @@ type ClaimBoxProps = {
 }
 
 const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
-  const [isLoading, setIsLoading] = useState(false)
   const [rewardsToClaim, setRewardsToClaim] = useState(userRewards)
 
-  const getReward = useStakingRewardsTransaction(stakingAddress, 'getReward')
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+
+  const { estimate: estimateGetReward, execute } = useStakingRewardsTransaction(
+    stakingAddress,
+    'getReward',
+  )
 
   const handleClaim = async () => {
-    try {
-      await getReward()
-      setRewardsToClaim(0)
-      setIsLoading(false)
-    } catch (error) {
-      setIsLoading(false)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await execute([], txGasOptions)
+        if (receipt) {
+          setRewardsToClaim(0)
+        }
+      },
+      title: 'Claim AELIN tokens',
+      estimate: () => estimateGetReward(),
+    })
   }
 
   return (
@@ -75,7 +83,7 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
         My Rewards: <Value>{rewardsToClaim} AELIN</Value>
       </Text>
       <Button
-        disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isLoading}
+        disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isSubmitting}
         onClick={handleClaim}
       >
         Claim

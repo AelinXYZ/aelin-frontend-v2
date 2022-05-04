@@ -3,45 +3,22 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { ContractReceipt, Overrides } from '@ethersproject/contracts'
 
 import useTransaction from './useTransaction'
-import useTransactionWithModal from './useTransactionWithModal'
 import aelinPoolCreate from '@/src/abis/AelinPoolCreate.json'
 import { AelinPoolCreate } from '@/types/typechain'
-import { ReturnTransactionWithModalHook } from '@/types/utils'
+import { UseTransactionReturn } from '@/types/utils'
 
 export function useAelinPoolCreateTransaction<
   MethodName extends keyof AelinPoolCreate['functions'],
   Params extends Parameters<AelinPoolCreate[MethodName]>,
->(
-  address: string,
-  method: MethodName,
-): (params: Params, options?: Overrides) => Promise<ContractReceipt | null> {
-  const { execute } = useTransaction(address, aelinPoolCreate, method)
-
-  return execute
+>(address: string, method: MethodName): UseTransactionReturn<Params> {
+  return useTransaction(address, aelinPoolCreate, method)
 }
 
-export function useAelinPoolCreateEstimate<
-  MethodName extends keyof AelinPoolCreate['functions'],
-  Params extends Parameters<AelinPoolCreate[MethodName]>,
->(address: string, method: MethodName): (params: Params) => Promise<BigNumber | null> {
-  const { estimate } = useTransaction(address, aelinPoolCreate, method)
-
-  return estimate
-}
-
-export function useAelinPoolCreateTxWithModal<
-  MethodName extends keyof AelinPoolCreate['functions'],
-  Params extends Parameters<AelinPoolCreate[MethodName]>,
->(address: string, method: MethodName): ReturnTransactionWithModalHook<Params> {
-  const { estimate, getModalTransaction, setShowModalTransaction } = useTransactionWithModal(
-    address,
-    aelinPoolCreate,
-    method,
-  )
-
-  return { estimate, setShowModalTransaction, getModalTransaction }
-}
-
+/**
+ * Get poolCreated ID after transaction is done. Yo need to pass the receipt to get the new poolId
+ * @param receipt
+ * @returns
+ */
 export const getPoolCreatedId = (receipt: ContractReceipt) => {
   const poolCreateInterface = new Interface(aelinPoolCreate)
   const parsedLogs = poolCreateInterface.parseLog(receipt.logs[2])

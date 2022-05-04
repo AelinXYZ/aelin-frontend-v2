@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { ContractReceipt } from '@ethersproject/contracts'
+import { ContractReceipt, Overrides } from '@ethersproject/contracts'
 import Wei from '@synthetixio/wei'
 
 export type ObjectValues<T> = T[keyof T]
@@ -27,12 +27,10 @@ export type GasPrices = {
 export type GasSpeed = keyof GasPrices
 export type Rates = Record<string, Wei>
 
-export type ReturnTransactionWithModalHook<Params> = {
-  estimate: (params: Params) => Promise<BigNumber | null>
-  setShowModalTransaction: (value: boolean) => void
-  getModalTransaction: (
-    modalTitle: string,
-    onComplete: (receipt: ContractReceipt) => void,
-    onError: (err: any) => void,
-  ) => JSX.Element | null
+export type UseTransactionReturn<Params> = {
+  estimate: (params?: Params) => Promise<BigNumber | null>
+  execute: (
+    params?: Params | undefined,
+    options?: Overrides | undefined,
+  ) => Promise<ContractReceipt | null>
 }

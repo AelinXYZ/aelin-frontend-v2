@@ -8,6 +8,7 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
@@ -18,14 +19,18 @@ type Props = {
 }
 
 function Deposit({ pool, poolHelpers }: Props) {
-  const { investmentTokenDecimals } = pool
+  const { investmentTokenDecimals, investmentTokenSymbol } = pool
   const { refetchUserInvestmentTokenBalance, userInvestmentTokenBalance: balance } = poolHelpers
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
 
-  const purchasePoolTokens = useAelinPoolTransaction(pool.address, 'purchasePoolTokens')
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+
+  const { estimate: purchasePoolTokensEstimate, execute } = useAelinPoolTransaction(
+    pool.address,
+    'purchasePoolTokens',
+  )
 
   useEffect(() => {
     if (!balance) {
@@ -45,17 +50,18 @@ function Deposit({ pool, poolHelpers }: Props) {
       return
     }
 
-    setIsLoading(true)
-
-    try {
-      await purchasePoolTokens([tokenInputValue])
-      refetchUserInvestmentTokenBalance()
-      setTokenInputValue('')
-      setInputError('')
-      setIsLoading(false)
-    } catch (error) {
-      setIsLoading(false)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await execute([tokenInputValue], txGasOptions)
+        if (receipt) {
+          refetchUserInvestmentTokenBalance()
+          setTokenInputValue('')
+          setInputError('')
+        }
+      },
+      title: `Deposit ${investmentTokenSymbol}`,
+      estimate: () => purchasePoolTokensEstimate([tokenInputValue]),
+    })
   }
 
   const balances = [
@@ -81,7 +87,7 @@ function Deposit({ pool, poolHelpers }: Props) {
           !address ||
           !isAppConnected ||
           poolHelpers.capReached ||
-          isLoading ||
+          isSubmitting ||
           !tokenInputValue ||
           Boolean(inputError)
         }
