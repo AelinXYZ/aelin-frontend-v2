@@ -158,10 +158,14 @@ export function getProRataRedemptionDates(
     openRedemptionEnd,
   }
 }
-export function getVestingDates(vestingCliff: string, vestingPeriod: string) {
+export function getVestingDates(
+  vestingCliff: string,
+  vestingPeriod: string,
+) {
   const now = new Date()
   const cliffMs = Number(vestingCliff ?? 0) * 1000
   const vestingPeriodMs = Number(vestingPeriod ?? 0) * 1000
+
   return {
     cliff: {
       ms: cliffMs,
@@ -170,7 +174,7 @@ export function getVestingDates(vestingCliff: string, vestingPeriod: string) {
     vesting: {
       ms: vestingPeriodMs,
       formatted: formatDistanceStrict(now, addMilliseconds(now, vestingPeriodMs)),
-    },
+    }
   }
 }
 
