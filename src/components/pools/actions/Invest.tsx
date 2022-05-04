@@ -21,7 +21,7 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
       ) : poolHelpers.userAllowance.gt(ZERO_ADDRESS) ? (
         <Deposit pool={pool} poolHelpers={poolHelpers} />
       ) : (
-        <Approve pool={pool} refetchAllowance={poolHelpers.refetchAllowance} />
+        <Approve pool={pool} refetchAllowance={poolHelpers.refetchUserAllowance} />
       )}
     </Wrapper>
   )

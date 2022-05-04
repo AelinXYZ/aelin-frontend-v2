@@ -53,7 +53,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     throw new Error('There was no possible to calculate pool current status')
   }
 
-  const [tab, setTab] = useState<PoolStatus>(tabs[0])
+  const [tab, setTab] = useState<PoolStatus>(tabs[tabs.length - 1])
   const [action, setAction] = useState<PoolAction>(actions[0])
   const dealExists = pool.deal
 
