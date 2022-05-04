@@ -43,7 +43,7 @@ const notify = ({ explorerUrl, type }: { type: ToastType; explorerUrl: string })
 
 const Toast = () => (
   <Toaster
-    containerStyle={{ position: 'absolute', marginBottom: '20px', marginLeft: '20px' }}
+    // containerStyle={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: '1234' }}
     position="bottom-right"
     toastOptions={{
       duration: ms('10s'),
