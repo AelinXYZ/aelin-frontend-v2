@@ -1,15 +1,27 @@
 import { useRouter } from 'next/router'
+import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
-import { Cell, Row, Table, TableWrapper } from '@/src/components/pureStyledComponents/common/Table'
+import {
+  Cell,
+  LinkCell,
+  Row,
+  Table,
+  TableWrapper,
+} from '@/src/components/pureStyledComponents/common/Table'
 import { getKeyChainByValue } from '@/src/constants/chains'
-import useAelinNotifications, { ParsedNotification } from '@/src/hooks/aelin/useAelinNotifications'
+import useAelinNotifications from '@/src/hooks/aelin/useAelinNotifications'
 import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+const ButtonClear = styled(ButtonPrimaryLightSm)`
+  margin: 20px auto 0;
+`
 
 type ClearedNotifications = {
   [key: string]: boolean | undefined
@@ -78,35 +90,33 @@ export const List: React.FC = ({ ...restProps }) => {
                   columns={columns.widths}
                   hasHover
                   key={index}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault()
                     router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
                   }}
                 >
                   <Cell>{formatDate(triggerStart, DATE_DETAILED)}</Cell>
                   <Cell light>{message}</Cell>
-                  <Cell justifyContent={columns.alignment.seePool}>
-                    <ButtonPrimaryLightSm
-                      onClick={() => {
+                  <LinkCell justifyContent={columns.alignment.seePool}>
+                    <ButtonRemove
+                      onClick={(e) => {
+                        e.preventDefault()
                         router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
                       }}
                     >
                       Go to pool
-                    </ButtonPrimaryLightSm>
+                    </ButtonRemove>
                     <ButtonPrimaryLightSm onClick={() => handleClearSingleNotification(id)}>
                       Clear
                     </ButtonPrimaryLightSm>
-                  </Cell>
+                  </LinkCell>
                 </Row>
               )
             })
           )}
         </InfiniteScroll>
       </Table>
-      {data?.length ? (
-        <ButtonPrimaryLightSm onClick={handleClearAllNotifications}>Clear All</ButtonPrimaryLightSm>
-      ) : (
-        <></>
-      )}
+      {data?.length && <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>}
     </TableWrapper>
   )
 }
