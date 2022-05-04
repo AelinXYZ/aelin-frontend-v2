@@ -98,17 +98,15 @@ export const List: React.FC = ({ ...restProps }) => {
                   <Cell>{formatDate(triggerStart, DATE_DETAILED)}</Cell>
                   <Cell light>{message}</Cell>
                   <LinkCell justifyContent={columns.alignment.seePool}>
-                    <ButtonRemove
+                    <ButtonPrimaryLightSm
                       onClick={(e) => {
                         e.preventDefault()
                         router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
                       }}
                     >
                       Go to pool
-                    </ButtonRemove>
-                    <ButtonPrimaryLightSm onClick={() => handleClearSingleNotification(id)}>
-                      Clear
                     </ButtonPrimaryLightSm>
+                    <ButtonRemove onClick={() => handleClearSingleNotification(id)} />
                   </LinkCell>
                 </Row>
               )
