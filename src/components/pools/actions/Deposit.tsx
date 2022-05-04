@@ -5,10 +5,9 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
-import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
-import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
@@ -19,14 +18,13 @@ type Props = {
 }
 
 function Deposit({ pool, poolHelpers }: Props) {
-  const { chainId, investmentToken, investmentTokenDecimals } = pool
+  const { investmentTokenDecimals } = pool
+  const { refetchUserInvestmentTokenBalance, userInvestmentTokenBalance: balance } = poolHelpers
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
-  const [balance, refetchBalance] = useERC20Call(chainId, investmentToken as string, 'balanceOf', [
-    address || ZERO_ADDRESS,
-  ])
+
   const purchasePoolTokens = useAelinPoolTransaction(pool.address, 'purchasePoolTokens')
 
   useEffect(() => {
@@ -35,7 +33,7 @@ function Deposit({ pool, poolHelpers }: Props) {
       return
     }
 
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance)) {
+    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance.raw)) {
       setInputError('Amount is too big')
     } else {
       setInputError('')
@@ -51,7 +49,7 @@ function Deposit({ pool, poolHelpers }: Props) {
 
     try {
       await purchasePoolTokens([tokenInputValue])
-      refetchBalance()
+      refetchUserInvestmentTokenBalance()
       setTokenInputValue('')
       setInputError('')
       setIsLoading(false)
@@ -62,8 +60,8 @@ function Deposit({ pool, poolHelpers }: Props) {
 
   const balances = [
     {
-      raw: balance || ZERO_BN,
-      formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals),
+      raw: balance.raw || ZERO_BN,
+      formatted: formatToken(balance.raw || ZERO_BN, pool.investmentTokenDecimals),
     },
     poolHelpers.maxDepositAllowed,
   ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
