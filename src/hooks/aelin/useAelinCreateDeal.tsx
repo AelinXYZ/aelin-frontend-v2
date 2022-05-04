@@ -16,7 +16,6 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getERC20Data } from '@/src/utils/getERC20Data'
 import { isDuration } from '@/src/utils/isDuration'
-import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import { shortenAddress } from '@/src/utils/string'
 import validateCreateDeal, { dealErrors } from '@/src/utils/validate/createDeal'
 
@@ -299,17 +298,10 @@ export const getCreateDealStepIndicatorData = (
     title: createDealConfig[step].title,
   }))
 
-const LOCAL_STORAGE_STATE_KEY = 'aelin-createDealState'
 export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAelinPool) {
   const { readOnlyAppProvider } = useWeb3Connection()
-
-  // Get saved state in localstorage only once
-  const { current: savedState } = useRef(
-    removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
-  )
   const router = useRouter()
-
-  const [createDealState, dispatch] = useReducer(createDealReducer, savedState || initialState)
+  const [createDealState, dispatch] = useReducer(createDealReducer, initialState)
   const [errors, setErrors] = useState<dealErrors>()
   const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
 
@@ -445,10 +437,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
         pool,
         chainId,
       ),
-    )
-    localStorage.setItem(
-      LOCAL_STORAGE_STATE_KEY,
-      JSON.stringify(createDealState, (k, v) => (v === undefined ? null : v)),
     )
   }, [createDealState, chainId, pool])
 

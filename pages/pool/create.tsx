@@ -33,6 +33,7 @@ import useAelinCreatePool, {
   getCreatePoolStepIndicatorData,
   getCreatePoolSummaryData,
 } from '@/src/hooks/aelin/useAelinCreatePool'
+import { useUnsavedChanges } from '@/src/hooks/useUsavedChanges'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Create: NextPage = () => {
@@ -50,6 +51,8 @@ const Create: NextPage = () => {
   } = useAelinCreatePool(appChainId)
 
   const [showWhiteListModal, setShowWhiteListModal] = useState<boolean>(false)
+
+  useUnsavedChanges(true)
 
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
   const { order, text, title } = currentStepConfig

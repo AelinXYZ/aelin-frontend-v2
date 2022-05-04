@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
@@ -18,7 +18,6 @@ import {
 import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { isDuration } from '@/src/utils/isDuration'
-import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
 
 export enum CreatePoolSteps {
@@ -304,16 +303,10 @@ export const getCreatePoolStepIndicatorData = (
     title: createPoolConfig[step].title,
   }))
 
-const LOCAL_STORAGE_STATE_KEY = 'aelin-createPoolState'
 export default function useAelinCreatePool(chainId: ChainsValues) {
-  // Get saved state in localstorage only once
-  const { current: savedState } = useRef(
-    removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
-  )
-
-  const router = useRouter()
-  const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
+  const [createPoolState, dispatch] = useReducer(createPoolReducer, initialState)
   const [errors, setErrors] = useState<poolErrors>()
+  const router = useRouter()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -429,10 +422,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         },
         chainId,
       ),
-    )
-    localStorage.setItem(
-      LOCAL_STORAGE_STATE_KEY,
-      JSON.stringify(createPoolState, (k, v) => (v === undefined ? null : v)),
     )
   }, [createPoolState, chainId])
 
