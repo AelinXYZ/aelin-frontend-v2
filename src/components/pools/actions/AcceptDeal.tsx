@@ -6,20 +6,19 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TokenInput } from '@/src/components/tokenInput/TokenInput'
-import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
+import { useProRataAmount } from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
-import { AelinPool } from '@/types/typechain'
 
 type Props = {
   pool: ParsedAelinPool
 }
 
 function AcceptDeal({ pool }: Props) {
-  const { chainId, investmentTokenDecimals } = pool
+  const { investmentTokenDecimals } = pool
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
@@ -31,12 +30,7 @@ function AcceptDeal({ pool }: Props) {
     throw new Error('There is not possible to accept deal at this pool stage.')
   }
 
-  const [balance, refetchBalance] = useAelinPoolCall(
-    chainId,
-    pool.address,
-    (stage === 1 ? 'maxProRataAmount' : 'maxOpenAvail') as keyof AelinPool['functions'],
-    [address || ZERO_ADDRESS],
-  )
+  const { balance, refetchBalance } = useProRataAmount(pool)
 
   const acceptDeal = useAelinPoolTransaction(pool.address, 'acceptDealTokens')
 

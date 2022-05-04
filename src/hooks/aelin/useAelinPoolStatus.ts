@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumberish } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import uniq from 'lodash/uniq'
@@ -11,9 +11,9 @@ import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
+import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { formatToken } from '@/src/web3/bigNumber'
 import {
   Funding,
@@ -23,6 +23,7 @@ import {
   UserRole,
   WaitingForDeal,
 } from '@/types/aelinPool'
+import { AelinPool } from '@/types/typechain/AelinPool'
 
 function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
   const { address } = useWeb3Connection()
@@ -63,16 +64,18 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
 
 function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
   const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
+  const { balance } = useProRataAmount(pool)
 
   const userProRataAllocation = ZERO_BN
   const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
 
   return {
-    userTotalWithdrawn: {
-      raw: userProRataAllocation,
-      formatted: formatToken(userProRataAllocation, pool.investmentTokenDecimals),
-    },
     userProRataAllocation: {
+      raw: userProRataAllocation,
+      formatted:
+        formatToken((balance as BigNumberish) || ZERO_BN, pool.investmentTokenDecimals) || '0',
+    },
+    userTotalWithdrawn: {
       raw: userAmountWithdrawn,
       formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
     },
@@ -293,6 +296,24 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
       tabs,
       actions,
     }),
-    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs, actions],
+    [poolResponse, refetchPool, derivedStatus, proRata, funding, dealing, userRole, tabs, actions],
   )
+}
+
+export function useProRataAmount(pool: ParsedAelinPool) {
+  const { address } = useWeb3Connection()
+
+  const [balance, refetchBalance] = useAelinPoolCall(
+    pool.chainId,
+    pool.address,
+    (pool.deal?.redemption?.stage === 1
+      ? 'maxProRataAmount'
+      : 'maxOpenAvail') as keyof AelinPool['functions'],
+    [address || ZERO_ADDRESS],
+  )
+
+  return {
+    balance,
+    refetchBalance,
+  }
 }
