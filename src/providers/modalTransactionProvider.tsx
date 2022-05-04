@@ -118,6 +118,8 @@ export default function TransactionModalProvider({ children }: Props) {
         setIsSubmitting(false)
       }
     }
+
+    return () => cleanState()
   }, [modalConfig])
 
   const values = {
