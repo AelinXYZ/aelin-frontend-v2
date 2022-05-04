@@ -2,28 +2,29 @@ import styled from 'styled-components'
 
 import { Link as LinkIcon } from '@/src/components/assets/Link'
 
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
+const Wrapper = styled.a`
   align-items: center;
+  color: ${({ theme }) => theme.colors.textColorLight};
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  text-decoration: none;
 
-  a {
-    margin-left: 5px;
+  &:hover {
+    text-decoration: underline;
   }
 `
 
-type Props = {
+export const ExternalLink: React.FC<{
   label: string
   href: string
-}
-
-export default function ExternalLink({ href, label }: Props) {
+}> = ({ href, label, ...restProps }) => {
   return (
-    <Wrapper>
+    <Wrapper href={href} rel="noreferrer" target="_blank" {...restProps}>
       {label}
-      <a href={href} rel="noreferrer" target="_blank">
-        <LinkIcon />
-      </a>
+      <LinkIcon />
     </Wrapper>
   )
 }
+
+export default ExternalLink

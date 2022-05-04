@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
+import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { TokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'

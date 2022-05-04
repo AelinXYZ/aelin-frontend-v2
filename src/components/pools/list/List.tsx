@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import { getAddress } from '@ethersproject/address'
@@ -35,7 +34,6 @@ export const List: React.FC<{
   setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
-  const router = useRouter()
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
 
   if (error) {

@@ -2,9 +2,14 @@ import styled from 'styled-components'
 
 import { BigNumberInput } from 'big-number-input'
 
-import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
+import {
+  Textfield as BaseTextField,
+  TextfieldState,
+} from '@/src/components/pureStyledComponents/form/Textfield'
+import { Error } from '@/src/components/pureStyledComponents/text/Error'
 
 const Wrapper = styled.div`
+  margin-bottom: 40px;
   width: 100%;
 `
 
@@ -47,13 +52,13 @@ const Balance = styled.div`
   font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.2;
-  margin: 0 0 40px;
+  margin: 0;
 `
 
 interface Props {
   decimals: number
   disabled?: boolean
-  error: boolean
+  error?: string
   maxDisabled?: boolean
   maxValue: string
   maxValueFormatted: string
@@ -83,7 +88,13 @@ export const TokenInput = ({
           decimals={decimals}
           onChange={setValue}
           renderInput={(props) => (
-            <Textfield disabled={disabled} error={error} placeholder="0" type="number" {...props} />
+            <Textfield
+              disabled={disabled}
+              placeholder="0"
+              status={error ? TextfieldState.error : undefined}
+              type="number"
+              {...props}
+            />
           )}
           value={value}
         />
@@ -94,6 +105,7 @@ export const TokenInput = ({
       <Balance>
         Balance: {maxValueFormatted} {symbol ? symbol : 'Pool tokens'}
       </Balance>
+      {error && <Error>{error}</Error>}
     </Wrapper>
   )
 }

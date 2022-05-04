@@ -199,7 +199,7 @@ export default function useAelinPool(
   }
 
   if (!poolCreatedData?.poolCreated) {
-    throw Error('There was not possible to fetch pool id: ' + poolAddress)
+    throw Error('It was not possible to fetch pool id: ' + poolAddress)
   }
 
   const pool = poolCreatedData.poolCreated as PoolCreated
