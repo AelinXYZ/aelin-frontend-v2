@@ -12,6 +12,15 @@ const Button = styled(GradientButton)`
   ${ModalButtonCSS}
 `
 
+export type ModalTransactionProps = {
+  disableButton: boolean
+  gasLimitEstimate: GasLimitEstimate
+  onSubmit: () => void
+  setGasPrice: (gasPrice: Wei) => void
+  onClose: () => void
+  title: string
+}
+
 const ConfirmTransactionModal = ({
   disableButton,
   gasLimitEstimate,
@@ -19,14 +28,7 @@ const ConfirmTransactionModal = ({
   onSubmit,
   setGasPrice,
   title,
-}: {
-  disableButton: boolean
-  gasLimitEstimate: GasLimitEstimate
-  onSubmit: () => void
-  setGasPrice: (gasPrice: Wei) => void
-  onClose: () => void
-  title: string
-}) => {
+}: ModalTransactionProps) => {
   return (
     <Modal onClose={onClose} title="Confirm transaction">
       <ModalText>{title}</ModalText>

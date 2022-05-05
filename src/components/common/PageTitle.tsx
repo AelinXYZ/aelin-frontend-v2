@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { Link as BaseLink } from '@/src/components/assets/Link'
+
 const Wrapper = styled.div`
   margin: 0 auto 30px;
   max-width: 100%;
@@ -7,13 +9,31 @@ const Wrapper = styled.div`
 `
 
 const Title = styled.h1`
-  color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 2.4rem;
   font-weight: 700;
   line-height: 1.4;
   margin: 0 0 12px;
   padding: 20px 0 0 0;
+`
+
+const TitleText = styled.span`
+  align-items: center;
+  color: ${({ theme }) => theme.colors.textColor};
+  display: inline-flex;
+  gap: 12px;
+  text-decoration: none;
+
+  &[href]:hover {
+    text-decoration: underline;
+  }
+`
+
+const Link = styled(BaseLink)`
+  --dimensions: 15px;
+
+  height: var(--dimensions);
+  width: var(--dimensions);
 `
 
 const SubTitle = styled.p`
@@ -24,13 +44,22 @@ const SubTitle = styled.p`
   margin: 0;
 `
 
-export const PageTitle: React.FC<{ title: string; subTitle?: string }> = ({
+export const PageTitle: React.FC<{ title: string; subTitle?: string; href?: string }> = ({
+  href,
   subTitle,
   title,
   ...restProps
-}) => (
-  <Wrapper {...restProps}>
-    <Title>{title}</Title>
-    <SubTitle>{subTitle ? subTitle : '--'}</SubTitle>
-  </Wrapper>
-)
+}) => {
+  const titleLinkProps = href ? { href: href, target: '_blank' } : {}
+
+  return (
+    <Wrapper {...restProps}>
+      <Title>
+        <TitleText as={href ? 'a' : 'span'} {...titleLinkProps}>
+          {title} {href && <Link />}
+        </TitleText>
+      </Title>
+      <SubTitle>{subTitle ? subTitle : '--'}</SubTitle>
+    </Wrapper>
+  )
+}

@@ -5,7 +5,7 @@ import Aelin from '@/src/components/sidebar/Aelin'
 import MyPools from '@/src/components/sidebar/MyPools'
 
 const Wrapper = styled.main`
-  --left-column-width: 290px;
+  --left-column-width: 260px;
 
   column-gap: 30px;
   display: grid;

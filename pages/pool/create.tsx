@@ -1,9 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-
-import { ContractReceipt } from '@ethersproject/contracts'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
@@ -29,7 +26,6 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator } from '@/src/components/timeline/StepIndicator'
-import { getKeyChainByValue } from '@/src/constants/chains'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {
   CreatePoolSteps,
@@ -37,33 +33,31 @@ import useAelinCreatePool, {
   getCreatePoolStepIndicatorData,
   getCreatePoolSummaryData,
 } from '@/src/hooks/aelin/useAelinCreatePool'
-import { getPoolCreatedId } from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
+import { useUnsavedChanges } from '@/src/hooks/useUsavedChanges'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Create: NextPage = () => {
-  const router = useRouter()
-
   const { appChainId } = useWeb3Connection()
+
   const {
     createPoolState,
     errors,
-    getModalTransaction,
     handleCreatePool,
     isFinalStep,
     isFirstStep,
+    isSubmitting,
     moveStep,
-    resetFields,
-    setIsSubmitting,
     setPoolField,
-    setShowModalTransaction,
   } = useAelinCreatePool(appChainId)
 
   const [showWhiteListModal, setShowWhiteListModal] = useState<boolean>(false)
 
+  useUnsavedChanges(true)
+
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
-  const disableSubmit = errors && Object.values(errors).some((err) => !!err)
+  const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -71,18 +65,6 @@ const Create: NextPage = () => {
     if (event.code === 'Enter' && !currentStepError) {
       moveStep('next')
     }
-  }
-
-  const onCompleteTx = (receipt: ContractReceipt) => {
-    resetFields()
-    setShowModalTransaction(false)
-    setIsSubmitting(false)
-    getPoolCreatedId(receipt)
-    router.push(`/pool/${getKeyChainByValue(appChainId)}/${getPoolCreatedId(receipt)}`)
-  }
-
-  const onErrorTx = () => {
-    setIsSubmitting(false)
   }
 
   return (
@@ -130,7 +112,6 @@ const Create: NextPage = () => {
                         key={`${step}_button`}
                         onClick={() => {
                           handleCreatePool()
-                          setShowModalTransaction(true)
                         }}
                       >
                         Create Pool
@@ -157,7 +138,6 @@ const Create: NextPage = () => {
           })}
         </CardWithTitle>
       </RightTimelineLayout>
-      {getModalTransaction('Create Pool', onCompleteTx, onErrorTx)}
       {showWhiteListModal && (
         <WhiteListModal
           currentList={createPoolState.whitelist}

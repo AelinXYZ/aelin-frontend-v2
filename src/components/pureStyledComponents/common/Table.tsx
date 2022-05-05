@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { lighten } from 'polished'
 import styled, { css } from 'styled-components'
 
@@ -14,14 +15,27 @@ interface RowProps {
 export const RowCSS = css<RowProps>`
   align-items: center;
   color: ${({ theme }) => theme.colors.textColor};
-  column-gap: 15px;
+  column-gap: 10px;
   display: grid;
   grid-template-columns: ${({ columns }) => columns};
   padding-left: 28px;
   padding-right: 16px;
+  text-decoration: none;
 `
 
-export const Row = styled.div<RowProps>`
+const RowHover = css`
+  &:hover {
+    background-color: ${({ theme }) => lighten(0.1, theme.card.backgroundColor)};
+    cursor: pointer;
+    text-decoration: none;
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
+`
+
+export const TableRowCSS = css<RowProps>`
   ${RowCSS}
 
   background-color: ${({ theme }) => theme.card.backgroundColor};
@@ -37,20 +51,30 @@ export const Row = styled.div<RowProps>`
     margin-bottom: 0;
   }
 
-  ${({ hasHover, theme }) =>
-    hasHover &&
-    `
-      &:hover {
-        background-color: ${lighten(0.1, theme.card.backgroundColor)};
-        cursor: pointer;
-        text-decoration: none;
+  ${({ hasHover }) => hasHover && RowHover}
 
-        &:active {
-          opacity: 0.7;
-        }
-      }
-  `}
+  &[href] {
+    ${RowHover}
+  }
 `
+
+export const Row = styled.div<RowProps>`
+  ${TableRowCSS}
+`
+
+interface RowLinkProps extends RowProps {
+  href: string
+}
+
+export const RowLink: React.FC<RowLinkProps> = ({ children, href, ...restProps }) => {
+  return (
+    <Link href={href} passHref>
+      <Row as="a" {...restProps}>
+        {children}
+      </Row>
+    </Link>
+  )
+}
 
 Row.defaultProps = {
   columns: '1fr',
@@ -88,7 +112,8 @@ Cell.defaultProps = {
 }
 
 export const LinkCell = styled(Cell)`
-  column-gap: 20px;
+  column-gap: 15px;
+  min-width: fit-content;
 `
 
 export const TH = styled(Cell)`

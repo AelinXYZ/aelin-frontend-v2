@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
-export const DEAL_DETAILS_BY_ID = gql`
-  query dealDetailsById($dealAddress: ID!) {
-    dealDetail(id: $dealAddress) {
+export const DEAL_BY_ID = gql`
+  query dealsById($dealAddress: ID!) {
+    deal(id: $dealAddress) {
       id
       underlyingDealToken
       underlyingDealTokenSymbol
@@ -19,6 +19,7 @@ export const DEAL_DETAILS_BY_ID = gql`
 
       vestingPeriod
       vestingCliff
+      vestingPeriodStarts
 
       holder
       isDealFunded

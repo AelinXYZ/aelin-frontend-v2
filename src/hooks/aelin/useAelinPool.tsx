@@ -73,6 +73,7 @@ export type ParsedAelinPool = {
         formatted: string
       }
       end: Date | null
+      start: Date | null
     }
     hasDealOpenPeriod: boolean
     redemption: {
@@ -164,6 +165,9 @@ export const getParsedPool = ({
       end: redemptionInfo
         ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms + vestingPeriod.vesting.ms)
         : null,
+      start: redemptionInfo
+      ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms)
+      : null,
     },
     hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
     redemption: redemptionInfo,
@@ -195,7 +199,7 @@ export default function useAelinPool(
   }
 
   if (!poolCreatedData?.poolCreated) {
-    throw Error('There was not possible to fetch pool id: ' + poolAddress)
+    throw Error('It was not possible to fetch pool id: ' + poolAddress)
   }
 
   const pool = poolCreatedData.poolCreated as PoolCreated

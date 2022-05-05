@@ -5,14 +5,15 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 
 import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
+import { TokenInput as BaseTokenInput } from '@/src/components/form/TokenInput'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TabContent } from '@/src/components/tabs/Tabs'
-import { TokenInput as BaseTokenInput } from '@/src/components/tokenInput/TokenInput'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import useStakingRewardsCall from '@/src/hooks/contracts/useStakingRewardsCall'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -47,11 +48,12 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   tokenAddress,
   type,
 }) => {
-  const [isLoading, setIsLoading] = useState(false)
   const [inputError, setInputError] = useState('')
   const [tokenInputValue, setTokenInputValue] = useState('')
 
   const { address, appChainId, isAppConnected } = useWeb3Connection()
+
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const [allowance, refetchAllowance] = useERC20Call(appChainId, tokenAddress, 'allowance', [
     address || ZERO_ADDRESS,
@@ -66,9 +68,20 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
     address || ZERO_ADDRESS,
   ])
 
-  const approve = useERC20Transaction(tokenAddress, 'approve')
-  const stake = useStakingRewardsTransaction(stakingAddress, 'stake')
-  const withdraw = useStakingRewardsTransaction(stakingAddress, 'withdraw')
+  const { estimate: estimateApprove, execute: executeApprove } = useERC20Transaction(
+    tokenAddress,
+    'approve',
+  )
+
+  const { estimate: estimateStake, execute: executeStake } = useStakingRewardsTransaction(
+    stakingAddress,
+    'stake',
+  )
+
+  const { estimate: estimateWithdraw, execute: executeWithdraw } = useStakingRewardsTransaction(
+    stakingAddress,
+    'withdraw',
+  )
 
   const totalBalance = useMemo(() => {
     if (type === DEPOSIT_TYPE) {
@@ -100,45 +113,48 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   }, [totalBalance, tokenInputValue])
 
   const handleApprove = async () => {
-    setIsLoading(true)
-    try {
-      await approve([stakingAddress, MaxUint256])
-      refetchAllowance()
-      setIsLoading(false)
-    } catch (error) {
-      console.error(error)
-      setIsLoading(false)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await executeApprove([stakingAddress, MaxUint256], txGasOptions)
+        if (receipt) {
+          refetchAllowance()
+        }
+      },
+      title: `Approve ${symbol}`,
+      estimate: () => estimateApprove([stakingAddress, MaxUint256]),
+    })
   }
 
   const handleDeposit = async () => {
-    setIsLoading(true)
-    try {
-      await stake([tokenInputValue])
-      refetchAllowance()
-      refetchBalanceOf()
-      setTokenInputValue('')
-      setInputError('')
-      setIsLoading(false)
-    } catch (error) {
-      console.error(error)
-      setIsLoading(false)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await executeStake([tokenInputValue], txGasOptions)
+        if (receipt) {
+          refetchAllowance()
+          refetchBalanceOf()
+          setTokenInputValue('')
+          setInputError('')
+        }
+      },
+      title: `Stake ${symbol}`,
+      estimate: () => estimateStake([tokenInputValue]),
+    })
   }
 
   const handleWithdraw = async () => {
-    setIsLoading(true)
-    try {
-      await withdraw([tokenInputValue])
-      refetchAllowance()
-      refetchBalanceOf()
-      setTokenInputValue('')
-      setInputError('')
-      setIsLoading(false)
-    } catch (error) {
-      console.error(error)
-      setIsLoading(false)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await executeWithdraw([tokenInputValue], txGasOptions)
+        if (receipt) {
+          refetchAllowance()
+          refetchBalanceOf()
+          setTokenInputValue('')
+          setInputError('')
+        }
+      },
+      title: `Withdraw ${symbol}`,
+      estimate: () => estimateWithdraw([tokenInputValue]),
+    })
   }
 
   return (
@@ -154,7 +170,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       />
       <ButtonsWrapper>
         <Button
-          disabled={!address || !isAppConnected || hasAllowance || isLoading}
+          disabled={!address || !isAppConnected || hasAllowance || isSubmitting}
           onClick={handleApprove}
         >
           Approve
@@ -166,7 +182,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
             !tokenInputValue ||
             Boolean(inputError) ||
             !hasAllowance ||
-            isLoading
+            isSubmitting
           }
           onClick={type === DEPOSIT_TYPE ? handleDeposit : handleWithdraw}
         >

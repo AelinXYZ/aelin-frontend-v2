@@ -79,7 +79,7 @@ export default function useTransaction<
   )
 
   const estimate = useCallback(
-    async (params: Params) => {
+    async (params?: Params) => {
       const signer = web3Provider?.getSigner()
       if (!signer) {
         // TODO replace console with some notification or toast
@@ -92,10 +92,12 @@ export default function useTransaction<
         return null
       }
 
+      const _params = Array.isArray(params) ? params : []
+
       const contract = new Contract(address, abi, signer) as MyContract
       try {
         console.info('Calculating transaction gas.')
-        const result = await contract.estimateGas[method as string](...params)
+        const result = await contract.estimateGas[method as string](..._params)
         return result
       } catch (e: any) {
         console.log(e)
