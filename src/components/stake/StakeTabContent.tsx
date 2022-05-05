@@ -13,7 +13,7 @@ import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import useStakingRewardsCall from '@/src/hooks/contracts/useStakingRewardsCall'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
-import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 

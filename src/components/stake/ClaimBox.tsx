@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
-import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 
 const Wrapper = styled.div`
   align-items: center;

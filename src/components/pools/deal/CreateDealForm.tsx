@@ -110,7 +110,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       <Head>
         <title>Deal creation</title>
       </Head>
-      <PageTitle subTitle={'???'} title={`${pool.nameFormatted}`} />
+      <PageTitle subTitle={pool.poolType} title={`${pool.nameFormatted}`} />
       <RightTimelineLayout activeStep={PoolTimelineState.dealCreation}>
         <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
           <StepIndicator

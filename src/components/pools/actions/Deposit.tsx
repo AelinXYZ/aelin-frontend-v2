@@ -8,7 +8,7 @@ import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Bu
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
-import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'

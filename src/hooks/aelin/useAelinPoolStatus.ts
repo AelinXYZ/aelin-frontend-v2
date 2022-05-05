@@ -5,6 +5,7 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import uniq from 'lodash/uniq'
 import ms from 'ms'
+import { accepts } from 'react-papaparse/dist/utils'
 
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
@@ -121,7 +122,7 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
     }
 
     // Seeking deal
-    if (isAfter(now, pool.purchaseExpiry) && !pool.dealAddress) {
+    if (isAfter(now, pool.purchaseExpiry) && !pool.deal?.holderAlreadyDeposited) {
       return {
         current: PoolStatus.SeekingDeal,
         history: [PoolStatus.Funding, PoolStatus.SeekingDeal],
@@ -191,10 +192,10 @@ function useUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserR
     }
 
     if (wa === pool.deal?.holderAddress) {
-      return UserRole.Investor
+      return UserRole.Holder
     }
 
-    return UserRole.Visitor
+    return UserRole.Investor
   }, [walletAddress, pool])
 }
 
@@ -239,19 +240,27 @@ function useUserActions(
       if (userRole === UserRole.Sponsor) {
         actions.push(PoolAction.CreateDeal)
       }
+
+      actions.push(PoolAction.AwaitingForDeal)
+
       if (isAfter(now, pool.dealDeadline)) {
         actions.push(PoolAction.Withdraw)
+
+        // if(sponsor && !accepts) {
+        //   create another deal
+        // }
       }
+
+      if (userRole === UserRole.Holder && pool.deal && !pool.deal.holderAlreadyDeposited) {
+        actions.push(PoolAction.FundDeal)
+      }
+
       return uniq(actions)
     }
 
     // Deal Presented
     if (currentStatus === PoolStatus.DealPresented) {
       const actions: PoolAction[] = []
-
-      if (userRole === UserRole.Holder && !pool.deal?.holderAlreadyDeposited) {
-        actions.push(PoolAction.FundDeal)
-      }
 
       if (pool.deal) {
         if (pool.deal.redemption && isBefore(now, pool.deal.redemption?.end)) {
