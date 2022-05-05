@@ -26,6 +26,9 @@ gql`
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
+
+    vestingEnds
+    vestingStarts
   }
 `
 
