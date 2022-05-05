@@ -7,14 +7,13 @@ import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents as BaseContents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
-import { AelinPool } from '@/types/typechain'
+import { WaitingForDeal } from '@/types/aelinPool'
 
 const Contents = styled(BaseContents)`
   margin-bottom: 20px;
@@ -22,10 +21,11 @@ const Contents = styled(BaseContents)`
 
 type Props = {
   pool: ParsedAelinPool
+  dealing: WaitingForDeal
 }
 
-function AcceptDeal({ pool }: Props) {
-  const { chainId, investmentTokenDecimals } = pool
+function AcceptDeal({ dealing, pool }: Props) {
+  const { investmentTokenDecimals } = pool
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
@@ -36,12 +36,7 @@ function AcceptDeal({ pool }: Props) {
     throw new Error('There is not possible to accept deal at this pool stage.')
   }
 
-  const [balance, refetchBalance] = useAelinPoolCall(
-    chainId,
-    pool.address,
-    (stage === 1 ? 'maxProRataAmount' : 'maxOpenAvail') as keyof AelinPool['functions'],
-    [address || ZERO_ADDRESS],
-  )
+  const { refetchUserStats, userProRataAllocation } = dealing
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -51,18 +46,21 @@ function AcceptDeal({ pool }: Props) {
   )
 
   useEffect(() => {
-    if (!balance) {
+    if (!userProRataAllocation.raw) {
       setInputError('User balance is not available!')
       return
     }
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance as BigNumberish)) {
+    if (
+      tokenInputValue &&
+      BigNumber.from(tokenInputValue).gt(userProRataAllocation.raw as BigNumberish)
+    ) {
       setInputError('Amount is too big')
     } else {
       setInputError('')
     }
-  }, [tokenInputValue, balance])
+  }, [tokenInputValue, userProRataAllocation.raw])
 
-  const withdrawFromPool = async () => {
+  const handleAcceptDeal = async () => {
     if (inputError) {
       return
     }
@@ -71,7 +69,7 @@ function AcceptDeal({ pool }: Props) {
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await execute([tokenInputValue], txGasOptions)
         if (receipt) {
-          refetchBalance()
+          refetchUserStats()
           setTokenInputValue('')
           setInputError('')
         }
@@ -89,9 +87,12 @@ function AcceptDeal({ pool }: Props) {
       <TokenInput
         decimals={investmentTokenDecimals}
         error={inputError}
-        maxValue={(balance || ZERO_BN).toString()}
+        maxValue={(userProRataAllocation.raw || ZERO_BN).toString()}
         maxValueFormatted={
-          formatToken((balance as BigNumberish) || ZERO_BN, investmentTokenDecimals) || '0'
+          formatToken(
+            (userProRataAllocation.raw as BigNumberish) || ZERO_BN,
+            investmentTokenDecimals,
+          ) || '0'
         }
         setValue={setTokenInputValue}
         value={tokenInputValue}
@@ -100,7 +101,7 @@ function AcceptDeal({ pool }: Props) {
         disabled={
           !address || !isAppConnected || isSubmitting || !tokenInputValue || Boolean(inputError)
         }
-        onClick={withdrawFromPool}
+        onClick={handleAcceptDeal}
       >
         Accept deal
       </GradientButton>

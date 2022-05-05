@@ -127,8 +127,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             {action === PoolAction.AwaitingForDeal && <WaitingForDeal />}
             {action === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
             {action === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-            {action === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
-            {action === PoolAction.FundDeal && <FundDeal pool={pool} />}
+            {action === PoolAction.AcceptDeal && <AcceptDeal dealing={dealing} pool={pool} />}
           </ActionTabs>
         </MainGrid>
       </RightTimelineLayout>

@@ -47,6 +47,7 @@ export interface Funding {
 export interface WaitingForDeal {
   userTotalWithdrawn: DetailedNumber
   userProRataAllocation: DetailedNumber
+  refetchUserStats: () => void
 }
 
 export type ProRata = Record<string, unknown>

@@ -306,6 +306,9 @@ export const getCreatePoolStepIndicatorData = (
 export default function useAelinCreatePool(chainId: ChainsValues) {
   const [createPoolState, dispatch] = useReducer(createPoolReducer, initialState)
   const [errors, setErrors] = useState<poolErrors>()
+
+  const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
+
   const router = useRouter()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
@@ -360,23 +363,29 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         ]),
       title: 'Create pool',
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await execute(
-          [
-            poolName,
-            poolSymbol,
-            poolCap,
-            investmentToken,
-            dealDeadLineDuration,
-            sponsorFee,
-            investmentDeadLineDuration,
-            poolAddresses,
-            poolAddressesAmounts,
-          ],
-          txGasOptions,
-        )
-        if (receipt) {
-          dispatch({ type: 'reset' })
-          router.push(`/pool/${getKeyChainByValue(chainId)}/${getPoolCreatedId(receipt)}`)
+        setShowWarningOnLeave(false)
+
+        try {
+          const receipt = await execute(
+            [
+              poolName,
+              poolSymbol,
+              poolCap,
+              investmentToken,
+              dealDeadLineDuration,
+              sponsorFee,
+              investmentDeadLineDuration,
+              poolAddresses,
+              poolAddressesAmounts,
+            ],
+            txGasOptions,
+          )
+          if (receipt) {
+            router.push(`/pool/${getKeyChainByValue(chainId)}/${getPoolCreatedId(receipt)}`)
+          }
+        } catch (error) {
+          console.log(error)
+          setShowWarningOnLeave(true)
         }
       },
     })
@@ -425,6 +434,10 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     )
   }, [createPoolState, chainId])
 
+  useEffect(() => {
+    setShowWarningOnLeave(true)
+  }, [createPoolState])
+
   return {
     setPoolField,
     createPoolState,
@@ -434,5 +447,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     isFirstStep,
     handleCreatePool,
     isSubmitting,
+    showWarningOnLeave,
   }
 }
