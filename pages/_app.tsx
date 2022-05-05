@@ -20,6 +20,10 @@ const GeneralContextProvider = dynamic(() => import('@/src/providers/generalProv
   ssr: false,
 })
 
+const NotificationsProvider = dynamic(() => import('@/src/providers/notificationsProvider'), {
+  ssr: false,
+})
+
 function App({ Component, pageProps }: AppProps) {
   const { hostname, port, protocol } =
     typeof window !== 'undefined'
@@ -55,13 +59,15 @@ function App({ Component, pageProps }: AppProps) {
           <Web3ConnectionProvider>
             <GeneralContextProvider>
               <TransactionModalProvider>
-                <GlobalStyle />
-                <Header />
-                <SafeSuspense>
-                  <Component {...pageProps} />
-                  <Toast />
-                </SafeSuspense>
-                <TooltipConfig />
+                <NotificationsProvider>
+                  <GlobalStyle />
+                  <Header />
+                  <SafeSuspense>
+                    <Component {...pageProps} />
+                    <Toast />
+                  </SafeSuspense>
+                  <TooltipConfig />
+                </NotificationsProvider>
               </TransactionModalProvider>
             </GeneralContextProvider>
           </Web3ConnectionProvider>
