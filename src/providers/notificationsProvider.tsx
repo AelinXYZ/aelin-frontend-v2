@@ -49,5 +49,9 @@ const NotificationsContextProvider: React.FC = ({ children }) => {
 export default genericSuspense(NotificationsContextProvider)
 
 export function useNotifications(): NotificationsContextType {
-  return useContext<NotificationsContextType>(NotificationsContext)
+  const context = useContext(NotificationsContext)
+  if (!context) {
+    throw new Error('Error on notifications context')
+  }
+  return context
 }
