@@ -7,8 +7,7 @@ import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents as BaseContents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { TokenInput } from '@/src/components/tokenInput/TokenInput'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
@@ -65,8 +64,7 @@ function AcceptDeal({ dealing, pool }: Props) {
     if (inputError) {
       return
     }
-    
-    setIsLoading(true)
+
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await execute([tokenInputValue], txGasOptions)
@@ -74,7 +72,6 @@ function AcceptDeal({ dealing, pool }: Props) {
           refetchUserStats()
           setTokenInputValue('')
           setInputError('')
-          setIsLoading(false)
         }
       },
       title: 'Create deal',
