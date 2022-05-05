@@ -1,6 +1,6 @@
 # Aelin Frontend v2
 
-### Run this application with Node 14
+## Run this application with Node 14
 
 1. Copy `.env.example` as `.env.local`
 
