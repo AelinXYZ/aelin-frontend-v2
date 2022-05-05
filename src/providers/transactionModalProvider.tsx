@@ -117,8 +117,6 @@ export default function TransactionModalProvider({ children }: Props) {
         setGasLimitEstimate(null)
         setIsSubmitting(false)
       }
-
-      return () => cleanState()
     }
   }, [modalConfig])
 

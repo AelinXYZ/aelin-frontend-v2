@@ -20,6 +20,7 @@ export enum PoolStatus {
 export enum PoolAction {
   Invest = 'Deposit tokens',
   CreateDeal = 'Create Deal',
+  AwaitingForDeal = 'Awaiting for Deal',
   FundDeal = 'Fund Deal',
   AcceptDeal = 'Accept Deal',
   Withdraw = 'Withdraw',
@@ -46,6 +47,7 @@ export interface Funding {
 export interface WaitingForDeal {
   userTotalWithdrawn: DetailedNumber
   userProRataAllocation: DetailedNumber
+  refetchUserStats: () => void
 }
 
 export type ProRata = Record<string, unknown>
