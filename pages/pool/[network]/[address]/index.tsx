@@ -29,4 +29,6 @@ const PoolDetailsPage: NextPage = () => {
   return <PoolMain chainId={chainId} poolAddress={poolAddress.toLowerCase()} />
 }
 
-export default genericSuspense(PoolDetailsPage, () => <Loading />)
+export default genericSuspense(PoolDetailsPage, () => (
+  <Loading text="Pool information is syncing" />
+))

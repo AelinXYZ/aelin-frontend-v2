@@ -5,7 +5,6 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import uniq from 'lodash/uniq'
 import ms from 'ms'
-import { accepts } from 'react-papaparse/dist/utils'
 
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
@@ -298,7 +297,11 @@ function useUserActions(
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('10s'),
+    shouldRetryOnError: true,
+    errorRetryInterval: ms('1s'),
+    errorRetryCount: 6,
   })
+
   const { address } = useWeb3Connection()
 
   // derive data for UI
