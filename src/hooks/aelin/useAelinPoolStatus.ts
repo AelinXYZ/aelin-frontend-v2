@@ -237,11 +237,13 @@ function useUserActions(
     // Seeking Deal
     if (currentStatus === PoolStatus.SeekingDeal) {
       const actions: PoolAction[] = []
-      if (userRole === UserRole.Sponsor) {
+      if (userRole === UserRole.Sponsor && !pool.dealAddress) {
         actions.push(PoolAction.CreateDeal)
       }
 
-      actions.push(PoolAction.AwaitingForDeal)
+      if (!pool.dealAddress) {
+        actions.push(PoolAction.AwaitingForDeal)
+      }
 
       if (isAfter(now, pool.dealDeadline)) {
         actions.push(PoolAction.Withdraw)
@@ -295,7 +297,7 @@ function useUserActions(
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
-    refreshInterval: ms('30s'),
+    refreshInterval: ms('10s'),
   })
   const { address } = useWeb3Connection()
 
