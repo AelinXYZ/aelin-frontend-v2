@@ -33,7 +33,7 @@ import useAelinCreatePool, {
   getCreatePoolStepIndicatorData,
   getCreatePoolSummaryData,
 } from '@/src/hooks/aelin/useAelinCreatePool'
-import { useUnsavedChanges } from '@/src/hooks/useUsavedChanges'
+import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Create: NextPage = () => {
@@ -48,16 +48,17 @@ const Create: NextPage = () => {
     isSubmitting,
     moveStep,
     setPoolField,
+    showWarningOnLeave,
   } = useAelinCreatePool(appChainId)
 
   const [showWhiteListModal, setShowWhiteListModal] = useState<boolean>(false)
-
-  useUnsavedChanges(true)
 
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
+
+  useWarningOnLeavePage(showWarningOnLeave)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

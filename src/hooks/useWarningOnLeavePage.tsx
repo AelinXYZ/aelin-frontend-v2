@@ -1,10 +1,13 @@
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-export const useUnsavedChanges = (unsavedChanges: boolean) => {
+export const useWarningOnLeavePage = (
+  unsavedChanges: boolean,
+  text = 'Are you sure you want to leave the page? All changes will be lost.',
+) => {
   const router = useRouter()
   useEffect(() => {
-    const warningText = 'Are you sure you want to leave the page? All changes will be lost.'
+    const warningText = text
     const handleWindowClose = (e: BeforeUnloadEvent) => {
       if (!unsavedChanges) return
       e.preventDefault()
@@ -22,5 +25,5 @@ export const useUnsavedChanges = (unsavedChanges: boolean) => {
       window.removeEventListener('beforeunload', handleWindowClose)
       router.events.off('routeChangeStart', handleBrowseAway)
     }
-  }, [router.events, unsavedChanges])
+  }, [router.events, text, unsavedChanges])
 }

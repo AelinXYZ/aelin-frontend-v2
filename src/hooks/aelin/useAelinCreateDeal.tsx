@@ -305,6 +305,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   const [errors, setErrors] = useState<dealErrors>()
   const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
 
+  const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
+
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate: createDealEstimate, execute } = useAelinPoolTransaction(
@@ -374,23 +376,29 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
 
       title: 'Create deal',
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await execute(
-          [
-            underlyingDealToken,
-            purchaseTokenTotal,
-            underlyingDealTokenTotal,
-            vestingPeriodDuration,
-            vestingCliffDuration,
-            proRataRedemptionDuration,
-            openRedemptionDuration,
-            holderAddress,
-            holderFundingDuration,
-          ],
-          txGasOptions,
-        )
-        if (receipt) {
-          dispatch({ type: 'reset' })
-          router.reload()
+        setShowWarningOnLeave(false)
+
+        try {
+          const receipt = await execute(
+            [
+              underlyingDealToken,
+              purchaseTokenTotal,
+              underlyingDealTokenTotal,
+              vestingPeriodDuration,
+              vestingCliffDuration,
+              proRataRedemptionDuration,
+              openRedemptionDuration,
+              holderAddress,
+              holderFundingDuration,
+            ],
+            txGasOptions,
+          )
+          if (receipt) {
+            router.reload()
+          }
+        } catch (error) {
+          console.log(error)
+          setShowWarningOnLeave(true)
         }
       },
     })
@@ -464,5 +472,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     isSubmitting,
     investmentTokenInfo,
     handleCreateDeal,
+    showWarningOnLeave,
   }
 }

@@ -38,7 +38,7 @@ import useAelinCreateDeal, {
   getCreateDealSummaryData,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
-import { useUnsavedChanges } from '@/src/hooks/useUsavedChanges'
+import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const StepIndicator = styled(BaseStepIndicator)`
@@ -68,13 +68,15 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     isSubmitting,
     moveStep,
     setDealField,
+    showWarningOnLeave,
   } = useAelinCreateDeal(appChainId, pool)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createDealState.currentStep] : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
-  useUnsavedChanges(true)
+
+  useWarningOnLeavePage(showWarningOnLeave)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
