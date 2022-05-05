@@ -10,8 +10,8 @@ import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useProRataAmount } from '@/src/hooks/aelin/useProRataAmount'
 import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
-import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -23,7 +23,6 @@ import {
   UserRole,
   WaitingForDeal,
 } from '@/types/aelinPool'
-import { AelinPool } from '@/types/typechain/AelinPool'
 
 function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
   const { address } = useWeb3Connection()
@@ -72,20 +71,30 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
 }
 
 function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
-  const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
-  const { balance } = useProRataAmount(pool)
+  const { data: userAllocationStatRes, refetch: refetchUserWithdrawn } = useUserAllocationStat(
+    pool.address,
+    chainId,
+  )
+  const { maxProRataAmountBalance, refetchMaxProRataAmountBalance } = useProRataAmount(pool)
 
   const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
 
   return {
+    refetchUserStats: () => {
+      refetchUserWithdrawn()
+      refetchMaxProRataAmountBalance()
+    },
     userTotalWithdrawn: {
       raw: userAmountWithdrawn,
       formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
     },
     userProRataAllocation: {
-      raw: balance as BigNumber,
+      raw: maxProRataAmountBalance as BigNumber,
       formatted:
-        formatToken((balance as BigNumberish) || ZERO_BN, pool.investmentTokenDecimals) || '0',
+        formatToken(
+          (maxProRataAmountBalance as BigNumberish) || ZERO_BN,
+          pool.investmentTokenDecimals,
+        ) || '0',
     },
   }
 }
@@ -306,22 +315,4 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
     }),
     [poolResponse, refetchPool, derivedStatus, proRata, funding, dealing, userRole, tabs, actions],
   )
-}
-
-export function useProRataAmount(pool: ParsedAelinPool) {
-  const { address } = useWeb3Connection()
-
-  const [balance, refetchBalance] = useAelinPoolCall(
-    pool.chainId,
-    pool.address,
-    (pool.deal?.redemption?.stage === 1
-      ? 'maxProRataAmount'
-      : 'maxOpenAvail') as keyof AelinPool['functions'],
-    [address || ZERO_ADDRESS],
-  )
-
-  return {
-    balance,
-    refetchBalance,
-  }
 }
