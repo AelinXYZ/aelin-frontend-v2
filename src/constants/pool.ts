@@ -3,6 +3,8 @@ import { PoolStatus } from '@/graphql-schema'
 
 export const POOLS_RESULTS_PER_CHAIN = 20
 export const VESTING_DEALS_RESULTS_PER_CHAIN = 20
+export const NOTIFICATIONS_RESULTS_PER_CHAIN = 20
+export const USERS_RESULTS_PER_CHAIN = 20
 
 export enum Privacy {
   PUBLIC = 'public',

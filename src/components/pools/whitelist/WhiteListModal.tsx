@@ -3,11 +3,17 @@ import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
 
-import { ButtonPrimaryLightSm, GradientButton } from '../../pureStyledComponents/buttons/Button'
-import { ButtonEdit, ButtonRemove } from '../../pureStyledComponents/buttons/ButtonCircle'
-import { Textfield } from '../../pureStyledComponents/form/Textfield'
 import { Modal as BaseModal, ModalButtonCSS } from '@/src/components/common/Modal'
 import UploadCSV from '@/src/components/pools/whitelist/UploadWhiteListCsv'
+import {
+  ButtonPrimaryLightSm,
+  GradientButton,
+} from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonEdit,
+  ButtonRemove,
+} from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
+import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
 
 export interface WhitelistProps {

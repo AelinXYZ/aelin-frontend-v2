@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { Notifications as NotificationsIcon } from '@/src/components/assets/Notifications'
+import { useNotifications } from '@/src/providers/notificationsProvider'
 
 const Wrapper = styled.a`
   align-items: center;
@@ -34,13 +35,13 @@ const Badge = styled.span`
 `
 
 export const Notifications: React.FC = ({ ...restProps }) => {
-  const notifications = 8
+  const { notifications } = useNotifications()
 
   return (
     <Link href="/notifications" passHref>
       <Wrapper {...restProps}>
         <NotificationsIcon />
-        <Badge>{notifications}</Badge>
+        {!!notifications?.length && <Badge>{notifications.length}</Badge>}
       </Wrapper>
     </Link>
   )
