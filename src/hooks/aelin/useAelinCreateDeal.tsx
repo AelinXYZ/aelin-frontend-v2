@@ -7,7 +7,7 @@ import { parseUnits } from '@ethersproject/units'
 import { Duration } from 'date-fns'
 
 import { useAelinPoolTransaction } from '../contracts/useAelinPoolTransaction'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token, isToken } from '@/src/constants/token'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -394,7 +394,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
             txGasOptions,
           )
           if (receipt) {
-            router.reload()
+            router.push(`/pool/${getKeyChainByValue(chainId)}/${pool.address}`)
           }
         } catch (error) {
           console.log(error)
