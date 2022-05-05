@@ -48,6 +48,8 @@ export type ParsedAelinPool = {
   withdrawn: DetailedNumber
   poolStatus: PoolStatus
   poolType: string
+  vestingStarts: Date
+  vestingEnds: Date
   deal?: {
     name: string
     symbol: string
@@ -126,6 +128,8 @@ export const getParsedPool = ({
     withdrawn: getAmountWithdrawn(pool.totalAmountWithdrawn || ZERO_BN, purchaseTokenDecimals),
     redeem: getAmountRedeem(pool.totalAmountAccepted || ZERO_BN, purchaseTokenDecimals),
     deal: undefined,
+    vestingStarts: new Date(pool.vestingStarts),
+    vestingEnds: new Date(pool.vestingEnds),
   }
 
   const dealDetails = pool.deal

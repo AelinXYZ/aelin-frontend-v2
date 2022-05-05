@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
@@ -27,7 +27,6 @@ export type ParsedNotification = {
 
 interface FetcherProps extends NotificationsQueryVariables {
   user?: ParsedUser
-  clearedNotifications?: ClearedNotifications
 }
 
 export type ClearedNotifications = {
@@ -53,7 +52,7 @@ function isUserTarget(user: ParsedUser, notification: ParsedNotification): boole
 }
 
 export async function fetcherNotifications(props: FetcherProps) {
-  const { clearedNotifications, user, ...variables } = props
+  const { user, ...variables } = props
   const allSDK = getAllGqlSDK()
 
   if (!user) return []
@@ -96,9 +95,7 @@ export async function fetcherNotifications(props: FetcherProps) {
       variables.orderDirection ? [variables.orderDirection] : ['desc'],
     )
 
-    return result.filter(
-      (notification: ParsedNotification) => !clearedNotifications?.[notification.id],
-    )
+    return result
   } catch (e) {
     console.error(e)
     return []
@@ -110,7 +107,6 @@ const getSwrKey = (
   previousPageData: ParsedNotification[],
   variables: NotificationsQueryVariables,
   user?: ParsedUser,
-  clearedNotifications?: ClearedNotifications,
 ) => {
   return [
     {
@@ -118,7 +114,6 @@ const getSwrKey = (
       skip: currentPage * NOTIFICATIONS_RESULTS_PER_CHAIN,
       first: NOTIFICATIONS_RESULTS_PER_CHAIN,
       user,
-      clearedNotifications,
     },
   ]
 }
@@ -126,12 +121,15 @@ const getSwrKey = (
 export default function useAelinNotifications(clearedNotifications?: ClearedNotifications) {
   const { address: userAddress } = useWeb3Connection()
   const { data: userResponse, error: errorUser } = useAelinUser(userAddress)
+  const [nowSeconds, setNow] = useState<string>()
 
   if (errorUser) {
     throw errorUser
   }
 
-  const nowSeconds = Math.round(Date.now() / 1000).toString()
+  useEffect(() => {
+    setNow(Math.round(Date.now() / 1000).toString())
+  }, [])
 
   const variables: NotificationsQueryVariables = {
     orderBy: Notification_OrderBy.TriggerStart,
@@ -151,15 +149,13 @@ export default function useAelinNotifications(clearedNotifications?: ClearedNoti
     setSize: setPage,
     size: currentPage,
   } = useSWRInfinite(
-    (...args) => getSwrKey(...args, variables, userResponse, clearedNotifications),
+    (...args) => getSwrKey(...args, variables, userResponse),
     fetcherNotifications,
     {
       revalidateFirstPage: true,
       revalidateOnMount: true,
     },
   )
-
-  const hasMore = !error && data[data.length - 1]?.length !== 0
 
   const nextPage = useCallback(() => {
     setPage(currentPage + 1)
@@ -170,8 +166,14 @@ export default function useAelinNotifications(clearedNotifications?: ClearedNoti
     [],
   )
 
+  const filteredResults = paginatedResult.filter(
+    (notification: ParsedNotification) => !clearedNotifications?.[notification.id],
+  )
+
+  const hasMore = !error && filteredResults?.length !== 0
+
   return {
-    data: paginatedResult,
+    data: filteredResults,
     error,
     nextPage,
     currentPage,
