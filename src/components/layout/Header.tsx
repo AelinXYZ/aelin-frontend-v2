@@ -33,7 +33,7 @@ const Wrapper = styled.header`
   height: ${({ theme }) => theme.header.height};
   margin: 0 0 15px;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     margin-bottom: 20px;
   }
 `
@@ -45,7 +45,7 @@ const InnerContainer = styled(BaseInnerContainer)`
   max-height: 100%;
   position: relative;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     ${BaseCardCSS}
     justify-content: space-between;
     padding: 12px 20px 12px 40px;
@@ -86,7 +86,7 @@ const HeaderDropdown = styled(Dropdown)`
 const ResponsiveDropdownCSS = css`
   display: none;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: flex;
   }
 `
@@ -110,7 +110,7 @@ const EndWrapper = styled.div`
   width: 100%;
   z-index: 5;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     justify-content: flex-end;
     left: auto;
     position: relative;
@@ -139,7 +139,7 @@ const Item = styled.div`
 const Line = styled.div`
   display: none;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     background: rgba(255, 255, 255, 0.25);
     display: block;
     height: 24px;
