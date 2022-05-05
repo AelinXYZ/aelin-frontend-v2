@@ -1,11 +1,10 @@
-import { useState } from 'react'
-
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolDealTransaction } from '@/src/hooks/contracts/useAelinPoolDealTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
+import { useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 type Props = {
@@ -13,7 +12,6 @@ type Props = {
 }
 
 function HolderDeposit({ pool }: Props) {
-  const [isLoading, setIsLoading] = useState(false)
   const { isAppConnected } = useWeb3Connection()
   const [holderBalance] = useERC20Call(
     pool.chainId,
@@ -21,26 +19,31 @@ function HolderDeposit({ pool }: Props) {
     'balanceOf',
     [pool.deal?.holderAddress || ZERO_ADDRESS],
   )
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const deposit = useAelinPoolDealTransaction(pool.dealAddress || ZERO_ADDRESS, 'depositUnderlying')
+  const { estimate, execute: deposit } = useAelinPoolDealTransaction(
+    pool.dealAddress || ZERO_ADDRESS,
+    'depositUnderlying',
+  )
 
   const underlyingAmount = pool.deal?.underlyingToken.dealAmount.raw || ZERO_BN
 
   const depositTokens = async () => {
-    setIsLoading(true)
-
-    try {
-      await deposit([underlyingAmount])
-      setIsLoading(false)
-    } catch (error) {
-      setIsLoading(false)
-    }
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions) => {
+        await deposit([underlyingAmount], txGasOptions)
+      },
+      title: `Fund deal`,
+      estimate: () => estimate([underlyingAmount]),
+    })
   }
 
   return (
     <>
       <GradientButton
-        disabled={!isAppConnected || isLoading || (holderBalance || ZERO_BN).lt(underlyingAmount)}
+        disabled={
+          !isAppConnected || isSubmitting || (holderBalance || ZERO_BN).lt(underlyingAmount)
+        }
         onClick={depositTokens}
       >
         {`Fund ${pool.deal?.underlyingToken.dealAmount.formatted} ${pool.deal?.underlyingToken.symbol}`}

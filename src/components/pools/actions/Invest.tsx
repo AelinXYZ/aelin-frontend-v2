@@ -22,8 +22,8 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
         <Deposit pool={pool} poolHelpers={poolHelpers} />
       ) : (
         <Approve
-          pool={pool}
           refetchAllowance={poolHelpers.refetchUserAllowance}
+          spender={pool.address}
           tokenAddress={pool.investmentToken}
           tokenSymbol={pool.investmentTokenSymbol}
         />

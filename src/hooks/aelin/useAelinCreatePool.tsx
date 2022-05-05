@@ -15,7 +15,7 @@ import {
   getPoolCreatedId,
   useAelinPoolCreateTransaction,
 } from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
-import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { isDuration } from '@/src/utils/isDuration'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
