@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import styled from 'styled-components'
 
 import StakeSection from '@/src/components/stake/StakeSection'
@@ -18,77 +18,69 @@ const Wrapper = styled.div`
 const StakeGrid = ({ ...restProps }) => {
   const { appChainId } = useWeb3Connection()
 
-  const StakeBoxes = useMemo(
+  const stakePerChain = useMemo(
     () => ({
       10: [
-        {
-          isPool2: false,
-          useStakingRewards: useAelinStakingRewards,
-          contractAddresses: {
-            stakingAddress: contractsConfig.STAKING_REWARDS.address[appChainId],
-            tokenAddress: contractsConfig.AELIN_TOKEN.address[appChainId],
-          },
-          textTooltip:
-            'Staking AELIN gives a share of 29 AELIN/month in inflationary rewards + 2/3 of protocol deal fees. Note deal fees are temporarily custodied by the Aelin Council and will be distributed in the future.',
-          textTooltipAPY:
-            'Estimation based on the total amount of rewards for a year and the total value staked in the contract.',
-          title: 'Aelin staking',
-        },
-        {
-          isPool2: true,
-          useStakingRewards: useGelatoStakingRewards,
-          contractAddresses: {
-            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[appChainId],
-            tokenAddress: contractsConfig.LP_TOKEN.address[appChainId],
-          },
-          textTooltip:
-            'Staking AELIN/ETH LP gives a share of 44 AELIN/month in inflationary rewards + 1/3 of deal fees. Note deal fees are temporarily custodied by the Aelin Council and will be distributed in the future.',
-          textTooltipAPY:
-            'Estimation based on the total amount of rewards for a year and the total value staked in the contract. Trading fees from Uniswap not included.',
-          title: 'AELIN/ETH staking',
-        },
+        <StakeSection
+          contractAddresses={{
+            stakingAddress: contractsConfig.STAKING_REWARDS.address[10],
+            tokenAddress: contractsConfig.AELIN_TOKEN.address[10],
+          }}
+          isPool2={false}
+          key="first-box"
+          textTooltip={
+            'Staking AELIN gives a share of 29 AELIN/month in inflationary rewards + 2/3 of protocol deal fees. Note deal fees are temporarily custodied by the Aelin Council and will be distributed in the future.'
+          }
+          textTooltipAPY={
+            'Estimation based on the total amount of rewards for a year and the total value staked in the contract.'
+          }
+          title={'Aelin staking'}
+          useStakingRewards={useAelinStakingRewards}
+        />,
+        <StakeSection
+          contractAddresses={{
+            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[10],
+            tokenAddress: contractsConfig.LP_TOKEN.address[10],
+          }}
+          isPool2={true}
+          key="second-box"
+          textTooltip={
+            'Staking AELIN/ETH LP gives a share of 44 AELIN/month in inflationary rewards + 1/3 of deal fees. Note deal fees are temporarily custodied by the Aelin Council and will be distributed in the future.'
+          }
+          textTooltipAPY={
+            'Estimation based on the total amount of rewards for a year and the total value staked in the contract. Trading fees from Uniswap not included.'
+          }
+          title={'AELIN/ETH staking'}
+          useStakingRewards={useGelatoStakingRewards}
+        />,
       ],
       1: [
-        {
-          isPool2: true,
-          useStakingRewards: useUniswapStakingRewards,
-          contractAddresses: {
-            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[appChainId],
-            tokenAddress: contractsConfig.LP_TOKEN.address[appChainId],
-          },
-          textTooltip:
-            'Staking AELIN/ETH LP gives a share of 50 AELIN/month in inflationary rewards.',
-          textTooltipAPY:
-            'Estimation based on the total amount of rewards for a year and the total value staked in the contract. Trading fees from Uniswap not included.',
-          title: 'AELIN/ETH staking',
-        },
+        <StakeSection
+          contractAddresses={{
+            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[1],
+            tokenAddress: contractsConfig.LP_TOKEN.address[1],
+          }}
+          isPool2={true}
+          key="first-box"
+          textTooltip={
+            'Staking AELIN/ETH LP gives a share of 50 AELIN/month in inflationary rewards.'
+          }
+          textTooltipAPY={
+            'Estimation based on the total amount of rewards for a year and the total value staked in the contract. Trading fees from Uniswap not included.'
+          }
+          title={'AELIN/ETH staking'}
+          useStakingRewards={useUniswapStakingRewards}
+        />,
       ],
       5: [],
       42: [],
     }),
-    [appChainId],
+    [],
   )
 
-  return (
-    <Wrapper {...restProps}>
-      {StakeBoxes[appChainId].map(
-        (
-          { contractAddresses, isPool2, textTooltip, textTooltipAPY, title, useStakingRewards },
-          i,
-        ) => (
-          <StakeSection
-            contractAddresses={contractAddresses}
-            isPool2={isPool2}
-            key={`stake-boxes-${i}`}
-            textTooltip={textTooltip}
-            textTooltipAPY={textTooltipAPY}
-            title={title}
-            useStakingRewards={useStakingRewards}
-          />
-        ),
-      )}
-    </Wrapper>
-  )
+  const stakeBoxes = useMemo(() => stakePerChain[appChainId], [appChainId, stakePerChain])
+
+  return <Wrapper {...restProps}>{stakeBoxes.map((box: ReactNode) => box)}</Wrapper>
 }
 
 export default StakeGrid

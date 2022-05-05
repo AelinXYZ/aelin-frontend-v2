@@ -4,9 +4,10 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ZERO_BN } from '@/src/constants/misc'
+import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { formatToken } from '@/src/web3/bigNumber'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -50,11 +51,12 @@ const Button = styled(GradientButton)`
 
 type ClaimBoxProps = {
   stakingAddress: string
-  userRewards: number
+  userRewards: BigNumber
+  decimals: number
 }
 
-const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
-  const [rewardsToClaim, setRewardsToClaim] = useState(userRewards)
+const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakingAddress, userRewards }) => {
+  const [rewardsToClaim, setRewardsToClaim] = useState<BigNumber>(userRewards)
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -68,7 +70,7 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await execute([], txGasOptions)
         if (receipt) {
-          setRewardsToClaim(0)
+          setRewardsToClaim(ZERO_BN)
         }
       },
       title: 'Claim AELIN tokens',
@@ -80,12 +82,9 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
     <Wrapper>
       <Title>Claim rewards</Title>
       <Text>
-        My Rewards: <Value>{rewardsToClaim} AELIN</Value>
+        My Rewards: <Value>{formatToken(rewardsToClaim, decimals, STAKING_DECIMALS)} AELIN</Value>
       </Text>
-      <Button
-        disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isSubmitting}
-        onClick={handleClaim}
-      >
+      <Button disabled={rewardsToClaim.eq(ZERO_BN) || isSubmitting} onClick={handleClaim}>
         Claim
       </Button>
     </Wrapper>

@@ -32,7 +32,7 @@ const getUniswapPoolAmount = (): Promise<UniswapResponse> => {
 }
 
 export const useUniswapPoolAmount = () => {
-  return useSWR(['uniswapAelinPoolAmount'], async () => {
+  return useSWR(['uniswap-aelin-pool-amount'], async () => {
     const response: UniswapResponse = await getUniswapPoolAmount()
 
     const {

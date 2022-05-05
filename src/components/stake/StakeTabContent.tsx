@@ -37,7 +37,7 @@ interface StakeTabContentProps {
   type: typeof DEPOSIT_TYPE | typeof WITHDRAW_TYPE
   decimals: number
   stakingAddress: string
-  symbol?: string
+  symbol: string
   tokenAddress: string
 }
 
@@ -85,14 +85,13 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
 
   const totalBalance = useMemo(() => {
     if (type === DEPOSIT_TYPE) {
-      return balanceOf
+      return balanceOf || ZERO_BN
     }
     if (type === WITHDRAW_TYPE) {
-      return userStake
+      return userStake || ZERO_BN
     }
 
-    console.error('Unknown type')
-    return ZERO_BN
+    throw new Error('Unknown action type')
   }, [type, balanceOf, userStake])
 
   const hasAllowance = useMemo(() => {
@@ -160,10 +159,10 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   return (
     <TabContent>
       <TokenInput
-        decimals={decimals ?? 18}
+        decimals={decimals}
         error={inputError}
-        maxValue={totalBalance?.toString() ?? '0'}
-        maxValueFormatted={formatToken(totalBalance ?? ZERO_BN, decimals ?? 18) ?? '0'}
+        maxValue={totalBalance.toString()}
+        maxValueFormatted={formatToken(totalBalance, decimals) || ''}
         setValue={setTokenInputValue}
         symbol={symbol}
         value={tokenInputValue}

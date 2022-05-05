@@ -58,13 +58,7 @@ interface StakeSectionProps {
   textTooltip: string
   textTooltipAPY: string
   title: string
-  useStakingRewards: ({
-    stakingAddress,
-    tokenAddress,
-  }: {
-    stakingAddress: string
-    tokenAddress: string
-  }) => StakingRewardsResponse
+  useStakingRewards: (stakingAddress: string, tokenAddress: string) => StakingRewardsResponse
 }
 
 const StakeSection: FC<StakeSectionProps> = ({
@@ -78,7 +72,18 @@ const StakeSection: FC<StakeSectionProps> = ({
 }) => {
   const { stakingAddress, tokenAddress } = contractAddresses
 
-  const rewards: StakingRewardsResponse = useStakingRewards({ stakingAddress, tokenAddress })
+  const rewards: StakingRewardsResponse = useStakingRewards(stakingAddress, tokenAddress)
+
+  /*
+  const rewards: StakingRewardsResponse = {
+    decimals: 18,
+    symbol: 'AELIN',
+    userRewards: BigNumber.from('0x11a5b9518e'),
+    userStake: BigNumber.from('0x78db1d92bd2a'),
+    totalStakedBalance: BigNumber.from('0x33d8bc21a447964d84'),
+    APY: 36.89176475474039,
+  }
+  */
 
   return (
     <Wrapper {...restProps}>
@@ -94,25 +99,29 @@ const StakeSection: FC<StakeSectionProps> = ({
       <Tabs>
         <Tab label="Deposit">
           <StakeTabContent
-            decimals={rewards?.decimals ?? 18}
+            decimals={rewards.decimals}
             stakingAddress={stakingAddress}
-            symbol={rewards?.symbol ?? ''}
+            symbol={rewards.symbol}
             tokenAddress={tokenAddress}
             type={DEPOSIT_TYPE}
           />
         </Tab>
         <Tab label="Withdraw">
           <StakeTabContent
-            decimals={rewards?.decimals ?? 18}
+            decimals={rewards.decimals}
             stakingAddress={stakingAddress}
-            symbol={rewards?.symbol ?? ''}
+            symbol={rewards.symbol}
             tokenAddress={tokenAddress}
             type={WITHDRAW_TYPE}
           />
         </Tab>
       </Tabs>
       <StakeInfo isPool2={isPool2} rewards={rewards} />
-      <ClaimBox stakingAddress={stakingAddress} userRewards={rewards?.userRewards ?? 0} />
+      <ClaimBox
+        decimals={rewards.decimals}
+        stakingAddress={stakingAddress}
+        userRewards={rewards.userRewards}
+      />
     </Wrapper>
   )
 }

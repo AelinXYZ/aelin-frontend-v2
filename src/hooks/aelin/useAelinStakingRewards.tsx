@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-
 import { BigNumber } from '@ethersproject/bignumber'
 import Wei from '@synthetixio/wei'
 
@@ -10,26 +8,19 @@ import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useStakingRewardsCall from '@/src/hooks/contracts/useStakingRewardsCall'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
-interface UseAelinStakingRewardsProps {
-  stakingAddress: string
-  tokenAddress: string
-}
-
 export type AelinStakingResponse = {
-  decimals: number | null
-  symbol: string | null
-  userRewards: number
-  userStake: number
-  ethInPool?: number
-  aelinInPool?: number
-  totalAelinStaked: number
+  decimals: number
+  symbol: string
+  userRewards: BigNumber
+  userStake: BigNumber
+  totalStakedBalance: BigNumber
   APY: number
 }
 
-export const useAelinStakingRewards = ({
-  stakingAddress,
-  tokenAddress,
-}: UseAelinStakingRewardsProps): AelinStakingResponse => {
+export const useAelinStakingRewards = (
+  stakingAddress: string,
+  tokenAddress: string,
+): AelinStakingResponse => {
   const { address, appChainId } = useWeb3Connection()
 
   const [totalStakedBalance] = useERC20Call(appChainId, tokenAddress, 'balanceOf', [stakingAddress])
@@ -56,38 +47,18 @@ export const useAelinStakingRewards = ({
     address || ZERO_ADDRESS,
   ])
 
-  if (
-    [
-      decimals,
-      symbol,
-      totalStakedBalance,
-      rewardForDuration,
-      duration,
-      userStake,
-      userRewards,
-    ].some((val) => val === null || typeof val === 'undefined')
-  ) {
-    console.error(new Error('Staking props cannot be empty.'))
+  const yearProRata = ONE_YEAR_IN_SECS / (duration ?? ZERO_BN).toNumber()
+  const totalStakedBalanceInWei = new Wei(BigNumber.from(totalStakedBalance), 18)
+  const rewardForDurationInWei = new Wei(BigNumber.from(rewardForDuration), 18)
+
+  return {
+    decimals: decimals || 18,
+    symbol: symbol || '',
+    userRewards: userRewards || ZERO_BN,
+    userStake: userStake || ZERO_BN,
+    totalStakedBalance: totalStakedBalance || ZERO_BN,
+    APY:
+      (100 * (rewardForDurationInWei.toNumber() * yearProRata)) /
+      totalStakedBalanceInWei.toNumber(),
   }
-
-  const memoizedResult = useMemo(() => {
-    const yearProRata = ONE_YEAR_IN_SECS / (duration ?? ZERO_BN).toNumber()
-    const userRewardsInWei = new Wei(BigNumber.from(userRewards), 18)
-    const userStakeInWei = new Wei(BigNumber.from(userStake), 18)
-    const totalStakedBalanceInWei = new Wei(BigNumber.from(totalStakedBalance), 18)
-    const rewardForDurationInWei = new Wei(BigNumber.from(rewardForDuration), 18)
-
-    return {
-      decimals,
-      symbol,
-      userRewards: userRewardsInWei.toNumber(),
-      userStake: userStakeInWei.toNumber(),
-      totalAelinStaked: totalStakedBalanceInWei.toNumber(),
-      APY:
-        (100 * (rewardForDurationInWei.toNumber() * yearProRata)) /
-        totalStakedBalanceInWei.toNumber(),
-    }
-  }, [decimals, duration, rewardForDuration, symbol, totalStakedBalance, userRewards, userStake])
-
-  return memoizedResult
 }
