@@ -341,7 +341,7 @@ export const Header: React.FC = (props) => {
                       <Ellipsis />
                     </EllipsisButton>
                   }
-                  dropdownPosition={DropdownPosition.center}
+                  dropdownPosition={DropdownPosition.right}
                   items={[
                     <DropdownItem
                       as="a"

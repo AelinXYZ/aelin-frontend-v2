@@ -27,7 +27,6 @@ const SidebarWrapper = styled(BaseCard)`
   flex-direction: column;
   height: fit-content;
   margin-bottom: 20px;
-  min-height: calc(100vh - 120px);
   padding: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
@@ -35,6 +34,7 @@ const SidebarWrapper = styled(BaseCard)`
     border-radius: 12px;
     border: ${(props) => props.theme.card.borderColor};
     margin-bottom: 0;
+    min-height: calc(100vh - 120px);
   }
 `
 
