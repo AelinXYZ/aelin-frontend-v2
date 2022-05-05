@@ -76,7 +76,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const currentStepError = errors ? errors[createDealState.currentStep] : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
 
-  useWarningOnLeavePage(showWarningOnLeave)
+  useWarningOnLeavePage(() => showWarningOnLeave)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

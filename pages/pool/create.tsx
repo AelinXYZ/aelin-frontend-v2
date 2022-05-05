@@ -58,7 +58,7 @@ const Create: NextPage = () => {
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
 
-  useWarningOnLeavePage(showWarningOnLeave)
+  useWarningOnLeavePage(() => showWarningOnLeave)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
