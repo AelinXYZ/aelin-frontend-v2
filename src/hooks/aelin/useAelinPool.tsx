@@ -165,9 +165,7 @@ export const getParsedPool = ({
       end: redemptionInfo
         ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms + vestingPeriod.vesting.ms)
         : null,
-      start: redemptionInfo
-      ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms)
-      : null,
+      start: redemptionInfo ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms) : null,
     },
     hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
     redemption: redemptionInfo,
