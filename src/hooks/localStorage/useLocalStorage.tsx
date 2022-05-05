@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
 
 import useEventListener from '../common/useEventListener'
+import parseJSON from '@/src/utils/parseJSON'
 
 declare global {
   interface WindowEventMap {
@@ -66,12 +67,3 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
 }
 
 export default useLocalStorage
-
-function parseJSON<T>(value: string | null): T | undefined {
-  try {
-    return value === 'undefined' ? undefined : JSON.parse(value ?? '')
-  } catch {
-    console.log('parsing error on', { value })
-    return undefined
-  }
-}

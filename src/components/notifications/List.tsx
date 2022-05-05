@@ -130,7 +130,7 @@ export const List: React.FC = ({ ...restProps }) => {
           )}
         </InfiniteScroll>
       </Table>
-      {data?.length && <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>}
+      {!!data?.length && <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>}
     </TableWrapper>
   )
 }
