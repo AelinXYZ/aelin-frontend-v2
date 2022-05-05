@@ -30,7 +30,7 @@ interface FetcherProps extends NotificationsQueryVariables {
   clearedNotifications?: ClearedNotifications
 }
 
-type ClearedNotifications = {
+export type ClearedNotifications = {
   [key: string]: boolean | undefined
 }
 

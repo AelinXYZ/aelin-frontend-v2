@@ -18,8 +18,8 @@ import {
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { getKeyChainByValue } from '@/src/constants/chains'
-import useAelinNotifications from '@/src/hooks/aelin/useAelinNotifications'
-import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
+import { ClearedNotifications } from '@/src/hooks/aelin/useAelinNotifications'
+import { useNotifications } from '@/src/providers/notificationsProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
 const ButtonClear = styled(ButtonPrimaryLight)`
@@ -34,22 +34,16 @@ const ButtonRemove = styled(BaseButtonRemove)`
   width: var(--dimensions);
 `
 
-type ClearedNotifications = {
-  [key: string]: boolean | undefined
-}
-
 export const List: React.FC = ({ ...restProps }) => {
   const router = useRouter()
-  const [clearedNotifications, setClearedNotifications] = useLocalStorage<ClearedNotifications>(
-    'aelin-cleared-notifications',
-    {},
-  )
   const {
-    data,
-    error: errorNotification,
+    clearedNotifications,
+    errorNotification,
     hasMore,
     nextPage,
-  } = useAelinNotifications(clearedNotifications)
+    notifications,
+    setClearedNotifications,
+  } = useNotifications()
 
   if (errorNotification) {
     throw errorNotification
@@ -70,7 +64,7 @@ export const List: React.FC = ({ ...restProps }) => {
 
   const handleClearAllNotifications = () =>
     setClearedNotifications(
-      data.reduce((resultAcc: ClearedNotifications, { id }) => {
+      notifications.reduce((resultAcc: ClearedNotifications, { id }) => {
         return {
           ...resultAcc,
           [id]: true,
@@ -82,7 +76,7 @@ export const List: React.FC = ({ ...restProps }) => {
     <TableWrapper {...restProps}>
       <Table>
         <InfiniteScroll
-          dataLength={data.length}
+          dataLength={notifications.length}
           hasMore={hasMore}
           loader={
             <Row columns={'1fr'}>
@@ -91,10 +85,10 @@ export const List: React.FC = ({ ...restProps }) => {
           }
           next={nextPage}
         >
-          {!data?.length ? (
+          {!notifications?.length ? (
             <BaseCard>No data.</BaseCard>
           ) : (
-            data.map((item, index) => {
+            notifications.map((item, index) => {
               const { chainId, id, message, poolAddress, triggerStart } = item
               return (
                 <Row
@@ -130,7 +124,9 @@ export const List: React.FC = ({ ...restProps }) => {
           )}
         </InfiniteScroll>
       </Table>
-      {!!data?.length && <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>}
+      {!!notifications?.length && (
+        <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>
+      )}
     </TableWrapper>
   )
 }
