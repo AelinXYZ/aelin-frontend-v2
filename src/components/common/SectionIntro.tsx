@@ -6,10 +6,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
   background-color: ${({ theme: { card } }) => card.backgroundColor};
-  background-image: url('resources/svg/background-1.svg');
-  background-position: 50% 20px;
   background-repeat: no-repeat;
-  background-size: contain;
   margin: 0 0 20px;
   min-height: 180px;
   padding: 20px 40px 18px;
