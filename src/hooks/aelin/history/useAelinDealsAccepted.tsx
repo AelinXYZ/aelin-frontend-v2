@@ -6,9 +6,10 @@ import useSWRInfinite from 'swr/infinite'
 import { DealAccepted_OrderBy, DealAcceptedsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
-import { DEAL_ACCEPTEDS_QUERY_NAME } from '@/src/queries/history/dealAccepteds'
+import { DEALS_ACCEPTED_QUERY_NAME } from '@/src/queries/history/dealsAccepted'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
+import { parsePoolName } from '@/src/utils/parsePoolName'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type ParsedDealAcceptedsHistory = {
@@ -20,16 +21,14 @@ export type ParsedDealAcceptedsHistory = {
   dealTokenAmount: string
 }
 
-const parsePoolName = (name: string) => name.slice(name.indexOf('-') + 1)
-
-export async function fetcherDealAccepteds(variables: DealAcceptedsQueryVariables) {
+export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariables) {
   const allSDK = getAllGqlSDK()
 
   const chainIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
 
   const queryPromises = (): Promise<any>[] =>
     chainIds.map((chainId: ChainsValues) =>
-      allSDK[chainId][DEAL_ACCEPTEDS_QUERY_NAME](variables)
+      allSDK[chainId][DEALS_ACCEPTED_QUERY_NAME](variables)
         .then((res) => {
           return res.dealAccepteds.map((dealAccepted) => {
             const investmentAmount = formatToken(
@@ -92,7 +91,7 @@ const getSwrKey = (
   ]
 }
 
-export default function useAelinDealAccepteds(variables: DealAcceptedsQueryVariables) {
+export default function useAelinDealsAccepted(variables: DealAcceptedsQueryVariables) {
   const {
     data = [],
     error,
@@ -100,9 +99,10 @@ export default function useAelinDealAccepteds(variables: DealAcceptedsQueryVaria
     mutate,
     setSize: setPage,
     size: currentPage,
-  } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherDealAccepteds, {
+  } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherDealsAccepted, {
     revalidateFirstPage: true,
     revalidateOnMount: true,
+    revalidateOnFocus: true,
   })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0

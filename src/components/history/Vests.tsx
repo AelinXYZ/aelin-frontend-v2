@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
@@ -19,7 +19,7 @@ import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
-import useAelinVestsHistory from '@/src/hooks/aelin/history/useAelinVestsHistory'
+import useAelinVests from '@/src/hooks/aelin/history/useAelinVests'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
@@ -78,20 +78,28 @@ export const Vests: React.FC = ({ ...restProps }) => {
     orderDirection: order.orderDirection,
   }
 
-  const { data } = useAelinVestsHistory(variables)
+  const { data, error, hasMore, mutate, nextPage } = useAelinVests(variables)
+
+  useEffect(() => {
+    mutate()
+  }, [mutate])
+
+  if (error) {
+    throw error
+  }
 
   return (
     <TableWrapper {...restProps}>
       <Table>
         <InfiniteScroll
           dataLength={data.length}
-          hasMore={false}
+          hasMore={hasMore}
           loader={
             <Row columns={'1fr'}>
               <Cell justifyContent="center">Loading...</Cell>
             </Row>
           }
-          next={() => console.log('next')}
+          next={nextPage}
         >
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (

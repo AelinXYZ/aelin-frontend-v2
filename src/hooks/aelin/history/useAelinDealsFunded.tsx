@@ -6,9 +6,10 @@ import useSWRInfinite from 'swr/infinite'
 import { DealFunded_OrderBy, DealFundedsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
-import { DEAL_FUNDEDS_QUERY_NAME } from '@/src/queries/history/dealFundeds'
+import { DEALS_FUNDED_QUERY_NAME } from '@/src/queries/history/dealsFunded'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
+import { parsePoolName } from '@/src/utils/parsePoolName'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type ParsedDealFundedsHistory = {
@@ -20,16 +21,14 @@ export type ParsedDealFundedsHistory = {
   amountRaised: string
 }
 
-const parsePoolName = (name: string) => name.slice(name.indexOf('-') + 1)
-
-export async function fetcherDealFundeds(variables: DealFundedsQueryVariables) {
+export async function fetcherDealsFunded(variables: DealFundedsQueryVariables) {
   const allSDK = getAllGqlSDK()
 
   const chainIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
 
   const queryPromises = (): Promise<any>[] =>
     chainIds.map((chainId: ChainsValues) =>
-      allSDK[chainId][DEAL_FUNDEDS_QUERY_NAME](variables)
+      allSDK[chainId][DEALS_FUNDED_QUERY_NAME](variables)
         .then((res) => {
           return res.dealFundeds.map((dealFunded) => {
             const amountFunded = formatToken(
@@ -92,7 +91,7 @@ const getSwrKey = (
   ]
 }
 
-export default function useAelinDealFundeds(variables: DealFundedsQueryVariables) {
+export default function useAelinDealsAccepted(variables: DealFundedsQueryVariables) {
   const {
     data = [],
     error,
@@ -100,9 +99,10 @@ export default function useAelinDealFundeds(variables: DealFundedsQueryVariables
     mutate,
     setSize: setPage,
     size: currentPage,
-  } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherDealFundeds, {
+  } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherDealsFunded, {
     revalidateFirstPage: true,
     revalidateOnMount: true,
+    revalidateOnFocus: true,
   })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0

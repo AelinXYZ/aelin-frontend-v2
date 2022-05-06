@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
@@ -19,7 +19,7 @@ import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
-import useAelinDealsSponsoredHistory from '@/src/hooks/aelin/history/useAelinDealsSponsoredHistory'
+import useAelinDealsSponsored from '@/src/hooks/aelin/history/useAelinDealsSponsored'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
@@ -90,7 +90,11 @@ export const DealsSponsored: React.FC = ({ ...restProps }) => {
     orderDirection: order.orderDirection,
   }
 
-  const { data, error, hasMore, nextPage } = useAelinDealsSponsoredHistory(variables)
+  const { data, error, hasMore, mutate, nextPage } = useAelinDealsSponsored(variables)
+
+  useEffect(() => {
+    mutate()
+  }, [mutate])
 
   if (error) {
     throw error

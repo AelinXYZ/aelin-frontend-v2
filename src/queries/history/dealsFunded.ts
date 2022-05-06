@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
-export const DEAL_FUNDEDS_QUERY_NAME = 'dealFundeds'
+export const DEALS_FUNDED_QUERY_NAME = 'dealFundeds'
 
-export const DEAL_FUNDEDS = gql`
+export const DEALS_FUNDED = gql`
   query dealFundeds(
     $skip: Int
     $first: Int

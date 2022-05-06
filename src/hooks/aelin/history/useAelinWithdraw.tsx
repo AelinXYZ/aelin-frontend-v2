@@ -9,6 +9,7 @@ import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { WITHDRAWS_QUERY_NAME } from '@/src/queries/history/withdraws'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
+import { parsePoolName } from '@/src/utils/parsePoolName'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type ParsedWithdrawsHistory = {
@@ -18,8 +19,6 @@ export type ParsedWithdrawsHistory = {
   timestamp: Date
   amountWithdrawn: string
 }
-
-const parsePoolName = (name: string) => name.slice(name.indexOf('-') + 1)
 
 export async function fetcherWithdraws(variables: WithdrawsQueryVariables) {
   const allSDK = getAllGqlSDK()
@@ -97,6 +96,7 @@ export default function useAelinWithdraw(variables: WithdrawsQueryVariables) {
   } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherWithdraws, {
     revalidateFirstPage: true,
     revalidateOnMount: true,
+    revalidateOnFocus: true,
   })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0

@@ -6,9 +6,10 @@ import useSWRInfinite from 'swr/infinite'
 import { DealSponsored_OrderBy, DealSponsoredsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
-import { DEAL_SPONSOREDS_QUERY_NAME } from '@/src/queries/history/dealSponsoreds'
+import { DEALS_SPONSORED_QUERY_NAME } from '@/src/queries/history/dealsSponsored'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
+import { parsePoolName } from '@/src/utils/parsePoolName'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type ParsedDealSponsoredHistory = {
@@ -21,16 +22,14 @@ export type ParsedDealSponsoredHistory = {
   totalInvested: string
 }
 
-const parsePoolName = (name: string) => name.slice(name.indexOf('-') + 1)
-
-export async function fetcherDealSponsored(variables: DealSponsoredsQueryVariables) {
+export async function fetcherDealsSponsored(variables: DealSponsoredsQueryVariables) {
   const allSDK = getAllGqlSDK()
 
   const chainIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
 
   const queryPromises = (): Promise<any>[] =>
     chainIds.map((chainId: ChainsValues) =>
-      allSDK[chainId][DEAL_SPONSOREDS_QUERY_NAME](variables)
+      allSDK[chainId][DEALS_SPONSORED_QUERY_NAME](variables)
         .then((res) => {
           return res.dealSponsoreds.map((dealSponsored) => {
             const totalInvested = formatToken(
@@ -68,9 +67,9 @@ export async function fetcherDealSponsored(variables: DealSponsoredsQueryVariabl
     )
 
   try {
-    const dealSponsoredByChainResponses = await Promise.allSettled(queryPromises())
+    const dealsSponsoredByChainResponses = await Promise.allSettled(queryPromises())
 
-    let result = dealSponsoredByChainResponses
+    let result = dealsSponsoredByChainResponses
       .filter(isSuccessful)
       .reduce((resultAcc: ParsedDealSponsoredHistory[], { value }) => [...resultAcc, ...value], [])
 
@@ -101,7 +100,7 @@ const getSwrKey = (
   ]
 }
 
-export default function useAelinDealSponsored(variables: DealSponsoredsQueryVariables) {
+export default function useAelinDealsSponsored(variables: DealSponsoredsQueryVariables) {
   const {
     data = [],
     error,
@@ -109,9 +108,10 @@ export default function useAelinDealSponsored(variables: DealSponsoredsQueryVari
     mutate,
     setSize: setPage,
     size: currentPage,
-  } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherDealSponsored, {
+  } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherDealsSponsored, {
     revalidateFirstPage: true,
     revalidateOnMount: true,
+    revalidateOnFocus: true,
   })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0

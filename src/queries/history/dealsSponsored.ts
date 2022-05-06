@@ -1,35 +1,35 @@
 import gql from 'graphql-tag'
 
-export const DEAL_ACCEPTEDS_QUERY_NAME = 'dealAccepteds'
+export const DEALS_SPONSORED_QUERY_NAME = 'dealSponsoreds'
 
-export const DEAL_ACCEPTEDS = gql`
-  query dealAccepteds(
+export const DEALS_SPONSORED = gql`
+  query dealSponsoreds(
     $skip: Int
     $first: Int
-    $orderBy: DealAccepted_orderBy
+    $orderBy: DealSponsored_orderBy
     $orderDirection: OrderDirection
-    $where: DealAccepted_filter
+    $where: DealSponsored_filter
   ) {
-    dealAccepteds(
+    dealSponsoreds(
       skip: $skip
       first: $first
       orderBy: $orderBy
       orderDirection: $orderDirection
       where: $where
     ) {
-      userAddress
       timestamp
-      investmentAmount
-      dealTokenAmount
+      amountEarned
+      totalAccepted
+      totalInvested
       pool {
         id
         name
-        sponsor
         purchaseTokenSymbol
         purchaseTokenDecimals
+        sponsorFee
         deal {
-          underlyingDealTokenDecimals
           underlyingDealTokenSymbol
+          underlyingDealTokenDecimals
         }
       }
     }

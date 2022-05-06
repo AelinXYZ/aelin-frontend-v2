@@ -9,6 +9,7 @@ import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEPOSITS_QUERY_NAME } from '@/src/queries/history/deposits'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
+import { parsePoolName } from '@/src/utils/parsePoolName'
 import { formatToken } from '@/src/web3/bigNumber'
 
 export type ParsedDepositsHistory = {
@@ -19,8 +20,6 @@ export type ParsedDepositsHistory = {
   amountDeposited: string
   sponsor: string
 }
-
-const parsePoolName = (name: string) => name.slice(name.indexOf('-') + 1)
 
 export async function fetcherDeposits(variables: DepositsQueryVariables) {
   const allSDK = getAllGqlSDK()
@@ -98,6 +97,7 @@ export default function useAelinDeposits(variables: DepositsQueryVariables) {
   } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherDeposits, {
     revalidateFirstPage: true,
     revalidateOnMount: true,
+    revalidateOnFocus: true,
   })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0
