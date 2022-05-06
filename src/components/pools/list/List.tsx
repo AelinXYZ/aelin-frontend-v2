@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import { getAddress } from '@ethersproject/address'
@@ -10,6 +9,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
   Row,
+  RowLink,
   Table,
   TableHead,
   TableWrapper,
@@ -34,7 +34,6 @@ export const List: React.FC<{
   setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
-  const router = useRouter()
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
 
   if (error) {
@@ -142,14 +141,10 @@ export const List: React.FC<{
                 start,
               } = pool
               return (
-                <Row
-                  as="a"
+                <RowLink
                   columns={columns.widths}
-                  hasHover
+                  href={`/pool/${getKeyChainByValue(network)}/${id}`}
                   key={id}
-                  onClick={() => {
-                    router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                  }}
                 >
                   <NameCell badge="3">{name.split('aePool-').pop()}</NameCell>
                   <Cell>
@@ -171,7 +166,7 @@ export const List: React.FC<{
                     {investmentTokenSymbol}
                   </Cell>
                   <Stage stage={stage.toLowerCase()}> {getStatusText({ poolStatus: stage })}</Stage>
-                </Row>
+                </RowLink>
               )
             })
           )}

@@ -1,15 +1,54 @@
 import { useRouter } from 'next/router'
+import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonPrimaryLight,
+  ButtonPrimaryLightSm,
+} from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonRemove as BaseButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
-import { Cell, Row, Table, TableWrapper } from '@/src/components/pureStyledComponents/common/Table'
-import { Chains, getKeyChainByValue } from '@/src/constants/chains'
+import {
+  Cell,
+  LinkCell,
+  Row,
+  Table,
+  TableWrapper,
+} from '@/src/components/pureStyledComponents/common/Table'
+import { getKeyChainByValue } from '@/src/constants/chains'
+import { ClearedNotifications } from '@/src/hooks/aelin/useAelinNotifications'
+import { useNotifications } from '@/src/providers/notificationsProvider'
+import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+const ButtonClear = styled(ButtonPrimaryLight)`
+  margin: 20px auto 0;
+`
+
+const ButtonRemove = styled(BaseButtonRemove)`
+  --dimensions: 24px;
+
+  background-size: 12px;
+  height: var(--dimensions);
+  width: var(--dimensions);
+`
 
 export const List: React.FC = ({ ...restProps }) => {
   const router = useRouter()
+  const {
+    clearedNotifications,
+    errorNotification,
+    hasMore,
+    nextPage,
+    notifications,
+    setClearedNotifications,
+  } = useNotifications()
+
+  if (errorNotification) {
+    throw errorNotification
+  }
+
   const columns = {
     alignment: {
       seePool: 'right',
@@ -17,95 +56,77 @@ export const List: React.FC = ({ ...restProps }) => {
     widths: '140px 1fr 120px',
   }
 
-  const data = [
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      message: 'Welcome to Aelin! Interested in learning some of the basics? Head to our docs.',
-      network: Chains.kovan,
-      link: { href: 'https://docs.aelin.xyz/', title: 'Learn more' },
-    },
-    {
-      date: 'Jan 1, 2022 10:00AM',
-      message:
-        "You've been whitelisted to the Nukevaults.com private pool. Private pools are closed to a select group of investors.",
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Feb 1, 2022 10:00AM',
-      message:
-        'A deal has been proposed in the Nukevaults.com pool. If you do not accept, it will be treated as declining the deal.',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Mar 1, 2022 11:00AM',
-      message: "You're eligible for a second round of investing in the Nukevaults.com pool.",
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Apr 1, 2022 01:00PM',
-      message: 'The vesting cliff countdown has begun in the Nukevaults.com pool.',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-  ]
+  const handleClearSingleNotification = (id: string) =>
+    setClearedNotifications((prevNotifications) => ({
+      ...prevNotifications,
+      [id]: true,
+    }))
+
+  const handleClearAllNotifications = () =>
+    setClearedNotifications(
+      notifications.reduce((resultAcc: ClearedNotifications, { id }) => {
+        return {
+          ...resultAcc,
+          [id]: true,
+        }
+      }, clearedNotifications),
+    )
 
   return (
     <TableWrapper {...restProps}>
       <Table>
         <InfiniteScroll
-          dataLength={data.length}
-          hasMore={false}
+          dataLength={notifications.length}
+          hasMore={hasMore}
           loader={
             <Row columns={'1fr'}>
               <Cell justifyContent="center">Loading...</Cell>
             </Row>
           }
-          next={() => console.log('next')}
+          next={nextPage}
         >
-          {!data.length ? (
+          {!notifications?.length ? (
             <BaseCard>No data.</BaseCard>
           ) : (
-            data.map((item, index) => {
-              const { date, id, link, message, network } = item
+            notifications.map((item, index) => {
+              const { chainId, id, message, poolAddress, triggerStart } = item
               return (
                 <Row
                   columns={columns.widths}
                   hasHover
                   key={index}
-                  onClick={() => {
-                    if (link) {
-                      window.open(link.href, '_blank')
-                    } else {
-                      router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                    }
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
                   }}
                 >
-                  <Cell>{date}</Cell>
+                  <Cell>{formatDate(triggerStart, DATE_DETAILED)}</Cell>
                   <Cell light>{message}</Cell>
-                  <Cell justifyContent={columns.alignment.seePool}>
-                    {link ? (
-                      <ButtonPrimaryLightSm as="a" href={link.href} target="_blank">
-                        {link.title}
-                      </ButtonPrimaryLightSm>
-                    ) : (
-                      <ButtonPrimaryLightSm
-                        onClick={() => {
-                          router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                        }}
-                      >
-                        Go to pool
-                      </ButtonPrimaryLightSm>
-                    )}
-                  </Cell>
+                  <LinkCell justifyContent={columns.alignment.seePool}>
+                    <ButtonPrimaryLightSm
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                      }}
+                    >
+                      Go to pool
+                    </ButtonPrimaryLightSm>
+                    <ButtonRemove
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleClearSingleNotification(id)
+                      }}
+                    />
+                  </LinkCell>
                 </Row>
               )
             })
           )}
         </InfiniteScroll>
       </Table>
+      {!!notifications?.length && (
+        <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>
+      )}
     </TableWrapper>
   )
 }

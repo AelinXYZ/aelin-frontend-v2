@@ -1,19 +1,23 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useReducer, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
 
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
-import { useAelinPoolCreateTxWithModal } from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
+import {
+  getPoolCreatedId,
+  useAelinPoolCreateTransaction,
+} from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { isDuration } from '@/src/utils/isDuration'
-import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
 
 export enum CreatePoolSteps {
@@ -299,22 +303,20 @@ export const getCreatePoolStepIndicatorData = (
     title: createPoolConfig[step].title,
   }))
 
-const LOCAL_STORAGE_STATE_KEY = 'aelin-createPoolState'
 export default function useAelinCreatePool(chainId: ChainsValues) {
-  // Get saved state in localstorage only once
-  const { current: savedState } = useRef(
-    removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
-  )
-
-  const [createPoolState, dispatch] = useReducer(createPoolReducer, savedState || initialState)
+  const [createPoolState, dispatch] = useReducer(createPoolReducer, initialState)
   const [errors, setErrors] = useState<poolErrors>()
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-  const {
-    estimate: createPoolEstimate,
-    getModalTransaction,
-    setShowModalTransaction,
-  } = useAelinPoolCreateTxWithModal(contracts.POOL_CREATE.address[chainId], 'createPool')
+  const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
+
+  const router = useRouter()
+
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+
+  const { estimate: createPoolEstimate, execute } = useAelinPoolCreateTransaction(
+    contracts.POOL_CREATE.address[chainId],
+    'createPool',
+  )
 
   const moveStep = (value: 'next' | 'prev' | CreatePoolSteps) => {
     const { currentStep } = createPoolState
@@ -346,24 +348,47 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       sponsorFee,
     } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
-    setShowModalTransaction(true)
+    setConfigAndOpenModal({
+      estimate: () =>
+        createPoolEstimate([
+          poolName,
+          poolSymbol,
+          poolCap,
+          investmentToken,
+          dealDeadLineDuration,
+          sponsorFee,
+          investmentDeadLineDuration,
+          poolAddresses,
+          poolAddressesAmounts,
+        ]),
+      title: 'Create pool',
+      onConfirm: async (txGasOptions: GasOptions) => {
+        setShowWarningOnLeave(false)
 
-    try {
-      await createPoolEstimate([
-        poolName,
-        poolSymbol,
-        poolCap,
-        investmentToken,
-        dealDeadLineDuration,
-        sponsorFee,
-        investmentDeadLineDuration,
-        poolAddresses,
-        poolAddressesAmounts,
-      ])
-    } catch (e) {
-      console.log(e)
-      setShowModalTransaction(false)
-    }
+        try {
+          const receipt = await execute(
+            [
+              poolName,
+              poolSymbol,
+              poolCap,
+              investmentToken,
+              dealDeadLineDuration,
+              sponsorFee,
+              investmentDeadLineDuration,
+              poolAddresses,
+              poolAddressesAmounts,
+            ],
+            txGasOptions,
+          )
+          if (receipt) {
+            router.push(`/pool/${getKeyChainByValue(chainId)}/${getPoolCreatedId(receipt)}`)
+          }
+        } catch (error) {
+          console.log(error)
+          setShowWarningOnLeave(true)
+        }
+      },
+    })
   }
 
   const setPoolField = useCallback(
@@ -407,11 +432,11 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         chainId,
       ),
     )
-    localStorage.setItem(
-      LOCAL_STORAGE_STATE_KEY,
-      JSON.stringify(createPoolState, (k, v) => (v === undefined ? null : v)),
-    )
   }, [createPoolState, chainId])
+
+  useEffect(() => {
+    setShowWarningOnLeave(true)
+  }, [createPoolState])
 
   return {
     setPoolField,
@@ -420,11 +445,8 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     isFinalStep,
     errors,
     isFirstStep,
-    isSubmitting,
     handleCreatePool,
-    getModalTransaction,
-    setShowModalTransaction,
-    setIsSubmitting,
-    resetFields: () => dispatch({ type: 'reset' }),
+    isSubmitting,
+    showWarningOnLeave,
   }
 }

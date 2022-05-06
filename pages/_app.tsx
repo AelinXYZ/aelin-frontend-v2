@@ -10,12 +10,17 @@ import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
 import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
+import TransactionModalProvider from '@/src/providers/transactionModalProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
 // Should be rendered on client side only!
 const GeneralContextProvider = dynamic(() => import('@/src/providers/generalProvider'), {
+  ssr: false,
+})
+
+const NotificationsProvider = dynamic(() => import('@/src/providers/notificationsProvider'), {
   ssr: false,
 })
 
@@ -53,13 +58,17 @@ function App({ Component, pageProps }: AppProps) {
         >
           <Web3ConnectionProvider>
             <GeneralContextProvider>
-              <GlobalStyle />
-              <Header />
-              <SafeSuspense>
-                <Component {...pageProps} />
-                <Toast />
-              </SafeSuspense>
-              <TooltipConfig />
+              <TransactionModalProvider>
+                <NotificationsProvider>
+                  <GlobalStyle />
+                  <Header />
+                  <SafeSuspense>
+                    <Component {...pageProps} />
+                    <Toast />
+                  </SafeSuspense>
+                  <TooltipConfig />
+                </NotificationsProvider>
+              </TransactionModalProvider>
             </GeneralContextProvider>
           </Web3ConnectionProvider>
         </SWRConfig>

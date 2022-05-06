@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { ReactElement, useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
@@ -5,16 +6,16 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
 import { Duration } from 'date-fns'
 
-import { ChainsValues } from '@/src/constants/chains'
+import { useAelinPoolTransaction } from '../contracts/useAelinPoolTransaction'
+import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token, isToken } from '@/src/constants/token'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinPoolTxWithModal } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getERC20Data } from '@/src/utils/getERC20Data'
 import { isDuration } from '@/src/utils/isDuration'
-import removeNullsFromObject from '@/src/utils/removeNullsFromObject'
 import { shortenAddress } from '@/src/utils/string'
 import validateCreateDeal, { dealErrors } from '@/src/utils/validate/createDeal'
 
@@ -140,7 +141,10 @@ type createDealValues = {
   holderFundingDuration: number
 }
 
-const parseValuesToCreateDeal = (createDealState: CreateDealState): createDealValues => {
+const parseValuesToCreateDeal = (
+  createDealState: CreateDealState,
+  investmentTokenDecimals: number,
+): createDealValues => {
   const {
     counterPartyAddress,
     counterPartyFundingPeriod,
@@ -195,7 +199,7 @@ const parseValuesToCreateDeal = (createDealState: CreateDealState): createDealVa
       ? parseUnits(dealTokenTotal.toString(), dealToken?.decimals)
       : ZERO_BN,
     purchaseTokenTotal: totalPurchaseAmount
-      ? parseUnits(totalPurchaseAmount.toString(), 18)
+      ? parseUnits(totalPurchaseAmount.toString(), investmentTokenDecimals)
       : ZERO_BN,
     vestingPeriodDuration,
     vestingCliffDuration,
@@ -294,25 +298,21 @@ export const getCreateDealStepIndicatorData = (
     title: createDealConfig[step].title,
   }))
 
-const LOCAL_STORAGE_STATE_KEY = 'aelin-createDealState'
 export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAelinPool) {
   const { readOnlyAppProvider } = useWeb3Connection()
-
-  // Get saved state in localstorage only once
-  const { current: savedState } = useRef(
-    removeNullsFromObject(JSON.parse(localStorage.getItem(LOCAL_STORAGE_STATE_KEY) as string)),
-  )
-
-  const [createDealState, dispatch] = useReducer(createDealReducer, savedState || initialState)
+  const router = useRouter()
+  const [createDealState, dispatch] = useReducer(createDealReducer, initialState)
   const [errors, setErrors] = useState<dealErrors>()
   const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
-  const {
-    estimate: createDealEstimate,
-    getModalTransaction,
-    setShowModalTransaction,
-  } = useAelinPoolTxWithModal(pool.address, 'createDeal')
+  const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
+
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+
+  const { estimate: createDealEstimate, execute } = useAelinPoolTransaction(
+    pool.address,
+    'createDeal',
+  )
 
   const moveStep = (value: 'next' | 'prev' | CreateDealSteps) => {
     const { currentStep } = createDealState
@@ -332,7 +332,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   }
 
   const handleCreateDeal = async () => {
-    setIsSubmitting(true)
     const {
       holderAddress,
       holderFundingDuration,
@@ -343,7 +342,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
       underlyingDealTokenTotal,
       vestingCliffDuration,
       vestingPeriodDuration,
-    } = parseValuesToCreateDeal(createDealState)
+    } = parseValuesToCreateDeal(createDealState, pool.investmentTokenDecimals)
 
     try {
       await createDealEstimate([
@@ -357,11 +356,52 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
         holderAddress,
         holderFundingDuration,
       ])
-      setIsSubmitting(false)
     } catch (e) {
       console.log(e)
-      setIsSubmitting(false)
     }
+
+    setConfigAndOpenModal({
+      estimate: () =>
+        createDealEstimate([
+          underlyingDealToken,
+          purchaseTokenTotal,
+          underlyingDealTokenTotal,
+          vestingPeriodDuration,
+          vestingCliffDuration,
+          proRataRedemptionDuration,
+          openRedemptionDuration,
+          holderAddress,
+          holderFundingDuration,
+        ]),
+
+      title: 'Create deal',
+      onConfirm: async (txGasOptions: GasOptions) => {
+        setShowWarningOnLeave(false)
+
+        try {
+          const receipt = await execute(
+            [
+              underlyingDealToken,
+              purchaseTokenTotal,
+              underlyingDealTokenTotal,
+              vestingPeriodDuration,
+              vestingCliffDuration,
+              proRataRedemptionDuration,
+              openRedemptionDuration,
+              holderAddress,
+              holderFundingDuration,
+            ],
+            txGasOptions,
+          )
+          if (receipt) {
+            router.push(`/pool/${getKeyChainByValue(chainId)}/${pool.address}`)
+          }
+        } catch (error) {
+          console.log(error)
+          setShowWarningOnLeave(true)
+        }
+      },
+    })
   }
 
   const setDealField = useCallback(
@@ -406,10 +446,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
         chainId,
       ),
     )
-    localStorage.setItem(
-      LOCAL_STORAGE_STATE_KEY,
-      JSON.stringify(createDealState, (k, v) => (v === undefined ? null : v)),
-    )
   }, [createDealState, chainId, pool])
 
   useEffect(() => {
@@ -436,9 +472,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     isSubmitting,
     investmentTokenInfo,
     handleCreateDeal,
-    getModalTransaction,
-    setShowModalTransaction,
-    setIsSubmitting,
-    resetFields: () => dispatch({ type: 'reset' }),
+    showWarningOnLeave,
   }
 }

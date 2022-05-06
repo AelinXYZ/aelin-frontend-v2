@@ -8,13 +8,16 @@ import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
+import FundDeal from '@/src/components/pools/actions/FundDeal'
 import Invest from '@/src/components/pools/actions/Invest'
+import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
 import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPool'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { ChainsValues } from '@/src/constants/chains'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { PoolAction, PoolStatus } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
@@ -28,9 +31,10 @@ const MainGrid = styled.div`
 `
 
 const ContentGrid = styled.div`
+  column-gap: 70px;
   display: grid;
   row-gap: 20px;
-  column-gap: 70px;
+  width: 100%;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     grid-template-columns: 1fr 1fr;
@@ -47,7 +51,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     chainId,
     poolAddress as string,
   )
-  const mockedPoolVisibility = '???'
+  const { getExplorerUrl } = useWeb3Connection()
 
   if (!current) {
     throw new Error('There was no possible to calculate pool current status')
@@ -66,7 +70,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       <Head>
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
-      <PageTitle subTitle={mockedPoolVisibility} title={pool.nameFormatted} />
+      <PageTitle
+        href={getExplorerUrl(pool.dealAddress || '')}
+        subTitle={pool.poolType}
+        title={pool.nameFormatted}
+      />
       <RightTimelineLayout activeStep={PoolTimelineState.poolCreation}>
         <MainGrid>
           <CardWithTitle
@@ -116,9 +124,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
           >
             {!actions.length && <div>No actions available</div>}
             {action === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
+            {action === PoolAction.AwaitingForDeal && <WaitingForDeal />}
             {action === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
             {action === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-            {action === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
+            {action === PoolAction.AcceptDeal && <AcceptDeal dealing={dealing} pool={pool} />}
+            {action === PoolAction.FundDeal && <FundDeal pool={pool} />}
           </ActionTabs>
         </MainGrid>
       </RightTimelineLayout>

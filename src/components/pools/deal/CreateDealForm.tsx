@@ -38,6 +38,7 @@ import useAelinCreateDeal, {
   getCreateDealSummaryData,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
+import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const StepIndicator = styled(BaseStepIndicator)`
@@ -60,23 +61,22 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const {
     createDealState,
     errors,
-    getModalTransaction,
     handleCreateDeal,
     investmentTokenInfo,
     isFinalStep,
     isFirstStep,
     isSubmitting,
     moveStep,
-    resetFields,
     setDealField,
-    setIsSubmitting,
-    setShowModalTransaction,
+    showWarningOnLeave,
   } = useAelinCreateDeal(appChainId, pool)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createDealState.currentStep] : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
+
+  useWarningOnLeavePage(() => showWarningOnLeave)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -105,23 +105,12 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     totalPurchase,
   ])
 
-  const onCompleteTx = () => {
-    resetFields()
-    setShowModalTransaction(false)
-    setIsSubmitting(false)
-    router.reload()
-  }
-
-  const onErrorTx = () => {
-    setIsSubmitting(false)
-  }
-
   return (
     <>
       <Head>
         <title>Deal creation</title>
       </Head>
-      <PageTitle subTitle={'???'} title={`${pool.nameFormatted}`} />
+      <PageTitle subTitle={pool.poolType} title={`${pool.nameFormatted}`} />
       <RightTimelineLayout activeStep={PoolTimelineState.dealCreation}>
         <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
           <StepIndicator
@@ -165,7 +154,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                         key={`${step}_button`}
                         onClick={() => {
                           handleCreateDeal()
-                          setShowModalTransaction(true)
                         }}
                       >
                         Create Deal
@@ -197,7 +185,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
           }}
         />
       )}
-      {getModalTransaction('Create deal', onCompleteTx, onErrorTx)}
       <Link href={`/pool/${network}/${poolAddress}`} passHref>
         <Button as="a">Cancel</Button>
       </Link>

@@ -1,14 +1,17 @@
 import { useMemo } from 'react'
 
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import uniq from 'lodash/uniq'
 import ms from 'ms'
+import { accepts } from 'react-papaparse/dist/utils'
 
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useProRataAmount } from '@/src/hooks/aelin/useProRataAmount'
 import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -69,18 +72,30 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
 }
 
 function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
-  const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
+  const { data: userAllocationStatRes, refetch: refetchUserWithdrawn } = useUserAllocationStat(
+    pool.address,
+    chainId,
+  )
+  const { maxProRataAmountBalance, refetchMaxProRataAmountBalance } = useProRataAmount(pool)
 
   const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
 
   return {
+    refetchUserStats: () => {
+      refetchUserWithdrawn()
+      refetchMaxProRataAmountBalance()
+    },
     userTotalWithdrawn: {
       raw: userAmountWithdrawn,
       formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
     },
     userProRataAllocation: {
-      raw: ZERO_BN,
-      formatted: formatToken(ZERO_BN, pool.investmentTokenDecimals),
+      raw: maxProRataAmountBalance as BigNumber,
+      formatted:
+        formatToken(
+          (maxProRataAmountBalance as BigNumberish) || ZERO_BN,
+          pool.investmentTokenDecimals,
+        ) || '0',
     },
   }
 }
@@ -107,7 +122,7 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
     }
 
     // Seeking deal
-    if (isAfter(now, pool.purchaseExpiry) && !pool.dealAddress) {
+    if (isAfter(now, pool.purchaseExpiry) && !pool.deal?.holderAlreadyDeposited) {
       return {
         current: PoolStatus.SeekingDeal,
         history: [PoolStatus.Funding, PoolStatus.SeekingDeal],
@@ -177,10 +192,10 @@ function useUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserR
     }
 
     if (wa === pool.deal?.holderAddress) {
-      return UserRole.Investor
+      return UserRole.Holder
     }
 
-    return UserRole.Visitor
+    return UserRole.Investor
   }, [walletAddress, pool])
 }
 
@@ -222,22 +237,32 @@ function useUserActions(
     // Seeking Deal
     if (currentStatus === PoolStatus.SeekingDeal) {
       const actions: PoolAction[] = []
-      if (userRole === UserRole.Sponsor) {
+      if (userRole === UserRole.Sponsor && !pool.dealAddress) {
         actions.push(PoolAction.CreateDeal)
       }
+
+      if (!pool.dealAddress) {
+        actions.push(PoolAction.AwaitingForDeal)
+      }
+
       if (isAfter(now, pool.dealDeadline)) {
         actions.push(PoolAction.Withdraw)
+
+        // if(sponsor && !accepts) {
+        //   create another deal
+        // }
       }
+
+      if (userRole === UserRole.Holder && pool.deal && !pool.deal.holderAlreadyDeposited) {
+        actions.push(PoolAction.FundDeal)
+      }
+
       return uniq(actions)
     }
 
     // Deal Presented
     if (currentStatus === PoolStatus.DealPresented) {
       const actions: PoolAction[] = []
-
-      if (userRole === UserRole.Holder && !pool.deal?.holderAlreadyDeposited) {
-        actions.push(PoolAction.FundDeal)
-      }
 
       if (pool.deal) {
         if (pool.deal.redemption && isBefore(now, pool.deal.redemption?.end)) {
@@ -272,7 +297,7 @@ function useUserActions(
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
-    refreshInterval: ms('30s'),
+    refreshInterval: ms('10s'),
   })
   const { address } = useWeb3Connection()
 
@@ -299,6 +324,6 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
       tabs,
       actions,
     }),
-    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs, actions],
+    [poolResponse, refetchPool, derivedStatus, proRata, funding, dealing, userRole, tabs, actions],
   )
 }

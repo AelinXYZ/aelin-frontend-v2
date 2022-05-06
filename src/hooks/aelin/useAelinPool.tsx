@@ -47,6 +47,9 @@ export type ParsedAelinPool = {
   redeem: DetailedNumber
   withdrawn: DetailedNumber
   poolStatus: PoolStatus
+  poolType: string
+  vestingStarts: Date
+  vestingEnds: Date
   deal?: {
     name: string
     symbol: string
@@ -73,6 +76,7 @@ export type ParsedAelinPool = {
         formatted: string
       }
       end: Date | null
+      start: Date | null
     }
     hasDealOpenPeriod: boolean
     redemption: {
@@ -106,6 +110,7 @@ export const getParsedPool = ({
     poolStatus: pool.poolStatus,
     name: pool.name,
     nameFormatted: pool.name.split('aePool-').pop() || '',
+    poolType: pool.hasAllowList ? 'Private' : 'Public',
     address: poolAddress,
     start: getPoolCreatedDate(pool),
     investmentToken: pool.purchaseToken,
@@ -123,6 +128,8 @@ export const getParsedPool = ({
     withdrawn: getAmountWithdrawn(pool.totalAmountWithdrawn || ZERO_BN, purchaseTokenDecimals),
     redeem: getAmountRedeem(pool.totalAmountAccepted || ZERO_BN, purchaseTokenDecimals),
     deal: undefined,
+    vestingStarts: new Date(pool.vestingStarts),
+    vestingEnds: new Date(pool.vestingEnds),
   }
 
   const dealDetails = pool.deal
@@ -164,6 +171,7 @@ export const getParsedPool = ({
       end: redemptionInfo
         ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms + vestingPeriod.vesting.ms)
         : null,
+      start: redemptionInfo ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms) : null,
     },
     hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
     redemption: redemptionInfo,
@@ -195,7 +203,7 @@ export default function useAelinPool(
   }
 
   if (!poolCreatedData?.poolCreated) {
-    throw Error('There was not possible to fetch pool id: ' + poolAddress)
+    throw Error('It was not possible to fetch pool id: ' + poolAddress)
   }
 
   const pool = poolCreatedData.poolCreated as PoolCreated

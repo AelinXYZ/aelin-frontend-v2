@@ -26,6 +26,9 @@ gql`
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
+
+    vestingEnds
+    vestingStarts
   }
 `
 
@@ -34,6 +37,7 @@ gql`
     id
     name
     symbol
+    poolAddress
     underlyingDealToken
     underlyingDealTokenSymbol
     underlyingDealTokenDecimals
@@ -48,10 +52,45 @@ gql`
 
     vestingPeriod
     vestingCliff
+    vestingPeriodStarts
 
     holder
     isDealFunded
     holderFundingExpiration
     holderFundingDuration
+  }
+`
+
+gql`
+  fragment NotificationDetails on Notification {
+    id
+    type
+    message
+    pool {
+      ...PoolDetails
+      deal {
+        ...PoolDeal
+      }
+    }
+    triggerStart
+    triggerEnd
+    target
+  }
+`
+
+gql`
+  fragment DealAcceptedDetails on DealAccepted {
+    id
+    userAddress
+    timestamp
+    poolName
+    investmentAmount
+    dealTokenAmount
+    pool {
+      ...PoolDetails
+      deal {
+        ...PoolDeal
+      }
+    }
   }
 `
