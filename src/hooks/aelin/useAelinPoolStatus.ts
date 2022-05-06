@@ -296,10 +296,10 @@ function useUserActions(
 
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
-    refreshInterval: ms('10s'),
+    refreshInterval: ms('30s'),
     shouldRetryOnError: true,
-    errorRetryInterval: ms('1s'),
-    errorRetryCount: 6,
+    errorRetryInterval: ms('20s'),
+    errorRetryCount: 10,
   })
 
   const { address } = useWeb3Connection()
