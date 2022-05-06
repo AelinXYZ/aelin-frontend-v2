@@ -54,6 +54,8 @@ export const convertToSeconds = ({
   minutes: number
 }) => days * ONE_DAY_IN_SECS + hours * ONE_HOUR_IN_SECS + minutes * ONE_MINUTE_IN_SECS
 
+export const emptyDuration = { days: undefined, hours: undefined, minutes: undefined }
+
 export const getDuration = (startDate: Date, days: number, hours: number, minutes: number) => {
   const startTimestamp = startDate.getTime()
   const endTimestamp = add(startDate, {

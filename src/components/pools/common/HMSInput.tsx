@@ -15,6 +15,7 @@ interface InputDeadlineProps {
   onChange: (duration: Duration) => void
   inputNames?: string[]
   autofocusOnRender?: boolean
+  disabled?: boolean
 }
 
 enum durationTypes {
@@ -28,6 +29,7 @@ export const HMSInput = ({
   onChange,
   inputNames = [durationTypes.days, durationTypes.hours, durationTypes.minutes],
   autofocusOnRender,
+  disabled = false,
   ...restProps
 }: InputDeadlineProps) => {
   const [duration, setDuration] = useState(defaultValue)
@@ -54,6 +56,7 @@ export const HMSInput = ({
     <Grid {...restProps}>
       <Textfield
         defaultValue={duration?.days}
+        disabled={disabled}
         id="durationDays"
         min={0}
         name={inputNames[0]}
@@ -64,6 +67,7 @@ export const HMSInput = ({
       />
       <Textfield
         defaultValue={duration?.hours}
+        disabled={disabled}
         id="durationHours"
         name={inputNames[1]}
         onChange={handleSetDuration}
@@ -72,6 +76,7 @@ export const HMSInput = ({
       />
       <Textfield
         defaultValue={duration?.minutes}
+        disabled={disabled}
         id="durationMinutes"
         name={inputNames[2]}
         onChange={handleSetDuration}

@@ -49,10 +49,12 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   onSetDealField: (value: unknown) => void
   onSetTotalPurchase: (value: string | undefined) => void
   totalPurchase: unknown
+  isOpenPeriodDisabled: boolean
 }
 
 export const DealCreateStepInput: React.FC<Props> = ({
   currentState,
+  isOpenPeriodDisabled,
   onCalculateDealModal,
   onKeyUp,
   onSetDealField,
@@ -132,11 +134,17 @@ export const DealCreateStepInput: React.FC<Props> = ({
       ) : step === CreateDealSteps.counterPartyFundingPeriod ||
         step === CreateDealSteps.vestingCliff ||
         step === CreateDealSteps.proRataPeriod ||
-        step === CreateDealSteps.openPeriod ||
         step === CreateDealSteps.vestingPeriod ? (
         <HMSInput
           autofocusOnRender
           defaultValue={currentState[step]}
+          onChange={(value) => onSetDealField(value)}
+        />
+      ) : step === CreateDealSteps.openPeriod ? (
+        <HMSInput
+          autofocusOnRender
+          defaultValue={currentState[step]}
+          disabled={isOpenPeriodDisabled}
           onChange={(value) => onSetDealField(value)}
         />
       ) : null}

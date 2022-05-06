@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { wei } from '@synthetixio/wei'
@@ -59,6 +59,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const { appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
   const [totalPurchase, setTotalPurchase] = useState<string | undefined>()
+
   const {
     createDealState,
     errors,
@@ -108,6 +109,17 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     totalPurchase,
   ])
 
+  const isOpenPeriodDisabled = useMemo(() => {
+    try {
+      return (
+        Number(createDealState.totalPurchaseAmount) ===
+        wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber()
+      )
+    } catch (error) {
+      return false
+    }
+  }, [createDealState.totalPurchaseAmount, pool.amountInPool.raw, pool.investmentTokenDecimals])
+
   return (
     <>
       <Head>
@@ -133,6 +145,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                   <Description>{text}</Description>
                   <DealCreateStepInput
                     currentState={createDealState}
+                    isOpenPeriodDisabled={isOpenPeriodDisabled}
                     onCalculateDealModal={() => setShowDealCalculationModal(true)}
                     onKeyUp={handleKeyUp}
                     onSetDealField={setDealField}
@@ -140,6 +153,9 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     role="none"
                     totalPurchase={totalPurchase}
                   />
+                  {createDealState.currentStep === CreateDealSteps.openPeriod &&
+                    isOpenPeriodDisabled && <Error>Pool supply maxed.</Error>}
+
                   {currentStepError && typeof currentStepError === 'string' && (
                     <Error>{currentStepError}</Error>
                   )}

@@ -5,6 +5,7 @@ import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
 import { Duration } from 'date-fns'
+import { add, assignWith } from 'lodash'
 
 import { useAelinPoolTransaction } from '../contracts/useAelinPoolTransaction'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
@@ -258,16 +259,35 @@ const createDealReducer = (state: CreateDealState, action: CreateDealAction) => 
   throw new Error(`Unknown action type: ${type}`)
 }
 
+const isEmptyDuration = ({ days, hours, minutes }: Duration) => !days && !hours && !minutes
+
 export const getCreateDealSummaryData = (
   createDealState: CreateDealState,
 ): { title: string; value: string }[] =>
   createDealConfigArr.map((step) => {
     let value = createDealState[step.id]
 
-    if (isDuration(value)) {
+    if (
+      // Duration steps
+      step.id === CreateDealSteps.vestingPeriod ||
+      step.id === CreateDealSteps.vestingCliff ||
+      step.id === CreateDealSteps.openPeriod ||
+      step.id === CreateDealSteps.proRataPeriod ||
+      step.id === CreateDealSteps.counterPartyFundingPeriod
+    ) {
+      value = (
+        step.id === CreateDealSteps.vestingPeriod &&
+        !isEmptyDuration(createDealState[CreateDealSteps.vestingPeriod] as Duration)
+          ? assignWith({}, createDealState[CreateDealSteps.vestingCliff], value, add) // sum vesting clif period + vesting period
+          : step.id === CreateDealSteps.openPeriod &&
+            !isEmptyDuration(createDealState[CreateDealSteps.openPeriod] as Duration)
+          ? assignWith({}, createDealState[CreateDealSteps.proRataPeriod], value, add) // sum open period + pro rate period
+          : value
+      ) as Duration
+
       try {
         value = Object.values(value).some((val) => !!val)
-          ? getFormattedDurationFromNowToDuration(value, 'LLL dd, yyyy HH:mma')
+          ? getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma')
           : undefined
       } catch (e) {
         value = undefined
@@ -278,7 +298,7 @@ export const getCreateDealSummaryData = (
       value = shortenAddress(value?.address)
     }
 
-    if (value && isAddress(value)) {
+    if (typeof value === 'string' && isAddress(value)) {
       value = shortenAddress(value)
     }
 
