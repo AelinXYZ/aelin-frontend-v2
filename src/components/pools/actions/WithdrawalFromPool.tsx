@@ -59,7 +59,7 @@ function WithdrawalFromPool({ pool }: Props) {
           setInputError('')
         }
       },
-      title: `Deposit ${investmentTokenSymbol}`,
+      title: `Withdraw ${investmentTokenSymbol}`,
       estimate: () => withdrawFromPoolEstimate([tokenInputValue]),
     })
   }
