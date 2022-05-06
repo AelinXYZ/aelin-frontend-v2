@@ -39,7 +39,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     }
 
     if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance.raw)) {
-      setInputError('Amount is too big')
+      setInputError('Insufficient balance')
     } else {
       setInputError('')
     }
