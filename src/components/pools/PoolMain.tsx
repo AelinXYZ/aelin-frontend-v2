@@ -60,8 +60,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   const [tab, setTab] = useState<PoolStatus>(tabs[tabs.length - 1])
   const [action, setAction] = useState<PoolAction>(actions[0])
   const dealExists = pool.deal
-  const noActionTabsTitle =
-    !actions.length || action === PoolAction.Invest || action === PoolAction.AwaitingForDeal
+  const noActionTabsTitle = !actions.length || action === PoolAction.Invest
 
   useEffect(() => {
     setAction(actions[0])
