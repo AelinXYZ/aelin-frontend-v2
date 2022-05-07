@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { Docs } from '@/src/components/assets/Docs'
@@ -33,7 +33,7 @@ const Wrapper = styled.header`
   height: ${({ theme }) => theme.header.height};
   margin: 0 0 15px;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     margin-bottom: 20px;
   }
 `
@@ -41,22 +41,21 @@ const Wrapper = styled.header`
 const InnerContainer = styled(BaseInnerContainer)`
   align-items: center;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   max-height: 100%;
+  position: relative;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     ${BaseCardCSS}
+    justify-content: space-between;
     padding: 12px 20px 12px 40px;
-  }
-
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    justify-content: center;
-    padding: 1em 0 0;
   }
 `
 
 const HomeLink = styled.a`
+  position: relative;
   transition: opacity 0.05s linear;
+  z-index: 10;
 
   &:active {
     opacity: 0.7;
@@ -84,13 +83,39 @@ const HeaderDropdown = styled(Dropdown)`
   }
 `
 
-const EndWrapper = styled.div`
+const ResponsiveDropdownCSS = css`
   display: none;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    align-items: center;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: flex;
-    gap: 20px;
+  }
+`
+
+const NetworkDropdown = styled(HeaderDropdown)`
+  ${ResponsiveDropdownCSS}
+`
+
+const WalletDropdown = styled(HeaderDropdown)`
+  ${ResponsiveDropdownCSS}
+`
+
+const EndWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 5;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    justify-content: flex-end;
+    left: auto;
+    position: relative;
+    top: auto;
+    width: auto;
   }
 `
 
@@ -112,9 +137,14 @@ const Item = styled.div`
 `
 
 const Line = styled.div`
-  background: rgba(255, 255, 255, 0.25);
-  height: 24px;
-  width: 1px;
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    background: rgba(255, 255, 255, 0.25);
+    display: block;
+    height: 24px;
+    width: 1px;
+  }
 `
 
 const DropdownButton = styled.div`
@@ -245,7 +275,7 @@ export const Header: React.FC = (props) => {
           </StartWrapper>
           <TopMenu />
           <EndWrapper>
-            <HeaderDropdown
+            <NetworkDropdown
               currentItem={getChainsByEnvironmentArray().findIndex(
                 ({ chainId }) => chainId === walletChainId,
               )}
@@ -269,7 +299,7 @@ export const Header: React.FC = (props) => {
             {isWalletConnected && (
               <>
                 <Line />
-                <HeaderDropdown
+                <WalletDropdown
                   dropdownButtonContent={
                     <DropdownButton>
                       <Metamask />
@@ -311,7 +341,7 @@ export const Header: React.FC = (props) => {
                       <Ellipsis />
                     </EllipsisButton>
                   }
-                  dropdownPosition={DropdownPosition.center}
+                  dropdownPosition={DropdownPosition.right}
                   items={[
                     <DropdownItem
                       as="a"

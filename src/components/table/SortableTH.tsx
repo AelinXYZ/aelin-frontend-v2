@@ -13,6 +13,13 @@ const Wrapper = styled(TH)`
   }
 `
 
+const Text = styled.span`
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
 const Sort = styled(BaseSort)<{ isActive?: boolean }>`
   flex-shrink: 0;
   opacity: ${({ isActive }) => (isActive ? 1 : 0.2)};
@@ -25,7 +32,7 @@ export const SortableTH: React.FC<{
 }> = ({ children, isActive, onClick, ...restProps }) => {
   return (
     <Wrapper onClick={onClick} {...restProps}>
-      {children}
+      <Text>{children}</Text>
       {onClick && <Sort isActive={isActive} />}
     </Wrapper>
   )
