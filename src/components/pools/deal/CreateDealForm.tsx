@@ -90,25 +90,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     }
   }
 
-  useEffect(() => {
-    if (
-      totalPurchase === 'all' &&
-      createDealState.currentStep === CreateDealSteps.totalPurchaseAmount
-    ) {
-      try {
-        setDealField(wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber())
-      } catch (e) {
-        setDealField(0)
-      }
-    }
-  }, [
-    createDealState.currentStep,
-    pool.amountInPool.raw,
-    pool.investmentTokenDecimals,
-    setDealField,
-    totalPurchase,
-  ])
-
   const isOpenPeriodDisabled = useMemo(() => {
     try {
       return (
@@ -144,6 +125,10 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                   <Title>{title}</Title>
                   <Description>{text}</Description>
                   <DealCreateStepInput
+                    amountInPool={wei(
+                      pool.amountInPool.raw,
+                      pool.investmentTokenDecimals,
+                    ).toNumber()}
                     currentState={createDealState}
                     isOpenPeriodDisabled={isOpenPeriodDisabled}
                     onCalculateDealModal={() => setShowDealCalculationModal(true)}
@@ -194,14 +179,16 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       {showDealCalculationModal && (
         <DealCalculationModal
           dealToken={createDealState.dealToken as Token}
-          dealTokenAmount={wei(createDealState.dealTokenTotal, createDealState.dealToken?.decimals)}
           investmentToken={investmentTokenInfo as Token}
-          investmentTokenAmount={wei(pool.amountInPool.raw, investmentTokenInfo?.decimals)}
           onClose={() => setShowDealCalculationModal(false)}
           onConfirm={(value) => {
             setDealField(value)
             setShowDealCalculationModal(false)
           }}
+          totalPurchaseAmount={wei(
+            createDealState.totalPurchaseAmount,
+            pool.investmentTokenDecimals,
+          )}
         />
       )}
       <Link href={`/pool/${network}/${poolAddress}`} passHref>

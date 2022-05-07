@@ -16,14 +16,13 @@ import { GasOptions, useTransactionModal } from '@/src/providers/transactionModa
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getERC20Data } from '@/src/utils/getERC20Data'
-import { isDuration } from '@/src/utils/isDuration'
 import { shortenAddress } from '@/src/utils/string'
 import validateCreateDeal, { dealErrors } from '@/src/utils/validate/createDeal'
 
 export enum CreateDealSteps {
   dealToken = 'dealToken',
-  dealTokenTotal = 'dealTokenTotal',
   totalPurchaseAmount = 'totalPurchaseAmount',
+  dealTokenTotal = 'dealTokenTotal',
   vestingCliff = 'vestingCliff',
   vestingPeriod = 'vestingPeriod',
   proRataPeriod = 'proRataPeriod',
@@ -42,8 +41,8 @@ interface CreateDealStepInfo {
 
 export interface CreateDealState {
   dealToken: Token | undefined
-  dealTokenTotal: string | undefined
   totalPurchaseAmount: string | undefined
+  dealTokenTotal: string | undefined
   vestingCliff: Duration | undefined
   vestingPeriod: Duration | undefined
   proRataPeriod: Duration | undefined
@@ -61,16 +60,10 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool as your deal. Examples - SNX Address (0x8700daec35af8ff88c16bdf0418774cb3d7599b4)',
     placeholder: 'Enter deal token address',
   },
-  [CreateDealSteps.dealTokenTotal]: {
-    id: CreateDealSteps.dealTokenTotal,
-    order: 2,
-    title: 'Deal token total',
-    text: 'Total amount of deal tokens that are being distributed to the pool. This determines the exchange rate between investment tokens and deal tokens.',
-    placeholder: 'Enter deal token total...',
-  },
+
   [CreateDealSteps.totalPurchaseAmount]: {
     id: CreateDealSteps.totalPurchaseAmount,
-    order: 3,
+    order: 2,
     title: 'Total purchase amount',
     text: (
       <>
@@ -84,6 +77,14 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
 
     placeholder: 'Enter total purchase amount...',
   },
+  [CreateDealSteps.dealTokenTotal]: {
+    id: CreateDealSteps.dealTokenTotal,
+    order: 3,
+    title: 'Deal token total',
+    text: 'Total amount of deal tokens that are being distributed to the pool. This determines the exchange rate between investment tokens and deal tokens.',
+    placeholder: 'Enter deal token total...',
+  },
+
   [CreateDealSteps.vestingCliff]: {
     id: CreateDealSteps.vestingCliff,
     order: 4,

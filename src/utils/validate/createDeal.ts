@@ -29,7 +29,7 @@ const validateCreateDeal = (values: dealErrors, pool: ParsedAelinPool, chainId: 
     errors.dealToken = true
   }
 
-  if (!values.totalPurchaseAmount) {
+  if (!values.totalPurchaseAmount || Number(values.totalPurchaseAmount) <= 0) {
     errors.totalPurchaseAmount = true
   } else if (
     values.totalPurchaseAmount &&
@@ -40,7 +40,7 @@ const validateCreateDeal = (values: dealErrors, pool: ParsedAelinPool, chainId: 
     errors.totalPurchaseAmount = `Max is ${pool.amountInPool.formatted}`
   }
 
-  if (!values.dealTokenTotal) {
+  if (!values.dealTokenTotal || Number(values.dealTokenTotal) <= 0) {
     errors.dealTokenTotal = true
   }
 

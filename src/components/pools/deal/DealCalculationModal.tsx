@@ -48,24 +48,13 @@ const Button = styled(GradientButton)`
 export const DealCalculationModal: React.FC<{
   dealToken: Token
   investmentToken: Token
-  dealTokenAmount: Wei
-  investmentTokenAmount: Wei
+  totalPurchaseAmount: Wei
   onClose: () => void
   onConfirm: (dealTokenTotal: number | undefined) => void
-}> = ({
-  dealToken,
-  dealTokenAmount,
-  investmentToken,
-  investmentTokenAmount,
-  onClose,
-  onConfirm,
-}) => {
-  const [dealTokenTotal, setDealTokenTotal] = useState<Wei>(dealTokenAmount)
+}> = ({ dealToken, investmentToken, onClose, onConfirm, totalPurchaseAmount }) => {
+  const [exchangeRate, setExchangeRate] = useState<number>(1)
+  const [dealTokenTotal, setDealTokenTotal] = useState<Wei>(totalPurchaseAmount)
   const [rateIsInverted, setRateIsInverted] = useState<boolean>(false)
-
-  const [exchangeRate, setExchangeRate] = useState<number>(
-    dealTokenAmount.div(investmentTokenAmount).toNumber(),
-  )
 
   const ratePair = useMemo(() => {
     return rateIsInverted
@@ -81,37 +70,26 @@ export const DealCalculationModal: React.FC<{
 
   useEffect(() => {
     if (rateIsInverted) {
-      //setDealTokenTotal()
+      try {
+        setDealTokenTotal(totalPurchaseAmount.div(wei(exchangeRate, investmentToken.decimals)))
+      } catch (error) {
+        setDealTokenTotal(wei(0))
+      }
     } else {
-      setDealTokenTotal(investmentTokenAmount.mul(wei(exchangeRate, investmentToken.decimals)))
+      setDealTokenTotal(totalPurchaseAmount.mul(wei(exchangeRate, investmentToken.decimals)))
     }
-  }, [
-    dealTokenAmount,
-    exchangeRate,
-    investmentToken.decimals,
-    investmentTokenAmount,
-    rateIsInverted,
-  ])
-
-  useEffect(() => {
-    if (rateIsInverted) {
-      setExchangeRate(investmentTokenAmount.div(dealTokenAmount).toNumber())
-    } else {
-      setExchangeRate(dealTokenAmount.div(investmentTokenAmount).toNumber())
-    }
-  }, [dealTokenAmount, exchangeRate, investmentTokenAmount, rateIsInverted])
+  }, [exchangeRate, investmentToken.decimals, totalPurchaseAmount, rateIsInverted])
 
   return (
     <Modal onClose={onClose} title="Deal Calculation">
       <Text>
         Total Purchase Token ({investmentToken?.symbol}):{' '}
-        <TokenValue>{investmentTokenAmount.toNumber()}</TokenValue>
+        <TokenValue>{totalPurchaseAmount.toNumber()}</TokenValue>
       </Text>
       <Label>
         Exchange rate: {ratePair}
         <ButtonPrimaryLightSm
           onClick={() => {
-            setExchangeRate(0)
             setRateIsInverted(!rateIsInverted)
           }}
         >

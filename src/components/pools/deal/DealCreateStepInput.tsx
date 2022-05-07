@@ -1,4 +1,4 @@
-import { HTMLAttributes, useEffect, useRef, useState } from 'react'
+import { HTMLAttributes, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
@@ -50,11 +50,12 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   onSetTotalPurchase: (value: string | undefined) => void
   totalPurchase: unknown
   isOpenPeriodDisabled: boolean
+  amountInPool: number
 }
 
 export const DealCreateStepInput: React.FC<Props> = ({
+  amountInPool,
   currentState,
-  isOpenPeriodDisabled,
   onCalculateDealModal,
   onKeyUp,
   onSetDealField,
@@ -62,8 +63,6 @@ export const DealCreateStepInput: React.FC<Props> = ({
   totalPurchase,
   ...restProps
 }) => {
-  const [disablePurchaseAmount, setDisablePurchaseAmount] = useState<boolean>(false)
-
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -72,6 +71,11 @@ export const DealCreateStepInput: React.FC<Props> = ({
       inputRef.current?.focus()
     }
   }, [step])
+
+  const isOpenPeriodDisabled = useMemo(
+    () => Number(currentState.totalPurchaseAmount) === amountInPool,
+    [amountInPool, currentState.totalPurchaseAmount],
+  )
 
   return (
     <Wrapper onKeyUp={onKeyUp} {...restProps}>
@@ -92,20 +96,34 @@ export const DealCreateStepInput: React.FC<Props> = ({
           value={currentState[step]}
         />
       ) : step === CreateDealSteps.dealTokenTotal ? (
-        <TextfieldNarrow
-          name={step}
-          onChange={(e) => onSetDealField(e.target.value)}
-          placeholder={createDealConfig[step].placeholder}
-          ref={inputRef}
-          type="number"
-          value={currentState[step]}
-        />
+        <>
+          <TextfieldNarrow
+            name={step}
+            onChange={(e) => onSetDealField(e.target.value)}
+            placeholder={createDealConfig[step].placeholder}
+            ref={inputRef}
+            type="number"
+            value={currentState[step]}
+          />
+
+          <PrivacyGrid>
+            <Button onClick={onCalculateDealModal}>Calculate</Button>
+          </PrivacyGrid>
+        </>
       ) : step === CreateDealSteps.totalPurchaseAmount ? (
         <>
           <TextfieldNarrow
-            disabled={disablePurchaseAmount}
             name={step}
-            onChange={(e) => onSetDealField(e.target.value)}
+            onChange={(e) => {
+              const { value } = e.target
+              onSetDealField(e.target.value)
+
+              Number(value) === amountInPool
+                ? onSetTotalPurchase('all')
+                : Number(value) && Number(value) < amountInPool
+                ? onSetTotalPurchase('partial')
+                : onSetTotalPurchase(undefined)
+            }}
             placeholder={createDealConfig[step].placeholder}
             ref={inputRef}
             type="number"
@@ -116,7 +134,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
               checked={totalPurchase === 'all'}
               label={'All'}
               onClick={() => {
-                setDisablePurchaseAmount(true)
+                onSetDealField(amountInPool)
                 onSetTotalPurchase('all')
               }}
             />
@@ -124,12 +142,11 @@ export const DealCreateStepInput: React.FC<Props> = ({
               checked={totalPurchase === 'partial'}
               label="Partial"
               onClick={() => {
-                setDisablePurchaseAmount(false)
+                onSetDealField(0)
                 onSetTotalPurchase('partial')
               }}
             />
           </PrivacyGrid>
-          <Button onClick={onCalculateDealModal}>Calculate</Button>
         </>
       ) : step === CreateDealSteps.counterPartyFundingPeriod ||
         step === CreateDealSteps.vestingCliff ||
