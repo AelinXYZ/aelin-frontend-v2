@@ -65,8 +65,8 @@ export const DealCalculationModal: React.FC<{
 
   const rateLabel = useMemo(() => {
     return rateIsInverted
-      ? `1 ${dealToken.symbol} = ${exchangeRate} ${investmentToken.symbol}`
-      : `1 ${investmentToken.symbol} = ${exchangeRate} ${dealToken.symbol}`
+      ? `${exchangeRate} ${investmentToken.symbol} = 1 ${dealToken.symbol}`
+      : `${exchangeRate} ${dealToken.symbol} = 1 ${investmentToken.symbol}`
   }, [dealToken.symbol, exchangeRate, investmentToken.symbol, rateIsInverted])
 
   useEffect(() => {
