@@ -43,6 +43,13 @@ const Button = styled(ButtonPrimaryLight)`
   padding-right: 10px;
 `
 
+const TokenValue = styled.span`
+  color: ${({ theme }) => theme.colors.primary};
+`
+const TotalAmount = styled.p`
+  text-align: center;
+`
+
 interface Props extends HTMLAttributes<HTMLDivElement> {
   currentState: CreateDealState
   onCalculateDealModal: () => void
@@ -50,7 +57,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   onSetTotalPurchase: (value: string | undefined) => void
   totalPurchase: unknown
   isOpenPeriodDisabled: boolean
-  amountInPool: number
+  amountInPool: { number: number; formatted: string }
 }
 
 export const DealCreateStepInput: React.FC<Props> = ({
@@ -73,7 +80,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
   }, [step])
 
   const isOpenPeriodDisabled = useMemo(
-    () => Number(currentState.totalPurchaseAmount) === amountInPool,
+    () => Number(currentState.totalPurchaseAmount) === amountInPool.number,
     [amountInPool, currentState.totalPurchaseAmount],
   )
 
@@ -118,9 +125,9 @@ export const DealCreateStepInput: React.FC<Props> = ({
               const { value } = e.target
               onSetDealField(e.target.value)
 
-              Number(value) === amountInPool
+              Number(value) === amountInPool.number
                 ? onSetTotalPurchase('all')
-                : Number(value) && Number(value) < amountInPool
+                : Number(value) && Number(value) < amountInPool.number
                 ? onSetTotalPurchase('partial')
                 : onSetTotalPurchase(undefined)
             }}
@@ -134,7 +141,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
               checked={totalPurchase === 'all'}
               label={'All'}
               onClick={() => {
-                onSetDealField(amountInPool)
+                onSetDealField(amountInPool.number)
                 onSetTotalPurchase('all')
               }}
             />
@@ -147,6 +154,9 @@ export const DealCreateStepInput: React.FC<Props> = ({
               }}
             />
           </PrivacyGrid>
+          <TotalAmount>
+            Total amount deposited <TokenValue>{amountInPool.formatted}</TokenValue>
+          </TotalAmount>
         </>
       ) : step === CreateDealSteps.counterPartyFundingPeriod ||
         step === CreateDealSteps.vestingCliff ||

@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { wei } from '@synthetixio/wei'
@@ -128,10 +128,10 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                   <Title>{title}</Title>
                   <Description>{text}</Description>
                   <DealCreateStepInput
-                    amountInPool={wei(
-                      pool.amountInPool.raw,
-                      pool.investmentTokenDecimals,
-                    ).toNumber()}
+                    amountInPool={{
+                      number: wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber(),
+                      formatted: pool.amountInPool.formatted as string,
+                    }}
                     currentState={createDealState}
                     isOpenPeriodDisabled={isOpenPeriodDisabled}
                     onCalculateDealModal={() => setShowDealCalculationModal(true)}
