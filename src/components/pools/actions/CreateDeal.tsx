@@ -12,7 +12,7 @@ type Props = {
 }
 
 export default function CreateDeal({ pool, ...restProps }: Props) {
-  const disableDealButton = pool.amountInPool.raw === ZERO_BN
+  const disableDealButton = pool.amountInPool.raw.eq(ZERO_BN)
   return (
     <Wrapper title="Awaiting Deal" {...restProps}>
       <Contents>

@@ -136,7 +136,6 @@ function TokenDropdown(props: TokenDropdownProps) {
   const { onChange, placeholder, tokenSelected } = props
   const { readOnlyAppProvider } = useWeb3Connection()
 
-  const [customToken, setCustomToken] = useState<Token | undefined>(undefined)
   const [inputError, setInputError] = useState<string>('')
   const [searchToken, setSearchToken] = useState<string>('')
   const [searchingToken, setSearchingToken] = useState<boolean>(false)
@@ -164,7 +163,6 @@ function TokenDropdown(props: TokenDropdownProps) {
     setInputError('')
     setSearchToken('')
     setSearchingToken(false)
-    setCustomToken(undefined)
   }
 
   const handlerSearchAddress = useCallback(
@@ -177,7 +175,6 @@ function TokenDropdown(props: TokenDropdownProps) {
 
       const tokenData = await getERC20Data({ address: value, provider: readOnlyAppProvider })
       if (tokenData) {
-        setCustomToken(tokenData)
         setInputError('')
         setSelectedToken(tokenToOption(tokenData))
         onChange(tokenData)
@@ -206,7 +203,6 @@ function TokenDropdown(props: TokenDropdownProps) {
               disabled={searchingToken}
               onChange={(e) => {
                 if (!e.target.value) {
-                  setCustomToken(undefined)
                   setSearchToken('')
                 }
                 handlerSearchAddress(e.target.value)
@@ -218,7 +214,6 @@ function TokenDropdown(props: TokenDropdownProps) {
             <Delete
               onClick={() => {
                 onChange(undefined as unknown as Token)
-                setCustomToken(undefined)
                 setSelectedToken(undefined)
                 setInputError('')
                 setSearchToken('')

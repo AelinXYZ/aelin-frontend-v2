@@ -6,6 +6,7 @@ import styled from 'styled-components'
 
 import { wei } from '@synthetixio/wei'
 
+import { Modal } from '../../common/Modal'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
@@ -30,7 +31,6 @@ import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
 import { Token } from '@/src/constants/token'
-import { PoolTimelineState } from '@/src/constants/types'
 import useAelinCreateDeal, {
   CreateDealSteps,
   createDealConfig,
@@ -41,6 +41,7 @@ import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { UserRole } from '@/types/aelinPool'
 
 const StepIndicator = styled(BaseStepIndicator)`
   .stepText {
@@ -56,7 +57,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const { network } = router.query
 
   const { pool } = useAelinPool(chainId, poolAddress)
-  const { appChainId } = useWeb3Connection()
+  const { address, appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
   const [totalPurchase, setTotalPurchase] = useState<string | undefined>()
 
@@ -73,7 +74,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     showWarningOnLeave,
   } = useAelinCreateDeal(appChainId, pool)
 
-  const { timeline } = useAelinPoolStatus(chainId, poolAddress as string)
+  const { timeline, userRole } = useAelinPoolStatus(chainId, poolAddress as string)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
   const { order, text, title } = currentStepConfig
@@ -100,6 +101,8 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       return false
     }
   }, [createDealState.totalPurchaseAmount, pool.amountInPool.raw, pool.investmentTokenDecimals])
+
+  const currentUserIsSponsor = useMemo(() => userRole === UserRole.Sponsor, [userRole])
 
   return (
     <>
@@ -194,6 +197,11 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       <Link href={`/pool/${network}/${poolAddress}`} passHref>
         <Button as="a">Cancel</Button>
       </Link>
+      {!currentUserIsSponsor && (
+        <Modal title="Invalid address">
+          <Error>You are not the sponsor of the the pool</Error>
+        </Modal>
+      )}
     </>
   )
 }
