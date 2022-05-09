@@ -199,7 +199,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       </Link>
       {!currentUserIsSponsor && (
         <Modal title="Invalid address">
-          <Error>You are not the sponsor of the the pool</Error>
+          <Error>You are not the sponsor of the pool</Error>
         </Modal>
       )}
     </>

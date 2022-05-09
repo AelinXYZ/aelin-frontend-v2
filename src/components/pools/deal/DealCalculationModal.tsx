@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import Wei, { wei } from '@synthetixio/wei'
 
+import { Tooltip } from '../../tooltip/Tooltip'
 import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import {
   ButtonPrimaryLightSm,
@@ -106,7 +107,10 @@ export const DealCalculationModal: React.FC<{
         value={exchangeRate || undefined}
       />
       <Note>{rateLabel}</Note>
-      <Label>{dealToken?.symbol} Total</Label>
+      <Label>
+        {dealToken?.symbol} Total{' '}
+        <Tooltip text={'The amount of tokens the Counter-party will have to deposit'} />
+      </Label>
       <Textfield readOnly type="number" value={dealTokenTotal.toNumber()} />
       <Button onClick={() => onConfirm(dealTokenTotal.toNumber())}>OK</Button>
     </Modal>
