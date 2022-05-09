@@ -88,9 +88,10 @@ export type ParsedAelinPool = {
       openRedemptionEnd: Date | null
     } | null
     holderAlreadyDeposited: boolean
-    holderDepositExpiration: Date
-    holderDepositDuration: Date
+    holderFundingExpiration: Date
+    holderFundingDuration: Date
     holderAddress: string
+    createdAt: Date
   }
 }
 
@@ -176,9 +177,10 @@ export const getParsedPool = ({
     hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
     redemption: redemptionInfo,
     holderAlreadyDeposited: dealDetails.isDealFunded,
-    holderDepositExpiration: new Date(),
-    holderDepositDuration: new Date(),
+    holderFundingExpiration: new Date(dealDetails.holderFundingExpiration * 1000),
+    holderFundingDuration: dealDetails.holderFundingDuration,
     holderAddress: dealDetails.holder,
+    createdAt: new Date(dealDetails.timestamp * 1000),
   }
 
   return res

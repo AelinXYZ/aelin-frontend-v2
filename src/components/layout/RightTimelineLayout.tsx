@@ -2,7 +2,7 @@ import { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 import { Timeline } from '@/src/components/pools/common/Timeline'
-import { PoolTimelineState } from '@/src/constants/types'
+import { TimelineSteps } from '@/src/hooks/aelin/useAelinPoolStatus'
 
 const Wrapper = styled.main`
   --timeline-width: 296px;
@@ -43,15 +43,15 @@ const TimelineWrapper = styled.div`
 `
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
-  activeStep?: PoolTimelineState
+  timelineSteps?: TimelineSteps
 }
 
-export const RightTimelineLayout: React.FC<Props> = ({ activeStep, children, ...restProps }) => {
+export const RightTimelineLayout: React.FC<Props> = ({ children, timelineSteps, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
       <Main>{children}</Main>
       <TimelineWrapper>
-        <Timeline activeStep={activeStep} />
+        <Timeline timelineSteps={timelineSteps} />
       </TimelineWrapper>
     </Wrapper>
   )
