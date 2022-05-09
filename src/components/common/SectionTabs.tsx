@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { ButtonPrimaryLighter } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -43,6 +43,8 @@ export const SectionTabs: React.FC<{
     setActiveItem(key)
   }
 
+  const index = items.findIndex(({ key }) => key === activeItem)
+
   return (
     <>
       <Wrapper {...restProps}>
@@ -52,7 +54,7 @@ export const SectionTabs: React.FC<{
           </Item>
         ))}
       </Wrapper>
-      {items.map(({ children, key }) => (activeItem === key ? children : null))}
+      {items[index].children}
     </>
   )
 }

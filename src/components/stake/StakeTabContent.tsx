@@ -105,7 +105,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       return
     }
     if (tokenInputValue && BigNumber.from(tokenInputValue).gt(totalBalance ?? ZERO_BN)) {
-      setInputError('Amount is bigger than your balance')
+      setInputError('Insufficient balance')
       return
     }
 

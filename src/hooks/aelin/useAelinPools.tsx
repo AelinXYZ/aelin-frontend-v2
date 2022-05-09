@@ -14,13 +14,9 @@ import { ExtendedStatus, POOLS_RESULTS_PER_CHAIN, allStages } from '@/src/consta
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
-
+import { isSuccessful } from '@/src/utils/isSuccessful'
 export interface PoolParsedWithState extends ParsedAelinPool {
   stage: ExtendedStatus
-}
-
-function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
-  return 'value' in response
 }
 
 export const calculateStatus = ({

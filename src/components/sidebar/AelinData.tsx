@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import styled from 'styled-components'
 
+import { Filters } from '../pureStyledComponents/common/Filters'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const Wrapper = styled.div`
   margin-bottom: 40px;
@@ -31,14 +34,30 @@ const ButtonContainer = styled.div`
   justify-content: center;
 `
 
+enum Tab {
+  Aelin = 'Aelin',
+  EthAelin = 'EthAelin',
+}
+
+function getBalanceTitle(activeTab: Tab): string {
+  switch (activeTab) {
+    case Tab.Aelin:
+      return 'Aelin balance:'
+    case Tab.EthAelin:
+      return 'ETH/Aelin balance:'
+  }
+}
+
 const AelinData: React.FC = ({ ...restProps }) => {
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.Aelin)
+
   const data = [
     {
-      title: 'Aelin balance:',
+      title: getBalanceTitle(activeTab),
       value: '0.25465487',
     },
     {
-      title: 'Aelin staking:',
+      title: 'My stake:',
       value: '1.7548656',
     },
     {
@@ -49,6 +68,24 @@ const AelinData: React.FC = ({ ...restProps }) => {
 
   return (
     <Wrapper {...restProps}>
+      <Filters justifyContent="flex-start">
+        <TabButton
+          isActive={activeTab === Tab.Aelin}
+          onClick={() => {
+            setActiveTab(Tab.Aelin)
+          }}
+        >
+          Aelin
+        </TabButton>
+        <TabButton
+          isActive={activeTab === Tab.EthAelin}
+          onClick={() => {
+            setActiveTab(Tab.EthAelin)
+          }}
+        >
+          ETH/Aelin
+        </TabButton>
+      </Filters>
       <Rows>
         {data.map(({ title, value }, index) => (
           <Row key={index}>

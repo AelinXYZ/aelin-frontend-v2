@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
@@ -40,7 +40,7 @@ function WithdrawalFromPool({ pool }: Props) {
       return
     }
     if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance)) {
-      setInputError('Amount is too big')
+      setInputError('Insufficient balance')
     } else {
       setInputError('')
     }
@@ -59,10 +59,26 @@ function WithdrawalFromPool({ pool }: Props) {
           setInputError('')
         }
       },
-      title: `Deposit ${investmentTokenSymbol}`,
+      title: `Withdraw ${investmentTokenSymbol}`,
       estimate: () => withdrawFromPoolEstimate([tokenInputValue]),
     })
   }
+
+  const maxValueFormatted = useMemo(
+    () => formatToken(balance || ZERO_BN, investmentTokenDecimals) || '0',
+    [balance, investmentTokenDecimals],
+  )
+  const disableButton = useMemo(
+    () =>
+      !address ||
+      !isAppConnected ||
+      isSubmitting ||
+      !tokenInputValue ||
+      Boolean(inputError) ||
+      BigNumber.from(tokenInputValue).eq(0) ||
+      !maxValueFormatted,
+    [address, inputError, isAppConnected, isSubmitting, maxValueFormatted, tokenInputValue],
+  )
 
   return (
     <>
@@ -70,16 +86,11 @@ function WithdrawalFromPool({ pool }: Props) {
         decimals={investmentTokenDecimals}
         error={inputError}
         maxValue={(balance || ZERO_BN).toString()}
-        maxValueFormatted={formatToken(balance || ZERO_BN, investmentTokenDecimals) || '0'}
+        maxValueFormatted={maxValueFormatted}
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
-      <GradientButton
-        disabled={
-          !address || !isAppConnected || isSubmitting || !tokenInputValue || Boolean(inputError)
-        }
-        onClick={withdrawFromPool}
-      >
+      <GradientButton disabled={disableButton} onClick={withdrawFromPool}>
         Withdraw
       </GradientButton>
     </>

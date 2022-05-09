@@ -54,7 +54,7 @@ function AcceptDeal({ dealing, pool }: Props) {
       tokenInputValue &&
       BigNumber.from(tokenInputValue).gt(userProRataAllocation.raw as BigNumberish)
     ) {
-      setInputError('Amount is too big')
+      setInputError('Insufficient balance')
     } else {
       setInputError('')
     }

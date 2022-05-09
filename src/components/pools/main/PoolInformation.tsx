@@ -29,7 +29,7 @@ export const PoolInformation: React.FC<{
         <InfoCell
           title="Pool cap"
           tooltip="Pool cap tooltip"
-          value={pool.poolCap.raw.eq(ZERO_BN) ? 'uncapped' : pool.poolCap.formatted}
+          value={pool.poolCap.raw.eq(ZERO_BN) ? 'Uncapped' : pool.poolCap.formatted}
         />
         <InfoCell title="Pool stats" tooltip="Pool stats tooltip">
           <Value>Funded: {pool.funded.formatted}</Value>
