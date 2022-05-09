@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
 
+import { genericSuspense } from '../../helpers/SafeSuspense'
 import { Close } from '@/src/components/assets/Close'
 import { Loading as BaseLoading } from '@/src/components/common/Loading'
 import { Modal, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
@@ -60,13 +61,14 @@ const Tokens = styled.div`
   flex-direction: column;
   height: 300px;
   margin: 0 auto 30px;
-  overflow: hidden;
+  overflow-y: auto;
   ${WidthLimitsCSS}
 `
 
-const Item = styled.div`
+const Item = styled.div<{ isActive: boolean }>`
   align-items: center;
-  background-color: ${({ theme }) => theme.dropdown.item.backgroundColor};
+  background-color: ${({ isActive, theme }) =>
+    !isActive ? theme.dropdown.item.backgroundColor : theme.dropdown.item.backgroundColorHover};
   color: ${({ theme }) => theme.dropdown.item.color};
   cursor: pointer;
   display: flex;
@@ -141,18 +143,29 @@ function TokenDropdown(props: TokenDropdownProps) {
   const [selectedToken, setSelectedToken] = useState<Option | undefined>(
     tokenSelected ? tokenToOption(tokenSelected) : undefined,
   )
+  const [showModal, setShowModal] = useState(false)
 
   const { tokens = [] } = useAelinTokenList() || {}
 
-  const options = useMemo(
-    () =>
-      !customToken
-        ? tokens
-            .map(tokenToOption)
-            .filter((token) => token.label.toLowerCase().includes(searchToken.toLowerCase()))
-        : [tokenToOption(customToken)],
-    [customToken, searchToken, tokens],
-  )
+  const options = useMemo(() => {
+    const selectedTokenIsInList = tokens.some((token) => token.address === tokenSelected?.address)
+    const tokenList = [...tokens]
+    if (!selectedTokenIsInList && tokenSelected) {
+      tokenList.push(tokenSelected)
+    }
+
+    return tokenList
+      .map(tokenToOption)
+      .filter((token) => token.label.toLowerCase().includes(searchToken.toLowerCase()))
+  }, [searchToken, tokenSelected, tokens])
+
+  const closeModal = () => {
+    setShowModal(false)
+    setInputError('')
+    setSearchToken('')
+    setSearchingToken(false)
+    setCustomToken(undefined)
+  }
 
   const handlerSearchAddress = useCallback(
     async (value: string) => {
@@ -166,23 +179,16 @@ function TokenDropdown(props: TokenDropdownProps) {
       if (tokenData) {
         setCustomToken(tokenData)
         setInputError('')
+        setSelectedToken(tokenToOption(tokenData))
+        onChange(tokenData)
+        closeModal()
       } else {
         setInputError('Invalid address')
       }
       return setSearchingToken(false)
     },
-    [readOnlyAppProvider],
+    [onChange, readOnlyAppProvider],
   )
-
-  const [showModal, setShowModal] = useState(false)
-
-  const closeModal = () => {
-    setShowModal(false)
-    setInputError('')
-    setSearchToken('')
-    setSearchingToken(false)
-    setCustomToken(undefined)
-  }
 
   return (
     <>
@@ -207,6 +213,7 @@ function TokenDropdown(props: TokenDropdownProps) {
               }}
               placeholder={placeholder}
               type="text"
+              value={searchToken}
             />
             <Delete
               onClick={() => {
@@ -226,6 +233,7 @@ function TokenDropdown(props: TokenDropdownProps) {
               options.map((item) => {
                 return (
                   <Item
+                    isActive={item.value.address === selectedToken?.value.address}
                     key={item.value.address}
                     onClick={() => {
                       setSelectedToken(item)
@@ -247,4 +255,4 @@ function TokenDropdown(props: TokenDropdownProps) {
   )
 }
 
-export default TokenDropdown
+export default genericSuspense(TokenDropdown)
