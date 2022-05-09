@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { DealSponsored_OrderBy, OrderDirection } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -15,108 +17,110 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { Chains, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
+import useAelinDealsSponsored from '@/src/hooks/aelin/history/useAelinDealsSponsored'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+type Order = {
+  orderBy: DealSponsored_OrderBy
+  orderDirection: OrderDirection
+}
 
 export const DealsSponsored: React.FC = ({ ...restProps }) => {
+  const { address } = useWeb3Connection()
   const router = useRouter()
+
+  const [order, setOrder] = useState<Order>({
+    orderBy: DealSponsored_OrderBy.Timestamp,
+    orderDirection: OrderDirection.Desc,
+  })
+
   const columns = {
     alignment: {
       network: 'center',
       seePool: 'right',
     },
-    widths: '140px 140px 150px 130px 120px 120px 1fr',
+    widths: '140px 140px 140px 140px 120px 120px 1fr',
   }
 
   const tableHeaderCells = [
     {
       title: 'Date',
-      sortKey: 'date',
+      sortKey: DealSponsored_OrderBy.Timestamp,
     },
     {
       title: 'Pool Name',
-      sortKey: '',
+      sortKey: DealSponsored_OrderBy.PoolName,
     },
     {
       title: 'Total Investment',
-      sortKey: '',
+      sortKey: DealSponsored_OrderBy.TotalInvested,
     },
     {
-      title: 'Total accepted',
-      sortKey: '',
+      title: 'Total Accepted',
+      sortKey: DealSponsored_OrderBy.TotalAccepted,
     },
     {
-      title: 'Amount earned',
-      sortKey: '',
+      title: 'Amount Earned',
+      sortKey: DealSponsored_OrderBy.AmountEarned,
     },
     {
       title: 'Network',
-      sortKey: '',
       justifyContent: columns.alignment.network,
     },
-    {
-      title: '',
-      sortKey: '',
-      justifyContent: columns.alignment.seePool,
-    },
   ]
 
-  const handleSort = (sortBy: string) => {
-    console.log(sortBy)
+  const handleSort = (sortBy: DealSponsored_OrderBy) => {
+    if (order.orderBy === sortBy) {
+      setOrder({
+        orderBy: sortBy,
+        orderDirection:
+          order.orderDirection === OrderDirection.Asc ? OrderDirection.Desc : OrderDirection.Asc,
+      })
+    } else {
+      setOrder({ orderBy: sortBy, orderDirection: OrderDirection.Desc })
+    }
   }
 
-  const sortBy = 'date'
+  const variables = {
+    where: { sponsor: address || ZERO_ADDRESS },
+    orderBy: order.orderBy,
+    orderDirection: order.orderDirection,
+  }
 
-  const data = [
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      totalInvestment: '1,000,000 USDC',
-      totalAccepted: '750,000 vNUKE',
-      amountEarned: '15,000 (2%)',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      totalInvestment: '1,000,000 USDC',
-      totalAccepted: '750,000 vNUKE',
-      amountEarned: '15,000 (2%)',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      totalInvestment: '1,000,000 USDC',
-      totalAccepted: '750,000 vNUKE',
-      amountEarned: '15,000 (2%)',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-  ]
+  const { data, error, hasMore, mutate, nextPage } = useAelinDealsSponsored(variables)
+
+  useEffect(() => {
+    mutate()
+  }, [mutate])
+
+  if (error) {
+    throw error
+  }
 
   return (
     <TableWrapper {...restProps}>
       <Table>
         <InfiniteScroll
           dataLength={data.length}
-          hasMore={false}
+          hasMore={hasMore}
           loader={
             <Row columns={'1fr'}>
               <Cell justifyContent="center">Loading...</Cell>
             </Row>
           }
-          next={() => console.log('next')}
+          next={nextPage}
         >
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
               <SortableTH
-                isActive={sortBy === sortKey}
+                isActive={order.orderBy === sortKey}
                 justifyContent={justifyContent}
                 key={index}
                 onClick={() => {
-                  handleSort(sortKey)
+                  if (sortKey) handleSort(sortKey)
                 }}
               >
                 {title}
@@ -127,8 +131,15 @@ export const DealsSponsored: React.FC = ({ ...restProps }) => {
             <BaseCard>No data.</BaseCard>
           ) : (
             data.map((item, index) => {
-              const { amountEarned, date, id, network, poolName, totalAccepted, totalInvestment } =
-                item
+              const {
+                amountEarned,
+                id,
+                network,
+                poolName,
+                timestamp,
+                totalAccepted,
+                totalInvested,
+              } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -138,9 +149,9 @@ export const DealsSponsored: React.FC = ({ ...restProps }) => {
                     router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                   }}
                 >
-                  <Cell>{date}</Cell>
+                  <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
                   <Cell light>{poolName}</Cell>
-                  <Cell light>{totalInvestment}</Cell>
+                  <Cell light>{totalInvested}</Cell>
                   <Cell light>{totalAccepted}</Cell>
                   <Cell light>{amountEarned}</Cell>
                   <Cell justifyContent={columns.alignment.network} light>

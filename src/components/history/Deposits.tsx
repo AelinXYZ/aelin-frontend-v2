@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { Deposit_OrderBy, OrderDirection } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -15,10 +17,27 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { Chains, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
+import useAelinDeposits from '@/src/hooks/aelin/history/useAelinDeposits'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+import { shortenAddress } from '@/src/utils/string'
+
+type Order = {
+  orderBy: Deposit_OrderBy
+  orderDirection: OrderDirection
+}
 
 export const Deposits: React.FC = ({ ...restProps }) => {
+  const { address } = useWeb3Connection()
   const router = useRouter()
+
+  const [order, setOrder] = useState<Order>({
+    orderBy: Deposit_OrderBy.Timestamp,
+    orderDirection: OrderDirection.Desc,
+  })
+
   const columns = {
     alignment: {
       network: 'center',
@@ -30,102 +49,75 @@ export const Deposits: React.FC = ({ ...restProps }) => {
   const tableHeaderCells = [
     {
       title: 'Date',
-      sortKey: 'date',
+      sortKey: Deposit_OrderBy.Timestamp,
     },
     {
-      title: 'Pool Name',
-      sortKey: '',
+      title: 'Pool name',
+      sortKey: Deposit_OrderBy.PoolName,
     },
     {
       title: 'Sponsor',
-      sortKey: '',
+      sortKey: Deposit_OrderBy.Sponsor,
     },
     {
       title: 'Amount deposited',
-      sortKey: '',
+      sortKey: Deposit_OrderBy.AmountDeposited,
     },
     {
       title: 'Network',
-      sortKey: '',
       justifyContent: columns.alignment.network,
     },
-    {
-      title: '',
-      sortKey: '',
-      justifyContent: columns.alignment.seePool,
-    },
   ]
 
-  const handleSort = (sortBy: string) => {
-    console.log(sortBy)
+  const handleSort = (sortBy: Deposit_OrderBy) => {
+    if (order.orderBy === sortBy) {
+      setOrder({
+        orderBy: sortBy,
+        orderDirection:
+          order.orderDirection === OrderDirection.Asc ? OrderDirection.Desc : OrderDirection.Asc,
+      })
+    } else {
+      setOrder({ orderBy: sortBy, orderDirection: OrderDirection.Desc })
+    }
   }
 
-  const sortBy = 'date'
+  const variables = {
+    where: { userAddress: address || ZERO_ADDRESS },
+    orderBy: order.orderBy,
+    orderDirection: order.orderDirection,
+  }
 
-  const data = [
-    {
-      amountDeposited: '1,000,000 USDC',
-      date: 'Dec 1, 2021 10:00AM',
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-      network: Chains.kovan,
-      poolName: 'Nuvevaults.com',
-      sponsor: 'Nukevault',
-    },
-    {
-      amountDeposited: '1,000,000 USDC',
-      date: 'Dec 1, 2021 10:00AM',
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-      network: Chains.kovan,
-      poolName: 'Nuvevaults.com',
-      sponsor: 'Nukevault',
-    },
-    {
-      amountDeposited: '1,000,000 USDC',
-      date: 'Dec 1, 2021 10:00AM',
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-      network: Chains.kovan,
-      poolName: 'Nuvevaults.com',
-      sponsor: 'Nukevault',
-    },
-    {
-      amountDeposited: '1,000,000 USDC',
-      date: 'Dec 1, 2021 10:00AM',
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-      network: Chains.kovan,
-      poolName: 'Nuvevaults.com',
-      sponsor: 'Nukevault',
-    },
-    {
-      amountDeposited: '1,000,000 USDC',
-      date: 'Dec 1, 2021 10:00AM',
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-      network: Chains.kovan,
-      poolName: 'Nuvevaults.com',
-      sponsor: 'Nukevault',
-    },
-  ]
+  const { data, error, hasMore, mutate, nextPage } = useAelinDeposits(variables)
+
+  useEffect(() => {
+    mutate()
+  }, [mutate])
+
+  if (error) {
+    throw error
+  }
 
   return (
     <TableWrapper {...restProps}>
       <Table>
         <InfiniteScroll
           dataLength={data.length}
-          hasMore={false}
+          hasMore={hasMore}
           loader={
             <Row columns={'1fr'}>
               <Cell justifyContent="center">Loading...</Cell>
             </Row>
           }
-          next={() => console.log('next')}
+          next={nextPage}
         >
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
               <SortableTH
-                isActive={sortBy === sortKey}
+                isActive={order.orderBy === sortKey}
                 justifyContent={justifyContent}
                 key={index}
                 onClick={() => {
-                  handleSort(sortKey)
+                  if (sortKey) handleSort(sortKey)
                 }}
               >
                 {title}
@@ -136,7 +128,7 @@ export const Deposits: React.FC = ({ ...restProps }) => {
             <BaseCard>No data.</BaseCard>
           ) : (
             data.map((item, index) => {
-              const { amountDeposited, date, id, network, poolName, sponsor } = item
+              const { amountDeposited, id, network, poolName, sponsor, timestamp } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -146,9 +138,15 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                     router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                   }}
                 >
-                  <Cell>{date}</Cell>
+                  <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
                   <Cell light>{poolName}</Cell>
-                  <Cell light>{sponsor}</Cell>
+                  <Cell light>
+                    {
+                      <ExternalLink href={`https://etherscan.io/address/${sponsor}`}>
+                        {shortenAddress(sponsor)}
+                      </ExternalLink>
+                    }
+                  </Cell>
                   <Cell light>{amountDeposited}</Cell>
                   <Cell justifyContent={columns.alignment.network} light>
                     {getNetworkConfig(network).icon}

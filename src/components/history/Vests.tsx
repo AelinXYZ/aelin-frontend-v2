@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { OrderDirection, Vest_OrderBy } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -15,10 +17,26 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { Chains, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
+import useAelinVests from '@/src/hooks/aelin/history/useAelinVests'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+type Order = {
+  orderBy: Vest_OrderBy
+  orderDirection: OrderDirection
+}
 
 export const Vests: React.FC = ({ ...restProps }) => {
+  const { address } = useWeb3Connection()
   const router = useRouter()
+
+  const [order, setOrder] = useState<Order>({
+    orderBy: Vest_OrderBy.Timestamp,
+    orderDirection: OrderDirection.Desc,
+  })
+
   const columns = {
     alignment: {
       network: 'center',
@@ -30,108 +48,67 @@ export const Vests: React.FC = ({ ...restProps }) => {
   const tableHeaderCells = [
     {
       title: 'Date',
-      sortKey: 'date',
+      sortKey: Vest_OrderBy.Timestamp,
     },
     {
       title: 'Amount vested',
-      sortKey: '',
+      sortKey: Vest_OrderBy.AmountVested,
     },
     {
       title: 'Network',
-      sortKey: '',
       justifyContent: columns.alignment.network,
     },
-    {
-      title: '',
-      sortKey: '',
-      justifyContent: columns.alignment.seePool,
-    },
   ]
 
-  const handleSort = (sortBy: string) => {
-    console.log(sortBy)
+  const handleSort = (sortBy: Vest_OrderBy) => {
+    if (order.orderBy === sortBy) {
+      setOrder({
+        orderBy: sortBy,
+        orderDirection:
+          order.orderDirection === OrderDirection.Asc ? OrderDirection.Desc : OrderDirection.Asc,
+      })
+    } else {
+      setOrder({ orderBy: sortBy, orderDirection: OrderDirection.Desc })
+    }
   }
 
-  const sortBy = 'date'
+  const variables = {
+    where: { userAddress: address || ZERO_ADDRESS },
+    orderBy: order.orderBy,
+    orderDirection: order.orderDirection,
+  }
 
-  const data = [
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      amountVested: '1,000,000 vAELIN',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-  ]
+  const { data, error, hasMore, mutate, nextPage } = useAelinVests(variables)
+
+  useEffect(() => {
+    mutate()
+  }, [mutate])
+
+  if (error) {
+    throw error
+  }
 
   return (
     <TableWrapper {...restProps}>
       <Table>
         <InfiniteScroll
           dataLength={data.length}
-          hasMore={false}
+          hasMore={hasMore}
           loader={
             <Row columns={'1fr'}>
               <Cell justifyContent="center">Loading...</Cell>
             </Row>
           }
-          next={() => console.log('next')}
+          next={nextPage}
         >
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
               <SortableTH
-                isActive={sortBy === sortKey}
+                isActive={order.orderBy === sortKey}
                 justifyContent={justifyContent}
                 key={index}
                 onClick={() => {
-                  handleSort(sortKey)
+                  if (sortKey) handleSort(sortKey)
                 }}
               >
                 {title}
@@ -142,7 +119,7 @@ export const Vests: React.FC = ({ ...restProps }) => {
             <BaseCard>No data.</BaseCard>
           ) : (
             data.map((item, index) => {
-              const { amountVested, date, id, network } = item
+              const { amountVested, id, network, timestamp } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -152,7 +129,7 @@ export const Vests: React.FC = ({ ...restProps }) => {
                     router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                   }}
                 >
-                  <Cell>{date}</Cell>
+                  <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
                   <Cell light>{amountVested}</Cell>
                   <Cell justifyContent={columns.alignment.network} light>
                     {getNetworkConfig(network).icon}

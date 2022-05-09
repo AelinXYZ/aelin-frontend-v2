@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { DealAccepted_OrderBy, OrderDirection } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -15,10 +17,26 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { Chains, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
+import useAelinDealsAccepted from '@/src/hooks/aelin/history/useAelinDealsAccepted'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+type Order = {
+  orderBy: DealAccepted_OrderBy
+  orderDirection: OrderDirection
+}
 
 export const DealsAccepted: React.FC = ({ ...restProps }) => {
+  const { address } = useWeb3Connection()
   const router = useRouter()
+
+  const [order, setOrder] = useState<Order>({
+    orderBy: DealAccepted_OrderBy.Timestamp,
+    orderDirection: OrderDirection.Desc,
+  })
+
   const columns = {
     alignment: {
       network: 'center',
@@ -30,126 +48,75 @@ export const DealsAccepted: React.FC = ({ ...restProps }) => {
   const tableHeaderCells = [
     {
       title: 'Date',
-      sortKey: 'date',
+      sortKey: DealAccepted_OrderBy.Timestamp,
     },
     {
-      title: 'Pool Name',
-      sortKey: '',
+      title: 'Pool name',
+      sortKey: DealAccepted_OrderBy.PoolName,
     },
     {
-      title: 'Investment Amount',
-      sortKey: '',
+      title: 'Investment amount',
+      sortKey: DealAccepted_OrderBy.InvestmentAmount,
     },
     {
       title: 'Deal token amount',
-      sortKey: '',
+      sortKey: DealAccepted_OrderBy.DealTokenAmount,
     },
     {
       title: 'Network',
-      sortKey: '',
       justifyContent: columns.alignment.network,
     },
-    {
-      title: '',
-      sortKey: '',
-      justifyContent: columns.alignment.seePool,
-    },
   ]
 
-  const handleSort = (sortBy: string) => {
-    console.log(sortBy)
+  const handleSort = (sortBy: DealAccepted_OrderBy) => {
+    if (order.orderBy === sortBy) {
+      setOrder({
+        orderBy: sortBy,
+        orderDirection:
+          order.orderDirection === OrderDirection.Asc ? OrderDirection.Desc : OrderDirection.Asc,
+      })
+    } else {
+      setOrder({ orderBy: sortBy, orderDirection: OrderDirection.Desc })
+    }
   }
 
-  const sortBy = 'date'
+  const variables = {
+    where: { userAddress: address || ZERO_ADDRESS },
+    orderBy: order.orderBy,
+    orderDirection: order.orderDirection,
+  }
 
-  const data = [
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-    {
-      date: 'Dec 1, 2021 10:00AM',
-      poolName: 'Nuvevaults.com',
-      investmentAmount: '1,000,000 USDC',
-      dealTokenAmount: '500,000 vNUKE',
-      network: Chains.kovan,
-      id: '0xf68a28f3674972fe6e0b5bc6677a6c47ea1ce6e5',
-    },
-  ]
+  const { data, error, hasMore, mutate, nextPage } = useAelinDealsAccepted(variables)
+
+  useEffect(() => {
+    mutate()
+  }, [mutate])
+
+  if (error) {
+    throw error
+  }
 
   return (
     <TableWrapper {...restProps}>
       <Table>
         <InfiniteScroll
           dataLength={data.length}
-          hasMore={false}
+          hasMore={hasMore}
           loader={
             <Row columns={'1fr'}>
               <Cell justifyContent="center">Loading...</Cell>
             </Row>
           }
-          next={() => console.log('next')}
+          next={nextPage}
         >
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
               <SortableTH
-                isActive={sortBy === sortKey}
+                isActive={order.orderBy === sortKey}
                 justifyContent={justifyContent}
                 key={index}
                 onClick={() => {
-                  handleSort(sortKey)
+                  if (sortKey) handleSort(sortKey)
                 }}
               >
                 {title}
@@ -160,7 +127,7 @@ export const DealsAccepted: React.FC = ({ ...restProps }) => {
             <BaseCard>No data.</BaseCard>
           ) : (
             data.map((item, index) => {
-              const { date, dealTokenAmount, id, investmentAmount, network, poolName } = item
+              const { dealTokenAmount, id, investmentAmount, network, poolName, timestamp } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -170,7 +137,7 @@ export const DealsAccepted: React.FC = ({ ...restProps }) => {
                     router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                   }}
                 >
-                  <Cell>{date}</Cell>
+                  <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
                   <Cell light>{poolName}</Cell>
                   <Cell light>{investmentAmount}</Cell>
                   <Cell light>{dealTokenAmount}</Cell>
