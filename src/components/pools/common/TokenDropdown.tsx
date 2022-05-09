@@ -200,6 +200,8 @@ function TokenDropdown(props: TokenDropdownProps) {
           </ModalText>
           <TextfieldWrapper>
             <Textfield
+              // eslint-disable-next-line jsx-a11y/no-autofocus
+              autoFocus
               disabled={searchingToken}
               onChange={(e) => {
                 if (!e.target.value) {
