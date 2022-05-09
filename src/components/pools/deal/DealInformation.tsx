@@ -98,7 +98,7 @@ export const DealInformation: React.FC<{
         </InfoCell>
         <InfoCell title="User stats" tooltip="??">
           <Value>
-            Remaining pro-rata allocation: {poolStatusHelper.userProRataAllocation.formatted}
+            Remaining pro-rata allocation: {poolStatusHelper.userMaxAllocation.formatted}
           </Value>
           <Value>Withdrawn: {poolStatusHelper.userTotalWithdrawn.formatted}</Value>
         </InfoCell>

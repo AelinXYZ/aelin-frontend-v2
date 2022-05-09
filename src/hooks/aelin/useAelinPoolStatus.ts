@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import uniq from 'lodash/uniq'
@@ -10,8 +9,8 @@ import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useProRataAmount } from '@/src/hooks/aelin/useProRataAmount'
 import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
+import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -71,30 +70,70 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
 }
 
 function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
+  const { address } = useWeb3Connection()
+  const walletAddress = address || ZERO_ADDRESS
   const { data: userAllocationStatRes, refetch: refetchUserWithdrawn } = useUserAllocationStat(
     pool.address,
     chainId,
   )
-  const { maxProRataAmountBalance, refetchMaxProRataAmountBalance } = useProRataAmount(pool)
+  // TODO: make this calls in a single request
+  const [maxProRataAmountBalance, refetchMaxProRataAmountBalance] = useAelinPoolCall(
+    pool.chainId,
+    pool.address,
+    'maxProRataAmount',
+    [walletAddress],
+  )
+
+  const [walletPoolBalance, refetchWalletPoolBalance] = useAelinPoolCall(
+    pool.chainId,
+    pool.address,
+    'balanceOf',
+    [walletAddress],
+  )
+  const safeWalletPoolBalance = walletPoolBalance || ZERO_BN
+
+  const [maxPurchaseDealAllowed, refetchMaxPurchaseDealAllowed] = useAelinPoolCall(
+    pool.chainId,
+    pool.address,
+    'purchaseTokenTotalForDeal',
+    [],
+  )
+
+  const [totalAmountAccepted, refetchTotalAmountAccepted] = useAelinPoolCall(
+    pool.chainId,
+    pool.address,
+    'totalAmountAccepted',
+    [],
+  )
 
   const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
+
+  const maxOpenRedemptionAvailable =
+    maxPurchaseDealAllowed?.sub(totalAmountAccepted || ZERO_BN) || ZERO_BN
+  const maxOpenRedemptionBalance = safeWalletPoolBalance.gt(maxOpenRedemptionAvailable)
+    ? maxOpenRedemptionAvailable
+    : safeWalletPoolBalance
+
+  const userMaxAllocation =
+    pool.deal?.redemption?.stage === 1
+      ? maxProRataAmountBalance || ZERO_BN
+      : maxOpenRedemptionBalance
 
   return {
     refetchUserStats: () => {
       refetchUserWithdrawn()
       refetchMaxProRataAmountBalance()
+      refetchWalletPoolBalance()
+      refetchMaxPurchaseDealAllowed()
+      refetchTotalAmountAccepted()
     },
     userTotalWithdrawn: {
       raw: userAmountWithdrawn,
       formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
     },
-    userProRataAllocation: {
-      raw: maxProRataAmountBalance as BigNumber,
-      formatted:
-        formatToken(
-          (maxProRataAmountBalance as BigNumberish) || ZERO_BN,
-          pool.investmentTokenDecimals,
-        ) || '0',
+    userMaxAllocation: {
+      raw: userMaxAllocation,
+      formatted: formatToken(userMaxAllocation, pool.investmentTokenDecimals) || '0',
     },
   }
 }
