@@ -80,7 +80,7 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
     <Wrapper>
       <Title>Claim rewards</Title>
       <Text>
-        My Rewards: <Value>{rewardsToClaim} AELIN</Value>
+        My rewards: <Value>{rewardsToClaim} AELIN</Value>
       </Text>
       <Button
         disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isSubmitting}

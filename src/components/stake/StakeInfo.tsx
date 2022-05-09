@@ -51,7 +51,7 @@ const StakeInfo: FC<StakeInfoProps> = ({ isPool2, rewards, ...restProps }) => {
       {!isPool2 && (
         <>
           <Text>
-            Aelin staking:{' '}
+            Total Aelin staked:{' '}
             <Value>{`${rewards?.totalAelinStaked?.toFixed(2) ?? 0} ${rewards?.symbol}`}</Value>
           </Text>
           <Text>

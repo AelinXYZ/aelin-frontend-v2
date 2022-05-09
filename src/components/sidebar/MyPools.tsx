@@ -1,17 +1,11 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import { Filters } from '../pureStyledComponents/common/Filters'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
 import Pool from '@/src/components/sidebar/Pool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
-
-const Filters = styled.div`
-  display: flex;
-  gap: 4px;
-  justify-content: space-between;
-  margin-bottom: 20px;
-`
 
 const MoreButton = styled(TabButton)`
   border-color: ${({ theme: { colors } }) => colors.textColor};
@@ -51,7 +45,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
 
   return (
     <CollapsibleBlock title={'My pools'} {...restProps}>
-      <Filters>
+      <Filters justifyContent="space-between">
         <TabButton
           isActive={activeFilter === 'invested'}
           onClick={() => {
