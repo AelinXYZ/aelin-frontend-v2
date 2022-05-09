@@ -30,13 +30,13 @@ const PoolDetailsPage: NextPage = () => {
 
   return (
     <ErrorBoundary
-      fallbackRender={({ resetErrorBoundary }) => (
+      fallbackRender={() => (
         <>
           <p>Oh no!</p>
           <p>
             The pool was not found, if it was created recently it might take some minutes to appear
           </p>
-          <Button onClick={resetErrorBoundary}>Try Again</Button>
+          <Button onClick={() => router.reload()}>Try Again</Button>
         </>
       )}
     >
