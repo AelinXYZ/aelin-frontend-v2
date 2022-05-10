@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
 
@@ -6,7 +6,7 @@ import debounce from 'lodash/debounce'
 
 import { PoolCreated_Filter, PoolStatus } from '@/graphql-schema'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
-import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
+import { SafeSuspense, genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { List } from '@/src/components/pools/list/List'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
@@ -113,26 +113,39 @@ export const ListWithFilters: React.FC = () => {
     length: searchOptions[0].length,
   })
 
-  const [searchString, setSearchString] = useState<string>('')
+  const [searchString, setSearchString] = useState('')
+
   const [poolFilter, setPoolFilter] = useState('')
 
-  const changeHandler = useCallback(
-    (value: string, whereKey: keyof PoolCreated_Filter, minLength: number) => {
-      const buildWhere = () =>
-        searchOptions.reduce((acc, option) => {
-          return {
-            ...acc,
-            [option.filter]:
-              searchFilter.filter === option.filter && value.length >= minLength ? value : null,
-          }
-        }, {})
+  const changeHandler = useCallback(() => {
+    const buildWhere = () =>
+      searchOptions.reduce((acc, option) => {
+        return {
+          ...acc,
+          [option.filter]:
+            searchFilter.filter === option.filter && searchString.length >= searchFilter.length
+              ? searchString
+              : null,
+        }
+      }, {})
 
-      setWhere(buildWhere())
-    },
-    [searchFilter.filter, setWhere],
+    setWhere(buildWhere())
+  }, [searchFilter.filter, searchFilter.length, searchString, setWhere])
+
+  const debouncedChangeHandler = useMemo(
+    () => debounce(changeHandler, DEBOUNCED_INPUT_TIME),
+    [changeHandler],
   )
 
-  const debouncedChangeHandler = debounce(changeHandler, DEBOUNCED_INPUT_TIME)
+  useEffect(() => {
+    return () => {
+      debouncedChangeHandler.cancel()
+    }
+  })
+
+  useEffect(() => {
+    debouncedChangeHandler()
+  }, [debouncedChangeHandler, searchString])
 
   const networks = [{ id: undefined, name: 'All networks' }, ...getChainsByEnvironmentArray()]
 
@@ -154,18 +167,13 @@ export const ListWithFilters: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [poolFilter])
 
-  useEffect(() => {
-    if (searchString) debouncedChangeHandler(searchString, searchFilter.filter, searchFilter.length)
-  }, [debouncedChangeHandler, searchFilter.filter, searchFilter.length, searchString])
-
   return (
     <>
       <Wrapper>
         <SearchWrapper>
           <Search
-            onChange={(evt) => {
+            onChange={async (evt) => {
               setSearchString(evt.target.value)
-              debouncedChangeHandler(evt.target.value, searchFilter.filter, searchFilter.length)
             }}
             placeholder={`Enter ${searchFilter.label.toLocaleLowerCase()}...`}
           />
@@ -259,4 +267,4 @@ export const ListWithFilters: React.FC = () => {
   )
 }
 
-export default ListWithFilters
+export default genericSuspense(ListWithFilters)
