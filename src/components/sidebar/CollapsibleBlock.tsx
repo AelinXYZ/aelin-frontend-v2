@@ -1,12 +1,18 @@
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 
-const Wrapper = styled(BaseCard)<{ isExpanded?: boolean }>`
-  height: ${({ isExpanded }) => (isExpanded ? 'auto' : 'fit-content')};
+enum CollapsibleBlockStates {
+  expanded = 'expanded',
+  collapsed = 'collapsed',
+}
+
+const Wrapper = styled(BaseCard)<{ state?: CollapsibleBlockStates }>`
+  height: ${({ state }) => (state === CollapsibleBlockStates.expanded ? 'auto' : 'fit-content')};
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: transparent;
@@ -60,16 +66,36 @@ const Button = styled.button`
   }
 `
 
-const CollapsibleBlock: React.FC<{ title: string }> = ({ children, title, ...restProps }) => {
-  const [isExpanded, setIsExpanded] = useState(true)
+const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
+  children,
+  name,
+  title,
+  ...restProps
+}) => {
+  const [persistentState, setPersistentState] = useLocalStorage(
+    `persistent-state_${name}`,
+    CollapsibleBlockStates.expanded,
+  )
+  const [state, setState] = useState(
+    persistentState ? persistentState : CollapsibleBlockStates.expanded,
+  )
+  const isCollapsed = useMemo(() => state === CollapsibleBlockStates.collapsed, [state])
+  const isExpanded = useMemo(() => state === CollapsibleBlockStates.expanded, [state])
+
+  const toggleCollapse = useCallback(() => {
+    const toggledState = isCollapsed
+      ? CollapsibleBlockStates.expanded
+      : CollapsibleBlockStates.collapsed
+
+    setState(toggledState)
+    setPersistentState(toggledState)
+  }, [isCollapsed, setPersistentState])
 
   return (
-    <Wrapper isExpanded={isExpanded} {...restProps}>
+    <Wrapper state={state} {...restProps}>
       <Header>
         <Title>{title}</Title>
-        <Button onClick={() => setIsExpanded(!isExpanded)}>
-          {isExpanded ? <ArrowUp /> : <ArrowDown />}
-        </Button>
+        <Button onClick={toggleCollapse}>{isExpanded ? <ArrowUp /> : <ArrowDown />}</Button>
       </Header>
       {isExpanded && <Contents>{children}</Contents>}
     </Wrapper>
