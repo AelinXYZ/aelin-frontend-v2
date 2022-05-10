@@ -262,8 +262,14 @@ const createDealReducer = (state: CreateDealState, action: CreateDealAction) => 
 
 const isEmptyDuration = ({ days, hours, minutes }: Duration) => !days && !hours && !minutes
 
+const camelCaseToTitleCase = (str: string) => {
+  const result = str.replace(/([A-Z])/g, ' $1')
+  return result.toLocaleLowerCase()
+}
+
 export const getCreateDealSummaryData = (
   createDealState: CreateDealState,
+  isOpenPeriodDisabled: boolean,
 ): { title: string; value: string }[] =>
   createDealConfigArr.map((step) => {
     let value = createDealState[step.id]
@@ -289,10 +295,16 @@ export const getCreateDealSummaryData = (
       try {
         value = Object.values(value).some((val) => !!val)
           ? getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma')
+          : Object.values(value).some((val) => val !== undefined)
+          ? `No ${camelCaseToTitleCase(step.id)}`
           : undefined
       } catch (e) {
         value = undefined
       }
+    }
+
+    if (isOpenPeriodDisabled && step.id === CreateDealSteps.openPeriod) {
+      value = `No ${camelCaseToTitleCase(step.id)}`
     }
 
     if (isToken(value)) {

@@ -121,6 +121,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
         <>
           <TextfieldNarrow
             defaultValue={0}
+            disabled={totalPurchase === 'all'}
             name={step}
             onChange={(e) => {
               const { value } = e.target
@@ -166,7 +167,10 @@ export const DealCreateStepInput: React.FC<Props> = ({
         <HMSInput
           autofocusOnRender
           defaultValue={currentState[step]}
-          onChange={(value) => onSetDealField(value)}
+          onChange={(value) => {
+            console.log(value)
+            onSetDealField(value)
+          }}
         />
       ) : step === CreateDealSteps.openPeriod ? (
         <HMSInput

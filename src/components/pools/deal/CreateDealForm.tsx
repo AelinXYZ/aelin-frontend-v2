@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { wei } from '@synthetixio/wei'
@@ -59,7 +59,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const { pool } = useAelinPool(chainId, poolAddress)
   const { address, appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
-  const [totalPurchase, setTotalPurchase] = useState<string | undefined>()
+  const [totalPurchase, setTotalPurchase] = useState<string | undefined>('partial')
 
   const {
     createDealState,
@@ -103,6 +103,13 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   }, [createDealState.totalPurchaseAmount, pool.amountInPool.raw, pool.investmentTokenDecimals])
 
   const currentUserIsSponsor = useMemo(() => userRole === UserRole.Sponsor, [userRole])
+
+  useEffect(() => {
+    if (isOpenPeriodDisabled && createDealState.currentStep === CreateDealSteps.openPeriod) {
+      console.log('asd')
+      setDealField({ days: 0, hours: undefined, minutes: undefined })
+    }
+  }, [createDealState.currentStep, isOpenPeriodDisabled, setDealField])
 
   return (
     <>
@@ -167,7 +174,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                       </GradientButton>
                     )}
                   </ButtonWrapper>
-                  <Summary data={getCreateDealSummaryData(createDealState)} />
+                  <Summary data={getCreateDealSummaryData(createDealState, isOpenPeriodDisabled)} />
                 </StepContents>
                 <PrevNextWrapper>
                   {!isFinalStep && (

@@ -50,6 +50,13 @@ const validateCreateDeal = (values: dealErrors, pool: ParsedAelinPool, chainId: 
     errors.counterPartyAddress = 'Invalid Ethereum address'
   }
 
+  if (values.vestingCliff?.days === undefined) {
+    errors.vestingCliff = true
+  }
+  if (values.vestingPeriod?.days === undefined) {
+    errors.vestingPeriod = true
+  }
+
   if (
     !values.proRataPeriod?.days &&
     !values.proRataPeriod?.hours &&

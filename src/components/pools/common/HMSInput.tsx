@@ -37,7 +37,7 @@ export const HMSInput = ({
 
   const handleSetDuration = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setDuration({ ...duration, [name]: Number(value) })
+    setDuration({ ...duration, [name]: value ? Number(value) : undefined })
   }
 
   useEffect(() => {
