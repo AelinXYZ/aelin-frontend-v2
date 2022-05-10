@@ -3,13 +3,13 @@ import styled from 'styled-components'
 
 import Wei, { wei } from '@synthetixio/wei'
 
-import { Tooltip } from '../../tooltip/Tooltip'
 import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import {
   ButtonPrimaryLightSm,
   GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
+import { Tooltip as BaseTooltip } from '@/src/components/tooltip/Tooltip'
 import { Token } from '@/src/constants/token'
 
 const Text = styled(ModalText)`
@@ -44,6 +44,12 @@ const Note = styled(Label)`
 
 const Button = styled(GradientButton)`
   ${ModalButtonCSS}
+`
+
+const Tooltip = styled(BaseTooltip)`
+  margin-left: 10px;
+  margin-right: auto;
+  margin-top: -3px;
 `
 
 export const DealCalculationModal: React.FC<{
@@ -108,8 +114,8 @@ export const DealCalculationModal: React.FC<{
       />
       <Note>{rateLabel}</Note>
       <Label>
-        {dealToken?.symbol} Total{' '}
-        <Tooltip text={'The amount of tokens the Counter-party will have to deposit'} />
+        {dealToken?.symbol} Total
+        <Tooltip text={'The amount of tokens the counter-party will have to deposit'} />
       </Label>
       <Textfield readOnly type="number" value={dealTokenTotal.toNumber()} />
       <Button onClick={() => onConfirm(dealTokenTotal.toNumber())}>OK</Button>
