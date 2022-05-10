@@ -50,6 +50,7 @@ export type ParsedAelinPool = {
   poolType: string
   vestingStarts: Date
   vestingEnds: Date
+  dealsCreated: number
   deal?: {
     name: string
     symbol: string
@@ -88,8 +89,8 @@ export type ParsedAelinPool = {
       openRedemptionEnd: Date | null
     } | null
     holderAlreadyDeposited: boolean
-    holderDepositExpiration: Date
-    holderDepositDuration: Date
+    holderFundingExpiration: Date
+    holderFundingDuration: Date
     holderAddress: string
   }
 }
@@ -130,6 +131,7 @@ export const getParsedPool = ({
     deal: undefined,
     vestingStarts: new Date(pool.vestingStarts),
     vestingEnds: new Date(pool.vestingEnds),
+    dealsCreated: pool.dealsCreated,
   }
 
   const dealDetails = pool.deal
@@ -176,8 +178,8 @@ export const getParsedPool = ({
     hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
     redemption: redemptionInfo,
     holderAlreadyDeposited: dealDetails.isDealFunded,
-    holderDepositExpiration: new Date(),
-    holderDepositDuration: new Date(),
+    holderFundingExpiration: new Date(dealDetails.holderFundingExpiration * 1000),
+    holderFundingDuration: dealDetails.holderFundingDuration,
     holderAddress: dealDetails.holder,
   }
 
