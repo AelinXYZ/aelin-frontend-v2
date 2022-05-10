@@ -117,6 +117,7 @@ export const theme = {
     paddingDesktopStart: '20px',
     paddingDesktopWideStart: '20px 40px',
     paddingMobile: '0 10px 10px 10px',
+    paddingTabletLandscapeStart: '10px',
   },
   stages: {
     awaitingdeal: yellow,

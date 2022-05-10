@@ -5,10 +5,18 @@ import { ButtonCSS } from '@/src/components/pureStyledComponents/buttons/Button'
 import { sections } from '@/src/constants/sections'
 
 const Wrapper = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    gap: 10px;
+  }
 `
 
 const Item = styled(NavLink)`
@@ -29,12 +37,20 @@ const Item = styled(NavLink)`
   }
 `
 
+const Icon = styled.span`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    display: block;
+  }
+`
+
 export const TopMenu: React.FC = ({ ...restProps }) => {
   return (
     <Wrapper {...restProps}>
       {sections.map(({ href, icon, title }, index) => (
         <Item href={href} key={`top_menu_item_${index}`}>
-          {icon} {title}
+          <Icon>{icon}</Icon> {title}
         </Item>
       ))}
     </Wrapper>

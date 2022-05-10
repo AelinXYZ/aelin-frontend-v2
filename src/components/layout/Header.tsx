@@ -48,7 +48,7 @@ const InnerContainer = styled(BaseInnerContainer)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     ${BaseCardCSS}
     justify-content: space-between;
-    padding: 12px 20px 12px 40px;
+    padding: 12px 20px 12px 30px;
   }
 `
 
@@ -120,13 +120,8 @@ const EndWrapper = styled.div`
 `
 
 const TopMenu = styled(BaseTopMenu)`
-  display: none;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    display: flex;
-    margin-left: auto;
-    margin-right: 30px;
-  }
+  margin-left: auto;
+  margin-right: 30px;
 `
 
 const Item = styled.div`

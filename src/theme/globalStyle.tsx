@@ -41,6 +41,10 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     min-height: 100vh;
     padding: ${({ theme }) => theme.layout.paddingMobile};
 
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+      padding: ${({ theme }) => theme.layout.paddingTabletLandscapeStart};
+    }
+
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
       padding: ${({ theme }) => theme.layout.paddingDesktopStart};
     }
