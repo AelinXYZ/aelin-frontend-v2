@@ -9,13 +9,14 @@ const Wrapper = styled.main`
 
   column-gap: 30px;
   display: grid;
-  flex-grow: 1;
-  flex-shrink: 0;
   margin: 0 auto;
   max-width: 100%;
+  row-gap: 20px;
   width: ${({ theme }) => theme.layout.maxWidth};
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    flex-grow: 1;
+    flex-shrink: 0;
     grid-template-columns: var(--left-column-width) 1fr;
   }
 `
@@ -26,7 +27,6 @@ const SidebarWrapper = styled(BaseCard)`
   display: flex;
   flex-direction: column;
   height: fit-content;
-  margin-bottom: 20px;
   padding: 0;
   row-gap: 20px;
 
