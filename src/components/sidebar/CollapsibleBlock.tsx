@@ -5,12 +5,8 @@ import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
-const Wrapper = styled(BaseCard)`
-  margin-bottom: 20px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+const Wrapper = styled(BaseCard)<{ isExpanded?: boolean }>`
+  height: ${({ isExpanded }) => (isExpanded ? 'auto' : 'fit-content')};
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: transparent;
@@ -68,7 +64,7 @@ const CollapsibleBlock: React.FC<{ title: string }> = ({ children, title, ...res
   const [isExpanded, setIsExpanded] = useState(true)
 
   return (
-    <Wrapper {...restProps}>
+    <Wrapper isExpanded={isExpanded} {...restProps}>
       <Header>
         <Title>{title}</Title>
         <Button onClick={() => setIsExpanded(!isExpanded)}>

@@ -28,13 +28,22 @@ const SidebarWrapper = styled(BaseCard)`
   height: fit-content;
   margin-bottom: 20px;
   padding: 0;
+  row-gap: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    display: grid;
+    column-gap: 30px;
+    grid-template-columns: 1fr 1fr;
+  }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    display: flex;
     background-color: ${(props) => props.theme.card.backgroundColor};
     border-radius: 12px;
     border: ${(props) => props.theme.card.borderColor};
     margin-bottom: 0;
     min-height: calc(100vh - 120px);
+    row-gap: 10px;
   }
 `
 
@@ -51,10 +60,7 @@ const Break = styled.div`
     background-color: ${({ theme }) => theme.colors.borderColor};
     display: block;
     height: 1px;
-    margin-bottom: 5px;
-    margin-left: 20px;
-    margin-right: 20px;
-    margin-top: 10px;
+    margin: 0 20px;
   }
 `
 
