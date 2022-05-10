@@ -484,7 +484,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   }, [pool.investmentToken, readOnlyAppProvider])
 
   useEffect(() => {
-    setShowWarningOnLeave(true)
+    setShowWarningOnLeave(!!createDealState.dealToken)
   }, [createDealState])
 
   return {
