@@ -28,6 +28,7 @@ const Item = styled(NavLink)`
   align-items: center;
   display: flex;
   flex-direction: column;
+  height: 100%;
   justify-content: center;
   row-gap: 8px;
   text-decoration: none;
@@ -51,6 +52,13 @@ const Item = styled(NavLink)`
   }
 `
 
+const Icon = styled.span`
+  align-items: center;
+  display: flex;
+  height: 15px;
+  justify-content: center;
+`
+
 const Text = styled.span`
   color: ${({ theme: { colors } }) => colors.lightGray};
   font-size: 1rem;
@@ -70,7 +78,8 @@ export const MobileMenu: React.FC = ({ ...restProps }) => {
     <Wrapper {...restProps}>
       {sections.map(({ href, icon, title }, index) => (
         <Item href={href} key={`mobile_menu_item_${index}`}>
-          {icon} <Text>{title}</Text>
+          <Icon>{icon}</Icon>
+          <Text>{title}</Text>
         </Item>
       ))}
     </Wrapper>
