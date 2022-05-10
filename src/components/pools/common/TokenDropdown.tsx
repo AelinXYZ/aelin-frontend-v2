@@ -1,13 +1,17 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { isAddress } from '@ethersproject/address'
+import { getAddress, isAddress } from '@ethersproject/address'
 
 import { genericSuspense } from '../../helpers/SafeSuspense'
 import { Close } from '@/src/components/assets/Close'
 import { Loading as BaseLoading } from '@/src/components/common/Loading'
-import { Modal, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
-import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
+import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
+import {
+  ButtonDropdown as BaseButtonDropdown,
+  ButtonPrimary,
+  GradientButton,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Token } from '@/src/constants/token'
 import useAelinTokenList from '@/src/hooks/aelin/useAelinTokenList'
@@ -119,6 +123,9 @@ const InvalidResults = styled.div`
 const Loading = styled(BaseLoading)`
   margin: auto;
 `
+const Button = styled(GradientButton)`
+  ${ModalButtonCSS}
+`
 
 const tokenToOption = (token: Token) => ({
   value: token,
@@ -128,7 +135,7 @@ const tokenToOption = (token: Token) => ({
 type Option = { label: string; value: Token }
 type TokenDropdownProps = {
   tokenSelected?: Token
-  onChange: (value: Token) => void
+  onChange: (value: Token | undefined) => void
   placeholder: string | undefined
 }
 
@@ -137,54 +144,66 @@ function TokenDropdown(props: TokenDropdownProps) {
   const { readOnlyAppProvider } = useWeb3Connection()
 
   const [inputError, setInputError] = useState<string>('')
-  const [searchToken, setSearchToken] = useState<string>('')
+  const [searchToken, setSearchToken] = useState<string>(tokenSelected ? tokenSelected.symbol : '')
   const [searchingToken, setSearchingToken] = useState<boolean>(false)
   const [selectedToken, setSelectedToken] = useState<Option | undefined>(
     tokenSelected ? tokenToOption(tokenSelected) : undefined,
   )
   const [showModal, setShowModal] = useState(false)
 
-  const { tokens = [] } = useAelinTokenList() || {}
+  const { tokens = [], tokensByAddress } = useAelinTokenList() || {}
 
   const options = useMemo(() => {
-    const selectedTokenIsInList = tokens.some((token) => token.address === tokenSelected?.address)
+    const selectedTokenIsInList = tokens.some(
+      (token) => token.address === selectedToken?.value.address,
+    )
     const tokenList = [...tokens]
-    if (!selectedTokenIsInList && tokenSelected) {
-      tokenList.push(tokenSelected)
+    if (!selectedTokenIsInList && selectedToken) {
+      tokenList.push(selectedToken.value)
     }
 
     return tokenList
       .map(tokenToOption)
       .filter((token) => token.label.toLowerCase().includes(searchToken.toLowerCase()))
-  }, [searchToken, tokenSelected, tokens])
+  }, [searchToken, selectedToken, tokens])
 
   const closeModal = () => {
     setShowModal(false)
     setInputError('')
-    setSearchToken('')
     setSearchingToken(false)
   }
 
   const handlerSearchAddress = useCallback(
     async (value: string) => {
+      setSearchToken(value)
+
       if (!isAddress(value)) {
-        return setSearchToken(value)
+        return
+      }
+
+      if (tokensByAddress && tokensByAddress[getAddress(value)]) {
+        return setSearchToken(tokensByAddress[getAddress(value)]?.symbol || '')
       }
 
       setSearchingToken(true)
 
-      const tokenData = await getERC20Data({ address: value, provider: readOnlyAppProvider })
+      let tokenData
+      if (tokensByAddress && tokensByAddress[value.toLocaleLowerCase()]) {
+        tokenData = tokensByAddress[value.toLocaleLowerCase()] as Token
+      } else {
+        tokenData = await getERC20Data({ address: value, provider: readOnlyAppProvider })
+      }
+
       if (tokenData) {
         setInputError('')
         setSelectedToken(tokenToOption(tokenData))
-        onChange(tokenData)
-        closeModal()
+        setSearchToken(tokenData.symbol)
       } else {
         setInputError('Invalid address')
       }
       return setSearchingToken(false)
     },
-    [onChange, readOnlyAppProvider],
+    [readOnlyAppProvider, tokensByAddress],
   )
 
   return (
@@ -199,30 +218,31 @@ function TokenDropdown(props: TokenDropdownProps) {
             of the commonly used tokens already provided in the below list.
           </ModalText>
           <TextfieldWrapper>
-            <Textfield
-              // eslint-disable-next-line jsx-a11y/no-autofocus
-              autoFocus
-              disabled={searchingToken}
-              onChange={(e) => {
-                if (!e.target.value) {
+            <form>
+              <Textfield
+                // eslint-disable-next-line jsx-a11y/no-autofocus
+                autoFocus
+                disabled={searchingToken}
+                onChange={(e) => {
+                  handlerSearchAddress(e.target.value)
+                }}
+                placeholder={placeholder}
+                type="text"
+                value={searchToken}
+              />
+
+              <Delete
+                onClick={() => {
+                  onChange(undefined)
+                  setInputError('')
                   setSearchToken('')
-                }
-                handlerSearchAddress(e.target.value)
-              }}
-              placeholder={placeholder}
-              type="text"
-              value={searchToken}
-            />
-            <Delete
-              onClick={() => {
-                onChange(undefined as unknown as Token)
-                setSelectedToken(undefined)
-                setInputError('')
-                setSearchToken('')
-              }}
-            >
-              <Close />
-            </Delete>
+                  setSelectedToken(undefined)
+                }}
+                type="reset"
+              >
+                <Close />
+              </Delete>
+            </form>
           </TextfieldWrapper>
           <Tokens>
             {searchingToken && <Loading />}
@@ -234,6 +254,7 @@ function TokenDropdown(props: TokenDropdownProps) {
                     key={item.value.address}
                     onClick={() => {
                       setSelectedToken(item)
+                      setSearchToken(item.label)
                       onChange(item.value)
                       closeModal()
                     }}
@@ -242,10 +263,20 @@ function TokenDropdown(props: TokenDropdownProps) {
                   </Item>
                 )
               })}
-            {(inputError || !options.length) && (
+            {(inputError || !options.length) && !searchingToken && (
               <InvalidResults>{inputError ? inputError : 'No results'}</InvalidResults>
             )}
           </Tokens>
+          <Button
+            disabled={!selectedToken || tokenSelected === selectedToken.value}
+            onClick={() => {
+              onChange(selectedToken?.value)
+              closeModal()
+            }}
+          >
+            Confirm
+          </Button>
+          <br />
         </Modal>
       )}
     </>

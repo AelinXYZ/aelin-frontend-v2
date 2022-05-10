@@ -120,6 +120,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
       ) : step === CreateDealSteps.totalPurchaseAmount ? (
         <>
           <TextfieldNarrow
+            defaultValue={0}
             name={step}
             onChange={(e) => {
               const { value } = e.target
