@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
-import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const Wrapper = styled.div`

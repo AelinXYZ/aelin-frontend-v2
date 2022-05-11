@@ -12,8 +12,8 @@ import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
-import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
 import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -106,8 +106,9 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       setInputError('Amount is too big')
       return
     }
+
     if (tokenInputValue && BigNumber.from(tokenInputValue).gt(totalBalance)) {
-      setInputError('Amount is bigger than your balance')
+      setInputError('Insufficient balance')
       return
     }
 

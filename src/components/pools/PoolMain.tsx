@@ -8,7 +8,9 @@ import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
+import FundDeal from '@/src/components/pools/actions/FundDeal'
 import Invest from '@/src/components/pools/actions/Invest'
+import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
 import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPool'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
@@ -50,7 +52,6 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     poolAddress as string,
   )
   const { getExplorerUrl } = useWeb3Connection()
-  const mockedPoolVisibility = '???'
 
   if (!current) {
     throw new Error('There was no possible to calculate pool current status')
@@ -59,6 +60,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   const [tab, setTab] = useState<PoolStatus>(tabs[tabs.length - 1])
   const [action, setAction] = useState<PoolAction>(actions[0])
   const dealExists = pool.deal
+  const noActionTabsTitle =
+    !actions.length || action === PoolAction.Invest || action === PoolAction.AwaitingForDeal
 
   useEffect(() => {
     setAction(actions[0])
@@ -71,7 +74,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       </Head>
       <PageTitle
         href={getExplorerUrl(pool.dealAddress || '')}
-        subTitle={mockedPoolVisibility}
+        subTitle={pool.poolType}
         title={pool.nameFormatted}
       />
       <RightTimelineLayout activeStep={PoolTimelineState.poolCreation}>
@@ -119,13 +122,15 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
           <ActionTabs
             active={action}
             onTabClick={setAction}
-            tabs={!actions.length || action === PoolAction.Invest ? undefined : actions}
+            tabs={noActionTabsTitle ? undefined : actions}
           >
             {!actions.length && <div>No actions available</div>}
             {action === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
+            {action === PoolAction.AwaitingForDeal && <WaitingForDeal />}
             {action === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
             {action === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-            {action === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
+            {action === PoolAction.AcceptDeal && <AcceptDeal dealing={dealing} pool={pool} />}
+            {action === PoolAction.FundDeal && <FundDeal pool={pool} />}
           </ActionTabs>
         </MainGrid>
       </RightTimelineLayout>

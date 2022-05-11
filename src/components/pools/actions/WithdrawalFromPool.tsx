@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
@@ -9,7 +9,7 @@ import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
-import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -40,7 +40,7 @@ function WithdrawalFromPool({ pool }: Props) {
       return
     }
     if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance)) {
-      setInputError('Amount is too big')
+      setInputError('Insufficient balance')
     } else {
       setInputError('')
     }
@@ -59,10 +59,26 @@ function WithdrawalFromPool({ pool }: Props) {
           setInputError('')
         }
       },
-      title: `Deposit ${investmentTokenSymbol}`,
+      title: `Withdraw ${investmentTokenSymbol}`,
       estimate: () => withdrawFromPoolEstimate([tokenInputValue]),
     })
   }
+
+  const maxValueFormatted = useMemo(
+    () => formatToken(balance || ZERO_BN, investmentTokenDecimals) || '0',
+    [balance, investmentTokenDecimals],
+  )
+  const disableButton = useMemo(
+    () =>
+      !address ||
+      !isAppConnected ||
+      isSubmitting ||
+      !tokenInputValue ||
+      Boolean(inputError) ||
+      BigNumber.from(tokenInputValue).eq(0) ||
+      !maxValueFormatted,
+    [address, inputError, isAppConnected, isSubmitting, maxValueFormatted, tokenInputValue],
+  )
 
   return (
     <>
@@ -70,16 +86,11 @@ function WithdrawalFromPool({ pool }: Props) {
         decimals={investmentTokenDecimals}
         error={inputError}
         maxValue={(balance || ZERO_BN).toString()}
-        maxValueFormatted={formatToken(balance || ZERO_BN, investmentTokenDecimals) || '0'}
+        maxValueFormatted={maxValueFormatted}
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
-      <GradientButton
-        disabled={
-          !address || !isAppConnected || isSubmitting || !tokenInputValue || Boolean(inputError)
-        }
-        onClick={withdrawFromPool}
-      >
+      <GradientButton disabled={disableButton} onClick={withdrawFromPool}>
         Withdraw
       </GradientButton>
     </>

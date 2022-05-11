@@ -7,11 +7,11 @@ import { parseUnits } from '@ethersproject/units'
 import { Duration } from 'date-fns'
 
 import { useAelinPoolTransaction } from '../contracts/useAelinPoolTransaction'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token, isToken } from '@/src/constants/token'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
 import { getERC20Data } from '@/src/utils/getERC20Data'
@@ -305,6 +305,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   const [errors, setErrors] = useState<dealErrors>()
   const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
 
+  const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
+
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate: createDealEstimate, execute } = useAelinPoolTransaction(
@@ -374,23 +376,29 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
 
       title: 'Create deal',
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await execute(
-          [
-            underlyingDealToken,
-            purchaseTokenTotal,
-            underlyingDealTokenTotal,
-            vestingPeriodDuration,
-            vestingCliffDuration,
-            proRataRedemptionDuration,
-            openRedemptionDuration,
-            holderAddress,
-            holderFundingDuration,
-          ],
-          txGasOptions,
-        )
-        if (receipt) {
-          dispatch({ type: 'reset' })
-          router.reload()
+        setShowWarningOnLeave(false)
+
+        try {
+          const receipt = await execute(
+            [
+              underlyingDealToken,
+              purchaseTokenTotal,
+              underlyingDealTokenTotal,
+              vestingPeriodDuration,
+              vestingCliffDuration,
+              proRataRedemptionDuration,
+              openRedemptionDuration,
+              holderAddress,
+              holderFundingDuration,
+            ],
+            txGasOptions,
+          )
+          if (receipt) {
+            router.push(`/pool/${getKeyChainByValue(chainId)}/${pool.address}`)
+          }
+        } catch (error) {
+          console.log(error)
+          setShowWarningOnLeave(true)
         }
       },
     })
@@ -454,6 +462,10 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     investmentTokenInfo()
   }, [pool.investmentToken, readOnlyAppProvider])
 
+  useEffect(() => {
+    setShowWarningOnLeave(true)
+  }, [createDealState])
+
   return {
     setDealField,
     createDealState,
@@ -464,5 +476,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     isSubmitting,
     investmentTokenInfo,
     handleCreateDeal,
+    showWarningOnLeave,
   }
 }

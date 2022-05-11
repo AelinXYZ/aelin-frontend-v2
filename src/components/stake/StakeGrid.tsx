@@ -26,6 +26,7 @@ const StakeGrid = ({ ...restProps }) => {
           }}
           isPool2={false}
           key={StakingEnum.AELIN}
+          stakeType={StakingEnum.AELIN}
           textTooltip={
             'Staking AELIN gives a share of 29 AELIN/month in inflationary rewards + 2/3 of protocol deal fees. Note deal fees are temporarily custodied by the Aelin Council and will be distributed in the future.'
           }
@@ -33,7 +34,6 @@ const StakeGrid = ({ ...restProps }) => {
             'Estimation based on the total amount of rewards for a year and the total value staked in the contract.'
           }
           title={'Aelin staking'}
-          stakeType={StakingEnum.AELIN}
         />,
 
         <StakeSection
@@ -43,6 +43,7 @@ const StakeGrid = ({ ...restProps }) => {
           }}
           isPool2={true}
           key={StakingEnum.GELATO}
+          stakeType={StakingEnum.GELATO}
           textTooltip={
             'Staking AELIN/ETH LP gives a share of 44 AELIN/month in inflationary rewards + 1/3 of deal fees. Note deal fees are temporarily custodied by the Aelin Council and will be distributed in the future.'
           }
@@ -50,7 +51,6 @@ const StakeGrid = ({ ...restProps }) => {
             'Estimation based on the total amount of rewards for a year and the total value staked in the contract. Trading fees from Uniswap not included.'
           }
           title={'AELIN/ETH staking'}
-          stakeType={StakingEnum.GELATO}
         />,
       ],
       1: [
@@ -61,6 +61,7 @@ const StakeGrid = ({ ...restProps }) => {
           }}
           isPool2={true}
           key={StakingEnum.UNISWAP}
+          stakeType={StakingEnum.UNISWAP}
           textTooltip={
             'Staking AELIN/ETH LP gives a share of 50 AELIN/month in inflationary rewards.'
           }
@@ -68,7 +69,6 @@ const StakeGrid = ({ ...restProps }) => {
             'Estimation based on the total amount of rewards for a year and the total value staked in the contract. Trading fees from Uniswap not included.'
           }
           title={'AELIN/ETH staking'}
-          stakeType={StakingEnum.UNISWAP}
         />,
       ],
       5: [],
