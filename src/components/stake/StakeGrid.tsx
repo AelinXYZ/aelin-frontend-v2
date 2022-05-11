@@ -2,6 +2,7 @@ import { ReactNode, useMemo } from 'react'
 import styled from 'styled-components'
 
 import StakeSection from '@/src/components/stake/StakeSection'
+import { Chains } from '@/src/constants/chains'
 import { contracts as contractsConfig } from '@/src/constants/contracts'
 import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -18,11 +19,11 @@ const StakeGrid = ({ ...restProps }) => {
 
   const stakePerChain = useMemo(
     () => ({
-      10: [
+      [Chains.optimism]: [
         <StakeSection
           contractAddresses={{
-            stakingAddress: contractsConfig.STAKING_REWARDS.address[10],
-            tokenAddress: contractsConfig.AELIN_TOKEN.address[10],
+            stakingAddress: contractsConfig.STAKING_REWARDS.address[Chains.optimism],
+            tokenAddress: contractsConfig.AELIN_TOKEN.address[Chains.optimism],
           }}
           key={StakingEnum.AELIN}
           stakeType={StakingEnum.AELIN}
@@ -37,8 +38,8 @@ const StakeGrid = ({ ...restProps }) => {
 
         <StakeSection
           contractAddresses={{
-            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[10],
-            tokenAddress: contractsConfig.LP_TOKEN.address[10],
+            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[Chains.optimism],
+            tokenAddress: contractsConfig.LP_TOKEN.address[Chains.optimism],
           }}
           key={StakingEnum.GELATO}
           stakeType={StakingEnum.GELATO}
@@ -51,11 +52,11 @@ const StakeGrid = ({ ...restProps }) => {
           title={'AELIN/ETH staking'}
         />,
       ],
-      1: [
+      [Chains.mainnet]: [
         <StakeSection
           contractAddresses={{
-            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[1],
-            tokenAddress: contractsConfig.LP_TOKEN.address[1],
+            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[Chains.mainnet],
+            tokenAddress: contractsConfig.LP_TOKEN.address[Chains.mainnet],
           }}
           key={StakingEnum.UNISWAP}
           stakeType={StakingEnum.UNISWAP}
@@ -68,8 +69,8 @@ const StakeGrid = ({ ...restProps }) => {
           title={'AELIN/ETH staking'}
         />,
       ],
-      5: [],
-      42: [],
+      [Chains.goerli]: [],
+      [Chains.kovan]: [],
     }),
     [],
   )

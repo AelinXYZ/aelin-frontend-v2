@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import cloneDeep from 'lodash/cloneDeep'
 
+import { Chains } from '@/src/constants/chains'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import {
@@ -55,18 +56,18 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
 
   const stakingRewardsPerChain = useMemo(
     () => ({
-      10: async () => {
+      [Chains.optimism]: async () => {
         try {
           setIsLoading(true)
 
           const aelinRewards = await getAelinStakingRewards({
             address: address || ZERO_ADDRESS,
-            chainId: 10,
+            chainId: Chains.optimism,
           })
 
           const gelatoRewards = await getGelatoStakingRewards({
             address: address || ZERO_ADDRESS,
-            chainId: 10,
+            chainId: Chains.optimism,
           })
 
           setData((prevState) => ({
@@ -84,13 +85,13 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
           }
         }
       },
-      1: async () => {
+      [Chains.mainnet]: async () => {
         try {
           setIsLoading(true)
 
           const uniswapRewards = await getUniswapStakingRewards({
             address: address || ZERO_ADDRESS,
-            chainId: 1,
+            chainId: Chains.mainnet,
           })
 
           setData((prevState) => ({
@@ -107,13 +108,13 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
           }
         }
       },
-      5: () => {
-        const error = new Error(`Staking Rewards isn't available on Network Id = 5`)
+      [Chains.goerli]: () => {
+        const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.goerli}`)
 
         setError(error)
       },
-      42: () => {
-        const error = new Error(`Staking Rewards isn't available on Network Id = 42`)
+      [Chains.kovan]: () => {
+        const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.kovan}`)
 
         setError(error)
       },
