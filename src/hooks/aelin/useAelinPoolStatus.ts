@@ -352,8 +352,12 @@ export type TimelineSteps = {
 function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
   const now = Date.now()
 
-  const getStepDeadline = (deadline: Date) =>
-    getFormattedDurationFromDateToNow(deadline, `Ended ${formatDate(deadline, DATE_DETAILED)}`)
+  const getStepDeadline = (deadline: Date, message?: string) =>
+    getFormattedDurationFromDateToNow(
+      deadline,
+      message ?? `Ended ${formatDate(deadline, DATE_DETAILED)}`,
+    )
+
   return {
     [PoolTimelineState.poolCreation]: {
       isDefined: true,
@@ -380,9 +384,18 @@ function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
       active:
         !!pool.deal && isAfter(now, pool.deal.createdAt) && !pool.deal?.holderAlreadyDeposited,
       isDone: !!pool.deal?.holderAlreadyDeposited,
-      deadline: pool.deal ? getStepDeadline(pool.deal.holderFundingExpiration) : undefined,
+      deadline: pool.deal
+        ? getStepDeadline(
+            pool.deal.holderFundingExpiration,
+            pool.deal.holderAlreadyDeposited && pool.deal.fundedAt
+              ? `Funded ${formatDate(pool.deal.fundedAt, DATE_DETAILED)}`
+              : undefined,
+          )
+        : undefined,
       deadlineProgress: pool.deal
-        ? calculateDeadlineProgress(pool.deal.holderFundingExpiration, pool.deal.createdAt)
+        ? pool.deal.holderAlreadyDeposited
+          ? '100'
+          : calculateDeadlineProgress(pool.deal.holderFundingExpiration, pool.deal.createdAt)
         : '0',
       value:
         pool.deal && pool.deal?.holderAlreadyDeposited
