@@ -12,7 +12,7 @@ import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
-import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
+import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -34,8 +34,6 @@ const Button = styled(GradientButton)`
 `
 
 interface StakeTabContentProps {
-  handleAfterWithdraw: (stakeType: StakingEnum, amount: BigNumber) => void
-  handleAfterDeposit: (stakeType: StakingEnum, amount: BigNumber) => void
   rewards: {
     decimals: number
     symbol: string
@@ -49,8 +47,6 @@ interface StakeTabContentProps {
 }
 
 const StakeTabContent: FC<StakeTabContentProps> = ({
-  handleAfterDeposit,
-  handleAfterWithdraw,
   rewards,
   stakeType,
   stakingAddress,
@@ -61,6 +57,8 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   const [tokenInputValue, setTokenInputValue] = useState('')
 
   const { address, appChainId, isAppConnected } = useWeb3Connection()
+
+  const { handleAfterDeposit, handleAfterWithdraw } = useStakingRewards()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 

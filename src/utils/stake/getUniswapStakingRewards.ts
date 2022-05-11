@@ -30,7 +30,7 @@ export type UniswapStakingResponse = {
   ethInPool: string
   aelinInPool: string
   APY: number
-} | null
+}
 
 export const getUniswapStakingRewards = async ({
   address,

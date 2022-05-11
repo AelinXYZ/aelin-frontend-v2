@@ -6,6 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -51,14 +52,17 @@ const Button = styled(GradientButton)`
 
 type ClaimBoxProps = {
   stakingAddress: string
+  stakeType: StakingEnum
   userRewards: BigNumber
   decimals: number
 }
 
-const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakingAddress, userRewards }) => {
+const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakeType, stakingAddress, userRewards }) => {
   const [rewardsToClaim, setRewardsToClaim] = useState<BigNumber>(userRewards)
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+
+  const { handleAfterClaim } = useStakingRewards()
 
   const { estimate: estimateGetReward, execute } = useStakingRewardsTransaction(
     stakingAddress,
@@ -71,6 +75,7 @@ const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakingAddress, userRewards }) 
         const receipt = await execute([], txGasOptions)
         if (receipt) {
           setRewardsToClaim(ZERO_BN)
+          handleAfterClaim(stakeType)
         }
       },
       title: 'Claim AELIN tokens',

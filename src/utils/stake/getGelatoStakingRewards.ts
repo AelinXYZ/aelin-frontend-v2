@@ -26,7 +26,7 @@ export type GelatoStakingResponse = {
   ethInPool: BigNumber
   aelinInPool: BigNumber
   APY: number
-} | null
+}
 
 export const getGelatoStakingRewards = async ({ address, chainId }: GelatoStakingArgs) => {
   const provider = new JsonRpcProvider(getNetworkConfig(chainId).rpcUrl)

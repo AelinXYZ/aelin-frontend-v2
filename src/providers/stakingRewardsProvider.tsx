@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import cloneDeep from 'lodash/cloneDeep'
 
-import { ZERO_ADDRESS } from '@/src/constants/misc'
+import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import {
   AelinStakingResponse,
@@ -25,15 +25,15 @@ export enum StakingEnum {
 }
 
 export type StakingType = {
-  [StakingEnum.UNISWAP]: UniswapStakingResponse
-  [StakingEnum.GELATO]: GelatoStakingResponse
-  [StakingEnum.AELIN]: AelinStakingResponse
+  [StakingEnum.UNISWAP]: UniswapStakingResponse | null
+  [StakingEnum.GELATO]: GelatoStakingResponse | null
+  [StakingEnum.AELIN]: AelinStakingResponse | null
 }
 
 export type StakingRewardsContextType = {
+  handleAfterClaim: (stakeType: StakingEnum) => void
   handleAfterWithdraw: (stakeType: StakingEnum, amount: BigNumber) => void
   handleAfterDeposit: (stakeType: StakingEnum, amount: BigNumber) => void
-  clear: () => void
   data: StakingType
   error: Error | null
   isLoading: boolean
@@ -161,14 +161,23 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
     }))
   }
 
-  const clear = () => {
-    setData(initialState)
+  const handleAfterClaim = (stakeType: StakingEnum) => {
+    const rewards = cloneDeep(data[stakeType])
+
+    if (!rewards) return
+
+    rewards.userRewards = ZERO_BN
+
+    setData((prevState) => ({
+      ...prevState,
+      [stakeType]: rewards,
+    }))
   }
 
   return (
     <StakingRewardsContext.Provider
       value={{
-        clear,
+        handleAfterClaim,
         handleAfterDeposit,
         handleAfterWithdraw,
         isLoading,

@@ -1,9 +1,10 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+import { BigNumberish } from '@ethersproject/bignumber'
 
-import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import { STAKING_DECIMALS } from '@/src/constants/misc'
+import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
 import { AelinStakingResponse } from '@/src/utils/stake/getAelinStakingRewards'
 import { GelatoStakingResponse } from '@/src/utils/stake/getGelatoStakingRewards'
 import { UniswapStakingResponse } from '@/src/utils/stake/getUniswapStakingRewards'
@@ -32,7 +33,7 @@ const Value = styled.span`
 type StakingRewardsResponse = AelinStakingResponse | GelatoStakingResponse | UniswapStakingResponse
 
 type StakeInfoProps = {
-  isPool2: boolean
+  stakeType: StakingEnum
   rewards: StakingRewardsResponse & {
     ethInPool?: BigNumberish
     aelinInPool?: BigNumberish
@@ -40,26 +41,20 @@ type StakeInfoProps = {
   }
 }
 
-const StakeInfo: FC<StakeInfoProps> = ({ isPool2, rewards, ...restProps }) => {
+const StakeInfo: FC<StakeInfoProps> = ({ rewards, stakeType }) => {
+  const isPool2 = stakeType === StakingEnum.GELATO || stakeType === StakingEnum.UNISWAP
+
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       {isPool2 && (
         <>
           <Text>
             ETH in pool via G-UNI:{' '}
-            <Value>{`${
-              BigNumber.isBigNumber(rewards.ethInPool)
-                ? formatToken(rewards.ethInPool, rewards.decimals)
-                : Number(rewards.ethInPool).toFixed(2)
-            }`}</Value>
+            <Value>{`${formatToken(rewards.ethInPool as BigNumberish, rewards.decimals)}`}</Value>
           </Text>
           <Text>
             Aelin in pool via G-UNI:{' '}
-            <Value>{`${
-              BigNumber.isBigNumber(rewards.aelinInPool)
-                ? formatToken(rewards.aelinInPool, rewards.decimals)
-                : Number(rewards.aelinInPool).toFixed(2)
-            }`}</Value>
+            <Value>{`${formatToken(rewards.aelinInPool as BigNumberish, rewards.decimals)}`}</Value>
           </Text>
           <Text>
             My stake:{' '}
@@ -73,7 +68,7 @@ const StakeInfo: FC<StakeInfoProps> = ({ isPool2, rewards, ...restProps }) => {
         <>
           <Text>
             Total Aelin Staked:{' '}
-            <Value>{`${formatToken(rewards.totalStakedBalance || ZERO_BN, rewards.decimals)} ${
+            <Value>{`${formatToken(rewards.totalStakedBalance as BigNumberish, rewards.decimals)} ${
               rewards?.symbol
             }`}</Value>
           </Text>

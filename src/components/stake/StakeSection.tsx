@@ -51,7 +51,6 @@ interface StakeSectionProps {
     stakingAddress: string
     tokenAddress: string
   }
-  isPool2: boolean
   stakeType: StakingEnum
   textTooltip: string
   textTooltipAPY: string
@@ -60,7 +59,6 @@ interface StakeSectionProps {
 
 const StakeSection: FC<StakeSectionProps> = ({
   contractAddresses,
-  isPool2 = false,
   stakeType,
   textTooltip,
   textTooltipAPY,
@@ -69,7 +67,7 @@ const StakeSection: FC<StakeSectionProps> = ({
 }) => {
   const { stakingAddress, tokenAddress } = contractAddresses
 
-  const { data, error, handleAfterDeposit, handleAfterWithdraw, isLoading } = useStakingRewards()
+  const { data, error, isLoading } = useStakingRewards()
 
   const rewards = data[stakeType]
 
@@ -95,8 +93,6 @@ const StakeSection: FC<StakeSectionProps> = ({
       <Tabs>
         <Tab label="Deposit">
           <StakeTabContent
-            handleAfterDeposit={handleAfterDeposit}
-            handleAfterWithdraw={handleAfterWithdraw}
             rewards={rewards}
             stakeType={stakeType}
             stakingAddress={stakingAddress}
@@ -106,8 +102,6 @@ const StakeSection: FC<StakeSectionProps> = ({
         </Tab>
         <Tab label="Withdraw">
           <StakeTabContent
-            handleAfterDeposit={handleAfterDeposit}
-            handleAfterWithdraw={handleAfterWithdraw}
             rewards={rewards}
             stakeType={stakeType}
             stakingAddress={stakingAddress}
@@ -116,9 +110,10 @@ const StakeSection: FC<StakeSectionProps> = ({
           />
         </Tab>
       </Tabs>
-      <StakeInfo isPool2={isPool2} rewards={rewards} />
+      <StakeInfo rewards={rewards} stakeType={stakeType} />
       <ClaimBox
         decimals={rewards.decimals}
+        stakeType={stakeType}
         stakingAddress={stakingAddress}
         userRewards={rewards.userRewards}
       />

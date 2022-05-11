@@ -24,7 +24,6 @@ const StakeGrid = ({ ...restProps }) => {
             stakingAddress: contractsConfig.STAKING_REWARDS.address[10],
             tokenAddress: contractsConfig.AELIN_TOKEN.address[10],
           }}
-          isPool2={false}
           key={StakingEnum.AELIN}
           stakeType={StakingEnum.AELIN}
           textTooltip={
@@ -41,7 +40,6 @@ const StakeGrid = ({ ...restProps }) => {
             stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[10],
             tokenAddress: contractsConfig.LP_TOKEN.address[10],
           }}
-          isPool2={true}
           key={StakingEnum.GELATO}
           stakeType={StakingEnum.GELATO}
           textTooltip={
@@ -59,7 +57,6 @@ const StakeGrid = ({ ...restProps }) => {
             stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[1],
             tokenAddress: contractsConfig.LP_TOKEN.address[1],
           }}
-          isPool2={true}
           key={StakingEnum.UNISWAP}
           stakeType={StakingEnum.UNISWAP}
           textTooltip={

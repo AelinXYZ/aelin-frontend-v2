@@ -23,7 +23,7 @@ export type AelinStakingResponse = {
   tokenBalance: BigNumber
   totalStakedBalance: BigNumber
   APY: number
-} | null
+}
 
 export const getAelinStakingRewards = async ({ address, chainId }: AelinStakingArgs) => {
   const provider = new JsonRpcProvider(getNetworkConfig(chainId).rpcUrl)
