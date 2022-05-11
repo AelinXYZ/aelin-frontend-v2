@@ -8,6 +8,7 @@ import { Deadline } from '@/src/components/common/Deadline'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
+  LoadingTableRow,
   Row,
   RowLink,
   Table,
@@ -97,18 +98,14 @@ export const List: React.FC<{
   }
 
   return (
-    <TableWrapper>
-      <Table>
-        <InfiniteScroll
-          dataLength={data.length}
-          hasMore={hasMore}
-          loader={
-            <Row columns={'1fr'}>
-              <Cell justifyContent="center">Loading...</Cell>
-            </Row>
-          }
-          next={nextPage}
-        >
+    <InfiniteScroll
+      dataLength={data.length}
+      hasMore={hasMore}
+      loader={<LoadingTableRow />}
+      next={nextPage}
+    >
+      <TableWrapper>
+        <Table>
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
               <SortableTH
@@ -166,9 +163,9 @@ export const List: React.FC<{
               )
             })
           )}
-        </InfiniteScroll>
-      </Table>
-    </TableWrapper>
+        </Table>
+      </TableWrapper>
+    </InfiniteScroll>
   )
 }
 

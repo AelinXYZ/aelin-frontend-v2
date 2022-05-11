@@ -1,10 +1,37 @@
 import Link from 'next/link'
 import { lighten } from 'polished'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
+
+const loadingAnimation = keyframes`
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+`
 
 export const Table = styled.div`
-  min-width: fit-content;
+  column-gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 20px;
   width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    grid-template-columns: 1fr;
+    min-width: fit-content;
+    row-gap: 10px;
+  }
 `
 
 interface RowProps {
@@ -17,10 +44,13 @@ export const RowCSS = css<RowProps>`
   color: ${({ theme }) => theme.colors.textColor};
   column-gap: 10px;
   display: grid;
-  grid-template-columns: ${({ columns }) => columns};
   padding-left: 28px;
   padding-right: 16px;
   text-decoration: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    grid-template-columns: ${({ columns }) => columns};
+  }
 `
 
 const RowHover = css`
@@ -41,15 +71,10 @@ export const TableRowCSS = css<RowProps>`
   background-color: ${({ theme }) => theme.card.backgroundColor};
   border-radius: ${({ theme }) => theme.card.borderRadius};
   border: ${({ theme }) => theme.card.borderColor};
-  margin-bottom: 10px;
   min-height: 48px;
   padding-bottom: 10px;
   padding-top: 10px;
   transition: background-color 0.1s linear;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 
   ${({ hasHover }) => hasHover && RowHover}
 
@@ -87,7 +112,7 @@ export const TableHead = styled.div<RowProps>`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     ${RowCSS}
 
-    margin-bottom: 18px;
+    margin-bottom: 8px;
   }
 `
 
@@ -145,3 +170,24 @@ export const TableWrapper = styled.div`
   overflow-y: none;
   width: 100%;
 `
+
+const Loading = styled.span`
+  animation-delay: 0;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-name: ${loadingAnimation};
+  animation-timing-function: ease-in-out;
+  color: ${({ theme }) => theme.colors.textLight};
+  font-style: italic;
+`
+
+export const LoadingTableRow: React.FC<{ text?: string }> = ({
+  text = 'Loading...',
+  ...restProps
+}) => (
+  <Row columns={'1fr'} style={{ marginTop: '10px' }} {...restProps}>
+    <Cell justifyContent="center">
+      <Loading>{text}</Loading>
+    </Cell>
+  </Row>
+)

@@ -116,7 +116,7 @@ export const theme = {
     maxWidth: '1360px',
     paddingDesktopStart: '20px',
     paddingDesktopWideStart: '20px 40px',
-    paddingMobile: '0 10px 10px 10px',
+    paddingMobile: '0 10px 80px 10px',
     paddingTabletLandscapeStart: '10px',
   },
   stages: {
