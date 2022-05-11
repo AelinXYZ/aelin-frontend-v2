@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -58,8 +58,6 @@ type ClaimBoxProps = {
 }
 
 const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakeType, stakingAddress, userRewards }) => {
-  const [rewardsToClaim, setRewardsToClaim] = useState<BigNumber>(userRewards)
-
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { handleAfterClaim } = useStakingRewards()
@@ -74,7 +72,6 @@ const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakeType, stakingAddress, user
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await execute([], txGasOptions)
         if (receipt) {
-          setRewardsToClaim(ZERO_BN)
           handleAfterClaim(stakeType)
         }
       },
@@ -87,9 +84,9 @@ const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakeType, stakingAddress, user
     <Wrapper>
       <Title>Claim rewards</Title>
       <Text>
-        My Rewards: <Value>{formatToken(rewardsToClaim, decimals, STAKING_DECIMALS)} AELIN</Value>
+        My Rewards: <Value>{formatToken(userRewards, decimals, STAKING_DECIMALS)} AELIN</Value>
       </Text>
-      <Button disabled={rewardsToClaim.eq(ZERO_BN) || isSubmitting} onClick={handleClaim}>
+      <Button disabled={userRewards.eq(ZERO_BN) || isSubmitting} onClick={handleClaim}>
         Claim
       </Button>
     </Wrapper>
