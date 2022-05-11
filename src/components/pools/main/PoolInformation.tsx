@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import ENSOrAddress from '../../aelin/ENSOrAddress'
+import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ZERO_BN } from '@/src/constants/misc'
