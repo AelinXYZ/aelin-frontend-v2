@@ -118,13 +118,6 @@ export function dealExchangeRates(
   }
 }
 
-export function hasDealOpenPeriod(
-  investmentRaisedAmount: string,
-  acceptedInvestmentTokensAmount: string,
-) {
-  return !BigNumber.from(investmentRaisedAmount).eq(BigNumber.from(acceptedInvestmentTokensAmount))
-}
-
 export function getProRataRedemptionDates(
   proRataRedemptionPeriodStart: string,
   proRataRedemptionPeriod: string,
