@@ -36,7 +36,7 @@ function AcceptDeal({ dealing, pool }: Props) {
     throw new Error('There is not possible to accept deal at this pool stage.')
   }
 
-  const { refetchUserStats, userProRataAllocation } = dealing
+  const { refetchUserStats, userMaxAllocation: userProRataAllocation } = dealing
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
