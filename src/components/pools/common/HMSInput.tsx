@@ -15,6 +15,7 @@ interface InputDeadlineProps {
   onChange: (duration: Duration) => void
   inputNames?: string[]
   autofocusOnRender?: boolean
+  disabled?: boolean
 }
 
 enum durationTypes {
@@ -22,12 +23,13 @@ enum durationTypes {
   hours = 'hours',
   minutes = 'minutes',
 }
-
+const MAX_LENGTH = 6
 export const HMSInput = ({
   defaultValue = { days: undefined, hours: undefined, minutes: undefined },
   onChange,
   inputNames = [durationTypes.days, durationTypes.hours, durationTypes.minutes],
   autofocusOnRender,
+  disabled = false,
   ...restProps
 }: InputDeadlineProps) => {
   const [duration, setDuration] = useState(defaultValue)
@@ -35,7 +37,11 @@ export const HMSInput = ({
 
   const handleSetDuration = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setDuration({ ...duration, [name]: Number(value) })
+    if (value.length > MAX_LENGTH) {
+      e.preventDefault()
+    } else {
+      setDuration({ ...duration, [name]: value ? Number(value) : undefined })
+    }
   }
 
   useEffect(() => {
@@ -54,6 +60,7 @@ export const HMSInput = ({
     <Grid {...restProps}>
       <Textfield
         defaultValue={duration?.days}
+        disabled={disabled}
         id="durationDays"
         min={0}
         name={inputNames[0]}
@@ -64,6 +71,7 @@ export const HMSInput = ({
       />
       <Textfield
         defaultValue={duration?.hours}
+        disabled={disabled}
         id="durationHours"
         name={inputNames[1]}
         onChange={handleSetDuration}
@@ -72,6 +80,7 @@ export const HMSInput = ({
       />
       <Textfield
         defaultValue={duration?.minutes}
+        disabled={disabled}
         id="durationMinutes"
         name={inputNames[2]}
         onChange={handleSetDuration}

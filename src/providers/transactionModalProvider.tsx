@@ -109,7 +109,7 @@ export default function TransactionModalProvider({ children }: Props) {
     if (modalConfig && modalConfig.estimate) {
       try {
         modalConfig.estimate().then((estimate) => {
-          setGasLimitEstimate(wei(estimate, 0))
+          if (estimate) setGasLimitEstimate(wei(estimate, 0))
           setIsSubmitting(false)
         })
       } catch (e) {
