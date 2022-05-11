@@ -9,6 +9,7 @@ import {
   GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
+import { Tooltip as BaseTooltip } from '@/src/components/tooltip/Tooltip'
 import { Token } from '@/src/constants/token'
 
 const Text = styled(ModalText)`
@@ -45,27 +46,22 @@ const Button = styled(GradientButton)`
   ${ModalButtonCSS}
 `
 
+const Tooltip = styled(BaseTooltip)`
+  margin-left: 10px;
+  margin-right: auto;
+  margin-top: -3px;
+`
+
 export const DealCalculationModal: React.FC<{
   dealToken: Token
   investmentToken: Token
-  dealTokenAmount: Wei
-  investmentTokenAmount: Wei
+  totalPurchaseAmount: Wei
   onClose: () => void
   onConfirm: (dealTokenTotal: number | undefined) => void
-}> = ({
-  dealToken,
-  dealTokenAmount,
-  investmentToken,
-  investmentTokenAmount,
-  onClose,
-  onConfirm,
-}) => {
-  const [dealTokenTotal, setDealTokenTotal] = useState<Wei>(dealTokenAmount)
+}> = ({ dealToken, investmentToken, onClose, onConfirm, totalPurchaseAmount }) => {
+  const [exchangeRate, setExchangeRate] = useState<number>(1)
+  const [dealTokenTotal, setDealTokenTotal] = useState<Wei>(totalPurchaseAmount)
   const [rateIsInverted, setRateIsInverted] = useState<boolean>(false)
-
-  const [exchangeRate, setExchangeRate] = useState<number>(
-    dealTokenAmount.div(investmentTokenAmount).toNumber(),
-  )
 
   const ratePair = useMemo(() => {
     return rateIsInverted
@@ -75,43 +71,32 @@ export const DealCalculationModal: React.FC<{
 
   const rateLabel = useMemo(() => {
     return rateIsInverted
-      ? `1 ${dealToken.symbol} = ${exchangeRate} ${investmentToken.symbol}`
-      : `1 ${investmentToken.symbol} = ${exchangeRate} ${dealToken.symbol}`
+      ? `${exchangeRate} ${investmentToken.symbol} = 1 ${dealToken.symbol}`
+      : `${exchangeRate} ${dealToken.symbol} = 1 ${investmentToken.symbol}`
   }, [dealToken.symbol, exchangeRate, investmentToken.symbol, rateIsInverted])
 
   useEffect(() => {
     if (rateIsInverted) {
-      //setDealTokenTotal()
+      try {
+        setDealTokenTotal(totalPurchaseAmount.div(wei(exchangeRate, investmentToken.decimals)))
+      } catch (error) {
+        setDealTokenTotal(wei(0))
+      }
     } else {
-      setDealTokenTotal(investmentTokenAmount.mul(wei(exchangeRate, investmentToken.decimals)))
+      setDealTokenTotal(totalPurchaseAmount.mul(wei(exchangeRate, investmentToken.decimals)))
     }
-  }, [
-    dealTokenAmount,
-    exchangeRate,
-    investmentToken.decimals,
-    investmentTokenAmount,
-    rateIsInverted,
-  ])
-
-  useEffect(() => {
-    if (rateIsInverted) {
-      setExchangeRate(investmentTokenAmount.div(dealTokenAmount).toNumber())
-    } else {
-      setExchangeRate(dealTokenAmount.div(investmentTokenAmount).toNumber())
-    }
-  }, [dealTokenAmount, exchangeRate, investmentTokenAmount, rateIsInverted])
+  }, [exchangeRate, investmentToken.decimals, totalPurchaseAmount, rateIsInverted])
 
   return (
     <Modal onClose={onClose} title="Deal Calculation">
       <Text>
         Total Purchase Token ({investmentToken?.symbol}):{' '}
-        <TokenValue>{investmentTokenAmount.toNumber()}</TokenValue>
+        <TokenValue>{totalPurchaseAmount.toNumber()}</TokenValue>
       </Text>
       <Label>
         Exchange rate: {ratePair}
         <ButtonPrimaryLightSm
           onClick={() => {
-            setExchangeRate(0)
             setRateIsInverted(!rateIsInverted)
           }}
         >
@@ -128,7 +113,10 @@ export const DealCalculationModal: React.FC<{
         value={exchangeRate || undefined}
       />
       <Note>{rateLabel}</Note>
-      <Label>{dealToken?.symbol} Total</Label>
+      <Label>
+        {dealToken?.symbol} Total
+        <Tooltip text={'The amount of tokens the counter-party will have to deposit'} />
+      </Label>
       <Textfield readOnly type="number" value={dealTokenTotal.toNumber()} />
       <Button onClick={() => onConfirm(dealTokenTotal.toNumber())}>OK</Button>
     </Modal>

@@ -222,7 +222,7 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
   }, [pool])
 }
 
-function useUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserRole {
+export function useUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserRole {
   return useMemo(() => {
     if (!walletAddress) {
       return UserRole.Visitor
