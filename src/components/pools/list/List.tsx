@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
@@ -9,7 +10,6 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
   LoadingTableRow,
-  Row,
   RowLink,
   Table,
   TableHead,
@@ -22,6 +22,14 @@ import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/consta
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { calculateInvestmentDeadlineProgress, getStatusText } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+
+const NetworkIconCell = styled(Cell)`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: grid;
+  }
+`
 
 interface FiltersProps {
   network: ChainsValues | null
@@ -141,16 +149,18 @@ export const List: React.FC<{
                   href={`/pool/${getKeyChainByValue(network)}/${id}`}
                   key={id}
                 >
-                  <NameCell badge="3">{name.split('aePool-').pop()}</NameCell>
+                  <NameCell badge="3" name={name.split('aePool-').pop()}>
+                    {getNetworkConfig(network).icon}
+                  </NameCell>
                   <Cell>
                     <ENSOrAddress address={sponsor} network={network} />
                   </Cell>
-                  <Cell
+                  <NetworkIconCell
                     justifyContent={columns.alignment.network}
                     title={getNetworkConfig(network).name}
                   >
                     {getNetworkConfig(network).icon}
-                  </Cell>
+                  </NetworkIconCell>
                   <Cell>${amountInPool.formatted}</Cell>
                   <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
                     {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}

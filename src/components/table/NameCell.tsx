@@ -15,10 +15,15 @@ const Text = styled.div`
   white-space: nowrap;
 `
 
-export const NameCell: React.FC<{ badge?: string }> = ({ badge, children, ...restProps }) => {
+export const NameCell: React.FC<{ name: string | undefined; badge?: string }> = ({
+  badge,
+  children,
+  name,
+  ...restProps
+}) => {
   return (
     <Wrapper {...restProps}>
-      <Text>{children}</Text> {badge && <Badge>{badge}</Badge>}
+      <Text>{name}</Text> {badge && <Badge>{badge}</Badge>} {children}
     </Wrapper>
   )
 }

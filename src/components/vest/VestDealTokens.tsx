@@ -201,7 +201,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                     href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
                     key={index}
                   >
-                    <NameCell>{poolName}</NameCell>
+                    <NameCell name={poolName} />
                     <Cell>{tokenToVest}</Cell>
                     <Cell>{myDealTotal}</Cell>
                     <AmountToVestCell {...item} />
