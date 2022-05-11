@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
-import { getAddress } from '@ethersproject/address'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
@@ -14,7 +14,6 @@ import {
   TableHead,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
-import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
@@ -22,7 +21,6 @@ import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/consta
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { calculateInvestmentDeadlineProgress, getStatusText } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
-import { shortenAddress } from '@/src/utils/string'
 
 interface FiltersProps {
   network: ChainsValues | null
@@ -148,9 +146,7 @@ export const List: React.FC<{
                 >
                   <NameCell badge="3">{name.split('aePool-').pop()}</NameCell>
                   <Cell>
-                    <ExternalLink href={`https://etherscan.io/address/${getAddress(sponsor)}`}>
-                      {shortenAddress(getAddress(sponsor))}
-                    </ExternalLink>
+                    <ENSOrAddress address={sponsor} network={network} />
                   </Cell>
                   <Cell
                     justifyContent={columns.alignment.network}
