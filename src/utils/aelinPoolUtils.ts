@@ -189,3 +189,18 @@ export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start:
 
   return Math.round((q / d) * 100).toString()
 }
+
+export function calculateDeadlineProgress(deadline: Date, start: Date) {
+  if (getFormattedDurationFromDateToNow(deadline, 'ended') === 'ended') {
+    return '0'
+  }
+
+  const end = deadline
+  const today = new Date()
+
+  //use Math.abs to avoid sign
+  const q = Math.abs(today.getTime() - start.getTime())
+  const d = Math.abs(end.getTime() - start.getTime())
+
+  return Math.round((q / d) * 100).toString()
+}

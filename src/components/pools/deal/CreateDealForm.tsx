@@ -38,6 +38,7 @@ import useAelinCreateDeal, {
   getCreateDealSummaryData,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
+import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
@@ -70,6 +71,8 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     setDealField,
     showWarningOnLeave,
   } = useAelinCreateDeal(appChainId, pool)
+
+  const { timeline } = useAelinPoolStatus(chainId, poolAddress as string)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
   const { order, text, title } = currentStepConfig
@@ -111,7 +114,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
         <title>Deal creation</title>
       </Head>
       <PageTitle subTitle={pool.poolType} title={`${pool.nameFormatted}`} />
-      <RightTimelineLayout activeStep={PoolTimelineState.dealCreation}>
+      <RightTimelineLayout timelineSteps={timeline}>
         <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
           <StepIndicator
             currentStepOrder={order}
