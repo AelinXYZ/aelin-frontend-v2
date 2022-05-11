@@ -170,12 +170,16 @@ export const ButtonDropdownCSS = css`
   border-style: ${({ theme }) => theme.textField.borderStyle};
   border-width: ${({ theme }) => theme.textField.borderWidth};
   color: ${({ theme }) => theme.buttonDropdown.color};
-  justify-content: space-between;
+  justify-content: center;
   padding-left: 20px;
   padding-right: 14px;
   position: relative;
   transition: transform 0.15s linear;
   width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    justify-content: space-between;
+  }
 
   &:active {
     opacity: 1;
