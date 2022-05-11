@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { Filters } from '../pureStyledComponents/common/Filters'
 import { PoolCreated } from '@/graphql-schema'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { Filters } from '@/src/components/pureStyledComponents/common/Filters'
 import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
 import Pool from '@/src/components/sidebar/Pool'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
@@ -142,7 +142,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
   const { notifications } = useNotifications()
 
   return (
-    <CollapsibleBlock title={'My pools'} {...restProps}>
+    <CollapsibleBlock name="mypools" title={'My pools'} {...restProps}>
       <Filters justifyContent="space-between">
         <TabButton
           isActive={activeFilter === Filter.Invested}

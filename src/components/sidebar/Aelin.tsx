@@ -6,7 +6,7 @@ import Graph from '@/src/components/sidebar/Graph'
 
 const Aelin = ({ ...restProps }) => {
   return (
-    <CollapsibleBlock title={'Aelin'} {...restProps}>
+    <CollapsibleBlock name="aelin" title={'Aelin'} {...restProps}>
       <AelinData />
       <Graph />
     </CollapsibleBlock>

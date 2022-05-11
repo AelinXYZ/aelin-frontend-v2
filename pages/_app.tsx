@@ -8,6 +8,7 @@ import { SWRConfig } from 'swr'
 import 'sanitize.css'
 import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
+import { MobileMenu } from '@/src/components/navigation/MobileMenu'
 import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
@@ -69,6 +70,7 @@ function App({ Component, pageProps }: AppProps) {
                       <Toast />
                     </SafeSuspense>
                     <TooltipConfig />
+                    <MobileMenu />
                   </NotificationsProvider>
                 </TransactionModalProvider>
               </StakingRewardsProvider>
