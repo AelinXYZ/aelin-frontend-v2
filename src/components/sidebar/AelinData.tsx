@@ -1,9 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
-import { Filters } from '../pureStyledComponents/common/Filters'
+import { BigNumber } from '@ethersproject/bignumber'
+
+import { Loading } from '@/src/components/common/Loading'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { Filters } from '@/src/components/pureStyledComponents/common/Filters'
+import { Chains } from '@/src/constants/chains'
+import { contracts } from '@/src/constants/contracts'
+import { ZERO_BN } from '@/src/constants/misc'
+import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { formatToken } from '@/src/web3/bigNumber'
 
 const Wrapper = styled.div`
   margin-bottom: 40px;
@@ -34,67 +45,148 @@ const ButtonContainer = styled.div`
   justify-content: center;
 `
 
-enum Tab {
-  Aelin = 'Aelin',
-  EthAelin = 'EthAelin',
-}
-
-function getBalanceTitle(activeTab: Tab): string {
+function getBalanceTitle(activeTab: StakingEnum): string {
   switch (activeTab) {
-    case Tab.Aelin:
+    case StakingEnum.AELIN:
       return 'Aelin balance:'
-    case Tab.EthAelin:
-      return 'ETH/Aelin balance:'
+    case StakingEnum.GELATO:
+    case StakingEnum.UNISWAP:
+      return 'AELIN/ETH balance:'
   }
 }
 
 const AelinData: React.FC = ({ ...restProps }) => {
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.Aelin)
+  const { appChainId } = useWeb3Connection()
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const data = [
+  const { data, error, handleAfterClaim, isLoading } = useStakingRewards()
+
+  const [activeTab, setActiveTab] = useState<StakingEnum>(StakingEnum.AELIN)
+
+  const isMainnet = Chains.mainnet === appChainId
+
+  useEffect(() => {
+    const activeTab = isMainnet ? StakingEnum.UNISWAP : StakingEnum.AELIN
+
+    setActiveTab(activeTab)
+  }, [appChainId, isMainnet])
+
+  const stakingAddress = useMemo(() => {
+    if (activeTab === StakingEnum.AELIN) {
+      return contracts.STAKING_REWARDS.address[Chains.optimism]
+    }
+
+    if (activeTab === StakingEnum.GELATO) {
+      return contracts.LP_STAKING_REWARDS.address[Chains.optimism]
+    }
+
+    if (activeTab === StakingEnum.UNISWAP) {
+      return contracts.LP_STAKING_REWARDS.address[Chains.mainnet]
+    }
+
+    throw new Error('Unexpected tab')
+  }, [activeTab])
+
+  const { estimate: estimateGetReward, execute } = useStakingRewardsTransaction(
+    stakingAddress,
+    'getReward',
+  )
+
+  const rewards = data[activeTab]
+
+  if (isLoading)
+    return (
+      <Wrapper>
+        <Loading />
+      </Wrapper>
+    )
+
+  if (error) {
+    throw error
+  }
+
+  const values = [
     {
       title: getBalanceTitle(activeTab),
-      value: '0.25465487',
+      value: `${formatToken(rewards?.tokenBalance as BigNumber, rewards?.decimals)} ${
+        rewards?.symbol
+      }`,
     },
     {
       title: 'My stake:',
-      value: '1.7548656',
+      value: `${formatToken(rewards?.userStake as BigNumber, rewards?.decimals)} ${
+        rewards?.symbol
+      }`,
     },
     {
       title: 'My rewards:',
-      value: '0.0005468',
+      value: `${formatToken(rewards?.userRewards as BigNumber, rewards?.decimals)} ${
+        rewards?.symbol
+      }`,
     },
   ]
+
+  const handleClaim = async () => {
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        const receipt = await execute([], txGasOptions)
+        if (receipt) {
+          handleAfterClaim(activeTab)
+        }
+      },
+      title: 'Claim AELIN tokens',
+      estimate: () => estimateGetReward(),
+    })
+  }
 
   return (
     <Wrapper {...restProps}>
       <Filters justifyContent="flex-start">
-        <TabButton
-          isActive={activeTab === Tab.Aelin}
-          onClick={() => {
-            setActiveTab(Tab.Aelin)
-          }}
-        >
-          Aelin
-        </TabButton>
-        <TabButton
-          isActive={activeTab === Tab.EthAelin}
-          onClick={() => {
-            setActiveTab(Tab.EthAelin)
-          }}
-        >
-          ETH/Aelin
-        </TabButton>
+        {isMainnet && (
+          <TabButton
+            isActive={activeTab === StakingEnum.UNISWAP}
+            onClick={() => {
+              setActiveTab(StakingEnum.UNISWAP)
+            }}
+          >
+            ETH/Aelin
+          </TabButton>
+        )}
+        {!isMainnet && (
+          <>
+            <TabButton
+              isActive={activeTab === StakingEnum.AELIN}
+              onClick={() => {
+                setActiveTab(StakingEnum.AELIN)
+              }}
+            >
+              Aelin
+            </TabButton>
+            <TabButton
+              isActive={activeTab === StakingEnum.GELATO}
+              onClick={() => {
+                setActiveTab(StakingEnum.GELATO)
+              }}
+            >
+              ETH/Aelin
+            </TabButton>
+          </>
+        )}
       </Filters>
       <Rows>
-        {data.map(({ title, value }, index) => (
+        {values.map(({ title, value }, index) => (
           <Row key={index}>
             {title} <Value>{value}</Value>
           </Row>
         ))}
       </Rows>
       <ButtonContainer>
-        <GradientButton>Claim</GradientButton>
+        <GradientButton
+          disabled={rewards?.userRewards.eq(ZERO_BN) || isSubmitting}
+          onClick={handleClaim}
+        >
+          Claim
+        </GradientButton>
       </ButtonContainer>
     </Wrapper>
   )
