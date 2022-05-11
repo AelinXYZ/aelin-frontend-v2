@@ -125,7 +125,7 @@ export const Cell = styled.span<{ justifyContent?: string; light?: boolean }>`
   align-items: center;
   color: ${({ light, theme: { colors } }) => (light ? colors.textColor : colors.textColorLight)};
   display: flex;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 500;
   height: 100%;
   height: fit-content;
@@ -133,6 +133,10 @@ export const Cell = styled.span<{ justifyContent?: string; light?: boolean }>`
   line-height: 1.2;
   margin-top: 3px;
   min-width: 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    font-size: 1.4rem;
+  }
 `
 
 Cell.defaultProps = {
