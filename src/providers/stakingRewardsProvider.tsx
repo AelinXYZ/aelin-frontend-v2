@@ -123,7 +123,6 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (appChainId === null) return
-    if (address === null) return
 
     stakingRewardsPerChain[appChainId]()
   }, [address, appChainId, stakingRewardsPerChain])
