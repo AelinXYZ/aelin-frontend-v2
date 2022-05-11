@@ -9,13 +9,13 @@ const getTokenList = (chainId: ChainsValues) => {
   if (!isDev) {
     return fetch(chainsConfig[chainId].tokenListUrl).then((x) => x.json())
   } else {
-    return new Promise((resolve) => resolve({ tokens: [TestnetTokens[chainId]] }))
+    return Promise.resolve({ tokens: [TestnetTokens[chainId]] })
   }
 }
 
 const useTokenListQuery = () => {
   const { appChainId } = useWeb3Connection()
-  return useSWR(['tokenList', appChainId], async () => {
+  return useSWR(['token-list', appChainId], async () => {
     const response: TokenListResponse = await getTokenList(appChainId)
     let tokens: Token[] = response.tokens
 
