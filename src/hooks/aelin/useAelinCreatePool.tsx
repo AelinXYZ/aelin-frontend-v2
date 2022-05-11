@@ -264,7 +264,7 @@ export const getCreatePoolSummaryData = (
     if (isDuration(value)) {
       try {
         value = Object.values(value).some((val) => !!val)
-          ? getFormattedDurationFromNowToDuration(value, 'LLL dd, yyyy HH:mma')
+          ? getFormattedDurationFromNowToDuration(value, 'LLL dd, yyyy HH:mma') ?? '--'
           : undefined
       } catch (e) {
         value = undefined
