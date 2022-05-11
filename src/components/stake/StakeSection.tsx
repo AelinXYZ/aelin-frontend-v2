@@ -1,8 +1,8 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
-import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
 import { Etherscan } from '@/src/components/assets/Etherscan'
+import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
@@ -11,9 +11,8 @@ import StakeInfo from '@/src/components/stake/StakeInfo'
 import StakeTabContent from '@/src/components/stake/StakeTabContent'
 import Tabs, { Tab } from '@/src/components/tabs/Tabs'
 import { Tooltip } from '@/src/components/tooltip/Tooltip'
-import { AelinStakingResponse } from '@/src/hooks/aelin/useAelinStakingRewards'
-import { GelatoStakingResponse } from '@/src/hooks/aelin/useGelatoStakingRewards'
-import { UniswapStakingResponse } from '@/src/hooks/aelin/useUniswapStakingRewards'
+import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '@/src/constants/types'
+import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 
 const Wrapper = styled(BaseCard)`
   display: flex;
@@ -47,43 +46,40 @@ const APYValue = styled.span`
   font-weight: 600;
 `
 
-type StakingRewardsResponse = GelatoStakingResponse | AelinStakingResponse | UniswapStakingResponse
-
 interface StakeSectionProps {
   contractAddresses: {
     stakingAddress: string
     tokenAddress: string
   }
   isPool2: boolean
+  stakeType: StakingEnum
   textTooltip: string
   textTooltipAPY: string
   title: string
-  useStakingRewards: (stakingAddress: string, tokenAddress: string) => StakingRewardsResponse
 }
 
 const StakeSection: FC<StakeSectionProps> = ({
   contractAddresses,
   isPool2 = false,
+  stakeType,
   textTooltip,
   textTooltipAPY,
   title,
-  useStakingRewards,
   ...restProps
 }) => {
   const { stakingAddress, tokenAddress } = contractAddresses
 
-  const rewards: StakingRewardsResponse = useStakingRewards(stakingAddress, tokenAddress)
+  const { data, error, handleAfterDeposit, handleAfterWithdraw, isLoading } = useStakingRewards()
 
-  /*
-  const rewards: StakingRewardsResponse = {
-    decimals: 18,
-    symbol: 'AELIN',
-    userRewards: BigNumber.from('0x11a5b9518e'),
-    userStake: BigNumber.from('0x78db1d92bd2a'),
-    totalStakedBalance: BigNumber.from('0x33d8bc21a447964d84'),
-    APY: 36.89176475474039,
+  const rewards = data[stakeType]
+
+  if (error) {
+    throw error
   }
-  */
+
+  if (isLoading) return <Loading />
+
+  if (!rewards) return null
 
   return (
     <Wrapper {...restProps}>
@@ -99,20 +95,24 @@ const StakeSection: FC<StakeSectionProps> = ({
       <Tabs>
         <Tab label="Deposit">
           <StakeTabContent
-            decimals={rewards.decimals}
+            handleAfterDeposit={handleAfterDeposit}
+            handleAfterWithdraw={handleAfterWithdraw}
+            rewards={rewards}
+            stakeType={stakeType}
             stakingAddress={stakingAddress}
-            symbol={rewards.symbol}
+            tabType={DEPOSIT_TYPE}
             tokenAddress={tokenAddress}
-            type={DEPOSIT_TYPE}
           />
         </Tab>
         <Tab label="Withdraw">
           <StakeTabContent
-            decimals={rewards.decimals}
+            handleAfterDeposit={handleAfterDeposit}
+            handleAfterWithdraw={handleAfterWithdraw}
+            rewards={rewards}
+            stakeType={stakeType}
             stakingAddress={stakingAddress}
-            symbol={rewards.symbol}
+            tabType={WITHDRAW_TYPE}
             tokenAddress={tokenAddress}
-            type={WITHDRAW_TYPE}
           />
         </Tab>
       </Tabs>

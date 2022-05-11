@@ -11,9 +11,9 @@ import { TabContent } from '@/src/components/tabs/Tabs'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
-import useStakingRewardsCall from '@/src/hooks/contracts/useStakingRewardsCall'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/modalTransactionProvider'
+import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -34,19 +34,28 @@ const Button = styled(GradientButton)`
 `
 
 interface StakeTabContentProps {
-  type: typeof DEPOSIT_TYPE | typeof WITHDRAW_TYPE
-  decimals: number
+  handleAfterWithdraw: (stakeType: StakingEnum, amount: BigNumber) => void
+  handleAfterDeposit: (stakeType: StakingEnum, amount: BigNumber) => void
+  rewards: {
+    decimals: number
+    symbol: string
+    tokenBalance: BigNumber
+    userStake: BigNumber
+  }
+  stakeType: StakingEnum
   stakingAddress: string
-  symbol: string
+  tabType: typeof DEPOSIT_TYPE | typeof WITHDRAW_TYPE
   tokenAddress: string
 }
 
 const StakeTabContent: FC<StakeTabContentProps> = ({
-  decimals,
+  handleAfterDeposit,
+  handleAfterWithdraw,
+  rewards,
+  stakeType,
   stakingAddress,
-  symbol,
+  tabType,
   tokenAddress,
-  type,
 }) => {
   const [inputError, setInputError] = useState('')
   const [tokenInputValue, setTokenInputValue] = useState('')
@@ -55,18 +64,12 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const [allowance, refetchAllowance] = useERC20Call(appChainId, tokenAddress, 'allowance', [
-    address || ZERO_ADDRESS,
-    stakingAddress,
-  ])
-
-  const [balanceOf, refetchBalanceOf] = useERC20Call(appChainId, tokenAddress, 'balanceOf', [
-    address || ZERO_ADDRESS,
-  ])
-
-  const [userStake] = useStakingRewardsCall(appChainId, stakingAddress, 'balanceOf', [
-    address || ZERO_ADDRESS,
-  ])
+  const [tokenAllowance, refetchTokenAllowance] = useERC20Call(
+    appChainId,
+    tokenAddress,
+    'allowance',
+    [address || ZERO_ADDRESS, stakingAddress],
+  )
 
   const { estimate: estimateApprove, execute: executeApprove } = useERC20Transaction(
     tokenAddress,
@@ -83,27 +86,27 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
     'withdraw',
   )
 
+  const { decimals, symbol, tokenBalance, userStake } = rewards
+
   const totalBalance = useMemo(() => {
-    if (type === DEPOSIT_TYPE) {
-      return balanceOf || ZERO_BN
+    if (tabType === DEPOSIT_TYPE) {
+      return tokenBalance || ZERO_BN
     }
-    if (type === WITHDRAW_TYPE) {
+    if (tabType === WITHDRAW_TYPE) {
       return userStake || ZERO_BN
     }
 
     throw new Error('Unknown action type')
-  }, [type, balanceOf, userStake])
+  }, [tabType, tokenBalance, userStake])
 
-  const hasAllowance = useMemo(() => {
-    return allowance?.gt(ZERO_ADDRESS) ?? false
-  }, [allowance])
+  const hasAllowance = (tokenAllowance as BigNumber).gt(ZERO_BN)
 
   useEffect(() => {
     if (tokenInputValue && BigNumber.from(tokenInputValue).gt(MaxUint256)) {
       setInputError('Amount is too big')
       return
     }
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(totalBalance ?? ZERO_BN)) {
+    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(totalBalance)) {
       setInputError('Amount is bigger than your balance')
       return
     }
@@ -116,7 +119,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await executeApprove([stakingAddress, MaxUint256], txGasOptions)
         if (receipt) {
-          refetchAllowance()
+          refetchTokenAllowance()
         }
       },
       title: `Approve ${symbol}`,
@@ -129,8 +132,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await executeStake([tokenInputValue], txGasOptions)
         if (receipt) {
-          refetchAllowance()
-          refetchBalanceOf()
+          handleAfterDeposit(stakeType, BigNumber.from(tokenInputValue))
           setTokenInputValue('')
           setInputError('')
         }
@@ -145,8 +147,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await executeWithdraw([tokenInputValue], txGasOptions)
         if (receipt) {
-          refetchAllowance()
-          refetchBalanceOf()
+          handleAfterWithdraw(stakeType, BigNumber.from(tokenInputValue))
           setTokenInputValue('')
           setInputError('')
         }
@@ -183,9 +184,9 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
             !hasAllowance ||
             isSubmitting
           }
-          onClick={type === DEPOSIT_TYPE ? handleDeposit : handleWithdraw}
+          onClick={tabType === DEPOSIT_TYPE ? handleDeposit : handleWithdraw}
         >
-          {type === DEPOSIT_TYPE ? 'Deposit' : 'Withdraw'}
+          {tabType === DEPOSIT_TYPE ? 'Deposit' : 'Withdraw'}
         </Button>
       </ButtonsWrapper>
     </TabContent>

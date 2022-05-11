@@ -4,9 +4,9 @@ import styled from 'styled-components'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 
 import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
-import { AelinStakingResponse } from '@/src/hooks/aelin/useAelinStakingRewards'
-import { GelatoStakingResponse } from '@/src/hooks/aelin/useGelatoStakingRewards'
-import { UniswapStakingResponse } from '@/src/hooks/aelin/useUniswapStakingRewards'
+import { AelinStakingResponse } from '@/src/utils/stake/getAelinStakingRewards'
+import { GelatoStakingResponse } from '@/src/utils/stake/getGelatoStakingRewards'
+import { UniswapStakingResponse } from '@/src/utils/stake/getUniswapStakingRewards'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const Wrapper = styled.div`
