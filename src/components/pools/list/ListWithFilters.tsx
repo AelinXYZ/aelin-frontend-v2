@@ -138,13 +138,11 @@ export const ListWithFilters: React.FC = () => {
   )
 
   useEffect(() => {
+    debouncedChangeHandler()
+
     return () => {
       debouncedChangeHandler.cancel()
     }
-  })
-
-  useEffect(() => {
-    debouncedChangeHandler()
   }, [debouncedChangeHandler, searchString])
 
   const networks = [{ id: undefined, name: 'All networks' }, ...getChainsByEnvironmentArray()]

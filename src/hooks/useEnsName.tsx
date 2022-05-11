@@ -1,5 +1,3 @@
-import { useCallback } from 'react'
-
 import { JsonRpcProvider } from '@ethersproject/providers'
 import useSWR from 'swr'
 
@@ -19,7 +17,7 @@ export const useEnsLookUpAddress = (address: string, network: ChainsValues) => {
     async () => {
       try {
         const ens = await mainnetRpcProvider.lookupAddress(address)
-        if (!ens) throw new Error(`No ens 'address'}`)
+        if (!ens) throw new Error(`No ens name for this address`)
         return ens
       } catch (err) {
         return address
@@ -47,7 +45,7 @@ export const ensResolver = async (name: string) => {
   if (isValidENSName(name)) {
     try {
       const ens = await mainnetRpcProvider.resolveName(name)
-      if (!ens) throw new Error(`No ens 'address'}`)
+      if (!ens) throw new Error(`No address for this ens name`)
       return ens
     } catch (err) {
       console.log(err)

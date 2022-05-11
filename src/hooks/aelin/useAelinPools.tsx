@@ -68,7 +68,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
           ...parsedPool,
           stage: calculateStatus({
             poolStatus: parsedPool.poolStatus,
-            purchaseExpiry: parsedPool.purchaseExpiry,
+            purchaseExpiry: parsedPool.purchaseExpiry.getTime(),
           }),
         }
       })
