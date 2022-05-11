@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
-import { BigNumberish } from '@ethersproject/bignumber'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 
 import { STAKING_DECIMALS } from '@/src/constants/misc'
 import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
@@ -50,11 +50,19 @@ const StakeInfo: FC<StakeInfoProps> = ({ rewards, stakeType }) => {
         <>
           <Text>
             ETH in pool via G-UNI:{' '}
-            <Value>{`${formatToken(rewards.ethInPool as BigNumberish, rewards.decimals)}`}</Value>
+            <Value>{`${
+              BigNumber.isBigNumber(rewards.ethInPool)
+                ? formatToken(rewards.ethInPool, rewards.decimals)
+                : Number(rewards.ethInPool).toFixed(2)
+            }`}</Value>
           </Text>
           <Text>
             Aelin in pool via G-UNI:{' '}
-            <Value>{`${formatToken(rewards.aelinInPool as BigNumberish, rewards.decimals)}`}</Value>
+            <Value>{`${
+              BigNumber.isBigNumber(rewards.aelinInPool)
+                ? formatToken(rewards.aelinInPool, rewards.decimals)
+                : Number(rewards.aelinInPool).toFixed(2)
+            }`}</Value>
           </Text>
           <Text>
             My stake:{' '}
