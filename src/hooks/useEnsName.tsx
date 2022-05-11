@@ -47,7 +47,6 @@ export const ensResolver = async (name: string) => {
   if (isValidENSName(name)) {
     try {
       const ens = await mainnetRpcProvider.resolveName(name)
-      console.log(ens)
       if (!ens) throw new Error(`No ens 'address'}`)
       return ens
     } catch (err) {
