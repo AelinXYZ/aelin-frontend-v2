@@ -82,9 +82,13 @@ Row.defaultProps = {
 }
 
 export const TableHead = styled.div<RowProps>`
-  ${RowCSS}
+  display: none;
 
-  margin-bottom: 18px;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    ${RowCSS}
+
+    margin-bottom: 18px;
+  }
 `
 
 TableHead.defaultProps = {
