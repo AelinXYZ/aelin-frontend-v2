@@ -32,7 +32,18 @@ const Wrapper = styled.a`
   }
 `
 
-const State = styled.span`
+type StageTypes =
+  | 'poolopen'
+  | 'open'
+  | 'fundingdeal'
+  | 'seekingdeal'
+  | 'dealopen'
+  | 'dealready'
+  | 'vesting'
+  | 'complete'
+  | string
+
+const State = styled.span<{ stage: StageTypes }>`
   --dimensions: 8px;
 
   border-radius: 5px;
@@ -40,20 +51,20 @@ const State = styled.span`
   height: var(--dimensions);
   width: var(--dimensions);
 
-  ${({ color, theme }) => color && `background-color: ${theme.states[color]};`}
+  background-color: ${({ stage, theme: { stages } }) => stages[stage] ?? '#fff'};
 `
 
 interface Props {
-  color: 'green' | 'yellow' | 'blue' | string
+  stage: StageTypes
   href: string
   notifications?: number
 }
 
-const Pool: React.FC<Props> = ({ children, color, href, notifications, ...restProps }) => {
+const Pool: React.FC<Props> = ({ children, href, notifications, stage, ...restProps }) => {
   return (
     <Link href={href} passHref>
       <Wrapper {...restProps}>
-        <State color={color} />
+        <State stage={stage} />
         {children}
         {notifications !== 0 && <Badge>{notifications}</Badge>}
       </Wrapper>
