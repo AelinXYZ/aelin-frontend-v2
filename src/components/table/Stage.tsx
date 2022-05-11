@@ -22,24 +22,7 @@ export const StageColor = styled.span<{ stage: StageTypes }>`
   --dimensions: 10px;
 
   align-items: center;
-  background-color: ${({ stage, theme: { stages } }) =>
-    stage === 'poolopen'
-      ? stages.poolopen
-      : stage === 'open'
-      ? stages.open
-      : stage === 'fundingdeal'
-      ? stages.fundingdeal
-      : stage === 'seekingdeal'
-      ? stages.awaitingdeal
-      : stage === 'dealopen'
-      ? stages.dealopen
-      : stage === 'dealready'
-      ? stages.dealready
-      : stage === 'vesting'
-      ? stages.vesting
-      : stage === 'complete'
-      ? stages.complete
-      : '#fff'}};
+  background-color: ${({ stage, theme: { stages } }) => stages[stage] ?? '#fff'};
   border-radius: 50%;
   color: ${({ theme }) => theme.colors.textColor};
   display: flex;

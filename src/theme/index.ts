@@ -120,7 +120,7 @@ export const theme = {
     paddingTabletLandscapeStart: '10px',
   },
   stages: {
-    awaitingdeal: yellow,
+    seekingdeal: yellow,
     complete: '#fff',
     dealopen: green,
     dealready: blue,
@@ -128,11 +128,6 @@ export const theme = {
     open: green,
     poolopen: green,
     vesting: pink,
-  },
-  states: {
-    green: green,
-    yellow: yellow,
-    blue: blue,
   },
   stepCircle: {
     backgroundColor: 'rgba(255, 255, 255, 0.2);',

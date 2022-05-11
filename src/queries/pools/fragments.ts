@@ -58,6 +58,7 @@ gql`
     isDealFunded
     holderFundingExpiration
     holderFundingDuration
+    timestamp
   }
 `
 

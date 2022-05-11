@@ -13,25 +13,11 @@ import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { ExtendedStatus, POOLS_RESULTS_PER_CHAIN, allStages } from '@/src/constants/pool'
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
+import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
 export interface PoolParsedWithState extends ParsedAelinPool {
   stage: ExtendedStatus
-}
-
-export const calculateStatus = ({
-  poolStatus,
-  purchaseExpiry,
-}: {
-  poolStatus: PoolStatus
-  purchaseExpiry: Date
-}): ExtendedStatus => {
-  const now = Date.now()
-
-  if (poolStatus === PoolStatus.PoolOpen && now > purchaseExpiry.getTime()) {
-    return allStages.SeekingDeal
-  }
-  return poolStatus
 }
 
 const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) => {
@@ -76,7 +62,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
               ...parsedPool,
               stage: calculateStatus({
                 poolStatus: parsedPool.poolStatus,
-                purchaseExpiry: parsedPool.purchaseExpiry,
+                purchaseExpiry: parsedPool.purchaseExpiry.getTime(),
               }),
             }
           }),

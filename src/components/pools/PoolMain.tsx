@@ -47,7 +47,7 @@ type Props = {
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
-  const { actions, current, dealing, funding, pool, tabs } = useAelinPoolStatus(
+  const { actions, current, dealing, funding, pool, tabs, timeline } = useAelinPoolStatus(
     chainId,
     poolAddress as string,
   )
@@ -77,7 +77,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         subTitle={pool.poolType}
         title={pool.nameFormatted}
       />
-      <RightTimelineLayout activeStep={PoolTimelineState.poolCreation}>
+      <RightTimelineLayout timelineSteps={timeline}>
         <MainGrid>
           <CardWithTitle
             titles={

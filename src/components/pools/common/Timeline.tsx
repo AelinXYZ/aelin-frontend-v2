@@ -2,7 +2,8 @@ import styled from 'styled-components'
 
 import { Deadline } from '@/src/components/common/Deadline'
 import { StepCircleBig as BaseStepCircle } from '@/src/components/timeline/StepCircle'
-import { PoolTimelineState } from '@/src/constants/types'
+import { PoolTimelineState, PoolTimelineStateTitles } from '@/src/constants/types'
+import { TimelineSteps } from '@/src/hooks/aelin/useAelinPoolStatus'
 
 const Wrapper = styled.div`
   --gap: 20px;
@@ -121,87 +122,54 @@ const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
   )
 }
 
-export const Timeline: React.FC<{ activeStep?: PoolTimelineState }> = ({
-  activeStep = PoolTimelineState.poolCreation,
+export const Timeline: React.FC<{ timelineSteps?: TimelineSteps }> = ({
+  timelineSteps,
   ...restProps
 }) => {
+  const isStepDefined = (state: PoolTimelineState) => timelineSteps?.[state]?.isDefined
+
   const items = [
-    {
-      state: PoolTimelineState.poolCreation,
-      content: (
-        <>
-          <Title>Pool Creation</Title>
-          <Value>Jan 1, 2022, 10.00AM</Value>
-        </>
-      ),
-    },
-    {
-      state: PoolTimelineState.investmentWindow,
-      content: (
-        <>
-          <Title>Investment window</Title>
-          <Value>Jan 1, 2022, 10.00AM</Value>
-        </>
-      ),
-    },
-    {
-      state: PoolTimelineState.dealCreation,
-      content: (
-        <>
-          <Title>Deal creation</Title>
-          <Value>Feb 1, 2022 11:00AM</Value>
-        </>
-      ),
-    },
-    {
-      state: PoolTimelineState.dealWindow,
-      content: (
-        <>
-          <Title>Deal Window</Title>
-          <Value>--</Value>
-        </>
-      ),
-    },
-    {
-      state: PoolTimelineState.roundInvestment,
-      content: (
-        <>
-          <Title>Round X investment</Title>
-          <Deadline progress="0" width="180px">
-            <Value>Ended Apr 30, 2022, 11:59</Value>
-          </Deadline>
-        </>
-      ),
-    },
-    {
-      state: PoolTimelineState.vestingPeriod,
-      content: (
-        <>
-          <Title>Vesting period</Title>
-          <Value>--</Value>
-        </>
-      ),
-    },
-    {
-      state: PoolTimelineState.vestingCliff,
-      content: (
-        <>
-          <Title>Vesting cliff</Title>
-          <Deadline progress="75" width="180px">
-            <Value>~89d 23h 59m</Value>
-          </Deadline>
-          <Value>Ends Jul 31, 2022 11:59PM</Value>
-        </>
-      ),
-    },
+    PoolTimelineState.poolCreation,
+    PoolTimelineState.investmentWindow,
+    PoolTimelineState.dealCreation,
+    PoolTimelineState.dealWindow,
+    PoolTimelineState.proRataRedemption,
+    PoolTimelineState.openRedemption,
+    PoolTimelineState.vestingCliff,
+    PoolTimelineState.vestingPeriod,
   ]
+    .filter(isStepDefined)
+    .map((state: PoolTimelineState) => ({
+      state,
+      content: (
+        <>
+          <Title>{PoolTimelineStateTitles[state]}</Title>
+          {timelineSteps?.[state]?.deadline ? (
+            <>
+              <Deadline progress={timelineSteps?.[state]?.deadlineProgress || '0'} width="180px">
+                <Value>{timelineSteps?.[state]?.deadline}</Value>
+              </Deadline>
+              {!timelineSteps?.[state]?.isDone && (
+                <Value>{timelineSteps?.[state]?.value ?? '--'}</Value>
+              )}
+            </>
+          ) : (
+            <Value>{timelineSteps?.[state]?.value ?? '--'}</Value>
+          )}
+        </>
+      ),
+    }))
 
   items.sort((a, b) => (a.state > b.state ? 1 : -1))
 
   return (
     <Wrapper {...restProps}>
       {items.map(({ content, state }, index) => (
-        <Step isActive={activeStep === state} isDone={activeStep > state} key={index}>
+        <Step
+          isActive={timelineSteps?.[state]?.active}
+          isDone={timelineSteps?.[state]?.isDone}
+          key={index}
+        >
           {content}
         </Step>
       ))}
