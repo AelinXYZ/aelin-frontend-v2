@@ -73,7 +73,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
       <PageTitle
-        href={getExplorerUrl(pool.dealAddress || '')}
+        href={getExplorerUrl(pool.address || '')}
         subTitle={pool.poolType}
         title={pool.nameFormatted}
       />
