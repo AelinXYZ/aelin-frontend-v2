@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import ENSOrAddress from '../../aelin/ENSOrAddress'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
