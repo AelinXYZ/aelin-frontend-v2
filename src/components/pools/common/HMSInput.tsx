@@ -23,7 +23,7 @@ enum durationTypes {
   hours = 'hours',
   minutes = 'minutes',
 }
-
+const MAX_LENGTH = 6
 export const HMSInput = ({
   defaultValue = { days: undefined, hours: undefined, minutes: undefined },
   onChange,
@@ -37,7 +37,11 @@ export const HMSInput = ({
 
   const handleSetDuration = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setDuration({ ...duration, [name]: value ? Number(value) : undefined })
+    if (value.length > MAX_LENGTH) {
+      e.preventDefault()
+    } else {
+      setDuration({ ...duration, [name]: value ? Number(value) : undefined })
+    }
   }
 
   useEffect(() => {

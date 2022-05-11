@@ -1,20 +1,21 @@
 import { useRouter } from 'next/router'
-import { ReactElement, useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useReducer, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
 import { Duration } from 'date-fns'
-import { add, assignWith } from 'lodash'
+import isEqual from 'lodash/isEqual'
 
 import { useAelinPoolTransaction } from '../contracts/useAelinPoolTransaction'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
-import { Token, isToken } from '@/src/constants/token'
+import { Token } from '@/src/constants/token'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
+import { getDuration, getFormattedDurationFromNowToDuration, sumDurations } from '@/src/utils/date'
+import formatNumber from '@/src/utils/formatNumber'
 import { getERC20Data } from '@/src/utils/getERC20Data'
 import { shortenAddress } from '@/src/utils/string'
 import validateCreateDeal, { dealErrors } from '@/src/utils/validate/createDeal'
@@ -37,19 +38,38 @@ interface CreateDealStepInfo {
   text: string | ReactElement
   placeholder: string | undefined
   id: CreateDealSteps
+  getSummaryValue: (...args: any) => string
 }
 
 export interface CreateDealState {
   dealToken: Token | undefined
   totalPurchaseAmount: string | undefined
   dealTokenTotal: string | undefined
-  vestingCliff: Duration | undefined
-  vestingPeriod: Duration | undefined
-  proRataPeriod: Duration | undefined
-  openPeriod: Duration | undefined
-  counterPartyFundingPeriod: Duration | undefined
+  vestingCliff: Duration
+  vestingPeriod: Duration
+  proRataPeriod: Duration
+  openPeriod: Duration
+  counterPartyFundingPeriod: Duration
   counterPartyAddress: string | undefined
   currentStep: CreateDealSteps
+}
+
+export interface CreateDealStateComplete {
+  dealToken: Token
+  totalPurchaseAmount: string
+  dealTokenTotal: string
+  vestingCliff: Duration
+  vestingPeriod: Duration
+  proRataPeriod: Duration
+  openPeriod: Duration
+  counterPartyFundingPeriod: Duration
+  counterPartyAddress: string
+  currentStep: CreateDealSteps
+}
+
+const camelCaseToTitleCase = (str: string) => {
+  const result = str.replace(/([A-Z])/g, ' $1')
+  return result.toLocaleLowerCase()
 }
 
 export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
@@ -59,6 +79,8 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Deal token',
     text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool as your deal. Examples - SNX Address (0x8700daec35af8ff88c16bdf0418774cb3d7599b4)',
     placeholder: 'Enter deal token address',
+    getSummaryValue: (currentState: CreateDealStateComplete) =>
+      currentState[CreateDealSteps.dealToken].symbol,
   },
 
   [CreateDealSteps.totalPurchaseAmount]: {
@@ -74,8 +96,9 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
         treatment.'
       </>
     ),
-
     placeholder: 'Enter total purchase amount...',
+    getSummaryValue: (currentState: CreateDealStateComplete) =>
+      formatNumber(Number(currentState[CreateDealSteps.totalPurchaseAmount])),
   },
   [CreateDealSteps.dealTokenTotal]: {
     id: CreateDealSteps.dealTokenTotal,
@@ -83,6 +106,8 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Deal token total',
     text: 'Total amount of deal tokens that are being distributed to the pool. This determines the exchange rate between investment tokens and deal tokens.',
     placeholder: 'Enter deal token total...',
+    getSummaryValue: (currentState: CreateDealStateComplete) =>
+      formatNumber(Number(currentState[CreateDealSteps.dealTokenTotal])),
   },
 
   [CreateDealSteps.vestingCliff]: {
@@ -91,6 +116,14 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Vesting cliff',
     text: 'Investors will not begin vesting any deal tokens until this point.',
     placeholder: undefined,
+    getSummaryValue: (currentState: CreateDealStateComplete) => {
+      const value = currentState[CreateDealSteps.vestingCliff]
+
+      return (
+        getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma') ??
+        `No ${camelCaseToTitleCase(CreateDealSteps.vestingCliff)}`
+      )
+    },
   },
   [CreateDealSteps.vestingPeriod]: {
     id: CreateDealSteps.vestingPeriod,
@@ -98,6 +131,15 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Vesting period',
     text: 'How long after the vesting cliff (if applicable), tokens will vest for. They will be unlocked linearly over this time.',
     placeholder: undefined,
+    getSummaryValue: (currentState: CreateDealStateComplete) => {
+      const value = currentState[CreateDealSteps.vestingPeriod]
+      const valueWithVestingCliff = sumDurations(currentState[CreateDealSteps.vestingCliff], value)
+
+      return Object.values(value).some((val) => val > 0)
+        ? getFormattedDurationFromNowToDuration(valueWithVestingCliff, '~LLL dd, yyyy HH:mma') ||
+            '--'
+        : `No ${camelCaseToTitleCase(CreateDealSteps.vestingPeriod)}`
+    },
   },
   [CreateDealSteps.proRataPeriod]: {
     id: CreateDealSteps.proRataPeriod,
@@ -105,6 +147,11 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Pro rata period',
     text: 'Time period where investors confirm their allocation of deal tokens. We recommend giving investors ample time so they do not miss accepting tokens. Note - If investors do not accept their pro rata period, they will effectively decline the deal.',
     placeholder: undefined,
+    getSummaryValue: (currentState: CreateDealStateComplete) => {
+      const value = currentState[CreateDealSteps.proRataPeriod]
+
+      return getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma') ?? '--'
+    },
   },
   [CreateDealSteps.openPeriod]: {
     id: CreateDealSteps.openPeriod,
@@ -112,6 +159,20 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Open period',
     text: 'Everyone who maxed out their allocation in the Pro-Rata period is eligible to buy any remaining tokens with any leftover purchase tokens they have not withdrawn. Note: this period is based on first-come, first-serve.',
     placeholder: undefined,
+    getSummaryValue: (currentState: CreateDealStateComplete, isOpenPeriodDisabled): string => {
+      const value = currentState[CreateDealSteps.openPeriod]
+      const valueWithProRataPeriod = sumDurations(
+        currentState[CreateDealSteps.proRataPeriod],
+        value,
+      )
+
+      return Object.values(value).some((val) => val > 0)
+        ? getFormattedDurationFromNowToDuration(valueWithProRataPeriod, '~LLL dd, yyyy HH:mma') ||
+            '--'
+        : isOpenPeriodDisabled
+        ? `No ${camelCaseToTitleCase(CreateDealSteps.openPeriod)}`
+        : `--`
+    },
   },
   [CreateDealSteps.counterPartyFundingPeriod]: {
     id: CreateDealSteps.counterPartyFundingPeriod,
@@ -119,6 +180,11 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Counter party funding period',
     text: 'Time period that the counter party (token holder) will have to deposit deal tokens to the pool. These tokens will be exchanged for investment tokens once their deposit is complete.',
     placeholder: undefined,
+    getSummaryValue: (currentState: CreateDealStateComplete) => {
+      const value = currentState[CreateDealSteps.counterPartyFundingPeriod]
+
+      return getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma') ?? `--`
+    },
   },
   [CreateDealSteps.counterPartyAddress]: {
     id: CreateDealSteps.counterPartyAddress,
@@ -126,6 +192,10 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Counter party address',
     text: 'Copy and paste the EOA/multisig address for the counter party (token holder) who is depositing deal tokens. Note - Only this address will be able to deposit deal tokens, no other addresses can be added at a later time.',
     placeholder: 'Enter counter party address',
+    getSummaryValue: (currentState: CreateDealState): string => {
+      const value = currentState[CreateDealSteps.counterPartyAddress] || ''
+      return isAddress(value) ? shortenAddress(value) || '--' : '--'
+    },
   },
 }
 
@@ -260,66 +330,20 @@ const createDealReducer = (state: CreateDealState, action: CreateDealAction) => 
   throw new Error(`Unknown action type: ${type}`)
 }
 
-const isEmptyDuration = ({ days, hours, minutes }: Duration) => !days && !hours && !minutes
-
-const camelCaseToTitleCase = (str: string) => {
-  const result = str.replace(/([A-Z])/g, ' $1')
-  return result.toLocaleLowerCase()
-}
-
 export const getCreateDealSummaryData = (
   createDealState: CreateDealState,
   isOpenPeriodDisabled: boolean,
 ): { title: string; value: string }[] =>
   createDealConfigArr.map((step) => {
-    let value = createDealState[step.id]
+    let value = ''
 
-    if (
-      // Duration steps
-      step.id === CreateDealSteps.vestingPeriod ||
-      step.id === CreateDealSteps.vestingCliff ||
-      step.id === CreateDealSteps.openPeriod ||
-      step.id === CreateDealSteps.proRataPeriod ||
-      step.id === CreateDealSteps.counterPartyFundingPeriod
-    ) {
-      value = (
-        step.id === CreateDealSteps.vestingPeriod &&
-        !isEmptyDuration(createDealState[CreateDealSteps.vestingPeriod] as Duration)
-          ? assignWith({}, createDealState[CreateDealSteps.vestingCliff], value, add) // sum vesting clif period + vesting period
-          : step.id === CreateDealSteps.openPeriod &&
-            !isEmptyDuration(createDealState[CreateDealSteps.openPeriod] as Duration)
-          ? assignWith({}, createDealState[CreateDealSteps.proRataPeriod], value, add) // sum open period + pro rate period
-          : value
-      ) as Duration
-
-      try {
-        value = Object.values(value).some((val) => !!val)
-          ? getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma')
-          : Object.values(value).some((val) => val !== undefined)
-          ? `No ${camelCaseToTitleCase(step.id)}`
-          : undefined
-      } catch (e) {
-        value = undefined
-      }
+    if (isEqual(createDealState[step.id], initialState[step.id])) {
+      value = '--'
     }
-
-    if (isOpenPeriodDisabled && step.id === CreateDealSteps.openPeriod) {
-      value = `No ${camelCaseToTitleCase(step.id)}`
-    }
-
-    if (isToken(value)) {
-      value = shortenAddress(value?.address)
-    }
-
-    if (typeof value === 'string' && isAddress(value)) {
-      value = shortenAddress(value)
-    }
-
-    if (!value) value = '--'
 
     return {
       title: step.title,
-      value: value as string,
+      value: value || step.getSummaryValue(createDealState, isOpenPeriodDisabled),
     }
   })
 
@@ -465,15 +489,15 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
     setErrors(
       validateCreateDeal(
         {
-          dealToken: dealToken?.address as string,
-          dealTokenTotal: dealTokenTotal as string,
-          totalPurchaseAmount: totalPurchaseAmount as string,
-          vestingCliff: vestingCliff as Duration,
-          vestingPeriod: vestingPeriod as Duration,
-          proRataPeriod: proRataPeriod as Duration,
-          openPeriod: openPeriod as Duration,
-          counterPartyFundingPeriod: counterPartyFundingPeriod as Duration,
-          counterPartyAddress: counterPartyAddress as string,
+          dealToken: dealToken?.address,
+          dealTokenTotal: dealTokenTotal,
+          totalPurchaseAmount: totalPurchaseAmount,
+          vestingCliff: vestingCliff,
+          vestingPeriod: vestingPeriod,
+          proRataPeriod: proRataPeriod,
+          openPeriod: openPeriod,
+          counterPartyFundingPeriod: counterPartyFundingPeriod,
+          counterPartyAddress: counterPartyAddress,
         },
         pool,
         chainId,
