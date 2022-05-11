@@ -46,7 +46,7 @@ export interface Funding {
 
 export interface WaitingForDeal {
   userTotalWithdrawn: DetailedNumber
-  userProRataAllocation: DetailedNumber
+  userMaxAllocation: DetailedNumber
   refetchUserStats: () => void
 }
 
