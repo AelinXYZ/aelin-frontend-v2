@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Deadline } from '@/src/components/common/Deadline'
 import { StepCircleBig as BaseStepCircle } from '@/src/components/timeline/StepCircle'
 import { PoolTimelineState, PoolTimelineStateTitles } from '@/src/constants/types'
-import { TimelineSteps } from '@/src/hooks/aelin/useAelinPoolStatus'
+import { TimelineSteps } from '@/types/aelinPool'
 
 const Wrapper = styled.div`
   --gap: 20px;

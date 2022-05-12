@@ -13,6 +13,7 @@ import Invest from '@/src/components/pools/actions/Invest'
 import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
 import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPool'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
+import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { ChainsValues } from '@/src/constants/chains'
 import { PoolTimelineState } from '@/src/constants/types'
@@ -116,7 +117,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               {tab === PoolStatus.DealPresented && dealExists && (
                 <DealInformation pool={pool} poolStatusHelper={dealing} />
               )}
-              {tab === PoolStatus.Vesting && <div>Vest info will appear here</div>}
+              {tab === PoolStatus.Vesting && <VestingInformation pool={pool} />}
             </ContentGrid>
           </CardWithTitle>
           <ActionTabs
