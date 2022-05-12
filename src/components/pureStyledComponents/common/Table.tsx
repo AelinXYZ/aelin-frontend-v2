@@ -44,12 +44,14 @@ export const RowCSS = css<RowProps>`
   color: ${({ theme }) => theme.colors.textColor};
   column-gap: 10px;
   display: grid;
-  padding-left: 28px;
-  padding-right: 16px;
+  padding: 12px 15px;
+  row-gap: 10px;
   text-decoration: none;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     grid-template-columns: ${({ columns }) => columns};
+    padding-left: 28px;
+    padding-right: 16px;
   }
 `
 
@@ -72,14 +74,17 @@ export const TableRowCSS = css<RowProps>`
   border-radius: ${({ theme }) => theme.card.borderRadius};
   border: ${({ theme }) => theme.card.borderColor};
   min-height: 48px;
-  padding-bottom: 10px;
-  padding-top: 10px;
   transition: background-color 0.1s linear;
 
   ${({ hasHover }) => hasHover && RowHover}
 
   &[href] {
     ${RowHover}
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    padding-bottom: 10px;
+    padding-top: 10px;
   }
 `
 
@@ -147,6 +152,20 @@ Cell.defaultProps = {
 export const LinkCell = styled(Cell)`
   column-gap: 15px;
   min-width: fit-content;
+`
+
+export const HideOnMobileCell = styled(Cell)`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: grid;
+  }
+`
+
+export const HideOnDesktop = styled.span`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: none;
+  }
 `
 
 export const TH = styled(Cell)`
