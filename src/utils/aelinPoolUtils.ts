@@ -3,6 +3,7 @@ import Wei from '@synthetixio/wei'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
+import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
 import { ExtendedStatus } from '@/src/constants/pool'
@@ -151,21 +152,29 @@ export function getProRataRedemptionDates(
     openRedemptionEnd,
   }
 }
-export function getVestingDates(vestingCliff: string, vestingPeriod: string) {
+export function getVestingDates(
+  redemptionEnd: Date | undefined,
+  vestingCliff: string,
+  vestingPeriod: string,
+) {
   const now = new Date()
   const cliffMs = Number(vestingCliff ?? 0) * 1000
-  const vestingPeriodMs = Number(vestingPeriod ?? 0) * 1000
+  const vestingMs = Number(vestingPeriod ?? 0) * 1000
 
-  return {
-    cliff: {
-      ms: cliffMs,
-      formatted: formatDistanceStrict(now, addMilliseconds(now, cliffMs)),
-    },
-    vesting: {
-      ms: vestingPeriodMs,
-      formatted: formatDistanceStrict(now, addMilliseconds(now, vestingPeriodMs)),
-    },
+  const cliff = {
+    ms: cliffMs,
+    formatted: formatDistanceStrict(now, addMilliseconds(now, cliffMs)),
+    end: redemptionEnd ? addMilliseconds(redemptionEnd, cliffMs) : null,
   }
+  const vesting = {
+    ms: vestingMs,
+    formatted: formatDistanceStrict(now, addMilliseconds(now, vestingMs)),
+    end: redemptionEnd ? addMilliseconds(redemptionEnd, cliffMs + vestingMs) : null,
+  }
+  const end = redemptionEnd ? addMilliseconds(redemptionEnd, cliff.ms + vesting.ms) : null
+  const start = redemptionEnd ? addMilliseconds(redemptionEnd, cliff.ms) : null
+
+  return { cliff, vesting, end, start }
 }
 
 export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start: Date) {
@@ -184,16 +193,17 @@ export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start:
 }
 
 export function calculateDeadlineProgress(deadline: Date, start: Date) {
-  if (getFormattedDurationFromDateToNow(deadline, 'ended') === 'ended') {
+  const now = new Date()
+  if (isBefore(now, start)) {
+    return '0'
+  }
+
+  if (isAfter(now, deadline)) {
     return '100'
   }
 
-  const end = deadline
-  const today = new Date()
+  const completed = now.getTime() - start.getTime()
+  const target = deadline.getTime() - start.getTime()
 
-  //use Math.abs to avoid sign
-  const q = Math.abs(today.getTime() - start.getTime())
-  const d = Math.abs(end.getTime() - start.getTime())
-
-  return Math.round((q / d) * 100).toString()
+  return Math.ceil((completed / target) * 100).toString()
 }

@@ -29,12 +29,7 @@ export const DealInformation: React.FC<{
       <Column>
         <InfoCell
           title="Name"
-          value={
-            <ExternalLink
-              href={getExplorerUrl(pool.dealAddress || '')}
-              label={deal.name.split('aeDeal-').pop() || ''}
-            />
-          }
+          value={<ExternalLink href={getExplorerUrl(pool.dealAddress || '')} label={deal.name} />}
         />
         <InfoCell
           title="Deal token"
