@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
+import { ensResolver } from '../useEnsName'
 import {
   InputMaybe,
   PoolCreated_OrderBy,
@@ -13,25 +14,11 @@ import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { ExtendedStatus, POOLS_RESULTS_PER_CHAIN, allStages } from '@/src/constants/pool'
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
+import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
 export interface PoolParsedWithState extends ParsedAelinPool {
   stage: ExtendedStatus
-}
-
-export const calculateStatus = ({
-  poolStatus,
-  purchaseExpiry,
-}: {
-  poolStatus: PoolStatus
-  purchaseExpiry: Date
-}): ExtendedStatus => {
-  const now = Date.now()
-
-  if (poolStatus === PoolStatus.PoolOpen && now > purchaseExpiry.getTime()) {
-    return allStages.SeekingDeal
-  }
-  return poolStatus
 }
 
 const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) => {
@@ -60,32 +47,32 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
 
   const networks = network ? [network] : chainIds
 
+  const _variables = { ...variables }
+  if (_variables?.where?.sponsor_contains) {
+    _variables.where.sponsor_contains = await ensResolver(_variables.where.sponsor_contains)
+  }
+
   // Inject chainId in each pool when promise resolve
   const queryPromises = (): Promise<any>[] =>
-    networks.map((chainId: ChainsValues) =>
-      allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
-        .then((res) =>
-          res.poolCreateds.map((pool) => {
-            const parsedPool: ParsedAelinPool = getParsedPool({
-              chainId,
-              pool,
-              poolAddress: pool.id,
-              purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-            })
-            return {
-              ...parsedPool,
-              stage: calculateStatus({
-                poolStatus: parsedPool.poolStatus,
-                purchaseExpiry: parsedPool.purchaseExpiry,
-              }),
-            }
+    networks.map(async (chainId: ChainsValues) => {
+      const { poolCreateds } = await allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
+
+      return poolCreateds.map((pool) => {
+        const parsedPool: ParsedAelinPool = getParsedPool({
+          chainId,
+          pool,
+          poolAddress: pool.id,
+          purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+        })
+        return {
+          ...parsedPool,
+          stage: calculateStatus({
+            poolStatus: parsedPool.poolStatus,
+            purchaseExpiry: parsedPool.purchaseExpiry.getTime(),
           }),
-        )
-        .catch((e) => {
-          console.error(`fetch pools on chain ${chainId} was failed`, e)
-          return []
-        }),
-    )
+        }
+      })
+    })
 
   // ChainIds promise array.
   // Each item will have an array of pools of a single chain
@@ -113,7 +100,6 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
 
 const getSwrKey = (
   currentPage: number,
-  previousPageData: PoolParsedWithState[],
   variables: PoolsCreatedQueryVariables,
   network: ChainsValues | null,
 ) => {
@@ -134,7 +120,7 @@ export default function useAelinPools(
     mutate,
     setSize: setPage,
     size: currentPage,
-  } = useSWRInfinite((...args) => getSwrKey(...args, variables, network), fetcherPools, {
+  } = useSWRInfinite((currentPage) => getSwrKey(currentPage, variables, network), fetcherPools, {
     revalidateFirstPage: true,
     revalidateOnMount: true,
   })

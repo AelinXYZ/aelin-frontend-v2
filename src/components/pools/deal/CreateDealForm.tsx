@@ -1,11 +1,12 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { wei } from '@synthetixio/wei'
 
+import { Modal } from '../../common/Modal'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
@@ -30,7 +31,6 @@ import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
 import { Token } from '@/src/constants/token'
-import { PoolTimelineState } from '@/src/constants/types'
 import useAelinCreateDeal, {
   CreateDealSteps,
   createDealConfig,
@@ -38,8 +38,10 @@ import useAelinCreateDeal, {
   getCreateDealSummaryData,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
+import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { UserRole } from '@/types/aelinPool'
 
 const StepIndicator = styled(BaseStepIndicator)`
   .stepText {
@@ -55,9 +57,10 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const { network } = router.query
 
   const { pool } = useAelinPool(chainId, poolAddress)
-  const { appChainId } = useWeb3Connection()
+  const { address, appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
-  const [totalPurchase, setTotalPurchase] = useState<string | undefined>()
+  const [totalPurchase, setTotalPurchase] = useState<string | undefined>('partial')
+
   const {
     createDealState,
     errors,
@@ -70,6 +73,8 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     setDealField,
     showWarningOnLeave,
   } = useAelinCreateDeal(appChainId, pool)
+
+  const { timeline, userRole } = useAelinPoolStatus(chainId, poolAddress as string)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
   const { order, text, title } = currentStepConfig
@@ -86,24 +91,25 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     }
   }
 
-  useEffect(() => {
-    if (
-      totalPurchase === 'all' &&
-      createDealState.currentStep === CreateDealSteps.totalPurchaseAmount
-    ) {
-      try {
-        setDealField(wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber())
-      } catch (e) {
-        setDealField(0)
-      }
+  const isOpenPeriodDisabled = useMemo(() => {
+    try {
+      return (
+        Number(createDealState.totalPurchaseAmount) ===
+        wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber()
+      )
+    } catch (error) {
+      return false
     }
-  }, [
-    createDealState.currentStep,
-    pool.amountInPool.raw,
-    pool.investmentTokenDecimals,
-    setDealField,
-    totalPurchase,
-  ])
+  }, [createDealState.totalPurchaseAmount, pool.amountInPool.raw, pool.investmentTokenDecimals])
+
+  const currentUserIsSponsor = useMemo(() => userRole === UserRole.Sponsor, [userRole])
+
+  useEffect(() => {
+    if (isOpenPeriodDisabled && createDealState.currentStep === CreateDealSteps.openPeriod) {
+      console.log('asd')
+      setDealField({ days: 0, hours: undefined, minutes: undefined })
+    }
+  }, [createDealState.currentStep, isOpenPeriodDisabled, setDealField])
 
   return (
     <>
@@ -111,7 +117,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
         <title>Deal creation</title>
       </Head>
       <PageTitle subTitle={pool.poolType} title={`${pool.nameFormatted}`} />
-      <RightTimelineLayout activeStep={PoolTimelineState.dealCreation}>
+      <RightTimelineLayout timelineSteps={timeline}>
         <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
           <StepIndicator
             currentStepOrder={order}
@@ -129,7 +135,12 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                   <Title>{title}</Title>
                   <Description>{text}</Description>
                   <DealCreateStepInput
+                    amountInPool={{
+                      number: wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber(),
+                      formatted: pool.amountInPool.formatted as string,
+                    }}
                     currentState={createDealState}
+                    isOpenPeriodDisabled={isOpenPeriodDisabled}
                     onCalculateDealModal={() => setShowDealCalculationModal(true)}
                     onKeyUp={handleKeyUp}
                     onSetDealField={setDealField}
@@ -137,6 +148,9 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     role="none"
                     totalPurchase={totalPurchase}
                   />
+                  {createDealState.currentStep === CreateDealSteps.openPeriod &&
+                    isOpenPeriodDisabled && <Error>Pool supply maxed.</Error>}
+
                   {currentStepError && typeof currentStepError === 'string' && (
                     <Error>{currentStepError}</Error>
                   )}
@@ -160,7 +174,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                       </GradientButton>
                     )}
                   </ButtonWrapper>
-                  <Summary data={getCreateDealSummaryData(createDealState)} />
+                  <Summary data={getCreateDealSummaryData(createDealState, isOpenPeriodDisabled)} />
                 </StepContents>
                 <PrevNextWrapper>
                   {!isFinalStep && (
@@ -175,19 +189,26 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       {showDealCalculationModal && (
         <DealCalculationModal
           dealToken={createDealState.dealToken as Token}
-          dealTokenAmount={wei(createDealState.dealTokenTotal, createDealState.dealToken?.decimals)}
           investmentToken={investmentTokenInfo as Token}
-          investmentTokenAmount={wei(pool.amountInPool.raw, investmentTokenInfo?.decimals)}
           onClose={() => setShowDealCalculationModal(false)}
           onConfirm={(value) => {
             setDealField(value)
             setShowDealCalculationModal(false)
           }}
+          totalPurchaseAmount={wei(
+            createDealState.totalPurchaseAmount,
+            pool.investmentTokenDecimals,
+          )}
         />
       )}
       <Link href={`/pool/${network}/${poolAddress}`} passHref>
         <Button as="a">Cancel</Button>
       </Link>
+      {!currentUserIsSponsor && (
+        <Modal title="Invalid address">
+          <Error>You are not the sponsor of the pool</Error>
+        </Modal>
+      )}
     </>
   )
 }

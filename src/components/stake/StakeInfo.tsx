@@ -1,9 +1,14 @@
 import { FC } from 'react'
 import styled from 'styled-components'
 
-import { AelinStakingResponse } from '@/src/hooks/aelin/useAelinStakingRewards'
-import { GelatoStakingResponse } from '@/src/hooks/aelin/useGelatoStakingRewards'
-import { UniswapStakingResponse } from '@/src/hooks/aelin/useUniswapStakingRewards'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+
+import { STAKING_DECIMALS } from '@/src/constants/misc'
+import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
+import { AelinStakingResponse } from '@/src/utils/stake/getAelinStakingRewards'
+import { GelatoStakingResponse } from '@/src/utils/stake/getGelatoStakingRewards'
+import { UniswapStakingResponse } from '@/src/utils/stake/getUniswapStakingRewards'
+import { formatToken } from '@/src/web3/bigNumber'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -25,37 +30,61 @@ const Value = styled.span`
   font-weight: 500;
 `
 
-type StakingRewardsResponse = GelatoStakingResponse | AelinStakingResponse | UniswapStakingResponse
+type StakingRewardsResponse = AelinStakingResponse | GelatoStakingResponse | UniswapStakingResponse
 
 type StakeInfoProps = {
-  isPool2: boolean
-  rewards: StakingRewardsResponse
+  stakeType: StakingEnum
+  rewards: StakingRewardsResponse & {
+    ethInPool?: BigNumberish
+    aelinInPool?: BigNumberish
+    totalStakedBalance?: BigNumberish
+  }
 }
 
-const StakeInfo: FC<StakeInfoProps> = ({ isPool2, rewards, ...restProps }) => {
+const StakeInfo: FC<StakeInfoProps> = ({ rewards, stakeType }) => {
+  const isPool2 = stakeType === StakingEnum.GELATO || stakeType === StakingEnum.UNISWAP
+
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       {isPool2 && (
         <>
           <Text>
-            ETH in pool via G-UNI: <Value>{`${rewards?.ethInPool?.toFixed(2) ?? 0}`}</Value>
+            ETH in pool via G-UNI:{' '}
+            <Value>{`${
+              BigNumber.isBigNumber(rewards.ethInPool)
+                ? formatToken(rewards.ethInPool, rewards.decimals)
+                : Number(rewards.ethInPool).toFixed(2)
+            }`}</Value>
           </Text>
           <Text>
-            Aelin in pool via G-UNI: <Value>{`${rewards?.aelinInPool?.toFixed(2) ?? 0}`}</Value>
+            Aelin in pool via G-UNI:{' '}
+            <Value>{`${
+              BigNumber.isBigNumber(rewards.aelinInPool)
+                ? formatToken(rewards.aelinInPool, rewards.decimals)
+                : Number(rewards.aelinInPool).toFixed(2)
+            }`}</Value>
           </Text>
           <Text>
-            My stake: <Value>{`${rewards?.userStake ?? 0} ${rewards?.symbol}`}</Value>
+            My stake:{' '}
+            <Value>{`${formatToken(rewards.userStake, rewards.decimals, STAKING_DECIMALS)} ${
+              rewards.symbol
+            }`}</Value>
           </Text>
         </>
       )}
       {!isPool2 && (
         <>
           <Text>
-            Total Aelin staked:{' '}
-            <Value>{`${rewards?.totalAelinStaked?.toFixed(2) ?? 0} ${rewards?.symbol}`}</Value>
+            Total Aelin Staked:{' '}
+            <Value>{`${formatToken(rewards.totalStakedBalance as BigNumberish, rewards.decimals)} ${
+              rewards?.symbol
+            }`}</Value>
           </Text>
           <Text>
-            My stake: <Value>{`${rewards?.userStake ?? 0} ${rewards?.symbol}`}</Value>
+            My stake:{' '}
+            <Value>{`${formatToken(rewards.userStake, rewards.decimals, STAKING_DECIMALS)} ${
+              rewards?.symbol
+            }`}</Value>
           </Text>
         </>
       )}

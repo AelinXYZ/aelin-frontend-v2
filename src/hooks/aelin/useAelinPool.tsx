@@ -21,7 +21,6 @@ import {
   getPurchaseTokenCap,
   getSponsorFee,
   getVestingDates,
-  hasDealOpenPeriod,
 } from '@/src/utils/aelinPoolUtils'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { DetailedNumber } from '@/types/utils'
@@ -92,6 +91,8 @@ export type ParsedAelinPool = {
     holderFundingExpiration: Date
     holderFundingDuration: Date
     holderAddress: string
+    createdAt: Date
+    fundedAt: Date | null
   }
 }
 
@@ -175,12 +176,14 @@ export const getParsedPool = ({
         : null,
       start: redemptionInfo ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms) : null,
     },
-    hasDealOpenPeriod: hasDealOpenPeriod(pool.contributions, dealDetails.purchaseTokenTotalForDeal),
+    hasDealOpenPeriod: !!dealDetails.openRedemptionStart,
     redemption: redemptionInfo,
     holderAlreadyDeposited: dealDetails.isDealFunded,
     holderFundingExpiration: new Date(dealDetails.holderFundingExpiration * 1000),
     holderFundingDuration: dealDetails.holderFundingDuration,
     holderAddress: dealDetails.holder,
+    createdAt: new Date(dealDetails.timestamp * 1000),
+    fundedAt: dealDetails.isDealFunded ? new Date(dealDetails.dealFundedAt * 1000) : null,
   }
 
   return res

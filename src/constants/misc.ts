@@ -12,8 +12,9 @@ export const WAIT_BLOCKS = 8
 
 export const DEFAULT_DECIMALS = 2
 export const EXCHANGE_DECIMALS = 4
+export const STAKING_DECIMALS = 18
 
 export const GWEI_PRECISION = 9
 export const GWEI_UNIT = 1000000000
 
-export const DEBOUNCED_INPUT_TIME = 500
+export const DEBOUNCED_INPUT_TIME = 600

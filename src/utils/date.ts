@@ -54,6 +54,8 @@ export const convertToSeconds = ({
   minutes: number
 }) => days * ONE_DAY_IN_SECS + hours * ONE_HOUR_IN_SECS + minutes * ONE_MINUTE_IN_SECS
 
+export const emptyDuration = { days: undefined, hours: undefined, minutes: undefined }
+
 export const getDuration = (startDate: Date, days: number, hours: number, minutes: number) => {
   const startTimestamp = startDate.getTime()
   const endTimestamp = add(startDate, {
@@ -64,5 +66,26 @@ export const getDuration = (startDate: Date, days: number, hours: number, minute
   return (endTimestamp - startTimestamp) / 1000
 }
 
-export const getFormattedDurationFromNowToDuration = (value: Duration, dateFormat: string) =>
-  format(add(Date.now(), value), dateFormat)
+export const getFormattedDurationFromNowToDuration = (
+  value: Duration,
+  dateFormat: string,
+): string | null => {
+  if (!Object.values(value).some((val) => val > 0)) return null
+  try {
+    return format(add(Date.now(), value), dateFormat)
+  } catch (e) {
+    return ''
+  }
+}
+
+export const sumDurations = (...durations: Duration[]): Duration => {
+  return durations.reduce((result, current) => {
+    for (const durationKey in current) {
+      if (durationKey in current) {
+        const sum = current[durationKey as keyof Duration] || 0
+        result[durationKey as keyof Duration] = (result[durationKey as keyof Duration] || 0) + sum
+      }
+    }
+    return result
+  }, {})
+}

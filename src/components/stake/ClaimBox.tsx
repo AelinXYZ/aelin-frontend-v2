@@ -1,12 +1,14 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ZERO_BN } from '@/src/constants/misc'
+import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
+import { formatToken } from '@/src/web3/bigNumber'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -50,13 +52,15 @@ const Button = styled(GradientButton)`
 
 type ClaimBoxProps = {
   stakingAddress: string
-  userRewards: number
+  stakeType: StakingEnum
+  userRewards: BigNumber
+  decimals: number
 }
 
-const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
-  const [rewardsToClaim, setRewardsToClaim] = useState(userRewards)
-
+const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakeType, stakingAddress, userRewards }) => {
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+
+  const { handleAfterClaim } = useStakingRewards()
 
   const { estimate: estimateGetReward, execute } = useStakingRewardsTransaction(
     stakingAddress,
@@ -68,7 +72,7 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await execute([], txGasOptions)
         if (receipt) {
-          setRewardsToClaim(0)
+          handleAfterClaim(stakeType)
         }
       },
       title: 'Claim AELIN tokens',
@@ -80,12 +84,9 @@ const ClaimBox: FC<ClaimBoxProps> = ({ stakingAddress, userRewards }) => {
     <Wrapper>
       <Title>Claim rewards</Title>
       <Text>
-        My rewards: <Value>{rewardsToClaim} AELIN</Value>
+        My Rewards: <Value>{formatToken(userRewards, decimals, STAKING_DECIMALS)} AELIN</Value>
       </Text>
-      <Button
-        disabled={BigNumber.from(rewardsToClaim).eq(ZERO_BN) || isSubmitting}
-        onClick={handleClaim}
-      >
+      <Button disabled={userRewards.eq(ZERO_BN) || isSubmitting} onClick={handleClaim}>
         Claim
       </Button>
     </Wrapper>

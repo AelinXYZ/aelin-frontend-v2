@@ -118,13 +118,6 @@ export function dealExchangeRates(
   }
 }
 
-export function hasDealOpenPeriod(
-  investmentRaisedAmount: string,
-  acceptedInvestmentTokensAmount: string,
-) {
-  return !BigNumber.from(investmentRaisedAmount).eq(BigNumber.from(acceptedInvestmentTokensAmount))
-}
-
 export function getProRataRedemptionDates(
   proRataRedemptionPeriodStart: string,
   proRataRedemptionPeriod: string,
@@ -181,6 +174,21 @@ export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start:
   }
 
   const end = purchaseExpiry
+  const today = new Date()
+
+  //use Math.abs to avoid sign
+  const q = Math.abs(today.getTime() - start.getTime())
+  const d = Math.abs(end.getTime() - start.getTime())
+
+  return Math.round((q / d) * 100).toString()
+}
+
+export function calculateDeadlineProgress(deadline: Date, start: Date) {
+  if (getFormattedDurationFromDateToNow(deadline, 'ended') === 'ended') {
+    return '100'
+  }
+
+  const end = deadline
   const today = new Date()
 
   //use Math.abs to avoid sign
