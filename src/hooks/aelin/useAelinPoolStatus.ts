@@ -254,6 +254,7 @@ function useUserTabs(pool: ParsedAelinPool, derivedStatus: DerivedStatus): PoolT
     }
 
     if (history.includes(PoolStatus.Vesting)) {
+      tabs.push(PoolTab.WithdrawUnredeemed)
       tabs.push(PoolTab.Vest)
     }
 

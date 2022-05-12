@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import UnredeemedInformation from './deal/UnredeemedInformation'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
@@ -58,7 +59,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     throw new Error('There was no possible to calculate pool current status')
   }
 
-  const [tab, setTab] = useState<PoolTab>(tabs[tabs.length - 1])
+  const isHolder = pool.deal?.holderAddress === address?.toLowerCase()
+  const [tab, setTab] = useState<PoolTab>()
   const [action, setAction] = useState<PoolAction>(actions[0])
   const dealExists = pool.deal
   // const noActionTabsTitle =
@@ -68,7 +70,13 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     setAction(actions[0])
   }, [actions])
 
-  const isHolder = pool.deal?.holderAddress === address?.toLowerCase()
+  useEffect(() => {
+    setTab(
+      tabs.includes(PoolTab.WithdrawUnredeemed) && pool.unredeemed.raw.gt(0) && isHolder
+        ? PoolTab.WithdrawUnredeemed
+        : tabs[tabs.length - 1],
+    )
+  }, [pool, isHolder, tabs])
 
   return (
     <>
@@ -126,6 +134,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               {tab === PoolTab.DealInformation && dealExists && (
                 <DealInformation pool={pool} poolStatusHelper={dealing} />
               )}
+              {tab === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tab === PoolTab.Vest && <VestingInformation pool={pool} />}
             </ContentGrid>
           </CardWithTitle>
