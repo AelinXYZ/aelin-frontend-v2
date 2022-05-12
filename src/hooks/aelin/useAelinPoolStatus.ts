@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
+import isWithinInterval from 'date-fns/isWithinInterval'
 import uniq from 'lodash/uniq'
 import ms from 'ms'
 
@@ -351,8 +352,11 @@ export type TimelineSteps = {
 function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
   const now = Date.now()
 
-  const getStepDeadline = (deadline: Date) =>
-    getFormattedDurationFromDateToNow(deadline, `Ended ${formatDate(deadline, DATE_DETAILED)}`)
+  const getStepDeadline = (deadline: Date, message?: string) =>
+    getFormattedDurationFromDateToNow(
+      deadline,
+      message ?? `Ended ${formatDate(deadline, DATE_DETAILED)}`,
+    )
 
   return {
     [PoolTimelineState.poolCreation]: {
@@ -380,9 +384,18 @@ function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
       active:
         !!pool.deal && isAfter(now, pool.deal.createdAt) && !pool.deal?.holderAlreadyDeposited,
       isDone: !!pool.deal?.holderAlreadyDeposited,
-      deadline: pool.deal ? getStepDeadline(pool.deal.holderFundingExpiration) : undefined,
+      deadline: pool.deal
+        ? getStepDeadline(
+            pool.deal.holderFundingExpiration,
+            pool.deal.holderAlreadyDeposited && pool.deal.fundedAt
+              ? `Funded ${formatDate(pool.deal.fundedAt, DATE_DETAILED)}`
+              : undefined,
+          )
+        : undefined,
       deadlineProgress: pool.deal
-        ? calculateDeadlineProgress(pool.deal.holderFundingExpiration, pool.deal.createdAt)
+        ? pool.deal.holderAlreadyDeposited
+          ? '100'
+          : calculateDeadlineProgress(pool.deal.holderFundingExpiration, pool.deal.createdAt)
         : '0',
       value:
         pool.deal && pool.deal?.holderAlreadyDeposited
@@ -440,7 +453,12 @@ function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
           : '',
     },
     [PoolTimelineState.vestingCliff]: {
-      active: !!pool.deal?.redemption && isAfter(now, pool.deal.redemption.end),
+      active:
+        !!pool.deal?.redemption &&
+        isWithinInterval(now, {
+          start: pool.deal.redemption.end,
+          end: addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
+        }),
       isDone:
         !!pool.deal?.redemption &&
         isAfter(now, addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms)),
@@ -469,7 +487,13 @@ function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
     [PoolTimelineState.vestingPeriod]: {
       active:
         !!pool.deal?.redemption &&
-        isAfter(now, addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms)),
+        isWithinInterval(now, {
+          start: addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
+          end: addMilliseconds(
+            pool.deal.redemption.end,
+            pool.deal.vestingPeriod.cliff.ms + pool.deal.vestingPeriod.vesting.ms,
+          ),
+        }),
       isDone:
         !!pool.deal?.redemption &&
         isAfter(

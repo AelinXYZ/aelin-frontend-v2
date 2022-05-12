@@ -185,7 +185,7 @@ export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start:
 
 export function calculateDeadlineProgress(deadline: Date, start: Date) {
   if (getFormattedDurationFromDateToNow(deadline, 'ended') === 'ended') {
-    return '0'
+    return '100'
   }
 
   const end = deadline
