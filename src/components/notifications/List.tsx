@@ -11,18 +11,57 @@ import {
 import { ButtonRemove as BaseButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
+  RowLink as BaseRowLink,
+  TableBody as BaseTableBody,
   Cell,
   LinkCell,
   LoadingTableRow,
-  RowLink,
   Table,
-  TableBody,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ClearedNotifications } from '@/src/hooks/aelin/useAelinNotifications'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+const TableBody = styled(BaseTableBody)`
+  grid-template-columns: 1fr;
+`
+
+const RowLink = styled(BaseRowLink)`
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletDesktopStart}) {
+    display: grid;
+  }
+
+  .cellTitle {
+    width: 100%;
+  }
+
+  .cellText {
+    width: calc(100% - 120px);
+  }
+
+  .cellLink {
+    margin-left: auto;
+    width: fit-content;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletDesktopStart}) {
+    .cellTitle,
+    .cellText,
+    .cellLink {
+      width: auto;
+    }
+
+    .cellLink {
+      margin-left: 0;
+    }
+  }
+`
 
 const ButtonClear = styled(ButtonPrimaryLight)`
   margin: 20px auto 0;
@@ -97,9 +136,11 @@ export const List: React.FC = ({ ...restProps }) => {
                       href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
                       key={index}
                     >
-                      <Cell>{formatDate(triggerStart, DATE_DETAILED)}</Cell>
-                      <Cell light>{message}</Cell>
-                      <LinkCell justifyContent={columns.alignment.seePool}>
+                      <Cell className="cellTitle">{formatDate(triggerStart, DATE_DETAILED)}</Cell>
+                      <Cell className="cellText" light>
+                        {message}
+                      </Cell>
+                      <LinkCell className="cellLink" justifyContent={columns.alignment.seePool}>
                         <ButtonPrimaryLightSm
                           onClick={(e) => {
                             e.stopPropagation()
