@@ -8,6 +8,7 @@ import ms from 'ms'
 
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useProRataAmount } from '@/src/hooks/aelin/useProRataAmount'
@@ -258,7 +259,7 @@ function useUserActions(
           pool.deal &&
           !pool.deal.holderAlreadyDeposited &&
           holderDepositExpired &&
-          pool.dealsCreated < 5
+          pool.dealsCreated < MAX_ALLOWED_DEALS
         ) {
           actions.push(PoolAction.CreateDeal)
         }
