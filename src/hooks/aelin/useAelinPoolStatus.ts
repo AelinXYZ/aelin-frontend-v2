@@ -20,10 +20,12 @@ import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 import {
+  DerivedStatus,
   Funding,
   PoolAction,
   PoolStatus,
   ProRata,
+  TimelineSteps,
   UserRole,
   WaitingForDeal,
 } from '@/types/aelinPool'
@@ -145,11 +147,6 @@ function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Waiting
 
 function useProRataStatus(pool: ParsedAelinPool): ProRata {
   return {}
-}
-
-type DerivedStatus = {
-  current: PoolStatus
-  history: PoolStatus[]
 }
 
 function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
@@ -331,22 +328,11 @@ function useUserActions(
     }
 
     if (currentStatus === PoolStatus.Vesting) {
-      return [PoolAction.Withdraw]
+      return [PoolAction.Withdraw, PoolAction.Claim]
     }
 
     return []
   }, [userRole, currentStatus, pool])
-}
-
-export type TimelineSteps = {
-  [key in PoolTimelineState as number]?: {
-    active: boolean
-    isDone: boolean
-    value?: string
-    deadline?: string
-    deadlineProgress?: string
-    isDefined?: boolean
-  }
 }
 
 function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {

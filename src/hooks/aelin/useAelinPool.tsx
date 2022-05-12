@@ -69,10 +69,12 @@ export type ParsedAelinPool = {
       cliff: {
         ms: number
         formatted: string
+        end: Date | null
       }
       vesting: {
         ms: number
         formatted: string
+        end: Date | null
       }
       end: Date | null
       start: Date | null
@@ -147,10 +149,8 @@ export const getParsedPool = ({
       )
     : null
 
-  const vestingPeriod = getVestingDates(dealDetails.vestingCliff, dealDetails.vestingPeriod)
-
   res.deal = {
-    name: dealDetails.name,
+    name: dealDetails.name.split('aeDeal-').pop() || '',
     symbol: dealDetails.symbol,
     underlyingToken: {
       token: dealDetails.underlyingDealToken,
@@ -167,13 +167,11 @@ export const getParsedPool = ({
       dealDetails.underlyingDealTokenTotal,
       dealDetails.underlyingDealTokenDecimals,
     ),
-    vestingPeriod: {
-      ...vestingPeriod,
-      end: redemptionInfo
-        ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms + vestingPeriod.vesting.ms)
-        : null,
-      start: redemptionInfo ? addMilliseconds(redemptionInfo.end, vestingPeriod.cliff.ms) : null,
-    },
+    vestingPeriod: getVestingDates(
+      redemptionInfo?.end,
+      dealDetails.vestingCliff,
+      dealDetails.vestingPeriod,
+    ),
     hasDealOpenPeriod: !!dealDetails.openRedemptionStart,
     redemption: redemptionInfo,
     holderAlreadyDeposited: dealDetails.isDealFunded,
