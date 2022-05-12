@@ -12,6 +12,7 @@ import {
   dealExchangeRates,
   getAmountInPool,
   getAmountRedeem,
+  getAmountUnRedeemed,
   getAmountWithdrawn,
   getDealDeadline,
   getDetailedNumber,
@@ -49,6 +50,7 @@ export type ParsedAelinPool = {
   funded: DetailedNumber
   redeem: DetailedNumber
   withdrawn: DetailedNumber
+  unredeemed: DetailedNumber
   poolStatus: PoolStatus
   poolType: string
   vestingStarts: Date
@@ -145,6 +147,11 @@ export const getParsedPool = ({
       vestingEnds: getVestingEnds(pool).getTime(),
       dealsCreated: pool.dealsCreated,
     }),
+    unredeemed: getAmountUnRedeemed(
+      pool.contributions || ZERO_BN,
+      pool.totalAmountAccepted || ZERO_BN,
+      purchaseTokenDecimals,
+    ),
     deal: undefined,
     dealsCreated: pool.dealsCreated,
   }

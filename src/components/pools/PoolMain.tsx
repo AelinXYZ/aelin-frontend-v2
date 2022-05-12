@@ -52,7 +52,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     chainId,
     poolAddress as string,
   )
-  const { getExplorerUrl } = useWeb3Connection()
+  const { address, getExplorerUrl } = useWeb3Connection()
 
   if (!current) {
     throw new Error('There was no possible to calculate pool current status')
@@ -67,6 +67,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   useEffect(() => {
     setAction(actions[0])
   }, [actions])
+
+  const isHolder = pool.deal?.holderAddress === address?.toLowerCase()
 
   return (
     <>
@@ -99,6 +101,16 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                     Deal information
                   </CardTitle>
                 )}
+                {tabs.includes(PoolTab.WithdrawUnredeemed) &&
+                  pool.unredeemed.raw.gt(0) &&
+                  isHolder && (
+                    <CardTitle
+                      isActive={tab === PoolTab.WithdrawUnredeemed}
+                      onClick={() => setTab(PoolTab.WithdrawUnredeemed)}
+                    >
+                      Unredeemed
+                    </CardTitle>
+                  )}
                 {tabs.includes(PoolTab.Vest) && (
                   <CardTitle isActive={tab === PoolTab.Vest} onClick={() => setTab(PoolTab.Vest)}>
                     Vest
