@@ -21,6 +21,7 @@ const IconContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 50px;
 `
 
 const InnerWrapper = styled.div`
@@ -54,28 +55,38 @@ const Link = styled.a`
   color: ${({ theme: { colors } }) => colors.textColorLight};
 `
 
+const Text = styled.p`
+  font-size: 1.2rem;
+  color: ${({ theme: { colors } }) => colors.textColorLight};
+`
+
 export const ToastComponent = ({
   icon,
   link,
+  message,
   t,
   title,
 }: {
-  t: Toast
-  title: string
-  link: {
+  icon: ReactNode
+  link?: {
     url: string
     text: string
   }
-  icon: ReactNode
+  message?: string
+  t: Toast
+  title: string
 }) => (
   <Wapper>
     <IconContainer>{icon}</IconContainer>
     <InnerWrapper>
       <TextContainer>
         <Title>{title}</Title>
-        <Link href={link.url} rel="noreferrer" target="_blank">
-          {link.text}
-        </Link>
+        {link && (
+          <Link href={link.url} rel="noreferrer" target="_blank">
+            {link.text}
+          </Link>
+        )}
+        {message && <Text>{message}</Text>}
       </TextContainer>
       <ButtonClose onClick={() => toast.dismiss(t.id)}>
         <Close />

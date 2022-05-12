@@ -1,49 +1,58 @@
 import Image from 'next/image'
 
 import ms from 'ms'
-import { Renderable, Toast, Toaster, toast } from 'react-hot-toast'
+import { Toast, Toaster, toast } from 'react-hot-toast'
 
 import LoaderIcon from '@/public/resources/gif/toast-loader.gif'
 import { Failed as FailedIcon } from '@/src/components/assets/Failed'
 import { Success as SuccessIcon } from '@/src/components/assets/Success'
 import { ToastComponent } from '@/src/components/toast/ToastComponent'
-import { ERROR_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
+import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 
-type ToastType = typeof ERROR_TYPE | typeof SUCCESS_TYPE | typeof WAITING_TYPE
+type ToastType = typeof FAILED_TYPE | typeof SUCCESS_TYPE | typeof WAITING_TYPE
 
-const ToastTypes: { [key: string]: (t: Toast, explorerUrl: string) => Renderable } = {
-  [WAITING_TYPE]: (t: Toast, explorerUrl: string) => (
+const ToastTypes = {
+  [WAITING_TYPE]: (t: Toast, explorerUrl?: string, message?: string) => (
     <ToastComponent
       icon={<Image alt="Loading..." src={LoaderIcon} />}
-      link={{ url: explorerUrl, text: 'Click to verify on Etherscan' }}
+      link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Etherscan' } : undefined}
+      message={message ? message : undefined}
       t={t}
       title="Transaction Sent"
     />
   ),
-  [ERROR_TYPE]: (t: Toast, explorerUrl: string) => (
+  [FAILED_TYPE]: (t: Toast, explorerUrl?: string, message?: string) => (
     <ToastComponent
       icon={<FailedIcon />}
-      link={{ url: explorerUrl, text: 'Click to see on Etherscan' }}
+      link={explorerUrl ? { url: explorerUrl, text: 'Click to see on Etherscan' } : undefined}
+      message={message ? message : undefined}
       t={t}
       title="Transaction Failed"
     />
   ),
-  [SUCCESS_TYPE]: (t: Toast, explorerUrl: string) => (
+  [SUCCESS_TYPE]: (t: Toast, explorerUrl?: string, message?: string) => (
     <ToastComponent
       icon={<SuccessIcon />}
-      link={{ url: explorerUrl, text: 'Click to verify on Etherscan' }}
+      link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Etherscan' } : undefined}
+      message={message ? message : undefined}
       t={t}
       title="Transaction confirmed"
     />
   ),
 }
 
-const notify = ({ explorerUrl, type }: { type: ToastType; explorerUrl: string }) =>
-  toast.custom((t: Toast) => ToastTypes[type](t, explorerUrl))
+const notify = ({
+  explorerUrl,
+  message,
+  type,
+}: {
+  explorerUrl?: string
+  message?: string
+  type: ToastType
+}) => toast.custom((t: Toast) => ToastTypes[type](t, explorerUrl, message))
 
 const Toast = () => (
   <Toaster
-    // containerStyle={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: '1234' }}
     position="bottom-right"
     toastOptions={{
       duration: ms('10s'),
