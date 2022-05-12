@@ -2,7 +2,7 @@ import { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
 import { Timeline } from '@/src/components/pools/common/Timeline'
-import { TimelineSteps } from '@/src/hooks/aelin/useAelinPoolStatus'
+import { TimelineSteps } from '@/types/aelinPool'
 
 const Wrapper = styled.main`
   --timeline-width: 296px;

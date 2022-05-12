@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import StakeSection from '@/src/components/stake/StakeSection'
 import { Chains } from '@/src/constants/chains'
-import { contracts as contractsConfig } from '@/src/constants/contracts'
+import { contracts } from '@/src/constants/contracts'
 import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
@@ -22,8 +22,8 @@ const StakeGrid = ({ ...restProps }) => {
       [Chains.optimism]: [
         <StakeSection
           contractAddresses={{
-            stakingAddress: contractsConfig.STAKING_REWARDS.address[Chains.optimism],
-            tokenAddress: contractsConfig.AELIN_TOKEN.address[Chains.optimism],
+            stakingAddress: contracts.STAKING_REWARDS.address[Chains.optimism],
+            tokenAddress: contracts.AELIN_TOKEN.address[Chains.optimism],
           }}
           key={StakingEnum.AELIN}
           stakeType={StakingEnum.AELIN}
@@ -38,8 +38,8 @@ const StakeGrid = ({ ...restProps }) => {
 
         <StakeSection
           contractAddresses={{
-            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[Chains.optimism],
-            tokenAddress: contractsConfig.LP_TOKEN.address[Chains.optimism],
+            stakingAddress: contracts.LP_STAKING_REWARDS.address[Chains.optimism],
+            tokenAddress: contracts.LP_TOKEN.address[Chains.optimism],
           }}
           key={StakingEnum.GELATO}
           stakeType={StakingEnum.GELATO}
@@ -55,8 +55,8 @@ const StakeGrid = ({ ...restProps }) => {
       [Chains.mainnet]: [
         <StakeSection
           contractAddresses={{
-            stakingAddress: contractsConfig.LP_STAKING_REWARDS.address[Chains.mainnet],
-            tokenAddress: contractsConfig.LP_TOKEN.address[Chains.mainnet],
+            stakingAddress: contracts.LP_STAKING_REWARDS.address[Chains.mainnet],
+            tokenAddress: contracts.LP_TOKEN.address[Chains.mainnet],
           }}
           key={StakingEnum.UNISWAP}
           stakeType={StakingEnum.UNISWAP}

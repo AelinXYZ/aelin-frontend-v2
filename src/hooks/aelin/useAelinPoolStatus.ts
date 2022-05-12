@@ -9,6 +9,7 @@ import ms from 'ms'
 
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -20,10 +21,12 @@ import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 import {
+  DerivedStatus,
   Funding,
   PoolAction,
   PoolStatus,
   ProRata,
+  TimelineSteps,
   UserRole,
   WaitingForDeal,
 } from '@/types/aelinPool'
@@ -145,11 +148,6 @@ function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Waiting
 
 function useProRataStatus(pool: ParsedAelinPool): ProRata {
   return {}
-}
-
-type DerivedStatus = {
-  current: PoolStatus
-  history: PoolStatus[]
 }
 
 function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
@@ -280,20 +278,34 @@ function useUserActions(
     // Seeking Deal
     if (currentStatus === PoolStatus.SeekingDeal) {
       const actions: PoolAction[] = []
-      if (userRole === UserRole.Sponsor && !pool.dealAddress) {
+      const isSponsor = userRole === UserRole.Sponsor
+      const now = new Date()
+
+      if (isSponsor && !pool.dealAddress) {
         actions.push(PoolAction.CreateDeal)
       }
 
-      if (!pool.dealAddress) {
+      if (
+        !pool.dealAddress ||
+        (pool.dealAddress && !pool.deal?.holderAlreadyDeposited && isBefore(now, pool.dealDeadline))
+      ) {
         actions.push(PoolAction.AwaitingForDeal)
       }
 
       if (isAfter(now, pool.dealDeadline)) {
-        actions.push(PoolAction.Withdraw)
+        const holderDepositExpired = pool.deal && isAfter(now, pool.deal.holderFundingExpiration)
 
-        // if(sponsor && !accepts) {
-        //   create another deal
-        // }
+        if (
+          isSponsor &&
+          pool.deal &&
+          !pool.deal.holderAlreadyDeposited &&
+          holderDepositExpired &&
+          pool.dealsCreated < MAX_ALLOWED_DEALS
+        ) {
+          actions.push(PoolAction.CreateDeal)
+        }
+
+        actions.push(PoolAction.Withdraw)
       }
 
       if (userRole === UserRole.Holder && pool.deal && !pool.deal.holderAlreadyDeposited) {
@@ -331,22 +343,11 @@ function useUserActions(
     }
 
     if (currentStatus === PoolStatus.Vesting) {
-      return [PoolAction.Withdraw]
+      return [PoolAction.Withdraw, PoolAction.Claim]
     }
 
     return []
   }, [userRole, currentStatus, pool])
-}
-
-export type TimelineSteps = {
-  [key in PoolTimelineState as number]?: {
-    active: boolean
-    isDone: boolean
-    value?: string
-    deadline?: string
-    deadlineProgress?: string
-    isDefined?: boolean
-  }
 }
 
 function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
