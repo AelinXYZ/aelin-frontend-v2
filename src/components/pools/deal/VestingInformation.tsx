@@ -17,7 +17,6 @@ const Column = styled.div`
 
 export const VestingInformation: React.FC<{
   pool: ParsedAelinPool
-  // poolStatusHelper: WaitingForDeal
 }> = ({ pool }) => {
   const { deal } = pool
   const { getExplorerUrl } = useWeb3Connection()
