@@ -49,6 +49,7 @@ export type ParsedAelinPool = {
   poolType: string
   vestingStarts: Date
   vestingEnds: Date
+  dealsCreated: number
   deal?: {
     name: string
     symbol: string
@@ -131,6 +132,7 @@ export const getParsedPool = ({
     deal: undefined,
     vestingStarts: new Date(pool.vestingStarts),
     vestingEnds: new Date(pool.vestingEnds),
+    dealsCreated: pool.dealsCreated,
   }
 
   const dealDetails = pool.deal
