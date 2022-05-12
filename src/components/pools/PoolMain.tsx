@@ -7,6 +7,7 @@ import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
+import Claim from '@/src/components/pools/actions/Claim'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import FundDeal from '@/src/components/pools/actions/FundDeal'
 import Invest from '@/src/components/pools/actions/Invest'
@@ -132,6 +133,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             {action === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
             {action === PoolAction.AcceptDeal && <AcceptDeal dealing={dealing} pool={pool} />}
             {action === PoolAction.FundDeal && <FundDeal pool={pool} />}
+            {action === PoolAction.Claim && <Claim pool={pool} />}
           </ActionTabs>
         </MainGrid>
       </RightTimelineLayout>
