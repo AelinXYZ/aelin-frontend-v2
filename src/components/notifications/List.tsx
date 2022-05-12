@@ -13,8 +13,10 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
   LinkCell,
-  Row,
+  LoadingTableRow,
+  RowLink,
   Table,
+  TableBody,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { getKeyChainByValue } from '@/src/constants/chains'
@@ -73,61 +75,58 @@ export const List: React.FC = ({ ...restProps }) => {
     )
 
   return (
-    <TableWrapper {...restProps}>
-      <Table>
-        <InfiniteScroll
-          dataLength={notifications.length}
-          hasMore={hasMore}
-          loader={
-            <Row columns={'1fr'}>
-              <Cell justifyContent="center">Loading...</Cell>
-            </Row>
-          }
-          next={nextPage}
-        >
-          {!notifications?.length ? (
-            <BaseCard>No data.</BaseCard>
-          ) : (
-            notifications.map((item, index) => {
-              const { chainId, id, message, poolAddress, triggerStart } = item
-              return (
-                <Row
-                  columns={columns.widths}
-                  hasHover
-                  key={index}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                  }}
-                >
-                  <Cell>{formatDate(triggerStart, DATE_DETAILED)}</Cell>
-                  <Cell light>{message}</Cell>
-                  <LinkCell justifyContent={columns.alignment.seePool}>
-                    <ButtonPrimaryLightSm
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                      }}
+    <>
+      <InfiniteScroll
+        dataLength={notifications.length}
+        hasMore={hasMore}
+        loader={<LoadingTableRow />}
+        next={nextPage}
+      >
+        <TableWrapper {...restProps}>
+          <Table>
+            {!notifications?.length ? (
+              <BaseCard>No notifications to show.</BaseCard>
+            ) : (
+              <TableBody>
+                {notifications.map((item, index) => {
+                  const { chainId, id, message, poolAddress, triggerStart } = item
+
+                  return (
+                    <RowLink
+                      columns={columns.widths}
+                      href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
+                      key={index}
                     >
-                      Go to pool
-                    </ButtonPrimaryLightSm>
-                    <ButtonRemove
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleClearSingleNotification(id)
-                      }}
-                    />
-                  </LinkCell>
-                </Row>
-              )
-            })
-          )}
-        </InfiniteScroll>
-      </Table>
+                      <Cell>{formatDate(triggerStart, DATE_DETAILED)}</Cell>
+                      <Cell light>{message}</Cell>
+                      <LinkCell justifyContent={columns.alignment.seePool}>
+                        <ButtonPrimaryLightSm
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                          }}
+                        >
+                          Go to pool
+                        </ButtonPrimaryLightSm>
+                        <ButtonRemove
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleClearSingleNotification(id)
+                          }}
+                        />
+                      </LinkCell>
+                    </RowLink>
+                  )
+                })}
+              </TableBody>
+            )}
+          </Table>
+        </TableWrapper>
+      </InfiniteScroll>
       {!!notifications?.length && (
         <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>
       )}
-    </TableWrapper>
+    </>
   )
 }
 

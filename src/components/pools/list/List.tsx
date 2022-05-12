@@ -14,6 +14,7 @@ import {
   LoadingTableRow,
   RowLink,
   Table,
+  TableBody,
   TableHead,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -48,7 +49,7 @@ export const List: React.FC<{
   filters: FiltersProps
   setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
   setOrderDirection: (value: OrderDirection) => void
-}> = ({ filters, setOrderBy, setOrderDirection }) => {
+}> = ({ filters, setOrderBy, setOrderDirection, ...restProps }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
 
   if (error) {
@@ -120,7 +121,7 @@ export const List: React.FC<{
       loader={<LoadingTableRow />}
       next={nextPage}
     >
-      <TableWrapper>
+      <TableWrapper {...restProps}>
         <Table>
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
@@ -136,54 +137,60 @@ export const List: React.FC<{
               </SortableTH>
             ))}
           </TableHead>
+
           {!data.length ? (
             <BaseCard>No data.</BaseCard>
           ) : (
-            data.map((pool) => {
-              const {
-                address: id,
-                amountInPool,
-                chainId: network,
-                investmentTokenSymbol,
-                name,
-                purchaseExpiry,
-                sponsor,
-                stage,
-                start,
-              } = pool
-              return (
-                <RowLink
-                  columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(network)}/${id}`}
-                  key={id}
-                >
-                  <NameCell>
-                    {name.split('aePool-').pop()}
-                    <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
-                  </NameCell>
-                  <Cell>
-                    <ENSOrAddress address={sponsor} network={network} />
-                  </Cell>
-                  <HideOnMobileCell
-                    justifyContent={columns.alignment.network}
-                    title={getNetworkConfig(network).name}
+            <TableBody>
+              {data.map((pool) => {
+                const {
+                  address: id,
+                  amountInPool,
+                  chainId: network,
+                  investmentTokenSymbol,
+                  name,
+                  purchaseExpiry,
+                  sponsor,
+                  stage,
+                  start,
+                } = pool
+                return (
+                  <RowLink
+                    columns={columns.widths}
+                    href={`/pool/${getKeyChainByValue(network)}/${id}`}
+                    key={id}
                   >
-                    {getNetworkConfig(network).icon}
-                  </HideOnMobileCell>
-                  <Cell>
-                    ${amountInPool.formatted}&nbsp;
-                    <HideOnDesktop>{investmentTokenSymbol}</HideOnDesktop>
-                  </Cell>
-                  <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
-                    {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
-                  </Deadline>
-                  <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
-                    {investmentTokenSymbol}
-                  </HideOnMobileCell>
-                  <Stage stage={stage.toLowerCase()}> {getStatusText({ poolStatus: stage })}</Stage>
-                </RowLink>
-              )
-            })
+                    <NameCell>
+                      {name.split('aePool-').pop()}
+                      <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
+                    </NameCell>
+                    <Cell>
+                      <ENSOrAddress address={sponsor} network={network} />
+                    </Cell>
+                    <HideOnMobileCell
+                      justifyContent={columns.alignment.network}
+                      title={getNetworkConfig(network).name}
+                    >
+                      {getNetworkConfig(network).icon}
+                    </HideOnMobileCell>
+                    <Cell>
+                      ${amountInPool.formatted}&nbsp;
+                      <HideOnDesktop>{investmentTokenSymbol}</HideOnDesktop>
+                    </Cell>
+                    <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
+                      {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
+                    </Deadline>
+                    <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
+                      {investmentTokenSymbol}
+                    </HideOnMobileCell>
+                    <Stage stage={stage.toLowerCase()}>
+                      {' '}
+                      {getStatusText({ poolStatus: stage })}
+                    </Stage>
+                  </RowLink>
+                )
+              })}
+            </TableBody>
           )}
         </Table>
       </TableWrapper>

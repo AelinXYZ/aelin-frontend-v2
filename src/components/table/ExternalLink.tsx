@@ -20,8 +20,8 @@ const Wrapper = styled(Cell)`
 `
 
 const Link = styled(BaseLink)`
-  margin-top: -3px;
   height: 10px;
+  margin-top: -3px;
   width: 10px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {

@@ -10,8 +10,10 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
   LinkCell,
+  LoadingTableRow,
   Row,
   Table,
+  TableBody,
   TableHead,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -89,18 +91,14 @@ export const Vests: React.FC = ({ ...restProps }) => {
   }
 
   return (
-    <TableWrapper {...restProps}>
-      <Table>
-        <InfiniteScroll
-          dataLength={data.length}
-          hasMore={hasMore}
-          loader={
-            <Row columns={'1fr'}>
-              <Cell justifyContent="center">Loading...</Cell>
-            </Row>
-          }
-          next={nextPage}
-        >
+    <InfiniteScroll
+      dataLength={data.length}
+      hasMore={hasMore}
+      loader={<LoadingTableRow />}
+      next={nextPage}
+    >
+      <TableWrapper {...restProps}>
+        <Table>
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
               <SortableTH
@@ -118,39 +116,41 @@ export const Vests: React.FC = ({ ...restProps }) => {
           {!data.length ? (
             <BaseCard>No data.</BaseCard>
           ) : (
-            data.map((item, index) => {
-              const { amountVested, id, network, timestamp } = item
-              return (
-                <Row
-                  columns={columns.widths}
-                  hasHover
-                  key={index}
-                  onClick={() => {
-                    router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                  }}
-                >
-                  <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
-                  <Cell light>{amountVested}</Cell>
-                  <Cell justifyContent={columns.alignment.network} light>
-                    {getNetworkConfig(network).icon}
-                  </Cell>
-                  <LinkCell justifyContent={columns.alignment.seePool} light>
-                    <ButtonPrimaryLightSm
-                      onClick={() => {
-                        router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                      }}
-                    >
-                      See Pool
-                    </ButtonPrimaryLightSm>
-                    <ExternalLink href={`https://etherscan.io/address/${id}`} />
-                  </LinkCell>
-                </Row>
-              )
-            })
+            <TableBody>
+              {data.map((item, index) => {
+                const { amountVested, id, network, timestamp } = item
+                return (
+                  <Row
+                    columns={columns.widths}
+                    hasHover
+                    key={index}
+                    onClick={() => {
+                      router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
+                    }}
+                  >
+                    <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
+                    <Cell light>{amountVested}</Cell>
+                    <Cell justifyContent={columns.alignment.network} light>
+                      {getNetworkConfig(network).icon}
+                    </Cell>
+                    <LinkCell justifyContent={columns.alignment.seePool} light>
+                      <ButtonPrimaryLightSm
+                        onClick={() => {
+                          router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
+                        }}
+                      >
+                        See Pool
+                      </ButtonPrimaryLightSm>
+                      <ExternalLink href={`https://etherscan.io/address/${id}`} />
+                    </LinkCell>
+                  </Row>
+                )
+              })}
+            </TableBody>
           )}
-        </InfiniteScroll>
-      </Table>
-    </TableWrapper>
+        </Table>
+      </TableWrapper>
+    </InfiniteScroll>
   )
 }
 

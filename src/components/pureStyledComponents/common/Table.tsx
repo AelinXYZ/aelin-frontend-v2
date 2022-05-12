@@ -17,11 +17,15 @@ const loadingAnimation = keyframes`
 `
 
 export const Table = styled.div`
+  min-width: fit-content;
+  width: 100%;
+`
+
+export const TableBody = styled.div`
   column-gap: 15px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   row-gap: 20px;
-  width: 100%;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     grid-template-columns: repeat(4, 1fr);
@@ -29,7 +33,7 @@ export const Table = styled.div`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     grid-template-columns: 1fr;
-    min-width: fit-content;
+
     row-gap: 10px;
   }
 `
