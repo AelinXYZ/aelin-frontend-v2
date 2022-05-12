@@ -16,10 +16,9 @@ import DealInformation from '@/src/components/pools/deal/DealInformation'
 import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { ChainsValues } from '@/src/constants/chains'
-import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { PoolAction, PoolStatus } from '@/types/aelinPool'
+import { PoolAction, PoolTab } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -58,7 +57,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     throw new Error('There was no possible to calculate pool current status')
   }
 
-  const [tab, setTab] = useState<PoolStatus>(tabs[tabs.length - 1])
+  const [tab, setTab] = useState<PoolTab>(tabs[tabs.length - 1])
   const [action, setAction] = useState<PoolAction>(actions[0])
   const dealExists = pool.deal
   // const noActionTabsTitle =
@@ -83,27 +82,24 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
           <CardWithTitle
             titles={
               <>
-                {tabs.includes(PoolStatus.Funding) && (
+                {tabs.includes(PoolTab.PoolInformation) && (
                   <CardTitle
-                    isActive={tab === PoolStatus.Funding}
-                    onClick={() => setTab(PoolStatus.Funding)}
+                    isActive={tab === PoolTab.PoolInformation}
+                    onClick={() => setTab(PoolTab.PoolInformation)}
                   >
                     Pool information
                   </CardTitle>
                 )}
-                {tabs.includes(PoolStatus.DealPresented) && dealExists && (
+                {tabs.includes(PoolTab.DealInformation) && dealExists && (
                   <CardTitle
-                    isActive={tab === PoolStatus.DealPresented}
-                    onClick={() => setTab(PoolStatus.DealPresented)}
+                    isActive={tab === PoolTab.DealInformation}
+                    onClick={() => setTab(PoolTab.DealInformation)}
                   >
                     Deal information
                   </CardTitle>
                 )}
-                {tabs.includes(PoolStatus.Vesting) && (
-                  <CardTitle
-                    isActive={tab === PoolStatus.Vesting}
-                    onClick={() => setTab(PoolStatus.Vesting)}
-                  >
+                {tabs.includes(PoolTab.Vest) && (
+                  <CardTitle isActive={tab === PoolTab.Vest} onClick={() => setTab(PoolTab.Vest)}>
                     Vest
                   </CardTitle>
                 )}
@@ -111,13 +107,13 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             }
           >
             <ContentGrid>
-              {tab === PoolStatus.Funding && (
+              {tab === PoolTab.PoolInformation && (
                 <PoolInformation pool={pool} poolStatusHelper={funding} />
               )}
-              {tab === PoolStatus.DealPresented && dealExists && (
+              {tab === PoolTab.DealInformation && dealExists && (
                 <DealInformation pool={pool} poolStatusHelper={dealing} />
               )}
-              {tab === PoolStatus.Vesting && <VestingInformation pool={pool} />}
+              {tab === PoolTab.Vest && <VestingInformation pool={pool} />}
             </ContentGrid>
           </CardWithTitle>
           <ActionTabs
