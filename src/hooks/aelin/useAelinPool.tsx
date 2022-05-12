@@ -91,6 +91,7 @@ export type ParsedAelinPool = {
     holderFundingDuration: Date
     holderAddress: string
     createdAt: Date
+    fundedAt: Date | null
   }
 }
 
@@ -180,6 +181,7 @@ export const getParsedPool = ({
     holderFundingDuration: dealDetails.holderFundingDuration,
     holderAddress: dealDetails.holder,
     createdAt: new Date(dealDetails.timestamp * 1000),
+    fundedAt: dealDetails.isDealFunded ? new Date(dealDetails.dealFundedAt * 1000) : null,
   }
 
   return res
