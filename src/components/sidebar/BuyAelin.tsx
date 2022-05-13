@@ -47,9 +47,12 @@ type PriceData = {
   price: number
 }
 
-const getAelinUSDPrices = (): Promise<PriceData[]> => {
+const getAelinUSDPrices = (
+  days: number,
+  interval: 'minutely' | 'hourly' | 'daily',
+): Promise<PriceData[]> => {
   return fetch(
-    `https://api.coingecko.com/api/v3/coins/aelin/market_chart?vs_currency=usd&days=1&interval=hourly`,
+    `https://api.coingecko.com/api/v3/coins/aelin/market_chart?vs_currency=usd&days=${days}&interval=${interval}`,
   )
     .then((response) => response.json())
     .then((json) =>
@@ -80,7 +83,7 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
   useEffect(() => {
     const updatePrices = async () => {
       try {
-        const prices = await getAelinUSDPrices()
+        const prices = await getAelinUSDPrices(1, 'hourly')
         setPrices(prices)
       } catch {
         setPrices([])
