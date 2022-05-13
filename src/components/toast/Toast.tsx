@@ -11,8 +11,14 @@ import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/
 
 type ToastType = typeof FAILED_TYPE | typeof SUCCESS_TYPE | typeof WAITING_TYPE
 
+type ToastComponentProps = {
+  t: Toast
+  explorerUrl?: string
+  message?: string
+}
+
 const ToastTypes = {
-  [WAITING_TYPE]: (t: Toast, explorerUrl?: string, message?: string) => (
+  [WAITING_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
     <ToastComponent
       icon={<Image alt="Loading..." src={LoaderIcon} />}
       link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Etherscan' } : undefined}
@@ -21,7 +27,7 @@ const ToastTypes = {
       title="Transaction Sent"
     />
   ),
-  [FAILED_TYPE]: (t: Toast, explorerUrl?: string, message?: string) => (
+  [FAILED_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
     <ToastComponent
       icon={<FailedIcon />}
       link={explorerUrl ? { url: explorerUrl, text: 'Click to see on Etherscan' } : undefined}
@@ -30,7 +36,7 @@ const ToastTypes = {
       title="Transaction Failed"
     />
   ),
-  [SUCCESS_TYPE]: (t: Toast, explorerUrl?: string, message?: string) => (
+  [SUCCESS_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
     <ToastComponent
       icon={<SuccessIcon />}
       link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Etherscan' } : undefined}
@@ -49,7 +55,7 @@ const notify = ({
   explorerUrl?: string
   message?: string
   type: ToastType
-}) => toast.custom((t: Toast) => ToastTypes[type](t, explorerUrl, message))
+}) => toast.custom((t: Toast) => ToastTypes[type]({ t, explorerUrl, message }))
 
 const Toast = () => (
   <Toaster
