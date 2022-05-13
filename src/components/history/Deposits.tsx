@@ -9,9 +9,10 @@ import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/butt
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
+  HideOnMobileCell,
   LinkCell,
   LoadingTableRow,
-  Row,
+  RowLink,
   Table,
   TableBody,
   TableHead,
@@ -129,13 +130,10 @@ export const Deposits: React.FC = ({ ...restProps }) => {
               {data.map((item, index) => {
                 const { amountDeposited, id, network, poolName, sponsor, timestamp } = item
                 return (
-                  <Row
+                  <RowLink
                     columns={columns.widths}
-                    hasHover
+                    href={`/pool/${getKeyChainByValue(network)}/${id}`}
                     key={index}
-                    onClick={() => {
-                      router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                    }}
                   >
                     <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
                     <Cell light>{poolName}</Cell>
@@ -147,10 +145,10 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                       }
                     </Cell>
                     <Cell light>{amountDeposited}</Cell>
-                    <Cell justifyContent={columns.alignment.network} light>
+                    <HideOnMobileCell justifyContent={columns.alignment.network} light>
                       {getNetworkConfig(network).icon}
-                    </Cell>
-                    <LinkCell justifyContent={columns.alignment.seePool} light>
+                    </HideOnMobileCell>
+                    <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
                       <ButtonPrimaryLightSm
                         onClick={() => {
                           router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
@@ -160,7 +158,7 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                       </ButtonPrimaryLightSm>
                       <ExternalLink href={`https://etherscan.io/address/${id}`} />
                     </LinkCell>
-                  </Row>
+                  </RowLink>
                 )
               })}
             </TableBody>

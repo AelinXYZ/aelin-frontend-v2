@@ -153,9 +153,18 @@ Cell.defaultProps = {
   light: false,
 }
 
-export const LinkCell = styled(Cell)`
-  column-gap: 15px;
-  min-width: fit-content;
+export const LinkCell = styled(Cell)<{ flexFlowColumn?: boolean }>`
+  ${({ flexFlowColumn }) =>
+    flexFlowColumn
+      ? css`
+          row-gap: 10px;
+          flex-flow: column;
+        `
+      : css`
+          flex-flow: row;
+          column-gap: 15px;
+          min-width: fit-content;
+        `}
 `
 
 export const HideOnMobileCell = styled(Cell)`
