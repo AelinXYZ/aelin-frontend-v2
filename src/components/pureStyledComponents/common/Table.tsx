@@ -130,7 +130,11 @@ TableHead.defaultProps = {
   hasHover: false,
 }
 
-export const Cell = styled.span<{ justifyContent?: string; light?: boolean }>`
+export const Cell = styled.span<{
+  justifyContent?: string
+  light?: boolean
+  mobileJustifyContent?: string
+}>`
   align-items: center;
   color: ${({ light, theme: { colors } }) => (light ? colors.textColor : colors.textColorLight)};
   display: flex;
@@ -138,7 +142,6 @@ export const Cell = styled.span<{ justifyContent?: string; light?: boolean }>`
   font-weight: 500;
   height: 100%;
   height: fit-content;
-  justify-content: ${({ justifyContent }) => justifyContent};
   line-height: 1.2;
   margin-top: 3px;
   min-width: 0;
@@ -146,9 +149,23 @@ export const Cell = styled.span<{ justifyContent?: string; light?: boolean }>`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     font-size: 1.4rem;
   }
+
+  ${({ justifyContent, mobileJustifyContent }) =>
+    mobileJustifyContent
+      ? css`
+          justify-content: ${mobileJustifyContent};
+
+          @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+            justify-content: ${justifyContent};
+          }
+        `
+      : css`
+          justify-content: ${justifyContent};
+        `}
 `
 
 Cell.defaultProps = {
+  mobileJustifyContent: undefined,
   justifyContent: 'flex-start',
   light: false,
 }

@@ -27,6 +27,11 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { shortenAddress } from '@/src/utils/string'
 
+Cell.defaultProps = {
+  mobileJustifyContent: 'center',
+  justifyContent: 'flex-start',
+}
+
 type Order = {
   orderBy: Deposit_OrderBy
   orderDirection: OrderDirection
@@ -136,7 +141,9 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                     key={index}
                   >
                     <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
-                    <Cell light>{poolName}</Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {poolName}
+                    </Cell>
                     <Cell light>
                       {
                         <ExternalLink
