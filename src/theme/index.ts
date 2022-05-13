@@ -9,7 +9,7 @@ const error = '#FF7777'
 const primary = '#8280FF'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
-const textColor = '#fff'
+const textColor = '#FFF'
 const mainBodyBackground = '#101826'
 const green = '#A2FF00'
 const yellow = '#F1C40F'
@@ -18,9 +18,10 @@ const gray = '#282E3B'
 const pink = '#FF50B9'
 const gradientStart = '#5452C3'
 const gradientEnd = '#01A0D3'
-const blueishGray = '#484d58'
+const blueishGray = '#484D58'
 const transparentWhite = 'rgba(255, 255, 255, 0.4)'
 const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
+const areaChartGradientEnd = '#232A37'
 
 export const theme = {
   buttonPrimary: {
@@ -78,6 +79,8 @@ export const theme = {
     textColorLight: lightGray,
     transparentWhite: transparentWhite,
     transparentWhite2: transparentWhite2,
+    areaChartGradientStart: primary,
+    areaChartGradientEnd: areaChartGradientEnd,
   },
   dropdown: {
     background: componentBackgroundColor,
