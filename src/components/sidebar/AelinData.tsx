@@ -14,6 +14,7 @@ import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingReward
 import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import isDev from '@/src/utils/isDev'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const Wrapper = styled.div`
@@ -101,28 +102,28 @@ const AelinData: React.FC = ({ ...restProps }) => {
       </Wrapper>
     )
 
-  if (error) {
+  if (error && !isDev) {
     throw error
   }
 
   const values = [
     {
       title: getBalanceTitle(activeTab),
-      value: `${formatToken(rewards?.tokenBalance as BigNumber, rewards?.decimals)} ${
-        rewards?.symbol
-      }`,
+      value: !isDev
+        ? `${formatToken(rewards?.tokenBalance as BigNumber, rewards?.decimals)} ${rewards?.symbol}`
+        : '0 AELIN',
     },
     {
       title: 'My stake:',
-      value: `${formatToken(rewards?.userStake as BigNumber, rewards?.decimals)} ${
-        rewards?.symbol
-      }`,
+      value: !isDev
+        ? `${formatToken(rewards?.userStake as BigNumber, rewards?.decimals)} ${rewards?.symbol}`
+        : '0 AELIN',
     },
     {
       title: 'My rewards:',
-      value: `${formatToken(rewards?.userRewards as BigNumber, rewards?.decimals)} ${
-        rewards?.symbol
-      }`,
+      value: !isDev
+        ? `${formatToken(rewards?.userRewards as BigNumber, rewards?.decimals)} ${rewards?.symbol}`
+        : '0 AELIN',
     },
   ]
 

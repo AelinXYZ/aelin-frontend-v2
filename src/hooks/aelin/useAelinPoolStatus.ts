@@ -25,6 +25,7 @@ import {
   Funding,
   PoolAction,
   PoolStatus,
+  PoolTab,
   ProRata,
   TimelineSteps,
   UserRole,
@@ -240,20 +241,20 @@ export function useUserRole(walletAddress: string | null, pool: ParsedAelinPool)
   }, [walletAddress, pool])
 }
 
-function useUserTabs(pool: ParsedAelinPool, derivedStatus: DerivedStatus): PoolStatus[] {
+function useUserTabs(pool: ParsedAelinPool, derivedStatus: DerivedStatus): PoolTab[] {
   const { history } = derivedStatus
   return useMemo(() => {
-    const tabs: PoolStatus[] = [PoolStatus.Funding]
+    const tabs: PoolTab[] = [PoolTab.PoolInformation]
 
     if (history.includes(PoolStatus.DealPresented)) {
       // only show dealInformation if the deal was funded by the holder
       if (pool.deal?.holderAlreadyDeposited) {
-        tabs.push(PoolStatus.DealPresented)
+        tabs.push(PoolTab.DealInformation)
       }
     }
 
     if (history.includes(PoolStatus.Vesting)) {
-      tabs.push(PoolStatus.Vesting)
+      tabs.push(PoolTab.Vest)
     }
 
     return tabs
