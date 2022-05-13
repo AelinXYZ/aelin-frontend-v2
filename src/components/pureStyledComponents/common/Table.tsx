@@ -157,12 +157,18 @@ export const LinkCell = styled(Cell)<{ flexFlowColumn?: boolean }>`
   ${({ flexFlowColumn }) =>
     flexFlowColumn
       ? css`
-          row-gap: 10px;
           flex-flow: column;
+          row-gap: 10px;
+
+          @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+            column-gap: 15px;
+            flex-flow: row;
+            min-width: fit-content;
+          }
         `
       : css`
-          flex-flow: row;
           column-gap: 15px;
+          flex-flow: row;
           min-width: fit-content;
         `}
 `

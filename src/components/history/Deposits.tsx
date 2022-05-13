@@ -139,7 +139,9 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                     <Cell light>{poolName}</Cell>
                     <Cell light>
                       {
-                        <ExternalLink href={`https://etherscan.io/address/${sponsor}`}>
+                        <ExternalLink
+                          href={`${getNetworkConfig(network).blockExplorerUrls}/address/${sponsor}`}
+                        >
                           {shortenAddress(sponsor)}
                         </ExternalLink>
                       }
@@ -156,7 +158,9 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                       >
                         See Pool
                       </ButtonPrimaryLightSm>
-                      <ExternalLink href={`https://etherscan.io/address/${id}`} />
+                      <ExternalLink
+                        href={`${getNetworkConfig(network).blockExplorerUrls}/address/${id}`}
+                      />
                     </LinkCell>
                   </RowLink>
                 )

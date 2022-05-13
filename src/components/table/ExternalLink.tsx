@@ -30,18 +30,17 @@ const Link = styled(BaseLink)`
   }
 `
 
-export const ExternalLink: React.FC<{ href: string }> = ({ children, href, ...restProps }) => {
-  return (
-    <Wrapper
-      onClick={(e) => {
-        e.stopPropagation()
-        e.preventDefault()
-        window.open(href, '_blank')
-      }}
-      {...restProps}
-    >
-      {children}
-      <Link />
-    </Wrapper>
-  )
-}
+export const ExternalLink: React.FC<{ href: string }> = ({ children, href, ...restProps }) => (
+  <Wrapper
+    onClick={(e) => {
+      e.stopPropagation()
+      e.preventDefault()
+
+      window.open(href, '_blank')
+    }}
+    {...restProps}
+  >
+    {children}
+    <Link />
+  </Wrapper>
+)
