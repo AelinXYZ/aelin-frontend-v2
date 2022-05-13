@@ -18,6 +18,13 @@ export enum PoolStatus {
   Closed = 'Closed',
 }
 
+export enum PoolTab {
+  PoolInformation,
+  DealInformation,
+  WithdrawUnredeemed,
+  Vest,
+}
+
 export enum PoolAction {
   Invest = 'Deposit tokens',
   CreateDeal = 'Create Deal',
