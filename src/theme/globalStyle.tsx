@@ -26,7 +26,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     outline-color: ${({ theme }) => theme.colors.secondary};
     width: 100%;
 
-    @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
       background-image: url('/resources/svg/bg-main.svg');
     }
   }

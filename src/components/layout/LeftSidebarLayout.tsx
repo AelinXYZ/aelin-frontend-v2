@@ -11,8 +11,10 @@ const Wrapper = styled.main`
   display: grid;
   margin: 0 auto;
   max-width: 100%;
+  position: relative;
   row-gap: 20px;
   width: ${({ theme }) => theme.layout.maxWidth};
+  z-index: 1;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     flex-grow: 1;

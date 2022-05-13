@@ -28,13 +28,19 @@ import { shortenAddress } from '@/src/utils/string'
 
 const Wrapper = styled.header`
   align-items: center;
+  background-color: ${({ theme }) => theme.colors.mainBodyBackground};
   display: flex;
   flex-grow: 0;
   height: ${({ theme }) => theme.header.height};
   margin: 0 0 15px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    background-color: transparent;
     margin-bottom: 20px;
+    position: relative;
   }
 `
 

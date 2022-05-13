@@ -13,8 +13,10 @@ const Wrapper = styled.main`
   flex-shrink: 0;
   margin: 0 auto;
   max-width: 100%;
+  position: relative;
   row-gap: 20px;
   width: ${({ theme }) => theme.layout.maxWidth};
+  z-index: 1;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     grid-template-columns: 1fr var(--timeline-width);
