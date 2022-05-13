@@ -23,6 +23,11 @@ const transparentWhite = 'rgba(255, 255, 255, 0.4)'
 const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 
 export const theme = {
+  button: {
+    fontSize: '1.4rem',
+    height: '36px',
+    padding: '0 24px',
+  },
   buttonPrimary: {
     backgroundColor: rgba(primary, 0.08),
     backgroundColorHover: rgba(primary, 0.2),

@@ -4,21 +4,23 @@ import styled, { css } from 'styled-components'
 import { ButtonPrimaryLighter } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const Wrapper = styled.div`
-  column-gap: 20px;
+  column-gap: 12px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   margin-bottom: 20px;
   row-gap: 10px;
   width: 100%;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    flex-direction: row;
+    column-gap: 20px;
   }
 `
 
 const ActiveItemCSS = css`
   &,
   &:hover {
+    background-color: rgba(130, 128, 255, 0.08);
     border-color: ${({ theme: { colors } }) => colors.primary};
     color: ${({ theme: { colors } }) => colors.primary};
     cursor: default;
@@ -27,6 +29,16 @@ const ActiveItemCSS = css`
 `
 
 const Item = styled(ButtonPrimaryLighter)<{ isActive?: boolean }>`
+  height: 24px;
+  padding: 0 10px;
+  font-size: 1rem;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    font-size: ${({ theme }) => theme.button.fontSize};
+    height: ${({ theme }) => theme.button.height};
+    padding: ${({ theme }) => theme.button.padding};
+  }
+
   ${({ isActive }) => isActive && ActiveItemCSS}
 `
 
