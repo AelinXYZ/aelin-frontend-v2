@@ -140,8 +140,8 @@ export const Cell = styled.span<{
   display: flex;
   font-size: 1.2rem;
   font-weight: 500;
-  height: 100%;
   height: fit-content;
+  justify-content: ${({ justifyContent }) => justifyContent};
   line-height: 1.2;
   margin-top: 3px;
   min-width: 0;
@@ -151,17 +151,14 @@ export const Cell = styled.span<{
   }
 
   ${({ justifyContent, mobileJustifyContent }) =>
-    mobileJustifyContent
-      ? css`
-          justify-content: ${mobileJustifyContent};
+    mobileJustifyContent &&
+    css`
+      justify-content: ${mobileJustifyContent};
 
-          @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-            justify-content: ${justifyContent};
-          }
-        `
-      : css`
-          justify-content: ${justifyContent};
-        `}
+      @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+        justify-content: ${justifyContent};
+      }
+    `}
 `
 
 Cell.defaultProps = {

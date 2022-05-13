@@ -26,11 +26,6 @@ import useAelinWithdraw from '@/src/hooks/aelin/history/useAelinWithdraw'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
-Cell.defaultProps = {
-  mobileJustifyContent: 'center',
-  justifyContent: 'flex-start',
-}
-
 type Order = {
   orderBy: Withdraw_OrderBy
   orderDirection: OrderDirection
@@ -135,9 +130,15 @@ export const Withdraws: React.FC = ({ ...restProps }) => {
                     href={`/pool/${getKeyChainByValue(network)}/${id}`}
                     key={index}
                   >
-                    <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
-                    <Cell light>{poolName}</Cell>
-                    <Cell light>{amountWithdrawn}</Cell>
+                    <Cell mobileJustifyContent="center">
+                      {formatDate(timestamp, DATE_DETAILED)}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {poolName}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {amountWithdrawn}
+                    </Cell>
                     <HideOnMobileCell justifyContent={columns.alignment.network} light>
                       {getNetworkConfig(network).icon}
                     </HideOnMobileCell>

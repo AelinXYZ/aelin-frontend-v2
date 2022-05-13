@@ -26,11 +26,6 @@ import useAelinDealsSponsored from '@/src/hooks/aelin/history/useAelinDealsSpons
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
-Cell.defaultProps = {
-  mobileJustifyContent: 'center',
-  justifyContent: 'flex-start',
-}
-
 type Order = {
   orderBy: DealSponsored_OrderBy
   orderDirection: OrderDirection
@@ -151,11 +146,21 @@ export const DealsSponsored: React.FC = ({ ...restProps }) => {
                     href={`/pool/${getKeyChainByValue(network)}/${id}`}
                     key={index}
                   >
-                    <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
-                    <Cell light>{poolName}</Cell>
-                    <Cell light>{totalInvested}</Cell>
-                    <Cell light>{totalAccepted}</Cell>
-                    <Cell light>{amountEarned}</Cell>
+                    <Cell mobileJustifyContent="center">
+                      {formatDate(timestamp, DATE_DETAILED)}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {poolName}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {totalInvested}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {totalAccepted}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {amountEarned}
+                    </Cell>
                     <HideOnMobileCell justifyContent={columns.alignment.network} light>
                       {getNetworkConfig(network).icon}
                     </HideOnMobileCell>

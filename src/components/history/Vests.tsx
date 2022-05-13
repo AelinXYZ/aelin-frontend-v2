@@ -26,11 +26,6 @@ import useAelinVests from '@/src/hooks/aelin/history/useAelinVests'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
-Cell.defaultProps = {
-  mobileJustifyContent: 'center',
-  justifyContent: 'flex-start',
-}
-
 type Order = {
   orderBy: Vest_OrderBy
   orderDirection: OrderDirection
@@ -131,8 +126,12 @@ export const Vests: React.FC = ({ ...restProps }) => {
                     href={`/pool/${getKeyChainByValue(network)}/${id}`}
                     key={index}
                   >
-                    <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
-                    <Cell light>{amountVested}</Cell>
+                    <Cell mobileJustifyContent="center">
+                      {formatDate(timestamp, DATE_DETAILED)}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {amountVested}
+                    </Cell>
                     <HideOnMobileCell justifyContent={columns.alignment.network} light>
                       {getNetworkConfig(network).icon}
                     </HideOnMobileCell>

@@ -27,11 +27,6 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { shortenAddress } from '@/src/utils/string'
 
-Cell.defaultProps = {
-  mobileJustifyContent: 'center',
-  justifyContent: 'flex-start',
-}
-
 type Order = {
   orderBy: Deposit_OrderBy
   orderDirection: OrderDirection
@@ -140,9 +135,13 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                     href={`/pool/${getKeyChainByValue(network)}/${id}`}
                     key={index}
                   >
-                    <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
-                    <Cell light>{poolName}</Cell>
-                    <Cell light>
+                    <Cell mobileJustifyContent="center">
+                      {formatDate(timestamp, DATE_DETAILED)}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {poolName}
+                    </Cell>
+                    <Cell light mobileJustifyContent="center">
                       {
                         <ExternalLink
                           href={`${getNetworkConfig(network).blockExplorerUrls}/address/${sponsor}`}
@@ -151,7 +150,9 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                         </ExternalLink>
                       }
                     </Cell>
-                    <Cell light>{amountDeposited}</Cell>
+                    <Cell light mobileJustifyContent="center">
+                      {amountDeposited}
+                    </Cell>
                     <HideOnMobileCell justifyContent={columns.alignment.network} light>
                       {getNetworkConfig(network).icon}
                     </HideOnMobileCell>
