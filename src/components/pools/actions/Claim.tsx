@@ -1,3 +1,6 @@
+import ms from 'ms'
+
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
@@ -6,12 +9,13 @@ import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTrans
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
+import { formatToken } from '@/src/web3/bigNumber'
 
 type Props = {
   pool: ParsedAelinPool
 }
 
-export default function Claim({ pool }: Props) {
+function Claim({ pool }: Props) {
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
   const { address, isAppConnected } = useWeb3Connection()
@@ -20,35 +24,37 @@ export default function Claim({ pool }: Props) {
     pool.dealAddress || ZERO_ADDRESS,
     'claim',
   )
-  const { data, mutate: refetch } = useVestingDealById({
-    id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
-  })
+  const { data } = useVestingDealById(
+    {
+      id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
+    },
+    { refreshInterval: ms('10s') },
+  )
 
   const claimTokens = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await claim([], txGasOptions)
-        if (receipt) {
-          refetch()
-        }
+        await claim([], txGasOptions)
       },
       title: `Claim ${data?.vestingDeal?.tokenToVestSymbol}`,
       estimate: () => estimate([]),
     })
   }
 
-  const { remainingAmountToVest, totalVested } = data?.vestingDeal || {}
+  const { remainingAmountToVest, totalVested, underlyingDealTokenDecimals } =
+    data?.vestingDeal || {}
   const symbol = pool.deal?.underlyingToken.symbol
   return (
     <>
       <Contents>Your deal tokens can be claimed.</Contents>
       <p>
-        Amount to claim:
-        {`${remainingAmountToVest || '0'} ${symbol}`}
+        {`Amount to claim: ${formatToken(
+          remainingAmountToVest || 0,
+          underlyingDealTokenDecimals,
+        )} ${symbol}`}
       </p>
       <p>
-        Total vested:
-        {`${totalVested || '0'} ${symbol}`}
+        {`Total vested: ${formatToken(totalVested || 0, underlyingDealTokenDecimals)} ${symbol}`}
       </p>
 
       <GradientButton disabled={!address || !isAppConnected || isSubmitting} onClick={claimTokens}>
@@ -57,3 +63,5 @@ export default function Claim({ pool }: Props) {
     </>
   )
 }
+
+export default genericSuspense(Claim)
