@@ -9,9 +9,10 @@ import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/butt
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
+  HideOnMobileCell,
   LinkCell,
   LoadingTableRow,
-  Row,
+  RowLink,
   Table,
   TableBody,
   TableHead,
@@ -24,6 +25,11 @@ import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinWithdraw from '@/src/hooks/aelin/history/useAelinWithdraw'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+Cell.defaultProps = {
+  mobileJustifyContent: 'center',
+  justifyContent: 'flex-start',
+}
 
 type Order = {
   orderBy: Withdraw_OrderBy
@@ -124,21 +130,18 @@ export const Withdraws: React.FC = ({ ...restProps }) => {
               {data.map((item, index) => {
                 const { amountWithdrawn, id, network, poolName, timestamp } = item
                 return (
-                  <Row
+                  <RowLink
                     columns={columns.widths}
-                    hasHover
+                    href={`/pool/${getKeyChainByValue(network)}/${id}`}
                     key={index}
-                    onClick={() => {
-                      router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                    }}
                   >
                     <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
                     <Cell light>{poolName}</Cell>
                     <Cell light>{amountWithdrawn}</Cell>
-                    <Cell justifyContent={columns.alignment.network} light>
+                    <HideOnMobileCell justifyContent={columns.alignment.network} light>
                       {getNetworkConfig(network).icon}
-                    </Cell>
-                    <LinkCell justifyContent={columns.alignment.seePool} light>
+                    </HideOnMobileCell>
+                    <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
                       <ButtonPrimaryLightSm
                         onClick={() => {
                           router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
@@ -146,9 +149,11 @@ export const Withdraws: React.FC = ({ ...restProps }) => {
                       >
                         See Pool
                       </ButtonPrimaryLightSm>
-                      <ExternalLink href={`https://etherscan.io/address/${id}`} />
+                      <ExternalLink
+                        href={`${getNetworkConfig(network).blockExplorerUrls}/address/${id}`}
+                      />
                     </LinkCell>
-                  </Row>
+                  </RowLink>
                 )
               })}
             </TableBody>

@@ -141,9 +141,7 @@ export const Deposits: React.FC = ({ ...restProps }) => {
                     key={index}
                   >
                     <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
-                    <Cell light mobileJustifyContent="center">
-                      {poolName}
-                    </Cell>
+                    <Cell light>{poolName}</Cell>
                     <Cell light>
                       {
                         <ExternalLink
