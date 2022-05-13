@@ -116,7 +116,7 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
       <ButtonContainer>
         <GradientButton as="a" href={buyAelinUrl} target="_blank">
           <Uniswap />
-          Buy Aelins
+          Buy Aelin
         </GradientButton>
       </ButtonContainer>
     </Wrapper>
