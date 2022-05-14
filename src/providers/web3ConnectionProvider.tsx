@@ -3,7 +3,6 @@ import {
   ReactNode,
   SetStateAction,
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -16,6 +15,7 @@ import Onboard from 'bnc-onboard'
 import { API, Wallet } from 'bnc-onboard/dist/src/interfaces'
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
 import nullthrows from 'nullthrows'
+import { toast } from 'react-hot-toast'
 
 import {
   Chains,
@@ -188,6 +188,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
         setWalletChainId(network || null)
       },
       address: async (address: string | undefined) => {
+        toast.dismiss()
         if (address) {
           setAddress(getAddress(address))
         } else {
