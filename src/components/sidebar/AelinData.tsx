@@ -127,6 +127,8 @@ const AelinData: React.FC = ({ ...restProps }) => {
     },
   ]
 
+  console.log('rewards?.userRewards', rewards?.userRewards)
+
   const handleClaim = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
@@ -183,7 +185,7 @@ const AelinData: React.FC = ({ ...restProps }) => {
       </Rows>
       <ButtonContainer>
         <GradientButton
-          disabled={rewards?.userRewards.eq(ZERO_BN) || isSubmitting}
+          disabled={rewards?.userRewards.eq(ZERO_BN) || isSubmitting || isDev}
           onClick={handleClaim}
         >
           Claim
