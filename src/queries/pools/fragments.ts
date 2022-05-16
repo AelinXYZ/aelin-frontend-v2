@@ -29,6 +29,7 @@ gql`
 
     vestingEnds
     vestingStarts
+    holder
   }
 `
 

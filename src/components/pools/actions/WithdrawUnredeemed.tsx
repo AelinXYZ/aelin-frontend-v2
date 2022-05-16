@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -10,13 +10,13 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 type Props = {
   pool: ParsedAelinPool
-  refetch: () => void
 }
 
-function WithdrawUnredeemed({ pool, refetch }: Props) {
+function WithdrawUnredeemed({ pool }: Props) {
   const { deal, dealAddress } = pool
   const { address, isAppConnected } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+  const [withdrew, setWithdrew] = useState<boolean>(false)
 
   const unredeemed = deal?.unredeemed.formatted || '0'
 
@@ -30,7 +30,7 @@ function WithdrawUnredeemed({ pool, refetch }: Props) {
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await execute([], txGasOptions)
         if (receipt) {
-          refetch()
+          setWithdrew(true)
         }
       },
       title: `Withdraw ${deal?.underlyingToken.symbol}`,
@@ -39,8 +39,8 @@ function WithdrawUnredeemed({ pool, refetch }: Props) {
   }
 
   const disableButton = useMemo(
-    () => !address || !isAppConnected || isSubmitting,
-    [address, isAppConnected, isSubmitting],
+    () => !address || !isAppConnected || isSubmitting || withdrew,
+    [address, isAppConnected, isSubmitting, withdrew],
   )
 
   return (

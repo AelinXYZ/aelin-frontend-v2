@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import WithdrawUnredeemed from './actions/WithdrawUnredeemed'
@@ -50,39 +49,15 @@ type Props = {
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
-  const { actions, current, dealing, funding, pool, refetchPool, tabs, timeline } =
-    useAelinPoolStatus(chainId, poolAddress as string)
-  const { address, getExplorerUrl } = useWeb3Connection()
+  const { current, dealing, funding, pool, tabs, timeline } = useAelinPoolStatus(
+    chainId,
+    poolAddress as string,
+  )
+  const { getExplorerUrl } = useWeb3Connection()
 
   if (!current) {
     throw new Error('There was no possible to calculate pool current status')
   }
-
-  const isHolder = pool.deal?.holderAddress === address?.toLowerCase()
-  const [tab, setTab] = useState<PoolTab>()
-  const [userActions, setUserActions] = useState<PoolAction[]>()
-  const [action, setAction] = useState<PoolAction>()
-  const dealExists = pool.deal
-  // const noActionTabsTitle =
-  //   !actions.length || action === PoolAction.Invest || action === PoolAction.AwaitingForDeal
-
-  useEffect(() => {
-    if (userActions) {
-      setAction(userActions[0])
-    }
-  }, [userActions])
-
-  useEffect(() => {
-    setTab(
-      tabs.includes(PoolTab.WithdrawUnredeemed) && pool.deal?.unredeemed.raw.gt(0) && isHolder
-        ? PoolTab.WithdrawUnredeemed
-        : tabs[tabs.length - 1],
-    )
-  }, [pool, isHolder, tabs])
-
-  useEffect(() => {
-    setUserActions(tab === PoolTab.WithdrawUnredeemed ? [PoolAction.WithdrawUnredeemed] : actions)
-  }, [actions, pool, isHolder, tab])
 
   return (
     <>
@@ -97,68 +72,46 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       <RightTimelineLayout timelineSteps={timeline}>
         <MainGrid>
           <CardWithTitle
-            titles={
-              <>
-                {tabs.includes(PoolTab.PoolInformation) && (
-                  <CardTitle
-                    isActive={tab === PoolTab.PoolInformation}
-                    onClick={() => setTab(PoolTab.PoolInformation)}
-                  >
-                    Pool information
-                  </CardTitle>
-                )}
-                {tabs.includes(PoolTab.DealInformation) && dealExists && (
-                  <CardTitle
-                    isActive={tab === PoolTab.DealInformation}
-                    onClick={() => setTab(PoolTab.DealInformation)}
-                  >
-                    Deal information
-                  </CardTitle>
-                )}
-                {tabs.includes(PoolTab.WithdrawUnredeemed) &&
-                  pool.deal?.unredeemed.raw.gt(0) &&
-                  isHolder && (
-                    <CardTitle
-                      isActive={tab === PoolTab.WithdrawUnredeemed}
-                      onClick={() => setTab(PoolTab.WithdrawUnredeemed)}
-                    >
-                      Unredeemed tokens
-                    </CardTitle>
-                  )}
-                {tabs.includes(PoolTab.Vest) && (
-                  <CardTitle isActive={tab === PoolTab.Vest} onClick={() => setTab(PoolTab.Vest)}>
-                    Vest
-                  </CardTitle>
-                )}
-              </>
-            }
+            titles={tabs.states.map((tabState) => (
+              <CardTitle
+                isActive={tabs.active === tabState}
+                key={tabState}
+                onClick={() => tabs.setActive(tabState)}
+              >
+                {tabState}
+              </CardTitle>
+            ))}
           >
             <ContentGrid>
-              {tab === PoolTab.PoolInformation && (
+              {tabs.active === PoolTab.PoolInformation && (
                 <PoolInformation pool={pool} poolStatusHelper={funding} />
               )}
-              {tab === PoolTab.DealInformation && dealExists && (
+              {tabs.active === PoolTab.DealInformation && !!pool.deal && (
                 <DealInformation pool={pool} poolStatusHelper={dealing} />
               )}
-              {tab === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
-              {tab === PoolTab.Vest && <VestingInformation pool={pool} />}
+              {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
+              {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
             </ContentGrid>
           </CardWithTitle>
           <ActionTabs
-            active={action}
-            onTabClick={setAction}
-            tabs={/* noActionTabsTitle ? undefined : */ userActions}
+            active={tabs.actions.active}
+            onTabClick={tabs.actions.setActive}
+            tabs={tabs.actions.states}
           >
-            {!actions.length && <div>No actions available</div>}
-            {action === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
-            {action === PoolAction.AwaitingForDeal && <WaitingForDeal />}
-            {action === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
-            {action === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-            {action === PoolAction.AcceptDeal && <AcceptDeal dealing={dealing} pool={pool} />}
-            {action === PoolAction.FundDeal && <FundDeal pool={pool} />}
-            {action === PoolAction.Claim && <Claim pool={pool} />}
-            {action === PoolAction.WithdrawUnredeemed && (
-              <WithdrawUnredeemed pool={pool} refetch={refetchPool} />
+            {!tabs.actions.states.length && <div>No actions available</div>}
+            {tabs.actions.active === PoolAction.Invest && (
+              <Invest pool={pool} poolHelpers={funding} />
+            )}
+            {tabs.actions.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
+            {tabs.actions.active === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
+            {tabs.actions.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
+            {tabs.actions.active === PoolAction.AcceptDeal && (
+              <AcceptDeal dealing={dealing} pool={pool} />
+            )}
+            {tabs.actions.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
+            {tabs.actions.active === PoolAction.Claim && <Claim pool={pool} />}
+            {tabs.actions.active === PoolAction.WithdrawUnredeemed && (
+              <WithdrawUnredeemed pool={pool} />
             )}
           </ActionTabs>
         </MainGrid>

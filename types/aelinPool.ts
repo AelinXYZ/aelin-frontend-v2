@@ -19,10 +19,10 @@ export enum PoolStatus {
 }
 
 export enum PoolTab {
-  PoolInformation,
-  DealInformation,
-  WithdrawUnredeemed,
-  Vest,
+  PoolInformation = 'Pool Information',
+  DealInformation = 'Deal Information',
+  WithdrawUnredeemed = 'Withdraw Unredeemed',
+  Vest = 'Vest',
 }
 
 export enum PoolAction {
