@@ -22,7 +22,10 @@ import {
 import { Summary } from '@/src/components/pools/common/Summary'
 import DealCalculationModal from '@/src/components/pools/deal/DealCalculationModal'
 import DealCreateStepInput from '@/src/components/pools/deal/DealCreateStepInput'
-import { Button, GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonPrimaryLight,
+  GradientButton,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
   ButtonPrev,
@@ -50,6 +53,12 @@ const StepIndicator = styled(BaseStepIndicator)`
   }
 `
 
+const CancelButton = styled(ButtonPrimaryLight)`
+  margin: 20px auto 0;
+  max-width: 100%;
+  width: 160px;
+`
+
 type Props = { poolAddress: string; chainId: ChainsValues }
 
 const CreateDealForm = ({ chainId, poolAddress }: Props) => {
@@ -57,7 +66,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
   const { network } = router.query
 
   const { pool } = useAelinPool(chainId, poolAddress)
-  const { address, appChainId } = useWeb3Connection()
+  const { appChainId } = useWeb3Connection()
   const [showDealCalculationModal, setShowDealCalculationModal] = useState(false)
   const [totalPurchase, setTotalPurchase] = useState<string | undefined>('partial')
 
@@ -185,6 +194,9 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
             )
           })}
         </CardWithTitle>
+        <Link href={`/pool/${network}/${poolAddress}`} passHref>
+          <CancelButton as="a">Cancel</CancelButton>
+        </Link>
       </RightTimelineLayout>
       {showDealCalculationModal && (
         <DealCalculationModal
@@ -201,9 +213,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
           )}
         />
       )}
-      <Link href={`/pool/${network}/${poolAddress}`} passHref>
-        <Button as="a">Cancel</Button>
-      </Link>
       {!currentUserIsSponsor && (
         <Modal title="Invalid address">
           <Error>You are not the sponsor of the pool</Error>
