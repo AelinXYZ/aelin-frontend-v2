@@ -10,7 +10,7 @@ import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ONE_YEAR_IN_SECS } from '@/src/constants/time'
 import contractCall from '@/src/utils/contractCall'
-import { AelinRatesResponse, getAelinETHRates } from '@/src/utils/stake/stakeUtils'
+import { getAelinETHRates } from '@/src/utils/stake/stakeUtils'
 
 type GelatoStakingArgs = {
   address: string
@@ -36,59 +36,34 @@ export const getGelatoStakingRewards = async ({ address, chainId }: GelatoStakin
   const gelatoStakingAddress = contracts.GELATO_POOL.address[10]
 
   try {
-    const totalStakedBalance = await contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [
-      stakingAddress,
-    ])
+    const promises = [
+      contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [stakingAddress]),
+      contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [address]),
+      contractCall(tokenAddress, ERC20ABI, provider, 'decimals', []),
+      contractCall(tokenAddress, ERC20ABI, provider, 'symbol', []),
+      contractCall(gelatoStakingAddress, GelatoPoolABI, provider, 'getUnderlyingBalances', []),
+      contractCall(gelatoStakingAddress, GelatoPoolABI, provider, 'totalSupply', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'getRewardForDuration', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'rewardsDuration', []),
+      contractCall(stakingAddress, GelatoPoolABI, provider, 'balanceOf', [address]),
+      contractCall(stakingAddress, GelatoPoolABI, provider, 'earned', [address]),
+      getAelinETHRates(),
+    ]
 
-    const tokenBalance = await contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [
-      address,
-    ])
+    const [
+      totalStakedBalance,
+      tokenBalance,
+      decimals,
+      symbol,
+      balances,
+      gUNITotalSupply,
+      rewardForDuration,
+      duration,
+      userStake,
+      userRewards,
+      rates,
+    ] = await Promise.all(promises)
 
-    const decimals = await contractCall(tokenAddress, ERC20ABI, provider, 'decimals', [])
-
-    const symbol = await contractCall(tokenAddress, ERC20ABI, provider, 'symbol', [])
-
-    const balances = await contractCall(
-      gelatoStakingAddress,
-      GelatoPoolABI,
-      provider,
-      'getUnderlyingBalances',
-      [],
-    )
-
-    const gUNITotalSupply = await contractCall(
-      gelatoStakingAddress,
-      GelatoPoolABI,
-      provider,
-      'totalSupply',
-      [],
-    )
-
-    const rewardForDuration = await contractCall(
-      stakingAddress,
-      AelinStakingABI,
-      provider,
-      'getRewardForDuration',
-      [],
-    )
-
-    const duration = await contractCall(
-      stakingAddress,
-      AelinStakingABI,
-      provider,
-      'rewardsDuration',
-      [],
-    )
-
-    const userStake = await contractCall(stakingAddress, GelatoPoolABI, provider, 'balanceOf', [
-      address,
-    ])
-
-    const userRewards = await contractCall(stakingAddress, GelatoPoolABI, provider, 'earned', [
-      address,
-    ])
-
-    const rates: AelinRatesResponse = await getAelinETHRates()
     const aelinRate = rates.aelin.usd
     const ethRate = rates.ethereum.usd
 

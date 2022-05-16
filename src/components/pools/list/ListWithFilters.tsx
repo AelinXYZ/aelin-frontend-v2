@@ -14,7 +14,6 @@ import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chain
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { getStatusText } from '@/src/utils/aelinPoolUtils'
 
 const Wrapper = styled.div`
   --gap: 20px;
@@ -117,6 +116,10 @@ export const ListWithFilters: React.FC = () => {
 
   const [poolFilter, setPoolFilter] = useState('')
 
+  const [stateFilterId, setStateFilterId] = useState(0)
+
+  const [nowSeconds, setNow] = useState<string>()
+
   const changeHandler = useCallback(() => {
     const buildWhere = () =>
       searchOptions.reduce((acc, option) => {
@@ -138,6 +141,10 @@ export const ListWithFilters: React.FC = () => {
   )
 
   useEffect(() => {
+    setNow(Math.round(Date.now() / 1000).toString())
+  }, [stateFilterId])
+
+  useEffect(() => {
     debouncedChangeHandler()
 
     return () => {
@@ -147,7 +154,88 @@ export const ListWithFilters: React.FC = () => {
 
   const networks = [{ id: undefined, name: 'All networks' }, ...getChainsByEnvironmentArray()]
 
-  const stagesTexts = ['All stages', ...Object.values(PoolStatus).map((poolStatus) => poolStatus)]
+  // - Open
+  // - Awaiting deal
+  // - Deal ready
+  // - Vesting
+  // - Complete
+  const stages = useMemo(
+    () => [
+      {
+        name: 'All stages',
+        id: 0,
+        where: {
+          poolStatus: null,
+          purchaseExpiry_lt: null,
+          purchaseExpiry_gt: null,
+          vestingStarts_lt: null,
+          vestingEnds_gt: null,
+          vestingEnds_lt: null,
+        },
+      },
+      {
+        name: 'Open',
+        id: 1,
+        where: {
+          purchaseExpiry_lt: null,
+          vestingStarts_lt: null,
+          vestingEnds_gt: null,
+          vestingEnds_lt: null,
+          poolStatus: PoolStatus.PoolOpen,
+          purchaseExpiry_gt: nowSeconds,
+        },
+      },
+      {
+        name: 'Awaiting deal',
+        id: 2,
+        where: {
+          purchaseExpiry_gt: null,
+          vestingStarts_lt: null,
+          vestingEnds_gt: null,
+          vestingEnds_lt: null,
+          poolStatus: PoolStatus.PoolOpen,
+          purchaseExpiry_lt: nowSeconds,
+        },
+      },
+      {
+        name: 'Deal ready',
+        id: 3,
+        where: {
+          purchaseExpiry_lt: null,
+          purchaseExpiry_gt: null,
+          vestingStarts_lt: 1,
+          vestingEnds_gt: null,
+          vestingEnds_lt: null,
+          poolStatus: PoolStatus.FundingDeal,
+        },
+      },
+      {
+        name: 'Vesting',
+        id: 4,
+        where: {
+          poolStatus: PoolStatus.DealOpen,
+          purchaseExpiry_lt: null,
+          purchaseExpiry_gt: null,
+          vestingEnds_lt: null,
+          vestingStarts_lt: nowSeconds,
+          vestingEnds_gt: nowSeconds,
+        },
+      },
+      {
+        name: 'Complete',
+        id: 5,
+        where: {
+          poolStatus: PoolStatus.DealOpen,
+          purchaseExpiry_lt: null,
+          purchaseExpiry_gt: null,
+          vestingStarts_lt: null,
+          vestingEnds_gt: null,
+          vestingEnds_lt: nowSeconds,
+        },
+      },
+    ],
+    [nowSeconds],
+  )
 
   const getCurrentItem = (index: number) => (index < 0 ? 0 : index)
 
@@ -228,27 +316,18 @@ export const ListWithFilters: React.FC = () => {
             ))}
           />
           <Dropdown
-            currentItem={getCurrentItem(
-              stagesTexts.indexOf(variables?.where?.poolStatus as string),
-            )}
-            dropdownButtonContent={
-              <ButtonDropdown>
-                {variables?.where?.poolStatus
-                  ? getStatusText({ poolStatus: variables?.where?.poolStatus as PoolStatus })
-                  : stagesTexts[0]}
-              </ButtonDropdown>
-            }
+            currentItem={stateFilterId}
+            dropdownButtonContent={<ButtonDropdown>{stages[stateFilterId].name}</ButtonDropdown>}
             dropdownPosition={DropdownPosition.right}
-            items={stagesTexts.map((item, key) => (
+            items={stages.map((item, key) => (
               <DropdownItem
                 key={key}
                 onClick={() => {
-                  setWhere({
-                    poolStatus: !key ? null : (item as PoolStatus),
-                  })
+                  setWhere(item.where)
+                  setStateFilterId(item.id)
                 }}
               >
-                {getStatusText({ poolStatus: item as PoolStatus })}
+                {item.name}
               </DropdownItem>
             ))}
           />

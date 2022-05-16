@@ -1,4 +1,4 @@
-import { HTMLAttributes, useEffect, useRef, useState } from 'react'
+import { HTMLAttributes, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
@@ -50,7 +50,6 @@ const PoolCreateStepInput: React.FC<Props> = ({
   ...restProps
 }) => {
   const step = currentState.currentStep
-  const [disableCap, setDisableCap] = useState<boolean>(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -90,21 +89,22 @@ const PoolCreateStepInput: React.FC<Props> = ({
       ) : step === CreatePoolSteps.poolCap ? (
         <>
           <Textfield
-            disabled={disableCap}
+            disabled={currentState[step] === 0}
             maxLength={8}
             name={step}
-            onChange={(e) => setPoolField(e.target.value)}
+            onChange={(e) =>
+              setPoolField(e.target.value === '' ? undefined : Number(e.target.value))
+            }
             placeholder={createPoolConfig[step].placeholder}
             ref={inputRef}
             type="number"
-            value={currentState[step]}
+            value={currentState[step] === undefined ? '' : currentState[step]}
           />
           <Checkbox
-            checked={disableCap}
+            checked={currentState[step] === 0}
             label={'No cap'}
             onClick={() => {
-              setPoolField('')
-              setDisableCap(!disableCap)
+              setPoolField(currentState[step] === 0 ? undefined : 0)
             }}
           />
         </>

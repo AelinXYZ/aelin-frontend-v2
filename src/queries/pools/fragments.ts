@@ -21,6 +21,7 @@ gql`
     contributions
     totalSupply
     dealsCreated
+    holder
 
     totalAmountEarnedBySponsor
     totalAmountAccepted

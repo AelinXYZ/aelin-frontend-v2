@@ -18,7 +18,7 @@ import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
 // Should be rendered on client side only!
-const GeneralContextProvider = dynamic(() => import('@/src/providers/generalProvider'), {
+const TokenIconsProvider = dynamic(() => import('@/src/providers/tokenIconsProvider'), {
   ssr: false,
 })
 
@@ -59,22 +59,22 @@ function App({ Component, pageProps }: AppProps) {
           }}
         >
           <Web3ConnectionProvider>
-            <GeneralContextProvider>
-              <StakingRewardsProvider>
-                <TransactionModalProvider>
-                  <NotificationsProvider>
-                    <GlobalStyle />
-                    <Header />
-                    <SafeSuspense>
+            <StakingRewardsProvider>
+              <TransactionModalProvider>
+                <NotificationsProvider>
+                  <GlobalStyle />
+                  <Header />
+                  <SafeSuspense>
+                    <TokenIconsProvider>
                       <Component {...pageProps} />
                       <Toast />
-                    </SafeSuspense>
-                    <TooltipConfig />
-                    <MobileMenu />
-                  </NotificationsProvider>
-                </TransactionModalProvider>
-              </StakingRewardsProvider>
-            </GeneralContextProvider>
+                    </TokenIconsProvider>
+                  </SafeSuspense>
+                  <TooltipConfig />
+                  <MobileMenu />
+                </NotificationsProvider>
+              </TransactionModalProvider>
+            </StakingRewardsProvider>
           </Web3ConnectionProvider>
         </SWRConfig>
       </ThemeProvider>
