@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import WithdrawUnredeemed from './actions/WithdrawUnredeemed'
 import UnredeemedInformation from './deal/UnredeemedInformation'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
@@ -49,10 +50,8 @@ type Props = {
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
-  const { actions, current, dealing, funding, pool, tabs, timeline } = useAelinPoolStatus(
-    chainId,
-    poolAddress as string,
-  )
+  const { actions, current, dealing, funding, pool, refetchPool, tabs, timeline } =
+    useAelinPoolStatus(chainId, poolAddress as string)
   const { address, getExplorerUrl } = useWeb3Connection()
 
   if (!current) {
@@ -61,22 +60,29 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
 
   const isHolder = pool.deal?.holderAddress === address?.toLowerCase()
   const [tab, setTab] = useState<PoolTab>()
-  const [action, setAction] = useState<PoolAction>(actions[0])
+  const [userActions, setUserActions] = useState<PoolAction[]>()
+  const [action, setAction] = useState<PoolAction>()
   const dealExists = pool.deal
   // const noActionTabsTitle =
   //   !actions.length || action === PoolAction.Invest || action === PoolAction.AwaitingForDeal
 
   useEffect(() => {
-    setAction(actions[0])
-  }, [actions])
+    if (userActions) {
+      setAction(userActions[0])
+    }
+  }, [userActions])
 
   useEffect(() => {
     setTab(
-      tabs.includes(PoolTab.WithdrawUnredeemed) && pool.unredeemed.raw.gt(0) && isHolder
+      tabs.includes(PoolTab.WithdrawUnredeemed) && pool.deal?.unredeemed.raw.gt(0) && isHolder
         ? PoolTab.WithdrawUnredeemed
         : tabs[tabs.length - 1],
     )
   }, [pool, isHolder, tabs])
+
+  useEffect(() => {
+    setUserActions(tab === PoolTab.WithdrawUnredeemed ? [PoolAction.WithdrawUnredeemed] : actions)
+  }, [actions, pool, isHolder, tab])
 
   return (
     <>
@@ -110,13 +116,13 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                   </CardTitle>
                 )}
                 {tabs.includes(PoolTab.WithdrawUnredeemed) &&
-                  pool.unredeemed.raw.gt(0) &&
+                  pool.deal?.unredeemed.raw.gt(0) &&
                   isHolder && (
                     <CardTitle
                       isActive={tab === PoolTab.WithdrawUnredeemed}
                       onClick={() => setTab(PoolTab.WithdrawUnredeemed)}
                     >
-                      Unredeemed
+                      Unredeemed tokens
                     </CardTitle>
                   )}
                 {tabs.includes(PoolTab.Vest) && (
@@ -141,7 +147,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
           <ActionTabs
             active={action}
             onTabClick={setAction}
-            tabs={/* noActionTabsTitle ? undefined : */ actions}
+            tabs={/* noActionTabsTitle ? undefined : */ userActions}
           >
             {!actions.length && <div>No actions available</div>}
             {action === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
@@ -151,6 +157,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             {action === PoolAction.AcceptDeal && <AcceptDeal dealing={dealing} pool={pool} />}
             {action === PoolAction.FundDeal && <FundDeal pool={pool} />}
             {action === PoolAction.Claim && <Claim pool={pool} />}
+            {action === PoolAction.WithdrawUnredeemed && (
+              <WithdrawUnredeemed pool={pool} refetch={refetchPool} />
+            )}
           </ActionTabs>
         </MainGrid>
       </RightTimelineLayout>

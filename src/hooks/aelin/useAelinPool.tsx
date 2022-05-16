@@ -12,7 +12,6 @@ import {
   dealExchangeRates,
   getAmountInPool,
   getAmountRedeem,
-  getAmountUnRedeemed,
   getAmountWithdrawn,
   getDealDeadline,
   getDetailedNumber,
@@ -50,7 +49,6 @@ export type ParsedAelinPool = {
   funded: DetailedNumber
   redeem: DetailedNumber
   withdrawn: DetailedNumber
-  unredeemed: DetailedNumber
   poolStatus: PoolStatus
   poolType: string
   vestingStarts: Date
@@ -102,6 +100,7 @@ export type ParsedAelinPool = {
     holderAddress: string
     createdAt: Date
     fundedAt: Date | null
+    unredeemed: DetailedNumber
   }
 }
 
@@ -147,11 +146,6 @@ export const getParsedPool = ({
       vestingEnds: getVestingEnds(pool).getTime(),
       dealsCreated: pool.dealsCreated,
     }),
-    unredeemed: getAmountUnRedeemed(
-      pool.contributions || ZERO_BN,
-      pool.totalAmountAccepted || ZERO_BN,
-      purchaseTokenDecimals,
-    ),
     deal: undefined,
     dealsCreated: pool.dealsCreated,
   }
@@ -201,6 +195,10 @@ export const getParsedPool = ({
     holderAddress: dealDetails.holder,
     createdAt: new Date(dealDetails.timestamp * 1000),
     fundedAt: dealDetails.isDealFunded ? new Date(dealDetails.dealFundedAt * 1000) : null,
+    unredeemed: getDetailedNumber(
+      dealDetails.totalAmountUnredeemed || ZERO_BN,
+      dealDetails.underlyingDealTokenDecimals,
+    ),
   }
 
   return res

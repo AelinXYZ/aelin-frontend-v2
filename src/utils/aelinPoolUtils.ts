@@ -109,7 +109,7 @@ export function getAmountUnRedeemed(
   }
 }
 
-  export function getStatusText<P extends { poolStatus: PoolStages }>(pool: P) {
+export function getStatusText<P extends { poolStatus: PoolStages }>(pool: P) {
   return pool.poolStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
 }
 

@@ -38,7 +38,7 @@ export const UnredeemedInformation: React.FC<{
         <InfoCell
           title="Amount to withdraw"
           tooltip="??"
-          value={`${pool.unredeemed.formatted} ${deal.underlyingToken.symbol}`}
+          value={`${deal.unredeemed.formatted} ${deal.underlyingToken.symbol}`}
         />
       </Column>
     </>

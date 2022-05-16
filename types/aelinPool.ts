@@ -33,6 +33,7 @@ export enum PoolAction {
   AcceptDeal = 'Accept Deal',
   Withdraw = 'Withdraw',
   Claim = 'Claim',
+  WithdrawUnredeemed = 'Withdraw Unredeemed',
 }
 
 // interface BaseState {

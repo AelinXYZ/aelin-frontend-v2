@@ -60,6 +60,7 @@ gql`
     holderFundingDuration
     timestamp
     dealFundedAt
+    totalAmountUnredeemed
   }
 `
 
