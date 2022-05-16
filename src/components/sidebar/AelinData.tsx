@@ -127,8 +127,6 @@ const AelinData: React.FC = ({ ...restProps }) => {
     },
   ]
 
-  console.log('rewards?.userRewards', rewards?.userRewards)
-
   const handleClaim = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
