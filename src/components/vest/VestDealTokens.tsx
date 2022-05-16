@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import styled from 'styled-components'
+import { useMemo, useState } from 'react'
+import styled, { css } from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
@@ -14,10 +14,12 @@ import {
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell as BaseCell,
+  HideOnDesktop,
   LinkCell,
   LoadingTableRow,
   RowLink,
   Table,
+  TableBody,
   TableHead,
   TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -34,12 +36,12 @@ import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import formatNumber from '@/src/utils/formatNumber'
 
-const TableCard = styled(BaseCard)`
-  border-width: 0;
-  padding: 0;
-
+const TableCard = styled.div`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    background-color: ${({ theme: { card } }) => card.backgroundColor};
+    border-radius: ${({ theme: { card } }) => card.borderRadius};
     border-width: 1px;
+    border: ${({ theme: { card } }) => card.borderColor};
     padding: 40px 50px;
   }
 `
@@ -57,6 +59,32 @@ const Title = styled(BaseTitle)`
   }
 `
 
+const ButtonCSS = css`
+  min-width: 80px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    min-width: 0;
+  }
+`
+
+const VestButton = styled(GradientButtonSm)`
+  ${ButtonCSS}
+`
+
+const SeePoolButton = styled(ButtonPrimaryLightSm)`
+  ${ButtonCSS}
+`
+
+const Value = styled.span`
+  color: ${({ theme }) => theme.colors.textColor};
+  font-weight: 500;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    color: ${({ theme }) => theme.colors.textColorLight};
+    font-weight: 400;
+  }
+`
+
 type Order = {
   orderBy: VestingDeal_OrderBy
   orderDirection: OrderDirection
@@ -66,6 +94,7 @@ const VestActionButton = ({
   dealAddress,
   disabled,
   mutate,
+  ...restProps
 }: {
   disabled: boolean
   dealAddress: string
@@ -78,15 +107,16 @@ const VestActionButton = ({
   }
 
   return (
-    <GradientButtonSm
+    <VestButton
       disabled={disabled}
       onClick={(e) => {
         e.preventDefault()
         handleVestTokens()
       }}
+      {...restProps}
     >
       Vest
-    </GradientButtonSm>
+    </VestButton>
   )
 }
 
@@ -94,7 +124,12 @@ const AmountToVestCell = ({ ...item }: ParsedVestingDeal) => {
   const { chainId, myDealTotal, poolAddress, totalVested } = item
   const amountToVest = useAelinClaimableTokens(poolAddress, chainId, myDealTotal, totalVested)
 
-  return <Cell mobileJustifyContent="center">{formatNumber(amountToVest)}</Cell>
+  return (
+    <Cell mobileJustifyContent="center">
+      <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
+      <Value>{formatNumber(amountToVest)}</Value>
+    </Cell>
+  )
 }
 
 export const VestDealTokens: React.FC = ({ ...restProps }) => {
@@ -162,34 +197,36 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     }
   }
 
+  const length = useMemo(() => data?.length, [data?.length])
+
   return (
     <TableCard {...restProps}>
       <Title>Vest Deal Tokens</Title>
       <InfiniteScroll
-        dataLength={data?.length}
+        dataLength={length}
         hasMore={hasMore}
         loader={<LoadingTableRow />}
         next={nextPage}
       >
-        <TableWrapper>
-          <Table>
-            <TableHead columns={columns.widths}>
-              {tableHeaderCells.map(({ sortKey, title }, index) => (
-                <SortableTH
-                  isActive={order.orderBy === sortKey}
-                  key={index}
-                  onClick={() => {
-                    handleSort(sortKey)
-                  }}
-                >
-                  {title}
-                </SortableTH>
-              ))}
-            </TableHead>
-            {!data?.length ? (
-              <BaseCard>No data.</BaseCard>
-            ) : (
-              data.map((item, index) => {
+        <Table>
+          <TableHead columns={columns.widths}>
+            {tableHeaderCells.map(({ sortKey, title }, index) => (
+              <SortableTH
+                isActive={order.orderBy === sortKey}
+                key={index}
+                onClick={() => {
+                  handleSort(sortKey)
+                }}
+              >
+                {title}
+              </SortableTH>
+            ))}
+          </TableHead>
+          {!data?.length ? (
+            <BaseCard>No data.</BaseCard>
+          ) : (
+            <TableBody>
+              {data.map((item, index) => {
                 const {
                   canVest,
                   chainId,
@@ -210,38 +247,47 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                   >
                     <NameCell mobileJustifyContent="center">{poolName}</NameCell>
                     <Cell mobileJustifyContent="center">{tokenToVest}</Cell>
-                    <Cell mobileJustifyContent="center">{myDealTotal}</Cell>
+                    <Cell mobileJustifyContent="center">
+                      <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
+                      <Value>{myDealTotal}</Value>
+                    </Cell>
                     <AmountToVestCell {...item} />
-                    <Cell mobileJustifyContent="center">{totalVested}</Cell>
-                    <Deadline
-                      progress={calculateVestingDealLineProgress(
-                        vestingPeriodEnds,
-                        vestingPeriodStarts,
-                      )}
-                    >
-                      {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
-                    </Deadline>
+                    <Cell mobileJustifyContent="center">
+                      <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
+                      <Value>{totalVested}</Value>
+                    </Cell>
+                    <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
+                      <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
+                      <Deadline
+                        progress={calculateVestingDealLineProgress(
+                          vestingPeriodEnds,
+                          vestingPeriodStarts,
+                        )}
+                      >
+                        {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
+                      </Deadline>
+                    </Cell>
                     <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
                       <VestActionButton
                         dealAddress={dealAddress}
                         disabled={!canVest}
                         mutate={mutate}
                       />
-                      <ButtonPrimaryLightSm
+                      <SeePoolButton
                         onClick={(e) => {
                           e.preventDefault()
                           router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
                         }}
                       >
                         See Pool
-                      </ButtonPrimaryLightSm>
+                      </SeePoolButton>
                     </LinkCell>
                   </RowLink>
                 )
-              })
-            )}
-          </Table>
-        </TableWrapper>
+              })}
+            </TableBody>
+          )}
+        </Table>
       </InfiniteScroll>
     </TableCard>
   )

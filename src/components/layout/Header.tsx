@@ -31,6 +31,7 @@ const Wrapper = styled.header`
   background-color: ${({ theme }) => theme.colors.mainBodyBackground};
   display: flex;
   flex-grow: 0;
+  flex-shrink: 0;
   height: ${({ theme }) => theme.header.height};
   margin: 0 0 15px;
   position: sticky;
