@@ -10,6 +10,7 @@ import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
 import { PoolStages } from '@/src/constants/pool'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
+import { DetailedNumber } from '@/types/utils'
 
 export type PoolDates = {
   timestamp: string
@@ -92,6 +93,19 @@ export function getAmountRedeem(amount: BigNumber, purchaseTokenDecimals: number
   return {
     raw: amount,
     formatted: formatToken(amount, purchaseTokenDecimals),
+  }
+}
+
+export function getAmountUnRedeemed(
+  funded: string,
+  redeemed: string,
+  decimals: number,
+): DetailedNumber {
+  const fundedBg = BigNumber.from(funded)
+  const redeemedBg = BigNumber.from(redeemed)
+  return {
+    raw: fundedBg.sub(redeemedBg),
+    formatted: formatToken(fundedBg.sub(redeemedBg), decimals),
   }
 }
 
