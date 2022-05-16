@@ -15,7 +15,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell as BaseCell,
   LinkCell,
-  Row,
+  LoadingTableRow,
   RowLink,
   Table,
   TableHead,
@@ -35,7 +35,13 @@ import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import formatNumber from '@/src/utils/formatNumber'
 
 const TableCard = styled(BaseCard)`
-  padding: 40px 50px;
+  border-width: 0;
+  padding: 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    border-width: 1px;
+    padding: 40px 50px;
+  }
 `
 
 const Cell = styled(BaseCell)`
@@ -43,7 +49,12 @@ const Cell = styled(BaseCell)`
 `
 
 const Title = styled(BaseTitle)`
-  margin-bottom: 20px;
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: block;
+    margin-bottom: 20px;
+  }
 `
 
 type Order = {
@@ -83,7 +94,7 @@ const AmountToVestCell = ({ ...item }: ParsedVestingDeal) => {
   const { chainId, myDealTotal, poolAddress, totalVested } = item
   const amountToVest = useAelinClaimableTokens(poolAddress, chainId, myDealTotal, totalVested)
 
-  return <Cell>{formatNumber(amountToVest)}</Cell>
+  return <Cell mobileJustifyContent="center">{formatNumber(amountToVest)}</Cell>
 }
 
 export const VestDealTokens: React.FC = ({ ...restProps }) => {
@@ -154,18 +165,14 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
   return (
     <TableCard {...restProps}>
       <Title>Vest Deal Tokens</Title>
-      <TableWrapper>
-        <Table>
-          <InfiniteScroll
-            dataLength={data?.length}
-            hasMore={hasMore}
-            loader={
-              <Row columns={'1fr'}>
-                <Cell justifyContent="center">Loading...</Cell>
-              </Row>
-            }
-            next={nextPage}
-          >
+      <InfiniteScroll
+        dataLength={data?.length}
+        hasMore={hasMore}
+        loader={<LoadingTableRow />}
+        next={nextPage}
+      >
+        <TableWrapper>
+          <Table>
             <TableHead columns={columns.widths}>
               {tableHeaderCells.map(({ sortKey, title }, index) => (
                 <SortableTH
@@ -201,11 +208,11 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                     href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
                     key={index}
                   >
-                    <NameCell>{poolName}</NameCell>
-                    <Cell>{tokenToVest}</Cell>
-                    <Cell>{myDealTotal}</Cell>
+                    <NameCell mobileJustifyContent="center">{poolName}</NameCell>
+                    <Cell mobileJustifyContent="center">{tokenToVest}</Cell>
+                    <Cell mobileJustifyContent="center">{myDealTotal}</Cell>
                     <AmountToVestCell {...item} />
-                    <Cell>{totalVested}</Cell>
+                    <Cell mobileJustifyContent="center">{totalVested}</Cell>
                     <Deadline
                       progress={calculateVestingDealLineProgress(
                         vestingPeriodEnds,
@@ -214,7 +221,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                     >
                       {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
                     </Deadline>
-                    <LinkCell justifyContent={columns.alignment.seePool} light>
+                    <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
                       <VestActionButton
                         dealAddress={dealAddress}
                         disabled={!canVest}
@@ -233,9 +240,9 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                 )
               })
             )}
-          </InfiniteScroll>
-        </Table>
-      </TableWrapper>
+          </Table>
+        </TableWrapper>
+      </InfiniteScroll>
     </TableCard>
   )
 }

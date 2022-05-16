@@ -11,6 +11,9 @@ const Wrapper = styled(Cell)`
   white-space: nowrap;
 `
 
-export const NameCell: React.FC = ({ children, ...restProps }) => {
+export const NameCell: React.FC<{ mobileJustifyContent?: string }> = ({
+  children,
+  ...restProps
+}) => {
   return <Wrapper {...restProps}>{children}</Wrapper>
 }
