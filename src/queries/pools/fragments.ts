@@ -30,6 +30,7 @@ gql`
 
     vestingEnds
     vestingStarts
+    holder
   }
 `
 
@@ -61,6 +62,7 @@ gql`
     holderFundingDuration
     timestamp
     dealFundedAt
+    totalAmountUnredeemed
   }
 `
 
