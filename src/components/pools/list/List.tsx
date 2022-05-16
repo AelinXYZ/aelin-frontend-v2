@@ -1,7 +1,9 @@
+import Image from 'next/image'
 import { useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { TokenIcon } from '../common/TokenIcon'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
@@ -20,7 +22,8 @@ import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { calculateInvestmentDeadlineProgress, getStatusText } from '@/src/utils/aelinPoolUtils'
+import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
+import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 interface FiltersProps {
@@ -139,6 +142,7 @@ export const List: React.FC<{
                 stage,
                 start,
               } = pool
+
               return (
                 <RowLink
                   columns={columns.widths}
@@ -160,7 +164,7 @@ export const List: React.FC<{
                     {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
                   </Deadline>
                   <Cell justifyContent={columns.alignment.investmentToken}>
-                    {investmentTokenSymbol}
+                    <TokenIcon symbol={investmentTokenSymbol} />
                   </Cell>
                   <Stage stage={stage}> {poolStagesText[stage]}</Stage>
                 </RowLink>
