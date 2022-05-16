@@ -4,7 +4,8 @@ import { curveMonotoneX } from '@visx/curve'
 import { LinearGradient } from '@visx/gradient'
 import { scaleLinear, scaleTime } from '@visx/scale'
 import { AreaClosed, LinePath } from '@visx/shape'
-import { extent, max } from 'd3-array'
+import maxBy from 'lodash/maxBy'
+import minBy from 'lodash/minBy'
 
 import { theme } from '@/src/theme'
 
@@ -28,24 +29,27 @@ const AreaChart = <DataType,>({
   const innerWidth = width - margin.left - margin.right
   const innerHeight = height - margin.top - margin.bottom
 
-  const xScale = useMemo(
-    () =>
-      scaleTime({
-        range: [margin.left, innerWidth + margin.left],
-        domain: extent(data, getXValue) as [Date, Date],
-      }),
-    [innerWidth, margin.left, data, getXValue],
-  )
+  const xScale = useMemo(() => {
+    const minXData = minBy(data, getXValue)
+    const minX = minXData ? getXValue(minXData) : undefined
+    const maxXData = maxBy(data, getXValue)
+    const maxX = maxXData ? getXValue(maxXData) : undefined
+    const domain = minX && maxX ? [minX, maxX] : undefined
+    return scaleTime({
+      range: [margin.left, innerWidth + margin.left],
+      domain: domain,
+    })
+  }, [innerWidth, margin.left, data, getXValue])
 
-  const yScale = useMemo(
-    () =>
-      scaleLinear({
-        range: [innerHeight + margin.top, margin.top],
-        domain: [0, (max(data, getYValue) || 0) + innerHeight / 3],
-        nice: true,
-      }),
-    [margin.top, innerHeight, data, getYValue],
-  )
+  const yScale = useMemo(() => {
+    const maxYData = maxBy(data, getYValue)
+    const maxY = maxYData ? getYValue(maxYData) : 0
+    return scaleLinear({
+      range: [innerHeight + margin.top, margin.top],
+      domain: [0, maxY + innerHeight / 3],
+      nice: true,
+    })
+  }, [margin.top, innerHeight, data, getYValue])
 
   if (width < 10) return null
 
