@@ -42,13 +42,17 @@ export const Vests: React.FC = ({ ...restProps }) => {
       network: 'center',
       seePool: 'right',
     },
-    widths: '140px 160px 120px 1fr',
+    widths: '140px 140px 160px 120px 1fr',
   }
 
   const tableHeaderCells = [
     {
       title: 'Date',
       sortKey: Vest_OrderBy.Timestamp,
+    },
+    {
+      title: 'Pool name',
+      sortKey: Vest_OrderBy.PoolName,
     },
     {
       title: 'Amount vested',
@@ -119,7 +123,7 @@ export const Vests: React.FC = ({ ...restProps }) => {
             <BaseCard>No data.</BaseCard>
           ) : (
             data.map((item, index) => {
-              const { amountVested, id, network, timestamp } = item
+              const { amountVested, id, network, poolName, timestamp } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -130,6 +134,7 @@ export const Vests: React.FC = ({ ...restProps }) => {
                   }}
                 >
                   <Cell>{formatDate(timestamp, DATE_DETAILED)}</Cell>
+                  <Cell light>{poolName}</Cell>
                   <Cell light>{amountVested}</Cell>
                   <Cell justifyContent={columns.alignment.network} light>
                     {getNetworkConfig(network).icon}

@@ -18,6 +18,13 @@ export enum PoolStatus {
   Closed = 'Closed',
 }
 
+export enum PoolTab {
+  PoolInformation = 'Pool Information',
+  DealInformation = 'Deal Information',
+  WithdrawUnredeemed = 'Withdraw Unredeemed',
+  Vest = 'Vest',
+}
+
 export enum PoolAction {
   Invest = 'Deposit tokens',
   CreateDeal = 'Create Deal',
@@ -26,6 +33,7 @@ export enum PoolAction {
   AcceptDeal = 'Accept Deal',
   Withdraw = 'Withdraw',
   Claim = 'Claim',
+  WithdrawUnredeemed = 'Withdraw Unredeemed',
 }
 
 // interface BaseState {

@@ -86,10 +86,7 @@ function getVisiblePools(
       }),
     )
     .map((pool) => ({
-      stage: calculateStatus({
-        poolStatus: pool.poolStatus,
-        purchaseExpiry: pool.purchaseExpiry.getTime(),
-      }).toLowerCase(),
+      stage: pool.stage,
       href: `/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}`,
       name: pool.nameFormatted,
       notifications: notifications.filter(

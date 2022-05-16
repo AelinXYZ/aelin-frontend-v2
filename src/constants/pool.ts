@@ -14,12 +14,18 @@ export enum Privacy {
   PRIVATE = 'private',
 }
 
-export enum LocalStatus {
-  SeekingDeal = 'SeekingDeal',
-  ProRataRedemption = 'ProRataRedemption',
-  OpenRedemption = 'OpenRedemption',
-  Closed = 'Closed',
+export enum PoolStages {
+  Open = 'Open',
+  AwaitingDeal = 'AwaitingDeal',
+  DealReady = 'DealReady',
+  Vesting = 'Vesting',
+  Complete = 'Complete',
 }
 
-export type ExtendedStatus = PoolStatus | LocalStatus
-export const allStages = { ...PoolStatus, ...LocalStatus }
+export const poolStagesText = {
+  [PoolStages.Open]: 'Open',
+  [PoolStages.AwaitingDeal]: 'Awaiting deal',
+  [PoolStages.DealReady]: 'Deal ready',
+  [PoolStages.Vesting]: 'Vesting',
+  [PoolStages.Complete]: 'Complete',
+}

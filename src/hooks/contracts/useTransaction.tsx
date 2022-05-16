@@ -1,9 +1,10 @@
 import { useCallback, useMemo } from 'react'
 
 import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
+import { toast } from 'react-hot-toast'
 
 import { notify } from '@/src/components/toast/Toast'
-import { ERROR_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
+import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { TransactionError } from '@/src/utils/TransactionError'
@@ -45,32 +46,43 @@ export default function useTransaction<
 
         notify({ type: WAITING_TYPE, explorerUrl: getExplorerUrl(tx.hash) })
       } catch (e: any) {
+        toast.dismiss()
+
         const error = new TransactionError(
           e.data?.message || e.message || 'Unable to decode revert reason',
           e.data?.code || e.code,
           e.data,
         )
         if (error.code === 4001) {
-          console.warn('User denied signature')
+          notify({ type: FAILED_TYPE, message: 'User denied signature' })
           return null
         }
         console.error('Transaction error', error.message)
+
+        notify({ type: FAILED_TYPE, message: error.message })
+
         return null
       }
 
       try {
         const receipt = await tx.wait()
         console.log(getExplorerUrl(tx.hash), 'Transaction success')
+
+        toast.dismiss()
         notify({ type: SUCCESS_TYPE, explorerUrl: getExplorerUrl(tx.hash) })
 
         return receipt
       } catch (e: any) {
+        toast.dismiss()
+
         const error = new TransactionError(
           e.data?.message || e.message || 'Unable to decode revert reason',
           e.data?.code || e.code,
           e.data,
         )
-        notify({ type: ERROR_TYPE, explorerUrl: getExplorerUrl(tx.hash) })
+
+        notify({ type: FAILED_TYPE, explorerUrl: getExplorerUrl(tx.hash) })
+
         console.error('Transaction error', error.message)
         return null
       }
@@ -82,7 +94,7 @@ export default function useTransaction<
     async (params?: Params) => {
       const signer = web3Provider?.getSigner()
       if (!signer) {
-        // TODO replace console with some notification or toast
+        notify({ type: FAILED_TYPE, message: 'There is no provider' })
         console.error('Transaction failed, there is no provider')
         return null
       }
@@ -100,7 +112,7 @@ export default function useTransaction<
         const result = await contract.estimateGas[method as string](..._params)
         return result
       } catch (e: any) {
-        console.log(e)
+        console.error('Gas estimate failed', e.message)
         return ZERO_BN
       }
     },

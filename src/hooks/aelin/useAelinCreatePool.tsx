@@ -217,7 +217,7 @@ const initialState: CreatePoolState = {
   [CreatePoolSteps.investmentToken]: undefined,
   [CreatePoolSteps.investmentDeadLine]: { days: undefined, hours: undefined, minutes: undefined },
   [CreatePoolSteps.dealDeadline]: { days: undefined, hours: undefined, minutes: undefined },
-  [CreatePoolSteps.poolCap]: undefined,
+  [CreatePoolSteps.poolCap]: 0,
   [CreatePoolSteps.sponsorFee]: undefined,
   [CreatePoolSteps.poolPrivacy]: undefined,
   currentStep: CreatePoolSteps.poolName,
@@ -279,7 +279,7 @@ export const getCreatePoolSummaryData = (
       value = `${value}%`
     }
 
-    if (step.id === CreatePoolSteps.poolCap && !value) {
+    if (step.id === CreatePoolSteps.poolCap && value === 0) {
       value = 'Uncapped'
     }
 

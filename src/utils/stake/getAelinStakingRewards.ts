@@ -32,42 +32,27 @@ export const getAelinStakingRewards = async ({ address, chainId }: AelinStakingA
   const stakingAddress = contracts.STAKING_REWARDS.address[10]
 
   try {
-    const totalStakedBalance = await contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [
-      stakingAddress,
-    ])
+    const promises = [
+      contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [stakingAddress]),
+      contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [address]),
+      contractCall(tokenAddress, ERC20ABI, provider, 'decimals', []),
+      contractCall(tokenAddress, ERC20ABI, provider, 'symbol', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'getRewardForDuration', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'rewardsDuration', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'balanceOf', [address]),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'earned', [address]),
+    ]
 
-    const tokenBalance = await contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [
-      address,
-    ])
-
-    const decimals = await contractCall(tokenAddress, ERC20ABI, provider, 'decimals', [])
-
-    const symbol = await contractCall(tokenAddress, ERC20ABI, provider, 'symbol', [])
-
-    // TODO: Make these calls in parallel
-    const rewardForDuration = await contractCall(
-      stakingAddress,
-      AelinStakingABI,
-      provider,
-      'getRewardForDuration',
-      [],
-    )
-
-    const duration = await contractCall(
-      stakingAddress,
-      AelinStakingABI,
-      provider,
-      'rewardsDuration',
-      [],
-    )
-
-    const userStake = await contractCall(stakingAddress, AelinStakingABI, provider, 'balanceOf', [
-      address,
-    ])
-
-    const userRewards = await contractCall(stakingAddress, AelinStakingABI, provider, 'earned', [
-      address,
-    ])
+    const [
+      totalStakedBalance,
+      tokenBalance,
+      decimals,
+      symbol,
+      rewardForDuration,
+      duration,
+      userStake,
+      userRewards,
+    ] = await Promise.all(promises)
 
     const yearProRata = ONE_YEAR_IN_SECS / (duration ?? ZERO_BN).toNumber()
     const totalStakedBalanceInWei = new Wei(BigNumber.from(totalStakedBalance), 18)

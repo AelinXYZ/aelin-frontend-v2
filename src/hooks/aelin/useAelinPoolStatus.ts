@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
@@ -25,6 +25,7 @@ import {
   Funding,
   PoolAction,
   PoolStatus,
+  PoolTab,
   ProRata,
   TimelineSteps,
   UserRole,
@@ -240,24 +241,82 @@ export function useUserRole(walletAddress: string | null, pool: ParsedAelinPool)
   }, [walletAddress, pool])
 }
 
-function useUserTabs(pool: ParsedAelinPool, derivedStatus: DerivedStatus): PoolStatus[] {
+interface ActionState {
+  states: PoolAction[]
+  active: PoolAction
+  setActive: Dispatch<SetStateAction<PoolAction>>
+}
+interface TabState {
+  states: PoolTab[]
+  active: PoolTab
+  setActive: (newState: PoolTab) => void
+  actions: ActionState
+}
+
+function useUserTabs(
+  pool: ParsedAelinPool,
+  derivedStatus: DerivedStatus,
+  userRole: UserRole,
+): TabState {
   const { history } = derivedStatus
-  return useMemo(() => {
-    const tabs: PoolStatus[] = [PoolStatus.Funding]
+  const actionsStates = useUserActions(userRole, pool, derivedStatus)
+  const [activeTab, setActiveTab] = useState<PoolTab>(PoolTab.PoolInformation)
+  const [activeAction, setActiveAction] = useState<PoolAction>(actionsStates[0])
+
+  const handleTabChange = (newState: PoolTab) => {
+    setActiveTab(newState)
+    if (newState === PoolTab.WithdrawUnredeemed) {
+      setActiveAction(PoolAction.WithdrawUnredeemed)
+    } else {
+      setActiveAction(actionsStates[0])
+    }
+  }
+
+  const getActionStates = (newState: PoolTab) => {
+    if (newState === PoolTab.WithdrawUnredeemed) {
+      return [PoolAction.WithdrawUnredeemed]
+    }
+    return actionsStates
+  }
+
+  const tabStates = useMemo(() => {
+    const tabs: PoolTab[] = [PoolTab.PoolInformation]
 
     if (history.includes(PoolStatus.DealPresented)) {
       // only show dealInformation if the deal was funded by the holder
       if (pool.deal?.holderAlreadyDeposited) {
-        tabs.push(PoolStatus.DealPresented)
+        tabs.push(PoolTab.DealInformation)
       }
     }
 
     if (history.includes(PoolStatus.Vesting)) {
-      tabs.push(PoolStatus.Vesting)
+      if (pool.deal?.unredeemed.raw.gt(0) && userRole === UserRole.Holder) {
+        tabs.push(PoolTab.WithdrawUnredeemed)
+      }
+      tabs.push(PoolTab.Vest)
+    }
+
+    if (tabs.includes(PoolTab.WithdrawUnredeemed)) {
+      setActiveTab(PoolTab.WithdrawUnredeemed)
+      setActiveAction(PoolAction.WithdrawUnredeemed)
+    } else {
+      setActiveTab(tabs[tabs.length - 1])
+      setActiveAction(actionsStates[0])
     }
 
     return tabs
-  }, [pool, history])
+  }, [pool, history, userRole, actionsStates])
+
+  return {
+    states: tabStates,
+    active: activeTab,
+    setActive: handleTabChange,
+    actions: {
+      states: getActionStates(activeTab),
+      active: activeAction,
+      setActive: setActiveAction,
+    },
+  }
 }
 
 function useUserActions(
@@ -544,9 +603,6 @@ function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
 export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
-    shouldRetryOnError: true,
-    errorRetryInterval: ms('20s'),
-    errorRetryCount: 10,
   })
 
   const { address } = useWeb3Connection()
@@ -554,14 +610,14 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
   // derive data for UI
   const derivedStatus = useCurrentStatus(poolResponse)
   const userRole = useUserRole(address, poolResponse)
-  const tabs = useUserTabs(poolResponse, derivedStatus)
-  const actions = useUserActions(userRole, poolResponse, derivedStatus)
+  const tabs = useUserTabs(poolResponse, derivedStatus, userRole)
 
   // get info by pool status
   const funding = useFundingStatus(poolResponse, chainId)
   const dealing = useDealingStatus(poolResponse, chainId)
   const proRata = useProRataStatus(poolResponse)
   const timeline = useTimelineStatus(poolResponse)
+  // const unredeemed = useUnredeemed()
 
   return useMemo(
     () => ({
@@ -573,20 +629,8 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
       dealing,
       proRata,
       tabs,
-      actions,
       timeline,
     }),
-    [
-      poolResponse,
-      refetchPool,
-      derivedStatus,
-      funding,
-      dealing,
-      proRata,
-      userRole,
-      tabs,
-      actions,
-      timeline,
-    ],
+    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs, timeline],
   )
 }

@@ -79,13 +79,13 @@ Tab.defaultProps = {
 }
 
 export const ActionTabs: React.FC<{
-  active: PoolAction
+  active?: PoolAction
   onTabClick: (action: PoolAction) => void
   tabs?: PoolAction[]
 }> = ({ active, children, onTabClick, tabs, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      {tabs && tabs.length && (
+      {tabs && tabs.length > 1 && (
         <Tabs>
           {tabs.map((action, index) => (
             <Tab

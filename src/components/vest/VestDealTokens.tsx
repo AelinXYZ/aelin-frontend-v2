@@ -60,7 +60,7 @@ const VestActionButton = ({
   dealAddress: string
   mutate: () => void
 }) => {
-  const vestTokens = useAelinDealTransaction(dealAddress, 'claim')
+  const { execute: vestTokens } = useAelinDealTransaction(dealAddress, 'claim')
   const handleVestTokens = async () => {
     await vestTokens()
     mutate()
