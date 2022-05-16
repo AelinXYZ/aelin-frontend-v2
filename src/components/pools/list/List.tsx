@@ -18,10 +18,10 @@ import {
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
-import { Chains, ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import useAelinTokenList from '@/src/hooks/aelin/useAelinTokenList'
+import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
 import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
@@ -36,8 +36,7 @@ export const List: React.FC<{
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
-
-  const { tokensBySymbol = {} } = useAelinTokenList(Chains.mainnet) || {}
+  const { tokens: tokensBySymbol = {} } = useTokenIcons()
 
   if (error) {
     throw error
