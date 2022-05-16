@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -17,10 +18,11 @@ import {
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
-import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { Chains, ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { calculateInvestmentDeadlineProgress, getStatusText } from '@/src/utils/aelinPoolUtils'
+import useAelinTokenList from '@/src/hooks/aelin/useAelinTokenList'
+import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 interface FiltersProps {
@@ -34,6 +36,8 @@ export const List: React.FC<{
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
+
+  const { tokensBySymbol = {} } = useAelinTokenList(Chains.mainnet) || {}
 
   if (error) {
     throw error
@@ -139,6 +143,10 @@ export const List: React.FC<{
                 stage,
                 start,
               } = pool
+
+              const investmentTokenImage =
+                tokensBySymbol[investmentTokenSymbol.toLowerCase()]?.logoURI
+
               return (
                 <RowLink
                   columns={columns.widths}
@@ -160,7 +168,17 @@ export const List: React.FC<{
                     {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
                   </Deadline>
                   <Cell justifyContent={columns.alignment.investmentToken}>
-                    {investmentTokenSymbol}
+                    {investmentTokenImage ? (
+                      <Image
+                        alt={investmentTokenSymbol}
+                        height={18}
+                        src={investmentTokenImage}
+                        title={investmentTokenSymbol}
+                        width={18}
+                      />
+                    ) : (
+                      investmentTokenSymbol
+                    )}
                   </Cell>
                   <Stage stage={stage}> {poolStagesText[stage]}</Stage>
                 </RowLink>

@@ -1,10 +1,13 @@
+import Image from 'next/image'
 import styled from 'styled-components'
 
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
+import { Chains } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinTokenList from '@/src/hooks/aelin/useAelinTokenList'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { Funding } from '@/types/aelinPool'
 
@@ -19,13 +22,29 @@ export const PoolInformation: React.FC<{
   pool: ParsedAelinPool
   poolStatusHelper: Funding
 }> = ({ pool, poolStatusHelper }) => {
+  const { tokensBySymbol = {} } = useAelinTokenList(Chains.mainnet) || {}
+
+  const investmentTokenImage = tokensBySymbol[pool.investmentTokenSymbol.toLowerCase()]?.logoURI
+
   return (
     <>
       <Column>
         <InfoCell
           title="Investment token"
           tooltip="Investment token tooltip contents"
-          value={pool.investmentTokenSymbol}
+          value={
+            investmentTokenImage ? (
+              <Image
+                alt={pool.investmentTokenSymbol}
+                height={18}
+                src={investmentTokenImage}
+                title={pool.investmentTokenSymbol}
+                width={18}
+              />
+            ) : (
+              pool.investmentTokenSymbol
+            )
+          }
         />
         <InfoCell
           title="Pool cap"
