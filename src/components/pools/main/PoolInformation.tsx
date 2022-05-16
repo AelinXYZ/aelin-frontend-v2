@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import styled from 'styled-components'
 
+import { TokenIcon } from '../common/TokenIcon'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
@@ -21,29 +22,13 @@ export const PoolInformation: React.FC<{
   pool: ParsedAelinPool
   poolStatusHelper: Funding
 }> = ({ pool, poolStatusHelper }) => {
-  const { tokens: tokensBySymbol = {} } = useTokenIcons()
-
-  const investmentTokenImage = tokensBySymbol[pool.investmentTokenSymbol.toLowerCase()]?.logoURI
-
   return (
     <>
       <Column>
         <InfoCell
           title="Investment token"
           tooltip="Investment token tooltip contents"
-          value={
-            investmentTokenImage ? (
-              <Image
-                alt={pool.investmentTokenSymbol}
-                height={18}
-                src={investmentTokenImage}
-                title={pool.investmentTokenSymbol}
-                width={18}
-              />
-            ) : (
-              pool.investmentTokenSymbol
-            )
-          }
+          value={<TokenIcon symbol={pool.investmentTokenSymbol} />}
         />
         <InfoCell
           title="Pool cap"

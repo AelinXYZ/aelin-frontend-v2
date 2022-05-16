@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { TokenIcon } from '../common/TokenIcon'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
@@ -36,7 +37,6 @@ export const List: React.FC<{
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
-  const { tokens: tokensBySymbol = {} } = useTokenIcons()
 
   if (error) {
     throw error
@@ -143,9 +143,6 @@ export const List: React.FC<{
                 start,
               } = pool
 
-              const investmentTokenImage =
-                tokensBySymbol[investmentTokenSymbol.toLowerCase()]?.logoURI
-
               return (
                 <RowLink
                   columns={columns.widths}
@@ -167,17 +164,7 @@ export const List: React.FC<{
                     {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
                   </Deadline>
                   <Cell justifyContent={columns.alignment.investmentToken}>
-                    {investmentTokenImage ? (
-                      <Image
-                        alt={investmentTokenSymbol}
-                        height={18}
-                        src={investmentTokenImage}
-                        title={investmentTokenSymbol}
-                        width={18}
-                      />
-                    ) : (
-                      investmentTokenSymbol
-                    )}
+                    <TokenIcon symbol={investmentTokenSymbol} />
                   </Cell>
                   <Stage stage={stage}> {poolStagesText[stage]}</Stage>
                 </RowLink>
