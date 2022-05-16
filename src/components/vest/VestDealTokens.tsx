@@ -21,7 +21,6 @@ import {
   Table,
   TableBody,
   TableHead,
-  TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { NameCell } from '@/src/components/table/NameCell'

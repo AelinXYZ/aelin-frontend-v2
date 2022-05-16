@@ -16,7 +16,6 @@ import {
   Table,
   TableBody,
   TableHead,
-  TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
@@ -102,65 +101,61 @@ export const Withdraws: React.FC = ({ ...restProps }) => {
       loader={<LoadingTableRow />}
       next={nextPage}
     >
-      <TableWrapper {...restProps}>
-        <Table>
-          <TableHead columns={columns.widths}>
-            {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
-              <SortableTH
-                isActive={order.orderBy === sortKey}
-                justifyContent={justifyContent}
-                key={index}
-                onClick={() => {
-                  if (sortKey) handleSort(sortKey)
-                }}
-              >
-                {title}
-              </SortableTH>
-            ))}
-          </TableHead>
-          {!data.length ? (
-            <BaseCard>No data.</BaseCard>
-          ) : (
-            <TableBody>
-              {data.map((item, index) => {
-                const { amountWithdrawn, id, network, poolName, timestamp } = item
-                return (
-                  <RowLink
-                    columns={columns.widths}
-                    href={`/pool/${getKeyChainByValue(network)}/${id}`}
-                    key={index}
-                  >
-                    <Cell mobileJustifyContent="center">
-                      {formatDate(timestamp, DATE_DETAILED)}
-                    </Cell>
-                    <Cell light mobileJustifyContent="center">
-                      {poolName}
-                    </Cell>
-                    <Cell light mobileJustifyContent="center">
-                      {amountWithdrawn}
-                    </Cell>
-                    <HideOnMobileCell justifyContent={columns.alignment.network} light>
-                      {getNetworkConfig(network).icon}
-                    </HideOnMobileCell>
-                    <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
-                      <ButtonPrimaryLightSm
-                        onClick={() => {
-                          router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                        }}
-                      >
-                        See Pool
-                      </ButtonPrimaryLightSm>
-                      <ExternalLink
-                        href={`${getNetworkConfig(network).blockExplorerUrls}/address/${id}`}
-                      />
-                    </LinkCell>
-                  </RowLink>
-                )
-              })}
-            </TableBody>
-          )}
-        </Table>
-      </TableWrapper>
+      <Table {...restProps}>
+        <TableHead columns={columns.widths}>
+          {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
+            <SortableTH
+              isActive={order.orderBy === sortKey}
+              justifyContent={justifyContent}
+              key={index}
+              onClick={() => {
+                if (sortKey) handleSort(sortKey)
+              }}
+            >
+              {title}
+            </SortableTH>
+          ))}
+        </TableHead>
+        {!data.length ? (
+          <BaseCard>No data.</BaseCard>
+        ) : (
+          <TableBody>
+            {data.map((item, index) => {
+              const { amountWithdrawn, id, network, poolName, timestamp } = item
+              return (
+                <RowLink
+                  columns={columns.widths}
+                  href={`/pool/${getKeyChainByValue(network)}/${id}`}
+                  key={index}
+                >
+                  <Cell mobileJustifyContent="center">{formatDate(timestamp, DATE_DETAILED)}</Cell>
+                  <Cell light mobileJustifyContent="center">
+                    {poolName}
+                  </Cell>
+                  <Cell light mobileJustifyContent="center">
+                    {amountWithdrawn}
+                  </Cell>
+                  <HideOnMobileCell justifyContent={columns.alignment.network} light>
+                    {getNetworkConfig(network).icon}
+                  </HideOnMobileCell>
+                  <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
+                    <ButtonPrimaryLightSm
+                      onClick={() => {
+                        router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
+                      }}
+                    >
+                      See Pool
+                    </ButtonPrimaryLightSm>
+                    <ExternalLink
+                      href={`${getNetworkConfig(network).blockExplorerUrls}/address/${id}`}
+                    />
+                  </LinkCell>
+                </RowLink>
+              )
+            })}
+          </TableBody>
+        )}
+      </Table>
     </InfiniteScroll>
   )
 }
