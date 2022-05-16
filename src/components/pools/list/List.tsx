@@ -1,8 +1,10 @@
+import Image from 'next/image'
 import { useState } from 'react'
 import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import { TokenIcon } from '../common/TokenIcon'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
@@ -21,8 +23,10 @@ import { NameCell as BaseNameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { calculateInvestmentDeadlineProgress, getStatusText } from '@/src/utils/aelinPoolUtils'
+import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
+import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 const NameCell = styled(BaseNameCell)`
@@ -152,6 +156,7 @@ export const List: React.FC<{
                 stage,
                 start,
               } = pool
+
               return (
                 <RowLink
                   columns={columns.widths}
@@ -173,15 +178,17 @@ export const List: React.FC<{
                   </HideOnMobileCell>
                   <Cell>
                     ${amountInPool.formatted}&nbsp;
-                    <HideOnDesktop>{investmentTokenSymbol}</HideOnDesktop>
+                    <HideOnDesktop>
+                      <TokenIcon symbol={investmentTokenSymbol} />
+                    </HideOnDesktop>
                   </Cell>
                   <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
                     {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
                   </Deadline>
                   <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
-                    {investmentTokenSymbol}
+                    <TokenIcon symbol={investmentTokenSymbol} />
                   </HideOnMobileCell>
-                  <Stage stage={stage.toLowerCase()}> {getStatusText({ poolStatus: stage })}</Stage>
+                  <Stage stage={stage}>{poolStagesText[stage]}</Stage>
                 </RowLink>
               )
             })}

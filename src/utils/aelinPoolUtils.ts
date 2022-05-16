@@ -6,7 +6,8 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { ExtendedStatus } from '@/src/constants/pool'
+import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
+import { PoolStages } from '@/src/constants/pool'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -15,6 +16,8 @@ export type PoolDates = {
   duration: string
   purchaseDuration: string
   purchaseExpiry: string
+  vestingStarts: string
+  vestingEnds: string
 }
 
 // timestamp when the pool was created
@@ -25,6 +28,14 @@ export function getPoolCreatedDate<PD extends PoolDates>(pool: PD): Date {
 // the duration of the pool assuming no deal is presented when purchasers can withdraw all of their locked funds
 export function getPurchaseExpiry<P extends PoolDates>(pool: P): Date {
   return new Date(Number(pool.purchaseExpiry) * 1000)
+}
+
+export function getVestingStarts<P extends PoolDates>(pool: P): Date {
+  return new Date(Number(pool.vestingStarts) * 1000)
+}
+
+export function getVestingEnds<P extends PoolDates>(pool: P): Date {
+  return new Date(Number(pool.vestingEnds) * 1000)
 }
 
 // if no deal is presented, investors can withdraw their locked funds after this date
@@ -84,7 +95,7 @@ export function getAmountRedeem(amount: BigNumber, purchaseTokenDecimals: number
   }
 }
 
-export function getStatusText<P extends { poolStatus: ExtendedStatus }>(pool: P) {
+export function getStatusText<P extends { poolStatus: PoolStages }>(pool: P) {
   return pool.poolStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
 }
 
@@ -206,4 +217,47 @@ export function calculateDeadlineProgress(deadline: Date, start: Date) {
   const target = deadline.getTime() - start.getTime()
 
   return Math.ceil((completed / target) * 100).toString()
+}
+
+export function getCurrentStage(pool: ParsedAelinPool) {
+  const now = Date.now()
+
+  // Open
+  if (isBefore(now, pool.purchaseExpiry)) {
+    return PoolStages.Open
+  }
+
+  // Awaiting deal
+  if (isAfter(now, pool.purchaseExpiry) && !pool.deal?.holderAlreadyDeposited) {
+    return PoolStages.AwaitingDeal
+  }
+
+  // Dealing
+  // isAfter(now, pool.dealDeadline)
+  // isBefore(now, pool.dealDeadline)
+  if (
+    pool.deal &&
+    pool.deal.holderAlreadyDeposited &&
+    pool.deal.redemption &&
+    isBefore(now, pool.deal.redemption?.end)
+    //isAfter(now, pool.deal?.redemption?.start) &&
+    // isBefore(now, pool.deal?.redemption?.end)
+  ) {
+    return PoolStages.DealReady
+  }
+
+  // Vesting
+  if (
+    pool.deal &&
+    pool.deal.holderAlreadyDeposited &&
+    pool.deal.redemption &&
+    isAfter(now, pool.deal.redemption?.end) &&
+    pool.deal.vestingPeriod.end &&
+    isBefore(now, pool.deal.vestingPeriod.end)
+  ) {
+    return PoolStages.Vesting
+  }
+
+  // TODO: Handle different states of closed
+  return PoolStages.Complete
 }

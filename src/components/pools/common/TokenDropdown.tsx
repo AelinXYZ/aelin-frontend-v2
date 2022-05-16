@@ -9,7 +9,6 @@ import { Loading as BaseLoading } from '@/src/components/common/Loading'
 import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import {
   ButtonDropdown as BaseButtonDropdown,
-  ButtonPrimary,
   GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextfield } from '@/src/components/pureStyledComponents/form/Textfield'
@@ -141,7 +140,7 @@ type TokenDropdownProps = {
 
 function TokenDropdown(props: TokenDropdownProps) {
   const { onChange, placeholder, tokenSelected } = props
-  const { readOnlyAppProvider } = useWeb3Connection()
+  const { appChainId, readOnlyAppProvider } = useWeb3Connection()
 
   const [inputError, setInputError] = useState<string>('')
   const [searchToken, setSearchToken] = useState<string>(tokenSelected ? tokenSelected.symbol : '')
@@ -151,7 +150,7 @@ function TokenDropdown(props: TokenDropdownProps) {
   )
   const [showModal, setShowModal] = useState(false)
 
-  const { tokens = [], tokensByAddress } = useAelinTokenList() || {}
+  const { tokens = [], tokensByAddress } = useAelinTokenList(appChainId) || {}
 
   const options = useMemo(() => {
     const selectedTokenIsInList = tokens.some(

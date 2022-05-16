@@ -10,7 +10,6 @@ import { ZERO_BN } from '@/src/constants/misc'
 import { ONE_YEAR_IN_SECS } from '@/src/constants/time'
 import contractCall from '@/src/utils/contractCall'
 import {
-  AelinRatesResponse,
   UniswapResponse,
   getAelinETHRates,
   getUniswapPoolAmount,
@@ -42,51 +41,32 @@ export const getUniswapStakingRewards = async ({
   const stakingAddress = contracts.LP_STAKING_REWARDS.address[1]
 
   try {
-    const totalStakedBalance = await contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [
-      stakingAddress,
-    ])
+    const promises = [
+      contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [stakingAddress]),
+      contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [address]),
+      contractCall(tokenAddress, ERC20ABI, provider, 'decimals', []),
+      contractCall(tokenAddress, ERC20ABI, provider, 'symbol', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'totalSupply', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'getRewardForDuration', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'rewardsDuration', []),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'balanceOf', [address]),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'earned', [address]),
+      getAelinETHRates(),
+    ]
 
-    const tokenBalance = await contractCall(tokenAddress, ERC20ABI, provider, 'balanceOf', [
-      address,
-    ])
+    const [
+      totalStakedBalance,
+      tokenBalance,
+      decimals,
+      symbol,
+      uniV2TotalSupply,
+      rewardForDuration,
+      duration,
+      userStake,
+      userRewards,
+      rates,
+    ] = await Promise.all(promises)
 
-    const decimals = await contractCall(tokenAddress, ERC20ABI, provider, 'decimals', [])
-
-    const symbol = await contractCall(tokenAddress, ERC20ABI, provider, 'symbol', [])
-
-    const uniV2TotalSupply = await contractCall(
-      stakingAddress,
-      AelinStakingABI,
-      provider,
-      'totalSupply',
-      [],
-    )
-
-    const rewardForDuration = await contractCall(
-      stakingAddress,
-      AelinStakingABI,
-      provider,
-      'getRewardForDuration',
-      [],
-    )
-
-    const duration = await contractCall(
-      stakingAddress,
-      AelinStakingABI,
-      provider,
-      'rewardsDuration',
-      [],
-    )
-
-    const userStake = await contractCall(stakingAddress, AelinStakingABI, provider, 'balanceOf', [
-      address,
-    ])
-
-    const userRewards = await contractCall(stakingAddress, AelinStakingABI, provider, 'earned', [
-      address,
-    ])
-
-    const rates: AelinRatesResponse = await getAelinETHRates()
     const aelinRate = rates.aelin.usd
     const ethRate = rates.ethereum.usd
 

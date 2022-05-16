@@ -1,20 +1,13 @@
 import useSWR from 'swr'
 
 import { Chains, ChainsValues, chainsConfig } from '@/src/constants/chains'
-import { TestnetTokens, Token, TokenListResponse } from '@/src/constants/token'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import isDev from '@/src/utils/isDev'
+import { Token, TokenListResponse } from '@/src/constants/token'
 
 const getTokenList = (chainId: ChainsValues) => {
-  if (!isDev) {
-    return fetch(chainsConfig[chainId].tokenListUrl).then((x) => x.json())
-  } else {
-    return Promise.resolve({ tokens: [TestnetTokens[chainId]] })
-  }
+  return fetch(chainsConfig[chainId].tokenListUrl).then((x) => x.json())
 }
 
-const useTokenListQuery = () => {
-  const { appChainId } = useWeb3Connection()
+const useTokenListQuery = (appChainId: ChainsValues) => {
   return useSWR(['token-list', appChainId], async () => {
     const response: TokenListResponse = await getTokenList(appChainId)
     let tokens: Token[] = response.tokens
@@ -32,13 +25,14 @@ const useTokenListQuery = () => {
 type UseAelinTokenListReturn = {
   tokens: Token[]
   tokensByAddress: { [address: string]: Token | undefined }
+  tokensBySymbol: { [symbol: string]: Token | undefined }
 }
-const useAelinTokenList = () => {
-  const tokenList = useTokenListQuery()
+const useAelinTokenList = (appChainId: ChainsValues) => {
+  const tokenList = useTokenListQuery(appChainId)
   if (!tokenList.data && !tokenList.error) return undefined
 
   const allTokens = tokenList?.data ?? []
-  const { tokens, tokensByAddress } = allTokens.reduce(
+  const { tokens, tokensByAddress, tokensBySymbol } = allTokens.reduce(
     (acc: UseAelinTokenListReturn, token) => {
       const address = token.address.toLowerCase()
       if (acc.tokensByAddress[address]) {
@@ -46,15 +40,17 @@ const useAelinTokenList = () => {
       }
       acc.tokens.push(token)
       acc.tokensByAddress[address] = token
+      acc.tokensBySymbol[token.symbol.toLowerCase()] = token
       return acc
     },
     {
       tokens: [],
       tokensByAddress: {},
+      tokensBySymbol: {},
     },
   )
 
-  return { tokens, tokensByAddress }
+  return { tokens, tokensByAddress, tokensBySymbol }
 }
 
 export default useAelinTokenList
