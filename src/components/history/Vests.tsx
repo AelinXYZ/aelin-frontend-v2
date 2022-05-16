@@ -45,13 +45,17 @@ export const Vests: React.FC = ({ ...restProps }) => {
       network: 'center',
       seePool: 'right',
     },
-    widths: '140px 160px 120px 1fr',
+    widths: '140px 140px 160px 120px 1fr',
   }
 
   const tableHeaderCells = [
     {
       title: 'Date',
       sortKey: Vest_OrderBy.Timestamp,
+    },
+    {
+      title: 'Pool name',
+      sortKey: Vest_OrderBy.PoolName,
     },
     {
       title: 'Amount vested',
@@ -119,13 +123,14 @@ export const Vests: React.FC = ({ ...restProps }) => {
           ) : (
             <TableBody>
               {data.map((item, index) => {
-                const { amountVested, id, network, timestamp } = item
+                const { amountVested, id, network, poolName, timestamp } = item
                 return (
                   <RowLink
                     columns={columns.widths}
                     href={`/pool/${getKeyChainByValue(network)}/${id}`}
                     key={index}
                   >
+                    <Cell light>{poolName}</Cell>
                     <Cell mobileJustifyContent="center">
                       {formatDate(timestamp, DATE_DETAILED)}
                     </Cell>
@@ -137,15 +142,14 @@ export const Vests: React.FC = ({ ...restProps }) => {
                     </HideOnMobileCell>
                     <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
                       <ButtonPrimaryLightSm
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation()
                           router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                         }}
                       >
                         See Pool
                       </ButtonPrimaryLightSm>
-                      <ExternalLink
-                        href={`${getNetworkConfig(network).blockExplorerUrls}/address/${id}`}
-                      />
+                      <ExternalLink href={`https://etherscan.io/address/${id}`} />
                     </LinkCell>
                   </RowLink>
                 )

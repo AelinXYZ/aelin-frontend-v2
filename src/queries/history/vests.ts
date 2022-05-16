@@ -19,9 +19,9 @@ export const VESTS = gql`
     ) {
       timestamp
       amountVested
+      poolName
       pool {
         id
-        name
         deal {
           underlyingDealTokenSymbol
           underlyingDealTokenDecimals

@@ -38,7 +38,7 @@ export async function fetcherVests(variables: VestsQueryVariables) {
             return {
               id: vest.pool.id,
               network: chainId,
-              poolName: parsePoolName(vest.pool.name),
+              poolName: parsePoolName(vest.poolName),
               timestamp: new Date(vest.timestamp * 1000),
               amountVested: `${amountVested} ${vest.pool.deal?.underlyingDealTokenSymbol}`,
             }
