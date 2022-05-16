@@ -94,6 +94,10 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     errors.poolPrivacy = 'Add white list addresses or change pool privacy to public'
   }
 
+  if (values.poolCap === undefined) {
+    errors.poolCap = true
+  }
+
   return errors
 }
 
