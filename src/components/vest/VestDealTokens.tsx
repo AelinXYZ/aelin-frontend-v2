@@ -18,7 +18,6 @@ import {
   LinkCell,
   LoadingTableRow,
   RowLink,
-  Table,
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -207,86 +206,84 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
         loader={<LoadingTableRow />}
         next={nextPage}
       >
-        <Table>
-          <TableHead columns={columns.widths}>
-            {tableHeaderCells.map(({ sortKey, title }, index) => (
-              <SortableTH
-                isActive={order.orderBy === sortKey}
-                key={index}
-                onClick={() => {
-                  handleSort(sortKey)
-                }}
-              >
-                {title}
-              </SortableTH>
-            ))}
-          </TableHead>
-          {!data?.length ? (
-            <BaseCard>No data.</BaseCard>
-          ) : (
-            <TableBody>
-              {data.map((item, index) => {
-                const {
-                  canVest,
-                  chainId,
-                  dealAddress,
-                  myDealTotal,
-                  poolAddress,
-                  poolName,
-                  tokenToVest,
-                  totalVested,
-                  vestingPeriodEnds,
-                  vestingPeriodStarts,
-                } = item
-                return (
-                  <RowLink
-                    columns={columns.widths}
-                    href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
-                    key={index}
-                  >
-                    <NameCell mobileJustifyContent="center">{poolName}</NameCell>
-                    <Cell mobileJustifyContent="center">{tokenToVest}</Cell>
-                    <Cell mobileJustifyContent="center">
-                      <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
-                      <Value>{myDealTotal}</Value>
-                    </Cell>
-                    <AmountToVestCell {...item} />
-                    <Cell mobileJustifyContent="center">
-                      <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
-                      <Value>{totalVested}</Value>
-                    </Cell>
-                    <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
-                      <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
-                      <Deadline
-                        progress={calculateVestingDealLineProgress(
-                          vestingPeriodEnds,
-                          vestingPeriodStarts,
-                        )}
-                      >
-                        {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
-                      </Deadline>
-                    </Cell>
-                    <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
-                      <VestActionButton
-                        dealAddress={dealAddress}
-                        disabled={!canVest}
-                        mutate={mutate}
-                      />
-                      <SeePoolButton
-                        onClick={(e) => {
-                          e.preventDefault()
-                          router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                        }}
-                      >
-                        See Pool
-                      </SeePoolButton>
-                    </LinkCell>
-                  </RowLink>
-                )
-              })}
-            </TableBody>
-          )}
-        </Table>
+        <TableHead columns={columns.widths}>
+          {tableHeaderCells.map(({ sortKey, title }, index) => (
+            <SortableTH
+              isActive={order.orderBy === sortKey}
+              key={index}
+              onClick={() => {
+                handleSort(sortKey)
+              }}
+            >
+              {title}
+            </SortableTH>
+          ))}
+        </TableHead>
+        {!data?.length ? (
+          <BaseCard>No data.</BaseCard>
+        ) : (
+          <TableBody>
+            {data.map((item, index) => {
+              const {
+                canVest,
+                chainId,
+                dealAddress,
+                myDealTotal,
+                poolAddress,
+                poolName,
+                tokenToVest,
+                totalVested,
+                vestingPeriodEnds,
+                vestingPeriodStarts,
+              } = item
+              return (
+                <RowLink
+                  columns={columns.widths}
+                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
+                  key={index}
+                >
+                  <NameCell mobileJustifyContent="center">{poolName}</NameCell>
+                  <Cell mobileJustifyContent="center">{tokenToVest}</Cell>
+                  <Cell mobileJustifyContent="center">
+                    <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
+                    <Value>{myDealTotal}</Value>
+                  </Cell>
+                  <AmountToVestCell {...item} />
+                  <Cell mobileJustifyContent="center">
+                    <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
+                    <Value>{totalVested}</Value>
+                  </Cell>
+                  <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
+                    <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
+                    <Deadline
+                      progress={calculateVestingDealLineProgress(
+                        vestingPeriodEnds,
+                        vestingPeriodStarts,
+                      )}
+                    >
+                      {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
+                    </Deadline>
+                  </Cell>
+                  <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
+                    <VestActionButton
+                      dealAddress={dealAddress}
+                      disabled={!canVest}
+                      mutate={mutate}
+                    />
+                    <SeePoolButton
+                      onClick={(e) => {
+                        e.preventDefault()
+                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                      }}
+                    >
+                      See Pool
+                    </SeePoolButton>
+                  </LinkCell>
+                </RowLink>
+              )
+            })}
+          </TableBody>
+        )}
       </InfiniteScroll>
     </TableCard>
   )

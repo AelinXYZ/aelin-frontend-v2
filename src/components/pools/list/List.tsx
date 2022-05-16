@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useState } from 'react'
 import styled from 'styled-components'
 
@@ -15,7 +14,6 @@ import {
   HideOnMobileCell,
   LoadingTableRow,
   RowLink,
-  Table,
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -25,7 +23,6 @@ import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
 import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
@@ -52,7 +49,7 @@ export const List: React.FC<{
   filters: FiltersProps
   setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
   setOrderDirection: (value: OrderDirection) => void
-}> = ({ filters, setOrderBy, setOrderDirection, ...restProps }) => {
+}> = ({ filters, setOrderBy, setOrderDirection }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
 
   if (error) {
@@ -124,77 +121,75 @@ export const List: React.FC<{
       loader={<LoadingTableRow />}
       next={nextPage}
     >
-      <Table {...restProps}>
-        <TableHead columns={columns.widths}>
-          {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
-            <SortableTH
-              isActive={sortBy === sortKey}
-              justifyContent={justifyContent}
-              key={index}
-              onClick={() => {
-                handleSort(sortKey)
-              }}
-            >
-              {title}
-            </SortableTH>
-          ))}
-        </TableHead>
+      <TableHead columns={columns.widths}>
+        {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
+          <SortableTH
+            isActive={sortBy === sortKey}
+            justifyContent={justifyContent}
+            key={index}
+            onClick={() => {
+              handleSort(sortKey)
+            }}
+          >
+            {title}
+          </SortableTH>
+        ))}
+      </TableHead>
 
-        {!data.length ? (
-          <BaseCard>No data.</BaseCard>
-        ) : (
-          <TableBody>
-            {data.map((pool) => {
-              const {
-                address: id,
-                amountInPool,
-                chainId: network,
-                investmentTokenSymbol,
-                name,
-                purchaseExpiry,
-                sponsor,
-                stage,
-                start,
-              } = pool
+      {!data.length ? (
+        <BaseCard>No data.</BaseCard>
+      ) : (
+        <TableBody>
+          {data.map((pool) => {
+            const {
+              address: id,
+              amountInPool,
+              chainId: network,
+              investmentTokenSymbol,
+              name,
+              purchaseExpiry,
+              sponsor,
+              stage,
+              start,
+            } = pool
 
-              return (
-                <RowLink
-                  columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(network)}/${id}`}
-                  key={id}
+            return (
+              <RowLink
+                columns={columns.widths}
+                href={`/pool/${getKeyChainByValue(network)}/${id}`}
+                key={id}
+              >
+                <NameCell>
+                  {name.split('aePool-').pop()}
+                  <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
+                </NameCell>
+                <Cell>
+                  <ENSOrAddress address={sponsor} network={network} />
+                </Cell>
+                <HideOnMobileCell
+                  justifyContent={columns.alignment.network}
+                  title={getNetworkConfig(network).name}
                 >
-                  <NameCell>
-                    {name.split('aePool-').pop()}
-                    <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
-                  </NameCell>
-                  <Cell>
-                    <ENSOrAddress address={sponsor} network={network} />
-                  </Cell>
-                  <HideOnMobileCell
-                    justifyContent={columns.alignment.network}
-                    title={getNetworkConfig(network).name}
-                  >
-                    {getNetworkConfig(network).icon}
-                  </HideOnMobileCell>
-                  <Cell>
-                    ${amountInPool.formatted}&nbsp;
-                    <HideOnDesktop>
-                      <TokenIcon symbol={investmentTokenSymbol} />
-                    </HideOnDesktop>
-                  </Cell>
-                  <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
-                    {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
-                  </Deadline>
-                  <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
+                  {getNetworkConfig(network).icon}
+                </HideOnMobileCell>
+                <Cell>
+                  ${amountInPool.formatted}&nbsp;
+                  <HideOnDesktop>
                     <TokenIcon symbol={investmentTokenSymbol} />
-                  </HideOnMobileCell>
-                  <Stage stage={stage}>{poolStagesText[stage]}</Stage>
-                </RowLink>
-              )
-            })}
-          </TableBody>
-        )}
-      </Table>
+                  </HideOnDesktop>
+                </Cell>
+                <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
+                  {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
+                </Deadline>
+                <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
+                  <TokenIcon symbol={investmentTokenSymbol} />
+                </HideOnMobileCell>
+                <Stage stage={stage}>{poolStagesText[stage]}</Stage>
+              </RowLink>
+            )
+          })}
+        </TableBody>
+      )}
     </InfiniteScroll>
   )
 }

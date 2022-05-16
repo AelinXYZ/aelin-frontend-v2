@@ -13,7 +13,6 @@ import {
   LinkCell,
   LoadingTableRow,
   RowLink,
-  Table,
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -30,7 +29,7 @@ type Order = {
   orderDirection: OrderDirection
 }
 
-export const DealsSponsored: React.FC = ({ ...restProps }) => {
+export const DealsSponsored: React.FC = () => {
   const { address } = useWeb3Connection()
   const router = useRouter()
 
@@ -109,75 +108,66 @@ export const DealsSponsored: React.FC = ({ ...restProps }) => {
       loader={<LoadingTableRow />}
       next={nextPage}
     >
-      <Table {...restProps}>
-        <TableHead columns={columns.widths}>
-          {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
-            <SortableTH
-              isActive={order.orderBy === sortKey}
-              justifyContent={justifyContent}
-              key={index}
-              onClick={() => {
-                if (sortKey) handleSort(sortKey)
-              }}
-            >
-              {title}
-            </SortableTH>
-          ))}
-        </TableHead>
-        {!data.length ? (
-          <BaseCard>No data.</BaseCard>
-        ) : (
-          <TableBody>
-            {data.map((item, index) => {
-              const {
-                amountEarned,
-                id,
-                network,
-                poolName,
-                timestamp,
-                totalAccepted,
-                totalInvested,
-              } = item
-              return (
-                <RowLink
-                  columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(network)}/${id}`}
-                  key={index}
-                >
-                  <Cell mobileJustifyContent="center">{formatDate(timestamp, DATE_DETAILED)}</Cell>
-                  <Cell light mobileJustifyContent="center">
-                    {poolName}
-                  </Cell>
-                  <Cell light mobileJustifyContent="center">
-                    {totalInvested}
-                  </Cell>
-                  <Cell light mobileJustifyContent="center">
-                    {totalAccepted}
-                  </Cell>
-                  <Cell light mobileJustifyContent="center">
-                    {amountEarned}
-                  </Cell>
-                  <HideOnMobileCell justifyContent={columns.alignment.network} light>
-                    {getNetworkConfig(network).icon}
-                  </HideOnMobileCell>
-                  <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
-                    <ButtonPrimaryLightSm
-                      onClick={() => {
-                        router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
-                      }}
-                    >
-                      See Pool
-                    </ButtonPrimaryLightSm>
-                    <ExternalLink
-                      href={`${getNetworkConfig(network).blockExplorerUrls}/address/${id}`}
-                    />
-                  </LinkCell>
-                </RowLink>
-              )
-            })}
-          </TableBody>
-        )}
-      </Table>
+      <TableHead columns={columns.widths}>
+        {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
+          <SortableTH
+            isActive={order.orderBy === sortKey}
+            justifyContent={justifyContent}
+            key={index}
+            onClick={() => {
+              if (sortKey) handleSort(sortKey)
+            }}
+          >
+            {title}
+          </SortableTH>
+        ))}
+      </TableHead>
+      {!data.length ? (
+        <BaseCard>No data.</BaseCard>
+      ) : (
+        <TableBody>
+          {data.map((item, index) => {
+            const { amountEarned, id, network, poolName, timestamp, totalAccepted, totalInvested } =
+              item
+            return (
+              <RowLink
+                columns={columns.widths}
+                href={`/pool/${getKeyChainByValue(network)}/${id}`}
+                key={index}
+              >
+                <Cell mobileJustifyContent="center">{formatDate(timestamp, DATE_DETAILED)}</Cell>
+                <Cell light mobileJustifyContent="center">
+                  {poolName}
+                </Cell>
+                <Cell light mobileJustifyContent="center">
+                  {totalInvested}
+                </Cell>
+                <Cell light mobileJustifyContent="center">
+                  {totalAccepted}
+                </Cell>
+                <Cell light mobileJustifyContent="center">
+                  {amountEarned}
+                </Cell>
+                <HideOnMobileCell justifyContent={columns.alignment.network} light>
+                  {getNetworkConfig(network).icon}
+                </HideOnMobileCell>
+                <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
+                  <ButtonPrimaryLightSm
+                    onClick={() => {
+                      router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
+                    }}
+                  >
+                    See Pool
+                  </ButtonPrimaryLightSm>
+                  <ExternalLink
+                    href={`${getNetworkConfig(network).blockExplorerUrls}/address/${id}`}
+                  />
+                </LinkCell>
+              </RowLink>
+            )
+          })}
+        </TableBody>
+      )}
     </InfiniteScroll>
   )
 }

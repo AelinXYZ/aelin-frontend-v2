@@ -16,7 +16,6 @@ import {
   Cell,
   LinkCell,
   LoadingTableRow,
-  Table,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ClearedNotifications } from '@/src/hooks/aelin/useAelinNotifications'
@@ -74,7 +73,7 @@ const ButtonRemove = styled(BaseButtonRemove)`
   width: var(--dimensions);
 `
 
-export const List: React.FC = ({ ...restProps }) => {
+export const List: React.FC = () => {
   const router = useRouter()
   const {
     clearedNotifications,
@@ -120,46 +119,44 @@ export const List: React.FC = ({ ...restProps }) => {
         loader={<LoadingTableRow />}
         next={nextPage}
       >
-        <Table {...restProps}>
-          {!notifications?.length ? (
-            <BaseCard>No notifications to show.</BaseCard>
-          ) : (
-            <TableBody>
-              {notifications.map((item, index) => {
-                const { chainId, id, message, poolAddress, triggerStart } = item
+        {!notifications?.length ? (
+          <BaseCard>No notifications to show.</BaseCard>
+        ) : (
+          <TableBody>
+            {notifications.map((item, index) => {
+              const { chainId, id, message, poolAddress, triggerStart } = item
 
-                return (
-                  <RowLink
-                    columns={columns.widths}
-                    href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
-                    key={index}
-                  >
-                    <Cell className="cellTitle">{formatDate(triggerStart, DATE_DETAILED)}</Cell>
-                    <Cell className="cellText" light>
-                      {message}
-                    </Cell>
-                    <LinkCell className="cellLink" justifyContent={columns.alignment.seePool}>
-                      <ButtonPrimaryLightSm
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                        }}
-                      >
-                        Go to pool
-                      </ButtonPrimaryLightSm>
-                      <ButtonRemove
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleClearSingleNotification(id)
-                        }}
-                      />
-                    </LinkCell>
-                  </RowLink>
-                )
-              })}
-            </TableBody>
-          )}
-        </Table>
+              return (
+                <RowLink
+                  columns={columns.widths}
+                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
+                  key={index}
+                >
+                  <Cell className="cellTitle">{formatDate(triggerStart, DATE_DETAILED)}</Cell>
+                  <Cell className="cellText" light>
+                    {message}
+                  </Cell>
+                  <LinkCell className="cellLink" justifyContent={columns.alignment.seePool}>
+                    <ButtonPrimaryLightSm
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                      }}
+                    >
+                      Go to pool
+                    </ButtonPrimaryLightSm>
+                    <ButtonRemove
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleClearSingleNotification(id)
+                      }}
+                    />
+                  </LinkCell>
+                </RowLink>
+              )
+            })}
+          </TableBody>
+        )}
       </InfiniteScroll>
       {!!notifications?.length && (
         <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>
