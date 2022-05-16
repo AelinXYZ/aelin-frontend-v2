@@ -249,7 +249,7 @@ interface ActionState {
 interface TabState {
   states: PoolTab[]
   active: PoolTab
-  setActive: Dispatch<SetStateAction<PoolTab>>
+  setActive: (newState: PoolTab) => void
   actions: ActionState
 }
 
@@ -262,6 +262,23 @@ function useUserTabs(
   const actionsStates = useUserActions(userRole, pool, derivedStatus)
   const [activeTab, setActiveTab] = useState<PoolTab>(PoolTab.PoolInformation)
   const [activeAction, setActiveAction] = useState<PoolAction>(actionsStates[0])
+
+  const handleTabChange = (newState: PoolTab) => {
+    setActiveTab(newState)
+    if (newState === PoolTab.WithdrawUnredeemed) {
+      setActiveAction(PoolAction.WithdrawUnredeemed)
+    } else {
+      setActiveAction(actionsStates[0])
+    }
+  }
+
+  const getActionStates = (newState: PoolTab) => {
+    if (newState === PoolTab.WithdrawUnredeemed) {
+      return [PoolAction.WithdrawUnredeemed]
+    }
+    return actionsStates
+  }
+
   const tabStates = useMemo(() => {
     const tabs: PoolTab[] = [PoolTab.PoolInformation]
 
@@ -281,19 +298,21 @@ function useUserTabs(
 
     if (tabs.includes(PoolTab.WithdrawUnredeemed)) {
       setActiveTab(PoolTab.WithdrawUnredeemed)
+      setActiveAction(PoolAction.WithdrawUnredeemed)
     } else {
       setActiveTab(tabs[tabs.length - 1])
+      setActiveAction(actionsStates[0])
     }
 
     return tabs
-  }, [pool, history, userRole])
+  }, [pool, history, userRole, actionsStates])
 
   return {
     states: tabStates,
     active: activeTab,
-    setActive: setActiveTab,
+    setActive: handleTabChange,
     actions: {
-      states: actionsStates,
+      states: getActionStates(activeTab),
       active: activeAction,
       setActive: setActiveAction,
     },
