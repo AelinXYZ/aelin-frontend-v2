@@ -64,7 +64,7 @@ const Pool: React.FC<Props> = ({ children, href, notifications, stage, ...restPr
   return (
     <Link href={href} passHref>
       <Wrapper {...restProps}>
-        <State stage={stage} />
+        <State stage={stage.toLowerCase()} />
         {children}
         {notifications !== 0 && <Badge>{notifications}</Badge>}
       </Wrapper>

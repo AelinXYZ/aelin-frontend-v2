@@ -38,7 +38,7 @@ export const Stage: React.FC<{
 }> = ({ children, stage, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      <StageColor stage={stage} /> {children}
+      <StageColor stage={stage.toLowerCase()} /> {children}
     </Wrapper>
   )
 }

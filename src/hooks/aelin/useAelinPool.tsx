@@ -7,6 +7,7 @@ import { SWRConfiguration } from 'swr'
 import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
+import { PoolStages } from '@/src/constants/pool'
 import {
   dealExchangeRates,
   getAmountInPool,
@@ -21,7 +22,10 @@ import {
   getPurchaseTokenCap,
   getSponsorFee,
   getVestingDates,
+  getVestingEnds,
+  getVestingStarts,
 } from '@/src/utils/aelinPoolUtils'
+import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { DetailedNumber } from '@/types/utils'
 
@@ -50,6 +54,7 @@ export type ParsedAelinPool = {
   vestingStarts: Date
   vestingEnds: Date
   dealsCreated: number
+  stage: PoolStages
   deal?: {
     name: string
     symbol: string
@@ -131,9 +136,16 @@ export const getParsedPool = ({
     funded: getFunded({ ...pool, purchaseTokenDecimals }),
     withdrawn: getAmountWithdrawn(pool.totalAmountWithdrawn || ZERO_BN, purchaseTokenDecimals),
     redeem: getAmountRedeem(pool.totalAmountAccepted || ZERO_BN, purchaseTokenDecimals),
+    vestingStarts: getVestingStarts(pool),
+    vestingEnds: getVestingEnds(pool),
+    stage: calculateStatus({
+      poolStatus: pool.poolStatus,
+      purchaseExpiry: getPurchaseExpiry(pool).getTime(),
+      vestingStarts: getVestingStarts(pool).getTime(),
+      vestingEnds: getVestingEnds(pool).getTime(),
+      dealsCreated: pool.dealsCreated,
+    }),
     deal: undefined,
-    vestingStarts: new Date(pool.vestingStarts),
-    vestingEnds: new Date(pool.vestingEnds),
     dealsCreated: pool.dealsCreated,
   }
 

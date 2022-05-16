@@ -18,6 +18,7 @@ import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { calculateInvestmentDeadlineProgress, getStatusText } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -161,7 +162,7 @@ export const List: React.FC<{
                   <Cell justifyContent={columns.alignment.investmentToken}>
                     {investmentTokenSymbol}
                   </Cell>
-                  <Stage stage={stage.toLowerCase()}> {getStatusText({ poolStatus: stage })}</Stage>
+                  <Stage stage={stage}> {poolStagesText[stage]}</Stage>
                 </RowLink>
               )
             })

@@ -4,22 +4,13 @@ import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
 import { ensResolver } from '../useEnsName'
-import {
-  InputMaybe,
-  PoolCreated_OrderBy,
-  PoolStatus,
-  PoolsCreatedQueryVariables,
-} from '@/graphql-schema'
+import { InputMaybe, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { ExtendedStatus, POOLS_RESULTS_PER_CHAIN, allStages } from '@/src/constants/pool'
+import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
-import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
-export interface PoolParsedWithState extends ParsedAelinPool {
-  stage: ExtendedStatus
-}
 
 const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) => {
   switch (orderBy) {
@@ -58,19 +49,12 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
       const { poolCreateds } = await allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
 
       return poolCreateds.map((pool) => {
-        const parsedPool: ParsedAelinPool = getParsedPool({
+        return getParsedPool({
           chainId,
           pool,
           poolAddress: pool.id,
           purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
         })
-        return {
-          ...parsedPool,
-          stage: calculateStatus({
-            poolStatus: parsedPool.poolStatus,
-            purchaseExpiry: parsedPool.purchaseExpiry.getTime(),
-          }),
-        }
       })
     })
 
@@ -81,7 +65,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
 
     let result = poolsByChainResponses
       .filter(isSuccessful)
-      .reduce((resultAcc: PoolParsedWithState[], { value }) => [...resultAcc, ...value], [])
+      .reduce((resultAcc: ParsedAelinPool[], { value }) => [...resultAcc, ...value], [])
 
     result = orderBy(
       result,
