@@ -79,7 +79,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     const dealDeadlineSeconds = convertToSeconds({
       days: values.dealDeadline?.days ?? 0,
       hours: values.dealDeadline?.hours ?? 0,
-      minutes: values.dealDeadline?.days ?? 0,
+      minutes: values.dealDeadline?.minutes ?? 0,
     })
     if (dealDeadlineSeconds > ONE_YEAR_IN_SECS) {
       errors.dealDeadline = 'Max duration is 365 days'
