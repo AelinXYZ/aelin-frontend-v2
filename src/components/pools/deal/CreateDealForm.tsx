@@ -33,6 +33,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
+import { ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
 import useAelinCreateDeal, {
   CreateDealSteps,
@@ -216,6 +217,11 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       {!currentUserIsSponsor && (
         <Modal title="Invalid address">
           <Error>You are not the sponsor of the pool</Error>
+        </Modal>
+      )}
+      {pool.amountInPool.raw.eq(ZERO_BN) && (
+        <Modal title="No Funds in Pool">
+          <Error>You can't create a deal if the pool has no funds</Error>
         </Modal>
       )}
     </>
