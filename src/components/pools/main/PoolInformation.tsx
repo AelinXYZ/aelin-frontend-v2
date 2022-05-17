@@ -45,7 +45,9 @@ export const PoolInformation: React.FC<{
         <InfoCell
           title="My pool balance"
           tooltip="My pool balance tooltip"
-          value={`${poolStatusHelper.poolTokenBalance.formatted || 0}`}
+          value={`${poolStatusHelper.poolTokenBalance.formatted || 0} ${
+            pool.investmentTokenSymbol
+          }`}
         />
       </Column>
       <Column>
