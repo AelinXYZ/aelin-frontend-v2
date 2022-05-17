@@ -445,16 +445,13 @@ function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
         !!pool.deal && isAfter(now, pool.deal.createdAt) && !pool.deal?.holderAlreadyDeposited,
       isDone: !!pool.deal?.holderAlreadyDeposited,
       deadline: pool.deal
-        ? getStepDeadline(
-            pool.deal.holderFundingExpiration,
-            pool.deal.holderAlreadyDeposited && pool.deal.fundedAt
-              ? `Funded ${formatDate(pool.deal.fundedAt, DATE_DETAILED)}`
-              : undefined,
-          )
+        ? pool.deal.holderAlreadyDeposited && pool.deal.fundedAt
+          ? `Funded ${formatDate(pool.deal.fundedAt, DATE_DETAILED)}`
+          : getStepDeadline(pool.deal.holderFundingExpiration)
         : undefined,
       deadlineProgress: pool.deal
         ? pool.deal.holderAlreadyDeposited
-          ? '100'
+          ? '0'
           : calculateDeadlineProgress(pool.deal.holderFundingExpiration, pool.deal.createdAt)
         : '0',
       value:
