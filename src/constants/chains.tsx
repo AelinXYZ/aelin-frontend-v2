@@ -34,6 +34,7 @@ export type ChainConfig = {
   rpcUrl: string
   shortName: string
   tokenListUrl: string
+  buyAelinUrl: string | undefined
 }
 
 export const chainsConfig: Record<ChainsValues, ChainConfig> = {
@@ -49,6 +50,8 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
     shortName: 'Mainnet',
     tokenListUrl: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
+    buyAelinUrl:
+      'https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=mainnet',
   },
   [Chains.goerli]: {
     blockExplorerUrls: ['https://goerli.etherscan.io/'],
@@ -62,6 +65,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: `https://eth-goerli.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
     shortName: 'Goerli',
     tokenListUrl: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
+    buyAelinUrl: undefined,
   },
   [Chains.kovan]: {
     blockExplorerUrls: ['https://kovan.etherscan.io/'],
@@ -75,6 +79,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: `https://eth-kovan.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
     shortName: 'Kovan',
     tokenListUrl: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
+    buyAelinUrl: undefined,
   },
   [Chains.optimism]: {
     id: Chains.optimism,
@@ -88,6 +93,8 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     isProd: true,
     icon: <Optimism />,
     tokenListUrl: 'https://static.optimism.io/optimism.tokenlist.json',
+    buyAelinUrl:
+      'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism',
     isL2: true,
   },
 }
