@@ -7,6 +7,7 @@ import { TokenIcon } from '../common/TokenIcon'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
+import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
@@ -17,27 +18,20 @@ import {
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
-import { NameCell as BaseNameCell } from '@/src/components/table/NameCell'
+import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
+import { useNotifications } from '@/src/providers/notificationsProvider'
 import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
-const NameCell = styled(BaseNameCell)`
-  .networkIcon {
-    height: 14px;
-    width: 14px;
-  }
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    .networkIcon {
-      height: auto;
-      width: auto;
-    }
-  }
+const Name = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 interface FiltersProps {
@@ -51,6 +45,8 @@ export const List: React.FC<{
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
+
+  const { notifications } = useNotifications()
 
   if (error) {
     throw error
@@ -135,7 +131,6 @@ export const List: React.FC<{
           </SortableTH>
         ))}
       </TableHead>
-
       {!data.length ? (
         <BaseCard>No data.</BaseCard>
       ) : (
@@ -153,6 +148,8 @@ export const List: React.FC<{
               start,
             } = pool
 
+            const activeNotifications = notifications.filter((n) => n.poolAddress === id).length
+
             return (
               <RowLink
                 columns={columns.widths}
@@ -160,7 +157,8 @@ export const List: React.FC<{
                 key={id}
               >
                 <NameCell>
-                  {name.split('aePool-').pop()}
+                  <Name>{name.split('aePool-').pop()}</Name>
+                  {activeNotifications ? <Badge>{activeNotifications.toString()}</Badge> : null}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                 </NameCell>
                 <Cell>
@@ -184,7 +182,7 @@ export const List: React.FC<{
                 <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
                   <TokenIcon symbol={investmentTokenSymbol} />
                 </HideOnMobileCell>
-                <Stage stage={stage}>{poolStagesText[stage]}</Stage>
+                <Stage stage={stage}> {poolStagesText[stage]}</Stage>
               </RowLink>
             )
           })}

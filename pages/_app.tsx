@@ -63,9 +63,9 @@ function App({ Component, pageProps }: AppProps) {
               <TransactionModalProvider>
                 <NotificationsProvider>
                   <GlobalStyle />
-                  <Header />
                   <SafeSuspense>
                     <TokenIconsProvider>
+                      <Header />
                       <Component {...pageProps} />
                       <Toast />
                     </TokenIconsProvider>

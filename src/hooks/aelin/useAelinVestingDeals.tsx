@@ -71,8 +71,8 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
             }
           }),
         )
-        .catch((e) => {
-          console.error(`fetch vestingDeals on chain ${chainId} was failed`, e)
+        .catch((err) => {
+          console.error(`fetch vestingDeals on chain ${chainId} was failed`, err)
           return []
         }),
     )

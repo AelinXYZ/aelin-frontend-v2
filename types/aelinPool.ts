@@ -27,6 +27,7 @@ export enum PoolTab {
 
 export enum PoolAction {
   Invest = 'Deposit tokens',
+  ReleaseFunds = 'Release funds',
   CreateDeal = 'Create Deal',
   AwaitingForDeal = 'Awaiting for Deal',
   FundDeal = 'Fund Deal',
