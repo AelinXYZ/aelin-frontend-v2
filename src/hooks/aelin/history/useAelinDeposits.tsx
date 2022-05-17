@@ -46,8 +46,8 @@ export async function fetcherDeposits(variables: DepositsQueryVariables) {
             }
           })
         })
-        .catch((e) => {
-          console.error(`fetch deposits on chain ${chainId} was failed`, e)
+        .catch((err) => {
+          console.error(`fetch deposits on chain ${chainId} was failed`, err)
           return []
         }),
     )
@@ -66,8 +66,8 @@ export async function fetcherDeposits(variables: DepositsQueryVariables) {
     )
 
     return result
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error(err)
     return []
   }
 }

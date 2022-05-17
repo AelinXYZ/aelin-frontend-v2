@@ -44,8 +44,8 @@ export async function fetcherVests(variables: VestsQueryVariables) {
             }
           })
         })
-        .catch((e) => {
-          console.error(`fetch vests on chain ${chainId} was failed`, e)
+        .catch((err) => {
+          console.error(`fetch vests on chain ${chainId} was failed`, err)
           return []
         }),
     )
@@ -65,8 +65,8 @@ export async function fetcherVests(variables: VestsQueryVariables) {
     )
 
     return result
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error(err)
     return []
   }
 }
