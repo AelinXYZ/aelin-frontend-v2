@@ -25,8 +25,10 @@ export const CreateDeal: React.FC<Props> = ({ pool, ...restProps }) => {
       {noFundsInPool ? (
         <>
           <Contents>
-            <b>You can't create a deal.</b> A funded pool is needed to create a deal, and this pool
-            has no funds.
+            <TextColor>
+              <b>You can't create a deal.</b>
+            </TextColor>{' '}
+            A funded pool is needed to create a deal, and this pool has no funds.
           </Contents>
         </>
       ) : pool.dealsCreated <= 1 ? (
