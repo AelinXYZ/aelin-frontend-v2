@@ -228,16 +228,19 @@ export function useUserRole(walletAddress: string | null, pool: ParsedAelinPool)
       return UserRole.Visitor
     }
 
-    const wa = walletAddress.toLowerCase()
-    if (wa === pool.sponsor) {
-      return UserRole.Sponsor
+    let userRole = UserRole.Investor
+
+    const address = walletAddress.toLowerCase()
+
+    if (address === pool.sponsor) {
+      userRole = UserRole.Sponsor
     }
 
-    if (wa === pool.deal?.holderAddress) {
-      return UserRole.Holder
+    if (address === pool.deal?.holderAddress) {
+      userRole = UserRole.Holder
     }
 
-    return UserRole.Investor
+    return userRole
   }, [walletAddress, pool])
 }
 
