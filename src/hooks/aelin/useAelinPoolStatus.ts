@@ -224,11 +224,11 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
 
 export function useUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserRole {
   return useMemo(() => {
-    if (!walletAddress) {
-      return UserRole.Visitor
-    }
-
     let userRole = UserRole.Investor
+
+    if (!walletAddress) {
+      return userRole
+    }
 
     const address = walletAddress.toLowerCase()
 
