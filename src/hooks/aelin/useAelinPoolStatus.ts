@@ -7,6 +7,7 @@ import isWithinInterval from 'date-fns/isWithinInterval'
 import uniq from 'lodash/uniq'
 import ms from 'ms'
 
+import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
@@ -379,6 +380,7 @@ function useUserTabs(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
   userRole: UserRole,
+  initialData?: NotificationType,
 ): TabState {
   const { history } = derivedStatus
   const actionsStates = useUserActions(userRole, pool, derivedStatus)
@@ -401,6 +403,9 @@ function useUserTabs(
     return actionsStates
   }
 
+  const isNotificationType = (type?: NotificationType) =>
+    !!(Object.values(NotificationType) as Array<NotificationType>).find((n) => n === type)
+
   const tabStates = useMemo(() => {
     const tabs: PoolTab[] = [PoolTab.PoolInformation]
 
@@ -418,16 +423,58 @@ function useUserTabs(
       tabs.push(PoolTab.Vest)
     }
 
-    if (tabs.includes(PoolTab.WithdrawUnredeemed)) {
-      setActiveTab(PoolTab.WithdrawUnredeemed)
-      setActiveAction(PoolAction.WithdrawUnredeemed)
+    if (initialData && isNotificationType(initialData)) {
+      switch (initialData) {
+        case NotificationType.InvestmentWindowAlert:
+          setActiveTab(PoolTab.PoolInformation)
+          break
+        case NotificationType.InvestmentWindowEnded:
+          if (pool.deal?.holderAlreadyDeposited) {
+            setActiveTab(PoolTab.DealInformation)
+            setActiveAction(PoolAction.CreateDeal)
+          }
+          break
+        case NotificationType.HolderSet:
+          if (pool.deal?.holderAlreadyDeposited) {
+            setActiveTab(PoolTab.DealInformation)
+            setActiveAction(PoolAction.FundDeal)
+          }
+          break
+        case NotificationType.DealProposed:
+        case NotificationType.FundingWindowAlert:
+        case NotificationType.FundingWindowEnded:
+        case NotificationType.VestingCliffBegun:
+          if (pool.deal?.holderAlreadyDeposited) {
+            setActiveTab(PoolTab.DealInformation)
+          }
+          break
+        case NotificationType.DealTokensVestingBegun:
+        case NotificationType.AllDealTokensVested:
+          setActiveTab(PoolTab.Vest)
+          setActiveAction(PoolAction.Claim)
+          break
+        case NotificationType.WithdrawUnredeemed:
+          if (pool.deal?.unredeemed.raw.gt(0) && userRole === UserRole.Holder) {
+            setActiveTab(PoolTab.WithdrawUnredeemed)
+          } else {
+            setActiveTab(tabs[tabs.length - 1])
+          }
+          break
+        default:
+          setActiveTab(tabs[tabs.length - 1])
+      }
     } else {
-      setActiveTab(tabs[tabs.length - 1])
-      setActiveAction(actionsStates[0])
+      if (tabs.includes(PoolTab.WithdrawUnredeemed)) {
+        setActiveTab(PoolTab.WithdrawUnredeemed)
+        setActiveAction(PoolAction.WithdrawUnredeemed)
+      } else {
+        setActiveTab(tabs[tabs.length - 1])
+        setActiveAction(actionsStates[0])
+      }
     }
 
     return tabs
-  }, [pool, history, userRole, actionsStates])
+  }, [pool, history, userRole, actionsStates, initialData])
 
   return {
     states: tabStates,
@@ -629,7 +676,15 @@ function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
   }
 }
 
-export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: string) {
+type InitialData = {
+  tabs: NotificationType
+}
+
+export default function useAelinPoolStatus(
+  chainId: ChainsValues,
+  poolAddress: string,
+  initialData?: InitialData,
+) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
   })
@@ -639,7 +694,7 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
   // derive data for UI
   const derivedStatus = useCurrentStatus(poolResponse)
   const userRole = useUserRole(address, poolResponse)
-  const tabs = useUserTabs(poolResponse, derivedStatus, userRole)
+  const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
 
   // get info by pool status
   const funding = useFundingStatus(poolResponse, chainId)
