@@ -19,7 +19,7 @@ const GAS_LIMIT_BUFFER_MULTIPLIER = 20
 export const getTransactionPrice = (
   gasPrice: Wei | null,
   gasLimit: GasLimitEstimate,
-  ethPrice: Wei | null,
+  ethPrice: Wei | undefined,
 ) => {
   if (!gasPrice || !gasLimit || !ethPrice) return null
   return gasPrice.mul(ethPrice).mul(gasLimit).div(GWEI_UNIT).toNumber().toFixed(4)

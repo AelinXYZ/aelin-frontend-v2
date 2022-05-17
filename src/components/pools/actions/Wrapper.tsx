@@ -13,7 +13,6 @@ const Title = styled.h4`
 
 export const Contents = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
-  display: flex;
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.5;

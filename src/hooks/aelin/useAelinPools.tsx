@@ -46,16 +46,21 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
   // Inject chainId in each pool when promise resolve
   const queryPromises = (): Promise<any>[] =>
     networks.map(async (chainId: ChainsValues) => {
-      const { poolCreateds } = await allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
+      try {
+        const { poolCreateds } = await allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
 
-      return poolCreateds.map((pool) => {
-        return getParsedPool({
-          chainId,
-          pool,
-          poolAddress: pool.id,
-          purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+        return poolCreateds.map((pool) => {
+          return getParsedPool({
+            chainId,
+            pool,
+            poolAddress: pool.id,
+            purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+          })
         })
-      })
+      } catch (err) {
+        console.error(`fetch pools created on chain ${chainId} was failed`, err)
+        return []
+      }
     })
 
   // ChainIds promise array.
@@ -76,8 +81,8 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
     // Return Merged all pools by chain in unique array. Only success promises
     // & Sorting by timestamp
     return result
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error(err)
     return []
   }
 }

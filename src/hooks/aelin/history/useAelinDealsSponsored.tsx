@@ -60,8 +60,8 @@ export async function fetcherDealsSponsored(variables: DealSponsoredsQueryVariab
             }
           })
         })
-        .catch((e) => {
-          console.error(`fetch deals sponsored on chain ${chainId} was failed`, e)
+        .catch((err) => {
+          console.error(`fetch deals sponsored on chain ${chainId} was failed`, err)
           return []
         }),
     )
@@ -80,8 +80,8 @@ export async function fetcherDealsSponsored(variables: DealSponsoredsQueryVariab
     )
 
     return result
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error(err)
     return []
   }
 }

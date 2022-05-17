@@ -44,8 +44,8 @@ export async function fetcherWithdraws(variables: WithdrawsQueryVariables) {
             }
           })
         })
-        .catch((e) => {
-          console.error(`fetch withdraw on chain ${chainId} was failed`, e)
+        .catch((err) => {
+          console.error(`fetch withdraw on chain ${chainId} was failed`, err)
           return []
         }),
     )
@@ -65,8 +65,8 @@ export async function fetcherWithdraws(variables: WithdrawsQueryVariables) {
     )
 
     return result
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error(err)
     return []
   }
 }

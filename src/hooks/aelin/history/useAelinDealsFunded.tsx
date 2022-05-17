@@ -51,8 +51,8 @@ export async function fetcherDealsFunded(variables: DealFundedsQueryVariables) {
             }
           })
         })
-        .catch((e) => {
-          console.error(`fetch deals funded on chain ${chainId} was failed`, e)
+        .catch((err) => {
+          console.error(`fetch deals funded on chain ${chainId} was failed`, err)
           return []
         }),
     )
@@ -71,8 +71,8 @@ export async function fetcherDealsFunded(variables: DealFundedsQueryVariables) {
     )
 
     return result
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error(err)
     return []
   }
 }
