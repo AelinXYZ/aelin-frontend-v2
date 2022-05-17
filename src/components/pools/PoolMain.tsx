@@ -63,7 +63,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       </Head>
       <PageTitle
         href={getExplorerUrl(pool.address || '')}
-        subTitle={pool.poolType}
+        subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
         title={pool.nameFormatted}
       />
       <RightTimelineLayout timelineSteps={timeline}>
