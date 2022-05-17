@@ -9,10 +9,12 @@ import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/commo
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
+import { chainsConfig } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
-import useExchangeRate from '@/src/hooks/useExchangeRate'
 import useEthGasPrice, { GAS_SPEEDS } from '@/src/hooks/useGasPrice'
-import { getExchangeRatesForCurrencies, getTransactionPrice } from '@/src/utils/gasUtils'
+import useEthPriceUnitInUSD from '@/src/hooks/useGasPriceUnitInUSD'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getTransactionPrice } from '@/src/utils/gasUtils'
 import { GasLimitEstimate, GasPrices, GasSpeed } from '@/types/utils'
 
 const Wrapper = styled.div`
@@ -90,20 +92,26 @@ const GasSelector = ({
   gasLimitEstimate,
   initialGasSpeed = 'fast',
   onChange,
+  setLoadingGas,
   ...restProps
 }: {
   gasLimitEstimate: GasLimitEstimate
   initialGasSpeed?: GasSpeed
   onChange: (value: Wei) => void
+  setLoadingGas: (value: boolean) => void
 }) => {
-  const { data: ethGasPriceData, isValidating: ethGasPriceIsValidating } = useEthGasPrice()
-  const { data: exchangeRateData, isValidating: exchangeRateIsValidating } = useExchangeRate()
+  const { data: ethGasPriceData, isValidating } = useEthGasPrice()
+  const { data: ethPriceInUSD } = useEthPriceUnitInUSD()
 
-  const [gasSpeed, setGasSpeed] = useState<GasSpeed>(initialGasSpeed)
+  const { appChainId } = useWeb3Connection()
+
+  const [isEditing, setIsEditing] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
   const [customGasPrice, setCustomGasPrice] = useState<string>('')
 
+  const [gasSpeed, setGasSpeed] = useState<GasSpeed>(initialGasSpeed)
+
   const gasPrices = useMemo(() => ethGasPriceData ?? ({} as GasPrices), [ethGasPriceData])
-  const isValidating = ethGasPriceIsValidating || exchangeRateIsValidating
 
   const gasPrice: Wei | null = useMemo(() => {
     try {
@@ -115,11 +123,11 @@ const GasSelector = ({
     }
   }, [customGasPrice, ethGasPriceData, gasSpeed])
 
-  const ethPriceRate = getExchangeRatesForCurrencies(exchangeRateData, 'sETH', 'sUSD')
+  const isL2Chain = chainsConfig[appChainId]?.isL2
 
   const transactionFee = useMemo(
-    () => getTransactionPrice(gasPrice, gasLimitEstimate, ethPriceRate) ?? 0,
-    [gasPrice, gasLimitEstimate, ethPriceRate],
+    () => getTransactionPrice(gasPrice, gasLimitEstimate, ethPriceInUSD) ?? 0,
+    [gasPrice, gasLimitEstimate, ethPriceInUSD],
   )
 
   const formattedGasPrice = useMemo(() => {
@@ -146,9 +154,6 @@ const GasSelector = ({
     // eslint-disable-next-line
   }, [gasPrice, customGasPrice])
 
-  const [isEditing, setIsEditing] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-
   const onEdit = () => {
     setIsEditing(true)
 
@@ -157,16 +162,28 @@ const GasSelector = ({
     }
   }
 
+  useEffect(() => {
+    setLoadingGas(!customGasPrice && !isEditing ? isValidating : false)
+
+    return () => {
+      setLoadingGas(true)
+    }
+  }, [customGasPrice, isEditing, isValidating, setLoadingGas])
+
   return (
     <Wrapper {...restProps}>
       <Text>Gas Price:</Text>&nbsp;
       <GasInput
-        disabled={isValidating}
         onBlur={() => {
           setIsEditing(false)
         }}
         onChange={(e) => {
           setCustomGasPrice(e.target.value)
+        }}
+        onKeyUp={(event) => {
+          if (event.code === 'Enter') {
+            setIsEditing(false)
+          }
         }}
         readOnly={!isEditing}
         ref={inputRef}
@@ -176,6 +193,7 @@ const GasSelector = ({
       &nbsp;
       <DollarValue>(${transactionFee})</DollarValue>
       <Dropdown
+        currentItem={GAS_SPEEDS.findIndex((speed) => speed === gasSpeed)}
         dropdownButtonContent={
           <ButtonDropdown>
             <ChevronDown />
@@ -196,7 +214,7 @@ const GasSelector = ({
           </DropdownItem>
         ))}
       />
-      <EditButton onClick={onEdit}>Edit</EditButton>
+      {!isL2Chain && <EditButton onClick={onEdit}>Edit</EditButton>}
     </Wrapper>
   )
 }

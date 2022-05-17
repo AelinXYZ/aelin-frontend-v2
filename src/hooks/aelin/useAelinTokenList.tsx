@@ -1,10 +1,14 @@
 import useSWR from 'swr'
 
 import { Chains, ChainsValues, chainsConfig } from '@/src/constants/chains'
-import { Token, TokenListResponse } from '@/src/constants/token'
+import { TestnetTokens, Token, TokenListResponse } from '@/src/constants/token'
 
 const getTokenList = (chainId: ChainsValues) => {
-  return fetch(chainsConfig[chainId].tokenListUrl).then((x) => x.json())
+  if (chainsConfig[chainId].isProd) {
+    return fetch(chainsConfig[chainId].tokenListUrl).then((x) => x.json())
+  } else {
+    return Promise.resolve({ tokens: TestnetTokens[chainId] })
+  }
 }
 
 const useTokenListQuery = (appChainId: ChainsValues) => {

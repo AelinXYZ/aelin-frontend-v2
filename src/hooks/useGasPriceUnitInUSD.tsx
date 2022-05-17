@@ -3,25 +3,28 @@ import { parseBytes32String } from '@ethersproject/strings'
 import { formatEther } from '@ethersproject/units'
 import synthetix, { CurrencyKey } from '@synthetixio/contracts-interface'
 import Wei, { wei } from '@synthetixio/wei'
+import ms from 'ms'
 import useSWR from 'swr'
 
+import { mainnetRpcProvider } from './useEnsName'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { iStandardSynth, synthToAsset } from '@/src/utils/gasUtils'
+import { getExchangeRatesForCurrencies, iStandardSynth, synthToAsset } from '@/src/utils/gasUtils'
 
 type Rates = Record<string, Wei>
 type CurrencyRate = BigNumberish
 type SynthRatesTuple = [string[], CurrencyRate[]]
 
-const useExchangeRates = () => {
+const useEthPriceUnitInUSD = () => {
   const { appChainId } = useWeb3Connection()
 
-  const snxjs = synthetix({ network: 'mainnet' })
+  const snxjs = synthetix({ network: 'mainnet', provider: mainnetRpcProvider })
 
-  return useSWR<Rates>(
+  return useSWR<Wei>(
     ['rates', 'exchangeRates', appChainId],
     async () => {
       const exchangeRates: Rates = {}
 
+      //  @TODO issue #255
       const synthsRates: SynthRatesTuple = await snxjs.contracts.SynthUtil.synthsRates()
 
       const synths = [...synthsRates[0]] as CurrencyKey[]
@@ -38,7 +41,7 @@ const useExchangeRates = () => {
         }
       })
 
-      return exchangeRates
+      return getExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD')
     },
     {
       refreshWhenHidden: false,
@@ -46,9 +49,10 @@ const useExchangeRates = () => {
       revalidateOnMount: false,
       revalidateOnReconnect: false,
       refreshWhenOffline: false,
-      refreshInterval: 10000,
+      refreshInterval: ms('2m'),
+      suspense: false,
     },
   )
 }
 
-export default useExchangeRates
+export default useEthPriceUnitInUSD

@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import styled from 'styled-components'
 
 import { TokenIcon } from '../common/TokenIcon'
@@ -7,7 +6,6 @@ import { Deadline } from '@/src/components/common/Deadline'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { Funding } from '@/types/aelinPool'
 

@@ -26,6 +26,7 @@ export type ChainConfig = {
   chainId: ChainsValues
   chainIdHex: string
   icon?: React.ReactNode
+  isL2?: boolean
   iconUrls: string[]
   id: ChainsValues
   isProd: boolean
@@ -87,6 +88,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     isProd: true,
     icon: <Optimism />,
     tokenListUrl: 'https://static.optimism.io/optimism.tokenlist.json',
+    isL2: true,
   },
 }
 
