@@ -12,6 +12,7 @@ import Claim from '@/src/components/pools/actions/Claim'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import FundDeal from '@/src/components/pools/actions/FundDeal'
 import Invest from '@/src/components/pools/actions/Invest'
+import ReleaseFunds from '@/src/components/pools/actions/ReleaseFunds'
 import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
 import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPool'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
@@ -49,15 +50,11 @@ type Props = {
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
-  const { current, dealing, funding, pool, tabs, timeline } = useAelinPoolStatus(
+  const { dealing, funding, pool, tabs, timeline } = useAelinPoolStatus(
     chainId,
     poolAddress as string,
   )
   const { getExplorerUrl } = useWeb3Connection()
-
-  if (!current) {
-    throw new Error('There was no possible to calculate pool current status')
-  }
 
   return (
     <>
@@ -92,11 +89,12 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
             </ContentGrid>
+            {tabs.actions.states.includes(PoolAction.ReleaseFunds) && <ReleaseFunds pool={pool} />}
           </CardWithTitle>
           <ActionTabs
             active={tabs.actions.active}
             onTabClick={tabs.actions.setActive}
-            tabs={tabs.actions.states}
+            tabs={tabs.actions.states.filter((a) => a === PoolAction.ReleaseFunds)}
           >
             {!tabs.actions.states.length && <div>No actions available</div>}
             {tabs.actions.active === PoolAction.Invest && (
