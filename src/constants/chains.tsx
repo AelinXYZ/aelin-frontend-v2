@@ -26,6 +26,7 @@ export type ChainConfig = {
   chainId: ChainsValues
   chainIdHex: string
   icon?: React.ReactNode
+  isL2?: boolean
   iconUrls: string[]
   id: ChainsValues
   isProd: boolean
@@ -94,6 +95,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     tokenListUrl: 'https://static.optimism.io/optimism.tokenlist.json',
     buyAelinUrl:
       'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism',
+    isL2: true,
   },
 }
 

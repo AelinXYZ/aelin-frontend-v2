@@ -28,6 +28,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
       background-image: url('/resources/svg/bg-main.svg');
+      background-repeat: repeat;
     }
   }
 

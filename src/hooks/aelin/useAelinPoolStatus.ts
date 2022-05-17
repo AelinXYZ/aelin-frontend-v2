@@ -253,6 +253,128 @@ interface TabState {
   actions: ActionState
 }
 
+function useUserActions(
+  userRole: UserRole,
+  pool: ParsedAelinPool,
+  derivedStatus: DerivedStatus,
+): PoolAction[] {
+  const { address: walletAddress } = useWeb3Connection()
+  const currentStatus = derivedStatus.current
+
+  return useMemo(() => {
+    const now = new Date()
+
+    // Funding
+    if (currentStatus === PoolStatus.Funding) {
+      return [PoolAction.Invest]
+    }
+
+    // Seeking Deal
+    if (currentStatus === PoolStatus.SeekingDeal) {
+      const actions: PoolAction[] = []
+      const isSponsor = userRole === UserRole.Sponsor
+      const now = new Date()
+
+      // Create deal
+      // Conditions:
+      // No deal presented or
+      // Deal expired, not funded and dealsCreated < MAX_ALLOWED_DEALS
+      if (isSponsor) {
+        if (!pool.dealAddress) {
+          actions.push(PoolAction.CreateDeal)
+        } else if (pool.deal) {
+          const holderDepositExpired = isAfter(now, pool.deal.holderFundingExpiration)
+
+          if (
+            !pool.deal.holderAlreadyDeposited &&
+            holderDepositExpired &&
+            pool.dealsCreated < MAX_ALLOWED_DEALS
+          ) {
+            actions.push(PoolAction.CreateDeal)
+          }
+        }
+      }
+
+      // Release funds. It a escape hatch for the case where Sponsor won't be able to create a deal with Holder.
+      // It creates a deal, setting holder = sponsor and fund pool deadline = Lowest possible, at the moment of writing it 30m on mainnet.
+      // Conditions:
+      // If no deal was presented or deal is due and holder is different than sponsor
+      if (
+        (isSponsor && !pool.dealAddress) ||
+        (pool.dealAddress &&
+          // isAfter(now, pool.dealDeadline) &&
+          pool.deal?.holderAddress !== (walletAddress as string).toLowerCase())
+      ) {
+        actions.push(PoolAction.ReleaseFunds)
+      }
+
+      // Awaiting for deal information
+      // hidden for sponsor.
+      if (
+        !isSponsor &&
+        (!pool.dealAddress ||
+          (pool.dealAddress &&
+            !pool.deal?.holderAlreadyDeposited &&
+            isBefore(now, pool.dealDeadline)))
+      ) {
+        actions.push(PoolAction.AwaitingForDeal)
+      }
+
+      // Withdraw
+      if (
+        isAfter(now, pool.dealDeadline) ||
+        (pool.dealAddress && pool.deal?.holderAlreadyDeposited)
+      ) {
+        actions.push(PoolAction.Withdraw)
+      }
+
+      // Fund deal
+      if (
+        userRole === UserRole.Holder &&
+        pool.deal &&
+        !pool.deal.holderAlreadyDeposited &&
+        isBefore(now, pool.deal.holderFundingExpiration)
+      ) {
+        actions.push(PoolAction.FundDeal)
+      }
+
+      return actions
+    }
+
+    // Deal Active (Holder already deposited)
+    if (currentStatus === PoolStatus.DealPresented) {
+      const actions: PoolAction[] = []
+
+      if (!pool.deal) {
+        return []
+      }
+
+      // Accept deal. For investors
+      if (pool.deal.redemption && isBefore(now, pool.deal.redemption?.end)) {
+        actions.push(PoolAction.AcceptDeal)
+      }
+
+      // Withdraw investment. For investors
+      // if holder already deposited or if the deadline to fund the pool is reached.
+      if (isAfter(now, pool.deal.holderFundingExpiration) || pool.deal.holderAlreadyDeposited) {
+        actions.push(PoolAction.Withdraw)
+      }
+
+      return actions
+    }
+
+    if (currentStatus === PoolStatus.Closed) {
+      return [PoolAction.Withdraw]
+    }
+
+    if (currentStatus === PoolStatus.Vesting) {
+      return [PoolAction.Withdraw, PoolAction.Claim]
+    }
+
+    return []
+  }, [userRole, currentStatus, pool, walletAddress])
+}
+
 function useUserTabs(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
@@ -319,96 +441,6 @@ function useUserTabs(
   }
 }
 
-function useUserActions(
-  userRole: UserRole,
-  pool: ParsedAelinPool,
-  derivedStatus: DerivedStatus,
-): PoolAction[] {
-  const currentStatus = derivedStatus.current
-
-  return useMemo(() => {
-    const now = new Date()
-
-    // Funding
-    if (currentStatus === PoolStatus.Funding) {
-      return [PoolAction.Invest]
-    }
-
-    // Seeking Deal
-    if (currentStatus === PoolStatus.SeekingDeal) {
-      const actions: PoolAction[] = []
-      const isSponsor = userRole === UserRole.Sponsor
-      const now = new Date()
-
-      if (isSponsor && !pool.dealAddress) {
-        actions.push(PoolAction.CreateDeal)
-      }
-
-      if (
-        !pool.dealAddress ||
-        (pool.dealAddress && !pool.deal?.holderAlreadyDeposited && isBefore(now, pool.dealDeadline))
-      ) {
-        actions.push(PoolAction.AwaitingForDeal)
-      }
-
-      if (isAfter(now, pool.dealDeadline)) {
-        const holderDepositExpired = pool.deal && isAfter(now, pool.deal.holderFundingExpiration)
-
-        if (
-          isSponsor &&
-          pool.deal &&
-          !pool.deal.holderAlreadyDeposited &&
-          holderDepositExpired &&
-          pool.dealsCreated < MAX_ALLOWED_DEALS
-        ) {
-          actions.push(PoolAction.CreateDeal)
-        }
-
-        actions.push(PoolAction.Withdraw)
-      }
-
-      if (userRole === UserRole.Holder && pool.deal && !pool.deal.holderAlreadyDeposited) {
-        actions.push(PoolAction.FundDeal)
-      }
-
-      return uniq(actions)
-    }
-
-    // Deal Presented
-    if (currentStatus === PoolStatus.DealPresented) {
-      const actions: PoolAction[] = []
-
-      if (pool.deal) {
-        if (pool.deal.redemption && isBefore(now, pool.deal.redemption?.end)) {
-          actions.push(PoolAction.AcceptDeal)
-        }
-
-        if (isAfter(now, pool.deal.holderFundingExpiration)) {
-          actions.push(PoolAction.Withdraw)
-        }
-
-        if (pool.deal.holderAlreadyDeposited) {
-          actions.push(PoolAction.Withdraw)
-        }
-      }
-
-      // TODO: override deal when is expired and amount of deals presented is < 5
-
-      return uniq(actions)
-    }
-
-    if (currentStatus === PoolStatus.Closed) {
-      return [PoolAction.Withdraw]
-    }
-
-    if (currentStatus === PoolStatus.Vesting) {
-      return [PoolAction.Withdraw, PoolAction.Claim]
-    }
-
-    return []
-  }, [userRole, currentStatus, pool])
-}
-
 function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
   const now = Date.now()
 
@@ -445,16 +477,13 @@ function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
         !!pool.deal && isAfter(now, pool.deal.createdAt) && !pool.deal?.holderAlreadyDeposited,
       isDone: !!pool.deal?.holderAlreadyDeposited,
       deadline: pool.deal
-        ? getStepDeadline(
-            pool.deal.holderFundingExpiration,
-            pool.deal.holderAlreadyDeposited && pool.deal.fundedAt
-              ? `Funded ${formatDate(pool.deal.fundedAt, DATE_DETAILED)}`
-              : undefined,
-          )
+        ? pool.deal.holderAlreadyDeposited && pool.deal.fundedAt
+          ? `Funded ${formatDate(pool.deal.fundedAt, DATE_DETAILED)}`
+          : getStepDeadline(pool.deal.holderFundingExpiration)
         : undefined,
       deadlineProgress: pool.deal
         ? pool.deal.holderAlreadyDeposited
-          ? '100'
+          ? '0'
           : calculateDeadlineProgress(pool.deal.holderFundingExpiration, pool.deal.createdAt)
         : '0',
       value:
@@ -624,13 +653,12 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
       refetchPool,
       pool: poolResponse,
       userRole,
-      ...derivedStatus,
       funding,
       dealing,
       proRata,
       tabs,
       timeline,
     }),
-    [poolResponse, refetchPool, derivedStatus, funding, dealing, proRata, userRole, tabs, timeline],
+    [poolResponse, refetchPool, funding, dealing, proRata, userRole, tabs, timeline],
   )
 }

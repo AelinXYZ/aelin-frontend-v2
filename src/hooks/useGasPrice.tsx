@@ -1,3 +1,4 @@
+import ms from 'ms'
 import useSWR from 'swr'
 
 import { Chains } from '@/src/constants/chains'
@@ -39,7 +40,7 @@ type GasNowResponse = {
 const useEthGasPrice = () => {
   const { appChainId, readOnlyAppProvider } = useWeb3Connection()
 
-  return useSWR<GasPrices, Error>(
+  const { data, isValidating } = useSWR<GasPrices, Error>(
     appChainId ? ['network', 'gasPrice', appChainId] : null,
     async () => {
       if (appChainId === Chains.mainnet) {
@@ -84,9 +85,11 @@ const useEthGasPrice = () => {
       revalidateOnMount: false,
       revalidateOnReconnect: false,
       refreshWhenOffline: false,
-      refreshInterval: 10000,
+      refreshInterval: ms('10s'),
     },
   )
+
+  return { data, isValidating }
 }
 
 export default useEthGasPrice

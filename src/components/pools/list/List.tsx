@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -22,7 +21,7 @@ import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
-import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
+import { useNotifications } from '@/src/providers/notificationsProvider'
 import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
@@ -37,6 +36,8 @@ export const List: React.FC<{
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
+
+  const { notifications } = useNotifications()
 
   if (error) {
     throw error
@@ -143,13 +144,17 @@ export const List: React.FC<{
                 start,
               } = pool
 
+              const activeNotifications = notifications.filter((n) => n.poolAddress === id).length
+
               return (
                 <RowLink
                   columns={columns.widths}
                   href={`/pool/${getKeyChainByValue(network)}/${id}`}
                   key={id}
                 >
-                  <NameCell badge="3">{name.split('aePool-').pop()}</NameCell>
+                  <NameCell badge={activeNotifications ? activeNotifications.toString() : ''}>
+                    {name.split('aePool-').pop()}
+                  </NameCell>
                   <Cell>
                     <ENSOrAddress address={sponsor} network={network} />
                   </Cell>
