@@ -5,7 +5,12 @@ export const Error = styled.p`
   font-size: 1.4rem;
   font-weight: normal;
   line-height: 1.2;
-  margin: 10px auto 0;
+  margin: 10px auto 20px;
   max-width: 100%;
   text-align: left;
+  width: 100%;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 `

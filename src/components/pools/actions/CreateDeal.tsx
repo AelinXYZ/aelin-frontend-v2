@@ -1,54 +1,59 @@
 import Link from 'next/link'
+import styled from 'styled-components'
 
-import { Error } from '../../pureStyledComponents/text/Error'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 
+const TextColor = styled.span`
+  color: ${(props) => props.theme.colors.textColor};
+`
+
 type Props = {
   pool: ParsedAelinPool
 }
 
-export default function CreateDeal({ pool, ...restProps }: Props) {
-  const disableDealButton = pool.amountInPool.raw.eq(ZERO_BN)
+export const CreateDeal: React.FC<Props> = ({ pool, ...restProps }) => {
+  const noFundsInPool = pool.amountInPool.raw.eq(ZERO_BN)
+  console.log(pool.dealsCreated)
+  console.log(pool.amountInPool.raw.eq(ZERO_BN))
+
   return (
-    <Wrapper {...restProps}>
-      {pool.dealsCreated <= 1 && (
+    <Wrapper title={noFundsInPool ? 'No funds in pool' : ''} {...restProps}>
+      {noFundsInPool ? (
         <>
           <Contents>
-            The sponsor is looking for a deal, if a deal is found, investors will be able to either
-            accept or withdraw their funds.
+            <b>You can't create a deal.</b> A funded pool is needed to create a deal, and this pool
+            has no funds.
           </Contents>
-          {!disableDealButton ? (
-            <Link
-              href={`/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}/create-deal`}
-              passHref
-            >
-              <GradientButton as="a">Create Deal</GradientButton>
-            </Link>
-          ) : (
-            <GradientButton disabled={disableDealButton}>Create Deal</GradientButton>
-          )}
-          {disableDealButton && <Error>The pool do not have founds</Error>}
+        </>
+      ) : pool.dealsCreated <= 1 ? (
+        <Contents>
+          The sponsor is looking for a deal. If a deal is found, investors will be able to either
+          accept or withdraw their funds.
+        </Contents>
+      ) : (
+        <>
+          <Contents>
+            The previous deal you created hasn't been funded. You can create a new deal now.
+          </Contents>
+          <Contents>
+            Deal creation attempts: <TextColor>{`${pool.dealsCreated} / 5`}</TextColor>
+          </Contents>
         </>
       )}
-      {pool.dealsCreated > 1 && (
-        <>
-          <Contents>
-            The previous deal you hasn't been funded. You can create a new deal now.
-            <br />
-            Deals attempts: {`${pool.dealsCreated}/5`}
-          </Contents>
-          <Link
-            href={`/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}/create-deal`}
-            passHref
-          >
-            <GradientButton as="a">Create Deal</GradientButton>
-          </Link>
-        </>
+      {noFundsInPool ? null : (
+        <Link
+          href={`/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}/create-deal`}
+          passHref
+        >
+          <GradientButton as="a">Create Deal</GradientButton>
+        </Link>
       )}
     </Wrapper>
   )
 }
+
+export default CreateDeal
