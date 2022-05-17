@@ -56,7 +56,13 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
         })
         .catch((e) => {
           console.error(`fetch user on chain ${chainId} was failed`, e)
-          return []
+          return {
+            poolAddresses: [],
+            poolsInvested: [],
+            poolsAsHolder: [],
+            poolsSponsored: [],
+            dealsAccepted: [],
+          }
         }),
     )
 
