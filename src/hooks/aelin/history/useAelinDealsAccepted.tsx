@@ -51,8 +51,8 @@ export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariable
             }
           })
         })
-        .catch((e) => {
-          console.error(`fetch deals accepted on chain ${chainId} was failed`, e)
+        .catch((err) => {
+          console.error(`fetch deals accepted on chain ${chainId} was failed`, err)
           return []
         }),
     )
@@ -71,8 +71,8 @@ export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariable
     )
 
     return result
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error(err)
     return []
   }
 }

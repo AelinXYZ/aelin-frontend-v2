@@ -76,8 +76,8 @@ export async function fetcherNotifications(props: FetcherProps) {
             })
             .filter((notification) => isUserTarget(user, notification)),
         )
-        .catch((e) => {
-          console.error(`fetch notifications on chain ${chainId} was failed`, e)
+        .catch((err) => {
+          console.error(`fetch notifications on chain ${chainId} was failed`, err)
           return []
         }),
     )
@@ -96,8 +96,8 @@ export async function fetcherNotifications(props: FetcherProps) {
     )
 
     return result
-  } catch (e) {
-    console.error(e)
+  } catch (err) {
+    console.error(err)
     return []
   }
 }
