@@ -4,7 +4,6 @@ import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isWithinInterval from 'date-fns/isWithinInterval'
-import uniq from 'lodash/uniq'
 import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
@@ -380,7 +379,7 @@ function useUserTabs(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
   userRole: UserRole,
-  initialData?: NotificationType,
+  defaultTab?: NotificationType,
 ): TabState {
   const { history } = derivedStatus
   const actionsStates = useUserActions(userRole, pool, derivedStatus)
@@ -404,7 +403,7 @@ function useUserTabs(
   }
 
   const isNotificationType = (type?: NotificationType) =>
-    !!(Object.values(NotificationType) as Array<NotificationType>).find((n) => n === type)
+    (Object.values(NotificationType) as Array<NotificationType>).some((n) => n === type)
 
   const tabStates = useMemo(() => {
     const tabs: PoolTab[] = [PoolTab.PoolInformation]
@@ -423,8 +422,8 @@ function useUserTabs(
       tabs.push(PoolTab.Vest)
     }
 
-    if (initialData && isNotificationType(initialData)) {
-      switch (initialData) {
+    if (defaultTab && isNotificationType(defaultTab)) {
+      switch (defaultTab) {
         case NotificationType.InvestmentWindowAlert:
           setActiveTab(PoolTab.PoolInformation)
           break
@@ -474,7 +473,7 @@ function useUserTabs(
     }
 
     return tabs
-  }, [pool, history, userRole, actionsStates, initialData])
+  }, [pool, history, userRole, actionsStates, defaultTab])
 
   return {
     states: tabStates,
@@ -701,7 +700,6 @@ export default function useAelinPoolStatus(
   const dealing = useDealingStatus(poolResponse, chainId)
   const proRata = useProRataStatus(poolResponse)
   const timeline = useTimelineStatus(poolResponse)
-  // const unredeemed = useUnredeemed()
 
   return useMemo(
     () => ({
