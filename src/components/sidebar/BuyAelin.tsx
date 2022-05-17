@@ -2,14 +2,14 @@ import React from 'react'
 import styled from 'styled-components'
 
 import ParentSize from '@visx/responsive/lib/components/ParentSize'
+import ms from 'ms'
 import useSWR from 'swr'
 
 import { Uniswap } from '@/src/components/assets/Uniswap'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import AreaChart from '@/src/components/sidebar/AreaChart'
-import { Chains } from '@/src/constants/chains'
-import { ONE_MINUTE_IN_SECS } from '@/src/constants/time'
+import { getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import formatNumber from '@/src/utils/formatNumber'
 
@@ -29,16 +29,29 @@ const AelinChart = styled.div`
 const LastPrice = styled.div`
   font-size: 1.6rem;
   font-weight: 600;
+  line-height: 1.4;
   margin: 0 0 4px;
   padding: 0;
+`
+
+const PriceDifferenceWrapper = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0 0 15px;
 `
 
 const PriceDifference = styled.div`
   color: ${({ theme: { colors } }) => colors.primary};
   font-size: 1.2rem;
-  font-weight: 500;
-  line-height: 1.2;
-  margin: 0 0 15px;
+  margin-right: 3px;
+`
+
+const IntervalDescription = styled.div`
+  color: ${({ theme: { colors } }) => colors.textColor};
+  font-size: 0.8rem;
 `
 
 const ButtonContainer = styled.div`
@@ -74,7 +87,7 @@ const useAelinUSDPrices = (days: number, interval: TimeInterval) => {
       revalidateOnMount: false,
       revalidateOnReconnect: false,
       refreshWhenOffline: false,
-      refreshInterval: ONE_MINUTE_IN_SECS * 1000,
+      refreshInterval: ms('1m'),
     },
   )
 
@@ -95,17 +108,17 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
 
   const { appChainId } = useWeb3Connection()
 
-  const buyAelinUrl =
-    appChainId === Chains.optimism
-      ? 'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism'
-      : 'https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=mainnet'
+  const currentChainConfig = getNetworkConfig(appChainId)
 
   return (
     <Wrapper {...restProps}>
       {prices && prices.length > 0 && (
         <AelinChart>
           <LastPrice>{getLastPriceFormatted(prices)}</LastPrice>
-          <PriceDifference>{getPriceDifferenceFormatted(prices)}</PriceDifference>
+          <PriceDifferenceWrapper>
+            <PriceDifference>{getPriceDifferenceFormatted(prices)}</PriceDifference>
+            <IntervalDescription>(last 24h)</IntervalDescription>
+          </PriceDifferenceWrapper>
           <ParentSize>
             {({ width }) => (
               <AreaChart
@@ -120,7 +133,12 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
         </AelinChart>
       )}
       <ButtonContainer>
-        <GradientButton as="a" href={buyAelinUrl} target="_blank">
+        <GradientButton
+          disabled={!currentChainConfig.buyAelinUrl}
+          onClick={() => {
+            window.open(currentChainConfig.buyAelinUrl, '_blank')
+          }}
+        >
           <Uniswap />
           Buy Aelin
         </GradientButton>
