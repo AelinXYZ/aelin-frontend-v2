@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { useState } from 'react'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -23,7 +22,6 @@ import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/consta
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
-import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
 import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 

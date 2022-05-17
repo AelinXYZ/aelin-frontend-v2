@@ -6,7 +6,7 @@ import { useWeb3Connection } from '../providers/web3ConnectionProvider'
 
 const { rpcUrl } = getNetworkConfig(Chains.mainnet)
 
-const mainnetRpcProvider = new JsonRpcProvider(rpcUrl)
+export const mainnetRpcProvider = new JsonRpcProvider(rpcUrl)
 
 export const useEnsLookUpAddress = (address: string, network: ChainsValues) => {
   const { getExplorerUrl } = useWeb3Connection()

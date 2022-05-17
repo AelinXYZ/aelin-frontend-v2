@@ -56,15 +56,15 @@ export const DealInformation: React.FC<{
               : 'Redemption closed'
           }
         />
-        <InfoCell
-          title="Round 1 deadline"
-          tooltip="??"
-          value={
-            deal.redemption
-              ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
-              : 'N/A'
-          }
-        />
+        <InfoCell title="Round 2 deadline" tooltip="??">
+          {deal.redemption && deal.redemption.openRedemptionEnd ? (
+            <Deadline progress="75" width="180px">
+              <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
+            </Deadline>
+          ) : (
+            <Value>No open period</Value>
+          )}
+        </InfoCell>
         <InfoCell title="Pool stats" tooltip="??">
           <Value>Amount in pool: {pool.amountInPool.formatted}</Value>
           <Value>Total redeem: {pool.redeem.formatted}</Value>
@@ -82,15 +82,15 @@ export const DealInformation: React.FC<{
           <Value>Cliff: {deal.vestingPeriod.cliff.formatted}</Value>
           <Value>Linear period: {deal.vestingPeriod.vesting.formatted}</Value>
         </InfoCell>
-        <InfoCell title="Round 2 deadline" tooltip="??">
-          {deal.redemption && deal.redemption.openRedemptionEnd ? (
-            <Deadline progress="75" width="180px">
-              <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
-            </Deadline>
-          ) : (
-            <Value>No open period</Value>
-          )}
-        </InfoCell>
+        <InfoCell
+          title="Round 1 deadline"
+          tooltip="??"
+          value={
+            deal.redemption
+              ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+              : 'N/A'
+          }
+        />
         <InfoCell title="User stats" tooltip="??">
           <Value>
             Remaining pro-rata allocation: {poolStatusHelper.userMaxAllocation.formatted}
