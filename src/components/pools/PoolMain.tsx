@@ -96,7 +96,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
           <ActionTabs
             active={tabs.actions.active}
             onTabClick={tabs.actions.setActive}
-            tabs={tabs.actions.states.filter((a) => a === PoolAction.ReleaseFunds)}
+            tabs={tabs.actions.states.filter((a) => a !== PoolAction.ReleaseFunds)}
           >
             {!tabs.actions.states.length && <div>No actions available</div>}
             {tabs.actions.active === PoolAction.Invest && (

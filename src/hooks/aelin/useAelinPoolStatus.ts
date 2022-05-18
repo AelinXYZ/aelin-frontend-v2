@@ -309,8 +309,8 @@ function useUserActions(
       if (
         (isSponsor && !pool.dealAddress) ||
         (pool.dealAddress &&
-          // isAfter(now, pool.dealDeadline) &&
-          pool.deal?.holderAddress !== (walletAddress as string).toLowerCase())
+          isAfter(now, pool.dealDeadline) &&
+          pool.deal?.holderAddress === (walletAddress as string).toLowerCase())
       ) {
         actions.push(PoolAction.ReleaseFunds)
       }
