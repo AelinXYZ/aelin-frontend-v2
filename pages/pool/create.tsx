@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import React, { useState } from 'react'
+import styled from 'styled-components'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
@@ -35,6 +36,11 @@ import useAelinCreatePool, {
 } from '@/src/hooks/aelin/useAelinCreatePool'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+
+const ErrorWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`
 
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
@@ -99,7 +105,9 @@ const Create: NextPage = () => {
                     setPoolField={setPoolField}
                   />
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error>{currentStepError}</Error>
+                    <ErrorWrapper>
+                      <Error>{currentStepError}</Error>
+                    </ErrorWrapper>
                   )}
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
