@@ -14,6 +14,7 @@ export enum PoolStatus {
   Funding = 'Funding',
   SeekingDeal = 'Seeking Deal',
   DealPresented = 'Deal presented',
+  WaitingForHolder = 'Waiting For Holder',
   Vesting = 'Vesting',
   Closed = 'Closed',
 }
