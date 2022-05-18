@@ -11,35 +11,50 @@ const Wrapper = styled.div`
   overflow: hidden;
   position: relative;
   width: fit-content;
-
-  &::before {
-    content: '';
-    background-color: rgba(255, 255, 255, 0.2);
-    height: 2px;
-    left: calc(var(--step-width) / 2);
-    position: absolute;
-    right: calc(var(--step-width) / 2);
-    top: 11px;
-    z-index: 10;
-  }
 `
 
-const Step = styled(BaseStep)<{ isDone?: boolean }>`
+const Step = styled(BaseStep)`
   position: relative;
   width: var(--step-width);
   z-index: 5;
 
-  &:not(:last-child)::after {
-    background-color: ${({ isDone, theme: { colors } }) =>
-      isDone ? colors.primary : 'transparent'};
+  &::before,
+  &::after {
     content: '';
+    background-color: rgba(255, 255, 255, 0.2);
     height: 2px;
-    left: calc(var(--step-width) / 2);
     position: absolute;
     top: 11px;
-    transition: all 0.25s linear;
-    width: ${({ isDone }) => (isDone ? 'calc(var(--step-width))' : '0')};
-    z-index: 5;
+    transition: background-color 0.15s linear;
+    z-index: 10;
+  }
+
+  &::before {
+    left: 0;
+    right: 50%;
+  }
+
+  &::after {
+    content: '';
+    left: 50%;
+    right: 0;
+  }
+
+  &:first-child::before {
+    display: none;
+  }
+
+  &:last-child::after {
+    display: none;
+  }
+
+  &::before {
+    background-color: ${({ isActive, isDone, theme: { colors } }) =>
+      (isDone || isActive) && colors.primary};
+  }
+
+  &::after {
+    background-color: ${({ isDone, theme: { colors } }) => isDone && colors.primary};
   }
 `
 
