@@ -135,7 +135,6 @@ const MyPools: React.FC = ({ ...restProps }) => {
   if (errorUser) {
     throw errorUser
   }
-
   const { notifications } = useNotifications()
 
   return (

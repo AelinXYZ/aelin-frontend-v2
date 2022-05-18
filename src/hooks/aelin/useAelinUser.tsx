@@ -1,3 +1,4 @@
+import orderBy from 'lodash/orderBy'
 import useSWR from 'swr'
 
 import { DealAccepted, PoolCreated } from '@/graphql-schema'
@@ -73,9 +74,21 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
       (resultAcc: ParsedUser, { value }) => {
         return {
           poolAddresses: [...resultAcc.poolAddresses, ...value.poolAddresses],
-          poolsInvested: [...resultAcc.poolsInvested, ...value.poolsInvested],
-          poolsSponsored: [...resultAcc.poolsSponsored, ...value.poolsSponsored],
-          poolsAsHolder: [...resultAcc.poolsAsHolder, ...value.poolsAsHolder],
+          poolsInvested: orderBy(
+            [...resultAcc.poolsInvested, ...value.poolsInvested],
+            ['timestamp'],
+            ['desc'],
+          ),
+          poolsSponsored: orderBy(
+            [...resultAcc.poolsSponsored, ...value.poolsSponsored],
+            ['timestamp'],
+            ['desc'],
+          ),
+          poolsAsHolder: orderBy(
+            [...resultAcc.poolsAsHolder, ...value.poolsAsHolder],
+            ['timestamp'],
+            ['desc'],
+          ),
           dealsAccepted: [...resultAcc.dealsAccepted, ...value.dealsAccepted],
         }
       },
