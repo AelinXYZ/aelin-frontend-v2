@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -195,16 +195,15 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     }
   }
 
-  const length = useMemo(() => data?.length, [data?.length])
-
   return (
-    <TableCard {...restProps}>
+    <TableCard id="outerWrapper" {...restProps}>
       <Title>Vest Deal Tokens</Title>
       <InfiniteScroll
-        dataLength={length}
+        dataLength={data.length}
         hasMore={hasMore}
         loader={<LoadingTableRow />}
         next={nextPage}
+        scrollableTarget={'outerWrapper'}
       >
         <TableHead columns={columns.widths}>
           {tableHeaderCells.map(({ sortKey, title }, index) => (
@@ -219,7 +218,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
             </SortableTH>
           ))}
         </TableHead>
-        {!data?.length ? (
+        {!data.length ? (
           <BaseCard>No data.</BaseCard>
         ) : (
           <TableBody>
