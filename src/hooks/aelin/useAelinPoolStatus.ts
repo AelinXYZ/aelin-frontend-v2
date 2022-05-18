@@ -309,7 +309,8 @@ function useUserActions(
       // If no deal was presented or deal is due and holder is different than sponsor
       if (
         (isSponsor && !pool.dealAddress) ||
-        (pool.dealAddress &&
+        (isSponsor &&
+          pool.dealAddress &&
           isAfter(now, pool.dealDeadline) &&
           pool.deal?.holderAddress === (walletAddress as string).toLowerCase())
       ) {
