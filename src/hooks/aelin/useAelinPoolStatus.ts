@@ -4,7 +4,6 @@ import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isWithinInterval from 'date-fns/isWithinInterval'
-import uniq from 'lodash/uniq'
 import ms from 'ms'
 
 import { ChainsValues } from '@/src/constants/chains'
@@ -155,7 +154,7 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
   return useMemo(() => {
     const now = Date.now()
 
-    // funding
+    // Funding
     if (isBefore(now, pool.purchaseExpiry)) {
       return {
         current: PoolStatus.Funding,
@@ -164,27 +163,49 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
     }
 
     // Seeking deal
-    if (isAfter(now, pool.purchaseExpiry) && !pool.deal?.holderAlreadyDeposited) {
+    if (
+      (isAfter(now, pool.purchaseExpiry) && !pool.deal) ||
+      (isAfter(now, pool.purchaseExpiry) &&
+        pool.deal &&
+        isAfter(now, pool.deal?.holderFundingExpiration as Date) &&
+        pool.deal?.holderAlreadyDeposited === false)
+    ) {
       return {
         current: PoolStatus.SeekingDeal,
         history: [PoolStatus.Funding, PoolStatus.SeekingDeal],
       }
     }
 
-    // Dealing
-    // isAfter(now, pool.dealDeadline)
-    // isBefore(now, pool.dealDeadline)
+    // Waiting For Holder
+    if (
+      pool.deal &&
+      isBefore(now, pool.deal.holderFundingExpiration) &&
+      pool.deal?.holderAlreadyDeposited === false
+    ) {
+      return {
+        current: PoolStatus.WaitingForHolder,
+        history: [PoolStatus.Funding, PoolStatus.SeekingDeal, PoolStatus.WaitingForHolder],
+      }
+    }
+
+    // Deal Presented
     if (
       pool.deal &&
       pool.deal.holderAlreadyDeposited &&
       pool.deal.redemption &&
-      isBefore(now, pool.deal.redemption?.end)
-      //isAfter(now, pool.deal?.redemption?.start) &&
-      // isBefore(now, pool.deal?.redemption?.end)
+      isWithinInterval(now, {
+        start: pool.deal?.redemption?.start,
+        end: pool.deal.redemption.end,
+      })
     ) {
       return {
         current: PoolStatus.DealPresented,
-        history: [PoolStatus.Funding, PoolStatus.SeekingDeal, PoolStatus.DealPresented],
+        history: [
+          PoolStatus.Funding,
+          PoolStatus.SeekingDeal,
+          PoolStatus.WaitingForHolder,
+          PoolStatus.DealPresented,
+        ],
       }
     }
 
@@ -194,31 +215,21 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
       pool.deal.holderAlreadyDeposited &&
       pool.deal.redemption &&
       isAfter(now, pool.deal.redemption?.end) &&
-      pool.deal.vestingPeriod.end &&
-      isBefore(now, pool.deal.vestingPeriod.end)
+      pool.deal.vestingPeriod.end
     ) {
       return {
         current: PoolStatus.Vesting,
         history: [
           PoolStatus.Funding,
           PoolStatus.SeekingDeal,
+          PoolStatus.WaitingForHolder,
           PoolStatus.DealPresented,
           PoolStatus.Vesting,
         ],
       }
     }
 
-    // TODO: Handle different states of closed
-    return {
-      current: PoolStatus.Closed,
-      history: [
-        PoolStatus.Funding,
-        // PoolStatus.SeekingDeal,
-        // PoolStatus.DealPresented,
-        // PoolStatus.Vesting,
-        // PoolStatus.Closed,
-      ],
-    }
+    throw new Error('Unexpected stage')
   }, [pool])
 }
 
@@ -270,6 +281,8 @@ function useUserActions(
   const currentStatus = derivedStatus.current
 
   return useMemo(() => {
+    const actions: PoolAction[] = []
+    const isSponsor = userRole === UserRole.Sponsor
     const now = new Date()
 
     // Funding
@@ -279,10 +292,6 @@ function useUserActions(
 
     // Seeking Deal
     if (currentStatus === PoolStatus.SeekingDeal) {
-      const actions: PoolAction[] = []
-      const isSponsor = userRole === UserRole.Sponsor
-      const now = new Date()
-
       // Create deal
       // Conditions:
       // No deal presented or
@@ -337,8 +346,13 @@ function useUserActions(
         actions.push(PoolAction.Withdraw)
       }
 
+      return actions
+    }
+
+    if (currentStatus === PoolStatus.WaitingForHolder) {
       // Fund deal
       if (
+        currentStatus === PoolStatus.WaitingForHolder &&
         userRole === UserRole.Holder &&
         pool.deal &&
         !pool.deal.holderAlreadyDeposited &&
@@ -352,8 +366,6 @@ function useUserActions(
 
     // Deal Active (Holder already deposited)
     if (currentStatus === PoolStatus.DealPresented) {
-      const actions: PoolAction[] = []
-
       if (!pool.deal) {
         return []
       }
