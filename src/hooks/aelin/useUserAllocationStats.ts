@@ -7,9 +7,7 @@ export function useUserAllocationStat(poolAddress: string | null, chainId: Chain
   const { address } = useWeb3Connection()
   const allSDK = getAllGqlSDK()
   const { useUserAllocationStat: gqlCall } = allSDK[chainId]
-  const { data, mutate } = gqlCall({
+  return gqlCall({
     id: `${(address || ZERO_ADDRESS).toLowerCase()}-${poolAddress}`,
   })
-
-  return { data, refetch: mutate }
 }

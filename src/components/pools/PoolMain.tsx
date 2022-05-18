@@ -1,8 +1,10 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
 import WithdrawUnredeemed from './actions/WithdrawUnredeemed'
 import UnredeemedInformation from './deal/UnredeemedInformation'
+import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
@@ -50,10 +52,18 @@ type Props = {
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
+  const {
+    query: { notification },
+  } = useRouter()
+
   const { dealing, funding, pool, tabs, timeline } = useAelinPoolStatus(
     chainId,
     poolAddress as string,
+    {
+      tabs: notification as NotificationType,
+    },
   )
+
   const { getExplorerUrl } = useWeb3Connection()
 
   return (
@@ -91,6 +101,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             </ContentGrid>
             {tabs.actions.isReleaseFundsAvailable && <ReleaseFunds pool={pool} />}
           </CardWithTitle>
+
           <ActionTabs
             active={tabs.actions.active}
             onTabClick={tabs.actions.setActive}
