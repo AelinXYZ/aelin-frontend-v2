@@ -231,6 +231,7 @@ export function useUserRole(
     let userRole = UserRole.Investor
 
     if (!walletAddress) {
+      userRole = UserRole.Visitor
       return userRole
     }
 
