@@ -262,18 +262,18 @@ export function useUserRole(
   }, [walletAddress, pool, derivedStatus])
 }
 
-interface ActionState {
+interface ActionTabsState {
   states: PoolAction[]
   active: PoolAction
   setActive: Dispatch<SetStateAction<PoolAction>>
-  isReleaseFundsAvailable: boolean
 }
 
-interface TabState {
+interface TabsState {
   states: PoolTab[]
   active: PoolTab
   setActive: (newState: PoolTab) => void
-  actions: ActionState
+  actionTabs: ActionTabsState
+  isReleaseFundsAvailable: boolean
 }
 
 function useUserActions(
@@ -405,7 +405,7 @@ function useUserTabs(
   derivedStatus: DerivedStatus,
   userRole: UserRole,
   defaultTab?: NotificationType,
-): TabState {
+): TabsState {
   const { history } = derivedStatus
   const userActions = useUserActions(userRole, pool, derivedStatus)
   const tabsActions = useMemo(
@@ -435,7 +435,7 @@ function useUserTabs(
   const isNotificationType = (type?: NotificationType) =>
     (Object.values(NotificationType) as Array<NotificationType>).some((n) => n === type)
 
-  const tabStates = useMemo(() => {
+  const tabs = useMemo(() => {
     const tabs: PoolTab[] = [PoolTab.PoolInformation]
 
     if (history.includes(PoolStatus.DealPresented)) {
@@ -506,15 +506,15 @@ function useUserTabs(
   }, [pool, history, userRole, tabsActions, defaultTab])
 
   return {
-    states: tabStates,
+    states: tabs,
     active: activeTab,
     setActive: handleTabChange,
-    actions: {
+    actionTabs: {
       states: getTabsActions(activeTab),
       active: activeAction,
       setActive: setActiveAction,
-      isReleaseFundsAvailable: userActions.includes(PoolAction.ReleaseFunds),
     },
+    isReleaseFundsAvailable: userActions.includes(PoolAction.ReleaseFunds),
   }
 }
 
