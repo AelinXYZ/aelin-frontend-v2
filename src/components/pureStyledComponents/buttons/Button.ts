@@ -66,7 +66,7 @@ export const ButtonPrimaryLightCSS = css`
 
   &[disabled],
   &[disabled]:hover {
-    background-color: ${({ theme }) => theme.buttonPrimaryLight.borderColor};
+    background-color: ${({ theme }) => theme.buttonPrimaryLight.backgroundColor};
     border-color: ${({ theme }) => theme.buttonPrimaryLight.borderColor};
     color: ${({ theme }) => theme.buttonPrimaryLight.color};
   }

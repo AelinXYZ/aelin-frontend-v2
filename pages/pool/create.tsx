@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import React, { useState } from 'react'
+import styled from 'styled-components'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { PageTitle } from '@/src/components/common/PageTitle'
@@ -8,6 +9,7 @@ import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout
 import {
   ButtonWrapper,
   Description,
+  MobileButtonWrapper,
   PrevNextWrapper,
   StepContents,
   Title,
@@ -35,6 +37,12 @@ import useAelinCreatePool, {
 } from '@/src/hooks/aelin/useAelinCreatePool'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+
+const BackButton = styled(ButtonPrimaryLight)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: none;
+  }
+`
 
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
@@ -104,25 +112,30 @@ const Create: NextPage = () => {
                         Edit whitelisted addresses
                       </ButtonPrimaryLight>
                     )}
-                    {isFinalStep ? (
-                      <GradientButton
-                        disabled={disableSubmit}
-                        key={`${step}_button`}
-                        onClick={() => {
-                          handleCreatePool()
-                        }}
-                      >
-                        Create Pool
-                      </GradientButton>
-                    ) : (
-                      <GradientButton
-                        disabled={!!currentStepError}
-                        key={`${step}_button`}
-                        onClick={() => moveStep('next')}
-                      >
-                        Next
-                      </GradientButton>
-                    )}
+                    <MobileButtonWrapper>
+                      <BackButton disabled={isFirstStep} onClick={() => moveStep('prev')}>
+                        Back
+                      </BackButton>
+                      {isFinalStep ? (
+                        <GradientButton
+                          disabled={disableSubmit}
+                          key={`${step}_button`}
+                          onClick={() => {
+                            handleCreatePool()
+                          }}
+                        >
+                          Create Pool
+                        </GradientButton>
+                      ) : (
+                        <GradientButton
+                          disabled={!!currentStepError}
+                          key={`${step}_button`}
+                          onClick={() => moveStep('next')}
+                        >
+                          Next
+                        </GradientButton>
+                      )}
+                    </MobileButtonWrapper>
                   </ButtonWrapper>
                   <Summary data={getCreatePoolSummaryData(createPoolState)} />
                 </StepContents>

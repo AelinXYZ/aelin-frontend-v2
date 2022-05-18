@@ -60,3 +60,9 @@ export const ButtonWrapper = styled.div`
   margin-bottom: 40px;
   margin-top: 40px;
 `
+
+export const MobileButtonWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  column-gap: 20px;
+`

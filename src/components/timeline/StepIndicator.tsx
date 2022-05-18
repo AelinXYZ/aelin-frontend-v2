@@ -1,21 +1,25 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { Step as BaseStep } from '@/src/components/timeline/Step'
 
+const STEP_WIDTH = 98
+
 const Wrapper = styled.div`
-  --step-width: 98px;
+  --step-width: ${STEP_WIDTH}px;
 
   margin: 0 auto 40px;
+  max-width: 100%;
   overflow: hidden;
   position: relative;
-  width: 100%;
+  width: fit-content;
 `
 
 const ScrollableWrapper = styled.div`
   display: flex;
   left: 0;
-  top: 0;
-  width: fit-content;
+  position: relative;
+  transition: left 0.25s ease-in-out;
 `
 
 const Step = styled(BaseStep)`
@@ -69,9 +73,27 @@ interface Props {
 }
 
 export const StepIndicator: React.FC<Props> = ({ currentStepOrder = 0, data, ...restProps }) => {
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const wrapperWidth = wrapperRef.current?.clientWidth
+  const currentElementIsOutOfBounds = useMemo(
+    () => (wrapperWidth ? currentStepOrder * STEP_WIDTH > wrapperWidth : false),
+    [currentStepOrder, wrapperWidth],
+  )
+  const loQueSobra = useMemo(
+    () => (wrapperWidth ? currentStepOrder * STEP_WIDTH - wrapperWidth : 0),
+    [currentStepOrder, wrapperWidth],
+  )
+  const [scrollLeft, setScrollLeft] = useState(0)
+
+  useEffect(() => {
+    if (currentElementIsOutOfBounds) {
+      setScrollLeft(loQueSobra)
+    }
+  }, [currentElementIsOutOfBounds, loQueSobra])
+
   return (
-    <Wrapper {...restProps}>
-      <ScrollableWrapper>
+    <Wrapper ref={wrapperRef} {...restProps}>
+      <ScrollableWrapper style={{ left: `-${scrollLeft}px` }}>
         {data.map(({ isActive, title }, index) => (
           <Step isActive={isActive} isDone={index + 1 < currentStepOrder} key={index}>
             {title}
