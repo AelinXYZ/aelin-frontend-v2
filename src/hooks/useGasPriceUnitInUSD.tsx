@@ -44,11 +44,6 @@ const useEthPriceUnitInUSD = () => {
       return getExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD')
     },
     {
-      refreshWhenHidden: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-      refreshWhenOffline: false,
       refreshInterval: ms('2m'),
       suspense: false,
     },
