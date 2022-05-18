@@ -4,8 +4,8 @@ const Wrapper = styled.div`
   background-color: rgba(255, 255, 255, 0.04);
   border-radius: 8px;
   border: 1px solid ${({ theme: { colors } }) => colors.borderColor};
-  gap: 20px;
   display: grid;
+  gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   grid-template-rows: auto auto;
   padding: 20px;

@@ -4,7 +4,7 @@ export const WrapperGrid = styled.div`
   max-width: 100%;
   width: 100%;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: grid;
     grid-template-columns: 30px 1fr 30px;
   }
@@ -20,7 +20,7 @@ export const StepContents = styled.div`
 export const PrevNextWrapper = styled.div`
   display: none;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: block;
     padding-top: 150px;
   }
