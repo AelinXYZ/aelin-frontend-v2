@@ -5,11 +5,16 @@ import { Step as BaseStep } from '@/src/components/timeline/Step'
 const Wrapper = styled.div`
   --step-width: 98px;
 
-  display: flex;
   margin: 0 auto 40px;
-  max-width: 100%;
   overflow: hidden;
   position: relative;
+  width: 100%;
+`
+
+const ScrollableWrapper = styled.div`
+  display: flex;
+  left: 0;
+  top: 0;
   width: fit-content;
 `
 
@@ -66,11 +71,13 @@ interface Props {
 export const StepIndicator: React.FC<Props> = ({ currentStepOrder = 0, data, ...restProps }) => {
   return (
     <Wrapper {...restProps}>
-      {data.map(({ isActive, title }, index) => (
-        <Step isActive={isActive} isDone={index + 1 < currentStepOrder} key={index}>
-          {title}
-        </Step>
-      ))}
+      <ScrollableWrapper>
+        {data.map(({ isActive, title }, index) => (
+          <Step isActive={isActive} isDone={index + 1 < currentStepOrder} key={index}>
+            {title}
+          </Step>
+        ))}
+      </ScrollableWrapper>
     </Wrapper>
   )
 }
