@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { Step as BaseStep } from '@/src/components/timeline/Step'
@@ -72,28 +72,63 @@ interface Props {
   currentStepOrder?: number
 }
 
+type Direction = 'forward' | 'backward' | undefined
+
 export const StepIndicator: React.FC<Props> = ({ currentStepOrder = 0, data, ...restProps }) => {
+  const [currentStep, setCurrentStep] = useState(1)
+  const [direction, setDirection] = useState<Direction>(undefined)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const wrapperWidth = wrapperRef.current?.clientWidth
-  const currentElementIsOutOfBounds = useMemo(
-    () => (wrapperWidth ? currentStepOrder * STEP_WIDTH > wrapperWidth : false),
-    [currentStepOrder, wrapperWidth],
-  )
-  const loQueSobra = useMemo(
-    () => (wrapperWidth ? currentStepOrder * STEP_WIDTH - wrapperWidth : 0),
-    [currentStepOrder, wrapperWidth],
-  )
+  const currentElementRightX = useMemo(() => currentStepOrder * STEP_WIDTH, [currentStepOrder])
+  const currentElementLeftX = useMemo(() => (currentStepOrder - 1) * STEP_WIDTH, [currentStepOrder])
   const [scrollLeft, setScrollLeft] = useState(0)
+  const currentElementIsOutOfBounds = useMemo(
+    () =>
+      wrapperWidth && direction === 'forward'
+        ? currentElementRightX > wrapperWidth
+        : wrapperWidth && direction === 'backward'
+        ? scrollLeft < 0 && currentElementLeftX + scrollLeft < 0
+        : false,
+    [currentElementLeftX, currentElementRightX, direction, scrollLeft, wrapperWidth],
+  )
+
+  const updateDirection = useCallback(
+    (direction: Direction) => {
+      setDirection(direction)
+      setCurrentStep(currentStepOrder)
+    },
+    [currentStepOrder],
+  )
 
   useEffect(() => {
     if (currentElementIsOutOfBounds) {
-      setScrollLeft(loQueSobra)
+      wrapperWidth && direction === 'forward'
+        ? setScrollLeft(-(currentElementRightX - wrapperWidth))
+        : wrapperWidth && direction === 'backward'
+        ? setScrollLeft(scrollLeft + (STEP_WIDTH - (scrollLeft + currentElementRightX)))
+        : 0
     }
-  }, [currentElementIsOutOfBounds, loQueSobra])
+
+    if (currentStepOrder > currentStep) {
+      updateDirection('forward')
+    } else if (currentStepOrder < currentStep) {
+      updateDirection('backward')
+    }
+  }, [
+    currentElementIsOutOfBounds,
+    currentElementLeftX,
+    currentElementRightX,
+    currentStep,
+    currentStepOrder,
+    direction,
+    scrollLeft,
+    updateDirection,
+    wrapperWidth,
+  ])
 
   return (
     <Wrapper ref={wrapperRef} {...restProps}>
-      <ScrollableWrapper style={{ left: `-${scrollLeft}px` }}>
+      <ScrollableWrapper style={{ left: `${scrollLeft}px` }}>
         {data.map(({ isActive, title }, index) => (
           <Step isActive={isActive} isDone={index + 1 < currentStepOrder} key={index}>
             {title}
