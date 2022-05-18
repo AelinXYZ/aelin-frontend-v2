@@ -6,7 +6,7 @@ import { Cell } from '@/src/components/pureStyledComponents/common/Table'
 const Wrapper = styled(Cell)`
   cursor: pointer;
   flex-shrink: 0;
-  gap: 10px;
+  gap: 8px;
   text-decoration: none;
 
   &:hover {
@@ -30,8 +30,14 @@ const Link = styled(BaseLink)`
   }
 `
 
-export const ExternalLink: React.FC<{ href: string }> = ({ children, href, ...restProps }) => (
+export const ExternalLink: React.FC<{ href: string; className?: string }> = ({
+  children,
+  className,
+  href,
+  ...restProps
+}) => (
   <Wrapper
+    className={`${className} externalLink`}
     onClick={(e) => {
       e.stopPropagation()
       e.preventDefault()

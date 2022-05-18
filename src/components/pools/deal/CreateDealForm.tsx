@@ -33,6 +33,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
+import { ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
 import useAelinCreateDeal, {
   CreateDealSteps,
@@ -216,6 +217,14 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       {!currentUserIsSponsor && (
         <Modal title="Invalid address">
           <Error>You are not the sponsor of the pool</Error>
+        </Modal>
+      )}
+      {pool.amountInPool.raw.eq(ZERO_BN) && (
+        <Modal title="Not possible to create a Deal">
+          <Error>
+            It's not possible to create a deal for this pool because it didn't receive any funds
+            during the investment window. No further action is required.
+          </Error>
         </Modal>
       )}
     </>

@@ -10,8 +10,8 @@ import { Deadline } from '@/src/components/common/Deadline'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
+  HideOnDesktop as BaseHideOnDesktop,
   Cell,
-  HideOnDesktop,
   HideOnMobileCell,
   LoadingTableRow,
   RowLink,
@@ -32,6 +32,22 @@ const Name = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`
+
+const TokenIconSmall = styled(TokenIcon)`
+  margin-left: 5px;
+  margin-top: -2px;
+
+  .externalLink {
+    font-size: 1.2rem !important;
+  }
+`
+
+const HideOnDesktop = styled(BaseHideOnDesktop)`
+  .networkIcon {
+    height: 14px;
+    width: 14px;
+  }
 `
 
 interface FiltersProps {
@@ -140,6 +156,7 @@ export const List: React.FC<{
               address: id,
               amountInPool,
               chainId: network,
+              investmentToken,
               investmentTokenSymbol,
               name,
               purchaseExpiry,
@@ -147,7 +164,6 @@ export const List: React.FC<{
               stage,
               start,
             } = pool
-
             const activeNotifications = notifications.filter((n) => n.poolAddress === id).length
 
             return (
@@ -173,14 +189,26 @@ export const List: React.FC<{
                 <Cell>
                   ${amountInPool.formatted}&nbsp;
                   <HideOnDesktop>
-                    <TokenIcon symbol={investmentTokenSymbol} />
+                    <TokenIconSmall
+                      address={investmentToken}
+                      iconHeight={12}
+                      iconWidth={12}
+                      network={network}
+                      symbol={investmentTokenSymbol}
+                      type="row"
+                    />
                   </HideOnDesktop>
                 </Cell>
                 <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
                   {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
                 </Deadline>
                 <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
-                  <TokenIcon symbol={investmentTokenSymbol} />
+                  <TokenIcon
+                    address={investmentToken}
+                    network={network}
+                    symbol={investmentTokenSymbol}
+                    type="column"
+                  />
                 </HideOnMobileCell>
                 <Stage stage={stage}> {poolStagesText[stage]}</Stage>
               </RowLink>
