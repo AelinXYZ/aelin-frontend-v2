@@ -222,8 +222,8 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       {pool.amountInPool.raw.eq(ZERO_BN) && (
         <Modal title="Not possible to create a Deal">
           <Error>
-            There is not possible to create a deal for this pool as it didn't receive any deposit
-            during the investment window. No further action is required!
+            It's not possible to create a deal for this pool because it didn't receive any funds
+            during the investment window. No further action is required.
           </Error>
         </Modal>
       )}
