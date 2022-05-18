@@ -164,10 +164,6 @@ const GasSelector = ({
 
   useEffect(() => {
     setLoadingGas(!customGasPrice && !isEditing ? isValidating : false)
-
-    return () => {
-      setLoadingGas(true)
-    }
   }, [customGasPrice, isEditing, isValidating, setLoadingGas])
 
   return (

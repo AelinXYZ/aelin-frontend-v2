@@ -89,7 +89,7 @@ export const List: React.FC = ({ ...restProps }) => {
             <BaseCard>No data.</BaseCard>
           ) : (
             notifications.map((item, index) => {
-              const { chainId, id, message, poolAddress, triggerStart } = item
+              const { chainId, id, message, poolAddress, triggerStart, type } = item
               return (
                 <Row
                   columns={columns.widths}
@@ -97,7 +97,9 @@ export const List: React.FC = ({ ...restProps }) => {
                   key={index}
                   onClick={(e) => {
                     e.stopPropagation()
-                    router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                    router.push(
+                      `/pool/${getKeyChainByValue(chainId)}/${poolAddress}?notification=${type}`,
+                    )
                   }}
                 >
                   <Cell>{formatDate(triggerStart, DATE_DETAILED)}</Cell>
@@ -106,7 +108,11 @@ export const List: React.FC = ({ ...restProps }) => {
                     <ButtonPrimaryLightSm
                       onClick={(e) => {
                         e.stopPropagation()
-                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                        router.push(
+                          `/pool/${getKeyChainByValue(
+                            chainId,
+                          )}/${poolAddress}?notification=${type}`,
+                        )
                       }}
                     >
                       Go to pool

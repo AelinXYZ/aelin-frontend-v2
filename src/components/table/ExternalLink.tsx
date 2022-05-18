@@ -6,7 +6,7 @@ import { Cell } from '@/src/components/pureStyledComponents/common/Table'
 const Wrapper = styled(Cell)`
   cursor: pointer;
   flex-shrink: 0;
-  gap: 10px;
+  gap: 8px;
   text-decoration: none;
 
   &:hover {

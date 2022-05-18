@@ -26,7 +26,14 @@ export const PoolInformation: React.FC<{
         <InfoCell
           title="Investment token"
           tooltip="Investment token tooltip contents"
-          value={<TokenIcon symbol={pool.investmentTokenSymbol} />}
+          value={
+            <TokenIcon
+              address={pool.investmentToken}
+              network={pool.chainId}
+              symbol={pool.investmentTokenSymbol}
+              type="row"
+            />
+          }
         />
         <InfoCell
           title="Pool cap"
@@ -45,7 +52,9 @@ export const PoolInformation: React.FC<{
         <InfoCell
           title="My pool balance"
           tooltip="My pool balance tooltip"
-          value={`${poolStatusHelper.poolTokenBalance.formatted || 0} ${pool.deal?.symbol}`}
+          value={`${poolStatusHelper.poolTokenBalance.formatted || 0} ${
+            pool.investmentTokenSymbol
+          }`}
         />
       </Column>
       <Column>

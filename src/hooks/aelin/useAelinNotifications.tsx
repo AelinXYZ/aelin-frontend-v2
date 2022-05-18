@@ -6,6 +6,7 @@ import useSWRInfinite from 'swr/infinite'
 import useAelinUser, { ParsedUser } from './useAelinUser'
 import {
   NotificationTarget,
+  NotificationType,
   Notification_OrderBy,
   NotificationsQueryVariables,
   OrderDirection,
@@ -23,6 +24,7 @@ export type ParsedNotification = {
   poolAddress: string
   chainId: ChainsValues
   target: NotificationTarget
+  type: NotificationType
 }
 
 interface FetcherProps extends NotificationsQueryVariables {
@@ -71,6 +73,7 @@ export async function fetcherNotifications(props: FetcherProps) {
                 triggerStart: new Date(notification.triggerStart * 1000),
                 poolAddress: notification.pool.id,
                 target: notification.target,
+                type: notification.type,
                 chainId,
               }
             })
