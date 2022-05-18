@@ -6,11 +6,14 @@ const Wrapper = styled.div`
   border: 1px solid ${({ theme: { colors } }) => colors.borderColor};
   gap: 20px;
   display: grid;
-  grid-auto-flow: column;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   grid-template-rows: auto auto;
   padding: 20px;
   width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    grid-auto-flow: column;
+  }
 `
 
 const Cell = styled.div``

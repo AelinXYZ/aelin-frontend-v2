@@ -66,7 +66,11 @@ const Inner = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 20px 45px 40px;
+  padding: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    padding: 20px 45px 40px;
+  }
 `
 
 export const CardWithTitle: React.FC<{ titles: React.ReactNode }> = ({

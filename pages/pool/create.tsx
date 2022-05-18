@@ -38,7 +38,6 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
-
   const {
     createPoolState,
     errors,
@@ -50,9 +49,7 @@ const Create: NextPage = () => {
     setPoolField,
     showWarningOnLeave,
   } = useAelinCreatePool(appChainId)
-
   const [showWhiteListModal, setShowWhiteListModal] = useState<boolean>(false)
-
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createPoolState.currentStep] : null

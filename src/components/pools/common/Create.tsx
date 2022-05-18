@@ -1,19 +1,29 @@
 import styled from 'styled-components'
 
 export const WrapperGrid = styled.div`
-  display: grid;
-  grid-template-columns: 30px 1fr 30px;
+  max-width: 100%;
   width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    display: grid;
+    grid-template-columns: 30px 1fr 30px;
+  }
 `
 
 export const StepContents = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 `
 
 export const PrevNextWrapper = styled.div`
-  padding-top: 150px;
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    display: block;
+    padding-top: 150px;
+  }
 `
 
 export const Title = styled.h2`
