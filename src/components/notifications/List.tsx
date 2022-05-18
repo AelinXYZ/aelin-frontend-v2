@@ -124,7 +124,7 @@ export const List: React.FC = () => {
         ) : (
           <TableBody>
             {notifications.map((item, index) => {
-              const { chainId, id, message, poolAddress, triggerStart } = item
+              const { chainId, id, message, poolAddress, triggerStart, type } = item
 
               return (
                 <RowLink
@@ -140,7 +140,11 @@ export const List: React.FC = () => {
                     <ButtonPrimaryLightSm
                       onClick={(e) => {
                         e.stopPropagation()
-                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                        router.push(
+                          `/pool/${getKeyChainByValue(
+                            chainId,
+                          )}/${poolAddress}?notification=${type}`,
+                        )
                       }}
                     >
                       Go to pool
