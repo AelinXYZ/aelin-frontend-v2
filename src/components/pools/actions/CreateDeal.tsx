@@ -17,8 +17,6 @@ type Props = {
 
 export const CreateDeal: React.FC<Props> = ({ pool, ...restProps }) => {
   const noFundsInPool = pool.amountInPool.raw.eq(ZERO_BN)
-  console.log(pool.dealsCreated)
-  console.log(pool.amountInPool.raw.eq(ZERO_BN))
 
   return (
     <Wrapper title={noFundsInPool ? 'No funds in pool' : ''} {...restProps}>
