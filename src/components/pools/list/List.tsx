@@ -136,6 +136,7 @@ export const List: React.FC<{
                 address: id,
                 amountInPool,
                 chainId: network,
+                investmentToken,
                 investmentTokenSymbol,
                 name,
                 purchaseExpiry,
@@ -169,7 +170,12 @@ export const List: React.FC<{
                     {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
                   </Deadline>
                   <Cell justifyContent={columns.alignment.investmentToken}>
-                    <TokenIcon symbol={investmentTokenSymbol} />
+                    <TokenIcon
+                      address={investmentToken}
+                      network={network}
+                      symbol={investmentTokenSymbol}
+                      type="column"
+                    />
                   </Cell>
                   <Stage stage={stage}> {poolStagesText[stage]}</Stage>
                 </RowLink>
