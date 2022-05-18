@@ -11,16 +11,55 @@ import {
 import { ButtonRemove as BaseButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
+  RowLink as BaseRowLink,
+  TableBody as BaseTableBody,
   Cell,
   LinkCell,
-  Row,
-  Table,
-  TableWrapper,
+  LoadingTableRow,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ClearedNotifications } from '@/src/hooks/aelin/useAelinNotifications'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+const TableBody = styled(BaseTableBody)`
+  grid-template-columns: 1fr;
+`
+
+const RowLink = styled(BaseRowLink)`
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletDesktopStart}) {
+    display: grid;
+  }
+
+  .cellTitle {
+    width: 100%;
+  }
+
+  .cellText {
+    width: calc(100% - 120px);
+  }
+
+  .cellLink {
+    margin-left: auto;
+    width: fit-content;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletDesktopStart}) {
+    .cellTitle,
+    .cellText,
+    .cellLink {
+      width: auto;
+    }
+
+    .cellLink {
+      margin-left: 0;
+    }
+  }
+`
 
 const ButtonClear = styled(ButtonPrimaryLight)`
   margin: 20px auto 0;
@@ -34,7 +73,7 @@ const ButtonRemove = styled(BaseButtonRemove)`
   width: var(--dimensions);
 `
 
-export const List: React.FC = ({ ...restProps }) => {
+export const List: React.FC = () => {
   const router = useRouter()
   const {
     clearedNotifications,
@@ -73,36 +112,31 @@ export const List: React.FC = ({ ...restProps }) => {
     )
 
   return (
-    <TableWrapper {...restProps}>
-      <Table>
-        <InfiniteScroll
-          dataLength={notifications.length}
-          hasMore={hasMore}
-          loader={
-            <Row columns={'1fr'}>
-              <Cell justifyContent="center">Loading...</Cell>
-            </Row>
-          }
-          next={nextPage}
-        >
-          {!notifications?.length ? (
-            <BaseCard>No data.</BaseCard>
-          ) : (
-            notifications.map((item, index) => {
+    <>
+      <InfiniteScroll
+        dataLength={notifications.length}
+        hasMore={hasMore}
+        loader={<LoadingTableRow />}
+        next={nextPage}
+      >
+        {!notifications?.length ? (
+          <BaseCard>No notifications to show.</BaseCard>
+        ) : (
+          <TableBody>
+            {notifications.map((item, index) => {
               const { chainId, id, message, poolAddress, triggerStart } = item
+
               return (
-                <Row
+                <RowLink
                   columns={columns.widths}
-                  hasHover
+                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
                   key={index}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                  }}
                 >
-                  <Cell>{formatDate(triggerStart, DATE_DETAILED)}</Cell>
-                  <Cell light>{message}</Cell>
-                  <LinkCell justifyContent={columns.alignment.seePool}>
+                  <Cell className="cellTitle">{formatDate(triggerStart, DATE_DETAILED)}</Cell>
+                  <Cell className="cellText" light>
+                    {message}
+                  </Cell>
+                  <LinkCell className="cellLink" justifyContent={columns.alignment.seePool}>
                     <ButtonPrimaryLightSm
                       onClick={(e) => {
                         e.stopPropagation()
@@ -118,16 +152,16 @@ export const List: React.FC = ({ ...restProps }) => {
                       }}
                     />
                   </LinkCell>
-                </Row>
+                </RowLink>
               )
-            })
-          )}
-        </InfiniteScroll>
-      </Table>
+            })}
+          </TableBody>
+        )}
+      </InfiniteScroll>
       {!!notifications?.length && (
         <ButtonClear onClick={handleClearAllNotifications}>Clear All</ButtonClear>
       )}
-    </TableWrapper>
+    </>
   )
 }
 

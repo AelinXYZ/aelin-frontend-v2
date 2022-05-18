@@ -29,10 +29,11 @@ const Wrapper = styled.div`
 
 const FiltersDropdowns = styled.div`
   display: grid;
-  gap: var(--gap);
+  gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--gap);
   }
 `
 
