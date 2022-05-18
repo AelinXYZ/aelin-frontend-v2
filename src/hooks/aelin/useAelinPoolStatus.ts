@@ -222,7 +222,11 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
   }, [pool])
 }
 
-export function useUserRole(walletAddress: string | null, pool: ParsedAelinPool): UserRole {
+export function useUserRole(
+  walletAddress: string | null,
+  pool: ParsedAelinPool,
+  derivedStatus: DerivedStatus,
+): UserRole {
   return useMemo(() => {
     let userRole = UserRole.Investor
 
@@ -236,12 +240,12 @@ export function useUserRole(walletAddress: string | null, pool: ParsedAelinPool)
       userRole = UserRole.Sponsor
     }
 
-    if (address === pool.deal?.holderAddress) {
+    if (address === pool.deal?.holderAddress && derivedStatus.current !== PoolStatus.SeekingDeal) {
       userRole = UserRole.Holder
     }
 
     return userRole
-  }, [walletAddress, pool])
+  }, [walletAddress, pool, derivedStatus])
 }
 
 interface ActionState {
@@ -641,7 +645,7 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
 
   // derive data for UI
   const derivedStatus = useCurrentStatus(poolResponse)
-  const userRole = useUserRole(address, poolResponse)
+  const userRole = useUserRole(address, poolResponse, derivedStatus)
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole)
 
   // get info by pool status
@@ -649,7 +653,6 @@ export default function useAelinPoolStatus(chainId: ChainsValues, poolAddress: s
   const dealing = useDealingStatus(poolResponse, chainId)
   const proRata = useProRataStatus(poolResponse)
   const timeline = useTimelineStatus(poolResponse)
-  // const unredeemed = useUnredeemed()
 
   return useMemo(
     () => ({

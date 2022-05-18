@@ -54,6 +54,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     chainId,
     poolAddress as string,
   )
+
   const { getExplorerUrl } = useWeb3Connection()
 
   return (
