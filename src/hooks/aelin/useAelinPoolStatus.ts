@@ -245,7 +245,9 @@ interface ActionState {
   states: PoolAction[]
   active: PoolAction
   setActive: Dispatch<SetStateAction<PoolAction>>
+  isReleaseFundsAvailable: boolean
 }
+
 interface TabState {
   states: PoolTab[]
   active: PoolTab
@@ -375,6 +377,18 @@ function useUserActions(
   }, [userRole, currentStatus, pool, walletAddress])
 }
 
+function getActionStates(actionsStates: PoolAction[]) {
+  return actionsStates.filter((action) => action !== PoolAction.ReleaseFunds)
+}
+
+function getActionStatesByTab(actionsStates: PoolAction[], activeTab: PoolTab) {
+  if (activeTab === PoolTab.WithdrawUnredeemed) {
+    return [PoolAction.WithdrawUnredeemed]
+  }
+
+  return getActionStates(actionsStates)
+}
+
 function useUserTabs(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
@@ -383,22 +397,13 @@ function useUserTabs(
   const { history } = derivedStatus
   const actionsStates = useUserActions(userRole, pool, derivedStatus)
   const [activeTab, setActiveTab] = useState<PoolTab>(PoolTab.PoolInformation)
-  const [activeAction, setActiveAction] = useState<PoolAction>(actionsStates[0])
+  const [activeAction, setActiveAction] = useState<PoolAction>(
+    getActionStatesByTab(actionsStates, activeTab)[0],
+  )
 
   const handleTabChange = (newState: PoolTab) => {
     setActiveTab(newState)
-    if (newState === PoolTab.WithdrawUnredeemed) {
-      setActiveAction(PoolAction.WithdrawUnredeemed)
-    } else {
-      setActiveAction(actionsStates[0])
-    }
-  }
-
-  const getActionStates = (newState: PoolTab) => {
-    if (newState === PoolTab.WithdrawUnredeemed) {
-      return [PoolAction.WithdrawUnredeemed]
-    }
-    return actionsStates
+    setActiveAction(getActionStatesByTab(actionsStates, newState)[0])
   }
 
   const tabStates = useMemo(() => {
@@ -423,7 +428,7 @@ function useUserTabs(
       setActiveAction(PoolAction.WithdrawUnredeemed)
     } else {
       setActiveTab(tabs[tabs.length - 1])
-      setActiveAction(actionsStates[0])
+      setActiveAction(getActionStates(actionsStates)[0])
     }
 
     return tabs
@@ -434,9 +439,10 @@ function useUserTabs(
     active: activeTab,
     setActive: handleTabChange,
     actions: {
-      states: getActionStates(activeTab),
+      states: getActionStatesByTab(actionsStates, activeTab),
       active: activeAction,
       setActive: setActiveAction,
+      isReleaseFundsAvailable: actionsStates.includes(PoolAction.ReleaseFunds),
     },
   }
 }
