@@ -74,7 +74,7 @@ function AcceptDeal({ dealing, pool }: Props) {
           setInputError('')
         }
       },
-      title: 'Create deal',
+      title: 'Accept deal',
       estimate: () => acceptDealEstimate([tokenInputValue]),
     })
   }
