@@ -9,7 +9,6 @@ import { DealsSponsored } from '@/src/components/history/DealsSponsored'
 import { Deposits } from '@/src/components/history/Deposits'
 import { Vests } from '@/src/components/history/Vests'
 import { Withdraws } from '@/src/components/history/Withdraws'
-import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 
 const History: NextPage = () => {
   const items = [
@@ -26,12 +25,10 @@ const History: NextPage = () => {
       <Head>
         <title>Aelin - History</title>
       </Head>
-      <LeftSidebarLayout>
-        <SectionIntro backgroundImage="/resources/svg/bg-history.svg" title="History">
-          All of your past investments are listed below.
-        </SectionIntro>
-        <SectionTabs items={items} />
-      </LeftSidebarLayout>
+      <SectionIntro backgroundImage="/resources/svg/bg-history.svg" title="History">
+        All of your past investments are listed below.
+      </SectionIntro>
+      <SectionTabs items={items} />
     </>
   )
 }
