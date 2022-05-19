@@ -25,10 +25,11 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
     <Wrapper title="Deposit tokens" {...restProps}>
       {(allowance || ZERO_BN).lt(pool.deal?.underlyingToken.dealAmount.raw || ZERO_BN) ? (
         <Approve
+          description={`Before funding the deal, you need to approve the pool to transfer your ${pool.deal?.underlyingToken.symbol}`}
           refetchAllowance={refetch}
           spender={pool.dealAddress || ZERO_ADDRESS}
+          title="Fund deal"
           tokenAddress={pool.deal?.underlyingToken.token || ZERO_ADDRESS}
-          tokenSymbol={pool.deal?.underlyingToken.symbol || ''}
         />
       ) : (
         <HolderDeposit pool={pool} />
