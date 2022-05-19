@@ -3,6 +3,7 @@ import {
   ReactNode,
   SetStateAction,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -17,6 +18,7 @@ import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
 import nullthrows from 'nullthrows'
 import { toast } from 'react-hot-toast'
 
+import { getExplorerUrl } from '../utils/getExplorerUrl'
 import {
   Chains,
   ChainsValues,
@@ -289,13 +291,10 @@ export default function Web3ConnectionProvider({ children }: Props) {
     }
   }
 
-  const getExplorerUrl = useMemo(() => {
-    return (hash: string) => {
-      const url = chainsConfig[appChainId]?.blockExplorerUrls[0]
-      const type = hash.length > 42 ? 'tx' : 'address'
-      return `${url}${type}/${hash}`
-    }
-  }, [appChainId])
+  const _getExplorerUrl = useCallback(
+    (hash: string) => getExplorerUrl(hash, appChainId),
+    [appChainId],
+  )
 
   const value = {
     isAppConnected,
@@ -307,7 +306,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
     address,
     readOnlyAppProvider,
     web3Provider,
-    getExplorerUrl,
+    getExplorerUrl: _getExplorerUrl,
     connectWallet,
     disconnectWallet,
     pushNetwork,
