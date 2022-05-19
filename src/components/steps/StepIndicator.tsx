@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { Step as BaseStep } from '@/src/components/timeline/Step'
+import { Step as BaseStep } from '@/src/components/steps/Step'
 
 const STEP_WIDTH = 98
 

@@ -27,7 +27,7 @@ import {
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
-import { StepIndicator } from '@/src/components/timeline/StepIndicator'
+import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {
   CreatePoolSteps,

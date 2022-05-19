@@ -32,7 +32,7 @@ import {
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
-import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
+import { StepIndicator as BaseStepIndicator } from '@/src/components/steps/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'

@@ -1,7 +1,7 @@
 import { DOMAttributes } from 'react'
 import styled from 'styled-components'
 
-import { StepCircle as BaseStepCircle } from '@/src/components/timeline/StepCircle'
+import { StepCircle as BaseStepCircle } from '@/src/components/steps/StepCircle'
 
 const Wrapper = styled.div`
   align-items: center;
