@@ -162,7 +162,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     isOpenPeriodDisabled && <Error>Pool supply maxed.</Error>}
 
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error>{currentStepError}</Error>
+                    <Error align="center">{currentStepError}</Error>
                   )}
                   <ButtonWrapper>
                     {!isFinalStep ? (

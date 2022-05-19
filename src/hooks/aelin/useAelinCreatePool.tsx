@@ -16,7 +16,7 @@ import {
   useAelinPoolCreateTransaction,
 } from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
-import { getDuration, getFormattedDurationFromNowToDuration } from '@/src/utils/date'
+import { getDuration, getFormattedDurationFromNowToDuration, sumDurations } from '@/src/utils/date'
 import { isDuration } from '@/src/utils/isDuration'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
 
@@ -95,7 +95,7 @@ export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
     order: 3,
     title: 'Investment token',
     text: 'Copy and paste the address of the tokens investors will contribute to the pool in exchange for deal tokens. This can be any ERC-20 token. Some commonly used tokens, such as USDC, USDT, ETH, are already provided in the dropdown.',
-    placeholder: 'USDC, USDT, ETH, etc...',
+    placeholder: 'Token name or contract address...',
   },
   [CreatePoolSteps.investmentDeadLine]: {
     id: CreatePoolSteps.investmentDeadLine,
@@ -262,12 +262,27 @@ export const getCreatePoolSummaryData = (
     let value = createPoolState[step.id]
 
     if (isDuration(value)) {
-      try {
-        value = Object.values(value).some((val) => !!val)
-          ? getFormattedDurationFromNowToDuration(value, 'LLL dd, yyyy HH:mma') ?? '--'
-          : undefined
-      } catch (e) {
-        value = undefined
+      if (step.id === CreatePoolSteps.dealDeadline) {
+        value = createPoolState[CreatePoolSteps.dealDeadline] as Duration
+        const valueWithInvestmentDeadline = sumDurations(
+          createPoolState[CreatePoolSteps.investmentDeadLine] as Duration,
+          value,
+        )
+
+        value = Object.values(value).some((val) => val > 0)
+          ? getFormattedDurationFromNowToDuration(
+              valueWithInvestmentDeadline,
+              '~LLL dd, yyyy HH:mma',
+            ) ?? '--'
+          : `--`
+      } else {
+        try {
+          value = Object.values(value).some((val) => !!val)
+            ? getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma') ?? '--'
+            : undefined
+        } catch (e) {
+          value = undefined
+        }
       }
     }
 
@@ -275,7 +290,7 @@ export const getCreatePoolSummaryData = (
       value = value?.symbol
     }
 
-    if (step.id === CreatePoolSteps.sponsorFee && value) {
+    if (step.id === CreatePoolSteps.sponsorFee && value !== '' && value !== undefined) {
       value = `${value}%`
     }
 

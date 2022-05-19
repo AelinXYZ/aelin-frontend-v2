@@ -94,6 +94,10 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     errors.poolPrivacy = 'Add white list addresses or change pool privacy to public'
   }
 
+  if (!values.sponsorFee || values.sponsorFee < 0) {
+    errors.sponsorFee = true
+  }
+
   if (values.poolCap === undefined) {
     errors.poolCap = true
   }
