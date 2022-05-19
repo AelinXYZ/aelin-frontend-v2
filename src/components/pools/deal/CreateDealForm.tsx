@@ -133,11 +133,11 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
             currentStepOrder={order}
             data={getCreateDealStepIndicatorData(createDealState.currentStep)}
           />
-          {Object.values(CreateDealSteps).map((step) => {
+          {Object.values(CreateDealSteps).map((step, index) => {
             const isStepVisible = createDealState.currentStep === step
 
             return !isStepVisible ? null : (
-              <WrapperGrid>
+              <WrapperGrid key={index}>
                 <PrevNextWrapper>
                   {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
                 </PrevNextWrapper>
