@@ -4,6 +4,7 @@ import ExternalLink from '@/src/components/common/ExternalLink'
 import { InfoCell } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
 const Column = styled.div`
   display: flex;
@@ -16,7 +17,6 @@ export const UnredeemedInformation: React.FC<{
   pool: ParsedAelinPool
 }> = ({ pool }) => {
   const { deal } = pool
-  const { getExplorerUrl } = useWeb3Connection()
 
   return !deal ? (
     <div>No Deal presented yet.</div>
@@ -28,7 +28,7 @@ export const UnredeemedInformation: React.FC<{
           tooltip="??"
           value={
             <ExternalLink
-              href={getExplorerUrl(deal.underlyingToken.token || '')}
+              href={getExplorerUrl(deal.underlyingToken.token || '', pool.chainId)}
               label={deal.underlyingToken.symbol}
             />
           }
