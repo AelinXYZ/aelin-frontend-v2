@@ -99,27 +99,27 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
             </ContentGrid>
-            {tabs.actions.states.includes(PoolAction.ReleaseFunds) && <ReleaseFunds pool={pool} />}
+            {tabs.isReleaseFundsAvailable && <ReleaseFunds pool={pool} />}
           </CardWithTitle>
 
           <ActionTabs
-            active={tabs.actions.active}
-            onTabClick={tabs.actions.setActive}
-            tabs={tabs.actions.states.filter((a) => a !== PoolAction.ReleaseFunds)}
+            active={tabs.actionTabs.active}
+            onTabClick={tabs.actionTabs.setActive}
+            tabs={tabs.actionTabs.states}
           >
-            {!tabs.actions.states.length && <div>No actions available</div>}
-            {tabs.actions.active === PoolAction.Invest && (
+            {!tabs.actionTabs.states.length && <div>No actions available</div>}
+            {tabs.actionTabs.active === PoolAction.Invest && (
               <Invest pool={pool} poolHelpers={funding} />
             )}
-            {tabs.actions.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
-            {tabs.actions.active === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
-            {tabs.actions.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-            {tabs.actions.active === PoolAction.AcceptDeal && (
+            {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
+            {tabs.actionTabs.active === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
+            {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
+            {tabs.actionTabs.active === PoolAction.AcceptDeal && (
               <AcceptDeal dealing={dealing} pool={pool} />
             )}
-            {tabs.actions.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
-            {tabs.actions.active === PoolAction.Claim && <Claim pool={pool} />}
-            {tabs.actions.active === PoolAction.WithdrawUnredeemed && (
+            {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
+            {tabs.actionTabs.active === PoolAction.Claim && <Claim pool={pool} />}
+            {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
               <WithdrawUnredeemed pool={pool} />
             )}
           </ActionTabs>
