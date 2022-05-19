@@ -45,6 +45,14 @@ const BackButton = styled(ButtonPrimaryLight)`
   }
 `
 
+const ResponsiveError = styled(Error)`
+  text-align: center;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    text-align: left;
+  }
+`
+
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
   const {
@@ -107,7 +115,7 @@ const Create: NextPage = () => {
                     setPoolField={setPoolField}
                   />
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error>{currentStepError}</Error>
+                    <ResponsiveError>{currentStepError}</ResponsiveError>
                   )}
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
