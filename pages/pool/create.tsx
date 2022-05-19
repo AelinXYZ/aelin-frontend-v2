@@ -35,6 +35,7 @@ import useAelinCreatePool, {
   getCreatePoolStepIndicatorData,
   getCreatePoolSummaryData,
 } from '@/src/hooks/aelin/useAelinCreatePool'
+import { useTimelineStatus } from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
@@ -73,13 +74,15 @@ const Create: NextPage = () => {
     }
   }
 
+  const timeline = useTimelineStatus()
+
   return (
     <>
       <Head>
         <title>{`${createPoolState.poolName || 'Create pool'}`}</title>
       </Head>
       <PageTitle title={`${createPoolState.poolName || 'Pool creation'}`} />
-      <RightTimelineLayout>
+      <RightTimelineLayout timelineSteps={timeline}>
         <CardWithTitle titles={<CardTitle>Pool creation</CardTitle>}>
           <StepIndicator
             currentStepOrder={order}
