@@ -5,6 +5,7 @@ import { ExternalLink as BaseExternalLink } from '@/src/components/table/Externa
 import { ChainsValues } from '@/src/constants/chains'
 import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
 type Direction = 'column' | 'row'
 
@@ -52,7 +53,6 @@ interface Props {
 
 export const TokenIcon: React.FC<Props> = ({ address, network, symbol, type = 'column' }) => {
   const { tokens: tokensBySymbol } = useTokenIcons()
-  const { getExplorerUrl } = useWeb3Connection()
   const investmentTokenImage = tokensBySymbol[symbol.toLowerCase()]?.logoURI
 
   return investmentTokenImage ? (

@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
-import { ensResolver } from '../useEnsName'
+import { ensResolver } from '../useEnsResolvers'
 import { InputMaybe, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pool'

@@ -134,7 +134,7 @@ export type Web3Context = {
   wallet: Wallet | null
   walletChainId: number | null
   web3Provider: Web3Provider | null
-  getExplorerUrl: (hash: string, chainId?: ChainsValues) => string
+  getExplorerUrl: (hash: string) => string
 }
 
 const Web3ContextConnection = createContext<Web3Context | undefined>(undefined)
@@ -290,8 +290,8 @@ export default function Web3ConnectionProvider({ children }: Props) {
   }
 
   const getExplorerUrl = useMemo(() => {
-    return (hash: string, chainId?: ChainsValues) => {
-      const url = chainsConfig[chainId || appChainId]?.blockExplorerUrls[0]
+    return (hash: string) => {
+      const url = chainsConfig[appChainId]?.blockExplorerUrls[0]
       const type = hash.length > 42 ? 'tx' : 'address'
       return `${url}${type}/${hash}`
     }
