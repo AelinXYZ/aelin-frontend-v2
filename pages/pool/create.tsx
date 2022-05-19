@@ -107,7 +107,7 @@ const Create: NextPage = () => {
                     setPoolField={setPoolField}
                   />
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error align="center">{currentStepError}</Error>
+                    <Error>{currentStepError}</Error>
                   )}
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (

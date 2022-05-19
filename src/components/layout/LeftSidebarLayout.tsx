@@ -23,6 +23,12 @@ const Wrapper = styled.main`
   }
 `
 
+const Main = styled.section`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+`
+
 const SidebarWrapper = styled(BaseCard)`
   background: none;
   border: none;
@@ -47,12 +53,6 @@ const SidebarWrapper = styled(BaseCard)`
     min-height: calc(100vh - 120px);
     row-gap: 10px;
   }
-`
-
-const Main = styled.section`
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
 `
 
 const Break = styled.div`
