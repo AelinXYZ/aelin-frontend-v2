@@ -1,15 +1,15 @@
 import { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
-import { Timeline as BaseTimeline } from '@/src/components/pools/common/Timeline'
+import { Timeline } from '@/src/components/pools/common/Timeline'
+import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
 import { TimelineSteps } from '@/types/aelinPool'
 
 export const Wrapper = styled.main`
   --timeline-width: 296px;
 
-  column-gap: 60px;
+  column-gap: 40px;
   display: grid;
-  flex-grow: 1;
   flex-shrink: 0;
   margin: 0 auto;
   max-width: 100%;
@@ -20,6 +20,11 @@ export const Wrapper = styled.main`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     grid-template-columns: 1fr var(--timeline-width);
+    flex-grow: 1;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    column-gap: 60px;
   }
 `
 
@@ -34,11 +39,24 @@ export const Section = styled.section`
   }
 `
 
-export const Timeline = styled(BaseTimeline)`
+export const TimelineWrapper = styled(CollapsibleBlock)`
   order: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    background-color: transparent;
+    border: none;
+    margin-bottom: 0;
     order: 1;
+    padding: 0;
+
+    .header {
+      display: none;
+    }
+
+    .collapsableContents {
+      display: block !important;
+      padding: 0;
+    }
   }
 `
 
@@ -50,7 +68,9 @@ export const RightTimelineLayout: React.FC<Props> = ({ children, timelineSteps, 
   return (
     <Wrapper {...restProps}>
       <Section>{children}</Section>
-      <Timeline timelineSteps={timelineSteps} />
+      <TimelineWrapper name="timeline" title={'Timeline'}>
+        <Timeline timelineSteps={timelineSteps} />
+      </TimelineWrapper>
     </Wrapper>
   )
 }
