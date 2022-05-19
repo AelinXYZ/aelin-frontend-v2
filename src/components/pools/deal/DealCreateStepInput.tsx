@@ -112,7 +112,6 @@ export const DealCreateStepInput: React.FC<Props> = ({
             type="number"
             value={currentState[step]}
           />
-
           <PrivacyGrid>
             <Button onClick={onCalculateDealModal}>Calculate</Button>
           </PrivacyGrid>

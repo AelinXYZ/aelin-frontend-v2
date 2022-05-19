@@ -101,7 +101,6 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             </ContentGrid>
             {tabs.isReleaseFundsAvailable && <ReleaseFunds pool={pool} />}
           </CardWithTitle>
-
           <ActionTabs
             active={tabs.actionTabs.active}
             onTabClick={tabs.actionTabs.setActive}

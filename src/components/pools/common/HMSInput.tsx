@@ -27,7 +27,9 @@ enum durationTypes {
   hours = 'hours',
   minutes = 'minutes',
 }
+
 const MAX_LENGTH = 6
+
 export const HMSInput = ({
   defaultValue = { days: undefined, hours: undefined, minutes: undefined },
   onChange,

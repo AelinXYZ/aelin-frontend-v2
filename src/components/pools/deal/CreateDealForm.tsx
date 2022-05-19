@@ -14,6 +14,7 @@ import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout
 import {
   ButtonWrapper,
   Description,
+  MobileButtonWrapper,
   PrevNextWrapper,
   StepContents,
   Title,
@@ -58,6 +59,20 @@ const CancelButton = styled(ButtonPrimaryLight)`
   margin: 20px auto 0;
   max-width: 100%;
   width: 160px;
+`
+
+const BackButton = styled(ButtonPrimaryLight)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: none;
+  }
+`
+
+const ResponsiveError = styled(Error)`
+  text-align: center;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    text-align: left;
+  }
 `
 
 type Props = { poolAddress: string; chainId: ChainsValues }
@@ -159,30 +174,34 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     totalPurchase={totalPurchase}
                   />
                   {createDealState.currentStep === CreateDealSteps.openPeriod &&
-                    isOpenPeriodDisabled && <Error>Pool supply maxed.</Error>}
-
+                    isOpenPeriodDisabled && <ResponsiveError>Pool supply maxed.</ResponsiveError>}
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error align="center">{currentStepError}</Error>
+                    <ResponsiveError>{currentStepError}</ResponsiveError>
                   )}
                   <ButtonWrapper>
-                    {!isFinalStep ? (
-                      <GradientButton
-                        disabled={!!currentStepError}
-                        onClick={() => moveStep('next')}
-                      >
-                        Next
-                      </GradientButton>
-                    ) : (
-                      <GradientButton
-                        disabled={disableSubmit}
-                        key={`${step}_button`}
-                        onClick={() => {
-                          handleCreateDeal()
-                        }}
-                      >
-                        Create Deal
-                      </GradientButton>
-                    )}
+                    <MobileButtonWrapper>
+                      <BackButton disabled={isFirstStep} onClick={() => moveStep('prev')}>
+                        Back
+                      </BackButton>
+                      {!isFinalStep ? (
+                        <GradientButton
+                          disabled={!!currentStepError}
+                          onClick={() => moveStep('next')}
+                        >
+                          Next
+                        </GradientButton>
+                      ) : (
+                        <GradientButton
+                          disabled={disableSubmit}
+                          key={`${step}_button`}
+                          onClick={() => {
+                            handleCreateDeal()
+                          }}
+                        >
+                          Create Deal
+                        </GradientButton>
+                      )}
+                    </MobileButtonWrapper>
                   </ButtonWrapper>
                   <Summary data={getCreateDealSummaryData(createDealState, isOpenPeriodDisabled)} />
                 </StepContents>
