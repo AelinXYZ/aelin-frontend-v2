@@ -59,7 +59,6 @@ const Break = styled.div`
 `
 
 export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
-  console.log('XXX')
   return (
     <Wrapper {...restProps}>
       <SidebarWrapper as="nav">
