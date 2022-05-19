@@ -719,6 +719,7 @@ export default function useAelinPoolStatus(
 ) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
+    compare: (_) => false,
   })
 
   const { address } = useWeb3Connection()
