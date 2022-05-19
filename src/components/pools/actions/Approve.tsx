@@ -7,12 +7,19 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 type Props = {
   tokenAddress: string
-  tokenSymbol: string
   spender: string
+  title: string
+  description: string
   refetchAllowance: () => void
 }
 
-export default function Approve({ refetchAllowance, spender, tokenAddress, tokenSymbol }: Props) {
+export default function Approve({
+  description,
+  refetchAllowance,
+  spender,
+  title,
+  tokenAddress,
+}: Props) {
   const { address, isAppConnected } = useWeb3Connection()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
@@ -27,16 +34,14 @@ export default function Approve({ refetchAllowance, spender, tokenAddress, token
           refetchAllowance()
         }
       },
-      title: `Approve ${tokenSymbol}`,
+      title: `${title}`,
       estimate: () => estimate([spender, MAX_BN]),
     })
   }
 
   return (
     <>
-      <Contents>
-        Before you deposit, the pool needs your permission to transfer your {tokenSymbol}
-      </Contents>
+      <Contents>{description}</Contents>
       <GradientButton
         disabled={!address || !isAppConnected || isSubmitting}
         onClick={approveInvestmentToken}
