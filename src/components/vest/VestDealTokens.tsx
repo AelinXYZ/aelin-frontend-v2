@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { Deadline } from '../common/Deadline'
-import { Dropdown, DropdownItem } from '../common/Dropdown'
+import { Dropdown as BaseDropdown, DropdownItem } from '../common/Dropdown'
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
@@ -21,7 +21,6 @@ import {
   RowLink,
   Table,
   TableHead,
-  TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { NameCell } from '@/src/components/table/NameCell'
@@ -48,6 +47,11 @@ const Cell = styled(BaseCell)`
 `
 
 const Title = styled(BaseTitle)`
+  margin-bottom: 20px;
+`
+
+const Dropdown = styled(BaseDropdown)`
+  max-width: 200px;
   margin-bottom: 20px;
 `
 
@@ -167,97 +171,95 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
   return (
     <TableCard {...restProps}>
       <Title>Vest Deal Tokens</Title>
-      <TableWrapper>
-        <Dropdown
-          currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
-          dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
-          items={vestingDealsFilterArr.map((vestingDeal, key) => (
-            <DropdownItem key={key} onClick={() => setVestingDealsFilter(vestingDeal)}>
-              {vestingDeal}
-            </DropdownItem>
-          ))}
-        />
-        <Table>
-          <InfiniteScroll
-            dataLength={data?.length}
-            hasMore={hasMore}
-            loader={
-              <Row columns={'1fr'}>
-                <Cell justifyContent="center">Loading...</Cell>
-              </Row>
-            }
-            next={nextPage}
-          >
-            <TableHead columns={columns.widths}>
-              {tableHeaderCells.map(({ sortKey, title }, index) => (
-                <SortableTH
-                  isActive={order.orderBy === sortKey}
+      <Dropdown
+        currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
+        dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
+        items={vestingDealsFilterArr.map((vestingDeal, key) => (
+          <DropdownItem key={key} onClick={() => setVestingDealsFilter(vestingDeal)}>
+            {vestingDeal}
+          </DropdownItem>
+        ))}
+      />
+      <Table>
+        <InfiniteScroll
+          dataLength={data?.length}
+          hasMore={hasMore}
+          loader={
+            <Row columns={'1fr'}>
+              <Cell justifyContent="center">Loading...</Cell>
+            </Row>
+          }
+          next={nextPage}
+        >
+          <TableHead columns={columns.widths}>
+            {tableHeaderCells.map(({ sortKey, title }, index) => (
+              <SortableTH
+                isActive={order.orderBy === sortKey}
+                key={index}
+                onClick={() => {
+                  handleSort(sortKey)
+                }}
+              >
+                {title}
+              </SortableTH>
+            ))}
+          </TableHead>
+          {!data?.length ? (
+            <BaseCard>No data.</BaseCard>
+          ) : (
+            data.map((item, index) => {
+              const {
+                canVest,
+                chainId,
+                dealAddress,
+                myDealTotal,
+                poolAddress,
+                poolName,
+                tokenToVest,
+                totalVested,
+                vestingPeriodEnds,
+                vestingPeriodStarts,
+              } = item
+              return (
+                <RowLink
+                  columns={columns.widths}
+                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
                   key={index}
-                  onClick={() => {
-                    handleSort(sortKey)
-                  }}
                 >
-                  {title}
-                </SortableTH>
-              ))}
-            </TableHead>
-            {!data?.length ? (
-              <BaseCard>No data.</BaseCard>
-            ) : (
-              data.map((item, index) => {
-                const {
-                  canVest,
-                  chainId,
-                  dealAddress,
-                  myDealTotal,
-                  poolAddress,
-                  poolName,
-                  tokenToVest,
-                  totalVested,
-                  vestingPeriodEnds,
-                  vestingPeriodStarts,
-                } = item
-                return (
-                  <RowLink
-                    columns={columns.widths}
-                    href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
-                    key={index}
+                  <NameCell>{poolName}</NameCell>
+                  <Cell>{tokenToVest}</Cell>
+                  <Cell>{myDealTotal}</Cell>
+                  <AmountToVestCell {...item} />
+                  <Cell>{totalVested}</Cell>
+                  <Deadline
+                    progress={calculateVestingDealLineProgress(
+                      vestingPeriodEnds,
+                      vestingPeriodStarts,
+                    )}
                   >
-                    <NameCell>{poolName}</NameCell>
-                    <Cell>{tokenToVest}</Cell>
-                    <Cell>{myDealTotal}</Cell>
-                    <AmountToVestCell {...item} />
-                    <Cell>{totalVested}</Cell>
-                    <Deadline
-                      progress={calculateVestingDealLineProgress(
-                        vestingPeriodEnds,
-                        vestingPeriodStarts,
-                      )}
+                    {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
+                  </Deadline>
+                  <LinkCell justifyContent={columns.alignment.seePool} light>
+                    <VestActionButton
+                      dealAddress={dealAddress}
+                      disabled={!canVest}
+                      mutate={mutate}
+                    />
+                    <ButtonPrimaryLightSm
+                      onClick={(e) => {
+                        e.preventDefault()
+                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                      }}
                     >
-                      {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
-                    </Deadline>
-                    <LinkCell justifyContent={columns.alignment.seePool} light>
-                      <VestActionButton
-                        dealAddress={dealAddress}
-                        disabled={!canVest}
-                        mutate={mutate}
-                      />
-                      <ButtonPrimaryLightSm
-                        onClick={(e) => {
-                          e.preventDefault()
-                          router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                        }}
-                      >
-                        See Pool
-                      </ButtonPrimaryLightSm>
-                    </LinkCell>
-                  </RowLink>
-                )
-              })
-            )}
-          </InfiniteScroll>
-        </Table>
-      </TableWrapper>
+                      See Pool
+                    </ButtonPrimaryLightSm>
+                  </LinkCell>
+                </RowLink>
+              )
+            })
+          )}
+        </InfiniteScroll>
+      </Table>
     </TableCard>
   )
 }
