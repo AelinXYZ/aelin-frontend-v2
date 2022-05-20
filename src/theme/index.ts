@@ -24,6 +24,11 @@ const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
 export const theme = {
+  button: {
+    fontSize: '1.4rem',
+    height: '36px',
+    padding: '0 24px',
+  },
   buttonPrimary: {
     backgroundColor: rgba(primary, 0.08),
     backgroundColorHover: rgba(primary, 0.2),
@@ -119,7 +124,8 @@ export const theme = {
     maxWidth: '1360px',
     paddingDesktopStart: '20px',
     paddingDesktopWideStart: '20px 40px',
-    paddingMobile: '0 10px 10px 10px',
+    paddingMobile: '0 10px 80px 10px',
+    paddingTabletLandscapeStart: '10px',
   },
   stages: {
     open: green,

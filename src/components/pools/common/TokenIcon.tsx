@@ -32,11 +32,11 @@ const ExternalLink = styled(BaseExternalLink)<{ direction?: Direction }>`
     direction === 'column' &&
     css`
       > svg {
-    height: 8px;
-  width: 8px;
-      margin-top: -1px;
-    `}};
-
+        height: 8px;
+        margin-top: -1px;
+        width: 8px;
+      }
+    `};
 `
 
 ExternalLink.defaultProps = {
@@ -45,18 +45,35 @@ ExternalLink.defaultProps = {
 
 interface Props {
   address: string
+  iconHeight?: number
   network: ChainsValues
   symbol: string
   type?: Direction
+  iconWidth?: number
 }
 
-export const TokenIcon: React.FC<Props> = ({ address, network, symbol, type = 'column' }) => {
+export const TokenIcon: React.FC<Props> = ({
+  address,
+  iconHeight = 18,
+  iconWidth = 18,
+  network,
+  symbol,
+  type = 'column',
+  ...restProps
+}) => {
   const { tokens: tokensBySymbol } = useTokenIcons()
   const investmentTokenImage = tokensBySymbol[symbol.toLowerCase()]?.logoURI
 
   return investmentTokenImage ? (
-    <Wrapper direction={type}>
-      <Image alt={symbol} height={18} src={investmentTokenImage} title={symbol} width={18} />
+    <Wrapper direction={type} {...restProps}>
+      <Image
+        alt={symbol}
+        className="tokenIcon"
+        height={iconHeight}
+        src={investmentTokenImage}
+        title={symbol}
+        width={iconWidth}
+      />
       <ExternalLink direction={type} href={getExplorerUrl(address, network)}>
         {symbol}
       </ExternalLink>

@@ -6,8 +6,6 @@ import { onBoardCSS } from '@/src/theme/onBoard'
 type ThemeType = typeof theme
 
 export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
-  :root {}
-
   html {
     font-size: 10px;
     scroll-behavior: smooth;
@@ -17,7 +15,6 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
     background-color: ${({ theme }) => theme.colors.mainBodyBackground};
-
     color: ${({ theme }) => theme.colors.textColor};
     font-family: ${({ theme }) => theme.fonts.fontFamily};
     font-size: ${({ theme }) => theme.fonts.defaultSize};
@@ -26,7 +23,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     outline-color: ${({ theme }) => theme.colors.secondary};
     width: 100%;
 
-    @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
       background-image: url('/resources/svg/bg-main.svg');
       background-repeat: repeat;
     }
@@ -41,6 +38,10 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     flex-direction: column;
     min-height: 100vh;
     padding: ${({ theme }) => theme.layout.paddingMobile};
+
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+      padding: ${({ theme }) => theme.layout.paddingTabletLandscapeStart};
+    }
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
       padding: ${({ theme }) => theme.layout.paddingDesktopStart};

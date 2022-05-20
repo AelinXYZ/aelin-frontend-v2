@@ -1,6 +1,7 @@
+import { DOMAttributes } from 'react'
 import styled from 'styled-components'
 
-import { StepCircle as BaseStepCircle } from '@/src/components/timeline/StepCircle'
+import { StepCircle as BaseStepCircle } from '@/src/components/steps/StepCircle'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -10,10 +11,6 @@ const Wrapper = styled.div`
   position: relative;
   width: 80px;
 `
-
-Wrapper.defaultProps = {
-  className: 'step',
-}
 
 const StepCircle = styled(BaseStepCircle)`
   position: relative;
@@ -42,14 +39,15 @@ Text.defaultProps = {
   className: 'stepText',
 }
 
-export const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
-  children,
-  isActive,
-  isDone,
-  ...restProps
-}) => {
+interface Props extends DOMAttributes<HTMLDivElement> {
+  className?: string
+  isActive?: boolean
+  isDone?: boolean
+}
+
+export const Step: React.FC<Props> = ({ children, className, isActive, isDone, ...restProps }) => {
   return (
-    <Wrapper {...restProps}>
+    <Wrapper className={`${className} step`} {...restProps}>
       <StepCircle isActive={isActive || isDone} />
       <Text isActive={isActive} isDone={isDone}>
         {children}

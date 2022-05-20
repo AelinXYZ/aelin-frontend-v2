@@ -14,6 +14,7 @@ import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout
 import {
   ButtonWrapper,
   Description,
+  MobileButtonWrapper,
   PrevNextWrapper,
   StepContents,
   Title,
@@ -31,7 +32,7 @@ import {
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
-import { StepIndicator as BaseStepIndicator } from '@/src/components/timeline/StepIndicator'
+import { StepIndicator as BaseStepIndicator } from '@/src/components/steps/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
@@ -60,6 +61,20 @@ const CancelButton = styled(ButtonPrimaryLight)`
   width: 160px;
 `
 
+const BackButton = styled(ButtonPrimaryLight)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: none;
+  }
+`
+
+const ResponsiveError = styled(Error)`
+  text-align: center;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    text-align: left;
+  }
+`
+
 type Props = { poolAddress: string; chainId: ChainsValues }
 
 const CreateDealForm = ({ chainId, poolAddress }: Props) => {
@@ -73,6 +88,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
 
   const {
     createDealState,
+    direction,
     errors,
     handleCreateDeal,
     investmentTokenInfo,
@@ -132,12 +148,13 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
           <StepIndicator
             currentStepOrder={order}
             data={getCreateDealStepIndicatorData(createDealState.currentStep)}
+            direction={direction}
           />
-          {Object.values(CreateDealSteps).map((step) => {
+          {Object.values(CreateDealSteps).map((step, index) => {
             const isStepVisible = createDealState.currentStep === step
 
             return !isStepVisible ? null : (
-              <WrapperGrid>
+              <WrapperGrid key={index}>
                 <PrevNextWrapper>
                   {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
                 </PrevNextWrapper>
@@ -159,30 +176,34 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     totalPurchase={totalPurchase}
                   />
                   {createDealState.currentStep === CreateDealSteps.openPeriod &&
-                    isOpenPeriodDisabled && <Error>Pool supply maxed.</Error>}
-
+                    isOpenPeriodDisabled && <ResponsiveError>Pool supply maxed.</ResponsiveError>}
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error align="center">{currentStepError}</Error>
+                    <ResponsiveError>{currentStepError}</ResponsiveError>
                   )}
                   <ButtonWrapper>
-                    {!isFinalStep ? (
-                      <GradientButton
-                        disabled={!!currentStepError}
-                        onClick={() => moveStep('next')}
-                      >
-                        Next
-                      </GradientButton>
-                    ) : (
-                      <GradientButton
-                        disabled={disableSubmit}
-                        key={`${step}_button`}
-                        onClick={() => {
-                          handleCreateDeal()
-                        }}
-                      >
-                        Create Deal
-                      </GradientButton>
-                    )}
+                    <MobileButtonWrapper>
+                      <BackButton disabled={isFirstStep} onClick={() => moveStep('prev')}>
+                        Back
+                      </BackButton>
+                      {!isFinalStep ? (
+                        <GradientButton
+                          disabled={!!currentStepError}
+                          onClick={() => moveStep('next')}
+                        >
+                          Next
+                        </GradientButton>
+                      ) : (
+                        <GradientButton
+                          disabled={disableSubmit}
+                          key={`${step}_button`}
+                          onClick={() => {
+                            handleCreateDeal()
+                          }}
+                        >
+                          Create Deal
+                        </GradientButton>
+                      )}
+                    </MobileButtonWrapper>
                   </ButtonWrapper>
                   <Summary data={getCreateDealSummaryData(createDealState, isOpenPeriodDisabled)} />
                 </StepContents>
