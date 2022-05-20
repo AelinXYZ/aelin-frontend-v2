@@ -8,7 +8,6 @@ import { SWRConfig } from 'swr'
 import 'sanitize.css'
 import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
-import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
@@ -66,9 +65,7 @@ function App({ Component, pageProps }: AppProps) {
                   <SafeSuspense>
                     <TokenIconsProvider>
                       <Header />
-                      <LeftSidebarLayout>
-                        <Component {...pageProps} />
-                      </LeftSidebarLayout>
+                      <Component {...pageProps} />
                       <Toast />
                     </TokenIconsProvider>
                   </SafeSuspense>
