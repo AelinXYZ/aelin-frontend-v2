@@ -130,7 +130,7 @@ export function dealExchangeRates(
   const dealToken = new Wei(dealTokenAmount, dealTokenDecimals, true)
 
   const investmentRate = dealToken.div(investmentToken)
-  const dealRate = new Wei(1) //.div(investmentRate)
+  const dealRate = new Wei(1).div(investmentRate)
 
   return {
     investmentPerDeal: {
