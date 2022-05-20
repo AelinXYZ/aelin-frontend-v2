@@ -8,8 +8,10 @@ import { SWRConfig } from 'swr'
 import 'sanitize.css'
 import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
+import { MobileMenu } from '@/src/components/navigation/MobileMenu'
 import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
+import LayoutStatusProvider from '@/src/providers/layoutStatusProvider'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
 import TransactionModalProvider from '@/src/providers/transactionModalProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
@@ -50,32 +52,35 @@ function App({ Component, pageProps }: AppProps) {
         <meta content={title} property="og:title" />
         <meta content={twitterHandle} name="twitter:creator" />
       </Head>
-      <ThemeProvider theme={theme}>
-        <SWRConfig
-          value={{
-            suspense: true,
-            revalidateOnFocus: false,
-          }}
-        >
-          <Web3ConnectionProvider>
-            <StakingRewardsProvider>
-              <TransactionModalProvider>
-                <NotificationsProvider>
-                  <GlobalStyle />
-                  <SafeSuspense>
-                    <TokenIconsProvider>
-                      <Header />
-                      <Component {...pageProps} />
-                      <Toast />
-                    </TokenIconsProvider>
-                  </SafeSuspense>
-                  <TooltipConfig />
-                </NotificationsProvider>
-              </TransactionModalProvider>
-            </StakingRewardsProvider>
-          </Web3ConnectionProvider>
-        </SWRConfig>
-      </ThemeProvider>
+      <Web3ConnectionProvider>
+        <LayoutStatusProvider>
+          <ThemeProvider theme={theme}>
+            <SWRConfig
+              value={{
+                suspense: true,
+                revalidateOnFocus: false,
+              }}
+            >
+              <StakingRewardsProvider>
+                <TransactionModalProvider>
+                  <NotificationsProvider>
+                    <GlobalStyle />
+                    <SafeSuspense>
+                      <TokenIconsProvider>
+                        <Header />
+                        <Component {...pageProps} />
+                        <Toast />
+                      </TokenIconsProvider>
+                    </SafeSuspense>
+                    <TooltipConfig />
+                    <MobileMenu />
+                  </NotificationsProvider>
+                </TransactionModalProvider>
+              </StakingRewardsProvider>
+            </SWRConfig>
+          </ThemeProvider>
+        </LayoutStatusProvider>
+      </Web3ConnectionProvider>
     </>
   )
 }

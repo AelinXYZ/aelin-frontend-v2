@@ -32,6 +32,7 @@ import { DetailedNumber } from '@/types/utils'
 export type ParsedAelinPool = {
   name: string
   nameFormatted: string
+  symbol: string
   chainId: ChainsValues
   address: string
   start: Date
@@ -119,6 +120,7 @@ export const getParsedPool = ({
     chainId,
     poolStatus: pool.poolStatus,
     name: pool.name,
+    symbol: pool.symbol,
     nameFormatted: pool.name.split('aePool-').pop() || '',
     poolType: pool.hasAllowList ? 'Private' : 'Public',
     address: poolAddress,

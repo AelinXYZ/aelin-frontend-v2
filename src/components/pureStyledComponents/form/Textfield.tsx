@@ -81,7 +81,7 @@ export const TextfieldCSS = css<TexfieldCSSProps>`
       ? textField.errorColor
       : status === TextfieldState.success
       ? textField.successColor
-      : textField.active.borderColor};
+      : textField.borderColor};
   border-radius: ${({ theme: { textField } }) => textField.borderRadius};
   border-style: ${({ theme: { textField } }) => textField.borderStyle};
   border-width: ${({ theme: { textField } }) => textField.borderWidth};

@@ -6,7 +6,7 @@ import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
 
 const Aelin = ({ ...restProps }) => {
   return (
-    <CollapsibleBlock title={'Aelin'} {...restProps}>
+    <CollapsibleBlock name="aelin" title={'Aelin'} {...restProps}>
       <AelinData />
       <BuyAelin />
     </CollapsibleBlock>

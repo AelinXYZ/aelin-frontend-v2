@@ -6,8 +6,12 @@ import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 const Grid = styled.div`
   display: grid;
   gap: 8px;
-  grid-template-columns: 1fr 1fr 1fr;
-  width: 376px;
+  max-width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 376px;
+  }
 `
 
 interface InputDeadlineProps {
@@ -23,7 +27,9 @@ enum durationTypes {
   hours = 'hours',
   minutes = 'minutes',
 }
+
 const MAX_LENGTH = 6
+
 export const HMSInput = ({
   defaultValue = { days: undefined, hours: undefined, minutes: undefined },
   onChange,

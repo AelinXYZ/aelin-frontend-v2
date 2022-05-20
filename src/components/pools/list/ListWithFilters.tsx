@@ -22,17 +22,18 @@ const Wrapper = styled.div`
   gap: var(--gap);
   margin-bottom: 20px;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     grid-template-columns: 1fr 1fr;
   }
 `
 
 const FiltersDropdowns = styled.div`
   display: grid;
-  gap: var(--gap);
+  gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    grid-template-columns: 1fr 1fr 1fr;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    gap: var(--gap);
   }
 `
 

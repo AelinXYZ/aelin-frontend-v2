@@ -13,14 +13,14 @@ export const ButtonCSS = css`
   cursor: pointer;
   display: flex;
   font-family: ${({ theme }) => theme.fonts.fontFamily};
-  font-size: 1.4rem;
+  font-size: ${({ theme }) => theme.fonts.fontSize};
   font-weight: 400;
   gap: 8px;
-  height: 36px;
+  height: ${({ theme }) => theme.button.height};
   justify-content: center;
   line-height: 1;
   outline: none;
-  padding: 0 24px;
+  padding: ${({ theme }) => theme.button.padding};
   text-align: center;
   text-decoration: none;
   transition: all 0.15s ease-out;
@@ -66,7 +66,7 @@ export const ButtonPrimaryLightCSS = css`
 
   &[disabled],
   &[disabled]:hover {
-    background-color: ${({ theme }) => theme.buttonPrimaryLight.borderColor};
+    background-color: ${({ theme }) => theme.buttonPrimaryLight.backgroundColor};
     border-color: ${({ theme }) => theme.buttonPrimaryLight.borderColor};
     color: ${({ theme }) => theme.buttonPrimaryLight.color};
   }
@@ -170,12 +170,16 @@ export const ButtonDropdownCSS = css`
   border-style: ${({ theme }) => theme.textField.borderStyle};
   border-width: ${({ theme }) => theme.textField.borderWidth};
   color: ${({ theme }) => theme.buttonDropdown.color};
-  justify-content: space-between;
+  justify-content: center;
   padding-left: 20px;
   padding-right: 14px;
   position: relative;
   transition: transform 0.15s linear;
   width: 100%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    justify-content: space-between;
+  }
 
   &:active {
     opacity: 1;

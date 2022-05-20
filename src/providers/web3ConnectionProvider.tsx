@@ -54,9 +54,10 @@ const RPC_URL = 'https://<network>.infura.io/v3/<INFURA_KEY>'
 export enum WalletType {
   MetaMask = 'metamask',
   Ledger = 'ledger',
-  Portis = 'portis',
+  //Portis = 'portis',
   Trezor = 'trezor',
-  Coinbase = 'coinbase',
+  //Coinbase = 'coinbase',
+  Gnosis = 'gnosis',
   WalletConnect = 'walletConnect',
 }
 
@@ -88,11 +89,6 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
           preferred: true,
         },
         {
-          walletName: WalletType.Portis,
-          apiKey: PORTIS_KEY,
-          preferred: true,
-        },
-        {
           walletName: WalletType.Trezor,
           appUrl: APP_URL,
           email: CONTACT_EMAIL,
@@ -100,7 +96,7 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
           preferred: true,
         },
         {
-          walletName: WalletType.Coinbase,
+          walletName: WalletType.Gnosis,
           preferred: true,
         },
         {
