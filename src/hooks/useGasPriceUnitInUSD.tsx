@@ -6,7 +6,7 @@ import Wei, { wei } from '@synthetixio/wei'
 import ms from 'ms'
 import useSWR from 'swr'
 
-import { mainnetRpcProvider } from './useEnsName'
+import { mainnetRpcProvider } from './useEnsResolvers'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getExchangeRatesForCurrencies, iStandardSynth, synthToAsset } from '@/src/utils/gasUtils'
 
