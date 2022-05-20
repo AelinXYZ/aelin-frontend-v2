@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import debounce from 'lodash/debounce'
 
@@ -27,23 +27,21 @@ const Wrapper = styled.div`
   }
 `
 
-const FiltersDropdowns = styled.div`
-  display: grid;
-  gap: 10px;
-  grid-template-columns: 1fr 1fr 1fr;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    gap: var(--gap);
+const DropdownItemsCSS = css`
+  .dropdownItems {
+    min-width: 0;
+    max-width: 100%;
   }
 `
 
 const SearchWrapper = styled.div`
   position: relative;
+  z-index: 10;
+
+  ${DropdownItemsCSS}
 
   .dropdownItems {
     background-color: ${({ theme }) => theme.colors.gray};
-    min-width: 0;
-    max-width: 100%;
   }
 `
 
@@ -74,6 +72,20 @@ const SearchDropdownButton = styled(ButtonDropdown)`
   .isOpen & {
     background-color: ${({ theme }) => theme.colors.gray};
   }
+`
+
+const FiltersDropdowns = styled.div`
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
+  position: relative;
+  z-index: 5;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    gap: var(--gap);
+  }
+
+  ${DropdownItemsCSS}
 `
 
 type SearchOptionsType = {
@@ -114,11 +126,8 @@ export const ListWithFilters: React.FC = () => {
   })
 
   const [searchString, setSearchString] = useState('')
-
   const [poolFilter, setPoolFilter] = useState('')
-
   const [stateFilterId, setStateFilterId] = useState(0)
-
   const [nowSeconds, setNow] = useState<string>()
 
   const changeHandler = useCallback(() => {

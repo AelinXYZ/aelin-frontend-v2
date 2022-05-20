@@ -115,6 +115,7 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   text-decoration: none;
   transition: background-color 0.15s linear;
   user-select: none;
+  white-space: normal;
 
   &.isActive {
     background-color: ${({ theme }) => theme.dropdown.item.backgroundColorActive};
