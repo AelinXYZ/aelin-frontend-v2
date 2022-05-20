@@ -5,9 +5,11 @@ import styled from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { Deadline } from '../common/Deadline'
+import { Dropdown, DropdownItem } from '../common/Dropdown'
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
+  ButtonDropdown,
   ButtonPrimaryLightSm,
   GradientButtonSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -27,7 +29,10 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinClaimableTokens from '@/src/hooks/aelin/useAelinClaimableTokens'
-import useAelinVestingDeals, { ParsedVestingDeal } from '@/src/hooks/aelin/useAelinVestingDeals'
+import useAelinVestingDeals, {
+  ParsedVestingDeal,
+  VestingDealsFilter,
+} from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress } from '@/src/utils/aelinPoolUtils'
@@ -92,12 +97,18 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     orderBy: VestingDeal_OrderBy.VestingPeriodEnds,
     orderDirection: OrderDirection.Desc,
   })
+  const [vestingDealsFilter, setVestingDealsFilter] = useState<VestingDealsFilter>(
+    VestingDealsFilter.Active,
+  )
 
-  const { data, error, hasMore, mutate, nextPage } = useAelinVestingDeals({
-    where: { user: user?.toLocaleLowerCase() || ZERO_ADDRESS },
-    orderBy: order.orderBy,
-    orderDirection: order.orderDirection,
-  })
+  const { data, error, hasMore, mutate, nextPage } = useAelinVestingDeals(
+    {
+      where: { user: user?.toLocaleLowerCase() || ZERO_ADDRESS },
+      orderBy: order.orderBy,
+      orderDirection: order.orderDirection,
+    },
+    vestingDealsFilter,
+  )
 
   if (error) {
     throw error
@@ -151,10 +162,21 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     }
   }
 
+  const vestingDealsFilterArr = Object.values(VestingDealsFilter) as Array<VestingDealsFilter>
+
   return (
     <TableCard {...restProps}>
       <Title>Vest Deal Tokens</Title>
       <TableWrapper>
+        <Dropdown
+          currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
+          dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
+          items={vestingDealsFilterArr.map((vestingDeal, key) => (
+            <DropdownItem key={key} onClick={() => setVestingDealsFilter(vestingDeal)}>
+              {vestingDeal}
+            </DropdownItem>
+          ))}
+        />
         <Table>
           <InfiniteScroll
             dataLength={data?.length}
