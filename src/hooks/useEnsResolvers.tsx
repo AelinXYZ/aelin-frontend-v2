@@ -1,16 +1,14 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
 import useSWR from 'swr'
 
-import { Chains, ChainsValues, getNetworkConfig } from '../constants/chains'
-import { useWeb3Connection } from '../providers/web3ConnectionProvider'
+import { Chains, getNetworkConfig } from '../constants/chains'
 
 const { rpcUrl } = getNetworkConfig(Chains.mainnet)
 
 export const mainnetRpcProvider = new JsonRpcProvider(rpcUrl)
 
-export const useEnsLookUpAddress = (address: string, network: ChainsValues) => {
-  const { getExplorerUrl } = useWeb3Connection()
-
+// Get ens name by address
+export const useEnsLookUpAddress = (address: string) => {
   const { data, isValidating } = useSWR(
     mainnetRpcProvider && address ? ['ensLookUpAddress', address] : null,
 
@@ -23,24 +21,17 @@ export const useEnsLookUpAddress = (address: string, network: ChainsValues) => {
         return address
       }
     },
-    {
-      refreshWhenHidden: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-      refreshWhenOffline: false,
-    },
   )
 
   return {
     data,
     isValidating,
-    explorerUrl: getExplorerUrl(address, network),
   }
 }
 
 const isValidENSName = (str: string) => str.length > 3 && str.includes('.')
 
+// get address by ens name
 export const ensResolver = async (name: string) => {
   if (isValidENSName(name)) {
     try {

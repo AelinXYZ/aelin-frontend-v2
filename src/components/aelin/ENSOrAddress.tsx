@@ -5,7 +5,8 @@ import { isAddress } from '@ethersproject/address'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { ChainsValues } from '@/src/constants/chains'
-import { useEnsLookUpAddress } from '@/src/hooks/useEnsName'
+import { useEnsLookUpAddress } from '@/src/hooks/useEnsResolvers'
+import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { shortenAddress } from '@/src/utils/string'
 
 const loadingAnimation = keyframes`
@@ -36,10 +37,10 @@ const ENSOrAddress: React.FC<{
   address: string
   network: ChainsValues
 }> = ({ address, network, ...restProps }) => {
-  const { data, explorerUrl } = useEnsLookUpAddress(address, network)
+  const { data } = useEnsLookUpAddress(address)
 
   return data ? (
-    <ExternalLink {...restProps} href={explorerUrl}>
+    <ExternalLink {...restProps} href={getExplorerUrl(address, network)}>
       {isAddress(data) ? shortenAddress(data) : data}
     </ExternalLink>
   ) : null

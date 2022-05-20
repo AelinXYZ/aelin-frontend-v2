@@ -4,9 +4,9 @@ import { Deadline } from '@/src/components/common/Deadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
 const Column = styled.div`
   display: flex;
@@ -19,7 +19,6 @@ export const VestingInformation: React.FC<{
   pool: ParsedAelinPool
 }> = ({ pool }) => {
   const { deal } = pool
-  const { getExplorerUrl } = useWeb3Connection()
 
   return !deal ? (
     <div>No Deal presented yet.</div>
@@ -28,14 +27,19 @@ export const VestingInformation: React.FC<{
       <Column>
         <InfoCell
           title="Name"
-          value={<ExternalLink href={getExplorerUrl(pool.dealAddress || '')} label={deal.name} />}
+          value={
+            <ExternalLink
+              href={getExplorerUrl(pool.dealAddress || '', pool.chainId)}
+              label={deal.name}
+            />
+          }
         />
         <InfoCell
           title="Deal token"
           tooltip="??"
           value={
             <ExternalLink
-              href={getExplorerUrl(deal.underlyingToken.token)}
+              href={getExplorerUrl(deal.underlyingToken.token, pool.chainId)}
               label={deal.underlyingToken.symbol}
             />
           }

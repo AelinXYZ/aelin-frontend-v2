@@ -3,6 +3,7 @@ import {
   ReactNode,
   SetStateAction,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -17,6 +18,7 @@ import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
 import nullthrows from 'nullthrows'
 import { toast } from 'react-hot-toast'
 
+import { getExplorerUrl } from '../utils/getExplorerUrl'
 import {
   Chains,
   ChainsValues,
@@ -27,6 +29,9 @@ import {
 import { RequiredNonNull } from '@/types/utils'
 
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
+
+// give onboard a window to update its internal state after certain actions
+const ONBOARD_STATE_DELAY = 100
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME
 
@@ -62,9 +67,11 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
     return
   }
 
+  const networkConfig = getNetworkConfig(appChainId)
+
   window.onboard = Onboard({
     networkId: appChainId,
-    networkName: getNetworkConfig(appChainId).name,
+    networkName: networkConfig.name,
     hideBranding: true,
     darkMode: true, // @TODO: it is a default value
     walletSelect: {
@@ -77,7 +84,7 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
         },
         {
           walletName: WalletType.Ledger,
-          rpcUrl: RPC_URL,
+          rpcUrl: networkConfig.rpcUrl,
           preferred: true,
         },
         {
@@ -89,7 +96,7 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
           walletName: WalletType.Trezor,
           appUrl: APP_URL,
           email: CONTACT_EMAIL,
-          rpcUrl: RPC_URL,
+          rpcUrl: networkConfig.rpcUrl,
           preferred: true,
         },
         {
@@ -128,13 +135,13 @@ export type Web3Context = {
   isAppConnected: boolean
   isWalletConnected: boolean
   isWalletNetworkSupported: boolean
-  pushNetwork: (chainId: ChainsValues) => Promise<void>
+  pushNetwork: (chainId?: ChainsValues) => Promise<void>
   readOnlyAppProvider: JsonRpcProvider
   setAppChainId: Dispatch<SetStateAction<ChainsValues>>
   wallet: Wallet | null
   walletChainId: number | null
   web3Provider: Web3Provider | null
-  getExplorerUrl: (hash: string, chainId?: ChainsValues) => string
+  getExplorerUrl: (hash: string) => string
 }
 
 const Web3ContextConnection = createContext<Web3Context | undefined>(undefined)
@@ -150,14 +157,14 @@ export default function Web3ConnectionProvider({ children }: Props) {
   const [wallet, setWallet] = useState<Wallet | null>(null)
   const [appChainId, setAppChainId] = useState<ChainsValues>(INITIAL_APP_CHAIN_ID)
   const supportedChainIds = getChainsByEnvironmentArray().map(({ chainId }) => chainId)
-  const web3Provider =
-    wallet !== null && wallet.provider !== null ? new Web3Provider(wallet.provider) : null
 
-  const isWalletConnected = web3Provider !== null && address !== null
+  const web3Provider = wallet?.provider != null ? new Web3Provider(wallet.provider) : null
+
+  const isWalletConnected = web3Provider != null && address != null
 
   const isAppConnected = walletChainId === appChainId && address !== null && web3Provider !== null
 
-  const isWalletNetworkSupported = supportedChainIds.includes(walletChainId as ChainsValues)
+  const isWalletNetworkSupported = supportedChainIds.includes(walletChainId as any)
 
   const readOnlyAppProvider = useMemo(
     () => new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl, appChainId),
@@ -177,10 +184,6 @@ export default function Web3ConnectionProvider({ children }: Props) {
     }
   }
 
-  useEffect(() => {
-    if (isWalletNetworkSupported && walletChainId) setAppChainId(walletChainId as ChainsValues)
-  }, [isWalletNetworkSupported, walletChainId])
-
   // Instantiate Onboard
   useEffect(() => {
     initOnboard(INITIAL_APP_CHAIN_ID, {
@@ -189,11 +192,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
       },
       address: async (address: string | undefined) => {
         toast.dismiss()
-        if (address) {
-          setAddress(getAddress(address))
-        } else {
-          setAddress(null)
-        }
+        if (address) setAddress(getAddress(address))
       },
       wallet: async (wallet: Wallet) => {
         if (wallet.name === undefined) {
@@ -208,7 +207,9 @@ export default function Web3ConnectionProvider({ children }: Props) {
 
   // recover previous connection
   useEffect(() => {
-    _reconnectWallet()
+    setTimeout(async () => {
+      await _reconnectWallet()
+    }, ONBOARD_STATE_DELAY)
   }, [])
 
   // efectively connect wallet
@@ -254,7 +255,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
     }
   }
 
-  const pushNetwork = async (chainId: ChainsValues): Promise<void> => {
+  const pushNetwork = async (chainId?: ChainsValues): Promise<void> => {
     if (!onboard || !wallet || wallet.name !== 'MetaMask') {
       console.warn('Unable to push network')
       return
@@ -289,13 +290,10 @@ export default function Web3ConnectionProvider({ children }: Props) {
     }
   }
 
-  const getExplorerUrl = useMemo(() => {
-    return (hash: string, chainId?: ChainsValues) => {
-      const url = chainsConfig[chainId || appChainId]?.blockExplorerUrls[0]
-      const type = hash.length > 42 ? 'tx' : 'address'
-      return `${url}${type}/${hash}`
-    }
-  }, [appChainId])
+  const _getExplorerUrl = useCallback(
+    (hash: string) => getExplorerUrl(hash, appChainId),
+    [appChainId],
+  )
 
   const value = {
     isAppConnected,
@@ -307,7 +305,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
     address,
     readOnlyAppProvider,
     web3Provider,
-    getExplorerUrl,
+    getExplorerUrl: _getExplorerUrl,
     connectWallet,
     disconnectWallet,
     pushNetwork,

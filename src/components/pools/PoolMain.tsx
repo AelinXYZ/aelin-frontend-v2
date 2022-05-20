@@ -25,7 +25,7 @@ import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { PoolAction, PoolTab } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
@@ -76,15 +76,13 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     },
   )
 
-  const { getExplorerUrl } = useWeb3Connection()
-
   return (
     <>
       <Head>
         <title>Aelin - {pool.nameFormatted}</title>
       </Head>
       <PageTitle
-        href={getExplorerUrl(pool.address || '')}
+        href={getExplorerUrl(pool.address || '', pool.chainId)}
         subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
         title={pool.nameFormatted}
       />
