@@ -1,9 +1,8 @@
 import styled from 'styled-components'
 
-import { Cell } from '@/src/components/pureStyledComponents/common/Table'
+import { Cell, CellProps } from '@/src/components/pureStyledComponents/common/Table'
 
-const Wrapper = styled(Cell)`
-  color: ${({ theme }) => theme.colors.textColor};
+const Wrapper = styled.div`
   font-weight: 500;
   gap: 10px;
   overflow: hidden;
@@ -11,9 +10,10 @@ const Wrapper = styled(Cell)`
   white-space: nowrap;
 `
 
-export const NameCell: React.FC<{ mobileJustifyContent?: string }> = ({
-  children,
-  ...restProps
-}) => {
-  return <Wrapper {...restProps}>{children}</Wrapper>
+export const NameCell: React.FC<CellProps> = ({ children, light, ...restProps }) => {
+  return (
+    <Wrapper as={Cell} light={light} {...restProps}>
+      {children}
+    </Wrapper>
+  )
 }
