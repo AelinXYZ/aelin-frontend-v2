@@ -25,7 +25,7 @@ import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/consta
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
-import { calculateInvestmentDeadlineProgress } from '@/src/utils/aelinPoolUtils'
+import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 const Name = styled.span`
@@ -199,7 +199,7 @@ export const List: React.FC<{
                     />
                   </HideOnDesktop>
                 </Cell>
-                <Deadline progress={calculateInvestmentDeadlineProgress(purchaseExpiry, start)}>
+                <Deadline progress={calculateDeadlineProgress(purchaseExpiry, start)}>
                   {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
                 </Deadline>
                 <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
