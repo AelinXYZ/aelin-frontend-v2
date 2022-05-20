@@ -110,7 +110,7 @@ const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
         <Button>{isExpanded ? <ArrowUp /> : <ArrowDown />}</Button>
       </Header>
       <CollapsableContents className="collapsableContents" isExpanded={isExpanded}>
-        <ContentsInner>{children}</ContentsInner>
+        <ContentsInner className="contentsInner">{children}</ContentsInner>
       </CollapsableContents>
     </Wrapper>
   )

@@ -57,6 +57,10 @@ export const TimelineWrapper = styled(CollapsibleBlock)`
       max-height: none !important;
       padding: 0;
     }
+
+    .contentsInner {
+      padding: 0;
+    }
   }
 `
 
