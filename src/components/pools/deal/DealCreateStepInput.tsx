@@ -119,7 +119,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
       ) : step === CreateDealSteps.totalPurchaseAmount ? (
         <>
           <TextfieldNarrow
-            defaultValue={0}
+            defaultValue={''}
             disabled={totalPurchase === 'all'}
             name={step}
             onChange={(e) => {
@@ -150,7 +150,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
               checked={totalPurchase === 'partial'}
               label="Partial"
               onClick={() => {
-                onSetDealField(0)
+                onSetDealField('')
                 onSetTotalPurchase('partial')
               }}
             />
