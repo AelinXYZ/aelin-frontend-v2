@@ -32,11 +32,15 @@ const Header = styled.div`
 
 const Title = styled.h3`
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
   padding: 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    font-size: 1.8rem;
+  }
 `
 
 const CollapsableContents = styled.section<{ isExpanded?: boolean }>`
