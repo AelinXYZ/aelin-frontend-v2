@@ -3,6 +3,10 @@ import styled from 'styled-components'
 
 const Wrapper = styled.svg``
 
+Wrapper.defaultProps = {
+  className: 'networkIcon',
+}
+
 export const Mainnet: React.FC<{ className?: string }> = (props) => (
   <Wrapper
     className={`mainnet ${props.className}`}

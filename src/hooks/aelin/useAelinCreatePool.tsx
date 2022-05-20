@@ -321,21 +321,20 @@ export const getCreatePoolStepIndicatorData = (
 export default function useAelinCreatePool(chainId: ChainsValues) {
   const [createPoolState, dispatch] = useReducer(createPoolReducer, initialState)
   const [errors, setErrors] = useState<poolErrors>()
-
+  const [direction, setDirection] = useState<'next' | 'prev' | undefined>()
   const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
-
   const router = useRouter()
-
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
-
   const { estimate: createPoolEstimate, execute } = useAelinPoolCreateTransaction(
     contracts.POOL_CREATE.address[chainId],
     'createPool',
   )
 
-  const moveStep = (value: 'next' | 'prev' | CreatePoolSteps) => {
+  const moveStep = (value: 'next' | 'prev') => {
     const { currentStep } = createPoolState
     const currentStepOrder = createPoolConfig[currentStep].order
+
+    setDirection(value)
 
     if (value === 'next') {
       const nextStep = createPoolConfigArr.find(({ order }) => order === currentStepOrder + 1)
@@ -454,14 +453,15 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   }, [createPoolState])
 
   return {
-    setPoolField,
     createPoolState,
-    moveStep,
-    isFinalStep,
+    direction,
     errors,
-    isFirstStep,
     handleCreatePool,
+    isFinalStep,
+    isFirstStep,
     isSubmitting,
+    moveStep,
+    setPoolField,
     showWarningOnLeave,
   }
 }

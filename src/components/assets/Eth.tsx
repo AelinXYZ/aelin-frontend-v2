@@ -3,6 +3,10 @@ import styled from 'styled-components'
 
 const Wrapper = styled.svg``
 
+Wrapper.defaultProps = {
+  className: 'networkIcon',
+}
+
 export const Eth: React.FC<{ className?: string }> = (props) => (
   <Wrapper
     className={`eth ${props.className}`}
