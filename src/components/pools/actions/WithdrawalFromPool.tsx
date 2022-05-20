@@ -93,6 +93,7 @@ function WithdrawalFromPool({ pool }: Props) {
         maxValue={(balance || ZERO_BN).toString()}
         maxValueFormatted={maxValueFormatted}
         setValue={setTokenInputValue}
+        symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
       <GradientButton disabled={disableButton} onClick={withdrawFromPool}>
