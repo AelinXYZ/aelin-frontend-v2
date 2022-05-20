@@ -8,7 +8,6 @@ import { wei } from '@synthetixio/wei'
 
 import { Modal } from '../../common/Modal'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
-import { PageTitle } from '@/src/components/common/PageTitle'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import {
@@ -32,6 +31,7 @@ import {
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
+import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/steps/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'

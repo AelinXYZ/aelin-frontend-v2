@@ -13,7 +13,6 @@ import useAelinUser, { ParsedUser } from '@/src/hooks/aelin/useAelinUser'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 
 const Wrapper = styled.div`
   box-sizing: border-box;

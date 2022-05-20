@@ -2,9 +2,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
-import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { ListWithFilters } from '@/src/components/pools/list/ListWithFilters'
+import { SectionIntro } from '@/src/components/section/SectionIntro'
 
 const Home: NextPage = () => {
   const router = useRouter()
