@@ -9,6 +9,7 @@ import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/butt
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
+  HideOnDesktop,
   LinkCell,
   LoadingTableRow,
   RowLink,
@@ -112,9 +113,17 @@ export const List: React.FC = () => {
 
             return (
               <RowLink columns={columns.widths} href={`/`} key={index}>
-                <ENSOrAddress address={sponsor} light network={network as ChainsValues} />
-                <Cell>{dealsCreated}</Cell>
-                <LinkCell className="cellLink" justifyContent={columns.alignment.seeMore}>
+                <ENSOrAddress
+                  address={sponsor}
+                  light
+                  mobileJustifyContent="center"
+                  network={network as ChainsValues}
+                />
+                <Cell mobileJustifyContent="center">
+                  <HideOnDesktop>Deals created:&nbsp;</HideOnDesktop>
+                  {dealsCreated}
+                </Cell>
+                <LinkCell justifyContent={columns.alignment.seeMore} mobileJustifyContent="center">
                   <ButtonPrimaryLightSm
                     onClick={(e) => {
                       e.stopPropagation()
