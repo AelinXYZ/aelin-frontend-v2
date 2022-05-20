@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
@@ -16,8 +17,15 @@ import {
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
+import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues } from '@/src/constants/chains'
+
+const Search = styled(BaseSearch)`
+  margin-bottom: 20px;
+  max-width: 100%;
+  width: 560px;
+`
 
 export const List: React.FC = () => {
   const router = useRouter()
@@ -85,60 +93,66 @@ export const List: React.FC = () => {
   }
 
   return (
-    <InfiniteScroll
-      dataLength={mockedSponsors.length}
-      hasMore={false}
-      loader={<LoadingTableRow />}
-      next={() => console.log('load next page')}
-    >
-      <TableHead columns={columns.widths}>
-        {tableHeaderCells.map(({ sortKey, title }, index) => (
-          <SortableTH
-            isActive={sortBy === sortKey}
-            key={index}
-            onClick={() => {
-              handleSort(sortKey)
-            }}
-          >
-            {title}
-          </SortableTH>
-        ))}
-      </TableHead>
-      {!mockedSponsors?.length ? (
-        <BaseCard>No sponsors.</BaseCard>
-      ) : (
-        <TableBody>
-          {mockedSponsors.map((item, index) => {
-            const { dealsCreated, network, sponsor } = item
+    <>
+      <Search placeholder="Enter sponsor name..." />
+      <InfiniteScroll
+        dataLength={mockedSponsors.length}
+        hasMore={false}
+        loader={<LoadingTableRow />}
+        next={() => console.log('load next page')}
+      >
+        <TableHead columns={columns.widths}>
+          {tableHeaderCells.map(({ sortKey, title }, index) => (
+            <SortableTH
+              isActive={sortBy === sortKey}
+              key={index}
+              onClick={() => {
+                handleSort(sortKey)
+              }}
+            >
+              {title}
+            </SortableTH>
+          ))}
+        </TableHead>
+        {!mockedSponsors?.length ? (
+          <BaseCard>No sponsors.</BaseCard>
+        ) : (
+          <TableBody>
+            {mockedSponsors.map((item, index) => {
+              const { dealsCreated, network, sponsor } = item
 
-            return (
-              <RowLink columns={columns.widths} href={`/`} key={index}>
-                <ENSOrAddress
-                  address={sponsor}
-                  light
-                  mobileJustifyContent="center"
-                  network={network as ChainsValues}
-                />
-                <Cell mobileJustifyContent="center">
-                  <HideOnDesktop>Deals created:&nbsp;</HideOnDesktop>
-                  {dealsCreated}
-                </Cell>
-                <LinkCell justifyContent={columns.alignment.seeMore} mobileJustifyContent="center">
-                  <ButtonPrimaryLightSm
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      router.push(`/`)
-                    }}
+              return (
+                <RowLink columns={columns.widths} href={`/`} key={index}>
+                  <ENSOrAddress
+                    address={sponsor}
+                    light
+                    mobileJustifyContent="center"
+                    network={network as ChainsValues}
+                  />
+                  <Cell mobileJustifyContent="center">
+                    <HideOnDesktop>Deals created:&nbsp;</HideOnDesktop>
+                    {dealsCreated}
+                  </Cell>
+                  <LinkCell
+                    justifyContent={columns.alignment.seeMore}
+                    mobileJustifyContent="center"
                   >
-                    See more
-                  </ButtonPrimaryLightSm>
-                </LinkCell>
-              </RowLink>
-            )
-          })}
-        </TableBody>
-      )}
-    </InfiniteScroll>
+                    <ButtonPrimaryLightSm
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/`)
+                      }}
+                    >
+                      See more
+                    </ButtonPrimaryLightSm>
+                  </LinkCell>
+                </RowLink>
+              )
+            })}
+          </TableBody>
+        )}
+      </InfiniteScroll>
+    </>
   )
 }
 
