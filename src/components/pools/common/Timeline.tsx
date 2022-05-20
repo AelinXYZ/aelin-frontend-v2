@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import { Deadline } from '@/src/components/common/Deadline'
-import { StepCircleBig as BaseStepCircle } from '@/src/components/timeline/StepCircle'
+import { StepCircleBig as BaseStepCircle } from '@/src/components/steps/StepCircle'
 import { PoolTimelineState, PoolTimelineStateTitles } from '@/src/constants/types'
 import { TimelineSteps } from '@/types/aelinPool'
 
@@ -127,7 +127,6 @@ export const Timeline: React.FC<{ timelineSteps?: TimelineSteps }> = ({
   ...restProps
 }) => {
   const isStepDefined = (state: PoolTimelineState) => timelineSteps?.[state]?.isDefined
-
   const items = [
     PoolTimelineState.poolCreation,
     PoolTimelineState.investmentWindow,

@@ -37,7 +37,8 @@ const Title = styled.h3`
   padding: 0;
 `
 
-const Contents = styled.section`
+const CollapsableContents = styled.section<{ isExpanded?: boolean }>`
+  display: ${({ isExpanded }) => (isExpanded ? 'block' : 'none')};
   padding-top: 20px;
 `
 
@@ -93,11 +94,13 @@ const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
 
   return (
     <Wrapper state={state} {...restProps}>
-      <Header>
+      <Header className="header">
         <Title>{title}</Title>
         <Button onClick={toggleCollapse}>{isExpanded ? <ArrowUp /> : <ArrowDown />}</Button>
       </Header>
-      {isExpanded && <Contents>{children}</Contents>}
+      <CollapsableContents className="collapsableContents" isExpanded={isExpanded}>
+        {children}
+      </CollapsableContents>
     </Wrapper>
   )
 }
