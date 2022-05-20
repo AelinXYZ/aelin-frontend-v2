@@ -25,7 +25,7 @@ export type LayoutStatusContextType = {
   }
 }
 
-const LayoutStatusContext = createContext<LayoutStatusContextType>({} as any)
+const LayoutStatusContext = createContext<LayoutStatusContextType>({} as LayoutStatusContextType)
 
 const LayoutStatusContextProvider: React.FC = ({ children }) => {
   const [activeMyPoolsFilter, setActiveMyPoolsFilter] = useState<MyPoolsFilter>(
