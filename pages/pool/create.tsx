@@ -57,6 +57,7 @@ const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
   const {
     createPoolState,
+    direction,
     errors,
     handleCreatePool,
     isFinalStep,
@@ -95,6 +96,7 @@ const Create: NextPage = () => {
           <StepIndicator
             currentStepOrder={order}
             data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
+            direction={direction}
           />
           {Object.values(CreatePoolSteps).map((step, index) => {
             const isStepVisible = createPoolState.currentStep === step

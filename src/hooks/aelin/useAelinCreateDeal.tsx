@@ -361,19 +361,19 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   const [createDealState, dispatch] = useReducer(createDealReducer, initialState)
   const [errors, setErrors] = useState<dealErrors>()
   const [investmentTokenInfo, setInvestmentTokenInfo] = useState<Token | null>(null)
-
+  const [direction, setDirection] = useState<'next' | 'prev' | undefined>()
   const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
-
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
-
   const { estimate: createDealEstimate, execute } = useAelinPoolTransaction(
     pool.address,
     'createDeal',
   )
 
-  const moveStep = (value: 'next' | 'prev' | CreateDealSteps) => {
+  const moveStep = (value: 'next' | 'prev') => {
     const { currentStep } = createDealState
     const currentStepOrder = createDealConfig[currentStep].order
+
+    setDirection(value)
 
     if (value === 'next') {
       const nextStep = createDealConfigArr.find(({ order }) => order === currentStepOrder + 1)
@@ -524,15 +524,16 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
   }, [createDealState])
 
   return {
-    setDealField,
     createDealState,
-    moveStep,
-    isFinalStep,
+    direction,
     errors,
+    handleCreateDeal,
+    investmentTokenInfo,
+    isFinalStep,
     isFirstStep,
     isSubmitting,
-    investmentTokenInfo,
-    handleCreateDeal,
+    moveStep,
+    setDealField,
     showWarningOnLeave,
   }
 }

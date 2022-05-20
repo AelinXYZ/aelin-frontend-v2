@@ -68,67 +68,63 @@ const Step = styled(BaseStep)`
 `
 
 interface Props {
+  currentStepOrder: number
   data: { title: string; isActive: boolean }[]
-  currentStepOrder?: number
+  direction: 'next' | 'prev' | undefined
 }
 
-type Direction = 'forward' | 'backward' | undefined
-
-export const StepIndicator: React.FC<Props> = ({ currentStepOrder = 0, data, ...restProps }) => {
-  const [currentStep, setCurrentStep] = useState(1)
-  const [direction, setDirection] = useState<Direction>(undefined)
+export const StepIndicator: React.FC<Props> = ({
+  currentStepOrder,
+  data,
+  direction,
+  ...restProps
+}) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const wrapperWidth = wrapperRef.current?.clientWidth
-  const currentElementRightX = useMemo(() => currentStepOrder * STEP_WIDTH, [currentStepOrder])
-  const currentElementLeftX = useMemo(() => (currentStepOrder - 1) * STEP_WIDTH, [currentStepOrder])
-  const [scrollLeft, setScrollLeft] = useState(0)
-  const currentElementIsOutOfBounds = useMemo(
-    () =>
-      wrapperWidth && direction === 'forward'
-        ? currentElementRightX > wrapperWidth
-        : wrapperWidth && direction === 'backward'
-        ? scrollLeft < 0 && currentElementLeftX + scrollLeft < 0
-        : false,
-    [currentElementLeftX, currentElementRightX, direction, scrollLeft, wrapperWidth],
-  )
+  const [wrapperWidth, setWrapperWidth] = useState(0)
+  const [xScroll, setXScroll] = useState(0)
 
-  const updateDirection = useCallback(
-    (direction: Direction) => {
-      setDirection(direction)
-      setCurrentStep(currentStepOrder)
-    },
+  const currentElementLeftX = useMemo(
+    () => currentStepOrder * STEP_WIDTH - STEP_WIDTH,
     [currentStepOrder],
   )
+  const currentElementRightX = useMemo(() => currentStepOrder * STEP_WIDTH, [currentStepOrder])
+  const leftIsOutOfBounds = useMemo(
+    () => xScroll + currentElementLeftX < 0,
+    [currentElementLeftX, xScroll],
+  )
+  const rightIsOutOfBounds = useMemo(
+    () => currentElementRightX - xScroll > wrapperWidth,
+    [currentElementRightX, wrapperWidth, xScroll],
+  )
+  const xScrollToGetRightElementIntoView = useMemo(
+    () => -(currentElementRightX - wrapperWidth),
+    [currentElementRightX, wrapperWidth],
+  )
+  const xScrollToGetLeftElementIntoView = useMemo(() => -currentElementLeftX, [currentElementLeftX])
 
-  useEffect(() => {
-    if (currentElementIsOutOfBounds) {
-      wrapperWidth && direction === 'forward'
-        ? setScrollLeft(-(currentElementRightX - wrapperWidth))
-        : wrapperWidth && direction === 'backward'
-        ? setScrollLeft(scrollLeft + (STEP_WIDTH - (scrollLeft + currentElementRightX)))
-        : 0
+  const updateXScroll = useCallback(() => {
+    if (rightIsOutOfBounds && direction === 'next') {
+      setXScroll(xScrollToGetRightElementIntoView)
     }
-
-    if (currentStepOrder > currentStep) {
-      updateDirection('forward')
-    } else if (currentStepOrder < currentStep) {
-      updateDirection('backward')
+    if (leftIsOutOfBounds && direction === 'prev') {
+      setXScroll(xScrollToGetLeftElementIntoView)
     }
   }, [
-    currentElementIsOutOfBounds,
-    currentElementLeftX,
-    currentElementRightX,
-    currentStep,
-    currentStepOrder,
     direction,
-    scrollLeft,
-    updateDirection,
-    wrapperWidth,
+    leftIsOutOfBounds,
+    rightIsOutOfBounds,
+    xScrollToGetLeftElementIntoView,
+    xScrollToGetRightElementIntoView,
   ])
+
+  useEffect(() => {
+    setWrapperWidth(wrapperRef.current?.clientWidth || 0)
+    updateXScroll()
+  }, [updateXScroll])
 
   return (
     <Wrapper ref={wrapperRef} {...restProps}>
-      <ScrollableWrapper style={{ left: `${scrollLeft}px` }}>
+      <ScrollableWrapper style={{ left: `${xScroll}px` }}>
         {data.map(({ isActive, title }, index) => (
           <Step isActive={isActive} isDone={index + 1 < currentStepOrder} key={index}>
             {title}

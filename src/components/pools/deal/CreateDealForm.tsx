@@ -88,6 +88,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
 
   const {
     createDealState,
+    direction,
     errors,
     handleCreateDeal,
     investmentTokenInfo,
@@ -147,6 +148,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
           <StepIndicator
             currentStepOrder={order}
             data={getCreateDealStepIndicatorData(createDealState.currentStep)}
+            direction={direction}
           />
           {Object.values(CreateDealSteps).map((step, index) => {
             const isStepVisible = createDealState.currentStep === step
