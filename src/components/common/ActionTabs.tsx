@@ -19,6 +19,7 @@ const Content = styled.div`
   flex-direction: column;
   flex-grow: 1;
   padding: 30px 40px;
+  width: 100%;
 `
 
 const Tabs = styled.div`

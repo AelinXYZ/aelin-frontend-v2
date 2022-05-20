@@ -45,6 +45,7 @@ function Claim({ pool }: Props) {
   const { remainingAmountToVest, totalVested, underlyingDealTokenDecimals } =
     data?.vestingDeal || {}
   const symbol = pool.deal?.underlyingToken.symbol
+
   return (
     <Wrapper title="Claim">
       <Contents style={{ marginBottom: '18px' }}>Your deal tokens can be claimed.</Contents>
