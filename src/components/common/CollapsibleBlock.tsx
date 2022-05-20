@@ -13,11 +13,13 @@ enum CollapsibleBlockStates {
 
 const Wrapper = styled(BaseCard)<{ state?: CollapsibleBlockStates }>`
   height: ${({ state }) => (state === CollapsibleBlockStates.expanded ? 'auto' : 'fit-content')};
+  padding: 10px 20px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: transparent;
     border: none;
     margin-bottom: 0;
+    padding: 20px 20px;
   }
 `
 
@@ -94,9 +96,9 @@ const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
 
   return (
     <Wrapper state={state} {...restProps}>
-      <Header className="header">
+      <Header className="header" onClick={toggleCollapse}>
         <Title>{title}</Title>
-        <Button onClick={toggleCollapse}>{isExpanded ? <ArrowUp /> : <ArrowDown />}</Button>
+        <Button>{isExpanded ? <ArrowUp /> : <ArrowDown />}</Button>
       </Header>
       <CollapsableContents className="collapsableContents" isExpanded={isExpanded}>
         {children}
