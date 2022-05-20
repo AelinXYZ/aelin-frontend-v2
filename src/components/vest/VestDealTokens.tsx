@@ -1,13 +1,15 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { Deadline } from '../common/Deadline'
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
+import { Deadline } from '@/src/components/common/Deadline'
+import { Dropdown as BaseDropdown, DropdownItem } from '@/src/components/common/Dropdown'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
+  ButtonDropdown,
   ButtonPrimaryLightSm,
   GradientButtonSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -27,7 +29,10 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinClaimableTokens from '@/src/hooks/aelin/useAelinClaimableTokens'
-import useAelinVestingDeals, { ParsedVestingDeal } from '@/src/hooks/aelin/useAelinVestingDeals'
+import useAelinVestingDeals, {
+  ParsedVestingDeal,
+  VestingDealsFilter,
+} from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress } from '@/src/utils/aelinPoolUtils'
@@ -40,7 +45,7 @@ const TableCard = styled.div`
     border-radius: ${({ theme: { card } }) => card.borderRadius};
     border-width: 1px;
     border: ${({ theme: { card } }) => card.borderColor};
-    padding: 40px 50px;
+    padding: 40px;
   }
 `
 
@@ -80,6 +85,18 @@ const Value = styled.span`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     color: ${({ theme }) => theme.colors.textColorLight};
     font-weight: 400;
+  }
+`
+
+const Dropdown = styled(BaseDropdown)`
+  margin-bottom: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    max-width: 50%;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    max-width: 250px;
   }
 `
 
@@ -136,12 +153,18 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     orderBy: VestingDeal_OrderBy.VestingPeriodEnds,
     orderDirection: OrderDirection.Desc,
   })
+  const [vestingDealsFilter, setVestingDealsFilter] = useState<VestingDealsFilter>(
+    VestingDealsFilter.Active,
+  )
 
-  const { data, error, hasMore, mutate, nextPage } = useAelinVestingDeals({
-    where: { user: user?.toLocaleLowerCase() || ZERO_ADDRESS },
-    orderBy: order.orderBy,
-    orderDirection: order.orderDirection,
-  })
+  const { data, error, hasMore, mutate, nextPage } = useAelinVestingDeals(
+    {
+      where: { user: user?.toLocaleLowerCase() || ZERO_ADDRESS },
+      orderBy: order.orderBy,
+      orderDirection: order.orderDirection,
+    },
+    vestingDealsFilter,
+  )
 
   if (error) {
     throw error
@@ -195,9 +218,20 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     }
   }
 
+  const vestingDealsFilterArr = Object.values(VestingDealsFilter) as Array<VestingDealsFilter>
+
   return (
     <TableCard id="outerWrapper" {...restProps}>
       <Title>Vest Deal Tokens</Title>
+      <Dropdown
+        currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
+        dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
+        items={vestingDealsFilterArr.map((vestingDeal, key) => (
+          <DropdownItem key={key} onClick={() => setVestingDealsFilter(vestingDeal)}>
+            {vestingDeal}
+          </DropdownItem>
+        ))}
+      />
       <InfiniteScroll
         dataLength={data.length}
         hasMore={hasMore}

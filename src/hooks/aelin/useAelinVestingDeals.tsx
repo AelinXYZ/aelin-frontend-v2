@@ -111,7 +111,16 @@ const getSwrKey = (
   ]
 }
 
-export default function useAelinVestingDeals(variables: VestingDealsQueryVariables) {
+export enum VestingDealsFilter {
+  All = 'All',
+  Completed = 'Completed',
+  Active = 'Active',
+}
+
+export default function useAelinVestingDeals(
+  variables: VestingDealsQueryVariables,
+  filter: VestingDealsFilter = VestingDealsFilter.Active,
+) {
   const {
     data = [],
     error,
@@ -122,6 +131,7 @@ export default function useAelinVestingDeals(variables: VestingDealsQueryVariabl
   } = useSWRInfinite((...args) => getSwrKey(...args, variables), fetcherVestingDeals, {
     revalidateFirstPage: true,
     revalidateOnMount: true,
+    revalidateOnFocus: true,
   })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0
@@ -135,8 +145,20 @@ export default function useAelinVestingDeals(variables: VestingDealsQueryVariabl
     [],
   )
 
+  const filteredResults = paginatedResult.filter((vestingDeal: ParsedVestingDeal) => {
+    if (
+      filter === VestingDealsFilter.All ||
+      (filter === VestingDealsFilter.Completed && !vestingDeal.canVest) ||
+      (filter === VestingDealsFilter.Active && vestingDeal.canVest)
+    ) {
+      return true
+    }
+
+    return false
+  })
+
   return {
-    data: paginatedResult,
+    data: filteredResults,
     error,
     nextPage,
     currentPage,
