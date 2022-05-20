@@ -45,7 +45,7 @@ const TableCard = styled.div`
     border-radius: ${({ theme: { card } }) => card.borderRadius};
     border-width: 1px;
     border: ${({ theme: { card } }) => card.borderColor};
-    padding: 40px 50px;
+    padding: 40px;
   }
 `
 
@@ -89,8 +89,15 @@ const Value = styled.span`
 `
 
 const Dropdown = styled(BaseDropdown)`
-  max-width: 200px;
   margin-bottom: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    max-width: 50%;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    max-width: 250px;
+  }
 `
 
 type Order = {
