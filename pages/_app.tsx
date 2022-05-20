@@ -73,6 +73,7 @@ function App({ Component, pageProps }: AppProps) {
                       </TokenIconsProvider>
                     </SafeSuspense>
                     <TooltipConfig />
+                    <MobileMenu />
                   </NotificationsProvider>
                 </TransactionModalProvider>
               </StakingRewardsProvider>
