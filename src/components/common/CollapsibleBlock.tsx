@@ -43,11 +43,6 @@ const Title = styled.h3`
   }
 `
 
-const CollapsableContents = styled.section<{ isExpanded?: boolean }>`
-  display: ${({ isExpanded }) => (isExpanded ? 'block' : 'none')};
-  padding-top: 20px;
-`
-
 const Button = styled.button`
   --dimensions: 30px;
 
@@ -71,6 +66,16 @@ const Button = styled.button`
   &:active {
     opacity: 0.7;
   }
+`
+
+const CollapsableContents = styled.section<{ isExpanded?: boolean }>`
+  max-height: ${({ isExpanded }) => (isExpanded ? '1080px' : '0')};
+  transition: max-height 0.25s linear;
+  overflow: hidden;
+`
+
+const ContentsInner = styled.section<{ isExpanded?: boolean }>`
+  padding-top: 20px;
 `
 
 const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
@@ -105,7 +110,7 @@ const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
         <Button>{isExpanded ? <ArrowUp /> : <ArrowDown />}</Button>
       </Header>
       <CollapsableContents className="collapsableContents" isExpanded={isExpanded}>
-        {children}
+        <ContentsInner>{children}</ContentsInner>
       </CollapsableContents>
     </Wrapper>
   )
