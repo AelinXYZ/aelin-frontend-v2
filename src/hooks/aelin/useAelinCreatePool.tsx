@@ -333,6 +333,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const moveStep = (value: 'next' | 'prev') => {
     const { currentStep } = createPoolState
     const currentStepOrder = createPoolConfig[currentStep].order
+
     setDirection(value)
 
     if (value === 'next') {

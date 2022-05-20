@@ -120,6 +120,10 @@ export const StepIndicator: React.FC<Props> = ({
   useEffect(() => {
     setWrapperWidth(wrapperRef.current?.clientWidth || 0)
     updateXScroll()
+
+    window.addEventListener('resize', function () {
+      setWrapperWidth(wrapperRef.current?.clientWidth || 0)
+    })
   }, [updateXScroll])
 
   return (
