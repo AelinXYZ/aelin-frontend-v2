@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
-import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import {
   ButtonWrapper,
@@ -27,6 +26,7 @@ import {
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
+import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {

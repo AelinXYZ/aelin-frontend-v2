@@ -130,11 +130,13 @@ TableHead.defaultProps = {
   hasHover: false,
 }
 
-export const Cell = styled.span<{
+export interface CellProps {
   justifyContent?: string
   light?: boolean
   mobileJustifyContent?: string
-}>`
+}
+
+export const Cell = styled.span<CellProps>`
   align-items: center;
   color: ${({ light, theme: { colors } }) => (light ? colors.textColor : colors.textColorLight)};
   display: flex;

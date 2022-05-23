@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import ExternalLink from '@/src/components/common/ExternalLink'
 import { InfoCell } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
 const Column = styled.div`

@@ -177,9 +177,7 @@ export const List: React.FC<{
                   {activeNotifications ? <Badge>{activeNotifications.toString()}</Badge> : null}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                 </NameCell>
-                <Cell>
-                  <ENSOrAddress address={sponsor} network={network} />
-                </Cell>
+                <ENSOrAddress address={sponsor} network={network} />
                 <HideOnMobileCell
                   justifyContent={columns.alignment.network}
                   title={getNetworkConfig(network).name}

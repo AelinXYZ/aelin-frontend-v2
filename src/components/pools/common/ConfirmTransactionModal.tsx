@@ -3,7 +3,6 @@ import styled from 'styled-components'
 
 import Wei from '@synthetixio/wei'
 
-import { Loading } from '../../common/Loading'
 import GasSelector from '@/src/components/aelin/GasSelector'
 import { Modal, ModalButtonCSS, ModalLine, ModalText } from '@/src/components/common/Modal'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'

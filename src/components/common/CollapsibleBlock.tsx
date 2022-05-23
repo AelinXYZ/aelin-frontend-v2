@@ -13,11 +13,13 @@ enum CollapsibleBlockStates {
 
 const Wrapper = styled(BaseCard)<{ state?: CollapsibleBlockStates }>`
   height: ${({ state }) => (state === CollapsibleBlockStates.expanded ? 'auto' : 'fit-content')};
+  padding: 10px 20px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: transparent;
     border: none;
     margin-bottom: 0;
+    padding: 20px 20px;
   }
 `
 
@@ -30,16 +32,15 @@ const Header = styled.div`
 
 const Title = styled.h3`
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
   padding: 0;
-`
 
-const CollapsableContents = styled.section<{ isExpanded?: boolean }>`
-  display: ${({ isExpanded }) => (isExpanded ? 'block' : 'none')};
-  padding-top: 20px;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    font-size: 1.8rem;
+  }
 `
 
 const Button = styled.button`
@@ -65,6 +66,16 @@ const Button = styled.button`
   &:active {
     opacity: 0.7;
   }
+`
+
+const CollapsableContents = styled.section<{ isExpanded?: boolean }>`
+  max-height: ${({ isExpanded }) => (isExpanded ? '1080px' : '0')};
+  transition: max-height 0.25s linear;
+  overflow: hidden;
+`
+
+const ContentsInner = styled.section<{ isExpanded?: boolean }>`
+  padding-top: 20px;
 `
 
 const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
@@ -94,12 +105,12 @@ const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
 
   return (
     <Wrapper state={state} {...restProps}>
-      <Header className="header">
+      <Header className="header" onClick={toggleCollapse}>
         <Title>{title}</Title>
-        <Button onClick={toggleCollapse}>{isExpanded ? <ArrowUp /> : <ArrowDown />}</Button>
+        <Button>{isExpanded ? <ArrowUp /> : <ArrowDown />}</Button>
       </Header>
       <CollapsableContents className="collapsableContents" isExpanded={isExpanded}>
-        {children}
+        <ContentsInner className="contentsInner">{children}</ContentsInner>
       </CollapsableContents>
     </Wrapper>
   )

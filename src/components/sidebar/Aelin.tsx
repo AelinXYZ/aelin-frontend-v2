@@ -1,8 +1,8 @@
 import React from 'react'
 
+import CollapsibleBlock from '@/src/components/common/CollapsibleBlock'
 import AelinData from '@/src/components/sidebar/AelinData'
 import BuyAelin from '@/src/components/sidebar/BuyAelin'
-import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
 
 const Aelin = ({ ...restProps }) => {
   return (

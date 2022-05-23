@@ -10,11 +10,16 @@ const Wrapper = styled.div`
 
 const Title = styled.h1`
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 2.4rem;
+  font-size: 1.8rem;
   font-weight: 700;
   line-height: 1.4;
-  margin: 0 0 12px;
+  margin: 0 0 4px;
   padding: 20px 0 0 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+  }
 `
 
 const TitleText = styled.span`
@@ -30,18 +35,29 @@ const TitleText = styled.span`
 `
 
 const Link = styled(BaseLink)`
-  --dimensions: 15px;
+  --dimensions: 12px;
 
   height: var(--dimensions);
   width: var(--dimensions);
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    --dimensions: 15px;
+
+    height: var(--dimensions);
+    width: var(--dimensions);
+  }
 `
 
 const SubTitle = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 500;
   line-height: 1.3;
   margin: 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    font-size: 1.4rem;
+  }
 `
 
 export const PageTitle: React.FC<{ title: string; subTitle?: string; href?: string }> = ({
