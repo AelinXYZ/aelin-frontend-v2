@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
@@ -152,10 +152,8 @@ function useProRataStatus(pool: ParsedAelinPool): ProRata {
   return {}
 }
 
-function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
+function useCurrentStatus(pool: ParsedAelinPool, now: number): DerivedStatus {
   return useMemo(() => {
-    const now = Date.now()
-
     // Funding
     if (isBefore(now, pool.purchaseExpiry)) {
       return {
@@ -232,7 +230,7 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
     }
 
     throw new Error('Unexpected stage')
-  }, [pool])
+  }, [pool, now])
 }
 
 export function useUserRole(
@@ -518,9 +516,7 @@ function useUserTabs(
   }
 }
 
-function useTimelineStatus(pool: ParsedAelinPool): TimelineSteps {
-  const now = Date.now()
-
+function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
   const getStepDeadline = (deadline: Date, message?: string) =>
     getFormattedDurationFromDateToNow(
       deadline,
@@ -717,15 +713,24 @@ export default function useAelinPoolStatus(
   poolAddress: string,
   initialData?: InitialData,
 ) {
+  const [now, setNow] = useState(Date.now())
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setNow(Date.now())
+    }, ms('1m'))
+
+    return () => clearInterval(intervalId)
+  }, [])
+
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
-    compare: (_) => false,
   })
 
   const { address } = useWeb3Connection()
 
   // derive data for UI
-  const derivedStatus = useCurrentStatus(poolResponse)
+  const derivedStatus = useCurrentStatus(poolResponse, now)
   const userRole = useUserRole(address, poolResponse, derivedStatus)
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
 
@@ -733,7 +738,7 @@ export default function useAelinPoolStatus(
   const funding = useFundingStatus(poolResponse, chainId)
   const dealing = useDealingStatus(poolResponse, chainId)
   const proRata = useProRataStatus(poolResponse)
-  const timeline = useTimelineStatus(poolResponse)
+  const timeline = useTimelineStatus(poolResponse, now)
 
   return useMemo(
     () => ({
