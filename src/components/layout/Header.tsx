@@ -28,12 +28,14 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { shortenAddress } from '@/src/utils/string'
 
 const Wrapper = styled.header`
+  --header-height: 60px;
+
   align-items: center;
   background-color: ${({ theme }) => theme.colors.mainBodyBackground};
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;
-  height: ${({ theme }) => theme.header.height};
+  height: var(--header-height);
   margin: 0 0 15px;
   position: sticky;
   top: 0;
@@ -72,7 +74,7 @@ const HomeLink = styled.a`
 
 const Logo = styled(BootNodeLogo)`
   cursor: pointer;
-  max-height: calc(${({ theme }) => theme.header.height} - 20px);
+  max-height: calc(var(--header-height) - 20px);
 `
 
 const StartWrapper = styled.div`

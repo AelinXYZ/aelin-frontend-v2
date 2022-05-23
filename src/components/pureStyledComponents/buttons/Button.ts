@@ -13,14 +13,14 @@ export const ButtonCSS = css`
   cursor: pointer;
   display: flex;
   font-family: ${({ theme }) => theme.fonts.fontFamily};
-  font-size: ${({ theme }) => theme.fonts.fontSize};
+  font-size: 1.4rem;
   font-weight: 400;
   gap: 8px;
-  height: ${({ theme }) => theme.button.height};
+  height: 36px;
   justify-content: center;
   line-height: 1;
   outline: none;
-  padding: ${({ theme }) => theme.button.padding};
+  padding: 0 24px;
   text-align: center;
   text-decoration: none;
   transition: all 0.15s ease-out;

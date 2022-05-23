@@ -1,13 +1,4 @@
 export const commonTheme = {
-  button: {
-    fontSize: '1.4rem',
-    height: '36px',
-    padding: '0 24px',
-  },
-  footer: {},
-  header: {
-    height: '60px',
-  },
   fonts: {
     defaultSize: '1.4rem',
     fontFamily: `'Hind Madurai', 'Helvetica Neue', 'Arial', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'`,
