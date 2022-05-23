@@ -4,7 +4,6 @@ import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isWithinInterval from 'date-fns/isWithinInterval'
-import { id } from 'date-fns/locale'
 import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
