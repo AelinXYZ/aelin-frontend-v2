@@ -13,6 +13,8 @@ export enum DropdownDirection {
 }
 
 const Wrapper = styled.div<{ fullWidth?: boolean; isOpen: boolean; disabled: boolean }>`
+  --dropdown-border-radius: 6px;
+
   outline: none;
   pointer-events: ${(props) => (props.disabled ? 'none' : 'initial')};
   position: relative;
@@ -66,8 +68,8 @@ const Items = styled.div<{
   isOpen: boolean
 }>`
   background-color: ${({ theme }) => theme.dropdown.background};
-  border-bottom-left-radius: ${({ theme }) => theme.dropdown.borderRadius};
-  border-bottom-right-radius: ${({ theme }) => theme.dropdown.borderRadius};
+  border-bottom-left-radius: var(--dropdown-border-radius);
+  border-bottom-right-radius: var(--dropdown-border-radius);
   border-bottom: 0.5px solid ${({ theme }) => theme.dropdown.borderColor};
   border-left: 0.5px solid ${({ theme }) => theme.dropdown.borderColor};
   border-right: 0.5px solid ${({ theme }) => theme.dropdown.borderColor};
@@ -98,6 +100,9 @@ export interface DropdownItemProps {
 }
 
 export const DropdownItemCSS = css<DropdownItemProps>`
+  --dropdown-item-height: 36px;
+  --dropdown-item-padding: 10px 20px;
+
   align-items: center;
   background-color: ${({ theme }) => theme.dropdown.item.backgroundColor};
   border-bottom: 1px solid ${({ theme }) => theme.dropdown.item.borderColor};
@@ -109,9 +114,9 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   gap: 10px;
   justify-content: ${({ justifyContent }) => justifyContent};
   line-height: 1.4;
-  min-height: ${({ theme }) => theme.dropdown.item.height};
+  min-height: var(--dropdown-item-height);
   overflow: hidden;
-  padding: 10px ${({ theme }) => theme.dropdown.item.paddingHorizontal};
+  padding: var(--dropdown-item-padding);
   text-decoration: none;
   transition: background-color 0.15s linear;
   user-select: none;
@@ -128,8 +133,8 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   }
 
   &:last-child {
-    border-bottom-left-radius: ${({ theme }) => theme.dropdown.borderRadius};
-    border-bottom-right-radius: ${({ theme }) => theme.dropdown.borderRadius};
+    border-bottom-left-radius: var(--dropdown-border-radius);
+    border-bottom-right-radius: var(--dropdown-border-radius);
     border-bottom: none;
   }
 

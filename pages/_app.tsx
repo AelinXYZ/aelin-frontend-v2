@@ -1,7 +1,6 @@
 import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { ThemeProvider } from 'styled-components'
 
 import { SWRConfig } from 'swr'
 
@@ -13,9 +12,9 @@ import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
 import LayoutStatusProvider from '@/src/providers/layoutStatusProvider'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
+import ThemeSwitch from '@/src/providers/themeSwitchProvider'
 import TransactionModalProvider from '@/src/providers/transactionModalProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
-import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
 // Should be rendered on client side only!
@@ -54,7 +53,7 @@ function App({ Component, pageProps }: AppProps) {
       </Head>
       <Web3ConnectionProvider>
         <LayoutStatusProvider>
-          <ThemeProvider theme={theme}>
+          <ThemeSwitch>
             <SWRConfig
               value={{
                 suspense: true,
@@ -78,7 +77,7 @@ function App({ Component, pageProps }: AppProps) {
                 </TransactionModalProvider>
               </StakingRewardsProvider>
             </SWRConfig>
-          </ThemeProvider>
+          </ThemeSwitch>
         </LayoutStatusProvider>
       </Web3ConnectionProvider>
     </>

@@ -10,9 +10,9 @@ const Wapper = styled.div`
   grid-template-columns: 50px 200px;
   padding: 10px;
   height: 70px;
-  border-radius: ${({ theme: { toast } }) => toast.borderRadius};
-  border-style: ${({ theme: { toast } }) => toast.borderStyle};
-  border-width: ${({ theme: { toast } }) => toast.borderWidth};
+  border-radius: 8px;
+  border-style: solid;
+  border-width: 0.5px;
   background-color: ${({ theme: { toast } }) => toast.backgroundColor};
   box-shadow: ${({ theme: { toast } }) => toast.boxShadow};
 `

@@ -7,7 +7,7 @@ import { AreaClosed, LinePath } from '@visx/shape'
 import maxBy from 'lodash/maxBy'
 import minBy from 'lodash/minBy'
 
-import { theme } from '@/src/theme'
+import { lightTheme as theme } from '@/src/theme/lightTheme'
 
 interface Props<DataType> {
   width: number

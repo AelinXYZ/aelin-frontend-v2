@@ -23,6 +23,7 @@ import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyle
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
+import { useThemeContext } from '@/src/providers/themeSwitchProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { shortenAddress } from '@/src/utils/string'
 
@@ -248,9 +249,10 @@ export const Header: React.FC = (props) => {
     pushNetwork,
     walletChainId,
   } = useWeb3Connection()
-
   const currentChain = getNetworkConfig(appChainId)
   const wrongNetwork = isWalletConnected && !isWalletNetworkSupported
+
+  const { currentTheme, switchTheme } = useThemeContext()
 
   const networksDropdownItems = getChainsByEnvironmentArray().map((item, index) => (
     <DropdownItem
@@ -372,12 +374,18 @@ export const Header: React.FC = (props) => {
                       <Optimism />
                       Buy Aelin OP
                     </DropdownItem>,
-                    <DropdownItem
-                      key={'external_links_4'}
-                      onClick={() => console.log('Light / Dark mode switching coming soon...')}
-                    >
-                      <LightMode />
-                      Light mode
+                    <DropdownItem key={'external_links_4'} onClick={switchTheme}>
+                      {currentTheme === 'light' ? (
+                        <>
+                          <LightMode />
+                          Dark mode
+                        </>
+                      ) : (
+                        <>
+                          <LightMode />
+                          Light mode
+                        </>
+                      )}
                     </DropdownItem>,
                   ]}
                 />
