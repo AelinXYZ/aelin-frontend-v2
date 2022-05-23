@@ -4,6 +4,7 @@ import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isWithinInterval from 'date-fns/isWithinInterval'
+import { id } from 'date-fns/locale'
 import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
@@ -353,10 +354,14 @@ function useUserActions(
       return actions
     }
 
+    // Waiting for holder
     if (currentStatus === PoolStatus.WaitingForHolder) {
+      if (userRole !== UserRole.Holder) {
+        actions.push(PoolAction.AwaitingForDeal)
+      }
+
       // Fund deal
       if (
-        currentStatus === PoolStatus.WaitingForHolder &&
         userRole === UserRole.Holder &&
         pool.deal &&
         !pool.deal.holderAlreadyDeposited &&
