@@ -60,12 +60,11 @@ const SubTitle = styled.p`
   }
 `
 
-export const PageTitle: React.FC<{ title: string; subTitle?: string; href?: string }> = ({
-  href,
-  subTitle,
-  title,
-  ...restProps
-}) => {
+export const PageTitle: React.FC<{
+  title: string | React.ReactNode
+  subTitle?: string
+  href?: string
+}> = ({ href, subTitle, title, ...restProps }) => {
   const titleLinkProps = href ? { href: href, target: '_blank' } : {}
 
   return (

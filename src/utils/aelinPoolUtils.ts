@@ -202,21 +202,6 @@ export function getVestingDates(
   return { cliff, vesting, end, start }
 }
 
-export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start: Date) {
-  if (getFormattedDurationFromDateToNow(purchaseExpiry, 'ended') === 'ended') {
-    return '0'
-  }
-
-  const end = purchaseExpiry
-  const today = new Date()
-
-  //use Math.abs to avoid sign
-  const q = Math.abs(today.getTime() - start.getTime())
-  const d = Math.abs(end.getTime() - start.getTime())
-
-  return Math.round((q / d) * 100).toString()
-}
-
 export function calculateDeadlineProgress(deadline: Date, start: Date) {
   const now = new Date()
   if (isBefore(now, start)) {

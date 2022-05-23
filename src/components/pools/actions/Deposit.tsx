@@ -6,6 +6,7 @@ import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_BN } from '@/src/constants/misc'
+import { Privacy } from '@/src/constants/pool'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
@@ -32,18 +33,40 @@ function Deposit({ pool, poolHelpers }: Props) {
     'purchasePoolTokens',
   )
 
+  const balances = [
+    {
+      raw: balance.raw || ZERO_BN,
+      formatted: formatToken(balance.raw || ZERO_BN, pool.investmentTokenDecimals),
+    },
+    poolHelpers.maxDepositAllowed,
+  ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+
   useEffect(() => {
-    if (!balance) {
+    if (!balances[0].raw) {
       setInputError('There was an error calculating User balance')
       return
     }
 
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance.raw)) {
+    if (
+      pool.poolType.toLowerCase() === Privacy.PRIVATE &&
+      tokenInputValue &&
+      BigNumber.from(tokenInputValue).gt(poolHelpers.allowedList.userMaxAmount.raw)
+    ) {
+      setInputError(
+        `Whitelisted amount exceeded - Max allowed: ${poolHelpers.allowedList.userMaxAmount.formatted} ${pool.investmentTokenSymbol}`,
+      )
+    } else if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balances[0].raw)) {
       setInputError('Insufficient balance')
     } else {
       setInputError('')
     }
-  }, [tokenInputValue, balance])
+  }, [
+    tokenInputValue,
+    poolHelpers.allowedList,
+    pool.poolType,
+    pool.investmentTokenSymbol,
+    balances,
+  ])
 
   const depositTokens = async () => {
     if (inputError) {
@@ -63,14 +86,6 @@ function Deposit({ pool, poolHelpers }: Props) {
       estimate: () => purchasePoolTokensEstimate([tokenInputValue]),
     })
   }
-
-  const balances = [
-    {
-      raw: balance.raw || ZERO_BN,
-      formatted: formatToken(balance.raw || ZERO_BN, pool.investmentTokenDecimals),
-    },
-    poolHelpers.maxDepositAllowed,
-  ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
   return (
     <>

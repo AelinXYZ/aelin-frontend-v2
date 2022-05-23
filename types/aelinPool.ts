@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { PoolTimelineState } from '@/src/constants/types'
+import { UserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import { DetailedNumber } from '@/types/utils'
 
 export enum UserRole {
@@ -46,6 +47,7 @@ export interface Funding {
   maxDepositAllowed: DetailedNumber
   poolTokenBalance: DetailedNumber
   userInvestmentTokenBalance: DetailedNumber
+  allowedList: UserAllowList
   refetchUserInvestmentTokenBalance: () => void
 }
 

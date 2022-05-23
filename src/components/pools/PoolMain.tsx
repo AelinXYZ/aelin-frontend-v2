@@ -23,8 +23,9 @@ import DealInformation from '@/src/components/pools/deal/DealInformation'
 import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
+import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { PoolAction, PoolTab } from '@/types/aelinPool'
 
@@ -79,12 +80,16 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   return (
     <>
       <Head>
-        <title>Aelin - {pool.nameFormatted}</title>
+        <title>Aelin - {pool.nameFormatted} </title>
       </Head>
       <PageTitle
         href={getExplorerUrl(pool.address || '', pool.chainId)}
         subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
-        title={pool.nameFormatted}
+        title={
+          <>
+            {pool.nameFormatted} {chainsConfig[pool.chainId].icon}
+          </>
+        }
       />
       <RightTimelineLayout timelineSteps={timeline}>
         <MainGrid>
@@ -116,21 +121,32 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             onTabClick={tabs.actionTabs.setActive}
             tabs={tabs.actionTabs.states}
           >
-            {!tabs.actionTabs.states.length && <div>No actions available</div>}
-            {tabs.actionTabs.active === PoolAction.Invest && (
-              <Invest pool={pool} poolHelpers={funding} />
-            )}
-            {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
-            {tabs.actionTabs.active === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
-            {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-            {tabs.actionTabs.active === PoolAction.AcceptDeal && (
-              <AcceptDeal dealing={dealing} pool={pool} />
-            )}
-            {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
-            {tabs.actionTabs.active === PoolAction.Claim && <Claim pool={pool} />}
-            {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
-              <WithdrawUnredeemed pool={pool} />
-            )}
+            <RequiredConnection
+              minHeight={175}
+              networkToCheck={pool.chainId}
+              text="Connect your wallet"
+            >
+              <>
+                {!tabs.actionTabs.states.length && <div>No actions available</div>}
+
+                {tabs.actionTabs.active === PoolAction.Invest && (
+                  <Invest pool={pool} poolHelpers={funding} />
+                )}
+                {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
+                {tabs.actionTabs.active === PoolAction.Withdraw && (
+                  <WithdrawalFromPool pool={pool} />
+                )}
+                {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
+                {tabs.actionTabs.active === PoolAction.AcceptDeal && (
+                  <AcceptDeal dealing={dealing} pool={pool} />
+                )}
+                {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
+                {tabs.actionTabs.active === PoolAction.Claim && <Claim pool={pool} />}
+                {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
+                  <WithdrawUnredeemed pool={pool} />
+                )}
+              </>
+            </RequiredConnection>
           </ActionTabs>
         </MainGrid>
       </RightTimelineLayout>

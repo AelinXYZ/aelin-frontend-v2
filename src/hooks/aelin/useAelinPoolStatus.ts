@@ -11,8 +11,8 @@ import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
-import useAelinPool from '@/src/hooks/aelin/useAelinPool'
-import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useUserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
 import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
@@ -35,6 +35,8 @@ import {
 function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
   const { address } = useWeb3Connection()
   const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
+  const allowedList = useUserAllowList(pool)
+
   const [userInvestmentTokenBalance, refetchUserInvestmentTokenBalance] = useERC20Call(
     pool.chainId,
     pool.investmentToken,
@@ -75,9 +77,11 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
         raw: userInvestmentTokenBalance || ZERO_BN,
         formatted: formatToken(userInvestmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals),
       },
+      allowedList,
       refetchUserInvestmentTokenBalance,
     }
   }, [
+    allowedList,
     pool.funded.raw,
     pool.investmentTokenDecimals,
     pool.poolCap.raw,
@@ -745,6 +749,6 @@ export default function useAelinPoolStatus(
       tabs,
       timeline,
     }),
-    [poolResponse, refetchPool, funding, dealing, proRata, userRole, tabs, timeline],
+    [refetchPool, poolResponse, userRole, funding, dealing, proRata, tabs, timeline],
   )
 }
