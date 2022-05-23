@@ -53,7 +53,7 @@ function Deposit({ pool, poolHelpers }: Props) {
       BigNumber.from(tokenInputValue).gt(poolHelpers.allowedList.userMaxAmount.raw)
     ) {
       setInputError(
-        `Whitelisted amount exceeded - Max allowed: ${poolHelpers.allowedList.userMaxAmount.formatted} ${pool.investmentTokenSymbol}`,
+        `Max allowed: ${poolHelpers.allowedList.userMaxAmount.formatted} ${pool.investmentTokenSymbol}`,
       )
     } else if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balances[0].raw)) {
       setInputError('Insufficient balance')

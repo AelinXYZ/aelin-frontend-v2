@@ -87,7 +87,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
         title={
           <>
-            {pool.nameFormatted} {chainsConfig[pool.chainId].icon}
+            {chainsConfig[pool.chainId].icon} {pool.nameFormatted}
           </>
         }
       />
