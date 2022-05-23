@@ -19,7 +19,9 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
       ) : poolHelpers.capReached ? (
         <Contents>Max cap reached</Contents>
       ) : !poolHelpers.allowedList.isUserAllowedToInvest ? (
-        <Contents>This is a private pool. The wallet connected is not allowed to invest</Contents>
+        <Contents>
+          This is a private pool. The connected wallet is not allowed to invest in this pool
+        </Contents>
       ) : poolHelpers.userAllowance.gt(ZERO_ADDRESS) ? (
         <Deposit pool={pool} poolHelpers={poolHelpers} />
       ) : (
