@@ -18,8 +18,6 @@ const ThemeContextProvider: React.FC = ({ children }) => {
         ? { ...commonTheme, ...darkTheme }
         : { ...commonTheme, ...lightTheme },
     )
-
-    console.log('theme switched')
   }
 
   const values = {

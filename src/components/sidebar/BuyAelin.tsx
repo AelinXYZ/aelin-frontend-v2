@@ -17,7 +17,7 @@ const Wrapper = styled.div``
 
 const AelinChart = styled.div`
   background-color: ${({ theme: { colors } }) => colors.transparentWhite2};
-  border-radius: ${({ theme: { card } }) => card.borderRadius};
+  border-radius: 8px;
   border: ${({ theme: { card } }) => card.borderColor};
   display: flex;
   flex-direction: column;
@@ -123,8 +123,8 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
             {({ width }) => (
               <AreaChart
                 data={prices}
-                getXValue={(data) => data.date}
-                getYValue={(data) => data.price}
+                getXValue={(data: { date: string }) => data.date}
+                getYValue={(data: { price: string }) => data.price}
                 height={80}
                 width={width}
               />
