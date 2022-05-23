@@ -353,10 +353,14 @@ function useUserActions(
       return actions
     }
 
+    // Waiting for holder
     if (currentStatus === PoolStatus.WaitingForHolder) {
+      if (userRole !== UserRole.Holder) {
+        actions.push(PoolAction.AwaitingForDeal)
+      }
+
       // Fund deal
       if (
-        currentStatus === PoolStatus.WaitingForHolder &&
         userRole === UserRole.Holder &&
         pool.deal &&
         !pool.deal.holderAlreadyDeposited &&
