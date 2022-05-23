@@ -1,8 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
-import { SectionIntro } from '@/src/components/common/SectionIntro'
-import { SectionTabs } from '@/src/components/common/SectionTabs'
 import { DealsAccepted } from '@/src/components/history/DealsAccepted'
 import { DealsFunded } from '@/src/components/history/DealsFunded'
 import { DealsSponsored } from '@/src/components/history/DealsSponsored'
@@ -10,6 +8,8 @@ import { Deposits } from '@/src/components/history/Deposits'
 import { Vests } from '@/src/components/history/Vests'
 import { Withdraws } from '@/src/components/history/Withdraws'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
+import { SectionIntro } from '@/src/components/section/SectionIntro'
+import { SectionTabs } from '@/src/components/section/SectionTabs'
 
 const History: NextPage = () => {
   const items = [

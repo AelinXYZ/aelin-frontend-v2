@@ -3,7 +3,8 @@ import styled, { keyframes } from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { ExternalLink } from '@/src/components/table/ExternalLink'
+import { CellProps } from '@/src/components/pureStyledComponents/common/Table'
+import { ExternalLink as Wrapper } from '@/src/components/table/ExternalLink'
 import { ChainsValues } from '@/src/constants/chains'
 import { useEnsLookUpAddress } from '@/src/hooks/useEnsResolvers'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
@@ -33,16 +34,18 @@ const Loading = styled.div`
   font-style: italic;
 `
 
-const ENSOrAddress: React.FC<{
+interface Props extends CellProps {
   address: string
   network: ChainsValues
-}> = ({ address, network, ...restProps }) => {
+}
+
+export const ENSOrAddress: React.FC<Props> = ({ address, network, ...restProps }) => {
   const { data } = useEnsLookUpAddress(address)
 
   return data ? (
-    <ExternalLink {...restProps} href={getExplorerUrl(address, network)}>
+    <Wrapper {...restProps} href={getExplorerUrl(address, network)}>
       {isAddress(data) ? shortenAddress(data) : data}
-    </ExternalLink>
+    </Wrapper>
   ) : null
 }
 

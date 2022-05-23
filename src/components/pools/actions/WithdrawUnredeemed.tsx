@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolDealTransaction } from '@/src/hooks/contracts/useAelinPoolDealTransaction'
@@ -44,17 +46,18 @@ function WithdrawUnredeemed({ pool }: Props) {
   )
 
   return (
-    <>
-      <div>Withdraw unredeemed tokens</div>
-      <p>Deal tokens that have been rejected by the purchasers</p>
-      <div>
-        <div>Amount to withdraw :</div>
-        <div>{unredeemed}</div>
-      </div>
+    <Wrapper title="Withdraw unredeemed tokens">
+      <Contents style={{ marginBottom: '18px' }}>
+        Deal tokens that have been rejected by the purchasers
+      </Contents>
+      <Contents>
+        Amount to withdraw:
+        <TextPrimary>{unredeemed}</TextPrimary>
+      </Contents>
       <GradientButton disabled={disableButton} onClick={withdrawUnredeemed}>
         Withdraw {unredeemed}
       </GradientButton>
-    </>
+    </Wrapper>
   )
 }
 

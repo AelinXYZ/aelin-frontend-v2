@@ -1,4 +1,4 @@
-import { HTMLAttributes, useEffect, useMemo, useRef, useState } from 'react'
+import { HTMLAttributes, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
@@ -112,7 +112,6 @@ export const DealCreateStepInput: React.FC<Props> = ({
             type="number"
             value={currentState[step]}
           />
-
           <PrivacyGrid>
             <Button onClick={onCalculateDealModal}>Calculate</Button>
           </PrivacyGrid>
@@ -120,7 +119,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
       ) : step === CreateDealSteps.totalPurchaseAmount ? (
         <>
           <TextfieldNarrow
-            defaultValue={0}
+            defaultValue={''}
             disabled={totalPurchase === 'all'}
             name={step}
             onChange={(e) => {
@@ -151,7 +150,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
               checked={totalPurchase === 'partial'}
               label="Partial"
               onClick={() => {
-                onSetDealField(0)
+                onSetDealField('')
                 onSetTotalPurchase('partial')
               }}
             />

@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import ExternalLink from '@/src/components/common/ExternalLink'
 import { InfoCell } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
 const Column = styled.div`
@@ -25,7 +24,7 @@ export const UnredeemedInformation: React.FC<{
       <Column>
         <InfoCell
           title="Token to withdraw"
-          tooltip="??"
+          tooltip="Deal tokens that have been rejected by the purchasers"
           value={
             <ExternalLink
               href={getExplorerUrl(deal.underlyingToken.token || '', pool.chainId)}
@@ -37,7 +36,6 @@ export const UnredeemedInformation: React.FC<{
       <Column>
         <InfoCell
           title="Amount to withdraw"
-          tooltip="??"
           value={`${deal.unredeemed.formatted} ${deal.underlyingToken.symbol}`}
         />
       </Column>

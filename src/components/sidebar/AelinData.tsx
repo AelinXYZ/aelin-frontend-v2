@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -11,6 +11,7 @@ import { Chains } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
+import { useLayoutStatus } from '@/src/providers/layoutStatusProvider'
 import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -59,18 +60,15 @@ function getBalanceTitle(activeTab: StakingEnum): string {
 const AelinData: React.FC = ({ ...restProps }) => {
   const { appChainId } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+  const {
+    sidebar: {
+      staking: { activeTab, setActiveTab },
+    },
+  } = useLayoutStatus()
 
   const { data, error, handleAfterClaim, isLoading } = useStakingRewards()
 
-  const [activeTab, setActiveTab] = useState<StakingEnum>(StakingEnum.AELIN)
-
   const isMainnet = Chains.mainnet === appChainId
-
-  useEffect(() => {
-    const activeTab = isMainnet ? StakingEnum.UNISWAP : StakingEnum.AELIN
-
-    setActiveTab(activeTab)
-  }, [appChainId, isMainnet])
 
   const stakingAddress = useMemo(() => {
     if (activeTab === StakingEnum.AELIN) {

@@ -4,6 +4,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -81,19 +82,24 @@ function WithdrawalFromPool({ pool }: Props) {
   )
 
   return (
-    <>
+    <Wrapper title="Withdraw">
+      <Contents>
+        The duration for this pool has ended. You may withdraw your funds now although the sponsor
+        may still create a deal for you if you remain in the pool.
+      </Contents>
       <TokenInput
         decimals={investmentTokenDecimals}
         error={inputError}
         maxValue={(balance || ZERO_BN).toString()}
         maxValueFormatted={maxValueFormatted}
         setValue={setTokenInputValue}
+        symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
       <GradientButton disabled={disableButton} onClick={withdrawFromPool}>
         Withdraw
       </GradientButton>
-    </>
+    </Wrapper>
   )
 }
 

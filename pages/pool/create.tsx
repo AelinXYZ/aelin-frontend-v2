@@ -1,13 +1,14 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import React, { useState } from 'react'
+import styled from 'styled-components'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
-import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import {
   ButtonWrapper,
   Description,
+  MobileButtonWrapper,
   PrevNextWrapper,
   StepContents,
   Title,
@@ -25,7 +26,8 @@ import {
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
-import { StepIndicator } from '@/src/components/timeline/StepIndicator'
+import { PageTitle } from '@/src/components/section/PageTitle'
+import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {
   CreatePoolSteps,
@@ -33,14 +35,29 @@ import useAelinCreatePool, {
   getCreatePoolStepIndicatorData,
   getCreatePoolSummaryData,
 } from '@/src/hooks/aelin/useAelinCreatePool'
+import { useTimelineStatus } from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
+const BackButton = styled(ButtonPrimaryLight)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: none;
+  }
+`
+
+const ResponsiveError = styled(Error)`
+  text-align: center;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    text-align: left;
+  }
+`
+
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
-
   const {
     createPoolState,
+    direction,
     errors,
     handleCreatePool,
     isFinalStep,
@@ -50,9 +67,7 @@ const Create: NextPage = () => {
     setPoolField,
     showWarningOnLeave,
   } = useAelinCreatePool(appChainId)
-
   const [showWhiteListModal, setShowWhiteListModal] = useState<boolean>(false)
-
   const currentStepConfig = createPoolConfig[createPoolState.currentStep]
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
@@ -68,17 +83,20 @@ const Create: NextPage = () => {
     }
   }
 
+  const timeline = useTimelineStatus()
+
   return (
     <>
       <Head>
         <title>{`${createPoolState.poolName || 'Create pool'}`}</title>
       </Head>
       <PageTitle title={`${createPoolState.poolName || 'Pool creation'}`} />
-      <RightTimelineLayout>
+      <RightTimelineLayout timelineSteps={timeline}>
         <CardWithTitle titles={<CardTitle>Pool creation</CardTitle>}>
           <StepIndicator
             currentStepOrder={order}
             data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
+            direction={direction}
           />
           {Object.values(CreatePoolSteps).map((step, index) => {
             const isStepVisible = createPoolState.currentStep === step
@@ -99,7 +117,7 @@ const Create: NextPage = () => {
                     setPoolField={setPoolField}
                   />
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error align="center">{currentStepError}</Error>
+                    <ResponsiveError>{currentStepError}</ResponsiveError>
                   )}
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
@@ -107,25 +125,30 @@ const Create: NextPage = () => {
                         Edit whitelisted addresses
                       </ButtonPrimaryLight>
                     )}
-                    {isFinalStep ? (
-                      <GradientButton
-                        disabled={disableSubmit}
-                        key={`${step}_button`}
-                        onClick={() => {
-                          handleCreatePool()
-                        }}
-                      >
-                        Create Pool
-                      </GradientButton>
-                    ) : (
-                      <GradientButton
-                        disabled={!!currentStepError}
-                        key={`${step}_button`}
-                        onClick={() => moveStep('next')}
-                      >
-                        Next
-                      </GradientButton>
-                    )}
+                    <MobileButtonWrapper>
+                      <BackButton disabled={isFirstStep} onClick={() => moveStep('prev')}>
+                        Back
+                      </BackButton>
+                      {isFinalStep ? (
+                        <GradientButton
+                          disabled={disableSubmit}
+                          key={`${step}_button`}
+                          onClick={() => {
+                            handleCreatePool()
+                          }}
+                        >
+                          Create Pool
+                        </GradientButton>
+                      ) : (
+                        <GradientButton
+                          disabled={!!currentStepError}
+                          key={`${step}_button`}
+                          onClick={() => moveStep('next')}
+                        >
+                          Next
+                        </GradientButton>
+                      )}
+                    </MobileButtonWrapper>
                   </ButtonWrapper>
                   <Summary data={getCreatePoolSummaryData(createPoolState)} />
                 </StepContents>

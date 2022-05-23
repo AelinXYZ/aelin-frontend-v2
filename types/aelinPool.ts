@@ -38,12 +38,6 @@ export enum PoolAction {
   WithdrawUnredeemed = 'Withdraw Unredeemed',
 }
 
-// interface BaseState {
-//   state: PoolState
-//   prevStates: PoolState[]
-//   meta: Record<string, unknown>
-// }
-
 export interface Funding {
   isCap: boolean
   capReached: boolean
@@ -80,15 +74,3 @@ export type DerivedStatus = {
 export type ProRata = Record<string, unknown>
 
 export type PoolStatusInfo = Funding | WaitingForDeal | ProRata
-
-// export function isFunding(pool: BaseState): pool is FundingState {
-//   return pool.state === AelinPoolState.Funding
-// }
-
-// export function isWaitingForDeal(pool: BaseState): pool is WaitingForDealState {
-//   return pool.state === AelinPoolState.WaitingForDeal
-// }
-
-// export function isProRata(pool: BaseState): pool is ProRataState {
-//   return pool.state === AelinPoolState.ProRata
-// }

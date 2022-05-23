@@ -1,25 +1,27 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { Deadline } from '../common/Deadline'
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
+import { Deadline } from '@/src/components/common/Deadline'
+import { Dropdown as BaseDropdown, DropdownItem } from '@/src/components/common/Dropdown'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
+  ButtonDropdown,
   ButtonPrimaryLightSm,
   GradientButtonSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell as BaseCell,
+  HideOnDesktop,
   LinkCell,
-  Row,
+  LoadingTableRow,
   RowLink,
-  Table,
+  TableBody,
   TableHead,
-  TableWrapper,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { NameCell } from '@/src/components/table/NameCell'
@@ -27,15 +29,24 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinClaimableTokens from '@/src/hooks/aelin/useAelinClaimableTokens'
-import useAelinVestingDeals, { ParsedVestingDeal } from '@/src/hooks/aelin/useAelinVestingDeals'
+import useAelinVestingDeals, {
+  ParsedVestingDeal,
+  VestingDealsFilter,
+} from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import formatNumber from '@/src/utils/formatNumber'
 
-const TableCard = styled(BaseCard)`
-  padding: 40px 50px;
+const TableCard = styled.div`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    background-color: ${({ theme: { card } }) => card.backgroundColor};
+    border-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-width: 1px;
+    border: ${({ theme: { card } }) => card.borderColor};
+    padding: 40px;
+  }
 `
 
 const Cell = styled(BaseCell)`
@@ -43,7 +54,50 @@ const Cell = styled(BaseCell)`
 `
 
 const Title = styled(BaseTitle)`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: block;
+    margin-bottom: 20px;
+  }
+`
+
+const ButtonCSS = css`
+  min-width: 80px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    min-width: 0;
+  }
+`
+
+const VestButton = styled(GradientButtonSm)`
+  ${ButtonCSS}
+`
+
+const SeePoolButton = styled(ButtonPrimaryLightSm)`
+  ${ButtonCSS}
+`
+
+const Value = styled.span`
+  color: ${({ theme }) => theme.colors.textColor};
+  font-weight: 500;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    color: ${({ theme }) => theme.colors.textColorLight};
+    font-weight: 400;
+  }
+`
+
+const Dropdown = styled(BaseDropdown)`
   margin-bottom: 20px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    max-width: 50%;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    max-width: 250px;
+  }
 `
 
 type Order = {
@@ -55,6 +109,7 @@ const VestActionButton = ({
   dealAddress,
   disabled,
   mutate,
+  ...restProps
 }: {
   disabled: boolean
   dealAddress: string
@@ -67,15 +122,16 @@ const VestActionButton = ({
   }
 
   return (
-    <GradientButtonSm
+    <VestButton
       disabled={disabled}
       onClick={(e) => {
         e.preventDefault()
         handleVestTokens()
       }}
+      {...restProps}
     >
       Vest
-    </GradientButtonSm>
+    </VestButton>
   )
 }
 
@@ -83,7 +139,12 @@ const AmountToVestCell = ({ ...item }: ParsedVestingDeal) => {
   const { chainId, myDealTotal, poolAddress, totalVested } = item
   const amountToVest = useAelinClaimableTokens(poolAddress, chainId, myDealTotal, totalVested)
 
-  return <Cell>{formatNumber(amountToVest)}</Cell>
+  return (
+    <Cell mobileJustifyContent="center">
+      <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
+      <Value>{formatNumber(amountToVest)}</Value>
+    </Cell>
+  )
 }
 
 export const VestDealTokens: React.FC = ({ ...restProps }) => {
@@ -92,12 +153,18 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     orderBy: VestingDeal_OrderBy.VestingPeriodEnds,
     orderDirection: OrderDirection.Desc,
   })
+  const [vestingDealsFilter, setVestingDealsFilter] = useState<VestingDealsFilter>(
+    VestingDealsFilter.Active,
+  )
 
-  const { data, error, hasMore, mutate, nextPage } = useAelinVestingDeals({
-    where: { user: user?.toLocaleLowerCase() || ZERO_ADDRESS },
-    orderBy: order.orderBy,
-    orderDirection: order.orderDirection,
-  })
+  const { data, error, hasMore, mutate, nextPage } = useAelinVestingDeals(
+    {
+      where: { user: user?.toLocaleLowerCase() || ZERO_ADDRESS },
+      orderBy: order.orderBy,
+      orderDirection: order.orderDirection,
+    },
+    vestingDealsFilter,
+  )
 
   if (error) {
     throw error
@@ -151,61 +218,76 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     }
   }
 
+  const vestingDealsFilterArr = Object.values(VestingDealsFilter) as Array<VestingDealsFilter>
+
   return (
-    <TableCard {...restProps}>
+    <TableCard id="outerWrapper" {...restProps}>
       <Title>Vest Deal Tokens</Title>
-      <TableWrapper>
-        <Table>
-          <InfiniteScroll
-            dataLength={data?.length}
-            hasMore={hasMore}
-            loader={
-              <Row columns={'1fr'}>
-                <Cell justifyContent="center">Loading...</Cell>
-              </Row>
-            }
-            next={nextPage}
-          >
-            <TableHead columns={columns.widths}>
-              {tableHeaderCells.map(({ sortKey, title }, index) => (
-                <SortableTH
-                  isActive={order.orderBy === sortKey}
+      <Dropdown
+        currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
+        dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
+        items={vestingDealsFilterArr.map((vestingDeal, key) => (
+          <DropdownItem key={key} onClick={() => setVestingDealsFilter(vestingDeal)}>
+            {vestingDeal}
+          </DropdownItem>
+        ))}
+      />
+      <InfiniteScroll
+        dataLength={data.length}
+        hasMore={hasMore}
+        loader={<LoadingTableRow />}
+        next={nextPage}
+        scrollableTarget={'outerWrapper'}
+      >
+        <TableHead columns={columns.widths}>
+          {tableHeaderCells.map(({ sortKey, title }, index) => (
+            <SortableTH
+              isActive={order.orderBy === sortKey}
+              key={index}
+              onClick={() => {
+                handleSort(sortKey)
+              }}
+            >
+              {title}
+            </SortableTH>
+          ))}
+        </TableHead>
+        {!data.length ? (
+          <BaseCard>No data.</BaseCard>
+        ) : (
+          <TableBody>
+            {data.map((item, index) => {
+              const {
+                canVest,
+                chainId,
+                dealAddress,
+                myDealTotal,
+                poolAddress,
+                poolName,
+                tokenToVest,
+                totalVested,
+                vestingPeriodEnds,
+                vestingPeriodStarts,
+              } = item
+              return (
+                <RowLink
+                  columns={columns.widths}
+                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
                   key={index}
-                  onClick={() => {
-                    handleSort(sortKey)
-                  }}
                 >
-                  {title}
-                </SortableTH>
-              ))}
-            </TableHead>
-            {!data?.length ? (
-              <BaseCard>No data.</BaseCard>
-            ) : (
-              data.map((item, index) => {
-                const {
-                  canVest,
-                  chainId,
-                  dealAddress,
-                  myDealTotal,
-                  poolAddress,
-                  poolName,
-                  tokenToVest,
-                  totalVested,
-                  vestingPeriodEnds,
-                  vestingPeriodStarts,
-                } = item
-                return (
-                  <RowLink
-                    columns={columns.widths}
-                    href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
-                    key={index}
-                  >
-                    <NameCell>{poolName}</NameCell>
-                    <Cell>{tokenToVest}</Cell>
-                    <Cell>{myDealTotal}</Cell>
-                    <AmountToVestCell {...item} />
-                    <Cell>{totalVested}</Cell>
+                  <NameCell mobileJustifyContent="center">{poolName}</NameCell>
+                  <Cell mobileJustifyContent="center">{tokenToVest}</Cell>
+                  <Cell mobileJustifyContent="center">
+                    <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
+                    <Value>{myDealTotal}</Value>
+                  </Cell>
+                  <AmountToVestCell {...item} />
+                  <Cell mobileJustifyContent="center">
+                    <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
+                    <Value>{totalVested}</Value>
+                  </Cell>
+                  <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
+                    <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
                     <Deadline
                       progress={calculateVestingDealLineProgress(
                         vestingPeriodEnds,
@@ -214,28 +296,28 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                     >
                       {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
                     </Deadline>
-                    <LinkCell justifyContent={columns.alignment.seePool} light>
-                      <VestActionButton
-                        dealAddress={dealAddress}
-                        disabled={!canVest}
-                        mutate={mutate}
-                      />
-                      <ButtonPrimaryLightSm
-                        onClick={(e) => {
-                          e.preventDefault()
-                          router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                        }}
-                      >
-                        See Pool
-                      </ButtonPrimaryLightSm>
-                    </LinkCell>
-                  </RowLink>
-                )
-              })
-            )}
-          </InfiniteScroll>
-        </Table>
-      </TableWrapper>
+                  </Cell>
+                  <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
+                    <VestActionButton
+                      dealAddress={dealAddress}
+                      disabled={!canVest}
+                      mutate={mutate}
+                    />
+                    <SeePoolButton
+                      onClick={(e) => {
+                        e.preventDefault()
+                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                      }}
+                    >
+                      See Pool
+                    </SeePoolButton>
+                  </LinkCell>
+                </RowLink>
+              )
+            })}
+          </TableBody>
+        )}
+      </InfiniteScroll>
     </TableCard>
   )
 }

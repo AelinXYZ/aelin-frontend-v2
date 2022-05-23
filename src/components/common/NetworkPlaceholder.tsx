@@ -11,6 +11,10 @@ const Wrapper = styled.div`
   width: 18px;
 `
 
+Wrapper.defaultProps = {
+  className: 'networkIcon networkPlaceholder',
+}
+
 const Name = styled.div`
   color: ${({ theme: { colors } }) => colors.mainBodyBackground};
   font-size: 1.3rem;

@@ -80,6 +80,7 @@ function Deposit({ pool, poolHelpers }: Props) {
         maxValue={balances[0].raw.toString()}
         maxValueFormatted={balances[0].formatted || '0'}
         setValue={setTokenInputValue}
+        symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
       <GradientButton

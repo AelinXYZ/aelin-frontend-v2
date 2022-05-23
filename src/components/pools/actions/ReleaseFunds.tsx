@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import { Button } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'

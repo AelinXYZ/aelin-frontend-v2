@@ -516,7 +516,7 @@ function useUserTabs(
   }
 }
 
-function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
+export function useTimelineStatus(pool?: ParsedAelinPool, now: number = Date.now()): TimelineSteps {
   const getStepDeadline = (deadline: Date, message?: string) =>
     getFormattedDurationFromDateToNow(
       deadline,
@@ -527,120 +527,120 @@ function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
     return {
       [PoolTimelineState.poolCreation]: {
         isDefined: true,
-        active: false,
-        isDone: true,
-        value: formatDate(pool.start, DATE_DETAILED),
+        active: !pool,
+        isDone: !!pool,
+        value: pool ? formatDate(pool.start, DATE_DETAILED) : '--',
       },
       [PoolTimelineState.investmentWindow]: {
         isDefined: true,
-        active: isBefore(now, pool.purchaseExpiry),
-        isDone: isAfter(now, pool.purchaseExpiry),
-        deadline: getStepDeadline(pool.purchaseExpiry),
-        deadlineProgress: calculateDeadlineProgress(pool.purchaseExpiry, pool.start),
-        value: `Ends ${formatDate(pool.purchaseExpiry, DATE_DETAILED)}`,
+        active: pool ? isBefore(now, pool.purchaseExpiry) : false,
+        isDone: pool ? isAfter(now, pool.purchaseExpiry) : false,
+        deadline: pool ? getStepDeadline(pool.purchaseExpiry) : '--',
+        deadlineProgress: pool ? calculateDeadlineProgress(pool.purchaseExpiry, pool.start) : '0',
+        value: pool ? `Ends ${formatDate(pool.purchaseExpiry, DATE_DETAILED)}` : '',
       },
       [PoolTimelineState.dealCreation]: {
         isDefined: true,
-        active: isAfter(now, pool.purchaseExpiry) && !pool.dealAddress,
-        isDone: !!pool.dealAddress,
-        value: pool.deal ? formatDate(pool.deal.createdAt, DATE_DETAILED) : '',
+        active: pool ? isAfter(now, pool.purchaseExpiry) && !pool.dealAddress : false,
+        isDone: pool ? !!pool.dealAddress : false,
+        value: pool?.deal ? formatDate(pool.deal.createdAt, DATE_DETAILED) : '--',
       },
       [PoolTimelineState.dealWindow]: {
         isDefined: true,
         active:
-          !!pool.deal && isAfter(now, pool.deal.createdAt) && !pool.deal?.holderAlreadyDeposited,
-        isDone: !!pool.deal?.holderAlreadyDeposited,
-        deadline: pool.deal
+          !!pool?.deal && isAfter(now, pool.deal.createdAt) && !pool.deal?.holderAlreadyDeposited,
+        isDone: !!pool?.deal?.holderAlreadyDeposited,
+        deadline: pool?.deal
           ? pool.deal.holderAlreadyDeposited && pool.deal.fundedAt
             ? `Funded ${formatDate(pool.deal.fundedAt, DATE_DETAILED)}`
             : getStepDeadline(pool.deal.holderFundingExpiration)
-          : undefined,
-        deadlineProgress: pool.deal
+          : '--',
+        deadlineProgress: pool?.deal
           ? pool.deal.holderAlreadyDeposited
             ? '0'
             : calculateDeadlineProgress(pool.deal.holderFundingExpiration, pool.deal.createdAt)
           : '0',
         value:
-          pool.deal && pool.deal?.holderAlreadyDeposited
+          pool?.deal && pool.deal?.holderAlreadyDeposited
             ? `Ends ${formatDate(pool.deal.holderFundingExpiration, DATE_DETAILED)}`
             : '',
       },
       [PoolTimelineState.proRataRedemption]: {
         isDefined: true,
         active:
-          !!pool.deal?.holderAlreadyDeposited &&
-          !!pool.deal.redemption &&
+          !!pool?.deal?.holderAlreadyDeposited &&
+          !!pool?.deal.redemption &&
           isBefore(now, pool.deal.redemption.proRataRedemptionEnd),
         isDone:
-          !!pool.deal?.holderAlreadyDeposited &&
-          !!pool.deal.redemption &&
-          isAfter(now, pool.deal.redemption.proRataRedemptionEnd),
+          !!pool?.deal?.holderAlreadyDeposited &&
+          !!pool?.deal.redemption &&
+          isAfter(now, pool?.deal.redemption.proRataRedemptionEnd),
         deadline:
-          pool.deal?.redemption && pool.deal.holderAlreadyDeposited
+          pool?.deal?.redemption && pool.deal.holderAlreadyDeposited
             ? getStepDeadline(pool.deal.redemption.proRataRedemptionEnd)
-            : undefined,
-        deadlineProgress: pool.deal?.redemption
+            : '--',
+        deadlineProgress: pool?.deal?.redemption
           ? calculateDeadlineProgress(
               pool.deal.redemption.proRataRedemptionEnd,
               pool.deal.redemption.proRataRedemptionStart,
             )
           : '0',
         value:
-          pool.deal?.redemption && pool.deal.holderAlreadyDeposited
+          pool?.deal?.redemption && pool.deal.holderAlreadyDeposited
             ? `Ends ${formatDate(pool.deal.redemption.proRataRedemptionEnd, DATE_DETAILED)}`
             : '',
       },
       [PoolTimelineState.openRedemption]: {
-        isDefined: !!pool.deal?.hasDealOpenPeriod,
+        isDefined: !!pool?.deal?.hasDealOpenPeriod,
         active:
-          !!pool.deal?.holderAlreadyDeposited &&
-          !!pool.deal.redemption?.openRedemptionEnd &&
+          !!pool?.deal?.holderAlreadyDeposited &&
+          !!pool?.deal.redemption?.openRedemptionEnd &&
           isBefore(now, pool.deal.redemption.openRedemptionEnd),
         isDone:
-          !!pool.deal?.holderAlreadyDeposited &&
-          !!pool.deal.redemption?.openRedemptionEnd &&
+          !!pool?.deal?.holderAlreadyDeposited &&
+          !!pool?.deal.redemption?.openRedemptionEnd &&
           isAfter(now, pool.deal.redemption.openRedemptionEnd),
         deadline:
-          pool.deal?.redemption?.openRedemptionEnd && pool.deal.holderAlreadyDeposited
+          pool?.deal?.redemption?.openRedemptionEnd && pool?.deal.holderAlreadyDeposited
             ? getStepDeadline(pool.deal.redemption.openRedemptionEnd)
-            : undefined,
-        deadlineProgress: pool.deal?.redemption?.openRedemptionEnd
+            : '--',
+        deadlineProgress: pool?.deal?.redemption?.openRedemptionEnd
           ? calculateDeadlineProgress(
               pool.deal.redemption.openRedemptionEnd,
               pool.deal.redemption.proRataRedemptionEnd,
             )
           : '0',
         value:
-          pool.deal?.redemption?.openRedemptionEnd && pool.deal.holderAlreadyDeposited
+          pool?.deal?.redemption?.openRedemptionEnd && pool.deal.holderAlreadyDeposited
             ? `Ends ${formatDate(pool.deal.redemption.openRedemptionEnd, DATE_DETAILED)}`
             : '',
       },
       [PoolTimelineState.vestingCliff]: {
         active:
-          !!pool.deal?.redemption &&
+          !!pool?.deal?.redemption &&
           isWithinInterval(now, {
             start: pool.deal.redemption.end,
             end: addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
           }),
         isDone:
-          !!pool.deal?.redemption &&
+          !!pool?.deal?.redemption &&
           isAfter(now, addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms)),
-        isDefined: !!pool.deal && pool.deal.vestingPeriod.cliff.ms > 0,
+        isDefined: !!pool?.deal && pool?.deal.vestingPeriod.cliff.ms > 0,
         deadline:
-          pool.deal?.redemption && isAfter(now, pool.deal.redemption.end)
+          pool?.deal?.redemption && isAfter(now, pool.deal.redemption.end)
             ? getStepDeadline(
                 addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
               )
-            : undefined,
+            : '--',
         deadlineProgress:
-          pool.deal?.redemption && isAfter(now, pool.deal.redemption.end)
+          pool?.deal?.redemption && isAfter(now, pool.deal.redemption.end)
             ? calculateDeadlineProgress(
                 addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
                 pool.deal.redemption.end,
               )
             : '0',
         value:
-          pool.deal?.redemption && isAfter(now, pool.deal.redemption.end)
+          pool?.deal?.redemption && isAfter(now, pool.deal.redemption.end)
             ? `Ends ${formatDate(
                 addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
                 DATE_DETAILED,
@@ -649,7 +649,7 @@ function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
       },
       [PoolTimelineState.vestingPeriod]: {
         active:
-          !!pool.deal?.redemption &&
+          !!pool?.deal?.redemption &&
           isWithinInterval(now, {
             start: addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
             end: addMilliseconds(
@@ -658,7 +658,7 @@ function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
             ),
           }),
         isDone:
-          !!pool.deal?.redemption &&
+          !!pool?.deal?.redemption &&
           isAfter(
             now,
             addMilliseconds(
@@ -668,7 +668,7 @@ function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
           ),
         isDefined: true,
         deadline:
-          pool.deal?.redemption &&
+          pool?.deal?.redemption &&
           isAfter(now, addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms))
             ? getStepDeadline(
                 addMilliseconds(
@@ -676,9 +676,9 @@ function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
                   pool.deal.vestingPeriod.cliff.ms + pool.deal.vestingPeriod.vesting.ms,
                 ),
               )
-            : undefined,
+            : '--',
         deadlineProgress:
-          pool.deal?.redemption &&
+          pool?.deal?.redemption &&
           isAfter(now, addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms))
             ? calculateDeadlineProgress(
                 addMilliseconds(
@@ -689,7 +689,7 @@ function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
               )
             : '0',
         value:
-          pool.deal?.redemption &&
+          pool?.deal?.redemption &&
           isAfter(now, addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms))
             ? `Ends ${formatDate(
                 addMilliseconds(
@@ -701,7 +701,7 @@ function useTimelineStatus(pool: ParsedAelinPool, now: number): TimelineSteps {
             : '',
       },
     }
-  }, [now, pool.deal, pool.dealAddress, pool.purchaseExpiry, pool.start])
+  }, [now, pool])
 }
 
 type InitialData = {

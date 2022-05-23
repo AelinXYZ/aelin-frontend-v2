@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 
-import { SectionIntro } from '@/src/components/common/SectionIntro'
+import { SectionIntro } from '@/src/components/section/SectionIntro'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const StakeBanner = ({ ...restProps }) => {

@@ -1,19 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
-import { Filters } from '../pureStyledComponents/common/Filters'
 import { PoolCreated } from '@/graphql-schema'
+import CollapsibleBlock from '@/src/components/common/CollapsibleBlock'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
+import { Filters } from '@/src/components/pureStyledComponents/common/Filters'
 import Pool from '@/src/components/sidebar/Pool'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ParsedNotification } from '@/src/hooks/aelin/useAelinNotifications'
 import { getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinUser, { ParsedUser } from '@/src/hooks/aelin/useAelinUser'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
+import { MyPoolsFilter, useLayoutStatus } from '@/src/providers/layoutStatusProvider'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 
 const Wrapper = styled.div`
   box-sizing: border-box;
@@ -57,16 +57,10 @@ type PoolData = {
   notifications: number
 }
 
-enum Filter {
-  Invested = 'Invested',
-  Sponsored = 'Sponsored',
-  Funded = 'Funded',
-}
-
 function getVisiblePools(
   user: ParsedUser | undefined,
   notifications: ParsedNotification[],
-  filter: Filter,
+  filter: MyPoolsFilter,
   isExpanded: boolean,
   appChainId: ChainsValues,
 ): PoolData[] {
@@ -95,42 +89,40 @@ function getVisiblePools(
     }))
 }
 
-function getPools(user: ParsedUser | undefined, filter: Filter): PoolCreated[] {
+function getPools(user: ParsedUser | undefined, filter: MyPoolsFilter): PoolCreated[] {
   if (!user) {
     return []
   }
 
   switch (filter) {
-    case Filter.Invested:
+    case MyPoolsFilter.Invested:
       return user.poolsInvested
-    case Filter.Sponsored:
+    case MyPoolsFilter.Sponsored:
       return user.poolsSponsored
-    case Filter.Funded:
+    case MyPoolsFilter.Funded:
       return user.poolsAsHolder
   }
 }
 
-function getEmptyPoolsText(filter: Filter): string {
+function getEmptyPoolsText(filter: MyPoolsFilter): string {
   switch (filter) {
-    case Filter.Invested:
+    case MyPoolsFilter.Invested:
       return "You haven't invested in any pools yet, join one now"
-    case Filter.Sponsored:
+    case MyPoolsFilter.Sponsored:
       return "You haven't sponsored any pool yet, create one now"
-    case Filter.Funded:
+    case MyPoolsFilter.Funded:
       return "You haven't funded any pool yet"
   }
 }
 
 const MyPools: React.FC = ({ ...restProps }) => {
-  const [activeFilter, setActiveFilter] = useState<Filter>(Filter.Invested)
-  const [filtersExpansion, setFiltersExpansion] = useState<Record<Filter, boolean>>({
-    [Filter.Invested]: false,
-    [Filter.Sponsored]: false,
-    [Filter.Funded]: false,
-  })
-
   const { address: userAddress, appChainId } = useWeb3Connection()
   const { data: userResponse, error: errorUser } = useAelinUser(userAddress)
+  const {
+    sidebar: {
+      myPools: { activeFilter, filtersExpansion, setActiveFilter, setFiltersExpansion },
+    },
+  } = useLayoutStatus()
 
   if (errorUser) {
     throw errorUser
@@ -138,31 +130,31 @@ const MyPools: React.FC = ({ ...restProps }) => {
   const { notifications } = useNotifications()
 
   return (
-    <CollapsibleBlock title={'My pools'} {...restProps}>
+    <CollapsibleBlock name="mypools" title={'My pools'} {...restProps}>
       <Filters justifyContent="space-between">
         <TabButton
-          isActive={activeFilter === Filter.Invested}
+          isActive={activeFilter === MyPoolsFilter.Invested}
           onClick={() => {
-            setActiveFilter(Filter.Invested)
+            setActiveFilter(MyPoolsFilter.Invested)
           }}
         >
-          {`Invested (${getPools(userResponse, Filter.Invested).length})`}
+          {`Invested (${getPools(userResponse, MyPoolsFilter.Invested).length})`}
         </TabButton>
         <TabButton
-          isActive={activeFilter === Filter.Sponsored}
+          isActive={activeFilter === MyPoolsFilter.Sponsored}
           onClick={() => {
-            setActiveFilter(Filter.Sponsored)
+            setActiveFilter(MyPoolsFilter.Sponsored)
           }}
         >
-          {`Sponsored (${getPools(userResponse, Filter.Sponsored).length})`}
+          {`Sponsored (${getPools(userResponse, MyPoolsFilter.Sponsored).length})`}
         </TabButton>
         <TabButton
-          isActive={activeFilter === Filter.Funded}
+          isActive={activeFilter === MyPoolsFilter.Funded}
           onClick={() => {
-            setActiveFilter(Filter.Funded)
+            setActiveFilter(MyPoolsFilter.Funded)
           }}
         >
-          {`Funded (${getPools(userResponse, Filter.Funded).length})`}
+          {`Funded (${getPools(userResponse, MyPoolsFilter.Funded).length})`}
         </TabButton>
       </Filters>
       <RequiredConnection text={`You must be logged to see the pools you ${activeFilter} in`}>

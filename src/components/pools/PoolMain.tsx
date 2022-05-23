@@ -6,8 +6,10 @@ import WithdrawUnredeemed from './actions/WithdrawUnredeemed'
 import UnredeemedInformation from './deal/UnredeemedInformation'
 import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
-import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
-import { PageTitle } from '@/src/components/common/PageTitle'
+import {
+  CardWithTitle as BaseCardWithTitle,
+  CardTitle,
+} from '@/src/components/common/CardWithTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import Claim from '@/src/components/pools/actions/Claim'
@@ -20,6 +22,7 @@ import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPoo
 import DealInformation from '@/src/components/pools/deal/DealInformation'
 import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
+import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
@@ -36,13 +39,22 @@ const MainGrid = styled.div`
 `
 
 const ContentGrid = styled.div`
-  column-gap: 70px;
+  column-gap: 20px;
   display: grid;
+  grid-template-columns: 1fr 1fr;
   row-gap: 20px;
   width: 100%;
 
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    column-gap: 70px;
+  }
+`
+
+const CardWithTitle = styled(BaseCardWithTitle)`
+  order: 1;
+
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    grid-template-columns: 1fr 1fr;
+    order: 0;
   }
 `
 
@@ -99,7 +111,6 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             </ContentGrid>
             {tabs.isReleaseFundsAvailable && <ReleaseFunds pool={pool} />}
           </CardWithTitle>
-
           <ActionTabs
             active={tabs.actionTabs.active}
             onTabClick={tabs.actionTabs.setActive}
