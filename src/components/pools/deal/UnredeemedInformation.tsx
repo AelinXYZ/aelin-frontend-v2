@@ -24,7 +24,7 @@ export const UnredeemedInformation: React.FC<{
       <Column>
         <InfoCell
           title="Token to withdraw"
-          tooltip="??"
+          tooltip="Deal tokens that have been rejected by the purchasers"
           value={
             <ExternalLink
               href={getExplorerUrl(deal.underlyingToken.token || '', pool.chainId)}
@@ -36,7 +36,6 @@ export const UnredeemedInformation: React.FC<{
       <Column>
         <InfoCell
           title="Amount to withdraw"
-          tooltip="??"
           value={`${deal.unredeemed.formatted} ${deal.underlyingToken.symbol}`}
         />
       </Column>
