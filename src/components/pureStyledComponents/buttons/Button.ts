@@ -166,9 +166,9 @@ export const ButtonDropdownCSS = css`
   background-color: ${({ theme }) => theme.buttonDropdown.backgroundColor};
   border-bottom: none;
   border-color: ${({ theme }) => theme.textField.borderColor};
-  border-radius: ${({ theme }) => theme.textField.borderRadius};
-  border-style: ${({ theme }) => theme.textField.borderStyle};
-  border-width: ${({ theme }) => theme.textField.borderWidth};
+  border-radius: 8px;
+  border-style: solid;
+  border-width: 0.5px;
   color: ${({ theme }) => theme.buttonDropdown.color};
   justify-content: center;
   padding-left: 20px;
