@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
@@ -20,6 +22,7 @@ function HolderDeposit({ pool }: Props) {
     [pool.deal?.holderAddress || ZERO_ADDRESS],
   )
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
+  const [disabledAfterDeposit, setDisabledAfterDeposit] = useState(false)
 
   const { estimate, execute: deposit } = useAelinPoolDealTransaction(
     pool.dealAddress || ZERO_ADDRESS,
@@ -32,6 +35,7 @@ function HolderDeposit({ pool }: Props) {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions) => {
         await deposit([underlyingAmount], txGasOptions)
+        setDisabledAfterDeposit(true)
       },
       title: `Fund deal`,
       estimate: () => estimate([underlyingAmount]),
@@ -42,7 +46,10 @@ function HolderDeposit({ pool }: Props) {
     <>
       <GradientButton
         disabled={
-          !isAppConnected || isSubmitting || (holderBalance || ZERO_BN).lt(underlyingAmount)
+          !isAppConnected ||
+          isSubmitting ||
+          disabledAfterDeposit ||
+          (holderBalance || ZERO_BN).lt(underlyingAmount)
         }
         onClick={depositTokens}
       >
