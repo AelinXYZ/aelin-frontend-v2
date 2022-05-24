@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
@@ -11,8 +11,10 @@ import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
+import { DetailedNumber } from '@/types/utils'
 
 type Props = {
   pool: ParsedAelinPool
@@ -21,7 +23,11 @@ type Props = {
 
 function Deposit({ pool, poolHelpers }: Props) {
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
-  const { refetchUserInvestmentTokenBalance, userInvestmentTokenBalance: balance } = poolHelpers
+  const {
+    allowedList,
+    refetchUserInvestmentTokenBalance,
+    userInvestmentTokenBalance: balance,
+  } = poolHelpers
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()
@@ -41,31 +47,38 @@ function Deposit({ pool, poolHelpers }: Props) {
     poolHelpers.maxDepositAllowed,
   ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
+  const isUserMaxAmountIsFromAllowedList =
+    isPrivatePool(pool.poolType) && allowedList.userMaxAmount.raw.lt(balances[0].raw)
+
+  const isAmountExceedsMax = useMemo(
+    () =>
+      isUserMaxAmountIsFromAllowedList
+        ? tokenInputValue && BigNumber.from(tokenInputValue).gt(allowedList.userMaxAmount.raw)
+        : tokenInputValue && BigNumber.from(tokenInputValue).gt(balances[0].raw),
+    [isUserMaxAmountIsFromAllowedList, tokenInputValue, allowedList.userMaxAmount.raw, balances],
+  )
+
   useEffect(() => {
     if (!balances[0].raw) {
       setInputError('There was an error calculating User balance')
       return
     }
 
-    if (
-      pool.poolType.toLowerCase() === Privacy.PRIVATE &&
-      tokenInputValue &&
-      BigNumber.from(tokenInputValue).gt(poolHelpers.allowedList.userMaxAmount.raw)
-    ) {
+    if (isAmountExceedsMax) {
       setInputError(
-        `Max allowed: ${poolHelpers.allowedList.userMaxAmount.formatted} ${pool.investmentTokenSymbol}`,
+        isUserMaxAmountIsFromAllowedList
+          ? `Max allowed: ${allowedList.userMaxAmount.formatted} ${pool.investmentTokenSymbol}`
+          : 'Insufficient balance',
       )
-    } else if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balances[0].raw)) {
-      setInputError('Insufficient balance')
     } else {
       setInputError('')
     }
   }, [
-    tokenInputValue,
-    poolHelpers.allowedList,
-    pool.poolType,
-    pool.investmentTokenSymbol,
+    allowedList.userMaxAmount.formatted,
     balances,
+    isAmountExceedsMax,
+    isUserMaxAmountIsFromAllowedList,
+    pool.investmentTokenSymbol,
   ])
 
   const depositTokens = async () => {

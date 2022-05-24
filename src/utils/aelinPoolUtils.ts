@@ -7,8 +7,7 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
-import { PoolStages } from '@/src/constants/pool'
-import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+import { PoolStages, Privacy } from '@/src/constants/pool'
 import { formatToken } from '@/src/web3/bigNumber'
 import { DetailedNumber } from '@/types/utils'
 
@@ -259,4 +258,8 @@ export function getCurrentStage(pool: ParsedAelinPool) {
 
   // TODO: Handle different states of closed
   return PoolStages.Complete
+}
+
+export function isPrivatePool(poolType: string) {
+  return poolType.toLowerCase() === Privacy.PRIVATE
 }
