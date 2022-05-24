@@ -49,10 +49,10 @@ export const lightTheme = {
     colorHover: lightGray,
   },
   buttonDropdown: {
-    backgroundColor: componentBackgroundColor,
-    backgroundColorHover: lighten(0.1, componentBackgroundColor),
-    borderColor: lightGray,
-    borderColorHover: lightGray,
+    backgroundColor: '#fff',
+    backgroundColorHover: '#fff',
+    borderColor: 'rgba(71, 87, 97, 0.2)',
+    borderColorHover: 'rgba(71, 87, 97, 0.2)',
     color: textColor,
     colorHover: textColor,
   },
@@ -86,13 +86,13 @@ export const lightTheme = {
     areaChartGradientEnd: areaChartGradientEnd,
   },
   dropdown: {
-    background: componentBackgroundColor,
-    borderColor: lightGray,
+    background: '#fff',
+    borderColor: componentBorderColor,
     boxShadow: 'none',
     item: {
       backgroundColor: 'transparent',
-      backgroundColorActive: 'rgba(255, 255, 255, 0.12)',
-      backgroundColorHover: 'rgba(255, 255, 255, 0.12)',
+      backgroundColorActive: 'rgba(0, 0, 0, 0.06)',
+      backgroundColorHover: 'rgba(0, 0, 0, 0.06)',
       borderColor: 'transparent',
       color: textColor,
       colorActive: textColor,
@@ -101,12 +101,23 @@ export const lightTheme = {
   header: {
     lineColor: 'rgba(71, 87, 97, 0.2)',
   },
+  headerDropdown: {
+    backgroundColor: '#fff',
+    borderColor: 'rgba(71, 87, 97, 0.2)',
+  },
   networkPlaceholder: {
     backgroundColor: 'rgba(71, 87, 97, 0.7)',
     color: '#fff',
   },
   progressBar: {
     background: 'rgba(71, 87, 97, 0.16)',
+  },
+  searchDropdown: {
+    backgroundColor: '#fff',
+  },
+  searchDropdownButton: {
+    backgroundColor: '#fff',
+    color: textColor,
   },
   table: {
     sortBackgroundColor: primaryDarker,

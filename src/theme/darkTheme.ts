@@ -100,12 +100,23 @@ export const darkTheme = {
   header: {
     lineColor: 'rgba(255, 255, 255, 0.25)',
   },
+  headerDropdown: {
+    backgroundColor: gray,
+    borderColor: lightGray,
+  },
   networkPlaceholder: {
     backgroundColor: '#fff',
     color: mainBodyBackground,
   },
   progressBar: {
     background: blueishGray,
+  },
+  searchDropdown: {
+    backgroundColor: gray,
+  },
+  searchDropdownButton: {
+    backgroundColor: gray,
+    color: textColor,
   },
   table: {
     sortBackgroundColor: '#fff',

@@ -152,9 +152,9 @@ export const ButtonDropdownIsOpenCSS = css`
   border-bottom-color: transparent;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  border-left-color: ${({ theme }) => theme.textField.borderColor};
-  border-right-color: ${({ theme }) => theme.textField.borderColor};
-  border-top-color: ${({ theme }) => theme.textField.borderColor};
+  border-left-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+  border-right-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+  border-top-color: ${({ theme }) => theme.buttonDropdown.borderColor};
   color: ${({ theme }) => theme.buttonDropdown.color};
 
   &::after {
@@ -165,7 +165,7 @@ export const ButtonDropdownIsOpenCSS = css`
 export const ButtonDropdownCSS = css`
   background-color: ${({ theme }) => theme.buttonDropdown.backgroundColor};
   border-bottom: none;
-  border-color: ${({ theme }) => theme.textField.borderColor};
+  border-color: ${({ theme }) => theme.buttonDropdown.borderColor};
   border-radius: 8px;
   border-style: solid;
   border-width: 0.5px;

@@ -86,8 +86,8 @@ const StartWrapper = styled.div`
 
 const HeaderDropdown = styled(Dropdown)`
   .dropdownItems {
-    background-color: ${({ theme }) => theme.colors.gray};
-    border-color: ${({ theme }) => theme.colors.lightGray};
+    background-color: ${({ theme }) => theme.headerDropdown.backgroundColor};
+    border-color: ${({ theme }) => theme.headerDropdown.borderColor};
     border-radius: 6px;
     border-style: solid;
     border-width: 0.5px;
