@@ -4,9 +4,11 @@ import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isWithinInterval from 'date-fns/isWithinInterval'
+import { ClientError } from 'graphql-request'
 import ms from 'ms'
+import { SWRResponse } from 'swr'
 
-import { NotificationType } from '@/graphql-schema'
+import { NotificationType, UserAllocationStatQuery } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
@@ -15,7 +17,6 @@ import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useUserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
 import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
-import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -32,25 +33,11 @@ import {
   WaitingForDeal,
 } from '@/types/aelinPool'
 
-function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
-  const { address } = useWeb3Connection()
-  const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
+type UserAllocationStat = SWRResponse<UserAllocationStatQuery, ClientError>
+
+function useFundingStatus(pool: ParsedAelinPool, userAllocationStat: UserAllocationStat): Funding {
+  const { data: userAllocationStatRes } = userAllocationStat
   const allowedList = useUserAllowList(pool)
-
-  const [userInvestmentTokenBalance, refetchUserInvestmentTokenBalance] = useERC20Call(
-    pool.chainId,
-    pool.investmentToken,
-    'balanceOf',
-    [address || ZERO_ADDRESS],
-  )
-
-  const [userAllowance, refetchUserAllowance] = useERC20Call(
-    pool.chainId,
-    pool.investmentToken,
-    'allowance',
-    [address || ZERO_ADDRESS, pool.address],
-  )
-
   return useMemo(() => {
     const isCap = pool.poolCap.raw.eq(0)
     const capAmount = pool.poolCap.raw
@@ -60,8 +47,6 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
     return {
       isCap,
       capReached: isCap ? false : capAmount.eq(funded),
-      userAllowance: userAllowance || ZERO_BN,
-      refetchUserAllowance,
       maxDepositAllowed: {
         raw: isCap ? MAX_BN : maxDepositAllowed,
         formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
@@ -73,33 +58,24 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
           pool.investmentTokenDecimals,
         ),
       },
-      userInvestmentTokenBalance: {
-        raw: userInvestmentTokenBalance || ZERO_BN,
-        formatted: formatToken(userInvestmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals),
-      },
       allowedList,
-      refetchUserInvestmentTokenBalance,
     }
   }, [
     allowedList,
     pool.funded.raw,
     pool.investmentTokenDecimals,
     pool.poolCap.raw,
-    refetchUserAllowance,
-    refetchUserInvestmentTokenBalance,
     userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
-    userAllowance,
-    userInvestmentTokenBalance,
   ])
 }
 
-function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
+function useDealingStatus(
+  pool: ParsedAelinPool,
+  userAllocationStat: UserAllocationStat,
+): WaitingForDeal {
   const { address } = useWeb3Connection()
   const walletAddress = address || ZERO_ADDRESS
-  const { data: userAllocationStatRes, mutate: refetchUserWithdrawn } = useUserAllocationStat(
-    pool.address,
-    chainId,
-  )
+  const { data: userAllocationStatRes, mutate: refetchUserWithdrawn } = userAllocationStat
 
   const [data, refetchPool] = useAelinPoolCallMultiple(pool.chainId, pool.address, [
     { method: 'maxProRataAmount', params: [walletAddress] },
@@ -737,14 +713,16 @@ export default function useAelinPoolStatus(
 
   const { address } = useWeb3Connection()
 
+  const userAllocationStat = useUserAllocationStat(poolResponse.address, chainId)
+
   // derive data for UI
   const derivedStatus = useCurrentStatus(poolResponse, now)
   const userRole = useUserRole(address, poolResponse, derivedStatus)
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
 
   // get info by pool status
-  const funding = useFundingStatus(poolResponse, chainId)
-  const dealing = useDealingStatus(poolResponse, chainId)
+  const funding = useFundingStatus(poolResponse, userAllocationStat)
+  const dealing = useDealingStatus(poolResponse, userAllocationStat)
   const proRata = useProRataStatus(poolResponse)
   const timeline = useTimelineStatus(poolResponse, now)
 
