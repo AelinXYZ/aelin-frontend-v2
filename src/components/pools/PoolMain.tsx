@@ -69,13 +69,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     query: { notification },
   } = useRouter()
 
-  const { dealing, funding, pool, tabs, timeline } = useAelinPoolStatus(
-    chainId,
-    poolAddress as string,
-    {
-      tabs: notification as NotificationType,
-    },
-  )
+  const { funding, pool, tabs, timeline } = useAelinPoolStatus(chainId, poolAddress as string, {
+    tabs: notification as NotificationType,
+  })
 
   return (
     <>
@@ -102,11 +98,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             ))}
           >
             <ContentGrid>
-              {tabs.active === PoolTab.PoolInformation && (
-                <PoolInformation pool={pool} poolStatusHelper={funding} />
-              )}
+              {tabs.active === PoolTab.PoolInformation && <PoolInformation pool={pool} />}
               {tabs.active === PoolTab.DealInformation && !!pool.deal && (
-                <DealInformation pool={pool} poolStatusHelper={dealing} />
+                <DealInformation pool={pool} />
               )}
               {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
@@ -134,9 +128,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                   <WithdrawalFromPool pool={pool} />
                 )}
                 {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.AcceptDeal && (
-                  <AcceptDeal dealing={dealing} pool={pool} />
-                )}
+                {tabs.actionTabs.active === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
                 {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
                 {tabs.actionTabs.active === PoolAction.Claim && <Claim pool={pool} />}
                 {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (

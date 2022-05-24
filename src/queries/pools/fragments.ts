@@ -31,6 +31,8 @@ gql`
     vestingEnds
     vestingStarts
     holder
+
+    filter
   }
 `
 

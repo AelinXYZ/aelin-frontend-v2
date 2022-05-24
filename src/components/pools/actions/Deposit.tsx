@@ -7,6 +7,7 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useUserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
@@ -22,7 +23,7 @@ type Props = {
 
 function Deposit({ pool, poolHelpers }: Props) {
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
-  const { allowedList } = poolHelpers
+  const allowedList = useUserAllowList(pool)
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()

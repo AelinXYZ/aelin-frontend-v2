@@ -4,6 +4,7 @@ import Deposit from '@/src/components/pools/actions/Deposit'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useUserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { Funding } from '@/types/aelinPool'
@@ -21,13 +22,15 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
     'allowance',
     [address || ZERO_ADDRESS, pool.address],
   )
+  const allowedList = useUserAllowList(pool)
+
   return (
     <Wrapper title="Deposit tokens" {...restProps}>
       {!userAllowance ? (
         <Contents>There was an error, try again!</Contents>
       ) : poolHelpers.capReached ? (
         <Contents>Max cap reached</Contents>
-      ) : !poolHelpers.allowedList.isUserAllowedToInvest ? (
+      ) : !allowedList.isUserAllowedToInvest ? (
         <Contents>The connected wallet was not whitelisted to invest in this pool.</Contents>
       ) : userAllowance.gt(ZERO_ADDRESS) ? (
         <Deposit pool={pool} poolHelpers={poolHelpers} />

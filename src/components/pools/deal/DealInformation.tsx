@@ -2,12 +2,14 @@ import styled from 'styled-components'
 
 import { Deadline } from '@/src/components/common/Deadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
+import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLoading'
+import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
-import { WaitingForDeal } from '@/types/aelinPool'
 
 const Column = styled.div`
   display: flex;
@@ -16,10 +18,22 @@ const Column = styled.div`
   row-gap: 20px;
 `
 
+const UserStatsInfoCell = genericSuspense(
+  ({ pool }: { pool: ParsedAelinPool }) => {
+    const userStats = useAelinDealUserStats(pool)
+    return (
+      <>
+        <Value>Remaining pro-rata allocation: {userStats.userMaxAllocation.formatted}</Value>
+        <Value>Withdrawn: {userStats.userTotalWithdrawn.formatted}</Value>
+      </>
+    )
+  },
+  () => <InlineLoading />,
+)
+
 export const DealInformation: React.FC<{
   pool: ParsedAelinPool
-  poolStatusHelper: WaitingForDeal
-}> = ({ pool, poolStatusHelper }) => {
+}> = ({ pool }) => {
   const { chainId, deal, sponsorFee } = pool
 
   return !deal ? (
@@ -112,10 +126,7 @@ export const DealInformation: React.FC<{
           }
         />
         <InfoCell title="User stats" tooltip="Pool stats for an investor connected to the app">
-          <Value>
-            Remaining pro-rata allocation: {poolStatusHelper.userMaxAllocation.formatted}
-          </Value>
-          <Value>Withdrawn: {poolStatusHelper.userTotalWithdrawn.formatted}</Value>
+          <UserStatsInfoCell pool={pool} />
         </InfoCell>
         <InfoCell
           title="Fees charged on accept"

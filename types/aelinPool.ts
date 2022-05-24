@@ -41,8 +41,6 @@ export interface Funding {
   isCap: boolean
   capReached: boolean
   maxDepositAllowed: DetailedNumber
-  poolTokenBalance: DetailedNumber
-  allowedList: UserAllowList
 }
 
 export interface WaitingForDeal {
