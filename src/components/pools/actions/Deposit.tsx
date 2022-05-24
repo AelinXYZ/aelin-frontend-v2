@@ -1,20 +1,20 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ZERO_BN } from '@/src/constants/misc'
-import { Privacy } from '@/src/constants/pool'
+import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useUserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
-import { DetailedNumber } from '@/types/utils'
 
 type Props = {
   pool: ParsedAelinPool
@@ -23,14 +23,17 @@ type Props = {
 
 function Deposit({ pool, poolHelpers }: Props) {
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
-  const {
-    allowedList,
-    refetchUserInvestmentTokenBalance,
-    userInvestmentTokenBalance: balance,
-  } = poolHelpers
+  const allowedList = useUserAllowList(pool)
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()
+
+  const [balance, refetchUserInvestmentTokenBalance] = useERC20Call(
+    pool.chainId,
+    pool.investmentToken,
+    'balanceOf',
+    [address || ZERO_ADDRESS],
+  )
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -41,8 +44,8 @@ function Deposit({ pool, poolHelpers }: Props) {
 
   const balances = [
     {
-      raw: balance.raw || ZERO_BN,
-      formatted: formatToken(balance.raw || ZERO_BN, pool.investmentTokenDecimals),
+      raw: balance || ZERO_BN,
+      formatted: formatToken(balance || ZERO_BN, pool.investmentTokenDecimals),
     },
     poolHelpers.maxDepositAllowed,
   ].sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))

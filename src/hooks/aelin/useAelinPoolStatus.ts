@@ -8,14 +8,10 @@ import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { MAX_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useUserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
-import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
-import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
-import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -26,31 +22,11 @@ import {
   PoolAction,
   PoolStatus,
   PoolTab,
-  ProRata,
   TimelineSteps,
   UserRole,
-  WaitingForDeal,
 } from '@/types/aelinPool'
 
-function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
-  const { address } = useWeb3Connection()
-  const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
-  const allowedList = useUserAllowList(pool)
-
-  const [userInvestmentTokenBalance, refetchUserInvestmentTokenBalance] = useERC20Call(
-    pool.chainId,
-    pool.investmentToken,
-    'balanceOf',
-    [address || ZERO_ADDRESS],
-  )
-
-  const [userAllowance, refetchUserAllowance] = useERC20Call(
-    pool.chainId,
-    pool.investmentToken,
-    'allowance',
-    [address || ZERO_ADDRESS, pool.address],
-  )
-
+function useFundingStatus(pool: ParsedAelinPool): Funding {
   return useMemo(() => {
     const isCap = pool.poolCap.raw.eq(0)
     const capAmount = pool.poolCap.raw
@@ -60,100 +36,12 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
     return {
       isCap,
       capReached: isCap ? false : capAmount.eq(funded),
-      userAllowance: userAllowance || ZERO_BN,
-      refetchUserAllowance,
       maxDepositAllowed: {
         raw: isCap ? MAX_BN : maxDepositAllowed,
         formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
       },
-      poolTokenBalance: {
-        raw: userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
-        formatted: formatToken(
-          userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
-          pool.investmentTokenDecimals,
-        ),
-      },
-      userInvestmentTokenBalance: {
-        raw: userInvestmentTokenBalance || ZERO_BN,
-        formatted: formatToken(userInvestmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals),
-      },
-      allowedList,
-      refetchUserInvestmentTokenBalance,
     }
-  }, [
-    allowedList,
-    pool.funded.raw,
-    pool.investmentTokenDecimals,
-    pool.poolCap.raw,
-    refetchUserAllowance,
-    refetchUserInvestmentTokenBalance,
-    userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
-    userAllowance,
-    userInvestmentTokenBalance,
-  ])
-}
-
-function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
-  const { address } = useWeb3Connection()
-  const walletAddress = address || ZERO_ADDRESS
-  const { data: userAllocationStatRes, mutate: refetchUserWithdrawn } = useUserAllocationStat(
-    pool.address,
-    chainId,
-  )
-
-  const [data, refetchPool] = useAelinPoolCallMultiple(pool.chainId, pool.address, [
-    { method: 'maxProRataAmount', params: [walletAddress] },
-    { method: 'balanceOf', params: [walletAddress] },
-    { method: 'purchaseTokenTotalForDeal', params: [] },
-    { method: 'totalAmountAccepted', params: [] },
-  ])
-
-  return useMemo(() => {
-    const maxProRataAmountBalance = data[0] || ZERO_BN
-    const safeWalletPoolBalance = data[1] || ZERO_BN
-    const maxPurchaseDealAllowed = data[2] || ZERO_BN
-    const totalAmountAccepted = data[3] || ZERO_BN
-
-    const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
-
-    const maxOpenRedemptionAvailable =
-      maxPurchaseDealAllowed?.sub(totalAmountAccepted || ZERO_BN) || ZERO_BN
-
-    const maxOpenRedemptionBalance = safeWalletPoolBalance.gt(maxOpenRedemptionAvailable)
-      ? maxOpenRedemptionAvailable
-      : safeWalletPoolBalance
-
-    const userMaxAllocation =
-      pool.deal?.redemption?.stage === 1
-        ? maxProRataAmountBalance || ZERO_BN
-        : maxOpenRedemptionBalance
-
-    return {
-      refetchUserStats: () => {
-        refetchUserWithdrawn()
-        refetchPool()
-      },
-      userTotalWithdrawn: {
-        raw: userAmountWithdrawn,
-        formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
-      },
-      userMaxAllocation: {
-        raw: userMaxAllocation,
-        formatted: formatToken(userMaxAllocation, pool.investmentTokenDecimals) || '0',
-      },
-    }
-  }, [
-    data,
-    pool.deal?.redemption?.stage,
-    pool.investmentTokenDecimals,
-    refetchPool,
-    refetchUserWithdrawn,
-    userAllocationStatRes?.userAllocationStat?.totalWithdrawn,
-  ])
-}
-
-function useProRataStatus(pool: ParsedAelinPool): ProRata {
-  return {}
+  }, [pool.funded.raw, pool.investmentTokenDecimals, pool.poolCap.raw])
 }
 
 function useCurrentStatus(pool: ParsedAelinPool, now: number): DerivedStatus {
@@ -743,9 +631,8 @@ export default function useAelinPoolStatus(
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
 
   // get info by pool status
-  const funding = useFundingStatus(poolResponse, chainId)
-  const dealing = useDealingStatus(poolResponse, chainId)
-  const proRata = useProRataStatus(poolResponse)
+  const funding = useFundingStatus(poolResponse)
+
   const timeline = useTimelineStatus(poolResponse, now)
 
   return useMemo(
@@ -754,11 +641,9 @@ export default function useAelinPoolStatus(
       pool: poolResponse,
       userRole,
       funding,
-      dealing,
-      proRata,
       tabs,
       timeline,
     }),
-    [refetchPool, poolResponse, userRole, funding, dealing, proRata, tabs, timeline],
+    [refetchPool, poolResponse, userRole, funding, tabs, timeline],
   )
 }
