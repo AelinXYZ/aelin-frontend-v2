@@ -251,6 +251,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
 
   const pushNetwork = async (chainId?: ChainsValues): Promise<void> => {
     if (!onboard || !wallet || wallet.name !== 'MetaMask') {
+      chainId && setAppChainId(chainId)
       console.warn('Unable to push network')
       return
     }
