@@ -24,7 +24,7 @@ import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyle
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
-import { ThemeType, useThemeContext } from '@/src/providers/themeSwitchProvider'
+import { ThemeType, useThemeContext } from '@/src/providers/themeContextProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { shortenAddress } from '@/src/utils/string'
 

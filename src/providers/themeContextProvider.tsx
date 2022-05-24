@@ -4,6 +4,7 @@ import { ThemeProvider } from 'styled-components'
 import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 import { commonTheme } from '@/src/theme/commonTheme'
 import { darkTheme } from '@/src/theme/darkTheme'
+import { GlobalStyle } from '@/src/theme/globalStyle'
 import { lightTheme } from '@/src/theme/lightTheme'
 
 export enum ThemeType {
@@ -45,7 +46,10 @@ const ThemeContextProvider: React.FC = ({ children }) => {
 
   return (
     <ThemeContext.Provider value={values}>
-      <ThemeProvider theme={currentThemeJSON}>{children}</ThemeProvider>
+      <ThemeProvider theme={currentThemeJSON}>
+        <GlobalStyle />
+        {children}
+      </ThemeProvider>
     </ThemeContext.Provider>
   )
 }

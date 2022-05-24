@@ -12,10 +12,9 @@ import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
 import LayoutStatusProvider from '@/src/providers/layoutStatusProvider'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
-import Theme from '@/src/providers/themeSwitchProvider'
+import Theme from '@/src/providers/themeContextProvider'
 import TransactionModalProvider from '@/src/providers/transactionModalProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
-import { GlobalStyle } from '@/src/theme/globalStyle'
 
 // Should be rendered on client side only!
 const TokenIconsProvider = dynamic(() => import('@/src/providers/tokenIconsProvider'), {
@@ -63,7 +62,6 @@ function App({ Component, pageProps }: AppProps) {
               <StakingRewardsProvider>
                 <TransactionModalProvider>
                   <NotificationsProvider>
-                    <GlobalStyle />
                     <SafeSuspense>
                       <TokenIconsProvider>
                         <Header />
