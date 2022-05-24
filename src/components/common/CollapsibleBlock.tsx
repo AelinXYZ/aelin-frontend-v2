@@ -45,12 +45,12 @@ const Title = styled.h3`
 `
 
 const Button = styled.button`
-  --dimensions: 30px;
+  --dimensions: 24px;
 
   align-items: center;
-  background: rgba(255, 255, 255, 0.06);
+  background: ${({ theme: { collapsibleBlock } }) => collapsibleBlock.buttonBackgroundColor};
   border-radius: 50%;
-  border: none;
+  border: 0.5px solid ${({ theme: { collapsibleBlock } }) => collapsibleBlock.buttonBorderColor};
   cursor: pointer;
   display: flex;
   height: var(--dimensions);

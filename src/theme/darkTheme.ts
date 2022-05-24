@@ -23,6 +23,11 @@ const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
 export const darkTheme = {
+  collapsibleBlock: {
+    buttonBackgroundColor: 'rgba(255, 255, 255, 0.06)',
+    buttonBorderColor: 'rgba(255, 255, 255, 0.06)',
+    buttonColor: '#fff',
+  },
   myPool: {
     backgroundColor: gray,
     borderColor: gray,
