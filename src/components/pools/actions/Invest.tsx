@@ -18,6 +18,8 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
         <Contents>There was an error, try again!</Contents>
       ) : poolHelpers.capReached ? (
         <Contents>Max cap reached</Contents>
+      ) : !poolHelpers.allowedList.isUserAllowedToInvest ? (
+        <Contents>The connected wallet was not whitelisted to invest in this pool.</Contents>
       ) : poolHelpers.userAllowance.gt(ZERO_ADDRESS) ? (
         <Deposit pool={pool} poolHelpers={poolHelpers} />
       ) : (
