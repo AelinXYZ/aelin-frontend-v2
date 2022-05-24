@@ -7,8 +7,7 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
-import { PoolStages } from '@/src/constants/pool'
-import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+import { PoolStages, Privacy } from '@/src/constants/pool'
 import { formatToken } from '@/src/web3/bigNumber'
 import { DetailedNumber } from '@/types/utils'
 
@@ -202,21 +201,6 @@ export function getVestingDates(
   return { cliff, vesting, end, start }
 }
 
-export function calculateInvestmentDeadlineProgress(purchaseExpiry: Date, start: Date) {
-  if (getFormattedDurationFromDateToNow(purchaseExpiry, 'ended') === 'ended') {
-    return '0'
-  }
-
-  const end = purchaseExpiry
-  const today = new Date()
-
-  //use Math.abs to avoid sign
-  const q = Math.abs(today.getTime() - start.getTime())
-  const d = Math.abs(end.getTime() - start.getTime())
-
-  return Math.round((q / d) * 100).toString()
-}
-
 export function calculateDeadlineProgress(deadline: Date, start: Date) {
   const now = new Date()
   if (isBefore(now, start)) {
@@ -274,4 +258,8 @@ export function getCurrentStage(pool: ParsedAelinPool) {
 
   // TODO: Handle different states of closed
   return PoolStages.Complete
+}
+
+export function isPrivatePool(poolType: string) {
+  return poolType.toLowerCase() === Privacy.PRIVATE
 }
