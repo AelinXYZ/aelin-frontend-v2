@@ -5,6 +5,7 @@ import { commonTheme } from '@/src/theme/commonTheme'
 import { darkTheme } from '@/src/theme/darkTheme'
 import { lightTheme } from '@/src/theme/lightTheme'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ThemeContext = createContext({} as any)
 
 const ThemeContextProvider: React.FC = ({ children }) => {

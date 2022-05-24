@@ -75,7 +75,7 @@ export const TableRowCSS = css<RowProps>`
   ${RowCSS}
 
   background-color: ${({ theme }) => theme.card.backgroundColor};
-  border-radius: ${({ theme }) => theme.card.borderRadius};
+  border-radius: 8px;
   border: ${({ theme }) => theme.card.borderColor};
   min-height: 48px;
   transition: background-color 0.1s linear;
