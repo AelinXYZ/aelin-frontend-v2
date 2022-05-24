@@ -23,6 +23,9 @@ const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
 export const darkTheme = {
+  logo: {
+    color: primary,
+  },
   buttonPrimary: {
     backgroundColor: rgba(primary, 0.08),
     backgroundColorHover: rgba(primary, 0.2),
