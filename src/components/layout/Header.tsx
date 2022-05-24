@@ -2,6 +2,7 @@ import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
+import { DarkMode } from '@/src/components/assets/DarkMode'
 import { Docs } from '@/src/components/assets/Docs'
 import { Ellipsis } from '@/src/components/assets/Ellipsis'
 import { Eth } from '@/src/components/assets/Eth'
@@ -29,6 +30,7 @@ import { shortenAddress } from '@/src/utils/string'
 
 const Wrapper = styled.header`
   --header-height: 60px;
+  --header-button-height: 34px;
 
   align-items: center;
   background-color: ${({ theme }) => theme.colors.mainBodyBackground};
@@ -113,6 +115,7 @@ const EndWrapper = styled.div`
   align-items: center;
   display: flex;
   gap: 20px;
+  height: 100%;
   justify-content: space-between;
   left: 0;
   position: absolute;
@@ -152,11 +155,16 @@ const Line = styled.div`
   }
 `
 
-const DropdownButton = styled.div`
+const DropdownButton = styled.button`
   align-items: center;
+  background-color: transparent;
+  border: none;
+  color: ${({ theme }) => theme.colors.textColor};
   cursor: pointer;
   display: flex;
   gap: 8px;
+  height: var(--header-button-height);
+  padding: 0;
 `
 
 const NetworkError = styled.p`
@@ -204,6 +212,22 @@ const WalletButton = styled(ButtonPrimaryLight)`
   }
 `
 
+const EllipsisButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  height: var(--header-button-height);
+  justify-content: center;
+  transition: opacity 0.15s linear;
+  width: fit-content;
+
+  &:active {
+    opacity: 0.7;
+  }
+`
+
 const ExternalLink = styled.a`
   display: flex;
   justify-content: center;
@@ -224,22 +248,6 @@ const ExternalLink = styled.a`
   }
 `
 
-const EllipsisButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  transition: opacity 0.15s linear;
-  width: fit-content;
-
-  &:active {
-    opacity: 0.7;
-  }
-`
-
 export const Header: React.FC = (props) => {
   const {
     address = '',
@@ -254,7 +262,7 @@ export const Header: React.FC = (props) => {
   const currentChain = getNetworkConfig(appChainId)
   const wrongNetwork = isWalletConnected && !isWalletNetworkSupported
 
-  const { currentTheme, switchTheme } = useThemeContext()
+  const { currentThemeName, switchTheme } = useThemeContext()
 
   const networksDropdownItems = getChainsByEnvironmentArray().map((item, index) => (
     <DropdownItem
@@ -377,9 +385,9 @@ export const Header: React.FC = (props) => {
                       Buy Aelin OP
                     </DropdownItem>,
                     <DropdownItem key={'external_links_4'} onClick={switchTheme}>
-                      {currentTheme === ThemeType.light ? (
+                      {currentThemeName === ThemeType.light ? (
                         <>
-                          <LightMode />
+                          <DarkMode />
                           Dark mode
                         </>
                       ) : (
