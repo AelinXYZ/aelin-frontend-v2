@@ -20,7 +20,7 @@ const Badge = styled.span`
   align-items: center;
   background: ${({ theme: { colors } }) => colors.primary};
   border-radius: 50%;
-  color: ${({ theme: { colors } }) => colors.textColor};
+  color: #fff;
   display: flex;
   font-size: 0.8rem;
   font-weight: 600;
