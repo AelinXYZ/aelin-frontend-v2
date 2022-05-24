@@ -52,22 +52,22 @@ const Search = styled(BaseSearch)`
   z-index: 1;
 `
 
-const SearchDropdown = styled(Dropdown)`
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 1;
-`
+// const SearchDropdown = styled(Dropdown)`
+//   position: absolute;
+//   right: 0;
+//   top: 0;
+//   z-index: 1;
+// `
 
-const SearchDropdownButton = styled(ButtonDropdown)`
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+// const SearchDropdownButton = styled(ButtonDropdown)`
+//   border-top-left-radius: 0;
+//   border-bottom-left-radius: 0;
 
-  &,
-  .isOpen & {
-    background-color: ${({ theme }) => theme.colors.gray};
-  }
-`
+//   &,
+//   .isOpen & {
+//     background-color: ${({ theme }) => theme.colors.gray};
+//   }
+// `
 
 const FiltersDropdowns = styled.div`
   display: grid;
@@ -126,19 +126,18 @@ export const ListWithFilters: React.FC = () => {
   const [nowSeconds, setNow] = useState<string>()
 
   const changeHandler = useCallback(() => {
-    const buildWhere = () =>
-      searchOptions.reduce((acc, option) => {
-        return {
-          ...acc,
-          [option.filter]:
-            searchFilter.filter === option.filter && searchString.length >= searchFilter.length
-              ? searchString
-              : null,
-        }
-      }, {})
-
-    setWhere(buildWhere())
-  }, [searchFilter.filter, searchFilter.length, searchString, setWhere])
+    // const buildWhere = () =>
+    //   searchOptions.reduce((acc, option) => {
+    //     return {
+    //       ...acc,
+    //       [option.filter]:
+    //         searchFilter.filter === option.filter && searchString.length >= searchFilter.length
+    //           ? searchString
+    //           : null,
+    //     }
+    //   }, {})
+    setWhere({ filter_contains: searchString.toLocaleLowerCase() })
+  }, [searchString, setWhere])
 
   const debouncedChangeHandler = useMemo(
     () => debounce(changeHandler, DEBOUNCED_INPUT_TIME),
@@ -266,9 +265,9 @@ export const ListWithFilters: React.FC = () => {
             onChange={async (evt) => {
               setSearchString(evt.target.value)
             }}
-            placeholder={`Enter ${searchFilter.label.toLocaleLowerCase()}...`}
+            placeholder="Search pool..."
           />
-          <SearchDropdown
+          {/* <SearchDropdown
             currentItem={getCurrentItem(
               searchOptions.findIndex((item) => item.filter === searchFilter.filter),
             )}
@@ -287,7 +286,7 @@ export const ListWithFilters: React.FC = () => {
                 {item.label}
               </DropdownItem>
             ))}
-          />
+          /> */}
         </SearchWrapper>
         <FiltersDropdowns>
           <Dropdown
