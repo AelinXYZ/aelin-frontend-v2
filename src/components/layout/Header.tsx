@@ -23,7 +23,7 @@ import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyle
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
-import { useThemeContext } from '@/src/providers/themeSwitchProvider'
+import { ThemeType, useThemeContext } from '@/src/providers/themeSwitchProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { shortenAddress } from '@/src/utils/string'
 
@@ -377,7 +377,7 @@ export const Header: React.FC = (props) => {
                       Buy Aelin OP
                     </DropdownItem>,
                     <DropdownItem key={'external_links_4'} onClick={switchTheme}>
-                      {currentTheme === 'light' ? (
+                      {currentTheme === ThemeType.light ? (
                         <>
                           <LightMode />
                           Dark mode

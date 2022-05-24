@@ -12,7 +12,7 @@ import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
 import LayoutStatusProvider from '@/src/providers/layoutStatusProvider'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
-import ThemeSwitch from '@/src/providers/themeSwitchProvider'
+import Theme from '@/src/providers/themeSwitchProvider'
 import TransactionModalProvider from '@/src/providers/transactionModalProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 import { GlobalStyle } from '@/src/theme/globalStyle'
@@ -53,7 +53,7 @@ function App({ Component, pageProps }: AppProps) {
       </Head>
       <Web3ConnectionProvider>
         <LayoutStatusProvider>
-          <ThemeSwitch>
+          <Theme>
             <SWRConfig
               value={{
                 suspense: true,
@@ -77,7 +77,7 @@ function App({ Component, pageProps }: AppProps) {
                 </TransactionModalProvider>
               </StakingRewardsProvider>
             </SWRConfig>
-          </ThemeSwitch>
+          </Theme>
         </LayoutStatusProvider>
       </Web3ConnectionProvider>
     </>
