@@ -2,6 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
+import { SectionIntro } from '@/src/components/section/SectionIntro'
+import { List } from '@/src/components/sponsors/List'
 
 const Sponsors: NextPage = () => {
   return (
@@ -9,7 +11,14 @@ const Sponsors: NextPage = () => {
       <Head>
         <title>Aelin - Sponsors</title>
       </Head>
-      <LeftSidebarLayout>Sponsors</LeftSidebarLayout>
+      <LeftSidebarLayout>
+        <SectionIntro backgroundImage="/resources/svg/bg-sponsors.svg" title="Sponsors">
+          Learn more about the sponsors presenting deals on Aelin by viewing all of their past
+          pools. Sponsors may have real-world experience / other experience that isn't reflected in
+          the information below.
+        </SectionIntro>
+        <List />
+      </LeftSidebarLayout>
     </>
   )
 }

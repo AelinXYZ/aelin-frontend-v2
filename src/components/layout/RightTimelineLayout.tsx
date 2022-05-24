@@ -1,8 +1,8 @@
 import { HTMLAttributes } from 'react'
 import styled from 'styled-components'
 
+import CollapsibleBlock from '@/src/components/common/CollapsibleBlock'
 import { Timeline } from '@/src/components/pools/common/Timeline'
-import CollapsibleBlock from '@/src/components/sidebar/CollapsibleBlock'
 import { TimelineSteps } from '@/types/aelinPool'
 
 export const Wrapper = styled.main`
@@ -54,7 +54,11 @@ export const TimelineWrapper = styled(CollapsibleBlock)`
     }
 
     .collapsableContents {
-      display: block !important;
+      max-height: none !important;
+      padding: 0;
+    }
+
+    .contentsInner {
       padding: 0;
     }
   }

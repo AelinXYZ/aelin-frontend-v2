@@ -27,6 +27,10 @@ export const GlobalStyle = createGlobalStyle<{ theme: any }>`
     }
   }
 
+  a {
+    color: ${({ theme }) => theme.colors.textColor};
+  }
+
   code {
     font-family: ${({ theme }) => theme.fonts.fontFamilyCode};
   }

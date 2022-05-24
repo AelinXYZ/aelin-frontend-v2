@@ -10,7 +10,6 @@ import {
   CardWithTitle as BaseCardWithTitle,
   CardTitle,
 } from '@/src/components/common/CardWithTitle'
-import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import Claim from '@/src/components/pools/actions/Claim'
@@ -23,6 +22,7 @@ import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPoo
 import DealInformation from '@/src/components/pools/deal/DealInformation'
 import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
+import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'

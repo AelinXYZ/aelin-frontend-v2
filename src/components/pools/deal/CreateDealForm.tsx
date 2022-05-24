@@ -8,7 +8,6 @@ import { wei } from '@synthetixio/wei'
 
 import { Modal } from '../../common/Modal'
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
-import { PageTitle } from '@/src/components/common/PageTitle'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import {
@@ -32,6 +31,7 @@ import {
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
+import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/steps/StepIndicator'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -64,14 +64,6 @@ const CancelButton = styled(ButtonPrimaryLight)`
 const BackButton = styled(ButtonPrimaryLight)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: none;
-  }
-`
-
-const ResponsiveError = styled(Error)`
-  text-align: center;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    text-align: left;
   }
 `
 
@@ -176,9 +168,9 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     totalPurchase={totalPurchase}
                   />
                   {createDealState.currentStep === CreateDealSteps.openPeriod &&
-                    isOpenPeriodDisabled && <ResponsiveError>Pool supply maxed.</ResponsiveError>}
+                    isOpenPeriodDisabled && <Error textAlign="center">Pool supply maxed.</Error>}
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <ResponsiveError>{currentStepError}</ResponsiveError>
+                    <Error textAlign="center">{currentStepError}</Error>
                   )}
                   <ButtonWrapper>
                     <MobileButtonWrapper>

@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
-import { PageTitle } from '@/src/components/common/PageTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import {
   ButtonWrapper,
@@ -27,6 +26,7 @@ import {
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
+import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {
@@ -42,14 +42,6 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 const BackButton = styled(ButtonPrimaryLight)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: none;
-  }
-`
-
-const ResponsiveError = styled(Error)`
-  text-align: center;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    text-align: left;
   }
 `
 
@@ -117,7 +109,7 @@ const Create: NextPage = () => {
                     setPoolField={setPoolField}
                   />
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <ResponsiveError>{currentStepError}</ResponsiveError>
+                    <Error textAlign="center">{currentStepError}</Error>
                   )}
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (

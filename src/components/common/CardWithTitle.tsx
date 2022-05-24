@@ -33,15 +33,20 @@ export const CardTitle = styled.h2<{ isActive?: boolean }>`
   cursor: pointer;
   display: flex;
   flex-grow: 1;
-  font-size: 1.6rem;
+  font-size: 1.2rem;
   font-weight: 400;
   justify-content: center;
   line-height: 1.4;
   margin: 0;
-  min-height: 50px;
+  min-height: 36px;
   padding: 0 20px;
   text-align: center;
   transition: opacity 0.15s linear;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    font-size: 1.6rem;
+    min-height: 50px;
+  }
 
   &:active {
     opacity: 0.7;

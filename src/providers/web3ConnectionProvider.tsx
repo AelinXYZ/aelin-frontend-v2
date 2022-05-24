@@ -46,10 +46,8 @@ nullthrows(
 )
 
 // @TODO: Default VALUES to connect to multiple wallets
-const PORTIS_KEY = 'Your Portis key here'
 const APP_URL = 'Your app url here'
 const CONTACT_EMAIL = 'Your contact email here'
-const RPC_URL = 'https://<network>.infura.io/v3/<INFURA_KEY>'
 
 export enum WalletType {
   MetaMask = 'metamask',

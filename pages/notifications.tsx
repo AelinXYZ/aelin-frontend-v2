@@ -1,9 +1,9 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 
-import { SectionIntro } from '@/src/components/common/SectionIntro'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { List } from '@/src/components/notifications/List'
+import { SectionIntro } from '@/src/components/section/SectionIntro'
 
 const Notifications: NextPage = () => {
   return (

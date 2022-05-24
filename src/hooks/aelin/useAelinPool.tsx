@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import addMilliseconds from 'date-fns/addMilliseconds'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 

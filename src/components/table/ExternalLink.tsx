@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 import { Link as BaseLink } from '@/src/components/assets/Link'
-import { Cell } from '@/src/components/pureStyledComponents/common/Table'
+import { Cell, CellProps } from '@/src/components/pureStyledComponents/common/Table'
 
 const Wrapper = styled(Cell)`
   cursor: pointer;
@@ -10,12 +10,7 @@ const Wrapper = styled(Cell)`
   text-decoration: none;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.textColor};
     text-decoration: underline;
-
-    .fill {
-      fill: ${({ theme }) => theme.colors.textColor};
-    }
   }
 `
 
@@ -30,18 +25,17 @@ const Link = styled(BaseLink)`
   }
 `
 
-export const ExternalLink: React.FC<{ href: string; className?: string }> = ({
-  children,
-  className,
-  href,
-  ...restProps
-}) => (
+interface Props extends CellProps {
+  className?: string
+  href: string
+}
+
+export const ExternalLink: React.FC<Props> = ({ children, className, href, ...restProps }) => (
   <Wrapper
     className={`${className} externalLink`}
     onClick={(e) => {
       e.stopPropagation()
       e.preventDefault()
-
       window.open(href, '_blank')
     }}
     {...restProps}

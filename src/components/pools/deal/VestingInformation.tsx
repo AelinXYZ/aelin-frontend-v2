@@ -36,7 +36,7 @@ export const VestingInformation: React.FC<{
         />
         <InfoCell
           title="Deal token"
-          tooltip="??"
+          tooltip="The token an investor may claim after an optional vesting period if they accept the deal"
           value={
             <ExternalLink
               href={getExplorerUrl(deal.underlyingToken.token, pool.chainId)}
@@ -47,7 +47,7 @@ export const VestingInformation: React.FC<{
 
         <InfoCell
           title="Vesting cliff ends"
-          tooltip="??"
+          tooltip="After the deal has been finalized, a period where no tokens are vesting"
           value={
             pool.deal?.redemption?.end && pool.deal?.vestingPeriod.cliff.end ? (
               <Deadline
@@ -69,12 +69,12 @@ export const VestingInformation: React.FC<{
         <InfoCell title="Symbol" value={deal.symbol} />
         <InfoCell
           title="Deal token amount"
-          tooltip="??"
+          tooltip="The total amount of underlying deal tokens in the deal"
           value={`${deal.underlyingToken.dealAmount.formatted} ${deal.underlyingToken.symbol}`}
         />
         <InfoCell
           title="Vesting period ends"
-          tooltip="??"
+          tooltip="The amount of time it takes to vest all underlying deal tokens after the vesting cliff"
           value={
             pool.deal?.vestingPeriod.cliff.end && pool.deal?.vestingPeriod.vesting.end ? (
               <Deadline

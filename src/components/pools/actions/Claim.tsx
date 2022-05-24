@@ -1,8 +1,9 @@
 import ms from 'ms'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { Contents } from '@/src/components/pools/actions/Wrapper'
+import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
@@ -44,23 +45,27 @@ function Claim({ pool }: Props) {
   const { remainingAmountToVest, totalVested, underlyingDealTokenDecimals } =
     data?.vestingDeal || {}
   const symbol = pool.deal?.underlyingToken.symbol
+
   return (
-    <>
-      <Contents>Your deal tokens can be claimed.</Contents>
-      <p>
-        {`Amount to claim: ${formatToken(
+    <Wrapper title="Claim">
+      <Contents style={{ marginBottom: '18px' }}>Your deal tokens can be claimed.</Contents>
+      <Contents>
+        Amount to claim:{' '}
+        <TextPrimary>{`${formatToken(
           remainingAmountToVest || 0,
           underlyingDealTokenDecimals,
-        )} ${symbol}`}
-      </p>
-      <p>
-        {`Total vested: ${formatToken(totalVested || 0, underlyingDealTokenDecimals)} ${symbol}`}
-      </p>
-
+        )} ${symbol}`}</TextPrimary>
+        <br />
+        Total vested:{' '}
+        <TextPrimary>{`${formatToken(
+          totalVested || 0,
+          underlyingDealTokenDecimals,
+        )} ${symbol}`}</TextPrimary>
+      </Contents>
       <GradientButton disabled={!address || !isAppConnected || isSubmitting} onClick={claimTokens}>
         Claim tokens
       </GradientButton>
-    </>
+    </Wrapper>
   )
 }
 
