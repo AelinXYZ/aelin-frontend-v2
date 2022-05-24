@@ -1,7 +1,10 @@
 import React, { ReactElement, ReactNode } from 'react'
 import styled from 'styled-components'
 
-import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonPrimaryLight,
+  GradientButton,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
@@ -24,6 +27,10 @@ const Text = styled.p`
   text-align: center;
   text-decoration: none;
   width: 100%;
+`
+
+const TextBig = styled(Text)`
+  font-size: 1.3rem;
 `
 
 const withRequiredConnection = (Component: React.FC) =>
@@ -64,10 +71,10 @@ const RequiredConnection: React.FC<RequiredConnectionProps> = ({
     </Wrapper>
   ) : isWrongNetwork ? (
     <Wrapper style={{ minHeight }} {...restProps}>
-      <Text>Wrong connected network</Text>
-      <ButtonPrimaryLight onClick={() => pushNetwork(networkToCheck)}>
+      <TextBig>Please switch to this pool's network</TextBig>
+      <GradientButton onClick={() => pushNetwork(networkToCheck)}>
         Switch to {chainsConfig[networkToCheck].name}
-      </ButtonPrimaryLight>
+      </GradientButton>
     </Wrapper>
   ) : (
     children
