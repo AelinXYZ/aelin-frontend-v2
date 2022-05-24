@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const Wrapper = styled.div`
   align-items: center;
-  background-color: #fff;
+  background-color: ${({ theme: { networkPlaceholder } }) => networkPlaceholder.backgroundColor};
   border-radius: 50%;
   display: flex;
   height: 18px;
@@ -16,7 +16,7 @@ Wrapper.defaultProps = {
 }
 
 const Name = styled.div`
-  color: ${({ theme: { colors } }) => colors.mainBodyBackground};
+  color: ${({ theme: { networkPlaceholder } }) => networkPlaceholder.color};
   font-size: 1.3rem;
   font-weight: 700;
   height: 11px;

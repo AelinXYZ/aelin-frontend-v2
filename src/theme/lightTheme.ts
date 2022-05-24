@@ -98,6 +98,13 @@ export const lightTheme = {
       colorActive: textColor,
     },
   },
+  header: {
+    lineColor: 'rgba(71, 87, 97, 0.2)',
+  },
+  networkPlaceholder: {
+    backgroundColor: 'rgba(71, 87, 97, 0.7)',
+    color: '#fff',
+  },
   progressBar: {
     background: 'rgba(71, 87, 97, 0.16)',
   },

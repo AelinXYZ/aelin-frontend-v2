@@ -148,7 +148,7 @@ const Line = styled.div`
   display: none;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    background: rgba(255, 255, 255, 0.25);
+    background: ${({ theme }) => theme.header.lineColor};
     display: block;
     height: 24px;
     width: 1px;

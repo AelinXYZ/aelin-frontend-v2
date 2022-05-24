@@ -97,6 +97,13 @@ export const darkTheme = {
       colorActive: textColor,
     },
   },
+  header: {
+    lineColor: 'rgba(255, 255, 255, 0.25)',
+  },
+  networkPlaceholder: {
+    backgroundColor: '#fff',
+    color: mainBodyBackground,
+  },
   progressBar: {
     background: blueishGray,
   },
