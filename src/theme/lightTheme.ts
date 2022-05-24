@@ -1,15 +1,16 @@
 import { lighten, rgba } from 'polished'
 
-const componentBackgroundColor = '#1A212F'
-const componentBorderColor = '#555C65'
+const componentBackgroundColor = '#fff'
+const componentBorderColor = 'rgba(71, 87, 97, 0.2)'
 const componentBorder = `0.5px solid ${componentBorderColor}`
 const lightGray = '#BABCC1'
 const error = '#FF7777'
 const primary = '#8280FF'
+const primaryDarker = '#5F5DD1'
 const secondary = '#E56399'
 const tertiary = '#A6CFD5'
-const textColor = '#FFF'
-const mainBodyBackground = '#fff'
+const textColor = '#666'
+const mainBodyBackground = '#fcfcfc'
 const green = '#A2FF00'
 const yellow = '#F1C40F'
 const blue = '#469FFF'
@@ -55,9 +56,13 @@ export const lightTheme = {
     color: textColor,
     colorHover: textColor,
   },
+  buttonGradient: {
+    color: '#fff',
+  },
   card: {
     backgroundColor: componentBackgroundColor,
     borderColor: componentBorder,
+    titleColor: primaryDarker,
   },
   colors: {
     blueishGray: blueishGray,
@@ -74,7 +79,7 @@ export const lightTheme = {
     secondary: secondary,
     tertiary: tertiary,
     textColor: textColor,
-    textColorLight: lightGray,
+    textColorLight: textColor,
     transparentWhite: transparentWhite,
     transparentWhite2: transparentWhite2,
     areaChartGradientStart: primary,
@@ -92,6 +97,10 @@ export const lightTheme = {
       color: textColor,
       colorActive: textColor,
     },
+  },
+  table: {
+    sortBackgroundColor: primaryDarker,
+    thColor: primaryDarker,
   },
   toast: {
     backgroundColor: gray,
@@ -117,18 +126,18 @@ export const lightTheme = {
   },
   textField: {
     backgroundColor: gray,
-    borderColor: lightGray,
+    borderColor: 'rgba(71, 87, 97, 0.2)',
     color: textColor,
     errorColor: error,
     successColor: green,
     active: {
-      color: textColor,
       backgroundColor: gray,
       borderColor: primary,
       boxShadow: '0 0 10px rgba(0, 0, 0, 0.25)',
+      color: textColor,
     },
     placeholder: {
-      color: lightGray,
+      color: 'rgba(71, 87, 97, 0.5)',
     },
   },
 }

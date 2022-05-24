@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { Loading } from '@/src/components/common/Loading'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Filters } from '@/src/components/pureStyledComponents/common/Filters'
 import { Chains } from '@/src/constants/chains'
@@ -180,12 +180,12 @@ const AelinData: React.FC = ({ ...restProps }) => {
         ))}
       </Rows>
       <ButtonContainer>
-        <GradientButton
+        <ButtonGradient
           disabled={rewards?.userRewards.eq(ZERO_BN) || isSubmitting || isDev}
           onClick={handleClaim}
         >
           Claim
-        </GradientButton>
+        </ButtonGradient>
       </ButtonContainer>
     </Wrapper>
   )

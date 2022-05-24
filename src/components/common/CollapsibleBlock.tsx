@@ -31,6 +31,7 @@ const Header = styled.div`
 `
 
 const Title = styled.h3`
+  color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.4rem;
   font-weight: 700;

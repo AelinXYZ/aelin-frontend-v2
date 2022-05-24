@@ -9,7 +9,7 @@ import { Loading as BaseLoading } from '@/src/components/common/Loading'
 import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import {
   ButtonDropdown as BaseButtonDropdown,
-  GradientButton,
+  ButtonGradient,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Token } from '@/src/constants/token'
@@ -122,7 +122,7 @@ const InvalidResults = styled.div`
 const Loading = styled(BaseLoading)`
   margin: auto;
 `
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 

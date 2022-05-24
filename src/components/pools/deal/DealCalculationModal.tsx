@@ -5,8 +5,8 @@ import Wei, { wei } from '@synthetixio/wei'
 
 import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import {
+  ButtonGradient,
   ButtonPrimaryLightSm,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Tooltip as BaseTooltip } from '@/src/components/tooltip/Tooltip'
@@ -42,7 +42,7 @@ const Note = styled(Label)`
   margin-top: 8px;
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 

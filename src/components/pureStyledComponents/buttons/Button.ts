@@ -109,7 +109,7 @@ export const ButtonGradientCSS = css`
     ${({ theme }) => theme.colors.gradientEnd} 100%
   );
   border: none;
-  color: ${({ theme }) => theme.colors.textColor};
+  color: ${({ theme }) => theme.buttonGradient.color};
   font-weight: 500;
 
   &:hover {
@@ -236,10 +236,10 @@ export const ButtonPrimaryLighter = styled(Button)`
   ${ButtonPrimaryLighterCSS}
 `
 
-export const GradientButton = styled(Button)`
+export const ButtonGradient = styled(Button)`
   ${ButtonGradientCSS}
 `
-export const GradientButtonSm = styled(Button)`
+export const ButtonGradientSm = styled(Button)`
   ${ButtonGradientSmCSS}
 `
 

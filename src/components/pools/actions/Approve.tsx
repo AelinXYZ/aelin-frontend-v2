@@ -1,5 +1,5 @@
 import { Contents } from '@/src/components/pools/actions/Wrapper'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN } from '@/src/constants/misc'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
@@ -42,12 +42,12 @@ export default function Approve({
   return (
     <>
       <Contents>{description}</Contents>
-      <GradientButton
+      <ButtonGradient
         disabled={!address || !isAppConnected || isSubmitting}
         onClick={approveInvestmentToken}
       >
         Approve
-      </GradientButton>
+      </ButtonGradient>
     </>
   )
 }

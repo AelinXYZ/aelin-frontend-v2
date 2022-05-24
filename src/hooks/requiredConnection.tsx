@@ -2,8 +2,8 @@ import React, { ReactElement, ReactNode } from 'react'
 import styled from 'styled-components'
 
 import {
+  ButtonGradient,
   ButtonPrimaryLight,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -72,9 +72,9 @@ const RequiredConnection: React.FC<RequiredConnectionProps> = ({
   ) : isWrongNetwork ? (
     <Wrapper style={{ minHeight }} {...restProps}>
       <TextBig>Please switch to this pool's network</TextBig>
-      <GradientButton onClick={() => pushNetwork(networkToCheck)}>
+      <ButtonGradient onClick={() => pushNetwork(networkToCheck)}>
         Switch to {chainsConfig[networkToCheck].name}
-      </GradientButton>
+      </ButtonGradient>
     </Wrapper>
   ) : (
     children

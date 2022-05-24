@@ -55,9 +55,13 @@ export const darkTheme = {
     color: textColor,
     colorHover: textColor,
   },
+  buttonGradient: {
+    color: textColor,
+  },
   card: {
     backgroundColor: componentBackgroundColor,
     borderColor: componentBorder,
+    titleColor: textColor,
   },
   colors: {
     blueishGray: blueishGray,
@@ -93,6 +97,10 @@ export const darkTheme = {
       colorActive: textColor,
     },
   },
+  table: {
+    sortBackgroundColor: '#fff',
+    thColor: textColor,
+  },
   toast: {
     backgroundColor: gray,
     boxShadow: '0 0 10px rgba(255, 255, 255, 0.25)',
@@ -122,10 +130,10 @@ export const darkTheme = {
     errorColor: error,
     successColor: green,
     active: {
-      color: textColor,
       backgroundColor: gray,
       borderColor: primary,
       boxShadow: '0 0 10px rgba(0, 0, 0, 0.25)',
+      color: textColor,
     },
     placeholder: {
       color: lightGray,

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
 import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
@@ -46,7 +46,7 @@ const Value = styled.span`
   color: ${({ theme }) => theme.colors.primary};
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   min-width: 160px;
 `
 

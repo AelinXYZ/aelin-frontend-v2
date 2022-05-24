@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
@@ -24,7 +24,7 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
 `
 
 const Title = styled.h1`
-  color: ${({ theme: { colors } }) => colors.textColor};
+  color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme: { fonts } }) => fonts.fontFamilyTitle};
   font-size: 1.8rem;
   font-weight: 700;
@@ -58,7 +58,7 @@ const Description = styled.p`
   }
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   margin: 0 auto;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {

@@ -204,7 +204,7 @@ export const HideOnDesktop = styled.span`
 `
 
 export const TH = styled(Cell)`
-  color: ${({ theme }) => theme.colors.textColor};
+  color: ${({ theme }) => theme.table.thColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.4rem;
   font-weight: 700;

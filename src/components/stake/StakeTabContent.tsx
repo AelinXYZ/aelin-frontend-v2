@@ -6,7 +6,7 @@ import { MaxUint256 } from '@ethersproject/constants'
 
 import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
 import { TokenInput as BaseTokenInput } from '@/src/components/form/TokenInput'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TabContent } from '@/src/components/tabs/Tabs'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
@@ -29,7 +29,7 @@ const ButtonsWrapper = styled.div`
   margin: 0 auto;
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   min-width: 160px;
 `
 

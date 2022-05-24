@@ -6,8 +6,8 @@ import { isAddress } from '@ethersproject/address'
 import { Modal as BaseModal, ModalButtonCSS } from '@/src/components/common/Modal'
 import UploadCSV from '@/src/components/pools/whitelist/UploadWhiteListCsv'
 import {
+  ButtonGradient,
   ButtonPrimaryLightSm,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonEdit,
@@ -65,7 +65,7 @@ const ButtonsGrid = styled.div`
   grid-template-columns: 32px 32px;
 `
 
-const ButtonSave = styled(GradientButton)`
+const ButtonSave = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 

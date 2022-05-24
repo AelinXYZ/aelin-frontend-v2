@@ -6,7 +6,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents as BaseContents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
@@ -97,14 +97,14 @@ function AcceptDeal({ dealing, pool }: Props) {
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
-      <GradientButton
+      <ButtonGradient
         disabled={
           !address || !isAppConnected || isSubmitting || !tokenInputValue || Boolean(inputError)
         }
         onClick={handleAcceptDeal}
       >
         Accept deal
-      </GradientButton>
+      </ButtonGradient>
     </Wrapper>
   )
 }

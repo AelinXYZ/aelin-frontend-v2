@@ -10,8 +10,8 @@ import { Dropdown as BaseDropdown, DropdownItem } from '@/src/components/common/
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
   ButtonDropdown,
+  ButtonGradientSm,
   ButtonPrimaryLightSm,
-  GradientButtonSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
@@ -70,7 +70,7 @@ const ButtonCSS = css`
   }
 `
 
-const VestButton = styled(GradientButtonSm)`
+const VestButton = styled(ButtonGradientSm)`
   ${ButtonCSS}
 `
 
