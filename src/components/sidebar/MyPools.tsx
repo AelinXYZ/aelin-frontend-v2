@@ -40,8 +40,8 @@ const Text = styled.p`
 `
 
 const MoreButton = styled(TabButton)`
-  border-color: ${({ theme: { colors } }) => colors.textColor};
-  color: ${({ theme: { colors } }) => colors.textColor};
+  border-color: ${({ theme: { buttonPrimaryLighter } }) => buttonPrimaryLighter.borderColor};
+  color: ${({ theme: { buttonPrimaryLighter } }) => buttonPrimaryLighter.color};
 `
 
 const ButtonContainer = styled.div`

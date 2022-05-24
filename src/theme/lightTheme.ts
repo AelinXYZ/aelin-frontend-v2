@@ -1,4 +1,4 @@
-import { lighten, rgba } from 'polished'
+import { rgba } from 'polished'
 
 const componentBackgroundColor = '#fff'
 const componentBorderColor = 'rgba(71, 87, 97, 0.2)'
