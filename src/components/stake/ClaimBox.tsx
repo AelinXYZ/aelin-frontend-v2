@@ -13,7 +13,7 @@ import { formatToken } from '@/src/web3/bigNumber'
 const Wrapper = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.transparentWhite2};
-  border-radius: ${({ theme: { card } }) => card.borderRadius};
+  border-radius: 8px;
   border: 1px solid ${({ theme: { card } }) => card.borderColor};
   display: flex;
   flex-direction: column;

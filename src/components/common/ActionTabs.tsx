@@ -67,11 +67,11 @@ const Tab = styled.h3<{ isActive?: boolean }>`
   ${({ isActive }) => isActive && ActiveTabCSS}
 
   &:first-child {
-    border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-top-left-radius: 8px;
   }
 
   &:last-child {
-    border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-top-right-radius: 8px;
   }
 `
 

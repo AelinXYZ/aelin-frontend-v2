@@ -42,7 +42,7 @@ import formatNumber from '@/src/utils/formatNumber'
 const TableCard = styled.div`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     background-color: ${({ theme: { card } }) => card.backgroundColor};
-    border-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-radius: 8px;
     border-width: 1px;
     border: ${({ theme: { card } }) => card.borderColor};
     padding: 40px;
