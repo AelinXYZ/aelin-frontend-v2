@@ -84,12 +84,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       </Head>
       <PageTitle
         href={getExplorerUrl(pool.address || '', pool.chainId)}
+        network={chainsConfig[pool.chainId].icon}
         subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
-        title={
-          <>
-            {chainsConfig[pool.chainId].icon} {pool.nameFormatted}
-          </>
-        }
+        title={pool.nameFormatted}
       />
       <RightTimelineLayout timelineSteps={timeline}>
         <MainGrid>
