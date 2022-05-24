@@ -98,6 +98,9 @@ export const lightTheme = {
       colorActive: textColor,
     },
   },
+  progressBar: {
+    background: 'rgba(71, 87, 97, 0.16)',
+  },
   table: {
     sortBackgroundColor: primaryDarker,
     thColor: primaryDarker,

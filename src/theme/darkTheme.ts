@@ -97,6 +97,9 @@ export const darkTheme = {
       colorActive: textColor,
     },
   },
+  progressBar: {
+    background: blueishGray,
+  },
   table: {
     sortBackgroundColor: '#fff',
     thColor: textColor,

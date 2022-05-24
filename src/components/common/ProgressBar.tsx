@@ -4,7 +4,7 @@ const Wrapper = styled.span`
   --height: 4px;
   --border-radius: calc(var(--height) / 2);
 
-  background-color: ${({ theme }) => theme.colors.blueishGray};
+  background-color: ${({ theme }) => theme.progressBar.background};
   border-radius: var(--border-radius);
   display: block;
   height: var(--height);
