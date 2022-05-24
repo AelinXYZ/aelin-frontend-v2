@@ -1,7 +1,8 @@
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import Approve from '@/src/components/pools/actions/Approve'
 import HolderDeposit from '@/src/components/pools/actions/HolderDeposit'
-import { Wrapper } from '@/src/components/pools/actions/Wrapper'
+import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
+import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
@@ -22,7 +23,7 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
   )
 
   return (
-    <Wrapper title="Deposit tokens" {...restProps}>
+    <Wrapper title="Fund deal" {...restProps}>
       {(allowance || ZERO_BN).lt(pool.deal?.underlyingToken.dealAmount.raw || ZERO_BN) ? (
         <Approve
           description={`Before funding the deal, you need to approve the pool to transfer your ${pool.deal?.underlyingToken.symbol}`}
@@ -32,7 +33,13 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
           tokenAddress={pool.deal?.underlyingToken.token || ZERO_ADDRESS}
         />
       ) : (
-        <HolderDeposit pool={pool} />
+        <>
+          <Contents>
+            Deal amount:{' '}
+            <TextPrimary>{`${pool.deal?.underlyingToken.dealAmount.formatted}`}</TextPrimary>
+          </Contents>
+          <HolderDeposit pool={pool} />
+        </>
       )}
     </Wrapper>
   )
