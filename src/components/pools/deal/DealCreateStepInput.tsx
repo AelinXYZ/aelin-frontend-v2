@@ -72,6 +72,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
 }) => {
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
+  const stepConfig = createDealConfig[step]
 
   useEffect(() => {
     if (inputRef.current) {
@@ -160,14 +161,11 @@ export const DealCreateStepInput: React.FC<Props> = ({
           </TotalAmount>
         </>
       ) : step === CreateDealSteps.counterPartyFundingPeriod ||
-        step === CreateDealSteps.vestingCliff ||
-        step === CreateDealSteps.proRataPeriod ||
-        step === CreateDealSteps.vestingPeriod ? (
+        step === CreateDealSteps.proRataPeriod ? (
         <HMSInput
           autofocusOnRender
           defaultValue={currentState[step]}
           onChange={(value) => {
-            console.log(value)
             onSetDealField(value)
           }}
         />
@@ -176,6 +174,14 @@ export const DealCreateStepInput: React.FC<Props> = ({
           autofocusOnRender
           defaultValue={currentState[step]}
           disabled={isOpenPeriodDisabled}
+          onChange={(value) => onSetDealField(value)}
+        />
+      ) : step === CreateDealSteps.vestingCliff || step === CreateDealSteps.vestingPeriod ? (
+        <HMSInput
+          autofocusOnRender
+          defaultValue={currentState[step]}
+          emptyCheckbox
+          emptyCheckboxLabel={`No ${stepConfig.title}`}
           onChange={(value) => onSetDealField(value)}
         />
       ) : null}
