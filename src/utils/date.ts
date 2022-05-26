@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { Duration } from 'date-fns'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
 import formatFNS from 'date-fns/format'
@@ -88,4 +89,8 @@ export const sumDurations = (...durations: Duration[]): Duration => {
     }
     return result
   }, {})
+}
+
+export const isEmptyDuration = (duration: Duration | undefined, emptyValue?: undefined) => {
+  return !duration ? true : Object.values(duration).every((v) => v === emptyValue)
 }
