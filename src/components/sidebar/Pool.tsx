@@ -16,7 +16,6 @@ const Wrapper = styled.a`
   font-weight: 500;
   gap: 14px;
   height: 36px;
-  margin-bottom: 10px;
   overflow: hidden;
   padding: 0 20px;
   text-decoration: none;
@@ -58,12 +57,12 @@ const State = styled.span<{ stage: StageTypes }>`
 `
 
 interface Props {
-  stage: StageTypes
   href: string
   notifications?: number
+  stage: StageTypes
 }
 
-const Pool: React.FC<Props> = ({ children, href, notifications, stage, ...restProps }) => {
+export const Pool: React.FC<Props> = ({ children, href, notifications, stage, ...restProps }) => {
   return (
     <Link href={href} passHref>
       <Wrapper {...restProps}>

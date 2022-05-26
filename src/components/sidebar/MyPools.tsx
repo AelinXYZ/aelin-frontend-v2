@@ -5,7 +5,7 @@ import { PoolCreated } from '@/graphql-schema'
 import CollapsibleBlock from '@/src/components/common/CollapsibleBlock'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Filters } from '@/src/components/pureStyledComponents/common/Filters'
-import Pool from '@/src/components/sidebar/Pool'
+import { Pool } from '@/src/components/sidebar/Pool'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ParsedNotification } from '@/src/hooks/aelin/useAelinNotifications'
 import { getParsedPool } from '@/src/hooks/aelin/useAelinPool'
@@ -26,9 +26,11 @@ const Wrapper = styled.div`
   flex-grow: 0;
 `
 
-const ScrollableWrapper = styled.div`
-  overflow-y: scroll;
-  max-height: 500px;
+const Pools = styled.div`
+  display: grid;
+  max-height: 300px;
+  overflow: auto;
+  row-gap: 10px;
 `
 
 const Text = styled.p`
@@ -52,7 +54,7 @@ const MoreButton = styled(TabButton)`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  padding: 5px 0 0 0;
+  margin: 15px 0 0 0;
 `
 
 type PoolData = {
@@ -163,24 +165,26 @@ const MyPools: React.FC = ({ ...restProps }) => {
         </TabButton>
       </Filters>
       <RequiredConnection text={`You must be logged to see the pools you ${activeFilter} in`}>
-        <ScrollableWrapper>
-          {getPools(userResponse, activeFilter).length > 0 ? (
-            getVisiblePools(
-              userResponse,
-              notifications,
-              activeFilter,
-              filtersExpansion[activeFilter],
-              appChainId,
-            ).map(({ href, name, notifications, stage }, index) => (
-              <Pool href={href} key={index} notifications={notifications} stage={stage}>
-                {name}
-              </Pool>
-            ))
-          ) : (
-            <Wrapper>
-              <Text>{getEmptyPoolsText(activeFilter)}</Text>
-            </Wrapper>
-          )}
+        <>
+          <Pools>
+            {getPools(userResponse, activeFilter).length > 0 ? (
+              getVisiblePools(
+                userResponse,
+                notifications,
+                activeFilter,
+                filtersExpansion[activeFilter],
+                appChainId,
+              ).map(({ href, name, notifications, stage }, index) => (
+                <Pool href={href} key={index} notifications={notifications} stage={stage}>
+                  {name}
+                </Pool>
+              ))
+            ) : (
+              <Wrapper>
+                <Text>{getEmptyPoolsText(activeFilter)}</Text>
+              </Wrapper>
+            )}
+          </Pools>
           {getPools(userResponse, activeFilter).length > 3 && (
             <ButtonContainer>
               <MoreButton
@@ -195,7 +199,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
               </MoreButton>
             </ButtonContainer>
           )}
-        </ScrollableWrapper>
+        </>
       </RequiredConnection>
     </CollapsibleBlock>
   )
