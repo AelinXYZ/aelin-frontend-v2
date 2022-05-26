@@ -34,6 +34,7 @@ const ActiveTabCSS = css`
     ${({ theme }) => theme.colors.gradientEnd} 100%
   );
   border-bottom-color: transparent;
+  color: #fff;
   cursor: default;
   font-weight: 600;
 

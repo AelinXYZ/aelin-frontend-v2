@@ -18,6 +18,7 @@ const TitleActiveCSS = css`
     ${({ theme }) => theme.colors.gradientStart} 9.37%,
     ${({ theme }) => theme.colors.gradientEnd} 100%
   );
+  color: #fff;
   cursor: default;
   font-weight: 600;
 
