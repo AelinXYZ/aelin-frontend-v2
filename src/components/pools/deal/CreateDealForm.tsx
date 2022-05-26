@@ -168,7 +168,12 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     totalPurchase={totalPurchase}
                   />
                   {createDealState.currentStep === CreateDealSteps.openPeriod &&
-                    isOpenPeriodDisabled && <Error textAlign="center">Pool supply maxed.</Error>}
+                    isOpenPeriodDisabled && (
+                      <Error textAlign="center">
+                        Open period is bypassed when 100% of tokens have been allocated to
+                        investors. Please click next to proceed
+                      </Error>
+                    )}
                   {currentStepError && typeof currentStepError === 'string' && (
                     <Error textAlign="center">{currentStepError}</Error>
                   )}
