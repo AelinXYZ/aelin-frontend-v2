@@ -8,12 +8,12 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents as BaseContents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_BN } from '@/src/constants/misc'
+import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
-import { WaitingForDeal } from '@/types/aelinPool'
 
 const Contents = styled(BaseContents)`
   margin-bottom: 20px;
@@ -21,22 +21,21 @@ const Contents = styled(BaseContents)`
 
 type Props = {
   pool: ParsedAelinPool
-  dealing: WaitingForDeal
 }
 
-function AcceptDeal({ dealing, pool }: Props) {
+function AcceptDeal({ pool }: Props) {
   const { investmentTokenDecimals } = pool
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()
 
+  const { refetchUserStats, userMaxAllocation: userProRataAllocation } = useAelinDealUserStats(pool)
+
   const stage = pool.deal?.redemption?.stage
   if (!stage) {
     throw new Error("It's not possible to accept a deal at this pool stage.")
   }
-
-  const { refetchUserStats, userMaxAllocation: userProRataAllocation } = dealing
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 

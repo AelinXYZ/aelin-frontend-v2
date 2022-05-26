@@ -119,7 +119,5 @@ export default function useTransaction<
     [abi, address, isAppConnected, method, web3Provider],
   )
 
-  return useMemo(() => {
-    return { execute, estimate }
-  }, [execute, estimate])
+  return { execute, estimate }
 }

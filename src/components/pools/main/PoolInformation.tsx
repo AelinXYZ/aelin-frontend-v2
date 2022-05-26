@@ -3,12 +3,15 @@ import styled from 'styled-components'
 import { TokenIcon } from '../common/TokenIcon'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Deadline } from '@/src/components/common/Deadline'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
+import UserInvestmentTokenBalance from '@/src/components/pools/common/UserInvestmentTokenBalance'
+import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLoading'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useUserAllocationStats } from '@/src/hooks/aelin/useUserAllocationStats'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
-import { Funding } from '@/types/aelinPool'
 
 const Column = styled.div`
   display: flex;
@@ -17,10 +20,24 @@ const Column = styled.div`
   row-gap: 20px;
 `
 
-export const PoolInformation: React.FC<{
+type Props = {
   pool: ParsedAelinPool
-  poolStatusHelper: Funding
-}> = ({ pool, poolStatusHelper }) => {
+}
+
+const UserStatsInfoCell = genericSuspense(
+  ({ pool }: { pool: ParsedAelinPool }) => {
+    const { data: userAllocationStat } = useUserAllocationStats(
+      pool.address,
+      pool.chainId,
+      pool.investmentTokenDecimals,
+    )
+
+    return <span>{`${userAllocationStat.formatted || 0} ${pool.investmentTokenSymbol}`}</span>
+  },
+  () => <InlineLoading />,
+)
+
+export const PoolInformation = ({ pool }: Props) => {
   return (
     <>
       <Column>
@@ -51,14 +68,12 @@ export const PoolInformation: React.FC<{
         </InfoCell>
         <InfoCell
           title={`My ${pool.investmentTokenSymbol} balance`}
-          value={poolStatusHelper.userInvestmentTokenBalance.formatted}
+          value={<UserInvestmentTokenBalance pool={pool} />}
         />
         <InfoCell
           title="My pool balance"
           tooltip="The number of purchase tokens you have deposited"
-          value={`${poolStatusHelper.poolTokenBalance.formatted || 0} ${
-            pool.investmentTokenSymbol
-          }`}
+          value={<UserStatsInfoCell pool={pool} />}
         />
       </Column>
       <Column>

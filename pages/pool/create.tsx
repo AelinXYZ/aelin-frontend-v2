@@ -14,8 +14,8 @@ import {
   Title,
   WrapperGrid,
 } from '@/src/components/pools/common/Create'
+import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInput'
 import { Summary } from '@/src/components/pools/common/Summary'
-import PoolCreateStepInput from '@/src/components/pools/main/PoolCreateStepInput'
 import WhiteListModal, { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
 import {
   ButtonGradient,
