@@ -6,7 +6,7 @@ import { Duration } from 'date-fns'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS } from '@/src/constants/time'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { convertToSeconds } from '@/src/utils/date'
+import { convertToSeconds, isEmptyDuration } from '@/src/utils/date'
 
 export type dealErrors = {
   dealToken?: string
@@ -50,10 +50,11 @@ const validateCreateDeal = (values: dealErrors, pool: ParsedAelinPool, chainId: 
     errors.counterPartyAddress = 'Invalid Ethereum address'
   }
 
-  if (values.vestingCliff?.days === undefined) {
+  if (isEmptyDuration(values.vestingCliff)) {
     errors.vestingCliff = true
   }
-  if (values.vestingPeriod?.days === undefined) {
+
+  if (isEmptyDuration(values.vestingPeriod)) {
     errors.vestingPeriod = true
   }
 

@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 
 const Grid = styled.div`
@@ -14,12 +15,19 @@ const Grid = styled.div`
   }
 `
 
+const Checkbox = styled(LabeledCheckbox)`
+  margin: 20px auto 0;
+  width: fit-content;
+`
+
 interface InputDeadlineProps {
   defaultValue?: Duration
   onChange: (duration: Duration) => void
   inputNames?: string[]
   autofocusOnRender?: boolean
   disabled?: boolean
+  emptyCheckbox?: boolean
+  emptyCheckboxLabel?: string
 }
 
 enum durationTypes {
@@ -36,17 +44,22 @@ export const HMSInput = ({
   inputNames = [durationTypes.days, durationTypes.hours, durationTypes.minutes],
   autofocusOnRender,
   disabled = false,
+  emptyCheckbox,
+  emptyCheckboxLabel = 'No value',
   ...restProps
 }: InputDeadlineProps) => {
   const [duration, setDuration] = useState(defaultValue)
+  const [emptyValue, setEmptyValue] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleSetDuration = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    if (value.length > MAX_LENGTH) {
+    const newDuration = { ...duration, [name]: value ? Number(value) : undefined }
+    if (value.length > MAX_LENGTH || Number(value) < 0) {
       e.preventDefault()
     } else {
-      setDuration({ ...duration, [name]: value ? Number(value) : undefined })
+      setDuration(newDuration)
+      onChange(newDuration)
     }
   }
 
@@ -58,41 +71,62 @@ export const HMSInput = ({
   }, [])
 
   useEffect(() => {
-    onChange(duration)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [duration])
+    if (emptyCheckbox && Object.values(duration).every((v) => v === 0)) {
+      setEmptyValue(true)
+    }
+  }, [duration, emptyCheckbox])
 
   return (
-    <Grid {...restProps}>
-      <Textfield
-        defaultValue={duration?.days}
-        disabled={disabled}
-        id="durationDays"
-        min={0}
-        name={inputNames[0]}
-        onChange={handleSetDuration}
-        placeholder="Days"
-        ref={inputRef}
-        type="number"
-      />
-      <Textfield
-        defaultValue={duration?.hours}
-        disabled={disabled}
-        id="durationHours"
-        name={inputNames[1]}
-        onChange={handleSetDuration}
-        placeholder="Hours"
-        type="number"
-      />
-      <Textfield
-        defaultValue={duration?.minutes}
-        disabled={disabled}
-        id="durationMinutes"
-        name={inputNames[2]}
-        onChange={handleSetDuration}
-        placeholder="Mins"
-        type="number"
-      />
-    </Grid>
+    <>
+      <Grid {...restProps}>
+        <Textfield
+          disabled={emptyValue || disabled}
+          id="durationDays"
+          min="0"
+          name={inputNames[0]}
+          onChange={handleSetDuration}
+          placeholder="Days"
+          ref={inputRef}
+          type="number"
+          value={duration?.days ?? ''}
+        />
+        <Textfield
+          disabled={emptyValue || disabled}
+          id="durationHours"
+          min="0"
+          name={inputNames[1]}
+          onChange={handleSetDuration}
+          placeholder="Hours"
+          type="number"
+          value={duration?.hours ?? ''}
+        />
+        <Textfield
+          disabled={emptyValue || disabled}
+          id="durationMinutes"
+          min="0"
+          name={inputNames[2]}
+          onChange={handleSetDuration}
+          placeholder="Mins"
+          type="number"
+          value={duration?.minutes ?? ''}
+        />
+      </Grid>
+      {emptyCheckbox && (
+        <Checkbox
+          checked={emptyValue}
+          label={emptyCheckboxLabel}
+          onClick={() => {
+            const newValue = {
+              days: emptyValue ? undefined : 0,
+              hours: emptyValue ? undefined : 0,
+              minutes: emptyValue ? undefined : 0,
+            }
+            setEmptyValue(!emptyValue)
+            setDuration(newValue)
+            onChange(newValue)
+          }}
+        />
+      )}
+    </>
   )
 }
