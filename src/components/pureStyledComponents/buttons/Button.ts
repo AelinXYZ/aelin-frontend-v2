@@ -134,6 +134,7 @@ export const TabButtonCSS = css<{ isActive?: boolean }>`
   font-weight: 400;
   height: 24px;
   margin: 0;
+  min-width: 0;
   opacity: 0.7;
   padding-left: 7px;
   padding-right: 7px;
