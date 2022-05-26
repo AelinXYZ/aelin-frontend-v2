@@ -103,17 +103,7 @@ function getPools(user: ParsedUser | undefined, filter: MyPoolsFilter): PoolCrea
     case MyPoolsFilter.Invested:
       return user.poolsInvested
     case MyPoolsFilter.Sponsored:
-      return [
-        ...user.poolsSponsored,
-        ...user.poolsSponsored,
-        ...user.poolsSponsored,
-        ...user.poolsSponsored,
-        ...user.poolsSponsored,
-        ...user.poolsSponsored,
-        ...user.poolsSponsored,
-        ...user.poolsSponsored,
-        ...user.poolsSponsored,
-      ]
+      return user.poolsSponsored
     case MyPoolsFilter.Funded:
       return user.poolsAsHolder
   }
