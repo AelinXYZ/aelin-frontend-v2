@@ -15,17 +15,6 @@ import { MyPoolsFilter, useLayoutStatus } from '@/src/providers/layoutStatusProv
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
-const Wrapper = styled.div`
-  box-sizing: border-box;
-  border-radius: 8px;
-  background: ${({ theme }) => theme.colors.gray};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-grow: 0;
-`
-
 const Pools = styled.div`
   display: grid;
   max-height: 300px;
@@ -33,17 +22,21 @@ const Pools = styled.div`
   row-gap: 10px;
 `
 
-const Text = styled.p`
-  color: ${({ theme }) => theme.colors.textColor};
+const EmptyPools = styled.div`
+  align-items: center;
+  background-color: ${({ theme: { myPool } }) => myPool.backgroundColor};
+  border-radius: 8px;
+  border: 1px solid ${({ theme: { myPool } }) => myPool.borderColor};
+  box-sizing: border-box;
+  color: ${({ theme: { myPool } }) => myPool.color};
   display: flex;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  padding: 0 20px;
+  flex-direction: column;
+  flex-grow: 0;
+  font-size: 1.4rem;
+  font-weight: 500;
+  height: 36px;
   justify-content: center;
-  text-align: center;
-  text-decoration: none;
-  width: 100%;
+  white-space: normal;
 `
 
 const MoreButton = styled(TabButton)`
@@ -114,11 +107,11 @@ function getPools(user: ParsedUser | undefined, filter: MyPoolsFilter): PoolCrea
 function getEmptyPoolsText(filter: MyPoolsFilter): string {
   switch (filter) {
     case MyPoolsFilter.Invested:
-      return "You haven't invested in any pools yet, join one now"
+      return "You haven't invested in a pool yet, join one now"
     case MyPoolsFilter.Sponsored:
-      return "You haven't sponsored any pool yet, create one now"
+      return "You haven't sponsored a pool yet, create one now"
     case MyPoolsFilter.Funded:
-      return "You haven't funded any pool yet"
+      return "You haven't funded a pool yet"
   }
 }
 
@@ -180,9 +173,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
                 </Pool>
               ))
             ) : (
-              <Wrapper>
-                <Text>{getEmptyPoolsText(activeFilter)}</Text>
-              </Wrapper>
+              <EmptyPools>{getEmptyPoolsText(activeFilter)}</EmptyPools>
             )}
           </Pools>
           {getPools(userResponse, activeFilter).length > 3 && (
