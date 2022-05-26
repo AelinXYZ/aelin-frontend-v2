@@ -48,10 +48,10 @@ export const lightTheme = {
   buttonPrimaryLight: {
     backgroundColor: 'transparent',
     backgroundColorHover: 'transparent',
-    borderColor: '#fff',
-    borderColorHover: '#fff',
-    color: textColor,
-    colorHover: textColor,
+    borderColor: primary,
+    borderColorHover: primary,
+    color: primary,
+    colorHover: primary,
   },
   buttonPrimaryLighter: {
     backgroundColor: mainBodyBackground,
