@@ -491,7 +491,11 @@ export function useTimelineStatus(pool?: ParsedAelinPool, now: number = Date.now
         active:
           !!pool?.deal?.holderAlreadyDeposited &&
           !!pool?.deal.redemption?.openRedemptionEnd &&
-          isBefore(now, pool.deal.redemption.openRedemptionEnd),
+          !!pool?.deal.redemption?.proRataRedemptionEnd &&
+          isWithinInterval(now, {
+            start: pool.deal.redemption.proRataRedemptionEnd,
+            end: pool.deal.redemption.openRedemptionEnd,
+          }),
         isDone:
           !!pool?.deal?.holderAlreadyDeposited &&
           !!pool?.deal.redemption?.openRedemptionEnd &&
