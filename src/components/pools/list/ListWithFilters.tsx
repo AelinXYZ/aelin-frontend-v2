@@ -13,6 +13,7 @@ import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Wrapper = styled.div`
@@ -259,6 +260,8 @@ export const ListWithFilters: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [poolFilter])
 
+  const { currentThemeName } = useThemeContext()
+
   return (
     <>
       <Wrapper>
@@ -274,7 +277,9 @@ export const ListWithFilters: React.FC = () => {
               searchOptions.findIndex((item) => item.filter === searchFilter.filter),
             )}
             dropdownButtonContent={
-              <SearchDropdownButton>{searchFilter.label}</SearchDropdownButton>
+              <SearchDropdownButton currentThemeName={currentThemeName}>
+                {searchFilter.label}
+              </SearchDropdownButton>
             }
             dropdownPosition={DropdownPosition.right}
             items={searchOptions.map((item, key) => (

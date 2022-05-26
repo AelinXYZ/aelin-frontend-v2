@@ -124,7 +124,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
 
   useEffect(() => {
     if (isOpenPeriodDisabled && createDealState.currentStep === CreateDealSteps.openPeriod) {
-      console.log('asd')
       setDealField({ days: 0, hours: undefined, minutes: undefined })
     }
   }, [createDealState.currentStep, isOpenPeriodDisabled, setDealField])

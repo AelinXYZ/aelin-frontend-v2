@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components'
 
+import { ThemeType } from '@/src/constants/types'
+
 export const DisabledButtonCSS = css`
   cursor: not-allowed;
   opacity: 0.5;
@@ -163,7 +165,7 @@ export const ButtonDropdownIsOpenCSS = css`
   }
 `
 
-export const ButtonDropdownCSS = css`
+export const ButtonDropdownCSS = css<{ currentThemeName?: ThemeType }>`
   background-color: ${({ theme }) => theme.buttonDropdown.backgroundColor};
   border-bottom: none;
   border-color: ${({ theme }) => theme.buttonDropdown.borderColor};
@@ -190,12 +192,21 @@ export const ButtonDropdownCSS = css`
     --dimensions: 8px;
 
     content: '';
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00IDZMLjUzNiAwaDYuOTI4TDQgNnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=');
+
     background-position: 50% 50%;
     background-repeat: no-repeat;
     gap: 10px;
     height: var(--dimensions);
     width: var(--dimensions);
+
+    ${({ currentThemeName }) =>
+      currentThemeName === 'dark'
+        ? css`
+            background-image: url('data:image/svg+xml;base64, PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00IDZMLjUzNiAwaDYuOTI4TDQgNnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=');
+          `
+        : css`
+            background-image: url('data:image/svg+xml;base64, PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00IDZMLjUzNiAwaDYuOTI4TDQgNnoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=');
+          `}
   }
 
   .isOpen & {
@@ -248,6 +259,6 @@ export const TabButton = styled(ButtonPrimary)<{ isActive?: boolean }>`
   ${TabButtonCSS}
 `
 
-export const ButtonDropdown = styled(Button)`
+export const ButtonDropdown = styled(Button)<{ currentThemeName?: ThemeType }>`
   ${ButtonDropdownCSS}
 `

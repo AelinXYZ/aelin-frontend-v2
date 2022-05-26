@@ -1,16 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 
+import { ThemeType } from '@/src/constants/types'
 import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 import { commonTheme } from '@/src/theme/commonTheme'
 import { darkTheme } from '@/src/theme/darkTheme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 import { lightTheme } from '@/src/theme/lightTheme'
-
-export enum ThemeType {
-  light = 'light',
-  dark = 'dark',
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ThemeContext = createContext({} as any)
