@@ -250,6 +250,15 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
 
   useEffect(() => {
     if (poolFilter) {
+      // All pools
+      if (poolFilter === myPools[0]) {
+        return setWhere({
+          sponsor_in: null,
+          holder_in: null,
+          id_in: null,
+        })
+      }
+
       // My Sponsored pools
       if (address && poolFilter === myPools[1]) {
         return setWhere({
@@ -258,6 +267,7 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
           id_in: null,
         })
       }
+
       // My funded pools
       if (address && poolFilter === myPools[2]) {
         return setWhere({
