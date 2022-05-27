@@ -20,6 +20,7 @@ import {
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ClearedNotifications } from '@/src/hooks/aelin/useAelinNotifications'
 import { useNotifications } from '@/src/providers/notificationsProvider'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
 const TableBody = styled(BaseTableBody)`
@@ -111,6 +112,8 @@ export const List: React.FC = () => {
       }, clearedNotifications),
     )
 
+  const { currentThemeName } = useThemeContext()
+
   return (
     <>
       <InfiniteScroll
@@ -150,6 +153,7 @@ export const List: React.FC = () => {
                       Go to pool
                     </ButtonPrimaryLightSm>
                     <ButtonRemove
+                      currentThemeName={currentThemeName}
                       onClick={(e) => {
                         e.stopPropagation()
                         handleClearSingleNotification(id)

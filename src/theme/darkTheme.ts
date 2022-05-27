@@ -23,6 +23,28 @@ const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
 export const darkTheme = {
+  buttonCircle: {
+    borderColor: '#fff',
+  },
+  radioButton: {
+    borderColor: '#fff',
+  },
+  checkBox: {
+    borderColor: '#fff',
+  },
+  buttonPrevNext: {
+    backgroundColor: gray,
+  },
+  tooltip: {
+    iconBackgroundColor: gray,
+    iconBorderColor: '#fff',
+    textBackgroundColor: gray,
+    textBorderColor: '#fff',
+    textColor: '#fff',
+  },
+  steps: {
+    lineBackgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
   infoCell: {
     borderBottomColor: 'rgba(255, 255, 255, 0.2)',
   },

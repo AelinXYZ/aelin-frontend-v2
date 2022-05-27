@@ -1,16 +1,22 @@
+import { withTheme } from 'styled-components'
+
 import ReactTooltip from 'react-tooltip'
 
-export default function TooltipConfig() {
+const Component: React.FC<{ theme?: any }> = ({ theme }) => {
   return (
     <ReactTooltip
-      backgroundColor="#282E3B"
+      backgroundColor={theme.tooltip.textBackgroundColor}
       border
-      borderColor="#fff"
+      borderColor={theme.tooltip.textBorderColor}
       className="customTooltip"
       delayHide={250}
       delayShow={0}
       effect="solid"
-      textColor="#fff"
+      textColor={theme.tooltip.textColor}
     />
   )
 }
+
+export const TooltipConfig = withTheme<any>(Component)
+
+export default TooltipConfig

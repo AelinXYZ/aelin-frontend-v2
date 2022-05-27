@@ -24,6 +24,28 @@ const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
 export const lightTheme = {
+  buttonCircle: {
+    borderColor: primary,
+  },
+  radioButton: {
+    borderColor: componentBorderColor,
+  },
+  checkBox: {
+    borderColor: componentBorderColor,
+  },
+  buttonPrevNext: {
+    backgroundColor: '#ccc',
+  },
+  tooltip: {
+    iconBackgroundColor: '#fff',
+    iconBorderColor: gray,
+    textBackgroundColor: '#fff',
+    textBorderColor: componentBorderColor,
+    textColor: textColor,
+  },
+  steps: {
+    lineBackgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
   infoCell: {
     borderBottomColor: componentBorderColor,
   },
@@ -34,7 +56,7 @@ export const lightTheme = {
   },
   myPool: {
     backgroundColor: '#FCFCFC',
-    borderColor: 'rgba(71, 87, 97, 0.2)',
+    borderColor: componentBorderColor,
     color: textColor,
   },
   logo: {
@@ -67,8 +89,8 @@ export const lightTheme = {
   buttonDropdown: {
     backgroundColor: '#fff',
     backgroundColorHover: '#fff',
-    borderColor: 'rgba(71, 87, 97, 0.2)',
-    borderColorHover: 'rgba(71, 87, 97, 0.2)',
+    borderColor: componentBorderColor,
+    borderColorHover: componentBorderColor,
     color: textColor,
     colorHover: textColor,
   },
@@ -115,11 +137,11 @@ export const lightTheme = {
     },
   },
   header: {
-    lineColor: 'rgba(71, 87, 97, 0.2)',
+    lineColor: componentBorderColor,
   },
   headerDropdown: {
     backgroundColor: '#fff',
-    borderColor: 'rgba(71, 87, 97, 0.2)',
+    borderColor: componentBorderColor,
   },
   networkPlaceholder: {
     backgroundColor: 'rgba(71, 87, 97, 0.7)',
@@ -162,15 +184,15 @@ export const lightTheme = {
     backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4);',
   },
   textField: {
-    backgroundColor: gray,
-    borderColor: 'rgba(71, 87, 97, 0.2)',
+    backgroundColor: '#fff',
+    borderColor: componentBorderColor,
     color: textColor,
     errorColor: error,
     successColor: green,
     active: {
-      backgroundColor: gray,
+      backgroundColor: '#fff',
       borderColor: primary,
-      boxShadow: '0 0 10px rgba(0, 0, 0, 0.25)',
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.05)',
       color: textColor,
     },
     placeholder: {

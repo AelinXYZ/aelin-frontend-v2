@@ -15,6 +15,7 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 
 export interface WhitelistProps {
   address: string
@@ -88,6 +89,7 @@ const WhiteListRow = ({
   onDeleteRow: (index: number) => void
   rowIndex: number
 }) => {
+  const { currentThemeName } = useThemeContext()
   return (
     <>
       <Textfield
@@ -104,8 +106,11 @@ const WhiteListRow = ({
         value={amount || ''}
       />
       <ButtonsGrid>
-        <ButtonEdit onClick={() => onChangeRow(false, 'isSaved', rowIndex)} />
-        <ButtonRemove onClick={() => onDeleteRow(rowIndex)} />
+        <ButtonEdit
+          currentThemeName={currentThemeName}
+          onClick={() => onChangeRow(false, 'isSaved', rowIndex)}
+        />
+        <ButtonRemove currentThemeName={currentThemeName} onClick={() => onDeleteRow(rowIndex)} />
       </ButtonsGrid>
     </>
   )
