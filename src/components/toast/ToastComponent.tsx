@@ -6,29 +6,29 @@ import { Toast, toast } from 'react-hot-toast'
 import { Close } from '@/src/components/assets/Close'
 
 const Wapper = styled.div`
-  display: grid;
-  grid-template-columns: 50px 200px;
-  padding: 10px;
-  height: 70px;
+  background-color: ${({ theme: { toast } }) => toast.backgroundColor};
   border-radius: 8px;
   border-style: solid;
   border-width: 0.5px;
-  background-color: ${({ theme: { toast } }) => toast.backgroundColor};
   box-shadow: ${({ theme: { toast } }) => toast.boxShadow};
+  display: grid;
+  grid-template-columns: 50px 200px;
+  height: 70px;
+  padding: 10px;
 `
 
 const IconContainer = styled.div`
-  display: flex;
-  justify-content: center;
   align-items: center;
+  display: flex;
   height: 50px;
+  justify-content: center;
 `
 
 const InnerWrapper = styled.div`
-  display: flex;
-  position: relative;
-  justify-content: space-between;
   align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
 `
 
 const TextContainer = styled.div`
@@ -36,28 +36,28 @@ const TextContainer = styled.div`
 `
 
 const ButtonClose = styled.button`
+  background: transparent;
+  border: 0;
   cursor: pointer;
   margin: 0;
-  border: 0;
-  padding: 0;
   outline: none;
-  background: transparent;
+  padding: 0;
 `
 
 const Title = styled.p`
   font-size: 1.4rem;
   font-weight: 500;
-  margin 2px;
+  margin: 2px;
 `
 
 const Link = styled.a`
-  font-size: 1.2rem;
   color: ${({ theme: { colors } }) => colors.textColorLight};
+  font-size: 1.2rem;
 `
 
 const Text = styled.p`
-  font-size: 1.2rem;
   color: ${({ theme: { colors } }) => colors.textColorLight};
+  font-size: 1.2rem;
 `
 
 export const ToastComponent = ({
