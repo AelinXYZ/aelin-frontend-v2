@@ -23,7 +23,11 @@ export const fetchAmountToVest = (
   ]).then(([amountToVest]) => amountToVest)
 }
 
-export default function useAelinAmountToVest(poolAddress: string, chainId: ChainsValues) {
+export default function useAelinAmountToVest(
+  poolAddress: string,
+  chainId: ChainsValues,
+  withInterval: boolean,
+) {
   const { address, isAppConnected } = useWeb3Connection()
 
   const {
@@ -49,10 +53,12 @@ export default function useAelinAmountToVest(poolAddress: string, chainId: Chain
   }, [])
 
   useEffect(() => {
+    if (!withInterval) return
+
     const intervalId = setInterval(() => getAmountToVest(), ms('5s'))
 
     return () => clearInterval(intervalId)
-  }, [getAmountToVest])
+  }, [getAmountToVest, withInterval])
 
   return amountToVest
 }

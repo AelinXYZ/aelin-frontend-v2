@@ -45,15 +45,16 @@ function Vest({ pool }: Props) {
   const isVestingCliffEnds = isAfter(now, pool.deal?.vestingPeriod.cliff.end as Date)
   const isVestindPeriodEnds = isAfter(now, pool.deal?.vestingPeriod.vesting.end as Date)
 
-  const hasRemainingTokens = !(
-    BigNumber.from(data?.vestingDeal?.remainingAmountToVest || 0) || ZERO_BN
-  ).eq(ZERO_BN)
+  const hasRemainingTokens = !BigNumber.from(data?.vestingDeal?.remainingAmountToVest || 0).eq(
+    ZERO_BN,
+  )
 
   const isVestButtonDisabled = useMemo(() => {
     return !address || !isAppConnected || isSubmitting || !hasRemainingTokens
   }, [address, hasRemainingTokens, isAppConnected, isSubmitting])
 
-  const amountToVest = useAelinAmountToVest(pool.address, pool.chainId)
+  const withInterval = isVestingCliffEnds && !isVestindPeriodEnds
+  const amountToVest = useAelinAmountToVest(pool.address, pool.chainId, withInterval)
 
   const handleVest = async () => {
     setConfigAndOpenModal({

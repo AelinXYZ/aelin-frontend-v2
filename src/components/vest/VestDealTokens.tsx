@@ -3,6 +3,7 @@ import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import isAfter from 'date-fns/isAfter'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
@@ -27,7 +28,7 @@ import {
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { getKeyChainByValue } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import useAelinVestingDeals, {
@@ -133,6 +134,43 @@ const VestActionButton = ({
     >
       Vest
     </VestButton>
+  )
+}
+
+type AmountToVestCellProps = {
+  vestingPeriodStarts: Date
+  vestingPeriodEnds: Date
+  amountToVest: BigNumber | null
+  poolAddress: string
+  chainId: ChainsValues
+  underlyingDealTokenDecimals: number
+}
+
+const AmountToVestCell = ({
+  amountToVest,
+  chainId,
+  poolAddress,
+  underlyingDealTokenDecimals,
+  vestingPeriodEnds,
+  vestingPeriodStarts,
+}: AmountToVestCellProps) => {
+  const now = new Date()
+  const isVestingCliffEnds = isAfter(now, vestingPeriodStarts)
+  const isVestindPeriodEnds = isAfter(now, vestingPeriodEnds)
+
+  const withInterval = isVestingCliffEnds && !isVestindPeriodEnds
+  const currentAmountToVest = useAelinAmountToVest(poolAddress, chainId, withInterval)
+
+  return (
+    <Cell mobileJustifyContent="center">
+      <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
+      <Value>
+        {formatToken(
+          currentAmountToVest !== null ? currentAmountToVest : (amountToVest as BigNumber),
+          underlyingDealTokenDecimals,
+        )}
+      </Value>
+    </Cell>
   )
 }
 
@@ -273,12 +311,14 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                     <Value>{formatToken(totalAmount, underlyingDealTokenDecimals)}</Value>
                   </Cell>
 
-                  <Cell mobileJustifyContent="center">
-                    <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
-                    <Value>
-                      {formatToken(amountToVest as BigNumber, underlyingDealTokenDecimals)}
-                    </Value>
-                  </Cell>
+                  <AmountToVestCell
+                    amountToVest={amountToVest}
+                    chainId={chainId}
+                    poolAddress={poolAddress}
+                    underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+                    vestingPeriodEnds={vestingPeriodEnds}
+                    vestingPeriodStarts={vestingPeriodStarts}
+                  />
 
                   <Cell mobileJustifyContent="center">
                     <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
