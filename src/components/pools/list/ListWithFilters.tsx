@@ -11,7 +11,7 @@ import { List } from '@/src/components/pools/list/List'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
-import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
+import { DEBOUNCED_INPUT_TIME, ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
 import useAelinUser from '@/src/hooks/aelin/useAelinUser'
@@ -282,7 +282,7 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
         return setWhere({
           holder_in: null,
           sponsor_in: null,
-          id_in: userPoolsInvested.map(({ id }) => id),
+          id_in: userPoolsInvested?.length ? userPoolsInvested.map(({ id }) => id) : [ZERO_ADDRESS],
         })
       }
     }
