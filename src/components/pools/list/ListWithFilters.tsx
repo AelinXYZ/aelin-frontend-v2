@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 
 import debounce from 'lodash/debounce'
 
-import { PoolCreated_Filter, PoolStatus } from '@/graphql-schema'
+import { PoolCreated, PoolCreated_Filter, PoolStatus } from '@/graphql-schema'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
 import { SafeSuspense, genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { List } from '@/src/components/pools/list/List'
@@ -12,7 +12,10 @@ import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Bu
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
+import useAelinUser from '@/src/hooks/aelin/useAelinUser'
+import { useLayoutStatus } from '@/src/providers/layoutStatusProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Wrapper = styled.div`
@@ -109,8 +112,9 @@ const searchOptions: Array<SearchOptionsType> = [
 
 const myPools = ['All pools', 'Sponsored', 'Funded', 'Invested']
 
-export const ListWithFilters: React.FC = () => {
-  const { address } = useWeb3Connection()
+export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: PoolCreated[] }) => {
+  const { address, isWalletConnected } = useWeb3Connection()
+
   const { network, setNetwork, setOrderBy, setOrderDirection, setWhere, variables } =
     useAelinPoolsFilters()
 
@@ -246,9 +250,29 @@ export const ListWithFilters: React.FC = () => {
 
   useEffect(() => {
     if (poolFilter) {
+      // My Sponsored pools
       if (address && poolFilter === myPools[1]) {
         return setWhere({
           sponsor_in: [address],
+          holder_in: null,
+          id_in: null,
+        })
+      }
+      // My funded pools
+      if (address && poolFilter === myPools[2]) {
+        return setWhere({
+          holder_in: [address],
+          sponsor_in: null,
+          id_in: null,
+        })
+      }
+
+      // My invested pools
+      if (address && poolFilter === myPools[3] && userPoolsInvested) {
+        return setWhere({
+          holder_in: null,
+          sponsor_in: null,
+          id_in: userPoolsInvested.map(({ id }) => id),
         })
       }
     }
@@ -292,6 +316,7 @@ export const ListWithFilters: React.FC = () => {
         <FiltersDropdowns>
           <Dropdown
             currentItem={getCurrentItem(myPools.indexOf(poolFilter))}
+            disabled={!isWalletConnected}
             dropdownButtonContent={
               <ButtonDropdown>{poolFilter ? poolFilter : myPools[0]}</ButtonDropdown>
             }
