@@ -25,7 +25,7 @@ const Title = styled.h1`
 
 const TitleText = styled.span`
   align-items: center;
-  color: ${({ theme }) => theme.colors.textColor};
+  color: ${({ theme }) => theme.pageTitle.color};
   display: inline-flex;
   gap: 12px;
   text-decoration: none;
