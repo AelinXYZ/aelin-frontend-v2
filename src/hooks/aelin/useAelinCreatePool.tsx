@@ -6,6 +6,7 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
 
+import { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -49,11 +50,7 @@ export interface CreatePoolState {
   sponsorFee?: number
   poolPrivacy?: Privacy
   currentStep: CreatePoolSteps
-  whitelist: {
-    address: string
-    amount: number
-    isSaved: boolean
-  }[]
+  whitelist: WhitelistProps[]
 }
 
 export interface CreatePoolStateComplete {
