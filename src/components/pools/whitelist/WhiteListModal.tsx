@@ -13,13 +13,14 @@ import {
   ButtonEdit,
   ButtonRemove,
 } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
-import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
+import { Textfield, TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
 
 export interface WhitelistProps {
   address: string
   amount: number | null
   isSaved: boolean
+  error: boolean
 }
 
 const Modal = styled(BaseModal)`
@@ -76,6 +77,7 @@ const Error = styled(BaseError)`
 const WhiteListRow = ({
   address,
   amount,
+  error,
   isSaved,
   onChangeRow,
   onDeleteRow,
@@ -84,6 +86,7 @@ const WhiteListRow = ({
   address: string
   amount: number | null
   isSaved: boolean
+  error: boolean
   onChangeRow: (value: string | boolean | number | null, key: string, index: number) => void
   onDeleteRow: (index: number) => void
   rowIndex: number
@@ -91,20 +94,21 @@ const WhiteListRow = ({
   return (
     <>
       <Textfield
-        disabled={isSaved}
+        // disabled={isSaved}
         onChange={(e) => onChangeRow(e.target.value, 'address', rowIndex)}
         placeholder="Add address..."
+        status={error ? TextfieldState.error : undefined}
         value={address}
       />
       <Textfield
-        disabled={isSaved}
+        // disabled={isSaved}
         onChange={(e) => onChangeRow(Number(e.target.value), 'amount', rowIndex)}
         placeholder="Max allocation..."
         type="number"
         value={amount || ''}
       />
       <ButtonsGrid>
-        <ButtonEdit onClick={() => onChangeRow(false, 'isSaved', rowIndex)} />
+        {/*<ButtonEdit onClick={() => onChangeRow(false, 'isSaved', rowIndex)} />*/}
         <ButtonRemove onClick={() => onDeleteRow(rowIndex)} />
       </ButtonsGrid>
     </>
@@ -116,7 +120,8 @@ export const initialWhitelistValues = [
     address: '',
     amount: null,
     isSaved: false,
-  }),
+    error: false,
+  } as WhitelistProps),
 ]
 
 const WhiteListModal = ({
@@ -129,7 +134,9 @@ const WhiteListModal = ({
   onConfirm: (whitelist: WhitelistProps[]) => void
 }) => {
   const [error, setError] = useState<boolean>(false)
-  const [list, setList] = useState(currentList.length ? currentList : initialWhitelistValues)
+  const [list, setList] = useState<WhitelistProps[]>(
+    currentList.length ? currentList : initialWhitelistValues,
+  )
   const handleUploadCSV = (whitelist: WhitelistProps[]): void => {
     setList(whitelist)
   }
@@ -137,7 +144,11 @@ const WhiteListModal = ({
   const onChangeRow = (value: string | boolean | number | null, key: string, index: number) => {
     const addresses = [...list]
 
-    addresses[index] = { ...addresses[index], [key]: value }
+    addresses[index] = {
+      ...addresses[index],
+      [key]: value,
+      error: key === 'address' && !!value && !isAddress(value as string),
+    }
     setList(addresses)
   }
 
@@ -146,11 +157,11 @@ const WhiteListModal = ({
   }
 
   useEffect(() => {
-    setError(
-      list.some((item: WhitelistProps) =>
-        item.address && item.amount ? !isAddress(item.address) : false,
-      ),
-    )
+    const addresses = [...list]
+
+    addresses.map((item) => ({ ...item, error: !isAddress(item.address) }))
+
+    setError(addresses.some((item: WhitelistProps) => item.error))
 
     return () => {
       setError(false)
@@ -158,14 +169,9 @@ const WhiteListModal = ({
   }, [list])
 
   const handleSave = () => {
-    const filterRows = [
-      ...list.filter(
-        (row: WhitelistProps) => isAddress(row.address) && row.amount && row.amount > 0,
-      ),
-    ]
-    const updateRows = filterRows.map((row) => ({ ...row, isSaved: true }))
-
-    onConfirm(updateRows)
+    //remove empty rows
+    const filterRows = [...list.filter((row: WhitelistProps) => row.address)]
+    onConfirm(filterRows)
     onClose()
   }
 
@@ -178,13 +184,16 @@ const WhiteListModal = ({
         <Title>Amount</Title>
         <div>&nbsp;</div>
         {list.map((listItem: WhitelistProps, rowIndex: number) => (
-          <WhiteListRow
-            {...listItem}
-            key={rowIndex}
-            onChangeRow={onChangeRow}
-            onDeleteRow={onDeleteRow}
-            rowIndex={rowIndex}
-          />
+          <>
+            <WhiteListRow
+              {...listItem}
+              key={rowIndex}
+              onChangeRow={onChangeRow}
+              onDeleteRow={onDeleteRow}
+              rowIndex={rowIndex}
+            />
+            {/*{listItem.error && <Error>Invalid Address</Error>}*/}
+          </>
         ))}
       </Grid>
       <ButtonPrimaryLightSm onClick={() => setList(list.concat(initialWhitelistValues))}>

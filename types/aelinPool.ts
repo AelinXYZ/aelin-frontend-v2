@@ -1,5 +1,4 @@
 import { PoolTimelineState } from '@/src/constants/types'
-import { UserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import { DetailedNumber } from '@/types/utils'
 
 export enum UserRole {
