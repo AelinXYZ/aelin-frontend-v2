@@ -44,7 +44,6 @@ const Step = styled(BaseStep)`
   }
 
   &::after {
-    content: '';
     left: 50%;
     right: 0;
   }

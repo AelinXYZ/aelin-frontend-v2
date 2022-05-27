@@ -179,12 +179,12 @@ export const lightTheme = {
     poolopen: green,
   },
   stepCircle: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2);',
-    backgroundColorActive: 'rgba(130, 128, 255, 0.2);',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backgroundColorActive: 'rgba(130, 128, 255, 0.2)',
     backgroundColorMain: '#fff',
     backgroundColorMainActive: '#8280ff',
     backgroundColorMiddle: transparentWhite,
-    backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4);',
+    backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4)',
   },
   textField: {
     backgroundColor: '#fff',
