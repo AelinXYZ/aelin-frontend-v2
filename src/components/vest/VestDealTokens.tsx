@@ -5,8 +5,8 @@ import styled, { css } from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
-import { Deadline } from '@/src/components/common/Deadline'
 import { Dropdown as BaseDropdown, DropdownItem } from '@/src/components/common/Dropdown'
+import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
   ButtonDropdown,
@@ -35,7 +35,6 @@ import useAelinVestingDeals, {
 } from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import formatNumber from '@/src/utils/formatNumber'
 
@@ -288,11 +287,9 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                   </Cell>
                   <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
                     <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
-                    <Deadline
-                      progress={calculateDeadlineProgress(vestingPeriodEnds, vestingPeriodStarts)}
-                    >
+                    <DynamicDeadline deadline={vestingPeriodEnds} start={vestingPeriodStarts}>
                       {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
-                    </Deadline>
+                    </DynamicDeadline>
                   </Cell>
                   <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
                     <VestActionButton

@@ -9,10 +9,7 @@ import {
   ButtonPrimaryLightSm,
   GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
-import {
-  ButtonEdit,
-  ButtonRemove,
-} from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
+import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { Textfield, TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
 
@@ -78,7 +75,6 @@ const WhiteListRow = ({
   address,
   amount,
   error,
-  isSaved,
   onChangeRow,
   onDeleteRow,
   rowIndex,

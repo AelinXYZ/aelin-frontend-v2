@@ -6,7 +6,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { TokenIcon } from '../common/TokenIcon'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
-import { Deadline } from '@/src/components/common/Deadline'
+import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
@@ -25,7 +25,6 @@ import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/consta
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
-import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 const Name = styled.span`
@@ -197,9 +196,9 @@ export const List: React.FC<{
                     />
                   </HideOnDesktop>
                 </Cell>
-                <Deadline progress={calculateDeadlineProgress(purchaseExpiry, start)}>
+                <DynamicDeadline deadline={purchaseExpiry} start={start}>
                   {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
-                </Deadline>
+                </DynamicDeadline>
                 <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
                   <TokenIcon
                     address={investmentToken}

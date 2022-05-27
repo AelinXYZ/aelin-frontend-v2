@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
@@ -44,8 +44,9 @@ function useFundingStatus(pool: ParsedAelinPool): Funding {
   }, [pool.funded.raw, pool.investmentTokenDecimals, pool.poolCap.raw])
 }
 
-function useCurrentStatus(pool: ParsedAelinPool, now: number): DerivedStatus {
+function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
   return useMemo(() => {
+    const now = Date.now()
     // Funding
     if (isBefore(now, pool.purchaseExpiry)) {
       return {
@@ -122,7 +123,7 @@ function useCurrentStatus(pool: ParsedAelinPool, now: number): DerivedStatus {
     }
 
     throw new Error('Unexpected stage')
-  }, [pool, now])
+  }, [pool])
 }
 
 export function useUserRole(
@@ -412,14 +413,14 @@ function useUserTabs(
   }
 }
 
-export function useTimelineStatus(pool?: ParsedAelinPool, now: number = Date.now()): TimelineSteps {
-  const getStepDeadline = (deadline: Date, message?: string) =>
-    getFormattedDurationFromDateToNow(
-      deadline,
-      message ?? `Ended ${formatDate(deadline, DATE_DETAILED)}`,
-    )
-
+export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
   return useMemo(() => {
+    const now = Date.now()
+    const getStepDeadline = (deadline: Date, message?: string) =>
+      getFormattedDurationFromDateToNow(
+        deadline,
+        message ?? `Ended ${formatDate(deadline, DATE_DETAILED)}`,
+      )
     return {
       [PoolTimelineState.poolCreation]: {
         isDefined: true,
@@ -601,7 +602,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool, now: number = Date.now
             : '',
       },
     }
-  }, [now, pool])
+  }, [pool])
 }
 
 type InitialData = {
@@ -613,16 +614,6 @@ export default function useAelinPoolStatus(
   poolAddress: string,
   initialData?: InitialData,
 ) {
-  const [now, setNow] = useState(Date.now())
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setNow(Date.now())
-    }, ms('1m'))
-
-    return () => clearInterval(intervalId)
-  }, [])
-
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
   })
@@ -630,14 +621,14 @@ export default function useAelinPoolStatus(
   const { address } = useWeb3Connection()
 
   // derive data for UI
-  const derivedStatus = useCurrentStatus(poolResponse, now)
+  const derivedStatus = useCurrentStatus(poolResponse)
   const userRole = useUserRole(address, poolResponse, derivedStatus)
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
 
   // get info by pool status
   const funding = useFundingStatus(poolResponse)
 
-  const timeline = useTimelineStatus(poolResponse, now)
+  const timeline = useTimelineStatus(poolResponse)
 
   return useMemo(
     () => ({
