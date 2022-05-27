@@ -126,6 +126,9 @@ export const List: React.FC<{
     }
   }
 
+  const getSortableHandler = (sortKey: PoolCreated_OrderBy | undefined) =>
+    sortKey ? () => handleSort(sortKey) : undefined
+
   return (
     <InfiniteScroll
       dataLength={data.length}
@@ -139,9 +142,7 @@ export const List: React.FC<{
             isActive={sortBy === sortKey}
             justifyContent={justifyContent}
             key={index}
-            onClick={() => {
-              if (sortKey) handleSort(sortKey)
-            }}
+            onClick={getSortableHandler(sortKey)}
           >
             {title}
           </SortableTH>

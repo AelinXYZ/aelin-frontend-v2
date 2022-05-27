@@ -37,7 +37,7 @@ export const ensResolver = async (name: string) => {
     try {
       const ens = await mainnetRpcProvider.resolveName(name)
       if (!ens) throw new Error(`No address for this ens name`)
-      return ens
+      return ens.toLowerCase()
     } catch (err) {
       console.log(err)
       return name
