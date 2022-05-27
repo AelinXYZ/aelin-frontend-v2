@@ -76,7 +76,6 @@ const WhiteListRow = ({
   address,
   amount,
   error,
-  isSaved,
   onChangeRow,
   onDeleteRow,
   rowIndex,

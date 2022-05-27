@@ -10,7 +10,6 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Tooltip as BaseTooltip } from '@/src/components/tooltip/Tooltip'
-import { ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
 
 const Text = styled(ModalText)`

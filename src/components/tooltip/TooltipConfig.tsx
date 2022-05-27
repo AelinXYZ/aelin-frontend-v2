@@ -2,6 +2,7 @@ import { withTheme } from 'styled-components'
 
 import ReactTooltip from 'react-tooltip'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Component: React.FC<{ theme?: any }> = ({ theme }) => {
   return (
     <ReactTooltip
@@ -17,6 +18,7 @@ const Component: React.FC<{ theme?: any }> = ({ theme }) => {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TooltipConfig = withTheme<any>(Component)
 
 export default TooltipConfig
