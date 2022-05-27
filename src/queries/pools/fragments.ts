@@ -22,6 +22,7 @@ gql`
     totalSupply
     dealsCreated
     holder
+    filter
 
     totalAmountEarnedBySponsor
     totalAmountAccepted
