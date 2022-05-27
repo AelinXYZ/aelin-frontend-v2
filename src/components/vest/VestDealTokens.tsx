@@ -36,7 +36,7 @@ import useAelinVestingDeals, {
 } from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress } from '@/src/utils/aelinPoolUtils'
+import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -287,10 +287,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                   <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
                     <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
                     <Deadline
-                      progress={calculateVestingDealLineProgress(
-                        vestingPeriodEnds,
-                        vestingPeriodStarts,
-                      )}
+                      progress={calculateDeadlineProgress(vestingPeriodEnds, vestingPeriodStarts)}
                     >
                       {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
                     </Deadline>

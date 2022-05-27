@@ -1,6 +1,5 @@
-import { BigNumber } from '@ethersproject/bignumber'
-
 import { PoolTimelineState } from '@/src/constants/types'
+import { UserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import { DetailedNumber } from '@/types/utils'
 
 export enum UserRole {
@@ -41,12 +40,7 @@ export enum PoolAction {
 export interface Funding {
   isCap: boolean
   capReached: boolean
-  userAllowance: BigNumber
-  refetchUserAllowance: () => void
   maxDepositAllowed: DetailedNumber
-  poolTokenBalance: DetailedNumber
-  userInvestmentTokenBalance: DetailedNumber
-  refetchUserInvestmentTokenBalance: () => void
 }
 
 export interface WaitingForDeal {

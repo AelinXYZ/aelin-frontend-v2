@@ -1,4 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
+import { SWRConfiguration } from 'swr'
 
 import useContractCall, { useContractCallMultiple } from './useContractCall'
 import aelinPool from '@/src/abis/AelinPool.json'
@@ -14,10 +15,19 @@ export default function useAelinPoolCall<
   address: string,
   method: MethodName,
   params: Params,
+  options?: SWRConfiguration,
 ): [Return | null, () => void] {
   const provider = new JsonRpcProvider(getNetworkConfig(chainId).rpcUrl)
 
-  const [data, refetch] = useContractCall(provider, address, aelinPool, method, params)
+  const [data, refetch] = useContractCall(
+    provider,
+    address,
+    aelinPool,
+    method,
+    params,
+    false,
+    options,
+  )
   return [data, refetch]
 }
 

@@ -26,6 +26,11 @@ const Wrapper = styled.div`
   flex-grow: 0;
 `
 
+const ScrollableWrapper = styled.div`
+  overflow-y: scroll;
+  max-height: 500px;
+`
+
 const Text = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
   display: flex;
@@ -158,7 +163,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
         </TabButton>
       </Filters>
       <RequiredConnection text={`You must be logged to see the pools you ${activeFilter} in`}>
-        <>
+        <ScrollableWrapper>
           {getPools(userResponse, activeFilter).length > 0 ? (
             getVisiblePools(
               userResponse,
@@ -190,7 +195,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
               </MoreButton>
             </ButtonContainer>
           )}
-        </>
+        </ScrollableWrapper>
       </RequiredConnection>
     </CollapsibleBlock>
   )

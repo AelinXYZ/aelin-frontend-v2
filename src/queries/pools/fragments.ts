@@ -31,6 +31,8 @@ gql`
     vestingEnds
     vestingStarts
     holder
+
+    filter
   }
 `
 
@@ -51,6 +53,7 @@ gql`
     proRataRedemptionPeriod
     proRataRedemptionPeriodStart
     openRedemptionPeriod
+    openRedemptionStart
 
     vestingPeriod
     vestingCliff

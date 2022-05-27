@@ -67,14 +67,6 @@ const BackButton = styled(ButtonPrimaryLight)`
   }
 `
 
-const ResponsiveError = styled(Error)`
-  text-align: center;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    text-align: left;
-  }
-`
-
 type Props = { poolAddress: string; chainId: ChainsValues }
 
 const CreateDealForm = ({ chainId, poolAddress }: Props) => {
@@ -176,9 +168,9 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     totalPurchase={totalPurchase}
                   />
                   {createDealState.currentStep === CreateDealSteps.openPeriod &&
-                    isOpenPeriodDisabled && <ResponsiveError>Pool supply maxed.</ResponsiveError>}
+                    isOpenPeriodDisabled && <Error textAlign="center">Pool supply maxed.</Error>}
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <ResponsiveError>{currentStepError}</ResponsiveError>
+                    <Error textAlign="center">{currentStepError}</Error>
                   )}
                   <ButtonWrapper>
                     <MobileButtonWrapper>

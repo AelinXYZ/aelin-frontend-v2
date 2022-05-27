@@ -13,7 +13,6 @@ import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
-import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -70,35 +69,33 @@ function Vest({ pool }: Props) {
   if (!BigNumber.isBigNumber(amountToVest)) return <Loading />
 
   return (
-    <RequiredConnection>
-      <>
-        {!isVestingCliffEnds && (
-          <VestingCliff
-            redemtionEnds={pool.deal?.redemption?.end}
-            vestingCliffEnds={pool.deal?.vestingPeriod.cliff.end}
-          />
-        )}
+    <>
+      {!isVestingCliffEnds && (
+        <VestingCliff
+          redemtionEnds={pool.deal?.redemption?.end}
+          vestingCliffEnds={pool.deal?.vestingPeriod.cliff.end}
+        />
+      )}
 
-        {isVestingCliffEnds && hasRemainingTokens && (
-          <VestingPeriod
-            amountToVest={amountToVest}
-            handleVest={handleVest}
-            isButtonDisabled={isVestButtonDisabled}
-            symbol={data?.vestingDeal?.tokenToVestSymbol}
-            totalVested={totalVested}
-            underlyingDealTokenDecimals={underlyingDealTokenDecimals}
-          />
-        )}
+      {isVestingCliffEnds && hasRemainingTokens && (
+        <VestingPeriod
+          amountToVest={amountToVest}
+          handleVest={handleVest}
+          isButtonDisabled={isVestButtonDisabled}
+          symbol={data?.vestingDeal?.tokenToVestSymbol}
+          totalVested={totalVested}
+          underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+        />
+      )}
 
-        {isVestingCliffEnds && isVestindPeriodEnds && !hasRemainingTokens && (
-          <VestingCompleted
-            symbol={data?.vestingDeal?.tokenToVestSymbol}
-            totalVested={totalVested}
-            underlyingDealTokenDecimals={underlyingDealTokenDecimals}
-          />
-        )}
-      </>
-    </RequiredConnection>
+      {isVestingCliffEnds && isVestindPeriodEnds && !hasRemainingTokens && (
+        <VestingCompleted
+          symbol={data?.vestingDeal?.tokenToVestSymbol}
+          totalVested={totalVested}
+          underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+        />
+      )}
+    </>
   )
 }
 

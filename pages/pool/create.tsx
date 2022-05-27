@@ -14,8 +14,8 @@ import {
   Title,
   WrapperGrid,
 } from '@/src/components/pools/common/Create'
+import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInput'
 import { Summary } from '@/src/components/pools/common/Summary'
-import PoolCreateStepInput from '@/src/components/pools/main/PoolCreateStepInput'
 import WhiteListModal, { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
 import {
   ButtonPrimaryLight,
@@ -42,14 +42,6 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 const BackButton = styled(ButtonPrimaryLight)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: none;
-  }
-`
-
-const ResponsiveError = styled(Error)`
-  text-align: center;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    text-align: left;
   }
 `
 
@@ -117,7 +109,7 @@ const Create: NextPage = () => {
                     setPoolField={setPoolField}
                   />
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <ResponsiveError>{currentStepError}</ResponsiveError>
+                    <Error textAlign="center">{currentStepError}</Error>
                   )}
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (

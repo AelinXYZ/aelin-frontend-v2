@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Link as BaseLink } from '@/src/components/assets/Link'
@@ -49,23 +50,31 @@ const Link = styled(BaseLink)`
 `
 
 const SubTitle = styled.p`
+  align-items: center;
   color: ${({ theme }) => theme.colors.textColorLight};
+  display: flex;
   font-size: 1.2rem;
   font-weight: 500;
+  gap: 8px;
   line-height: 1.3;
   margin: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     font-size: 1.4rem;
   }
+
+  .networkIcon {
+    height: 14px;
+    width: 14px;
+  }
 `
 
-export const PageTitle: React.FC<{ title: string; subTitle?: string; href?: string }> = ({
-  href,
-  subTitle,
-  title,
-  ...restProps
-}) => {
+export const PageTitle: React.FC<{
+  href?: string
+  network?: ReactNode
+  subTitle?: string
+  title: string | React.ReactNode
+}> = ({ href, network, subTitle, title, ...restProps }) => {
   const titleLinkProps = href ? { href: href, target: '_blank' } : {}
 
   return (
@@ -75,7 +84,11 @@ export const PageTitle: React.FC<{ title: string; subTitle?: string; href?: stri
           {title} {href && <Link />}
         </TitleText>
       </Title>
-      <SubTitle>{subTitle ? subTitle : '--'}</SubTitle>
+      <SubTitle>
+        {subTitle ? subTitle : '--'}
+        {network && ' - '}
+        {network}
+      </SubTitle>
     </Wrapper>
   )
 }

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
@@ -8,14 +8,10 @@ import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { MAX_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
-import useAelinPool from '@/src/hooks/aelin/useAelinPool'
-import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useUserAllocationStat } from '@/src/hooks/aelin/useUserAllocationStats'
-import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
-import useERC20Call from '@/src/hooks/contracts/useERC20Call'
+import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -26,29 +22,11 @@ import {
   PoolAction,
   PoolStatus,
   PoolTab,
-  ProRata,
   TimelineSteps,
   UserRole,
-  WaitingForDeal,
 } from '@/types/aelinPool'
 
-function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding {
-  const { address } = useWeb3Connection()
-  const { data: userAllocationStatRes } = useUserAllocationStat(pool.address, chainId)
-  const [userInvestmentTokenBalance, refetchUserInvestmentTokenBalance] = useERC20Call(
-    pool.chainId,
-    pool.investmentToken,
-    'balanceOf',
-    [address || ZERO_ADDRESS],
-  )
-
-  const [userAllowance, refetchUserAllowance] = useERC20Call(
-    pool.chainId,
-    pool.investmentToken,
-    'allowance',
-    [address || ZERO_ADDRESS, pool.address],
-  )
-
+function useFundingStatus(pool: ParsedAelinPool): Funding {
   return useMemo(() => {
     const isCap = pool.poolCap.raw.eq(0)
     const capAmount = pool.poolCap.raw
@@ -58,104 +36,16 @@ function useFundingStatus(pool: ParsedAelinPool, chainId: ChainsValues): Funding
     return {
       isCap,
       capReached: isCap ? false : capAmount.eq(funded),
-      userAllowance: userAllowance || ZERO_BN,
-      refetchUserAllowance,
       maxDepositAllowed: {
         raw: isCap ? MAX_BN : maxDepositAllowed,
         formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
       },
-      poolTokenBalance: {
-        raw: userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
-        formatted: formatToken(
-          userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
-          pool.investmentTokenDecimals,
-        ),
-      },
-      userInvestmentTokenBalance: {
-        raw: userInvestmentTokenBalance || ZERO_BN,
-        formatted: formatToken(userInvestmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals),
-      },
-      refetchUserInvestmentTokenBalance,
     }
-  }, [
-    pool.funded.raw,
-    pool.investmentTokenDecimals,
-    pool.poolCap.raw,
-    refetchUserAllowance,
-    refetchUserInvestmentTokenBalance,
-    userAllocationStatRes?.userAllocationStat?.poolTokenBalance,
-    userAllowance,
-    userInvestmentTokenBalance,
-  ])
+  }, [pool.funded.raw, pool.investmentTokenDecimals, pool.poolCap.raw])
 }
 
-function useDealingStatus(pool: ParsedAelinPool, chainId: ChainsValues): WaitingForDeal {
-  const { address } = useWeb3Connection()
-  const walletAddress = address || ZERO_ADDRESS
-  const { data: userAllocationStatRes, mutate: refetchUserWithdrawn } = useUserAllocationStat(
-    pool.address,
-    chainId,
-  )
-
-  const [data, refetchPool] = useAelinPoolCallMultiple(pool.chainId, pool.address, [
-    { method: 'maxProRataAmount', params: [walletAddress] },
-    { method: 'balanceOf', params: [walletAddress] },
-    { method: 'purchaseTokenTotalForDeal', params: [] },
-    { method: 'totalAmountAccepted', params: [] },
-  ])
-
+function useCurrentStatus(pool: ParsedAelinPool, now: number): DerivedStatus {
   return useMemo(() => {
-    const maxProRataAmountBalance = data[0] || ZERO_BN
-    const safeWalletPoolBalance = data[1] || ZERO_BN
-    const maxPurchaseDealAllowed = data[2] || ZERO_BN
-    const totalAmountAccepted = data[3] || ZERO_BN
-
-    const userAmountWithdrawn = userAllocationStatRes?.userAllocationStat?.totalWithdrawn || ZERO_BN
-
-    const maxOpenRedemptionAvailable =
-      maxPurchaseDealAllowed?.sub(totalAmountAccepted || ZERO_BN) || ZERO_BN
-
-    const maxOpenRedemptionBalance = safeWalletPoolBalance.gt(maxOpenRedemptionAvailable)
-      ? maxOpenRedemptionAvailable
-      : safeWalletPoolBalance
-
-    const userMaxAllocation =
-      pool.deal?.redemption?.stage === 1
-        ? maxProRataAmountBalance || ZERO_BN
-        : maxOpenRedemptionBalance
-
-    return {
-      refetchUserStats: () => {
-        refetchUserWithdrawn()
-        refetchPool()
-      },
-      userTotalWithdrawn: {
-        raw: userAmountWithdrawn,
-        formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
-      },
-      userMaxAllocation: {
-        raw: userMaxAllocation,
-        formatted: formatToken(userMaxAllocation, pool.investmentTokenDecimals) || '0',
-      },
-    }
-  }, [
-    data,
-    pool.deal?.redemption?.stage,
-    pool.investmentTokenDecimals,
-    refetchPool,
-    refetchUserWithdrawn,
-    userAllocationStatRes?.userAllocationStat?.totalWithdrawn,
-  ])
-}
-
-function useProRataStatus(pool: ParsedAelinPool): ProRata {
-  return {}
-}
-
-function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
-  return useMemo(() => {
-    const now = Date.now()
-
     // Funding
     if (isBefore(now, pool.purchaseExpiry)) {
       return {
@@ -232,7 +122,7 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
     }
 
     throw new Error('Unexpected stage')
-  }, [pool])
+  }, [pool, now])
 }
 
 export function useUserRole(
@@ -353,10 +243,14 @@ function useUserActions(
       return actions
     }
 
+    // Waiting for holder
     if (currentStatus === PoolStatus.WaitingForHolder) {
+      if (userRole !== UserRole.Holder) {
+        actions.push(PoolAction.AwaitingForDeal)
+      }
+
       // Fund deal
       if (
-        currentStatus === PoolStatus.WaitingForHolder &&
         userRole === UserRole.Holder &&
         pool.deal &&
         !pool.deal.holderAlreadyDeposited &&
@@ -518,9 +412,7 @@ function useUserTabs(
   }
 }
 
-export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
-  const now = Date.now()
-
+export function useTimelineStatus(pool?: ParsedAelinPool, now: number = Date.now()): TimelineSteps {
   const getStepDeadline = (deadline: Date, message?: string) =>
     getFormattedDurationFromDateToNow(
       deadline,
@@ -599,7 +491,11 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
         active:
           !!pool?.deal?.holderAlreadyDeposited &&
           !!pool?.deal.redemption?.openRedemptionEnd &&
-          isBefore(now, pool.deal.redemption.openRedemptionEnd),
+          !!pool?.deal.redemption?.proRataRedemptionEnd &&
+          isWithinInterval(now, {
+            start: pool.deal.redemption.proRataRedemptionEnd,
+            end: pool.deal.redemption.openRedemptionEnd,
+          }),
         isDone:
           !!pool?.deal?.holderAlreadyDeposited &&
           !!pool?.deal.redemption?.openRedemptionEnd &&
@@ -717,6 +613,16 @@ export default function useAelinPoolStatus(
   poolAddress: string,
   initialData?: InitialData,
 ) {
+  const [now, setNow] = useState(Date.now())
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setNow(Date.now())
+    }, ms('1m'))
+
+    return () => clearInterval(intervalId)
+  }, [])
+
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
   })
@@ -724,15 +630,14 @@ export default function useAelinPoolStatus(
   const { address } = useWeb3Connection()
 
   // derive data for UI
-  const derivedStatus = useCurrentStatus(poolResponse)
+  const derivedStatus = useCurrentStatus(poolResponse, now)
   const userRole = useUserRole(address, poolResponse, derivedStatus)
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
 
   // get info by pool status
-  const funding = useFundingStatus(poolResponse, chainId)
-  const dealing = useDealingStatus(poolResponse, chainId)
-  const proRata = useProRataStatus(poolResponse)
-  const timeline = useTimelineStatus(poolResponse)
+  const funding = useFundingStatus(poolResponse)
+
+  const timeline = useTimelineStatus(poolResponse, now)
 
   return useMemo(
     () => ({
@@ -740,11 +645,9 @@ export default function useAelinPoolStatus(
       pool: poolResponse,
       userRole,
       funding,
-      dealing,
-      proRata,
       tabs,
       timeline,
     }),
-    [poolResponse, refetchPool, funding, dealing, proRata, userRole, tabs, timeline],
+    [refetchPool, poolResponse, userRole, funding, tabs, timeline],
   )
 }
