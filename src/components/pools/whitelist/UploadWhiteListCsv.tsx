@@ -5,11 +5,11 @@ import { isAddress } from '@ethersproject/address'
 import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
-import { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/AddressesWhiteList'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 
 export interface IUploadCSV {
-  onUploadCSV: (data: WhitelistProps[]) => void
+  onUploadCSV: (data: AddressWhitelistProps[]) => void
 }
 
 const UploadCSV: FC<IUploadCSV> = ({ onUploadCSV }) => {
@@ -28,7 +28,7 @@ const UploadCSV: FC<IUploadCSV> = ({ onUploadCSV }) => {
       })
 
       return accum
-    }, [] as WhitelistProps[])
+    }, [] as AddressWhitelistProps[])
 
     onUploadCSV(whitelist)
   }
