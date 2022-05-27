@@ -139,13 +139,9 @@ export const List: React.FC<{
             isActive={sortBy === sortKey}
             justifyContent={justifyContent}
             key={index}
-            onClick={
-              sortKey
-                ? () => {
-                    handleSort(sortKey)
-                  }
-                : undefined
-            }
+            onClick={() => {
+              if (sortKey) handleSort(sortKey)
+            }}
           >
             {title}
           </SortableTH>
