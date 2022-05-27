@@ -220,6 +220,10 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       {showDealCalculationModal && (
         <DealCalculationModal
           dealToken={createDealState.dealToken as Token}
+          dealTokenAmount={wei(
+            createDealState.dealTokenTotal || ZERO_BN,
+            createDealState.dealToken?.decimals,
+          )}
           investmentToken={investmentTokenInfo as Token}
           onClose={() => setShowDealCalculationModal(false)}
           onConfirm={(value) => {
