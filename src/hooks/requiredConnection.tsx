@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 const Text = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
   display: flex;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.5;
   margin: 0 auto 10px;

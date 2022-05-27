@@ -1,26 +1,30 @@
 import { useCallback } from 'react'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
 import { VestingDeal_OrderBy, VestingDealsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { ZERO_BN } from '@/src/constants/misc'
 import { VESTING_DEALS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
+import { fetchAmountToVest } from '@/src/hooks/aelin/useAelinAmountToVest'
 import { VESTING_DEALS_QUERY_NAME } from '@/src/queries/pools/vestingDeals'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
-import { formatToken } from '@/src/web3/bigNumber'
 
 export type ParsedVestingDeal = {
   poolName: string
   poolAddress: string
   dealAddress: string
-  tokenToVest: string
-  myDealTotal: string
+  tokenSymbol: string
+  totalAmount: string
   remainingAmountToVest: string
+  amountToVest: BigNumber | null
   canVest: boolean
   totalVested: string
   vestingPeriodEnds: Date
   vestingPeriodStarts: Date
+  underlyingDealTokenDecimals: number
   chainId: ChainsValues
 }
 
@@ -41,35 +45,35 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
     chainIds.map((chainId: ChainsValues) =>
       allSDK[chainId][VESTING_DEALS_QUERY_NAME](variables)
         .then((res) =>
-          res.vestingDeals.map((vestingDeal) => {
-            const myDealTotal = formatToken(
-              vestingDeal.investorDealTotal,
-              vestingDeal.underlyingDealTokenDecimals || 0,
-            )
-            const totalVested = formatToken(
-              vestingDeal.totalVested,
-              vestingDeal.underlyingDealTokenDecimals || 0,
-            )
-            const remainingAmountToVest = formatToken(
-              vestingDeal.remainingAmountToVest,
-              vestingDeal.underlyingDealTokenDecimals || 0,
-            )
-            const now = new Date().getTime()
+          Promise.all(
+            res.vestingDeals.map(async (vestingDeal) => {
+              const now = new Date().getTime()
 
-            return {
-              poolName: parsePoolName(vestingDeal.poolName),
-              tokenToVest: vestingDeal.tokenToVestSymbol,
-              myDealTotal,
-              totalVested,
-              canVest:
-                Number(remainingAmountToVest) > 0 && now > vestingDeal.vestingPeriodStarts * 1000,
-              vestingPeriodEnds: new Date(vestingDeal.vestingPeriodEnds * 1000),
-              vestingPeriodStarts: new Date(vestingDeal.vestingPeriodStarts * 1000),
-              poolAddress: vestingDeal.poolAddress,
-              dealAddress: vestingDeal.pool.dealAddress,
-              chainId,
-            }
-          }),
+              const amountToVest = await fetchAmountToVest(
+                vestingDeal.pool.dealAddress,
+                chainId,
+                variables.where?.user as string,
+              )
+
+              return {
+                poolName: parsePoolName(vestingDeal.poolName),
+                tokenSymbol: vestingDeal.tokenToVestSymbol,
+                amountToVest: amountToVest,
+                totalAmount: vestingDeal.investorDealTotal,
+                totalVested: vestingDeal.totalVested,
+                canVest:
+                  BigNumber.from(vestingDeal.remainingAmountToVest).gt(ZERO_BN) &&
+                  now > vestingDeal.vestingPeriodStarts * 1000,
+                remainingAmountToVest: vestingDeal.remainingAmountToVest,
+                vestingPeriodEnds: new Date(vestingDeal.vestingPeriodEnds * 1000),
+                vestingPeriodStarts: new Date(vestingDeal.vestingPeriodStarts * 1000),
+                poolAddress: vestingDeal.poolAddress,
+                dealAddress: vestingDeal.pool.dealAddress,
+                underlyingDealTokenDecimals: vestingDeal.underlyingDealTokenDecimals,
+                chainId,
+              }
+            }),
+          ),
         )
         .catch((err) => {
           console.error(`fetch vestingDeals on chain ${chainId} was failed`, err)

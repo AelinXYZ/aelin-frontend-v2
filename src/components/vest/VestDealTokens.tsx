@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
@@ -28,7 +29,7 @@ import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
-import useAelinClaimableTokens from '@/src/hooks/aelin/useAelinClaimableTokens'
+import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import useAelinVestingDeals, {
   ParsedVestingDeal,
   VestingDealsFilter,
@@ -37,7 +38,7 @@ import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTrans
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateInvestmentDeadlineProgress as calculateVestingDealLineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
-import formatNumber from '@/src/utils/formatNumber'
+import { formatToken } from '@/src/web3/bigNumber'
 
 const TableCard = styled.div`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
@@ -132,18 +133,6 @@ const VestActionButton = ({
     >
       Vest
     </VestButton>
-  )
-}
-
-const AmountToVestCell = ({ ...item }: ParsedVestingDeal) => {
-  const { chainId, myDealTotal, poolAddress, totalVested } = item
-  const amountToVest = useAelinClaimableTokens(poolAddress, chainId, myDealTotal, totalVested)
-
-  return (
-    <Cell mobileJustifyContent="center">
-      <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
-      <Value>{formatNumber(amountToVest)}</Value>
-    </Cell>
   )
 }
 
@@ -258,14 +247,16 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
           <TableBody>
             {data.map((item, index) => {
               const {
+                amountToVest,
                 canVest,
                 chainId,
                 dealAddress,
-                myDealTotal,
                 poolAddress,
                 poolName,
-                tokenToVest,
+                tokenSymbol,
+                totalAmount,
                 totalVested,
+                underlyingDealTokenDecimals,
                 vestingPeriodEnds,
                 vestingPeriodStarts,
               } = item
@@ -276,15 +267,22 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                   key={index}
                 >
                   <NameCell mobileJustifyContent="center">{poolName}</NameCell>
-                  <Cell mobileJustifyContent="center">{tokenToVest}</Cell>
+                  <Cell mobileJustifyContent="center">{tokenSymbol}</Cell>
                   <Cell mobileJustifyContent="center">
                     <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
-                    <Value>{myDealTotal}</Value>
+                    <Value>{formatToken(totalAmount, underlyingDealTokenDecimals)}</Value>
                   </Cell>
-                  <AmountToVestCell {...item} />
+
+                  <Cell mobileJustifyContent="center">
+                    <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
+                    <Value>
+                      {formatToken(amountToVest as BigNumber, underlyingDealTokenDecimals)}
+                    </Value>
+                  </Cell>
+
                   <Cell mobileJustifyContent="center">
                     <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
-                    <Value>{totalVested}</Value>
+                    <Value>{formatToken(totalVested, underlyingDealTokenDecimals)}</Value>
                   </Cell>
                   <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
                     <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>

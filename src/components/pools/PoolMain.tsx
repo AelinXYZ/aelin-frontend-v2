@@ -2,8 +2,6 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
-import WithdrawUnredeemed from './actions/WithdrawUnredeemed'
-import UnredeemedInformation from './deal/UnredeemedInformation'
 import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import {
@@ -12,14 +10,16 @@ import {
 } from '@/src/components/common/CardWithTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
-import Claim from '@/src/components/pools/actions/Claim'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import FundDeal from '@/src/components/pools/actions/FundDeal'
 import Invest from '@/src/components/pools/actions/Invest'
 import ReleaseFunds from '@/src/components/pools/actions/ReleaseFunds'
+import Vest from '@/src/components/pools/actions/Vest/Vest'
 import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
+import WithdrawUnredeemed from '@/src/components/pools/actions/WithdrawUnredeemed'
 import WithdrawalFromPool from '@/src/components/pools/actions/WithdrawalFromPool'
 import DealInformation from '@/src/components/pools/deal/DealInformation'
+import UnredeemedInformation from '@/src/components/pools/deal/UnredeemedInformation'
 import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
@@ -127,7 +127,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               <AcceptDeal dealing={dealing} pool={pool} />
             )}
             {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
-            {tabs.actionTabs.active === PoolAction.Claim && <Claim pool={pool} />}
+            {tabs.actionTabs.active === PoolAction.Vest && <Vest pool={pool} />}
             {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
               <WithdrawUnredeemed pool={pool} />
             )}

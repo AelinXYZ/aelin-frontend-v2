@@ -1,48 +1,71 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
+import isAfter from 'date-fns/isAfter'
 import ms from 'ms'
 
 import useAelinPool from './useAelinPool'
 import { ChainsValues } from '@/src/constants/chains'
+import { ZERO_BN } from '@/src/constants/misc'
 
 export default function useAelinClaimableTokens(
   poolAddress: string,
   chainId: ChainsValues,
-  myDealTotal: string,
-  totalVested: string,
+  totalAmount: BigNumberish,
+  totalVested: BigNumberish,
 ) {
   const {
     pool: { deal },
   } = useAelinPool(chainId, poolAddress)
 
-  const vestingPeriods = deal?.vestingPeriod
+  const [amountToVest, setAmountToVest] = useState<BigNumber>(ZERO_BN)
 
-  const [amountToVest, setAmountToVest] = useState<number>(0)
+  const getAmountToVest = useCallback(() => {
+    const now = new Date()
 
-  useEffect(() => {
-    const getAmountToVest = () => {
-      if (!vestingPeriods || !vestingPeriods.start || !vestingPeriods.end) {
-        return 0
-      }
-      const now = new Date().getTime()
-      if (now < vestingPeriods.start.getTime()) {
-        return 0
-      } else if (!vestingPeriods?.vesting.ms) {
-        return Number(myDealTotal) - Number(totalVested)
-      } else {
-        const maxTime = now > vestingPeriods.end.getTime() ? vestingPeriods.end.getTime() : now
-
-        const timeElapsed = maxTime - vestingPeriods.start.getTime()
-        return (Number(myDealTotal) * timeElapsed) / vestingPeriods.vesting.ms - Number(totalVested)
-      }
+    if (!deal?.vestingPeriod.start || !deal?.vestingPeriod.end) {
+      return setAmountToVest(ZERO_BN)
     }
 
-    setAmountToVest(getAmountToVest())
+    const isVestingCliffEnds = isAfter(now, deal?.vestingPeriod.start as Date)
+    const isVestindPeriodEnds = isAfter(now, deal?.vestingPeriod.end as Date)
 
-    const intervalId = setInterval(() => setAmountToVest(getAmountToVest()), ms('1s'))
+    if (!isVestingCliffEnds) {
+      return setAmountToVest(ZERO_BN)
+    }
+
+    if (isVestindPeriodEnds) {
+      const amountToVest = BigNumber.from(totalAmount).sub(BigNumber.from(totalVested))
+      return setAmountToVest(amountToVest)
+    }
+
+    const timeElapsed = now.getTime() - deal?.vestingPeriod?.start.getTime()
+
+    const amountToVest = BigNumber.from(totalAmount)
+      .mul(timeElapsed)
+      .div(deal.vestingPeriod.vesting.ms)
+      .sub(BigNumber.from(totalVested))
+
+    // Fake fix
+    setAmountToVest(amountToVest.lt(ZERO_BN) ? ZERO_BN : amountToVest)
+  }, [
+    deal?.vestingPeriod.end,
+    deal?.vestingPeriod.start,
+    deal?.vestingPeriod.vesting.ms,
+    totalAmount,
+    totalVested,
+  ])
+
+  useEffect(() => {
+    getAmountToVest()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    const intervalId = setInterval(() => getAmountToVest(), ms('5s'))
 
     return () => clearInterval(intervalId)
-  }, [vestingPeriods, totalVested, myDealTotal])
+  }, [getAmountToVest])
 
   return amountToVest
 }
