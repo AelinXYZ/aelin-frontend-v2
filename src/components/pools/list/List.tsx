@@ -83,11 +83,11 @@ export const List: React.FC<{
     },
     {
       title: 'Sponsor',
-      sortKey: PoolCreated_OrderBy.Sponsor,
+      // sortKey: PoolCreated_OrderBy.Sponsor,
     },
     {
       title: 'Network',
-      justifyContent: columns.alignment.network,
+      // justifyContent: columns.alignment.network,
     },
     {
       title: 'Amount in Pool',
@@ -100,11 +100,11 @@ export const List: React.FC<{
     {
       title: 'Investment token',
       justifyContent: columns.alignment.investmentToken,
-      sortKey: PoolCreated_OrderBy.PurchaseToken,
+      // sortKey: PoolCreated_OrderBy.PurchaseToken,
     },
     {
       title: 'Stage',
-      sortKey: PoolCreated_OrderBy.PoolStatus,
+      // sortKey: PoolCreated_OrderBy.PoolStatus,
     },
   ]
 
@@ -139,9 +139,13 @@ export const List: React.FC<{
             isActive={sortBy === sortKey}
             justifyContent={justifyContent}
             key={index}
-            onClick={() => {
-              handleSort(sortKey)
-            }}
+            onClick={
+              sortKey
+                ? () => {
+                    handleSort(sortKey)
+                  }
+                : undefined
+            }
           >
             {title}
           </SortableTH>
