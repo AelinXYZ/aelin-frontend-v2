@@ -6,9 +6,11 @@ import AddressesWhiteList, {
   AddressWhitelistProps,
   initialWhitelistValues,
 } from '@/src/components/pools/whitelist/AddressesWhiteList'
-import { NftType } from '@/src/components/pools/whitelist/NftTypeSection'
+import {
+  NftType,
+  NftWhitelistProcess,
+} from '@/src/components/pools/whitelist/NftCollectionsSection'
 import NftWhiteList, { NftWhiteListStep } from '@/src/components/pools/whitelist/NftWhiteList'
-import { NftWhitelistProcess } from '@/src/components/pools/whitelist/NftWhiteListProcessSection'
 import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/WhiteListTabs'
 
 const Modal = styled(BaseModal)`

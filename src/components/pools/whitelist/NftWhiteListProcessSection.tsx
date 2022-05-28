@@ -1,5 +1,9 @@
 import styled, { css } from 'styled-components'
 
+import {
+  NftType,
+  NftWhitelistProcess,
+} from '@/src/components/pools/whitelist/NftCollectionsSection'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const Wrapper = styled.div`
@@ -40,10 +44,14 @@ const Item = styled(ButtonPrimaryLight)<{ isActive?: boolean }>`
   ${({ isActive }) => isActive && ActiveItemCSS}
 `
 
-export enum NftWhitelistProcess {
-  unlimited = 'Unlimited',
-  limitedPerWallet = 'Limited per Wallet',
-  limitedPerNft = 'Limited per NFT',
+const getItems = (nftType: NftType) => {
+  const entries = Object.entries(NftWhitelistProcess)
+  switch (nftType) {
+    case NftType.erc721:
+      return entries.splice(0, 3)
+    case NftType.erc1155:
+      return entries.splice(3, entries.length - 3)
+  }
 }
 
 const getDescription = (active: NftWhitelistProcess) => {
@@ -54,20 +62,24 @@ const getDescription = (active: NftWhitelistProcess) => {
       return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens, regardless of the number of qualified NFTs held.'
     case NftWhitelistProcess.limitedPerNft:
       return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens, regarding of the number of qualified NFTs held.'
+    case NftWhitelistProcess.minimumAmount:
+      return 'Each wallet holding a qualified ERC-1155 can deposit a minimum amount of Investment tokens.'
   }
 }
 
 const NftWhiteListProcessSection = ({
   active,
+  nftType,
   setActive,
 }: {
+  nftType: NftType
   active: NftWhitelistProcess
   setActive: (active: NftWhitelistProcess) => void
 }) => {
   return (
     <>
       <Wrapper>
-        {Object.entries(NftWhitelistProcess).map(([key, value]) => (
+        {getItems(nftType).map(([key, value]) => (
           <Item isActive={active === value} key={key} onClick={() => setActive(value)}>
             {value}
           </Item>

@@ -1,10 +1,12 @@
 import styled from 'styled-components'
 
 import { StepContents } from '@/src/components/pools/common/Create'
-import NftTypeSection, { NftType } from '@/src/components/pools/whitelist/NftTypeSection'
-import NftWhiteListProcessSection, {
+import NftCollectionsSection, {
+  NftType,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/NftWhiteListProcessSection'
+} from '@/src/components/pools/whitelist/NftCollectionsSection'
+import NftTypeSection from '@/src/components/pools/whitelist/NftTypeSection'
+import NftWhiteListProcessSection from '@/src/components/pools/whitelist/NftWhiteListProcessSection'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 
@@ -90,13 +92,23 @@ const NftWhiteList = ({
   const getContent = () => {
     switch (currentStep) {
       case NftWhiteListStep.nftType:
-        return <NftTypeSection active={nftType} setActive={setNftType} />
+        return (
+          <NftTypeSection
+            active={nftType}
+            setActive={setNftType}
+            setWhitelistProcess={setWhiteListProcess}
+          />
+        )
       case NftWhiteListStep.whiteListProcess:
         return (
-          <NftWhiteListProcessSection active={whiteListProcess} setActive={setWhiteListProcess} />
+          <NftWhiteListProcessSection
+            active={whiteListProcess}
+            nftType={nftType}
+            setActive={setWhiteListProcess}
+          />
         )
       case NftWhiteListStep.nftCollection:
-        return <></>
+        return <NftCollectionsSection />
     }
   }
 

@@ -1,6 +1,10 @@
 import styled from 'styled-components'
 
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
+import {
+  NftType,
+  NftWhitelistProcess,
+} from '@/src/components/pools/whitelist/NftCollectionsSection'
 
 const Description = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
@@ -19,17 +23,23 @@ const Wrapper = styled.div`
   max-width: fit-content;
 `
 
-export enum NftType {
-  erc721 = 'ERC-721*',
-  erc1155 = 'ERC-1155',
+const getNftWhitelistProcess = (nftType: NftType) => {
+  switch (nftType) {
+    case NftType.erc721:
+      return NftWhitelistProcess.unlimited
+    case NftType.erc1155:
+      return NftWhitelistProcess.minimumAmount
+  }
 }
 
 const NftTypeSection = ({
   active,
   setActive,
+  setWhitelistProcess,
 }: {
   active: NftType
-  setActive: (nftType: NftType) => void
+  setActive: (active: NftType) => void
+  setWhitelistProcess: (whitelistProcess: NftWhitelistProcess) => void
 }) => {
   return (
     <>
@@ -42,6 +52,7 @@ const NftTypeSection = ({
             label={value}
             onClick={() => {
               setActive(value)
+              setWhitelistProcess(getNftWhitelistProcess(value))
             }}
           />
         ))}
