@@ -1,5 +1,3 @@
-import styled, { keyframes } from 'styled-components'
-
 import { isAddress } from '@ethersproject/address'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'

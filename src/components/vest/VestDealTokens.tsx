@@ -31,10 +31,7 @@ import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
-import useAelinVestingDeals, {
-  ParsedVestingDeal,
-  VestingDealsFilter,
-} from '@/src/hooks/aelin/useAelinVestingDeals'
+import useAelinVestingDeals, { VestingDealsFilter } from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
