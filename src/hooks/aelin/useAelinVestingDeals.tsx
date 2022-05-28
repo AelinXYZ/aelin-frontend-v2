@@ -11,6 +11,8 @@ import { VESTING_DEALS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { fetchAmountToVest } from '@/src/hooks/aelin/useAelinAmountToVest'
 import { VESTING_DEALS_QUERY_NAME } from '@/src/queries/pools/vestingDeals'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
+import { isSuccessful } from '@/src/utils/isSuccessful'
+import { parsePoolName } from '@/src/utils/parsePoolName'
 
 export type ParsedVestingDeal = {
   poolName: string
@@ -26,14 +28,6 @@ export type ParsedVestingDeal = {
   vestingPeriodStarts: Date
   underlyingDealTokenDecimals: number
   chainId: ChainsValues
-}
-
-function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
-  return 'value' in response
-}
-
-function parsePoolName(name: string) {
-  return name.slice(name.indexOf('-') + 1)
 }
 
 export async function fetcherVestingDeals(variables: VestingDealsQueryVariables) {

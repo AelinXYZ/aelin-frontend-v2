@@ -4,7 +4,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
 import ms from 'ms'
 
-import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import VestingCliff from '@/src/components/pools/actions/Vest/VestingCliff'
 import VestingCompleted from '@/src/components/pools/actions/Vest/VestingCompleted'
@@ -42,43 +41,48 @@ function Vest({ pool }: Props) {
   const { totalVested, underlyingDealTokenDecimals } = data?.vestingDeal || {}
 
   const now = new Date()
-  const isVestingCliffEnds = isAfter(now, pool.deal?.vestingPeriod.cliff.end as Date)
-  const isVestindPeriodEnds = isAfter(now, pool.deal?.vestingPeriod.vesting.end as Date)
+  const isVestingCliffEnded = isAfter(now, pool.deal?.vestingPeriod.cliff.end as Date)
+  const isVestindPeriodEnded = isAfter(now, pool.deal?.vestingPeriod.vesting.end as Date)
 
-  const hasRemainingTokens = !BigNumber.from(data?.vestingDeal?.remainingAmountToVest || 0).eq(
-    ZERO_BN,
+  const hasRemainingTokens = !(
+    BigNumber.from(data?.vestingDeal?.remainingAmountToVest || 0).eq(ZERO_BN) ||
+    // Temp fix: Sometimes remainingAmountToVest is negative
+    BigNumber.from(data?.vestingDeal?.remainingAmountToVest || 0).lt(ZERO_BN)
   )
 
   const isVestButtonDisabled = useMemo(() => {
     return !address || !isAppConnected || isSubmitting || !hasRemainingTokens
   }, [address, hasRemainingTokens, isAppConnected, isSubmitting])
 
-  const withInterval = isVestingCliffEnds && !isVestindPeriodEnds
-  const amountToVest = useAelinAmountToVest(pool.address, pool.chainId, withInterval)
+  const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
+  const [amountToVest, refetchAmountToVest] = useAelinAmountToVest(
+    pool.address,
+    pool.chainId,
+    withinInterval,
+  )
 
   const handleVest = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
         await claim([], txGasOptions)
         await refetch()
+        await refetchAmountToVest()
       },
       title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
       estimate: () => estimate([]),
     })
   }
 
-  if (!BigNumber.isBigNumber(amountToVest)) return <Loading />
-
   return (
     <>
-      {!isVestingCliffEnds && (
+      {!isVestingCliffEnded && (
         <VestingCliff
           redemtionEnds={pool.deal?.redemption?.end}
           vestingCliffEnds={pool.deal?.vestingPeriod.cliff.end}
         />
       )}
 
-      {isVestingCliffEnds && hasRemainingTokens && (
+      {isVestingCliffEnded && hasRemainingTokens && (
         <VestingPeriod
           amountToVest={amountToVest}
           handleVest={handleVest}
@@ -89,7 +93,7 @@ function Vest({ pool }: Props) {
         />
       )}
 
-      {isVestingCliffEnds && isVestindPeriodEnds && !hasRemainingTokens && (
+      {isVestingCliffEnded && isVestindPeriodEnded && !hasRemainingTokens && (
         <VestingCompleted
           symbol={data?.vestingDeal?.tokenToVestSymbol}
           totalVested={totalVested}
@@ -100,4 +104,4 @@ function Vest({ pool }: Props) {
   )
 }
 
-export default genericSuspense(Vest, () => <></>)
+export default genericSuspense(Vest)

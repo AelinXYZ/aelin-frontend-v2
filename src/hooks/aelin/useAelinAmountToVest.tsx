@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useState } from 'react'
-
 import { BigNumber } from '@ethersproject/bignumber'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import ms from 'ms'
 
 import AelinDealABI from '@/src/abis/AelinDeal.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
+import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
+import useAelinDealCall from '@/src/hooks/contracts/useAelinDealCall'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'
 
@@ -26,39 +25,27 @@ export const fetchAmountToVest = (
 export default function useAelinAmountToVest(
   poolAddress: string,
   chainId: ChainsValues,
-  withInterval: boolean,
-) {
-  const { address, isAppConnected } = useWeb3Connection()
+  withinInterval: boolean,
+): [BigNumber, () => void] {
+  const { address } = useWeb3Connection()
 
   const {
     pool: { dealAddress },
   } = useAelinPool(chainId, poolAddress)
 
-  const [amountToVest, setAmountToVest] = useState<BigNumber | null>(null)
+  const [response, refetch] = useAelinDealCall(
+    chainId,
+    dealAddress as string,
+    'claimableTokens',
+    [address || ZERO_ADDRESS],
+    {
+      ...(withinInterval && { refreshInterval: ms('5s') }),
+    },
+  )
 
-  const getAmountToVest = useCallback(async () => {
-    if (!isAppConnected) {
-      setAmountToVest(ZERO_BN)
-      return
-    }
+  if (!response) return [ZERO_BN, refetch]
 
-    const amountToVest = await fetchAmountToVest(dealAddress as string, chainId, address as string)
+  const [amountToVest] = response
 
-    setAmountToVest(amountToVest)
-  }, [address, chainId, dealAddress, isAppConnected])
-
-  useEffect(() => {
-    getAmountToVest()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    if (!withInterval) return
-
-    const intervalId = setInterval(() => getAmountToVest(), ms('5s'))
-
-    return () => clearInterval(intervalId)
-  }, [getAmountToVest, withInterval])
-
-  return amountToVest
+  return [amountToVest, refetch]
 }

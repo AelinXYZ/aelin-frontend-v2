@@ -155,11 +155,11 @@ const AmountToVestCell = ({
   vestingPeriodStarts,
 }: AmountToVestCellProps) => {
   const now = new Date()
-  const isVestingCliffEnds = isAfter(now, vestingPeriodStarts)
-  const isVestindPeriodEnds = isAfter(now, vestingPeriodEnds)
+  const isVestingCliffEnded = isAfter(now, vestingPeriodStarts)
+  const isVestindPeriodEnded = isAfter(now, vestingPeriodEnds)
 
-  const withInterval = isVestingCliffEnds && !isVestindPeriodEnds
-  const currentAmountToVest = useAelinAmountToVest(poolAddress, chainId, withInterval)
+  const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
+  const [currentAmountToVest] = useAelinAmountToVest(poolAddress, chainId, withinInterval)
 
   return (
     <Cell mobileJustifyContent="center">
