@@ -20,18 +20,10 @@ export const USERS = gql`
       block: $block
     ) {
       id
-      poolsInvested {
-        ...PoolDetails
-      }
-      poolsSponsored {
-        ...PoolDetails
-      }
-      poolsAsHolder {
-        ...PoolDetails
-      }
-      dealsAccepted {
-        ...DealAcceptedDetails
-      }
+      poolsInvestedAmt
+      poolsAsHolderAmt
+      poolsSponsoredAmt
+      dealsAcceptedAmt
     }
   }
 `
