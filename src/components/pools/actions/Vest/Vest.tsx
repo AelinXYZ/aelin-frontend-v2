@@ -81,7 +81,6 @@ function Vest({ pool }: Props) {
           vestingCliffEnds={pool.deal?.vestingPeriod.cliff.end}
         />
       )}
-
       {isVestingCliffEnded && hasRemainingTokens && (
         <VestingPeriod
           amountToVest={amountToVest}
@@ -92,7 +91,6 @@ function Vest({ pool }: Props) {
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
         />
       )}
-
       {isVestingCliffEnded && isVestindPeriodEnded && !hasRemainingTokens && (
         <VestingCompleted
           symbol={data?.vestingDeal?.tokenToVestSymbol}
