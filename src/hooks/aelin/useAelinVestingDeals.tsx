@@ -5,7 +5,7 @@ import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
 import { VestingDeal_OrderBy, VestingDealsQueryVariables } from '@/graphql-schema'
-import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { ChainsValues, ChainsValuesArray } from '@/src/constants/config/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { VESTING_DEALS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { fetchAmountToVest } from '@/src/hooks/aelin/useAelinAmountToVest'

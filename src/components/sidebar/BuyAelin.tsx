@@ -9,7 +9,7 @@ import { Uniswap } from '@/src/components/assets/Uniswap'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import AreaChart from '@/src/components/sidebar/AreaChart'
-import { getNetworkConfig } from '@/src/constants/chains'
+import { getNetworkConfig } from '@/src/constants/config/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import formatNumber from '@/src/utils/formatNumber'
 

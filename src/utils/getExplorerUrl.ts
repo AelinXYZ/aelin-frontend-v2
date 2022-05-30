@@ -1,4 +1,4 @@
-import { ChainsValues, chainsConfig } from '../constants/chains'
+import { ChainsValues, chainsConfig } from '../constants/config/chains'
 
 export const getExplorerUrl = (hash: string, chainId: ChainsValues) => {
   const url = chainsConfig[chainId]?.blockExplorerUrls[0]

@@ -21,7 +21,7 @@ import {
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
-import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/config/chains'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'

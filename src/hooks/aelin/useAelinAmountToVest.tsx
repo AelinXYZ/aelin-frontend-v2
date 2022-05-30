@@ -3,7 +3,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import ms from 'ms'
 
 import AelinDealABI from '@/src/abis/AelinDeal.json'
-import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import { ChainsValues, getNetworkConfig } from '@/src/constants/config/chains'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import useAelinDealCall from '@/src/hooks/contracts/useAelinDealCall'

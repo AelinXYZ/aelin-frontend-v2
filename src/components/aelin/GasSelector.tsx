@@ -9,7 +9,7 @@ import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/commo
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
-import { chainsConfig } from '@/src/constants/chains'
+import { chainsConfig } from '@/src/constants/config/chains'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
 import useEthGasPrice, { GAS_SPEEDS } from '@/src/hooks/useGasPrice'
 import useEthPriceUnitInUSD from '@/src/hooks/useGasPriceUnitInUSD'

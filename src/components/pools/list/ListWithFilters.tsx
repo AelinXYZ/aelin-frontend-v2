@@ -10,7 +10,7 @@ import { SafeSuspense, genericSuspense } from '@/src/components/helpers/SafeSusp
 import { List } from '@/src/components/pools/list/List'
 import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
-import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
+import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/config/chains'
 import { DEBOUNCED_INPUT_TIME, ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'

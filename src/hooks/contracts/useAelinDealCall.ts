@@ -3,7 +3,7 @@ import { SWRConfiguration } from 'swr'
 
 import useContractCall from './useContractCall'
 import AelinDealABI from '@/src/abis/AelinDeal.json'
-import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import { ChainsValues, getNetworkConfig } from '@/src/constants/config/chains'
 import { AelinDeal } from '@/types/typechain'
 
 export default function useAelinDealCall<

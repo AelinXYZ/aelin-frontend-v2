@@ -2,7 +2,7 @@ import AelinPoolCreateABI from '@/src/abis/AelinPoolCreate.json'
 import AelinStakingABI from '@/src/abis/AelinStaking.json'
 import ERC20 from '@/src/abis/ERC20.json'
 import GelatoPoolABI from '@/src/abis/GelatoPool.json'
-import { Chains, ChainsValues } from '@/src/constants/chains'
+import { Chains, ChainsValues } from '@/src/constants/config/chains'
 
 type BaseAppContractInfo = {
   abi: any[]

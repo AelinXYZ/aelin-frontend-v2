@@ -3,7 +3,7 @@ import { useReducer, useState } from 'react'
 import cloneDeep from 'lodash/cloneDeep'
 
 import { OrderDirection, PoolCreated_Filter, PoolCreated_OrderBy } from '@/graphql-schema'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues } from '@/src/constants/config/chains'
 
 type State = {
   orderBy: PoolCreated_OrderBy | null

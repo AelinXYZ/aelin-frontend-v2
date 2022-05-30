@@ -2,7 +2,7 @@ import orderBy from 'lodash/orderBy'
 import useSWR from 'swr'
 
 import { DealAccepted, PoolCreated } from '@/graphql-schema'
-import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { ChainsValues, ChainsValuesArray } from '@/src/constants/config/chains'
 import { USER_BY_ID_QUERY_NAME } from '@/src/queries/pools/user'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 

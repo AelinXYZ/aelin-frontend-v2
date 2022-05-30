@@ -4,7 +4,7 @@ import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 
 import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues } from '@/src/constants/config/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { PoolStages } from '@/src/constants/pool'
 import {

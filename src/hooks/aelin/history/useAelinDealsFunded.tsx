@@ -4,7 +4,7 @@ import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
 import { DealFunded_OrderBy, DealFundedsQueryVariables } from '@/graphql-schema'
-import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { ChainsValues, ChainsValuesArray } from '@/src/constants/config/chains'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEALS_FUNDED_QUERY_NAME } from '@/src/queries/history/dealsFunded'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'

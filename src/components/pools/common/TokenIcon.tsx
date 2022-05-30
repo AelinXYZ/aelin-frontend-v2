@@ -2,7 +2,7 @@ import Image from 'next/image'
 import styled, { css } from 'styled-components'
 
 import { ExternalLink as BaseExternalLink } from '@/src/components/table/ExternalLink'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues } from '@/src/constants/config/chains'
 import { useTokenIcons } from '@/src/providers/tokenIconsProvider'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 

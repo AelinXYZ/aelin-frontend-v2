@@ -19,7 +19,7 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues } from '@/src/constants/config/chains'
 
 const Search = styled(BaseSearch)`
   margin-bottom: 20px;
