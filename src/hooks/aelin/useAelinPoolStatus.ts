@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
@@ -26,27 +26,29 @@ import {
   UserRole,
 } from '@/types/aelinPool'
 
-function useFundingStatus(pool: ParsedAelinPool): Funding {
-  return useMemo(() => {
-    const isCap = pool.poolCap.raw.eq(0)
-    const capAmount = pool.poolCap.raw
-    const funded = pool.funded.raw
-    const maxDepositAllowed = capAmount.sub(funded)
+interface ActionTabsState {
+  states: PoolAction[]
+  active: PoolAction
+  setActive: Dispatch<SetStateAction<PoolAction>>
+}
 
-    return {
-      isCap,
-      capReached: isCap ? false : capAmount.eq(funded),
-      maxDepositAllowed: {
-        raw: isCap ? MAX_BN : maxDepositAllowed,
-        formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
-      },
-    }
-  }, [pool.funded.raw, pool.investmentTokenDecimals, pool.poolCap.raw])
+interface TabsState {
+  states: PoolTab[]
+  active: PoolTab
+  setActive: (newState: PoolTab) => void
+  actionTabs: ActionTabsState
+  isReleaseFundsAvailable: boolean
 }
 
 function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
-  return useMemo(() => {
+  const [poolStatus, setPoolStatus] = useState<DerivedStatus>({
+    current: PoolStatus.Funding,
+    history: [PoolStatus.Funding],
+  })
+
+  const getStatus = useCallback(() => {
     const now = Date.now()
+
     // Funding
     if (isBefore(now, pool.purchaseExpiry)) {
       return {
@@ -124,9 +126,49 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
 
     throw new Error('Unexpected stage')
   }, [pool])
+
+  // we do this to initialize the correct pool status
+  useEffect(() => {
+    const newStatus = getStatus()
+    setPoolStatus(newStatus)
+  }, [getStatus])
+
+  // Interval to update the pool status, if the pool is active, we need to make sure
+  // we update the status regularly, to keep the UI consistent.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newStatus = getStatus()
+      if (poolStatus.current !== newStatus.current) {
+        setPoolStatus(newStatus)
+      }
+    }, ms('30s'))
+
+    return () => clearInterval(interval)
+  }, [getStatus, poolStatus])
+
+  return poolStatus
 }
 
-export function useUserRole(
+function useFundingStatus(pool: ParsedAelinPool, derivedStatus: DerivedStatus): Funding {
+  return useMemo(() => {
+    derivedStatus // used to force re-render
+    const isCap = pool.poolCap.raw.eq(0)
+    const capAmount = pool.poolCap.raw
+    const funded = pool.funded.raw
+    const maxDepositAllowed = capAmount.sub(funded)
+
+    return {
+      isCap,
+      capReached: isCap ? false : capAmount.eq(funded),
+      maxDepositAllowed: {
+        raw: isCap ? MAX_BN : maxDepositAllowed,
+        formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
+      },
+    }
+  }, [pool.funded.raw, pool.investmentTokenDecimals, pool.poolCap.raw, derivedStatus])
+}
+
+function useUserRole(
   walletAddress: string | null,
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
@@ -151,20 +193,6 @@ export function useUserRole(
 
     return userRole
   }, [walletAddress, pool, derivedStatus])
-}
-
-interface ActionTabsState {
-  states: PoolAction[]
-  active: PoolAction
-  setActive: Dispatch<SetStateAction<PoolAction>>
-}
-
-interface TabsState {
-  states: PoolTab[]
-  active: PoolTab
-  setActive: (newState: PoolTab) => void
-  actionTabs: ActionTabsState
-  isReleaseFundsAvailable: boolean
 }
 
 function useUserActions(
@@ -413,8 +441,12 @@ function useUserTabs(
   }
 }
 
-export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
+export function useTimelineStatus(
+  pool?: ParsedAelinPool,
+  derivedStatus?: DerivedStatus,
+): TimelineSteps {
   return useMemo(() => {
+    derivedStatus // used to force re-render
     const now = Date.now()
     const getStepDeadline = (deadline: Date, message?: string) =>
       getFormattedDurationFromDateToNow(
@@ -602,7 +634,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
             : '',
       },
     }
-  }, [pool])
+  }, [pool, derivedStatus])
 }
 
 type InitialData = {
@@ -622,13 +654,11 @@ export default function useAelinPoolStatus(
 
   // derive data for UI
   const derivedStatus = useCurrentStatus(poolResponse)
+
   const userRole = useUserRole(address, poolResponse, derivedStatus)
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
-
-  // get info by pool status
-  const funding = useFundingStatus(poolResponse)
-
-  const timeline = useTimelineStatus(poolResponse)
+  const funding = useFundingStatus(poolResponse, derivedStatus)
+  const timeline = useTimelineStatus(poolResponse, derivedStatus)
 
   return useMemo(
     () => ({
