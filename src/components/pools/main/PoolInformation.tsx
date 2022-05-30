@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 import { TokenIcon } from '../common/TokenIcon'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
-import { Deadline } from '@/src/components/common/Deadline'
+import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import UserInvestmentTokenBalance from '@/src/components/pools/common/UserInvestmentTokenBalance'
@@ -10,7 +10,6 @@ import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLo
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useUserAllocationStats } from '@/src/hooks/aelin/useUserAllocationStats'
-import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
 const Column = styled.div`
@@ -81,12 +80,9 @@ export const PoolInformation = ({ pool }: Props) => {
           title="Investment deadline"
           tooltip="The amount of time investors have to deposit Investment tokens"
         >
-          <Deadline
-            progress={calculateDeadlineProgress(pool.purchaseExpiry, pool.start)}
-            width="180px"
-          >
+          <DynamicDeadline deadline={pool.purchaseExpiry} start={pool.start} width="180px">
             <Value>{formatDate(pool.purchaseExpiry, DATE_DETAILED)}</Value>
-          </Deadline>
+          </DynamicDeadline>
         </InfoCell>
         <InfoCell
           title="Deal deadline"
