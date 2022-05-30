@@ -20,6 +20,7 @@ const Content = styled.div`
   flex-grow: 1;
   padding: 30px 40px;
   width: 100%;
+  justify-content: center;
 `
 
 const Tabs = styled.div`
