@@ -195,7 +195,7 @@ const WhiteListModal = ({
       <ButtonPrimaryLightSm onClick={() => setList(list.concat(initialWhitelistValues))}>
         Add more rows
       </ButtonPrimaryLightSm>
-      {error && <Error>There are some invalid address in the list</Error>}
+      {error && <Error textAlign="center">There are some invalid address in the list</Error>}
       <ButtonSave disabled={error} onClick={handleSave}>
         Save
       </ButtonSave>
