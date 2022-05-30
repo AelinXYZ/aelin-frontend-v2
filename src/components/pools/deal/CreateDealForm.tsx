@@ -237,7 +237,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       )}
       {!currentUserIsSponsor && (
         <Modal title="Invalid address">
-          <Error>You are not the sponsor of the pool</Error>
+          <Error textAlign="center">You are not the sponsor of the pool</Error>
         </Modal>
       )}
       {pool.amountInPool.raw.eq(ZERO_BN) && (
