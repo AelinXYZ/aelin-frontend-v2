@@ -1,10 +1,9 @@
 import styled from 'styled-components'
 
-import { Deadline } from '@/src/components/common/Deadline'
+import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
@@ -50,15 +49,13 @@ export const VestingInformation: React.FC<{
           tooltip="After the deal has been finalized, a period where no tokens are vesting"
           value={
             pool.deal?.redemption?.end && pool.deal?.vestingPeriod.cliff.end ? (
-              <Deadline
-                progress={calculateDeadlineProgress(
-                  pool.deal?.vestingPeriod.cliff.end,
-                  pool.deal?.redemption?.end,
-                )}
+              <DynamicDeadline
+                deadline={pool.deal?.vestingPeriod.cliff.end}
+                start={pool.deal?.redemption?.end}
                 width="180px"
               >
                 <Value>{formatDate(pool.deal?.vestingPeriod.cliff.end, DATE_DETAILED)}</Value>
-              </Deadline>
+              </DynamicDeadline>
             ) : (
               'N/A'
             )
@@ -77,15 +74,13 @@ export const VestingInformation: React.FC<{
           tooltip="The amount of time it takes to vest all underlying deal tokens after the vesting cliff"
           value={
             pool.deal?.vestingPeriod.cliff.end && pool.deal?.vestingPeriod.vesting.end ? (
-              <Deadline
-                progress={calculateDeadlineProgress(
-                  pool.deal?.vestingPeriod.vesting.end,
-                  pool.deal?.vestingPeriod.cliff.end,
-                )}
+              <DynamicDeadline
+                deadline={pool.deal?.vestingPeriod.vesting.end}
+                start={pool.deal?.vestingPeriod.cliff.end}
                 width="180px"
               >
                 <Value>{formatDate(pool.deal?.vestingPeriod.vesting.end, DATE_DETAILED)}</Value>
-              </Deadline>
+              </DynamicDeadline>
             ) : (
               'N/A'
             )

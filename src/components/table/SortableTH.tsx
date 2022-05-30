@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { Sort as BaseSort } from '@/src/components/assets/Sort'
 import { TH } from '@/src/components/pureStyledComponents/common/Table'
 
-const Wrapper = styled(TH)`
-  cursor: pointer;
+const Wrapper = styled(TH)<{ onClick?: () => void }>`
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   gap: 10px;
   user-select: none;
 

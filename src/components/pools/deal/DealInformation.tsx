@@ -1,13 +1,12 @@
 import styled from 'styled-components'
 
-import { Deadline } from '@/src/components/common/Deadline'
+import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLoading'
 import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
@@ -83,15 +82,13 @@ export const DealInformation: React.FC<{
           tooltip="The open redemption period is for investors who have maxxed their allocation in the pro rata round"
         >
           {deal.redemption && deal.redemption.openRedemptionEnd ? (
-            <Deadline
-              progress={calculateDeadlineProgress(
-                deal.redemption.openRedemptionEnd,
-                deal.redemption.start,
-              )}
+            <DynamicDeadline
+              deadline={deal.redemption.openRedemptionEnd}
+              start={deal.redemption.start}
               width="180px"
             >
               <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
-            </Deadline>
+            </DynamicDeadline>
           ) : (
             <Value>No open period</Value>
           )}
