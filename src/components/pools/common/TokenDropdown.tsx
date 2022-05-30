@@ -42,13 +42,13 @@ const Delete = styled.button`
   border: none;
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.textField.height};
+  height: 100%;
   justify-content: center;
   position: absolute;
   right: 0;
   top: 0;
   transition: opacity 0.15s linear;
-  width: ${({ theme }) => theme.textField.height};
+  width: 36px;
   z-index: 10;
 
   &:active {
@@ -65,6 +65,7 @@ const Tokens = styled.div`
   height: 300px;
   margin: 0 auto 30px;
   overflow-y: auto;
+
   ${WidthLimitsCSS}
 `
 
@@ -75,6 +76,7 @@ const Item = styled.div<{ isActive: boolean }>`
   color: ${({ theme }) => theme.dropdown.item.color};
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
   font-size: 1.4rem;
   font-weight: 400;
   gap: 10px;
@@ -216,32 +218,29 @@ function TokenDropdown(props: TokenDropdownProps) {
             Address of any ERC-20 tokens investors will contribute to the pool. Or choose from some
             of the commonly used tokens already provided in the below list.
           </ModalText>
-          <TextfieldWrapper>
-            <form>
-              <Textfield
-                // eslint-disable-next-line jsx-a11y/no-autofocus
-                autoFocus
-                disabled={searchingToken}
-                onChange={(e) => {
-                  handlerSearchAddress(e.target.value)
-                }}
-                placeholder={placeholder}
-                type="text"
-                value={searchToken}
-              />
-
-              <Delete
-                onClick={() => {
-                  onChange(undefined)
-                  setInputError('')
-                  setSearchToken('')
-                  setSelectedToken(undefined)
-                }}
-                type="reset"
-              >
-                <Close />
-              </Delete>
-            </form>
+          <TextfieldWrapper as="form">
+            <Textfield
+              // eslint-disable-next-line jsx-a11y/no-autofocus
+              autoFocus
+              disabled={searchingToken}
+              onChange={(e) => {
+                handlerSearchAddress(e.target.value)
+              }}
+              placeholder={placeholder}
+              type="text"
+              value={searchToken}
+            />
+            <Delete
+              onClick={() => {
+                onChange(undefined)
+                setInputError('')
+                setSearchToken('')
+                setSelectedToken(undefined)
+              }}
+              type="reset"
+            >
+              <Close />
+            </Delete>
           </TextfieldWrapper>
           <Tokens>
             {searchingToken && <Loading />}
@@ -275,7 +274,6 @@ function TokenDropdown(props: TokenDropdownProps) {
           >
             Confirm
           </Button>
-          <br />
         </Modal>
       )}
     </>

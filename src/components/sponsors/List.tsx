@@ -139,6 +139,7 @@ export const List: React.FC = () => {
                   >
                     <ButtonPrimaryLightSm
                       onClick={(e) => {
+                        e.preventDefault()
                         e.stopPropagation()
                         router.push(`/`)
                       }}

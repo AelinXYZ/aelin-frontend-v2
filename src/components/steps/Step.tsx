@@ -22,8 +22,8 @@ StepCircle.defaultProps = {
 }
 
 const Text = styled.div<{ isActive?: boolean; isDone?: boolean }>`
-  color: ${({ isActive, isDone, theme: { colors } }) =>
-    isActive ? colors.primary : isDone ? colors.textColor : 'rgba(255, 255, 255, 0.4)'};
+  color: ${({ isActive, isDone, theme: { steps } }) =>
+    isActive ? steps.textIsActiveColor : isDone ? steps.textIsDoneColor : steps.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.2rem;
   font-weight: 600;

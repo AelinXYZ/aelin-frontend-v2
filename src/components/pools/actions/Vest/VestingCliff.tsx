@@ -1,7 +1,17 @@
-import { Deadline } from '@/src/components/common/Deadline'
+import styled from 'styled-components'
+
+import { Deadline as BaseDeadline } from '@/src/components/common/Deadline'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
+
+const Deadline = styled(BaseDeadline)`
+  margin-right: auto;
+`
+
+const NoMarginContents = styled(Contents)`
+  margin: 0;
+`
 
 type VestingCliffProps = {
   redemtionEnds: Date | undefined
@@ -16,9 +26,8 @@ function VestingCliff({ redemtionEnds, vestingCliffEnds }: VestingCliffProps) {
       </Contents>
       <Deadline
         progress={calculateDeadlineProgress(vestingCliffEnds as Date, redemtionEnds as Date)}
-        width="180px"
       >
-        <Contents>{formatDate(vestingCliffEnds as Date, DATE_DETAILED)}</Contents>
+        <NoMarginContents>{formatDate(vestingCliffEnds as Date, DATE_DETAILED)}</NoMarginContents>
       </Deadline>
     </Wrapper>
   )

@@ -51,6 +51,9 @@ export const darkTheme = {
   },
   steps: {
     lineBackgroundColor: 'rgba(255, 255, 255, 0.2)',
+    textIsActiveColor: primary,
+    textIsDoneColor: textColor,
+    textColor: 'rgba(255, 255, 255, 0.4)',
   },
   infoCell: {
     borderBottomColor: 'rgba(255, 255, 255, 0.2)',

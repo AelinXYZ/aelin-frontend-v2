@@ -142,6 +142,7 @@ export const List: React.FC = () => {
                   <LinkCell className="cellLink" justifyContent={columns.alignment.seePool}>
                     <ButtonPrimaryLightSm
                       onClick={(e) => {
+                        e.preventDefault()
                         e.stopPropagation()
                         router.push(
                           `/pool/${getKeyChainByValue(
@@ -155,6 +156,7 @@ export const List: React.FC = () => {
                     <ButtonRemove
                       currentThemeName={currentThemeName}
                       onClick={(e) => {
+                        e.preventDefault()
                         e.stopPropagation()
                         handleClearSingleNotification(id)
                       }}
