@@ -32,7 +32,7 @@ export enum PoolAction {
   FundDeal = 'Fund Deal',
   AcceptDeal = 'Accept Deal',
   Withdraw = 'Withdraw',
-  Claim = 'Claim',
+  Vest = 'Vest',
   WithdrawUnredeemed = 'Withdraw Unredeemed',
 }
 

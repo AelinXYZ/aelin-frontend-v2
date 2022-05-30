@@ -287,7 +287,7 @@ function useUserActions(
     }
 
     if (currentStatus === PoolStatus.Vesting) {
-      return [PoolAction.Withdraw, PoolAction.Claim]
+      return [PoolAction.Vest, PoolAction.Withdraw]
     }
 
     return []
@@ -374,7 +374,7 @@ function useUserTabs(
         case NotificationType.DealTokensVestingBegun:
         case NotificationType.AllDealTokensVested:
           setActiveTab(PoolTab.Vest)
-          setActiveAction(PoolAction.Claim)
+          setActiveAction(PoolAction.Vest)
           break
         case NotificationType.WithdrawUnredeemed:
           if (pool.deal?.unredeemed.raw.gt(0) && userRole === UserRole.Holder) {
