@@ -137,6 +137,7 @@ export const Vests: React.FC = () => {
                 <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
                   <ButtonPrimaryLightSm
                     onClick={(e) => {
+                      e.preventDefault()
                       e.stopPropagation()
                       router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
                     }}
