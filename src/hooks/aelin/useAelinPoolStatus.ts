@@ -335,8 +335,20 @@ function useUserTabs(
     () => userActions.filter((action) => action !== PoolAction.ReleaseFunds),
     [userActions],
   )
-  const [activeTab, setActiveTab] = useState<PoolTab>(PoolTab.PoolInformation)
-  const [activeAction, setActiveAction] = useState<PoolAction>(tabsActions[0])
+  const [activeTab, setActiveTab] = useState<PoolTab>('' as unknown as PoolTab)
+  const [activeAction, setActiveAction] = useState<PoolAction>('' as unknown as PoolAction)
+
+  // prevent re-assignation
+  useEffect(() => {
+    setActiveTab(PoolTab.PoolInformation)
+  }, [])
+
+  // prevent re-assignation
+  useEffect(() => {
+    if (!activeAction) {
+      setActiveAction(tabsActions[0])
+    }
+  }, [tabsActions, activeAction])
 
   const handleTabChange = (newState: PoolTab) => {
     setActiveTab(newState)
@@ -441,13 +453,15 @@ function useUserTabs(
   }
 }
 
-export function useTimelineStatus(
-  pool?: ParsedAelinPool,
-  derivedStatus?: DerivedStatus,
-): TimelineSteps {
+export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
+  const [now, setNow] = useState(Date.now())
+
+  useEffect(() => {
+    const interval = setInterval(() => setNow(Date.now()), ms('30s'))
+    return () => clearInterval(interval)
+  }, [])
+
   return useMemo(() => {
-    derivedStatus // used to force re-render
-    const now = Date.now()
     const getStepDeadline = (deadline: Date, message?: string) =>
       getFormattedDurationFromDateToNow(
         deadline,
@@ -634,7 +648,7 @@ export function useTimelineStatus(
             : '',
       },
     }
-  }, [pool, derivedStatus])
+  }, [pool, now])
 }
 
 type InitialData = {
@@ -658,7 +672,7 @@ export default function useAelinPoolStatus(
   const userRole = useUserRole(address, poolResponse, derivedStatus)
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
   const funding = useFundingStatus(poolResponse, derivedStatus)
-  const timeline = useTimelineStatus(poolResponse, derivedStatus)
+  const timeline = useTimelineStatus(poolResponse)
 
   return useMemo(
     () => ({

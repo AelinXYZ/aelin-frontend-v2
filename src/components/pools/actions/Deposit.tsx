@@ -63,9 +63,9 @@ function Deposit({ pool, poolHelpers }: Props) {
   }, [investmentTokenBalance.raw, sortedBalances, tokenInputValue])
 
   const depositTokens = async () => {
-    // if (inputError) {
-    //   return
-    // }
+    if (inputError) {
+      return
+    }
 
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
@@ -93,14 +93,14 @@ function Deposit({ pool, poolHelpers }: Props) {
         value={tokenInputValue}
       />
       <ButtonGradient
-        // disabled={
-        //   !address ||
-        //   !isAppConnected ||
-        //   poolHelpers.capReached ||
-        //   isSubmitting ||
-        //   !tokenInputValue ||
-        //   Boolean(inputError)
-        // }
+        disabled={
+          !address ||
+          !isAppConnected ||
+          poolHelpers.capReached ||
+          isSubmitting ||
+          !tokenInputValue ||
+          Boolean(inputError)
+        }
         onClick={depositTokens}
       >
         Deposit
