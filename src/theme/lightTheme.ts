@@ -24,6 +24,10 @@ const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
 export const lightTheme = {
+  mobileMenu: {
+    backgroundColor: '#f3f3f3',
+    itemColor: gray,
+  },
   pageTitle: {
     color: primaryDarker,
   },
