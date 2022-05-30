@@ -347,59 +347,6 @@ export const Header: React.FC = (props) => {
                 />
                 <Line />
                 <Notifications />
-                <Line />
-                <HeaderDropdown
-                  activeItemHighlight={false}
-                  disabled={!isWalletConnected}
-                  dropdownButtonContent={
-                    <EllipsisButton>
-                      <Ellipsis />
-                    </EllipsisButton>
-                  }
-                  dropdownPosition={DropdownPosition.right}
-                  items={[
-                    <DropdownItem
-                      as="a"
-                      href="https://docs.aelin.xyz/"
-                      key={'external_links_1'}
-                      target="_blank"
-                    >
-                      <Docs />
-                      Docs
-                    </DropdownItem>,
-                    <DropdownItem
-                      as="a"
-                      href="https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=kovan"
-                      key={'external_links_2'}
-                      target="_blank"
-                    >
-                      <Eth />
-                      Buy Aelin L1
-                    </DropdownItem>,
-                    <DropdownItem
-                      as="a"
-                      href="https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism"
-                      key={'external_links_3'}
-                      target="_blank"
-                    >
-                      <Optimism />
-                      Buy Aelin OP
-                    </DropdownItem>,
-                    <DropdownItem key={'external_links_4'} onClick={switchTheme}>
-                      {currentThemeName === ThemeType.light ? (
-                        <>
-                          <DarkMode />
-                          Dark mode
-                        </>
-                      ) : (
-                        <>
-                          <LightMode />
-                          Light mode
-                        </>
-                      )}
-                    </DropdownItem>,
-                  ]}
-                />
               </>
             )}
             {!isWalletConnected && (
@@ -408,6 +355,58 @@ export const Header: React.FC = (props) => {
                 <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
               </>
             )}
+            <Line />
+            <HeaderDropdown
+              activeItemHighlight={false}
+              dropdownButtonContent={
+                <EllipsisButton>
+                  <Ellipsis />
+                </EllipsisButton>
+              }
+              dropdownPosition={DropdownPosition.right}
+              items={[
+                <DropdownItem
+                  as="a"
+                  href="https://docs.aelin.xyz/"
+                  key={'external_links_1'}
+                  target="_blank"
+                >
+                  <Docs />
+                  Docs
+                </DropdownItem>,
+                <DropdownItem
+                  as="a"
+                  href="https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=kovan"
+                  key={'external_links_2'}
+                  target="_blank"
+                >
+                  <Eth />
+                  Buy Aelin L1
+                </DropdownItem>,
+                <DropdownItem
+                  as="a"
+                  href="https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism"
+                  key={'external_links_3'}
+                  target="_blank"
+                >
+                  <Optimism />
+                  Buy Aelin OP
+                </DropdownItem>,
+                <DropdownItem key={'external_links_4'} onClick={switchTheme}>
+                  {currentThemeName === ThemeType.light ? (
+                    <>
+                      <DarkMode />
+                      Dark mode
+                    </>
+                  ) : (
+                    <>
+                      <LightMode />
+                      Light mode
+                    </>
+                  )}
+                </DropdownItem>,
+              ]}
+            />
           </EndWrapper>
         </InnerContainer>
       </Wrapper>
