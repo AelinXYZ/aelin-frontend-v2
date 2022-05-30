@@ -75,7 +75,7 @@ export const TableRowCSS = css<RowProps>`
   ${RowCSS}
 
   background-color: ${({ theme }) => theme.card.backgroundColor};
-  border-radius: ${({ theme }) => theme.card.borderRadius};
+  border-radius: 8px;
   border: ${({ theme }) => theme.card.borderColor};
   min-height: 48px;
   transition: background-color 0.1s linear;
@@ -204,7 +204,7 @@ export const HideOnDesktop = styled.span`
 `
 
 export const TH = styled(Cell)`
-  color: ${({ theme }) => theme.colors.textColor};
+  color: ${({ theme }) => theme.table.thColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.4rem;
   font-weight: 700;

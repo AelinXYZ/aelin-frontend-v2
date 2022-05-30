@@ -14,7 +14,7 @@ const Wrapper = styled.div`
 
 const StepCircle = styled(BaseStepCircle)`
   position: relative;
-  z-index: 10;
+  z-index: 15;
 `
 
 StepCircle.defaultProps = {

@@ -6,15 +6,13 @@ import { isAddress } from '@ethersproject/address'
 import { Modal as BaseModal, ModalButtonCSS } from '@/src/components/common/Modal'
 import UploadCSV from '@/src/components/pools/whitelist/UploadWhiteListCsv'
 import {
+  ButtonGradient,
   ButtonPrimaryLightSm,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
-import {
-  ButtonEdit,
-  ButtonRemove,
-} from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
+import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { Textfield, TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 
 export interface WhitelistProps {
   address: string
@@ -66,7 +64,7 @@ const ButtonsGrid = styled.div`
   grid-template-columns: 32px 32px;
 `
 
-const ButtonSave = styled(GradientButton)`
+const ButtonSave = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 
@@ -78,7 +76,6 @@ const WhiteListRow = ({
   address,
   amount,
   error,
-  isSaved,
   onChangeRow,
   onDeleteRow,
   rowIndex,
@@ -91,25 +88,24 @@ const WhiteListRow = ({
   onDeleteRow: (index: number) => void
   rowIndex: number
 }) => {
+  const { currentThemeName } = useThemeContext()
   return (
     <>
       <Textfield
-        // disabled={isSaved}
         onChange={(e) => onChangeRow(e.target.value, 'address', rowIndex)}
         placeholder="Add address..."
         status={error ? TextfieldState.error : undefined}
         value={address}
       />
       <Textfield
-        // disabled={isSaved}
         onChange={(e) => onChangeRow(Number(e.target.value), 'amount', rowIndex)}
         placeholder="Max allocation..."
         type="number"
         value={amount || ''}
       />
       <ButtonsGrid>
-        {/*<ButtonEdit onClick={() => onChangeRow(false, 'isSaved', rowIndex)} />*/}
-        <ButtonRemove onClick={() => onDeleteRow(rowIndex)} />
+        <div>&nbsp;</div>
+        <ButtonRemove currentThemeName={currentThemeName} onClick={() => onDeleteRow(rowIndex)} />
       </ButtonsGrid>
     </>
   )

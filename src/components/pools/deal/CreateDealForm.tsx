@@ -23,8 +23,8 @@ import { Summary } from '@/src/components/pools/common/Summary'
 import DealCalculationModal from '@/src/components/pools/deal/DealCalculationModal'
 import DealCreateStepInput from '@/src/components/pools/deal/DealCreateStepInput'
 import {
+  ButtonGradient,
   ButtonPrimaryLight,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
@@ -124,7 +124,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
 
   useEffect(() => {
     if (isOpenPeriodDisabled && createDealState.currentStep === CreateDealSteps.openPeriod) {
-      console.log('asd')
       setDealField({ days: 0, hours: undefined, minutes: undefined })
     }
   }, [createDealState.currentStep, isOpenPeriodDisabled, setDealField])
@@ -183,14 +182,14 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                         Back
                       </BackButton>
                       {!isFinalStep ? (
-                        <GradientButton
+                        <ButtonGradient
                           disabled={!!currentStepError}
                           onClick={() => moveStep('next')}
                         >
                           Next
-                        </GradientButton>
+                        </ButtonGradient>
                       ) : (
-                        <GradientButton
+                        <ButtonGradient
                           disabled={disableSubmit}
                           key={`${step}_button`}
                           onClick={() => {
@@ -198,7 +197,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                           }}
                         >
                           Create Deal
-                        </GradientButton>
+                        </ButtonGradient>
                       )}
                     </MobileButtonWrapper>
                   </ButtonWrapper>

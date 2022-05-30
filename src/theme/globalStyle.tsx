@@ -1,11 +1,9 @@
 import { createGlobalStyle } from 'styled-components'
 
-import { theme } from '@/src/theme/index'
 import { onBoardCSS } from '@/src/theme/onBoard'
 
-type ThemeType = typeof theme
-
-export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const GlobalStyle = createGlobalStyle<{ theme: any }>`
   html {
     font-size: 10px;
     scroll-behavior: smooth;

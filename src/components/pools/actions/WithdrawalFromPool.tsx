@@ -5,7 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
@@ -96,9 +96,9 @@ function WithdrawalFromPool({ pool }: Props) {
         symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
-      <GradientButton disabled={disableButton} onClick={withdrawFromPool}>
+      <ButtonGradient disabled={disableButton} onClick={withdrawFromPool}>
         Withdraw
-      </GradientButton>
+      </ButtonGradient>
     </Wrapper>
   )
 }

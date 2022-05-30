@@ -2,6 +2,7 @@ import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
+import { DarkMode } from '@/src/components/assets/DarkMode'
 import { Docs } from '@/src/components/assets/Docs'
 import { Ellipsis } from '@/src/components/assets/Ellipsis'
 import { Eth } from '@/src/components/assets/Eth'
@@ -23,16 +24,21 @@ import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyle
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
+import { ThemeType } from '@/src/constants/types'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { shortenAddress } from '@/src/utils/string'
 
 const Wrapper = styled.header`
+  --header-height: 60px;
+  --header-button-height: 34px;
+
   align-items: center;
   background-color: ${({ theme }) => theme.colors.mainBodyBackground};
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;
-  height: ${({ theme }) => theme.header.height};
+  height: var(--header-height);
   margin: 0 0 15px;
   position: sticky;
   top: 0;
@@ -71,7 +77,7 @@ const HomeLink = styled.a`
 
 const Logo = styled(BootNodeLogo)`
   cursor: pointer;
-  max-height: calc(${({ theme }) => theme.header.height} - 20px);
+  max-height: calc(var(--header-height) - 20px);
 `
 
 const StartWrapper = styled.div`
@@ -81,8 +87,8 @@ const StartWrapper = styled.div`
 
 const HeaderDropdown = styled(Dropdown)`
   .dropdownItems {
-    background-color: ${({ theme }) => theme.colors.gray};
-    border-color: ${({ theme }) => theme.colors.lightGray};
+    background-color: ${({ theme }) => theme.headerDropdown.backgroundColor};
+    border-color: ${({ theme }) => theme.headerDropdown.borderColor};
     border-radius: 6px;
     border-style: solid;
     border-width: 0.5px;
@@ -110,6 +116,7 @@ const EndWrapper = styled.div`
   align-items: center;
   display: flex;
   gap: 20px;
+  height: 100%;
   justify-content: space-between;
   left: 0;
   position: absolute;
@@ -142,18 +149,23 @@ const Line = styled.div`
   display: none;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    background: rgba(255, 255, 255, 0.25);
+    background: ${({ theme }) => theme.header.lineColor};
     display: block;
     height: 24px;
     width: 1px;
   }
 `
 
-const DropdownButton = styled.div`
+const DropdownButton = styled.button`
   align-items: center;
+  background-color: transparent;
+  border: none;
+  color: ${({ theme }) => theme.colors.textColor};
   cursor: pointer;
   display: flex;
   gap: 8px;
+  height: var(--header-button-height);
+  padding: 0;
 `
 
 const NetworkError = styled.p`
@@ -201,6 +213,22 @@ const WalletButton = styled(ButtonPrimaryLight)`
   }
 `
 
+const EllipsisButton = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  height: var(--header-button-height);
+  justify-content: center;
+  transition: opacity 0.15s linear;
+  width: fit-content;
+
+  &:active {
+    opacity: 0.7;
+  }
+`
+
 const ExternalLink = styled.a`
   display: flex;
   justify-content: center;
@@ -221,22 +249,6 @@ const ExternalLink = styled.a`
   }
 `
 
-const EllipsisButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  height: 100%;
-  justify-content: center;
-  transition: opacity 0.15s linear;
-  width: fit-content;
-
-  &:active {
-    opacity: 0.7;
-  }
-`
-
 export const Header: React.FC = (props) => {
   const {
     address = '',
@@ -248,9 +260,10 @@ export const Header: React.FC = (props) => {
     pushNetwork,
     walletChainId,
   } = useWeb3Connection()
-
   const currentChain = getNetworkConfig(appChainId)
   const wrongNetwork = isWalletConnected && !isWalletNetworkSupported
+
+  const { currentThemeName, switchTheme } = useThemeContext()
 
   const networksDropdownItems = getChainsByEnvironmentArray().map((item, index) => (
     <DropdownItem
@@ -334,53 +347,6 @@ export const Header: React.FC = (props) => {
                 />
                 <Line />
                 <Notifications />
-                <Line />
-                <HeaderDropdown
-                  activeItemHighlight={false}
-                  disabled={!isWalletConnected}
-                  dropdownButtonContent={
-                    <EllipsisButton>
-                      <Ellipsis />
-                    </EllipsisButton>
-                  }
-                  dropdownPosition={DropdownPosition.right}
-                  items={[
-                    <DropdownItem
-                      as="a"
-                      href="https://docs.aelin.xyz/"
-                      key={'external_links_1'}
-                      target="_blank"
-                    >
-                      <Docs />
-                      Docs
-                    </DropdownItem>,
-                    <DropdownItem
-                      as="a"
-                      href="https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=kovan"
-                      key={'external_links_2'}
-                      target="_blank"
-                    >
-                      <Eth />
-                      Buy Aelin L1
-                    </DropdownItem>,
-                    <DropdownItem
-                      as="a"
-                      href="https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism"
-                      key={'external_links_3'}
-                      target="_blank"
-                    >
-                      <Optimism />
-                      Buy Aelin OP
-                    </DropdownItem>,
-                    <DropdownItem
-                      key={'external_links_4'}
-                      onClick={() => console.log('Light / Dark mode switching coming soon...')}
-                    >
-                      <LightMode />
-                      Light mode
-                    </DropdownItem>,
-                  ]}
-                />
               </>
             )}
             {!isWalletConnected && (
@@ -389,6 +355,58 @@ export const Header: React.FC = (props) => {
                 <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
               </>
             )}
+            <Line />
+            <HeaderDropdown
+              activeItemHighlight={false}
+              dropdownButtonContent={
+                <EllipsisButton>
+                  <Ellipsis />
+                </EllipsisButton>
+              }
+              dropdownPosition={DropdownPosition.right}
+              items={[
+                <DropdownItem
+                  as="a"
+                  href="https://docs.aelin.xyz/"
+                  key={'external_links_1'}
+                  target="_blank"
+                >
+                  <Docs />
+                  Docs
+                </DropdownItem>,
+                <DropdownItem
+                  as="a"
+                  href="https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=kovan"
+                  key={'external_links_2'}
+                  target="_blank"
+                >
+                  <Eth />
+                  Buy Aelin L1
+                </DropdownItem>,
+                <DropdownItem
+                  as="a"
+                  href="https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism"
+                  key={'external_links_3'}
+                  target="_blank"
+                >
+                  <Optimism />
+                  Buy Aelin OP
+                </DropdownItem>,
+                <DropdownItem key={'external_links_4'} onClick={switchTheme}>
+                  {currentThemeName === ThemeType.light ? (
+                    <>
+                      <DarkMode />
+                      Dark mode
+                    </>
+                  ) : (
+                    <>
+                      <LightMode />
+                      Light mode
+                    </>
+                  )}
+                </DropdownItem>,
+              ]}
+            />
           </EndWrapper>
         </InnerContainer>
       </Wrapper>

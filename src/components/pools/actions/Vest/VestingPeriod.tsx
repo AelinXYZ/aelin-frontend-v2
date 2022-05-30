@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -39,9 +39,9 @@ function VestingPeriod({
           underlyingDealTokenDecimals,
         )} ${symbol}`}</TextPrimary>
       </Contents>
-      <GradientButton disabled={isButtonDisabled} onClick={handleVest}>
+      <ButtonGradient disabled={isButtonDisabled} onClick={handleVest}>
         Vest
-      </GradientButton>
+      </ButtonGradient>
     </Wrapper>
   )
 }

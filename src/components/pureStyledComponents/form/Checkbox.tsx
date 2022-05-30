@@ -5,7 +5,7 @@ export const Checkbox = styled.div<{ checked?: boolean }>`
 
   background-color: ${({ checked, theme: { colors } }) =>
     checked ? colors.primary : 'rgba(255, 255, 255, 0.04)'};
-  border-color: #fff;
+  border-color: ${({ theme: { checkBox } }) => checkBox.borderColor};
   border-style: solid;
   border-width: 1px;
   box-sizing: border-box;

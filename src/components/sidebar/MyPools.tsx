@@ -5,7 +5,7 @@ import { PoolCreated } from '@/graphql-schema'
 import CollapsibleBlock from '@/src/components/common/CollapsibleBlock'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Filters } from '@/src/components/pureStyledComponents/common/Filters'
-import Pool from '@/src/components/sidebar/Pool'
+import { Pool } from '@/src/components/sidebar/Pool'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ParsedNotification } from '@/src/hooks/aelin/useAelinNotifications'
 import { getParsedPool } from '@/src/hooks/aelin/useAelinPool'
@@ -15,44 +15,39 @@ import { MyPoolsFilter, useLayoutStatus } from '@/src/providers/layoutStatusProv
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
-const Wrapper = styled.div`
-  box-sizing: border-box;
+const Pools = styled.div`
+  display: grid;
+  max-height: 300px;
+  overflow: auto;
+  row-gap: 10px;
+`
+
+const EmptyPools = styled.div`
+  align-items: center;
+  background-color: ${({ theme: { myPool } }) => myPool.backgroundColor};
   border-radius: 8px;
-  background: ${({ theme }) => theme.colors.gray};
+  border: 1px solid ${({ theme: { myPool } }) => myPool.borderColor};
+  box-sizing: border-box;
+  color: ${({ theme: { myPool } }) => myPool.color};
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   flex-grow: 0;
-`
-
-const ScrollableWrapper = styled.div`
-  overflow-y: scroll;
-  max-height: 500px;
-`
-
-const Text = styled.p`
-  color: ${({ theme }) => theme.colors.textColor};
-  display: flex;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  padding: 0 20px;
+  font-size: 1.4rem;
+  font-weight: 500;
+  height: 36px;
   justify-content: center;
-  text-align: center;
-  text-decoration: none;
-  width: 100%;
+  white-space: normal;
 `
 
 const MoreButton = styled(TabButton)`
-  border-color: ${({ theme: { colors } }) => colors.textColor};
-  color: ${({ theme: { colors } }) => colors.textColor};
+  border-color: ${({ theme: { buttonPrimaryLighter } }) => buttonPrimaryLighter.borderColor};
+  color: ${({ theme: { buttonPrimaryLighter } }) => buttonPrimaryLighter.color};
 `
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  padding: 5px 0 0 0;
+  margin: 15px 0 0 0;
 `
 
 type PoolData = {
@@ -112,11 +107,11 @@ function getPools(user: ParsedUser | undefined, filter: MyPoolsFilter): PoolCrea
 function getEmptyPoolsText(filter: MyPoolsFilter): string {
   switch (filter) {
     case MyPoolsFilter.Invested:
-      return "You haven't invested in any pools yet, join one now"
+      return "You haven't invested in a pool yet, join one now"
     case MyPoolsFilter.Sponsored:
-      return "You haven't sponsored any pool yet, create one now"
+      return "You haven't sponsored a pool yet, create one now"
     case MyPoolsFilter.Funded:
-      return "You haven't funded any pool yet"
+      return "You haven't funded a pool yet"
   }
 }
 
@@ -163,24 +158,24 @@ const MyPools: React.FC = ({ ...restProps }) => {
         </TabButton>
       </Filters>
       <RequiredConnection text={`You must be logged to see the pools you ${activeFilter} in`}>
-        <ScrollableWrapper>
-          {getPools(userResponse, activeFilter).length > 0 ? (
-            getVisiblePools(
-              userResponse,
-              notifications,
-              activeFilter,
-              filtersExpansion[activeFilter],
-              appChainId,
-            ).map(({ href, name, notifications, stage }, index) => (
-              <Pool href={href} key={index} notifications={notifications} stage={stage}>
-                {name}
-              </Pool>
-            ))
-          ) : (
-            <Wrapper>
-              <Text>{getEmptyPoolsText(activeFilter)}</Text>
-            </Wrapper>
-          )}
+        <>
+          <Pools>
+            {getPools(userResponse, activeFilter).length > 0 ? (
+              getVisiblePools(
+                userResponse,
+                notifications,
+                activeFilter,
+                filtersExpansion[activeFilter],
+                appChainId,
+              ).map(({ href, name, notifications, stage }, index) => (
+                <Pool href={href} key={index} notifications={notifications} stage={stage}>
+                  {name}
+                </Pool>
+              ))
+            ) : (
+              <EmptyPools>{getEmptyPoolsText(activeFilter)}</EmptyPools>
+            )}
+          </Pools>
           {getPools(userResponse, activeFilter).length > 3 && (
             <ButtonContainer>
               <MoreButton
@@ -195,7 +190,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
               </MoreButton>
             </ButtonContainer>
           )}
-        </ScrollableWrapper>
+        </>
       </RequiredConnection>
     </CollapsibleBlock>
   )

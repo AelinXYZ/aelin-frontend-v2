@@ -2,7 +2,7 @@ import Link from 'next/link'
 import styled from 'styled-components'
 
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -49,7 +49,7 @@ export const CreateDeal: React.FC<Props> = ({ pool, ...restProps }) => {
           href={`/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}/create-deal`}
           passHref
         >
-          <GradientButton as="a">Create Deal</GradientButton>
+          <ButtonGradient as="a">Create Deal</ButtonGradient>
         </Link>
       )}
     </Wrapper>

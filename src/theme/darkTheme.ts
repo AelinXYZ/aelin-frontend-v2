@@ -3,7 +3,6 @@ import { lighten, rgba } from 'polished'
 const componentBackgroundColor = '#1A212F'
 const componentBorderColor = '#555C65'
 const componentBorder = `0.5px solid ${componentBorderColor}`
-const componentBorderRadius = '8px'
 const lightGray = '#BABCC1'
 const error = '#FF7777'
 const primary = '#8280FF'
@@ -23,11 +22,51 @@ const transparentWhite = 'rgba(255, 255, 255, 0.4)'
 const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
-export const theme = {
-  button: {
-    fontSize: '1.4rem',
-    height: '36px',
-    padding: '0 24px',
+export const darkTheme = {
+  mobileMenu: {
+    backgroundColor: gray,
+    itemColor: lightGray,
+  },
+  pageTitle: {
+    color: textColor,
+  },
+  buttonCircle: {
+    borderColor: '#fff',
+  },
+  radioButton: {
+    borderColor: '#fff',
+  },
+  checkBox: {
+    borderColor: '#fff',
+  },
+  buttonPrevNext: {
+    backgroundColor: gray,
+  },
+  tooltip: {
+    iconBackgroundColor: gray,
+    iconBorderColor: '#fff',
+    textBackgroundColor: gray,
+    textBorderColor: '#fff',
+    textColor: '#fff',
+  },
+  steps: {
+    lineBackgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  infoCell: {
+    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  collapsibleBlock: {
+    buttonBackgroundColor: 'rgba(255, 255, 255, 0.06)',
+    buttonBorderColor: 'rgba(255, 255, 255, 0.06)',
+    buttonColor: '#fff',
+  },
+  myPool: {
+    backgroundColor: gray,
+    borderColor: gray,
+    color: textColor,
+  },
+  logo: {
+    color: primary,
   },
   buttonPrimary: {
     backgroundColor: rgba(primary, 0.08),
@@ -61,10 +100,13 @@ export const theme = {
     color: textColor,
     colorHover: textColor,
   },
+  buttonGradient: {
+    color: textColor,
+  },
   card: {
     backgroundColor: componentBackgroundColor,
     borderColor: componentBorder,
-    borderRadius: componentBorderRadius,
+    titleColor: textColor,
   },
   colors: {
     blueishGray: blueishGray,
@@ -90,7 +132,6 @@ export const theme = {
   dropdown: {
     background: componentBackgroundColor,
     borderColor: lightGray,
-    borderRadius: '6px',
     boxShadow: 'none',
     item: {
       backgroundColor: 'transparent',
@@ -99,33 +140,36 @@ export const theme = {
       borderColor: 'transparent',
       color: textColor,
       colorActive: textColor,
-      height: '36px',
-      paddingHorizontal: '20px',
     },
   },
-  fonts: {
-    defaultSize: '1.4rem',
-    fontFamily: `'Hind Madurai', 'Helvetica Neue', 'Arial', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'`,
-    fontFamilyTitle: `'Montserrat', 'Helvetica Neue', 'Arial', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'`,
-    fontFamilyCode: `'source-code-pro', 'Menlo', 'Monaco', 'Consolas', 'Courier New', 'monospace'`,
+  header: {
+    lineColor: 'rgba(255, 255, 255, 0.25)',
+  },
+  headerDropdown: {
+    backgroundColor: gray,
+    borderColor: lightGray,
+  },
+  networkPlaceholder: {
+    backgroundColor: '#fff',
+    color: mainBodyBackground,
+  },
+  progressBar: {
+    background: blueishGray,
+  },
+  searchDropdown: {
+    backgroundColor: gray,
+  },
+  searchDropdownButton: {
+    backgroundColor: gray,
+    color: textColor,
+  },
+  table: {
+    sortBackgroundColor: '#fff',
+    thColor: textColor,
   },
   toast: {
-    borderRadius: componentBorderRadius,
-    borderStyle: 'solid',
-    borderWidth: '0.5px',
     backgroundColor: gray,
-    boxShadow: '0px 0px 10px rgba(255, 255, 255, 0.25)',
-  },
-  footer: {},
-  header: {
-    height: '60px',
-  },
-  layout: {
-    maxWidth: '1360px',
-    paddingDesktopStart: '20px',
-    paddingDesktopWideStart: '20px 40px',
-    paddingMobile: '0 10px 80px 10px',
-    paddingTabletLandscapeStart: '10px',
+    boxShadow: '0 0 10px rgba(255, 255, 255, 0.25)',
   },
   stages: {
     open: green,
@@ -138,40 +182,27 @@ export const theme = {
     poolopen: green,
   },
   stepCircle: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2);',
-    backgroundColorActive: 'rgba(130, 128, 255, 0.2);',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColorActive: 'rgba(130, 128, 255, 0.2)',
     backgroundColorMain: '#fff',
     backgroundColorMainActive: '#8280ff',
     backgroundColorMiddle: transparentWhite,
-    backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4);',
+    backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4)',
   },
   textField: {
     backgroundColor: gray,
     borderColor: lightGray,
-    borderRadius: '8px',
-    borderStyle: 'solid',
-    borderWidth: '0.5px',
     color: textColor,
     errorColor: error,
     successColor: green,
-    fontSize: '1.4rem',
-    fontWeight: '400',
-    height: '36px',
-    paddingHorizontal: '15px',
     active: {
-      color: textColor,
       backgroundColor: gray,
       borderColor: primary,
+      boxShadow: '0 0 10px rgba(0, 0, 0, 0.25)',
+      color: textColor,
     },
     placeholder: {
       color: lightGray,
-      fontSize: '1.4rem',
     },
-  },
-  themeBreakPoints: {
-    desktopWideStart: '1281px',
-    tabletPortraitStart: '481px',
-    desktopStart: '1025px',
-    tabletLandscapeStart: '769px',
   },
 }

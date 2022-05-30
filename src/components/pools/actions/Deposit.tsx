@@ -4,7 +4,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
@@ -92,7 +92,7 @@ function Deposit({ pool, poolHelpers }: Props) {
         symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
-      <GradientButton
+      <ButtonGradient
         disabled={
           !address ||
           !isAppConnected ||
@@ -104,7 +104,7 @@ function Deposit({ pool, poolHelpers }: Props) {
         onClick={depositTokens}
       >
         Deposit
-      </GradientButton>
+      </ButtonGradient>
     </>
   )
 }

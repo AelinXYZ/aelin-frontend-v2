@@ -12,8 +12,8 @@ import { Dropdown as BaseDropdown, DropdownItem } from '@/src/components/common/
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
   ButtonDropdown,
+  ButtonGradientSm,
   ButtonPrimaryLightSm,
-  GradientButtonSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
@@ -41,7 +41,7 @@ import { formatToken } from '@/src/web3/bigNumber'
 const TableCard = styled.div`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     background-color: ${({ theme: { card } }) => card.backgroundColor};
-    border-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-radius: 8px;
     border-width: 1px;
     border: ${({ theme: { card } }) => card.borderColor};
     padding: 40px;
@@ -69,7 +69,7 @@ const ButtonCSS = css`
   }
 `
 
-const VestButton = styled(GradientButtonSm)`
+const VestButton = styled(ButtonGradientSm)`
   ${ButtonCSS}
 `
 

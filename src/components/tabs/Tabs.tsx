@@ -25,20 +25,20 @@ const TabListItem = styled.li`
   text-align: center;
 
   &:first-child {
-    border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-top-left-radius: 8px;
 
     > button {
       border: ${({ theme: { card } }) => card.borderColor};
-      border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
+      border-top-left-radius: 8px;
     }
   }
 
   &:last-child {
-    border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-top-right-radius: 8px;
 
     > button {
       border: ${({ theme: { card } }) => card.borderColor};
-      border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
+      border-top-right-radius: 8px;
     }
   }
 `
@@ -72,8 +72,8 @@ const TabLink = styled.button`
 export const TabContent = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.transparentWhite2};
-  border-bottom-left-radius: ${({ theme: { card } }) => card.borderRadius};
-  border-bottom-right-radius: ${({ theme: { card } }) => card.borderRadius};
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   border-top: 0;
   border: ${({ theme: { card } }) => card.borderColor};
   display: flex;

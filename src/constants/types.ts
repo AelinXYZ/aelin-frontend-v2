@@ -22,3 +22,8 @@ export enum PoolTimelineStateTitles {
   'Vesting Cliff',
   'Vesting Period',
 }
+
+export enum ThemeType {
+  light = 'light',
+  dark = 'dark',
+}

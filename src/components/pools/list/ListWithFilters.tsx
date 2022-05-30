@@ -41,7 +41,7 @@ const SearchWrapper = styled.div`
   ${DropdownItemsCSS}
 
   .dropdownItems {
-    background-color: ${({ theme }) => theme.colors.gray};
+    background-color: ${({ theme }) => theme.searchDropdown.backgroundColor};
   }
 `
 

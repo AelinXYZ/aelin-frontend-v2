@@ -5,11 +5,11 @@ import Wei from '@synthetixio/wei'
 
 import GasSelector from '@/src/components/aelin/GasSelector'
 import { Modal, ModalButtonCSS, ModalLine, ModalText } from '@/src/components/common/Modal'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { GasLimitEstimate } from '@/types/utils'
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 

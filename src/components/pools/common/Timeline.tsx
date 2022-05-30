@@ -56,7 +56,7 @@ const Info = styled.div<{ isActive?: boolean; isDone?: boolean }>`
 
   &::before,
   &::after {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: ${({ theme }) => theme.steps.lineBackgroundColor};
     content: '';
     left: -41px;
     position: absolute;

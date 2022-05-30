@@ -11,7 +11,7 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 const Home: NextPage = () => {
   const router = useRouter()
   const { address } = useWeb3Connection()
-  const { data: userResponse, error: errorUser } = useAelinUser(address)
+  const { data: userResponse } = useAelinUser(address)
 
   return (
     <>
