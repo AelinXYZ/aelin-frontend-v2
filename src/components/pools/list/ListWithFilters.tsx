@@ -46,7 +46,6 @@ const SearchWrapper = styled.div`
 `
 
 const Search = styled(BaseSearch)`
-  padding-right: 125px;
   position: relative;
   width: 100%;
   z-index: 1;
