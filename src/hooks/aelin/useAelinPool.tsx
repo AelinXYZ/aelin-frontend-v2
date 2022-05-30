@@ -178,7 +178,7 @@ export const getParsedPool = ({
       ),
     },
     exchangeRates: dealExchangeRates(
-      pool.contributions,
+      dealDetails.purchaseTokenTotalForDeal,
       purchaseTokenDecimals,
       dealDetails.underlyingDealTokenTotal,
       dealDetails.underlyingDealTokenDecimals,
