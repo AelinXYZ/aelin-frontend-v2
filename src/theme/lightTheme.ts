@@ -52,6 +52,9 @@ export const lightTheme = {
   },
   steps: {
     lineBackgroundColor: 'rgba(0, 0, 0, 0.1)',
+    textIsActiveColor: primary,
+    textIsDoneColor: textColor,
+    textColor: '#aaa',
   },
   infoCell: {
     borderBottomColor: componentBorderColor,
