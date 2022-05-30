@@ -5,9 +5,13 @@ import { useRouter } from 'next/router'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { ListWithFilters } from '@/src/components/pools/list/ListWithFilters'
 import { SectionIntro } from '@/src/components/section/SectionIntro'
+import useAelinUser from '@/src/hooks/aelin/useAelinUser'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Home: NextPage = () => {
   const router = useRouter()
+  const { address } = useWeb3Connection()
+  const { data: userResponse, error: errorUser } = useAelinUser(address)
 
   return (
     <>
@@ -24,7 +28,7 @@ const Home: NextPage = () => {
           to access deals brought by sponsors. Aelin does not endorse any pools, follow an
           investor's best practices in our docs, and do your own research.
         </SectionIntro>
-        <ListWithFilters />
+        <ListWithFilters userPoolsInvested={userResponse?.poolsInvested} />
       </LeftSidebarLayout>
     </>
   )
