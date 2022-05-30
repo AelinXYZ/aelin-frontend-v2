@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
+import ReactTooltip from 'react-tooltip'
 
 import { TokenIcon } from '../common/TokenIcon'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
@@ -129,6 +130,10 @@ export const List: React.FC<{
   const getSortableHandler = (sortKey: PoolCreated_OrderBy | undefined) =>
     sortKey ? () => handleSort(sortKey) : undefined
 
+  useEffect(() => {
+    ReactTooltip.rebuild()
+  })
+
   return (
     <InfiniteScroll
       dataLength={data.length}
@@ -175,7 +180,17 @@ export const List: React.FC<{
               >
                 <NameCell>
                   <Name>{name.split('aePool-').pop()}</Name>
-                  {activeNotifications ? <Badge>{activeNotifications.toString()}</Badge> : null}
+                  {activeNotifications ? (
+                    <Badge
+                      data-html={true}
+                      data-multiline={true}
+                      data-tip={`You have ${
+                        activeNotifications > 1 ? 'notifications' : 'one notification'
+                      } for this pool.`}
+                    >
+                      {activeNotifications.toString()}
+                    </Badge>
+                  ) : null}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                 </NameCell>
                 <ENSOrAddress address={sponsor} network={network} />
