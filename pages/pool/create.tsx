@@ -16,7 +16,8 @@ import {
 } from '@/src/components/pools/common/Create'
 import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInput'
 import { Summary } from '@/src/components/pools/common/Summary'
-import WhiteListModal, { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/AddressesWhiteList'
+import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
 import {
   ButtonPrimaryLight,
   GradientButton,
@@ -158,7 +159,7 @@ const Create: NextPage = () => {
         <WhiteListModal
           currentList={createPoolState.whitelist}
           onClose={() => setShowWhiteListModal(false)}
-          onConfirm={(whitelist: WhitelistProps[]) => setPoolField(whitelist, 'whitelist')}
+          onConfirm={(whitelist: AddressWhitelistProps[]) => setPoolField(whitelist, 'whitelist')}
         />
       )}
     </>
