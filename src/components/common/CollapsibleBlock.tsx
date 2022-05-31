@@ -70,8 +70,7 @@ const Button = styled.button`
 `
 
 const CollapsableContents = styled.section<{ isExpanded?: boolean }>`
-  max-height: ${({ isExpanded }) => (isExpanded ? '1080px' : '0')};
-  transition: max-height 0.25s linear;
+  height: ${({ isExpanded }) => (isExpanded ? 'auto' : '0')};
   overflow: hidden;
 `
 
