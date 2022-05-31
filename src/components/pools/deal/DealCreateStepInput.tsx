@@ -1,6 +1,8 @@
 import { HTMLAttributes, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
+import Wei, { wei } from '@synthetixio/wei'
+
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import { HMSInput } from '@/src/components/pools/common/HMSInput'
 import TokenDropdown from '@/src/components/pools/common/TokenDropdown'
@@ -57,12 +59,14 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   onSetTotalPurchase: (value: string | undefined) => void
   totalPurchase: unknown
   isOpenPeriodDisabled: boolean
-  amountInPool: { number: number; formatted: string }
+  amountInPool: { wei: Wei; formatted: string }
+  investmentTokenDecimals: number
 }
 
 export const DealCreateStepInput: React.FC<Props> = ({
   amountInPool,
   currentState,
+  investmentTokenDecimals,
   onCalculateDealModal,
   onKeyUp,
   onSetDealField,
@@ -81,8 +85,8 @@ export const DealCreateStepInput: React.FC<Props> = ({
   }, [step])
 
   const isOpenPeriodDisabled = useMemo(
-    () => Number(currentState.totalPurchaseAmount) === amountInPool.number,
-    [amountInPool, currentState.totalPurchaseAmount],
+    () => wei(currentState.totalPurchaseAmount || 0, investmentTokenDecimals).eq(amountInPool.wei),
+    [amountInPool.wei, currentState.totalPurchaseAmount, investmentTokenDecimals],
   )
 
   return (
@@ -126,10 +130,11 @@ export const DealCreateStepInput: React.FC<Props> = ({
             onChange={(e) => {
               const { value } = e.target
               onSetDealField(e.target.value)
+              const weiVal = wei(value || 0, investmentTokenDecimals)
 
-              Number(value) === amountInPool.number
+              weiVal.eq(amountInPool.wei)
                 ? onSetTotalPurchase('all')
-                : Number(value) && Number(value) < amountInPool.number
+                : weiVal.lt(amountInPool.wei)
                 ? onSetTotalPurchase('partial')
                 : onSetTotalPurchase(undefined)
             }}
@@ -143,7 +148,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
               checked={totalPurchase === 'all'}
               label={'All'}
               onClick={() => {
-                onSetDealField(amountInPool.number)
+                onSetDealField(amountInPool.wei.toString())
                 onSetTotalPurchase('all')
               }}
             />

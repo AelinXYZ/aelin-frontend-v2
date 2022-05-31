@@ -154,10 +154,11 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                   <Description>{text}</Description>
                   <DealCreateStepInput
                     amountInPool={{
-                      number: wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber(),
+                      wei: wei(pool.amountInPool.raw, pool.investmentTokenDecimals),
                       formatted: pool.amountInPool.formatted as string,
                     }}
                     currentState={createDealState}
+                    investmentTokenDecimals={pool.investmentTokenDecimals}
                     isOpenPeriodDisabled={isOpenPeriodDisabled}
                     onCalculateDealModal={() => setShowDealCalculationModal(true)}
                     onKeyUp={handleKeyUp}
