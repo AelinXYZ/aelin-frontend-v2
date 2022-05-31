@@ -32,7 +32,7 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
     const userPoolBalance = (data[1] as BigNumber) || ZERO_BN
     const maxPurchaseDealAllowed = (data[2] as BigNumber) || ZERO_BN
     const totalAmountAccepted = (data[3] as BigNumber) || ZERO_BN
-    const userWithdrawn = (data[4] as BigNumber) || ZERO_BN
+    // const userWithdrawn = (data[4] as BigNumber) || ZERO_BN
     // const userAccepted = (data[5] as BigNumber) || ZERO_BN
 
     const userAmountWithdrawn = userAllocationStats?.totalWithdrawn || ZERO_BN
@@ -46,7 +46,9 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
 
     const userMaxAllocation =
       pool.deal?.redemption?.stage === 1
-        ? maxProRataAmountBalance.sub(userWithdrawn) || ZERO_BN
+        ? maxProRataAmountBalance.gt(userPoolBalance)
+          ? maxProRataAmountBalance
+          : userPoolBalance || ZERO_BN
         : maxOpenRedemptionBalance
 
     return {
