@@ -389,6 +389,10 @@ function useUserTabs(
 
     if (defaultTab && isNotificationType(defaultTab)) {
       switch (defaultTab) {
+        case NotificationType.DealNotFunded:
+          setActiveTab(PoolTab.PoolInformation)
+          setActiveAction(PoolAction.CreateDeal)
+          break
         case NotificationType.InvestmentWindowAlert:
           setActiveTab(PoolTab.PoolInformation)
           break
@@ -396,6 +400,9 @@ function useUserTabs(
           if (pool.deal?.holderAlreadyDeposited) {
             setActiveTab(PoolTab.DealInformation)
             setActiveAction(PoolAction.CreateDeal)
+          } else {
+            setActiveTab(tabs[tabs.length - 1])
+            setActiveAction(tabsActions[0])
           }
           break
         case NotificationType.HolderSet:
@@ -406,14 +413,21 @@ function useUserTabs(
           break
         case NotificationType.DealProposed:
         case NotificationType.FundingWindowAlert:
-        case NotificationType.FundingWindowEnded:
         case NotificationType.VestingCliffBegun:
           if (pool.deal?.holderAlreadyDeposited) {
             setActiveTab(PoolTab.DealInformation)
           }
           break
+        case NotificationType.FundingWindowEnded:
+          console.log(userRole)
+          setActiveTab(PoolTab.PoolInformation)
+          userRole === UserRole.Sponsor
+            ? setActiveAction(PoolAction.CreateDeal)
+            : setActiveAction(PoolAction.Withdraw)
+          break
         case NotificationType.DealTokensVestingBegun:
         case NotificationType.AllDealTokensVested:
+        case NotificationType.SponsorFeesReady:
           setActiveTab(PoolTab.Vest)
           setActiveAction(PoolAction.Vest)
           break
