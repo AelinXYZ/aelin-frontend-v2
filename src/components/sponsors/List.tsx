@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, User_OrderBy } from '@/graphql-schema'
-import { ENSOrAddress } from '@/src/components/aelin/ENSOrAddress'
+import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -30,7 +30,7 @@ const Search = styled(BaseSearch)`
   width: 560px;
 `
 
-export const List: React.FC = () => {
+const List: React.FC = () => {
   const router = useRouter()
   const [sortBy, setSortBy] = useState<User_OrderBy | undefined>()
   const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
