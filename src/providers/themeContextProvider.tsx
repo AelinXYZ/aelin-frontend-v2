@@ -14,12 +14,13 @@ const ThemeContext = createContext({} as any)
 const ThemeContextProvider: React.FC = ({ children }) => {
   const [persistentState, setPersistentState] = useLocalStorage(
     `persistent-state_theme`,
-    ThemeType.light,
+    ThemeType.dark,
   )
   const [currentThemeName, setCurrentThemeName] = useState(
-    persistentState ? persistentState : ThemeType.light,
+    persistentState ? persistentState : ThemeType.dark,
   )
   const isLightTheme = useMemo(() => currentThemeName === ThemeType.light, [currentThemeName])
+
   const [currentThemeJSON, setCurrentThemeJSON] = useState(
     isLightTheme ? { ...commonTheme, ...lightTheme } : { ...commonTheme, ...darkTheme },
   )
