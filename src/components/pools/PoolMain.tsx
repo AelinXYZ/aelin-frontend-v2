@@ -113,9 +113,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             tabs={tabs.actionTabs.states}
           >
             <RequiredConnection
+              isNotConnectedText="Connect your wallet"
               minHeight={175}
               networkToCheck={pool.chainId}
-              text="Connect your wallet"
             >
               <>
                 {!tabs.actionTabs.states.length && <div>No actions available</div>}

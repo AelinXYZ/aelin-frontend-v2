@@ -157,7 +157,9 @@ const MyPools: React.FC = ({ ...restProps }) => {
           {`Funded (${getPools(userResponse, MyPoolsFilter.Funded).length})`}
         </TabButton>
       </Filters>
-      <RequiredConnection text={`You must be logged to see the pools you ${activeFilter} in`}>
+      <RequiredConnection
+        isNotConnectedText={`You must be logged to see the pools you ${activeFilter} in`}
+      >
         <>
           <Pools>
             {getPools(userResponse, activeFilter).length > 0 ? (
