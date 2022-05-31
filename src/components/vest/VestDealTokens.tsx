@@ -21,7 +21,7 @@ import {
   HideOnDesktop,
   LinkCell,
   LoadingTableRow,
-  RowLink,
+  Row,
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -29,10 +29,12 @@ import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
+import { getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import useAelinVestingDeals, { VestingDealsFilter } from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
+import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -106,17 +108,18 @@ type Order = {
 const VestActionButton = ({
   dealAddress,
   disabled,
-  mutate,
+  refetch,
   ...restProps
 }: {
   disabled: boolean
   dealAddress: string
-  mutate: () => void
+  refetch: () => void
 }) => {
   const { execute: vestTokens } = useAelinDealTransaction(dealAddress, 'claim')
+
   const handleVestTokens = async () => {
     await vestTokens()
-    mutate()
+    refetch()
   }
 
   return (
@@ -138,6 +141,7 @@ type AmountToVestCellProps = {
   vestingPeriodEnds: Date
   amountToVest: BigNumber | null
   poolAddress: string
+  tokenSymbol: string
   chainId: ChainsValues
   underlyingDealTokenDecimals: number
 }
@@ -146,6 +150,7 @@ const AmountToVestCell = ({
   amountToVest,
   chainId,
   poolAddress,
+  tokenSymbol,
   underlyingDealTokenDecimals,
   vestingPeriodEnds,
   vestingPeriodStarts,
@@ -164,7 +169,8 @@ const AmountToVestCell = ({
         {formatToken(
           currentAmountToVest !== null ? currentAmountToVest : (amountToVest as BigNumber),
           underlyingDealTokenDecimals,
-        )}
+        )}{' '}
+        {tokenSymbol}
       </Value>
     </Cell>
   )
@@ -180,7 +186,13 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     VestingDealsFilter.Active,
   )
 
-  const { data, error, hasMore, mutate, nextPage } = useAelinVestingDeals(
+  const {
+    data,
+    error,
+    hasMore,
+    mutate: refetch,
+    nextPage,
+  } = useAelinVestingDeals(
     {
       where: { user: user?.toLocaleLowerCase() || ZERO_ADDRESS },
       orderBy: order.orderBy,
@@ -199,16 +211,12 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
       network: 'center',
       seePool: 'right',
     },
-    widths: '110px 115px 115px 132px 105px 165px 1fr',
+    widths: '110px 115px 132px 115px 170px 80px 1fr',
   }
 
   const tableHeaderCells = [
     {
       title: 'Pool Name',
-      sortKey: VestingDeal_OrderBy.TokenToVest,
-    },
-    {
-      title: 'Token to vest',
       sortKey: VestingDeal_OrderBy.TokenToVest,
     },
     {
@@ -227,6 +235,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
       title: 'Vesting period ends',
       sortKey: VestingDeal_OrderBy.VestingPeriodEnds,
     },
+    { title: 'Network' },
   ]
 
   const handleSort = (sortBy: VestingDeal_OrderBy) => {
@@ -268,7 +277,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
               isActive={order.orderBy === sortKey}
               key={index}
               onClick={() => {
-                handleSort(sortKey)
+                if (sortKey) handleSort(sortKey)
               }}
             >
               {title}
@@ -295,22 +304,20 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                 vestingPeriodStarts,
               } = item
               return (
-                <RowLink
-                  columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
-                  key={index}
-                >
+                <Row columns={columns.widths} key={index}>
                   <NameCell mobileJustifyContent="center">{poolName}</NameCell>
-                  <Cell mobileJustifyContent="center">{tokenSymbol}</Cell>
                   <Cell mobileJustifyContent="center">
                     <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
-                    <Value>{formatToken(totalAmount, underlyingDealTokenDecimals)}</Value>
+                    <Value>
+                      {formatToken(totalAmount, underlyingDealTokenDecimals)} {tokenSymbol}
+                    </Value>
                   </Cell>
 
                   <AmountToVestCell
                     amountToVest={amountToVest}
                     chainId={chainId}
                     poolAddress={poolAddress}
+                    tokenSymbol={tokenSymbol}
                     underlyingDealTokenDecimals={underlyingDealTokenDecimals}
                     vestingPeriodEnds={vestingPeriodEnds}
                     vestingPeriodStarts={vestingPeriodStarts}
@@ -318,7 +325,9 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
 
                   <Cell mobileJustifyContent="center">
                     <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
-                    <Value>{formatToken(totalVested, underlyingDealTokenDecimals)}</Value>
+                    <Value>
+                      {formatToken(totalVested, underlyingDealTokenDecimals)} {tokenSymbol}
+                    </Value>
                   </Cell>
                   <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
                     <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
@@ -326,12 +335,24 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                       {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
                     </DynamicDeadline>
                   </Cell>
+                  <Cell justifyContent="center" mobileJustifyContent="center">
+                    <HideOnDesktop>Network</HideOnDesktop>
+                    {getNetworkConfig(chainId).icon}
+                  </Cell>
                   <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
-                    <VestActionButton
-                      dealAddress={dealAddress}
-                      disabled={!canVest}
-                      mutate={mutate}
-                    />
+                    <RequiredConnection
+                      buttonSize="sm"
+                      isNotConnectedText=""
+                      isWrongNetworkText=""
+                      networkToCheck={chainId}
+                    >
+                      <VestActionButton
+                        dealAddress={dealAddress}
+                        disabled={!canVest}
+                        refetch={refetch}
+                      />
+                    </RequiredConnection>
+
                     <SeePoolButton
                       onClick={(e) => {
                         e.preventDefault()
@@ -341,7 +362,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                       See Pool
                     </SeePoolButton>
                   </LinkCell>
-                </RowLink>
+                </Row>
               )
             })}
           </TableBody>
