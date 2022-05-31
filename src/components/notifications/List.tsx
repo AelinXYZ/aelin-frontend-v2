@@ -132,7 +132,7 @@ export const List: React.FC = () => {
               return (
                 <RowLink
                   columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
+                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}?notification=${type}`}
                   key={index}
                 >
                   <Cell className="cellTitle">{formatDate(triggerStart, DATE_DETAILED)}</Cell>
