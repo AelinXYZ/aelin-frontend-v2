@@ -28,7 +28,7 @@ import {
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue } from '@/src/constants/config/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import useAelinVestingDeals, { VestingDealsFilter } from '@/src/hooks/aelin/useAelinVestingDeals'

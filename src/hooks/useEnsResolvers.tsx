@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
 import useSWR from 'swr'
 
-import { Chains, getNetworkConfig } from '../constants/chains'
+import { Chains, getNetworkConfig } from '../constants/config/chains'
 
 const { rpcUrl } = getNetworkConfig(Chains.mainnet)
 

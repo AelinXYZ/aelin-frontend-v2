@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import { Chains, ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { Chains, ChainsValues, chainsConfig } from '@/src/constants/config/chains'
 import { TestnetTokens, Token, TokenListResponse } from '@/src/constants/token'
 
 const getTokenList = (chainId: ChainsValues) => {

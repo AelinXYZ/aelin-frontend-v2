@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 
-import { Chains } from '@/src/constants/chains'
+import { Chains } from '@/src/constants/config/chains'
 import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 

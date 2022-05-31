@@ -1,4 +1,4 @@
-import { Chains } from '@/src/constants/chains'
+import { Chains } from '@/src/constants/config/chains'
 
 // Guard to check if var is Token type
 export function isToken(token: any): token is Token {

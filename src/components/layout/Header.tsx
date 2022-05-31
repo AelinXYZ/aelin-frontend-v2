@@ -23,7 +23,7 @@ import {
 import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
-import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
+import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/config/chains'
 import { ThemeType } from '@/src/constants/types'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'

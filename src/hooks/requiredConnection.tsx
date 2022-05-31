@@ -5,7 +5,7 @@ import {
   ButtonGradient,
   ButtonPrimaryLight,
 } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { ChainsValues, chainsConfig } from '@/src/constants/config/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Wrapper = styled.div`

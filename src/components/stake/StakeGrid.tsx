@@ -2,8 +2,8 @@ import { ReactNode, useMemo } from 'react'
 import styled from 'styled-components'
 
 import StakeSection from '@/src/components/stake/StakeSection'
-import { Chains } from '@/src/constants/chains'
-import { contracts } from '@/src/constants/contracts'
+import { Chains } from '@/src/constants/config/chains'
+import { contracts } from '@/src/constants/config/contracts'
 import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 

@@ -7,7 +7,7 @@ import isWithinInterval from 'date-fns/isWithinInterval'
 import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues } from '@/src/constants/config/chains'
 import { MAX_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'

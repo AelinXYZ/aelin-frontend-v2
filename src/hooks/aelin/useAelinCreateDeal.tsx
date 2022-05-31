@@ -8,7 +8,7 @@ import { Duration } from 'date-fns'
 import isEqual from 'lodash/isEqual'
 
 import { useAelinPoolTransaction } from '../contracts/useAelinPoolTransaction'
-import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue } from '@/src/constants/config/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'

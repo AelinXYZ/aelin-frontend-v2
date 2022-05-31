@@ -18,7 +18,7 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/config/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinDealsAccepted from '@/src/hooks/aelin/history/useAelinDealsAccepted'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'

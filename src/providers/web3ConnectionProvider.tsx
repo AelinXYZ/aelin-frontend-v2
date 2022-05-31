@@ -25,7 +25,7 @@ import {
   chainsConfig,
   getChainsByEnvironmentArray,
   getNetworkConfig,
-} from '@/src/constants/chains'
+} from '@/src/constants/config/chains'
 import { RequiredNonNull } from '@/types/utils'
 
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'

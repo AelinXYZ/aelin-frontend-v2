@@ -7,7 +7,7 @@ import nullthrows from 'nullthrows'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import CreateDealForm from '@/src/components/pools/deal/CreateDealForm'
-import { Chains, ChainsKeys } from '@/src/constants/chains'
+import { Chains, ChainsKeys } from '@/src/constants/config/chains'
 
 const CreateDeal: NextPage = () => {
   const router = useRouter()

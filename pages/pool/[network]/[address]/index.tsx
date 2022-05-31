@@ -13,7 +13,7 @@ import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Bu
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { BaseParagraph } from '@/src/components/pureStyledComponents/text/BaseParagraph'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
-import { Chains, ChainsKeys } from '@/src/constants/chains'
+import { Chains, ChainsKeys } from '@/src/constants/config/chains'
 
 const Card = styled(BaseCard)`
   margin: auto;

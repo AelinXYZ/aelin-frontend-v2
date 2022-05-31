@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-import { Chains } from '../constants/chains'
+import { Chains } from '../constants/config/chains'
 import { Token } from '../constants/token'
 import useAelinTokenList from '../hooks/aelin/useAelinTokenList'
 

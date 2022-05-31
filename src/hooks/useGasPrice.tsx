@@ -1,7 +1,7 @@
 import ms from 'ms'
 import useSWR from 'swr'
 
-import { Chains } from '@/src/constants/chains'
+import { Chains } from '@/src/constants/config/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import formatGwei from '@/src/utils/formatGwai'
 import { GasPrices, GasSpeed } from '@/types/utils'

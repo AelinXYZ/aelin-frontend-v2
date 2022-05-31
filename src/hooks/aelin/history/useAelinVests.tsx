@@ -4,7 +4,7 @@ import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
 import { Vest_OrderBy, VestsQueryVariables } from '@/graphql-schema'
-import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { ChainsValues, ChainsValuesArray } from '@/src/constants/config/chains'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { VESTS_QUERY_NAME } from '@/src/queries/history/vests'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'

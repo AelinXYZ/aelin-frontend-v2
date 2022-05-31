@@ -23,7 +23,7 @@ import UnredeemedInformation from '@/src/components/pools/deal/UnredeemedInforma
 import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
-import { ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { ChainsValues, chainsConfig } from '@/src/constants/config/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'

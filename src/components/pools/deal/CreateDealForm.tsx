@@ -33,7 +33,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator as BaseStepIndicator } from '@/src/components/steps/StepIndicator'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues } from '@/src/constants/config/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
 import useAelinCreateDeal, {

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
-import { getKeyChainByValue } from '@/src/constants/chains'
+import { getKeyChainByValue } from '@/src/constants/config/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 

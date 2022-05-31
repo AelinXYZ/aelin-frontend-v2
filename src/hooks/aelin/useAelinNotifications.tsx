@@ -11,7 +11,7 @@ import {
   NotificationsQueryVariables,
   OrderDirection,
 } from '@/graphql-schema'
-import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { ChainsValues, ChainsValuesArray } from '@/src/constants/config/chains'
 import { NOTIFICATIONS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { NOTIFICATIONS_QUERY_NAME } from '@/src/queries/pools/notification'

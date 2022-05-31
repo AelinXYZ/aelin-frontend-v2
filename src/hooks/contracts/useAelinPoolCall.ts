@@ -3,7 +3,7 @@ import { SWRConfiguration } from 'swr'
 
 import useContractCall, { useContractCallMultiple } from './useContractCall'
 import aelinPool from '@/src/abis/AelinPool.json'
-import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import { ChainsValues, getNetworkConfig } from '@/src/constants/config/chains'
 import { AelinPool } from '@/types/typechain'
 
 export default function useAelinPoolCall<

@@ -17,7 +17,7 @@ import {
   LinkCell,
   LoadingTableRow,
 } from '@/src/components/pureStyledComponents/common/Table'
-import { getKeyChainByValue } from '@/src/constants/chains'
+import { getKeyChainByValue } from '@/src/constants/config/chains'
 import { ClearedNotifications } from '@/src/hooks/aelin/useAelinNotifications'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { useThemeContext } from '@/src/providers/themeContextProvider'

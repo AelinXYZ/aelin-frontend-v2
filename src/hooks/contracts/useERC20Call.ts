@@ -2,7 +2,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 
 import useContractCall from './useContractCall'
 import erc20 from '@/src/abis/ERC20.json'
-import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import { ChainsValues, getNetworkConfig } from '@/src/constants/config/chains'
 import { ERC20 } from '@/types/typechain'
 
 export default function useERC20Call<

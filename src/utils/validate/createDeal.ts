@@ -3,7 +3,7 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
 import { Duration } from 'date-fns'
 
-import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import { ChainsValues, getNetworkConfig } from '@/src/constants/config/chains'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS } from '@/src/constants/time'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { convertToSeconds, isEmptyDuration } from '@/src/utils/date'
