@@ -44,7 +44,7 @@ const Item = styled(ButtonPrimaryLight)<{ isActive?: boolean }>`
   ${({ isActive }) => isActive && ActiveItemCSS}
 `
 
-const getItems = (nftType: NftType) => {
+const getItems = (nftType: NftType): [string, NftWhitelistProcess][] => {
   const entries = Object.entries(NftWhitelistProcess)
   switch (nftType) {
     case NftType.erc721:
@@ -54,7 +54,7 @@ const getItems = (nftType: NftType) => {
   }
 }
 
-const getDescription = (active: NftWhitelistProcess) => {
+const getDescription = (active: NftWhitelistProcess): string => {
   switch (active) {
     case NftWhitelistProcess.unlimited:
       return 'Each wallet holding a qualified NFT can deposit an unlimited amount of Investment tokens.'

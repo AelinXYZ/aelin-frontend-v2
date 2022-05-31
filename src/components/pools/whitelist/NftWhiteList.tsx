@@ -70,6 +70,16 @@ const getStepIndicatorData = (
     title: nftWhiteListStepsConfig[step].title,
   }))
 
+type NftWhiteListProps = {
+  currentStep: NftWhiteListStep
+  setCurrentStep: (currentStep: NftWhiteListStep) => void
+  nftType: NftType
+  setNftType: (nftType: NftType) => void
+  whiteListProcess: NftWhitelistProcess
+  setWhiteListProcess: (whiteListProcess: NftWhitelistProcess) => void
+  onClose: () => void
+}
+
 const NftWhiteList = ({
   currentStep,
   nftType,
@@ -78,18 +88,10 @@ const NftWhiteList = ({
   setNftType,
   setWhiteListProcess,
   whiteListProcess,
-}: {
-  currentStep: NftWhiteListStep
-  setCurrentStep: (currentStep: NftWhiteListStep) => void
-  nftType: NftType
-  setNftType: (nftType: NftType) => void
-  whiteListProcess: NftWhitelistProcess
-  setWhiteListProcess: (whiteListProcess: NftWhitelistProcess) => void
-  onClose: () => void
-}) => {
+}: NftWhiteListProps) => {
   const { order, title } = nftWhiteListStepsConfig[currentStep]
 
-  const getContent = () => {
+  const getContent = (): JSX.Element => {
     switch (currentStep) {
       case NftWhiteListStep.nftType:
         return (
@@ -124,7 +126,9 @@ const NftWhiteList = ({
         const isLastStep =
           nftWhiteListStepsConfig[currentStep].order === Object.keys(nftWhiteListStepsConfig).length
 
-        return !isStepVisible ? null : (
+        if (!isStepVisible) return null
+
+        return (
           <StepContents key={index}>
             <Title>{title}</Title>
             {getContent()}
@@ -132,13 +136,14 @@ const NftWhiteList = ({
               onClick={() => {
                 if (isLastStep) {
                   onClose()
-                } else {
-                  const nextStep = Object.values(nftWhiteListStepsConfig).find(
-                    ({ order }) => order === nftWhiteListStepsConfig[currentStep].order + 1,
-                  )?.id
-                  if (nextStep) {
-                    setCurrentStep(nextStep)
-                  }
+                  return
+                }
+
+                const nextStep = Object.values(nftWhiteListStepsConfig).find(
+                  ({ order }) => order === nftWhiteListStepsConfig[currentStep].order + 1,
+                )?.id
+                if (nextStep) {
+                  setCurrentStep(nextStep)
                 }
               }}
             >

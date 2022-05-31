@@ -23,7 +23,9 @@ const Wrapper = styled.div`
   max-width: fit-content;
 `
 
-const getNftWhitelistProcess = (nftType: NftType) => {
+const getNftWhitelistProcess = (
+  nftType: NftType,
+): NftWhitelistProcess.unlimited | NftWhitelistProcess.minimumAmount => {
   switch (nftType) {
     case NftType.erc721:
       return NftWhitelistProcess.unlimited
