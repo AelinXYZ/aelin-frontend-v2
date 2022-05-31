@@ -9,12 +9,14 @@ import ms from 'ms'
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { MAX_BN } from '@/src/constants/misc'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
+import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { formatToken } from '@/src/web3/bigNumber'
 import {
   DerivedStatus,
@@ -203,6 +205,13 @@ function useUserActions(
   const { address: walletAddress } = useWeb3Connection()
   const currentStatus = derivedStatus.current
 
+  const allSDK = getAllGqlSDK()
+  const { useVestingDealById } = allSDK[pool.chainId]
+
+  const { data } = useVestingDealById({
+    id: `${(walletAddress || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
+  })
+
   return useMemo(() => {
     const actions: PoolAction[] = []
     const isSponsor = userRole === UserRole.Sponsor
@@ -316,11 +325,24 @@ function useUserActions(
     }
 
     if (currentStatus === PoolStatus.Vesting) {
-      return [PoolAction.Vest, PoolAction.Withdraw]
+      if (data?.vestingDeal !== null) {
+        return [PoolAction.Vest, PoolAction.Withdraw]
+      }
+
+      return [PoolAction.Withdraw]
     }
 
     return []
-  }, [userRole, currentStatus, pool, walletAddress])
+  }, [
+    userRole,
+    currentStatus,
+    pool.dealAddress,
+    pool.dealDeadline,
+    pool.deal,
+    pool.dealsCreated,
+    walletAddress,
+    data?.vestingDeal,
+  ])
 }
 
 function useUserTabs(
