@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import styled from 'styled-components'
 
 import { TokenIcon } from '../common/TokenIcon'
@@ -25,11 +26,16 @@ type Props = {
 
 const UserStatsInfoCell = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
-    const { data: userAllocationStat } = useUserAllocationStats(
+    const { data: userAllocationStat, refetch } = useUserAllocationStats(
       pool.address,
       pool.chainId,
       pool.investmentTokenDecimals,
     )
+
+    useEffect(() => {
+      pool.amountInPool
+      refetch()
+    }, [refetch, pool.amountInPool])
 
     return <span>{`${userAllocationStat.formatted || 0} ${pool.investmentTokenSymbol}`}</span>
   },

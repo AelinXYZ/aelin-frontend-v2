@@ -78,6 +78,9 @@ function AcceptDeal({ pool }: Props) {
     })
   }
 
+  const userBalance =
+    formatToken(userProRataAllocation.raw || ZERO_BN, investmentTokenDecimals) || '0'
+
   return (
     <Wrapper title={`Deal allocation stage ${stage}`}>
       <Contents>
@@ -87,18 +90,18 @@ function AcceptDeal({ pool }: Props) {
         decimals={investmentTokenDecimals}
         error={inputError}
         maxValue={(userProRataAllocation.raw || ZERO_BN).toString()}
-        maxValueFormatted={
-          formatToken(
-            (userProRataAllocation.raw as BigNumberish) || ZERO_BN,
-            investmentTokenDecimals,
-          ) || '0'
-        }
+        maxValueFormatted={userBalance}
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
       <ButtonGradient
         disabled={
-          !address || !isAppConnected || isSubmitting || !tokenInputValue || Boolean(inputError)
+          !address ||
+          !isAppConnected ||
+          isSubmitting ||
+          !tokenInputValue ||
+          BigNumber.from(tokenInputValue).eq(0) ||
+          Boolean(inputError)
         }
         onClick={handleAcceptDeal}
       >
