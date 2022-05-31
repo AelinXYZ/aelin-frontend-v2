@@ -4,13 +4,15 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { ENSOrAddress } from '@/src/components/aelin/ENSOrAddress'
+import { OrderDirection, User_OrderBy } from '@/graphql-schema'
+import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
   HideOnDesktop,
+  HideOnMobileCell,
   LinkCell,
   LoadingTableRow,
   RowLink,
@@ -19,7 +21,8 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { ChainsValues } from '@/src/constants/chains'
+import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import useAelinUsers from '@/src/hooks/aelin/useAelinUsers'
 
 const Search = styled(BaseSearch)`
   margin-bottom: 20px;
@@ -27,111 +30,110 @@ const Search = styled(BaseSearch)`
   width: 560px;
 `
 
-export const List: React.FC = () => {
+const List: React.FC = () => {
   const router = useRouter()
-  const [sortBy, setSortBy] = useState<string | undefined>()
+  const [sortBy, setSortBy] = useState<User_OrderBy | undefined>()
+  const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
+  const [searchString, setSearchString] = useState<string>()
+
+  const { data, error, hasMore, nextPage } = useAelinUsers({
+    orderBy: sortBy ?? User_OrderBy.PoolsSponsoredAmt,
+    orderDirection,
+    where: {
+      id: searchString && searchString !== '' ? searchString.toLocaleLowerCase() : undefined,
+      poolsSponsored_not: [],
+    },
+  })
+
+  if (error) {
+    throw error
+  }
 
   const columns = {
     alignment: {
       seeMore: 'right',
     },
-    widths: '180px 1fr 120px',
+    widths: '180px 120px 1fr 120px',
   }
 
   const tableHeaderCells = [
     {
       title: 'Sponsor',
-      sortKey: 'sponsor',
     },
     {
-      title: 'Deals created',
-      sortKey: 'dealsCreated',
+      title: 'Network',
+    },
+    {
+      title: 'Pools created',
+      sortKey: User_OrderBy.PoolsSponsoredAmt,
     },
   ]
 
-  const mockedSponsors = [
-    {
-      sponsor: '0x32dea44d5C243990B0133f5D103C2A784aA6a29F',
-      dealsCreated: '13',
-      network: 42,
-    },
-    {
-      sponsor: '0x8365EFb25D0822AaF15Ee1D314147B6a7831C403',
-      dealsCreated: '2',
-      network: 42,
-    },
-    {
-      sponsor: '0x800231D131E7f523D805E03856B08fe8811aE533',
-      dealsCreated: '5',
-      network: 42,
-    },
-    {
-      sponsor: '0xFcbE615dEf610E806BB64427574A2c5c1fB55510',
-      dealsCreated: '1',
-      network: 42,
-    },
-    {
-      sponsor: '0xdb55afCfd038D51642fD67025D8A252C645A91a8',
-      dealsCreated: '2',
-      network: 42,
-    },
-    {
-      sponsor: '0x5E4e65926BA27467555EB562121fac00D24E9dD2',
-      dealsCreated: '4',
-      network: 42,
-    },
-    {
-      sponsor: '0x6887246668a3b87F54DeB3b94Ba47a6f63F32985',
-      dealsCreated: '8',
-      network: 42,
-    },
-  ]
+  const handleSort = (sortKey?: User_OrderBy) => {
+    if (!sortKey) {
+      return
+    }
 
-  const handleSort = (sortKey: string) => {
+    if (orderDirection === OrderDirection.Desc) {
+      setOrderDirection(OrderDirection.Asc)
+    } else {
+      setOrderDirection(OrderDirection.Desc)
+    }
+
     setSortBy(sortKey)
-    console.log(`sorted by ${sortBy}`)
   }
 
   return (
     <>
-      <Search placeholder="Enter sponsor name..." />
+      <Search
+        onChange={async (evt) => {
+          setSearchString(evt.target.value)
+        }}
+        placeholder="Enter sponsor address..."
+      />
       <InfiniteScroll
-        dataLength={mockedSponsors.length}
-        hasMore={false}
+        dataLength={data?.length}
+        hasMore={hasMore}
         loader={<LoadingTableRow />}
-        next={() => console.log('load next page')}
+        next={nextPage}
       >
         <TableHead columns={columns.widths}>
           {tableHeaderCells.map(({ sortKey, title }, index) => (
             <SortableTH
               isActive={sortBy === sortKey}
               key={index}
-              onClick={() => {
-                handleSort(sortKey)
-              }}
+              onClick={
+                sortKey
+                  ? () => {
+                      handleSort(sortKey)
+                    }
+                  : undefined
+              }
             >
               {title}
             </SortableTH>
           ))}
         </TableHead>
-        {!mockedSponsors?.length ? (
+        {!data?.length ? (
           <BaseCard>No sponsors.</BaseCard>
         ) : (
           <TableBody>
-            {mockedSponsors.map((item, index) => {
-              const { dealsCreated, network, sponsor } = item
-
+            {data.map((item, index) => {
+              const { chainId: network, id, poolsSponsoredAmt } = item
               return (
-                <RowLink columns={columns.widths} href={`/`} key={index}>
+                <RowLink columns={columns.widths} href={`/?filter=${id}`} key={index}>
                   <ENSOrAddress
-                    address={sponsor}
+                    address={id}
                     light
                     mobileJustifyContent="center"
                     network={network as ChainsValues}
                   />
+                  <HideOnMobileCell title={getNetworkConfig(network).name}>
+                    {getNetworkConfig(network).icon}
+                  </HideOnMobileCell>
                   <Cell mobileJustifyContent="center">
                     <HideOnDesktop>Deals created:&nbsp;</HideOnDesktop>
-                    {dealsCreated}
+                    {poolsSponsoredAmt}
                   </Cell>
                   <LinkCell
                     justifyContent={columns.alignment.seeMore}
@@ -141,7 +143,7 @@ export const List: React.FC = () => {
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        router.push(`/`)
+                        router.push(`/?filter=${id}`)
                       }}
                     >
                       See more

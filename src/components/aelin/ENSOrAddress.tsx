@@ -14,7 +14,7 @@ interface Props extends CellProps {
   network: ChainsValues
 }
 
-export const ENSOrAddress: React.FC<Props> = ({ address, network, ...restProps }) => {
+const ENSOrAddress: React.FC<Props> = ({ address, network, ...restProps }) => {
   const { data } = useEnsLookUpAddress(address)
 
   return data ? (

@@ -3,7 +3,7 @@ import Head from 'next/head'
 
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { SectionIntro } from '@/src/components/section/SectionIntro'
-import { List } from '@/src/components/sponsors/List'
+import List from '@/src/components/sponsors/List'
 
 const Sponsors: NextPage = () => {
   return (
