@@ -11,7 +11,7 @@ type Props = {
   width?: string
 }
 
-export const DynamicDeadline: React.FC<Props> = ({ deadline, start, width }: Props) => {
+export const DynamicDeadline: React.FC<Props> = ({ children, deadline, start, width }) => {
   const [progress, setProgress] = useState('0')
 
   useEffect(() => {
@@ -23,5 +23,9 @@ export const DynamicDeadline: React.FC<Props> = ({ deadline, start, width }: Pro
     return () => clearInterval(interval)
   }, [deadline, start])
 
-  return <Deadline progress={progress} width={width} />
+  return (
+    <Deadline progress={progress} width={width}>
+      {children}
+    </Deadline>
+  )
 }
