@@ -188,7 +188,7 @@ export const getParsedPool = ({
       dealDetails.vestingCliff,
       dealDetails.vestingPeriod,
     ),
-    hasDealOpenPeriod: !!dealDetails.openRedemptionStart,
+    hasDealOpenPeriod: dealDetails.openRedemptionStart && dealDetails.openRedemptionStart !== '0',
     redemption: redemptionInfo,
     holderAlreadyDeposited: dealDetails.isDealFunded,
     holderFundingExpiration: new Date(dealDetails.holderFundingExpiration * 1000),
