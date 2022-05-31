@@ -121,7 +121,7 @@ const List: React.FC = () => {
             {data.map((item, index) => {
               const { chainId: network, id, poolsSponsoredAmt } = item
               return (
-                <RowLink columns={columns.widths} href={`/`} key={index}>
+                <RowLink columns={columns.widths} href={`/?filter=${id}`} key={index}>
                   <ENSOrAddress
                     address={id}
                     light
@@ -143,7 +143,7 @@ const List: React.FC = () => {
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
-                        router.push(`/`)
+                        router.push(`/?filter=${id}`)
                       }}
                     >
                       See more

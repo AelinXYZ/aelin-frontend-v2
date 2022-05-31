@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -68,6 +69,10 @@ const FiltersDropdowns = styled.div`
 const myPools = ['All pools', 'Sponsored', 'Funded', 'Invested']
 
 export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: PoolCreated[] }) => {
+  const {
+    query: { filter },
+  } = useRouter()
+  const searchRef = useRef<HTMLInputElement | null>(null)
   const { address, isWalletConnected } = useWeb3Connection()
 
   const { network, setNetwork, setOrderBy, setOrderDirection, setWhere, variables } =
@@ -87,6 +92,13 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
     () => debounce(changeHandler, DEBOUNCED_INPUT_TIME),
     [changeHandler],
   )
+
+  useEffect(() => {
+    if (filter && searchRef?.current) {
+      setSearchString(filter as string)
+      searchRef.current.value = filter as string
+    }
+  }, [filter, searchRef])
 
   useEffect(() => {
     setNow(Math.round(Date.now() / 1000).toString())
@@ -237,6 +249,7 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
               setSearchString(evt.target.value)
             }}
             placeholder="Pool name, sponsor, currency..."
+            ref={searchRef}
           />
         </SearchWrapper>
         <FiltersDropdowns>
