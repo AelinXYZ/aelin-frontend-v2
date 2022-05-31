@@ -46,9 +46,9 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
 
     const userMaxAllocation =
       pool.deal?.redemption?.stage === 1
-        ? maxProRataAmountBalance.gt(userPoolBalance)
-          ? maxProRataAmountBalance
-          : userPoolBalance || ZERO_BN
+        ? userPoolBalance.lt(maxProRataAmountBalance)
+          ? userPoolBalance || ZERO_BN
+          : maxProRataAmountBalance
         : maxOpenRedemptionBalance
 
     return {
