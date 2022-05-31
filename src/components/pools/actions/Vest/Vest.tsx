@@ -5,6 +5,7 @@ import isAfter from 'date-fns/isAfter'
 import ms from 'ms'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import UserDidNotInvest from '@/src/components/pools/actions/Vest/UserDidNotInvest'
 import VestingCliff from '@/src/components/pools/actions/Vest/VestingCliff'
 import VestingCompleted from '@/src/components/pools/actions/Vest/VestingCompleted'
 import VestingPeriod from '@/src/components/pools/actions/Vest/VestingPeriod'
@@ -71,6 +72,10 @@ function Vest({ pool }: Props) {
       title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
       estimate: () => estimate([]),
     })
+  }
+
+  if (data?.vestingDeal === null) {
+    return <UserDidNotInvest />
   }
 
   return (
