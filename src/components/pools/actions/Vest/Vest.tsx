@@ -73,8 +73,6 @@ function Vest({ pool }: Props) {
     })
   }
 
-  if (data?.vestingDeal === null) return null
-
   return (
     <>
       {!isVestingCliffEnded && (
