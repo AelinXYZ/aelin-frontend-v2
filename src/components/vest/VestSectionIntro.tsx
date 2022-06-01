@@ -1,4 +1,4 @@
-import { SectionIntro } from '../section/SectionIntro'
+import { SectionIntro } from '@/src/components/section/SectionIntro'
 
 export const VestSectionIntro: React.FC = () => (
   <SectionIntro backgroundImage="resources/svg/bg-vest.svg" title="Vest">

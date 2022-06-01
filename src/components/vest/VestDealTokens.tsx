@@ -146,7 +146,14 @@ type AmountToVestCellProps = {
   underlyingDealTokenDecimals: number
 }
 
-const AmountToVestCell = ({
+const Wrapper: React.FC = ({ children, ...restProps }) => (
+  <TableCard id="outerWrapper" {...restProps}>
+    <Title>Vest Deal Tokens</Title>
+    {children}
+  </TableCard>
+)
+
+const AmountToVestCell: React.FC<AmountToVestCellProps> = ({
   amountToVest,
   chainId,
   poolAddress,
@@ -154,7 +161,7 @@ const AmountToVestCell = ({
   underlyingDealTokenDecimals,
   vestingPeriodEnds,
   vestingPeriodStarts,
-}: AmountToVestCellProps) => {
+}) => {
   const now = new Date()
   const isVestingCliffEnded = isAfter(now, vestingPeriodStarts)
   const isVestindPeriodEnded = isAfter(now, vestingPeriodEnds)
@@ -252,9 +259,19 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
 
   const vestingDealsFilterArr = Object.values(VestingDealsFilter) as Array<VestingDealsFilter>
 
+  if (!data.length) {
+    return (
+      <Wrapper {...restProps}>
+        <BaseCard>
+          You don't have any deal tokens to vest. Once you do, vesting information will be shown
+          below!
+        </BaseCard>
+      </Wrapper>
+    )
+  }
+
   return (
-    <TableCard id="outerWrapper" {...restProps}>
-      <Title>Vest Deal Tokens</Title>
+    <Wrapper {...restProps}>
       <Dropdown
         currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
         dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
@@ -284,91 +301,87 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
             </SortableTH>
           ))}
         </TableHead>
-        {!data.length ? (
-          <BaseCard>No data.</BaseCard>
-        ) : (
-          <TableBody>
-            {data.map((item, index) => {
-              const {
-                amountToVest,
-                canVest,
-                chainId,
-                dealAddress,
-                poolAddress,
-                poolName,
-                tokenSymbol,
-                totalAmount,
-                totalVested,
-                underlyingDealTokenDecimals,
-                vestingPeriodEnds,
-                vestingPeriodStarts,
-              } = item
-              return (
-                <Row columns={columns.widths} key={index}>
-                  <NameCell mobileJustifyContent="center">{poolName}</NameCell>
-                  <Cell mobileJustifyContent="center">
-                    <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
-                    <Value>
-                      {formatToken(totalAmount, underlyingDealTokenDecimals)} {tokenSymbol}
-                    </Value>
-                  </Cell>
+        <TableBody>
+          {data.map((item, index) => {
+            const {
+              amountToVest,
+              canVest,
+              chainId,
+              dealAddress,
+              poolAddress,
+              poolName,
+              tokenSymbol,
+              totalAmount,
+              totalVested,
+              underlyingDealTokenDecimals,
+              vestingPeriodEnds,
+              vestingPeriodStarts,
+            } = item
+            return (
+              <Row columns={columns.widths} key={index}>
+                <NameCell mobileJustifyContent="center">{poolName}</NameCell>
+                <Cell mobileJustifyContent="center">
+                  <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
+                  <Value>
+                    {formatToken(totalAmount, underlyingDealTokenDecimals)} {tokenSymbol}
+                  </Value>
+                </Cell>
 
-                  <AmountToVestCell
-                    amountToVest={amountToVest}
-                    chainId={chainId}
-                    poolAddress={poolAddress}
-                    tokenSymbol={tokenSymbol}
-                    underlyingDealTokenDecimals={underlyingDealTokenDecimals}
-                    vestingPeriodEnds={vestingPeriodEnds}
-                    vestingPeriodStarts={vestingPeriodStarts}
-                  />
+                <AmountToVestCell
+                  amountToVest={amountToVest}
+                  chainId={chainId}
+                  poolAddress={poolAddress}
+                  tokenSymbol={tokenSymbol}
+                  underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+                  vestingPeriodEnds={vestingPeriodEnds}
+                  vestingPeriodStarts={vestingPeriodStarts}
+                />
 
-                  <Cell mobileJustifyContent="center">
-                    <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
-                    <Value>
-                      {formatToken(totalVested, underlyingDealTokenDecimals)} {tokenSymbol}
-                    </Value>
-                  </Cell>
-                  <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
-                    <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
-                    <DynamicDeadline deadline={vestingPeriodEnds} start={vestingPeriodStarts}>
-                      {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
-                    </DynamicDeadline>
-                  </Cell>
-                  <Cell justifyContent="center" mobileJustifyContent="center">
-                    <HideOnDesktop>Network</HideOnDesktop>
-                    {getNetworkConfig(chainId).icon}
-                  </Cell>
-                  <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
-                    <RequiredConnection
-                      buttonSize="sm"
-                      isNotConnectedText=""
-                      isWrongNetworkText=""
-                      networkToCheck={chainId}
-                    >
-                      <VestActionButton
-                        dealAddress={dealAddress}
-                        disabled={!canVest}
-                        refetch={refetch}
-                      />
-                    </RequiredConnection>
+                <Cell mobileJustifyContent="center">
+                  <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
+                  <Value>
+                    {formatToken(totalVested, underlyingDealTokenDecimals)} {tokenSymbol}
+                  </Value>
+                </Cell>
+                <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
+                  <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
+                  <DynamicDeadline deadline={vestingPeriodEnds} start={vestingPeriodStarts}>
+                    {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
+                  </DynamicDeadline>
+                </Cell>
+                <Cell justifyContent="center" mobileJustifyContent="center">
+                  <HideOnDesktop>Network</HideOnDesktop>
+                  {getNetworkConfig(chainId).icon}
+                </Cell>
+                <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
+                  <RequiredConnection
+                    buttonSize="sm"
+                    isNotConnectedText=""
+                    isWrongNetworkText=""
+                    networkToCheck={chainId}
+                  >
+                    <VestActionButton
+                      dealAddress={dealAddress}
+                      disabled={!canVest}
+                      refetch={refetch}
+                    />
+                  </RequiredConnection>
 
-                    <SeePoolButton
-                      onClick={(e) => {
-                        e.preventDefault()
-                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                      }}
-                    >
-                      See Pool
-                    </SeePoolButton>
-                  </LinkCell>
-                </Row>
-              )
-            })}
-          </TableBody>
-        )}
+                  <SeePoolButton
+                    onClick={(e) => {
+                      e.preventDefault()
+                      router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                    }}
+                  >
+                    See Pool
+                  </SeePoolButton>
+                </LinkCell>
+              </Row>
+            )
+          })}
+        </TableBody>
       </InfiniteScroll>
-    </TableCard>
+    </Wrapper>
   )
 }
 
