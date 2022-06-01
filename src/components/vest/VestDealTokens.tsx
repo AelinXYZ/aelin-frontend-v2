@@ -146,7 +146,14 @@ type AmountToVestCellProps = {
   underlyingDealTokenDecimals: number
 }
 
-const AmountToVestCell = ({
+const Wrapper: React.FC = ({ children, ...restProps }) => (
+  <TableCard id="outerWrapper" {...restProps}>
+    <Title>Vest Deal Tokens</Title>
+    {children}
+  </TableCard>
+)
+
+const AmountToVestCell: React.FC<AmountToVestCellProps> = ({
   amountToVest,
   chainId,
   poolAddress,
@@ -154,7 +161,7 @@ const AmountToVestCell = ({
   underlyingDealTokenDecimals,
   vestingPeriodEnds,
   vestingPeriodStarts,
-}: AmountToVestCellProps) => {
+}) => {
   const now = new Date()
   const isVestingCliffEnded = isAfter(now, vestingPeriodStarts)
   const isVestindPeriodEnded = isAfter(now, vestingPeriodEnds)
@@ -254,19 +261,17 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
 
   if (!data.length) {
     return (
-      <TableCard id="outerWrapper" {...restProps}>
-        <Title>Vest Deal Tokens</Title>
+      <Wrapper {...restProps}>
         <BaseCard>
           You don't have any deal tokens to vest. Once you do, vesting information will be shown
           below!
         </BaseCard>
-      </TableCard>
+      </Wrapper>
     )
   }
 
   return (
-    <TableCard id="outerWrapper" {...restProps}>
-      <Title>Vest Deal Tokens</Title>
+    <Wrapper {...restProps}>
       <Dropdown
         currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
         dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
@@ -376,7 +381,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
           })}
         </TableBody>
       </InfiniteScroll>
-    </TableCard>
+    </Wrapper>
   )
 }
 
