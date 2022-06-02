@@ -8,6 +8,7 @@ import { Duration } from 'date-fns'
 import isEqual from 'lodash/isEqual'
 
 import { useAelinPoolTransaction } from '../contracts/useAelinPoolTransaction'
+import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
@@ -38,7 +39,7 @@ interface CreateDealStepInfo {
   text: string | ReactElement
   placeholder: string | undefined
   id: CreateDealSteps
-  getSummaryValue: (...args: any) => string
+  getSummaryValue: (...args: any) => string | JSX.Element
 }
 
 export interface CreateDealState {
@@ -79,8 +80,14 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     title: 'Deal token',
     text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool as your deal. Examples - SNX Address (0x8700daec35af8ff88c16bdf0418774cb3d7599b4)',
     placeholder: 'Enter deal token address',
-    getSummaryValue: (currentState: CreateDealStateComplete) =>
-      currentState[CreateDealSteps.dealToken].symbol,
+    getSummaryValue: (currentState: CreateDealStateComplete) => (
+      <TokenIcon
+        address={currentState[CreateDealSteps.dealToken].address}
+        network={currentState[CreateDealSteps.dealToken].chainId as ChainsValues}
+        symbol={currentState[CreateDealSteps.dealToken].symbol}
+        type="row"
+      />
+    ),
   },
 
   [CreateDealSteps.totalPurchaseAmount]: {
@@ -333,7 +340,7 @@ const createDealReducer = (state: CreateDealState, action: CreateDealAction) => 
 export const getCreateDealSummaryData = (
   createDealState: CreateDealState,
   isOpenPeriodDisabled: boolean,
-): { title: string; value: string }[] =>
+): { title: string; value: string | JSX.Element }[] =>
   createDealConfigArr.map((step) => {
     let value = ''
 
