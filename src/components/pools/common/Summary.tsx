@@ -1,3 +1,4 @@
+import React from 'react'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -27,7 +28,8 @@ const Title = styled.h4`
   margin: 0 0 4px;
 `
 
-const Value = styled.p`
+const Value = styled.div`
+  display: flex;
   color: ${({ theme }) => theme.colors.textColorLight};
   font-size: 1.4rem;
   font-weight: 400;
@@ -37,7 +39,7 @@ const Value = styled.p`
 
 export const SummaryItem: React.FC<{
   title: string
-  value: string
+  value: string | JSX.Element
 }> = ({ title, value }) => (
   <Cell>
     <Title>{title}</Title>
@@ -46,7 +48,7 @@ export const SummaryItem: React.FC<{
 )
 
 interface Props {
-  data: { title: string; value: string }[]
+  data: { title: string; value: string | JSX.Element }[]
 }
 
 export const Summary: React.FC<Props> = ({ data, ...restProps }) => {

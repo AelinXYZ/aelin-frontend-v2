@@ -6,6 +6,7 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
 
+import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
@@ -254,9 +255,10 @@ const createPoolReducer = (state: CreatePoolState, action: CreatePoolAction) => 
 
 export const getCreatePoolSummaryData = (
   createPoolState: CreatePoolState,
-): { title: string; value: string }[] =>
+): { title: string; value: string | JSX.Element }[] =>
   createPoolConfigArr.map((step) => {
-    let value = createPoolState[step.id]
+    let value: string | number | Token | Duration | undefined | JSX.Element =
+      createPoolState[step.id]
 
     if (isDuration(value)) {
       if (step.id === CreatePoolSteps.dealDeadline) {
@@ -284,7 +286,14 @@ export const getCreatePoolSummaryData = (
     }
 
     if (isToken(value)) {
-      value = value?.symbol
+      value = (
+        <TokenIcon
+          address={value.address}
+          network={value.chainId as ChainsValues}
+          symbol={value.symbol}
+          type="row"
+        />
+      )
     }
 
     if (step.id === CreatePoolSteps.sponsorFee && value !== '' && value !== undefined) {
@@ -303,7 +312,7 @@ export const getCreatePoolSummaryData = (
 
     return {
       title: step.title,
-      value: value as string,
+      value: value as JSX.Element | string,
     }
   })
 
@@ -345,7 +354,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
     return dispatch({ type: 'updateStep', payload: value })
   }
-
   const handleCreatePool = async () => {
     const {
       dealDeadLineDuration,
