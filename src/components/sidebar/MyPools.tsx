@@ -116,7 +116,7 @@ function getEmptyPoolsText(filter: MyPoolsFilter): string {
 }
 
 const MyPools: React.FC = ({ ...restProps }) => {
-  const { address: userAddress, appChainId } = useWeb3Connection()
+  const { address: userAddress, appChainId, isWalletConnected } = useWeb3Connection()
   const { data: userResponse, error: errorUser } = useAelinUser(userAddress)
   const {
     sidebar: {
@@ -129,6 +129,8 @@ const MyPools: React.FC = ({ ...restProps }) => {
   }
   const { notifications } = useNotifications()
 
+  const isConnected = isWalletConnected && userAddress
+
   return (
     <CollapsibleBlock name="mypools" title={'My pools'} {...restProps}>
       <Filters justifyContent="space-between">
@@ -138,7 +140,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
             setActiveFilter(MyPoolsFilter.Invested)
           }}
         >
-          {`Invested (${getPools(userResponse, MyPoolsFilter.Invested).length})`}
+          {`Invested (${!isConnected ? 0 : getPools(userResponse, MyPoolsFilter.Invested).length})`}
         </TabButton>
         <TabButton
           isActive={activeFilter === MyPoolsFilter.Sponsored}
@@ -146,7 +148,9 @@ const MyPools: React.FC = ({ ...restProps }) => {
             setActiveFilter(MyPoolsFilter.Sponsored)
           }}
         >
-          {`Sponsored (${getPools(userResponse, MyPoolsFilter.Sponsored).length})`}
+          {`Sponsored (${
+            !isConnected ? 0 : getPools(userResponse, MyPoolsFilter.Sponsored).length
+          })`}
         </TabButton>
         <TabButton
           isActive={activeFilter === MyPoolsFilter.Funded}
@@ -154,7 +158,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
             setActiveFilter(MyPoolsFilter.Funded)
           }}
         >
-          {`Funded (${getPools(userResponse, MyPoolsFilter.Funded).length})`}
+          {`Funded (${!isConnected ? 0 : getPools(userResponse, MyPoolsFilter.Funded).length})`}
         </TabButton>
       </Filters>
       <RequiredConnection
