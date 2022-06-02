@@ -59,12 +59,13 @@ type PoolData = {
 
 function getVisiblePools(
   user: ParsedUser | undefined,
+  isConnected: boolean,
   notifications: ParsedNotification[],
   filter: MyPoolsFilter,
   isExpanded: boolean,
   appChainId: ChainsValues,
 ): PoolData[] {
-  let visiblePools = getPools(user, filter)
+  let visiblePools = getPools(user, isConnected, filter)
 
   if (!isExpanded) {
     visiblePools = visiblePools.slice(0, 3)
@@ -89,8 +90,12 @@ function getVisiblePools(
     }))
 }
 
-function getPools(user: ParsedUser | undefined, filter: MyPoolsFilter): PoolCreated[] {
-  if (!user) {
+function getPools(
+  user: ParsedUser | undefined,
+  isConnected: boolean,
+  filter: MyPoolsFilter,
+): PoolCreated[] {
+  if (!user || !isConnected) {
     return []
   }
 
@@ -129,7 +134,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
   }
   const { notifications } = useNotifications()
 
-  const isConnected = isWalletConnected && userAddress
+  const isConnected = isWalletConnected && !!userAddress
 
   return (
     <CollapsibleBlock name="mypools" title={'My pools'} {...restProps}>
@@ -140,7 +145,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
             setActiveFilter(MyPoolsFilter.Invested)
           }}
         >
-          {`Invested (${!isConnected ? 0 : getPools(userResponse, MyPoolsFilter.Invested).length})`}
+          {`Invested (${getPools(userResponse, isConnected, MyPoolsFilter.Invested).length})`}
         </TabButton>
         <TabButton
           isActive={activeFilter === MyPoolsFilter.Sponsored}
@@ -148,9 +153,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
             setActiveFilter(MyPoolsFilter.Sponsored)
           }}
         >
-          {`Sponsored (${
-            !isConnected ? 0 : getPools(userResponse, MyPoolsFilter.Sponsored).length
-          })`}
+          {`Sponsored (${getPools(userResponse, isConnected, MyPoolsFilter.Sponsored).length})`}
         </TabButton>
         <TabButton
           isActive={activeFilter === MyPoolsFilter.Funded}
@@ -158,7 +161,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
             setActiveFilter(MyPoolsFilter.Funded)
           }}
         >
-          {`Funded (${!isConnected ? 0 : getPools(userResponse, MyPoolsFilter.Funded).length})`}
+          {`Funded (${getPools(userResponse, isConnected, MyPoolsFilter.Funded).length})`}
         </TabButton>
       </Filters>
       <RequiredConnection
@@ -166,9 +169,10 @@ const MyPools: React.FC = ({ ...restProps }) => {
       >
         <>
           <Pools>
-            {getPools(userResponse, activeFilter).length > 0 ? (
+            {getPools(userResponse, isConnected, activeFilter).length > 0 ? (
               getVisiblePools(
                 userResponse,
+                isConnected,
                 notifications,
                 activeFilter,
                 filtersExpansion[activeFilter],
@@ -182,7 +186,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
               <EmptyPools>{getEmptyPoolsText(activeFilter)}</EmptyPools>
             )}
           </Pools>
-          {getPools(userResponse, activeFilter).length > 3 && (
+          {getPools(userResponse, isConnected, activeFilter).length > 3 && (
             <ButtonContainer>
               <MoreButton
                 onClick={() => {
