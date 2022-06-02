@@ -56,7 +56,7 @@ const Link = styled.a`
 const Text = styled.p`
   color: ${({ theme: { colors } }) => colors.textColorLight};
   font-size: 1.2rem;
-  margin: 8px 0;
+  margin: 5px 0;
 `
 
 export const ToastComponent = ({
