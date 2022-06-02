@@ -13,14 +13,13 @@ const Wapper = styled.div`
   box-shadow: ${({ theme: { toast } }) => toast.boxShadow};
   display: grid;
   grid-template-columns: 50px 200px;
-  height: 70px;
+  min-height: 70px;
   padding: 10px;
 `
 
 const IconContainer = styled.div`
   align-items: center;
   display: flex;
-  height: 50px;
   justify-content: center;
 `
 
@@ -31,9 +30,7 @@ const InnerWrapper = styled.div`
   position: relative;
 `
 
-const TextContainer = styled.div`
-  padding: 5px;
-`
+const TextContainer = styled.div``
 
 const ButtonClose = styled.button`
   background: transparent;
@@ -47,17 +44,19 @@ const ButtonClose = styled.button`
 const Title = styled.p`
   font-size: 1.4rem;
   font-weight: 500;
-  margin: 2px;
+  margin: 5px 0;
 `
 
 const Link = styled.a`
   color: ${({ theme: { colors } }) => colors.textColorLight};
   font-size: 1.2rem;
+  margin: 5px 0;
 `
 
 const Text = styled.p`
   color: ${({ theme: { colors } }) => colors.textColorLight};
   font-size: 1.2rem;
+  margin: 5px 0;
 `
 
 export const ToastComponent = ({
