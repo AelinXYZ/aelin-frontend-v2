@@ -488,7 +488,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
         isDone: !!pool,
         value: pool ? formatDate(pool.start, DATE_DETAILED) : '--',
       },
-      [PoolTimelineState.investmentWindow]: {
+      [PoolTimelineState.investmentDeadline]: {
         isDefined: true,
         active: pool ? isBefore(now, pool.purchaseExpiry) : false,
         isDone: pool ? isAfter(now, pool.purchaseExpiry) : false,
@@ -502,7 +502,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
         isDone: pool ? !!pool.dealAddress : false,
         value: pool?.deal ? formatDate(pool.deal.createdAt, DATE_DETAILED) : '--',
       },
-      [PoolTimelineState.dealWindow]: {
+      [PoolTimelineState.dealDeadline]: {
         isDefined: true,
         active:
           !!pool?.deal && isAfter(now, pool.deal.createdAt) && !pool.deal?.holderAlreadyDeposited,

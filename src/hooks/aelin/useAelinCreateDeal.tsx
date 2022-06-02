@@ -77,7 +77,7 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     id: CreateDealSteps.dealToken,
     order: 1,
     title: 'Deal token',
-    text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool as your deal. Examples - SNX Address (0x8700daec35af8ff88c16bdf0418774cb3d7599b4)',
+    text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool for your deal.',
     placeholder: 'Enter deal token address',
     getSummaryValue: (currentState: CreateDealStateComplete) =>
       currentState[CreateDealSteps.dealToken].symbol,

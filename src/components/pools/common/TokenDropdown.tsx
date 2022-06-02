@@ -214,10 +214,7 @@ function TokenDropdown(props: TokenDropdownProps) {
       </ButtonDropdown>
       {showModal && (
         <Modal onClose={closeModal} title="Select a token">
-          <ModalText>
-            Address of any ERC-20 tokens investors will contribute to the pool. Or choose from some
-            of the commonly used tokens already provided in the below list.
-          </ModalText>
+          <ModalText>Select a token from the list below or paste a custom address</ModalText>
           <TextfieldWrapper as="form">
             <Textfield
               // eslint-disable-next-line jsx-a11y/no-autofocus

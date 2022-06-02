@@ -3,9 +3,9 @@ export const WITHDRAW_TYPE = 'WITHDRAW_TYPE'
 
 export enum PoolTimelineState {
   'poolCreation' = 0,
-  'investmentWindow' = 1,
+  'investmentDeadline' = 1,
   'dealCreation' = 2,
-  'dealWindow' = 3,
+  'dealDeadline' = 3,
   'proRataRedemption' = 4,
   'openRedemption' = 5,
   'vestingCliff' = 6,
@@ -14,9 +14,9 @@ export enum PoolTimelineState {
 
 export enum PoolTimelineStateTitles {
   'Pool Creation',
-  'Investment Window',
+  'Investment Deadline',
   'Deal Creation',
-  'Deal Window',
+  'Deal Deadline',
   'Pro Rata Redemption',
   'Open Redemption',
   'Vesting Cliff',

@@ -65,7 +65,7 @@ export const PoolInformation = ({ pool }: Props) => {
         />
         <InfoCell
           title="Pool stats"
-          tooltip="The total amount of tokens all purchasers have deposited, withdrawn and the remaining amount in the pool"
+          tooltip="The total amount of tokens all investors have deposited, withdrawn and the remaining amount in the pool"
         >
           <Value>Funded: {pool.funded.formatted}</Value>
           <Value>Withdrawn: {pool.withdrawn.formatted}</Value>
@@ -77,7 +77,7 @@ export const PoolInformation = ({ pool }: Props) => {
         />
         <InfoCell
           title="My pool balance"
-          tooltip="The number of purchase tokens you have deposited"
+          tooltip="The number of investment tokens you have deposited"
           value={<UserStatsInfoCell pool={pool} />}
         />
       </Column>

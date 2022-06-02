@@ -129,9 +129,9 @@ export const Timeline: React.FC<{ timelineSteps?: TimelineSteps }> = ({
   const isStepDefined = (state: PoolTimelineState) => timelineSteps?.[state]?.isDefined
   const items = [
     PoolTimelineState.poolCreation,
-    PoolTimelineState.investmentWindow,
+    PoolTimelineState.investmentDeadline,
     PoolTimelineState.dealCreation,
-    PoolTimelineState.dealWindow,
+    PoolTimelineState.dealDeadline,
     PoolTimelineState.proRataRedemption,
     PoolTimelineState.openRedemption,
     PoolTimelineState.vestingCliff,
