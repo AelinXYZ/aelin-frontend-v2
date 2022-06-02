@@ -395,6 +395,7 @@ function useUserTabs(
           break
         case NotificationType.InvestmentWindowAlert:
           setActiveTab(PoolTab.PoolInformation)
+          setActiveAction(tabsActions[0])
           break
         case NotificationType.InvestmentWindowEnded:
           if (pool.deal?.holderAlreadyDeposited) {
@@ -416,6 +417,7 @@ function useUserTabs(
         case NotificationType.VestingCliffBegun:
           if (pool.deal?.holderAlreadyDeposited) {
             setActiveTab(PoolTab.DealInformation)
+            setActiveAction(tabsActions[0])
           }
           break
         case NotificationType.FundingWindowEnded:
@@ -434,6 +436,7 @@ function useUserTabs(
         case NotificationType.WithdrawUnredeemed:
           if (pool.deal?.unredeemed.raw.gt(0) && userRole === UserRole.Holder) {
             setActiveTab(PoolTab.WithdrawUnredeemed)
+            setActiveAction(PoolAction.WithdrawUnredeemed)
           } else {
             setActiveTab(tabs[tabs.length - 1])
           }
