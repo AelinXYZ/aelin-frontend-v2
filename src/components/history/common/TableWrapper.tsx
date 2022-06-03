@@ -2,32 +2,24 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import {
-  DealAccepted_OrderBy,
-  DealFunded_OrderBy,
-  DealSponsored_OrderBy,
-  Deposit_OrderBy,
-  OrderDirection,
-} from '@/graphql-schema'
+import { OrderDirection } from '@/graphql-schema'
 import { LoadingTableRow, TableHead } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
 
-type OrderBy = any
-
 type tableHeaderCellProps = {
   justifyContent?: string
-  sortKey?: OrderBy
+  sortKey?: any
   title: string
 }
 
 type TableWrapper = {
   dataLength: number
   columns: any
-  handleSort: (sortBy: OrderBy) => void
+  handleSort: (sortBy: any) => void
   hasMore: boolean
   nextPage: () => void
   order: {
-    orderBy: OrderBy
+    orderBy: any
     orderDirection: OrderDirection
   }
   tableHeaderCells: Array<tableHeaderCellProps>
@@ -57,7 +49,7 @@ export const TableWrapper: React.FC<TableWrapper> = ({
       loader={<LoadingTableRow />}
       next={nextPage}
     >
-      {!dataLength && (
+      {!!dataLength && (
         <TableHead columns={columns.widths}>
           {tableHeaderCells.map(
             ({ justifyContent, sortKey, title }: tableHeaderCellProps, index: number) => (
