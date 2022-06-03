@@ -7,6 +7,7 @@ import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLoading'
 import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { dealExchangeRates } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
@@ -36,9 +37,9 @@ export const DealInformation: React.FC<{
 }> = ({ pool }) => {
   const { chainId, deal, sponsorFee } = pool
 
-  return !deal ? (
-    <div>No Deal presented yet.</div>
-  ) : (
+  if (!deal) return <div>No Deal presented yet.</div>
+
+  return (
     <>
       <Column>
         <InfoCell
@@ -82,13 +83,17 @@ export const DealInformation: React.FC<{
           title="Round 2 deadline"
           tooltip="The open redemption period is for investors who have maxxed their allocation in the pro rata round"
         >
-          {deal.redemption && deal.redemption.openRedemptionEnd ? (
+          {deal.redemption &&
+          deal.redemption.proRataRedemptionEnd &&
+          deal.redemption.openRedemptionEnd ? (
             <DynamicDeadline
               deadline={deal.redemption.openRedemptionEnd}
-              start={deal.redemption.start}
+              start={deal.redemption.proRataRedemptionEnd}
               width="180px"
             >
-              <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
+              {deal.redemption
+                ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+                : 'N/A'}
             </DynamicDeadline>
           ) : (
             <Value>No open period</Value>
@@ -117,12 +122,19 @@ export const DealInformation: React.FC<{
         <InfoCell
           title="Round 1 deadline"
           tooltip="The pro rata redemption period is when an investor has the opportunity to max out their allocation for the deal"
-          value={
-            deal.redemption
-              ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
-              : 'N/A'
-          }
-        />
+        >
+          {deal.redemption && deal.redemption.proRataRedemptionEnd && (
+            <DynamicDeadline
+              deadline={deal.redemption.proRataRedemptionEnd}
+              start={deal.redemption.start}
+              width="180px"
+            >
+              {deal.redemption
+                ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+                : 'N/A'}
+            </DynamicDeadline>
+          )}
+        </InfoCell>
         <InfoCell title="User stats" tooltip="Pool stats for an investor connected to the app">
           <UserStatsInfoCell pool={pool} />
         </InfoCell>
