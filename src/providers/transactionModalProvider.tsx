@@ -40,6 +40,8 @@ type ModalConfig = {
   onConfirm: ({ gasLimit, gasPrice }: GasOptions) => Promise<void>
   /** The modal title */
   title: string
+  /** The modal subtitle */
+  subTitle?: string
 }
 
 export default function TransactionModalProvider({ children }: Props) {
@@ -92,17 +94,21 @@ export default function TransactionModalProvider({ children }: Props) {
         },
         setGasPrice,
         title: modalConfig.title,
+        subTitle: modalConfig.subTitle,
       },
     [gasLimitEstimate, isSubmitting, txGasOptions, modalConfig],
   )
 
-  const setConfigAndOpenModal = useCallback(({ estimate, onConfirm, title }: ModalConfig) => {
-    // open modal with loading (need to finish estimate call)
-    setIsSubmitting(true)
-    setShowModalTransaction(true)
+  const setConfigAndOpenModal = useCallback(
+    ({ estimate, onConfirm, subTitle, title }: ModalConfig) => {
+      // open modal with loading (need to finish estimate call)
+      setIsSubmitting(true)
+      setShowModalTransaction(true)
 
-    setModalConfig({ estimate, title, onConfirm })
-  }, [])
+      setModalConfig({ estimate, title, subTitle, onConfirm })
+    },
+    [],
+  )
 
   useEffect(() => {
     // when estimate is setted, is called too
