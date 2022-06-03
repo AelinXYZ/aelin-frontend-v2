@@ -170,8 +170,8 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                   {createDealState.currentStep === CreateDealSteps.openPeriod &&
                     isOpenPeriodDisabled && (
                       <Error textAlign="center">
-                        Open period is bypassed when 100% of tokens have been allocated to
-                        investors. Please click next to proceed
+                        Round 2 is bypassed when all investment tokens have been allocated. Please
+                        click next to proceed
                       </Error>
                     )}
                   {currentStepError && typeof currentStepError === 'string' && (

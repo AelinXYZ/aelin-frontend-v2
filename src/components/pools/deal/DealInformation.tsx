@@ -71,9 +71,9 @@ export const DealInformation: React.FC<{
           tooltip="A series of steps that investors go through from depositing funds to vesting deal tokens. The full list of stages are: Pro Rata Redemption, Open Redemption, Redemption closed"
           value={
             deal.redemption?.stage === 1
-              ? 'Round 1: Pro Rata Redemption'
+              ? 'Round 1: Accept Allocation'
               : deal.redemption?.stage === 2
-              ? 'Round 2: Open Redemption'
+              ? 'Round 2: Accept Remaining'
               : 'Redemption closed'
           }
         />
@@ -81,6 +81,7 @@ export const DealInformation: React.FC<{
           title="Round 2 deadline"
           tooltip="The open redemption period is for investors who have maxxed their allocation in the pro rata round"
         >
+          <Value>Accept Remaining</Value>
           {deal.redemption && deal.redemption.openRedemptionEnd ? (
             <DynamicDeadline
               deadline={deal.redemption.openRedemptionEnd}
@@ -90,7 +91,7 @@ export const DealInformation: React.FC<{
               <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
             </DynamicDeadline>
           ) : (
-            <Value>No open period</Value>
+            <Value>N/A</Value>
           )}
         </InfoCell>
         <InfoCell title="Pool stats" tooltip="Stats across all investors in the pool">

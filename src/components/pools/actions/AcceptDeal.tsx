@@ -82,7 +82,7 @@ function AcceptDeal({ pool }: Props) {
     formatToken(userProRataAllocation.raw || ZERO_BN, investmentTokenDecimals) || '0'
 
   return (
-    <Wrapper title={`Deal allocation stage ${stage}`}>
+    <Wrapper title={`Round ${stage}`}>
       <Contents>
         By clicking "accept deal" you are agreeing to the negotiated exchange rate.
       </Contents>

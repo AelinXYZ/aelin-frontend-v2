@@ -17,8 +17,8 @@ export enum PoolTimelineStateTitles {
   'Investment Deadline',
   'Deal Creation',
   'Deal Deadline',
-  'Pro Rata Redemption',
-  'Open Redemption',
+  'Round 1: Accept Allocation',
+  'Round 2: Accept Remaining',
   'Vesting Cliff',
   'Vesting Period',
 }

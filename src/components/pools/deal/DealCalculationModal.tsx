@@ -96,7 +96,7 @@ export const DealCalculationModal: React.FC<{
   return (
     <Modal onClose={onClose} title="Deal Calculation">
       <Text>
-        Total Purchase Token ({investmentToken?.symbol}):{' '}
+        Total Investment Token ({investmentToken?.symbol}):{' '}
         <TokenValue>{totalPurchaseAmount.toNumber()}</TokenValue>
       </Text>
       <Label>
