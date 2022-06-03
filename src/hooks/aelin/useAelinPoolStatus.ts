@@ -409,6 +409,8 @@ function useUserTabs(
         case NotificationType.HolderSet:
           if (pool.deal?.holderAlreadyDeposited) {
             setActiveTab(PoolTab.DealInformation)
+          } else {
+            setActiveTab(PoolTab.PoolInformation)
             setActiveAction(PoolAction.FundDeal)
           }
           break
