@@ -56,11 +56,15 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
       },
       userTotalWithdrawn: {
         raw: userAmountWithdrawn,
-        formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
+        formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals) || '0',
       },
       userMaxAllocation: {
         raw: userMaxAllocation,
         formatted: formatToken(userMaxAllocation, pool.investmentTokenDecimals) || '0',
+      },
+      totalAmountAccepted: {
+        raw: totalAmountAccepted,
+        formatted: formatToken(totalAmountAccepted, pool.investmentTokenDecimals),
       },
     }
   }, [
