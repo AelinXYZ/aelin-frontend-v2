@@ -87,6 +87,7 @@ export const DealInformation: React.FC<{
           deal.redemption.openRedemptionEnd ? (
             <DynamicDeadline
               deadline={deal.redemption.openRedemptionEnd}
+              hideWhenDeadlineIsReached={true}
               start={deal.redemption.proRataRedemptionEnd}
               width="180px"
             >
@@ -125,6 +126,7 @@ export const DealInformation: React.FC<{
           {deal.redemption && deal.redemption.proRataRedemptionEnd && (
             <DynamicDeadline
               deadline={deal.redemption.proRataRedemptionEnd}
+              hideWhenDeadlineIsReached={true}
               start={deal.redemption.start}
               width="180px"
             >

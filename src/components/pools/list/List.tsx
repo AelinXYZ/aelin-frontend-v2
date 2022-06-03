@@ -212,8 +212,12 @@ export const List: React.FC<{
                     />
                   </HideOnDesktop>
                 </Cell>
-                <DynamicDeadline deadline={purchaseExpiry} start={start}>
-                  {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
+                <DynamicDeadline
+                  deadline={purchaseExpiry}
+                  hideWhenDeadlineIsReached={false}
+                  start={start}
+                >
+                  {getFormattedDurationFromDateToNow(purchaseExpiry)}
                 </DynamicDeadline>
                 <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
                   <TokenIcon

@@ -86,8 +86,13 @@ export const PoolInformation = ({ pool }: Props) => {
           title="Investment deadline"
           tooltip="The amount of time investors have to deposit Investment tokens"
         >
-          <DynamicDeadline deadline={pool.purchaseExpiry} start={pool.start} width="180px">
-            <Value>{formatDate(pool.purchaseExpiry, DATE_DETAILED)}</Value>
+          <DynamicDeadline
+            deadline={pool.purchaseExpiry}
+            hideWhenDeadlineIsReached={true}
+            start={pool.start}
+            width="180px"
+          >
+            {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
           </DynamicDeadline>
         </InfoCell>
         <InfoCell

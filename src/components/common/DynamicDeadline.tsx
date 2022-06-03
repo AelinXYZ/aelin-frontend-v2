@@ -9,6 +9,7 @@ import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 
 type DynamicDeadlineProps = {
   deadline: Date
+  hideWhenDeadlineIsReached?: boolean
   start: Date
   width?: string
 }
@@ -16,6 +17,7 @@ type DynamicDeadlineProps = {
 export const DynamicDeadline: React.FC<DynamicDeadlineProps> = ({
   children,
   deadline,
+  hideWhenDeadlineIsReached,
   start,
   width,
 }) => {
@@ -41,11 +43,13 @@ export const DynamicDeadline: React.FC<DynamicDeadlineProps> = ({
     return () => clearInterval(interval)
   }, [deadline, start])
 
-  if (progress === '0') return <Value>Ended {children}</Value>
+  const isEnded = Number(progress) === 0
+
+  if (isEnded && hideWhenDeadlineIsReached) return <Value>Ended {children}</Value>
 
   return (
     <Deadline progress={progress} width={width}>
-      <Value>Ends {children}</Value>
+      {!isEnded ? <Value>{`Ends ${children}`}</Value> : 'Ended'}
     </Deadline>
   )
 }

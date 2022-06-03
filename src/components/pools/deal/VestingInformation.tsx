@@ -51,10 +51,11 @@ export const VestingInformation: React.FC<{
             pool.deal?.redemption?.end && pool.deal?.vestingPeriod.cliff.end ? (
               <DynamicDeadline
                 deadline={pool.deal?.vestingPeriod.cliff.end}
+                hideWhenDeadlineIsReached={true}
                 start={pool.deal?.redemption?.end}
                 width="180px"
               >
-                <Value>{formatDate(pool.deal?.vestingPeriod.cliff.end, DATE_DETAILED)}</Value>
+                {formatDate(pool.deal?.vestingPeriod.cliff.end, DATE_DETAILED)}
               </DynamicDeadline>
             ) : (
               'N/A'
@@ -76,10 +77,11 @@ export const VestingInformation: React.FC<{
             pool.deal?.vestingPeriod.cliff.end && pool.deal?.vestingPeriod.vesting.end ? (
               <DynamicDeadline
                 deadline={pool.deal?.vestingPeriod.vesting.end}
+                hideWhenDeadlineIsReached={true}
                 start={pool.deal?.vestingPeriod.cliff.end}
                 width="180px"
               >
-                <Value>{formatDate(pool.deal?.vestingPeriod.vesting.end, DATE_DETAILED)}</Value>
+                {formatDate(pool.deal?.vestingPeriod.vesting.end, DATE_DETAILED)}
               </DynamicDeadline>
             ) : (
               'N/A'

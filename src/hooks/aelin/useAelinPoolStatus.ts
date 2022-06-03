@@ -479,11 +479,8 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
   }, [])
 
   return useMemo(() => {
-    const getStepDeadline = (deadline: Date, message?: string) =>
-      getFormattedDurationFromDateToNow(
-        deadline,
-        message ?? `Ended ${formatDate(deadline, DATE_DETAILED)}`,
-      )
+    const getStepDeadline = (deadline: Date) => getFormattedDurationFromDateToNow(deadline)
+
     return {
       [PoolTimelineState.poolCreation]: {
         isDefined: true,
@@ -547,7 +544,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
           : '0',
         value:
           pool?.deal?.redemption && pool.deal.holderAlreadyDeposited
-            ? `Ends ${formatDate(pool.deal.redemption.proRataRedemptionEnd, DATE_DETAILED)}`
+            ? `Ended ${formatDate(pool.deal.redemption.proRataRedemptionEnd, DATE_DETAILED)}`
             : '',
       },
       [PoolTimelineState.openRedemption]: {
@@ -576,7 +573,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
           : '0',
         value:
           pool?.deal?.redemption?.openRedemptionEnd && pool.deal.holderAlreadyDeposited
-            ? `Ends ${formatDate(pool.deal.redemption.openRedemptionEnd, DATE_DETAILED)}`
+            ? `Ended ${formatDate(pool.deal.redemption.openRedemptionEnd, DATE_DETAILED)}`
             : '',
       },
       [PoolTimelineState.vestingCliff]: {
@@ -605,7 +602,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
             : '0',
         value:
           pool?.deal?.redemption && isAfter(now, pool.deal.redemption.end)
-            ? `Ends ${formatDate(
+            ? `Ended ${formatDate(
                 addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
                 DATE_DETAILED,
               )}`
