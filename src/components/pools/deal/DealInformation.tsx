@@ -24,6 +24,7 @@ const UserStatsInfoCell = genericSuspense(
       <>
         <Value>Remaining pro-rata allocation: {userStats.userMaxAllocation.formatted}</Value>
         <Value>Withdrawn: {userStats.userTotalWithdrawn.formatted}</Value>
+        <Value>Accepted: {userStats.totalAmountAccepted.formatted}</Value>
       </>
     )
   },
