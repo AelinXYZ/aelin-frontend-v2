@@ -519,7 +519,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
           : '0',
         value:
           pool?.deal && pool.deal?.holderAlreadyDeposited
-            ? `Ends ${formatDate(pool.deal.holderFundingExpiration, DATE_DETAILED)}`
+            ? `Ended ${formatDate(pool.deal.holderFundingExpiration, DATE_DETAILED)}`
             : '',
       },
       [PoolTimelineState.proRataRedemption]: {
