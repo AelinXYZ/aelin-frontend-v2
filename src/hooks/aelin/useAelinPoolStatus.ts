@@ -445,7 +445,7 @@ function useUserTabs(
           setActiveTab(tabs[tabs.length - 1])
       }
     } else {
-      if (tabs.includes(PoolTab.WithdrawUnredeemed)) {
+      if (tabs.includes(PoolTab.WithdrawUnredeemed) && pool.deal?.unredeemed.raw.gt(0)) {
         setActiveTab(PoolTab.WithdrawUnredeemed)
         setActiveAction(PoolAction.WithdrawUnredeemed)
       } else {
