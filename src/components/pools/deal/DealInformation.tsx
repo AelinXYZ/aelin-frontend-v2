@@ -7,7 +7,6 @@ import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
 import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLoading'
 import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { dealExchangeRates } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
