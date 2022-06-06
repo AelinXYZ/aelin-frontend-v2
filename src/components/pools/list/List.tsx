@@ -179,7 +179,7 @@ export const List: React.FC<{
               >
                 <NameCell>
                   <Name>{name.split('aePool-').pop()}</Name>
-                  {activeNotifications ? (
+                  {!!activeNotifications && (
                     <Badge
                       data-html={true}
                       data-multiline={true}
@@ -189,7 +189,7 @@ export const List: React.FC<{
                     >
                       {activeNotifications.toString()}
                     </Badge>
-                  ) : null}
+                  )}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                 </NameCell>
                 <ENSOrAddress address={sponsor} network={network} />

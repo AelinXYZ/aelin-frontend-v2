@@ -24,7 +24,7 @@ export const DynamicDeadline: React.FC<DynamicDeadlineProps> = ({
   const now = new Date()
 
   const [progress, setProgress] = useState(() =>
-    isAfter(now, start) ? calculateDeadlineProgress(deadline, start) : '0',
+    isAfter(now, start) ? calculateDeadlineProgress(deadline, start) : '100',
   )
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const DynamicDeadline: React.FC<DynamicDeadlineProps> = ({
 
   return (
     <Deadline progress={progress} width={width}>
-      {!isEnded ? <Value>{`Ends ${children}`}</Value> : 'Ended'}
+      <Value>{!isEnded ? `Ends ${children}` : 'Ended'}</Value>
     </Deadline>
   )
 }

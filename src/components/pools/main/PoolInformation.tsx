@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
 
+import isAfter from 'date-fns/isAfter'
+
 import { TokenIcon } from '../common/TokenIcon'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -43,6 +45,8 @@ const UserStatsInfoCell = genericSuspense(
 )
 
 export const PoolInformation = ({ pool }: Props) => {
+  const now = new Date()
+
   return (
     <>
       <Column>
@@ -99,7 +103,18 @@ export const PoolInformation = ({ pool }: Props) => {
           title="Deal deadline"
           tooltip="The amount of time a sponsor has to find a deal before investors can withdraw their funds. A deal may still be created after the deadline if funds are still in the pool."
           value={formatDate(pool.dealDeadline, DATE_DETAILED)}
-        />
+        >
+          {isAfter(now, pool.purchaseExpiry) && (
+            <DynamicDeadline
+              deadline={pool.dealDeadline}
+              hideWhenDeadlineIsReached={true}
+              start={pool.purchaseExpiry}
+              width="180px"
+            >
+              {formatDate(pool.dealDeadline, DATE_DETAILED)}
+            </DynamicDeadline>
+          )}
+        </InfoCell>
         <InfoCell
           title="Sponsor"
           tooltip="The sponsor will seek a deal on behalf of purchasers entering this pool"

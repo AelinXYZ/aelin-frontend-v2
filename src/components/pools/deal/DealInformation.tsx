@@ -92,7 +92,7 @@ export const DealInformation: React.FC<{
               width="180px"
             >
               {deal.redemption
-                ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+                ? formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)
                 : 'N/A'}
             </DynamicDeadline>
           ) : (
