@@ -53,6 +53,7 @@ export type TimelineSteps = {
     active: boolean
     isDone: boolean
     value?: string
+    withDeadlineBar: boolean
     deadline?: string
     deadlineProgress?: string
     isDefined?: boolean
