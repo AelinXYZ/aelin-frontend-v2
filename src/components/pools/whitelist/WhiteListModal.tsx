@@ -2,12 +2,12 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { Modal as BaseModal } from '@/src/components/common/Modal'
+import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/WhiteListTabs'
 import AddressesWhiteList, {
   AddressWhitelistProps,
   initialWhitelistValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import NftWhiteList, { NftWhiteListStep } from '@/src/components/pools/whitelist/nft/NftWhiteList'
-import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/nft/WhiteListTabs'
 import {
   NftType,
   NftWhitelistProcess,
