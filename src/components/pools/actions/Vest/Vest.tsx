@@ -57,7 +57,7 @@ function Vest({ pool }: Props) {
   const hasRemainingTokens =
     Number(lastClaim) !== 0
       ? isBefore(lastClaim * 1000, pool.deal?.vestingPeriod.vesting.end as Date)
-      : !amountToVest.eq(ZERO_BN)
+      : amountToVest.gt(ZERO_BN)
 
   const isVestButtonDisabled = useMemo(() => {
     return !address || !isAppConnected || isSubmitting || !hasRemainingTokens
