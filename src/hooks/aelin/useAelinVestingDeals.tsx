@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
-import { isAfter, isBefore } from 'date-fns'
+import { isBefore } from 'date-fns'
 import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
