@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
+import { isMobile } from 'react-device-detect'
+
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -86,7 +88,7 @@ const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
 }) => {
   const [persistentState, setPersistentState] = useLocalStorage(
     `persistent-state_${name}`,
-    CollapsibleBlockStates.expanded,
+    isMobile ? CollapsibleBlockStates.collapsed : CollapsibleBlockStates.expanded,
   )
   const [state, setState] = useState(
     persistentState ? persistentState : CollapsibleBlockStates.expanded,
