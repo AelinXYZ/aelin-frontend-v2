@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FC } from 'react'
 
-import { isAddress } from '@ethersproject/address'
 import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
@@ -22,8 +21,6 @@ const UploadCSV: FC<IUploadCSV> = ({ onUploadCSV }) => {
       accum.push({
         address,
         amount: Number(amount),
-        isSaved: true,
-        error: !isAddress(address),
       })
 
       return accum

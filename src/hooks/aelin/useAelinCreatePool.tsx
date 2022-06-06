@@ -67,7 +67,6 @@ export interface CreatePoolStateComplete {
   whitelist: {
     address: string
     amount: number
-    isSaved: boolean
   }[]
 }
 
