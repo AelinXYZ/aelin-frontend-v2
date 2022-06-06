@@ -366,7 +366,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                 <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
                   <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
                   <DynamicDeadline deadline={vestingPeriodEnds} start={vestingPeriodStarts}>
-                    {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
+                    {getFormattedDurationFromDateToNow(vestingPeriodEnds)}
                   </DynamicDeadline>
                 </Cell>
                 <Cell justifyContent="center" mobileJustifyContent="center">
