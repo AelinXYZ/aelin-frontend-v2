@@ -14,6 +14,7 @@ gql`
     purchaseDuration
     purchaseExpiry
     purchaseTokenDecimals
+    totalUsersInvested
     timestamp
     dealAddress
     hasAllowList
