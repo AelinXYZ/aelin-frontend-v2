@@ -127,6 +127,11 @@ export const theme = {
     paddingMobile: '0 10px 80px 10px',
     paddingTabletLandscapeStart: '10px',
   },
+  nftWhiteList: {
+    border: '1px solid rgba(255, 255, 255, 0.25)',
+    borderRadius: '8px',
+    layerBackgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
   stages: {
     open: green,
     awaitingdeal: yellow,
