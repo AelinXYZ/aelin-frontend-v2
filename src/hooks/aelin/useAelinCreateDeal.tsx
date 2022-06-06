@@ -97,9 +97,9 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     text: (
       <>
         You have two options for how many investment tokens you'll accept for the deal. <br />
-        1- All: Every purchase token will be exchanged for a deal token.
+        1. All: Every investment token will be exchanged for a deal token.
         <br />
-        2- Partial: A partial amount of investment tokens in the pool will be exchangeable for deal
+        2. Partial: A partial amount of investment tokens in the pool will be exchangeable for deal
         tokens
       </>
     ),

@@ -128,7 +128,7 @@ export const PoolInformation = ({ pool }: Props) => {
         </InfoCell>
         <InfoCell
           title="Sponsor"
-          tooltip="The sponsor will seek a deal on behalf of purchasers entering this pool"
+          tooltip="The sponsor will seek a deal on behalf of investors entering this pool"
           value={<ENSOrAddress address={pool.sponsor} network={pool.chainId} />}
         />
         <InfoCell

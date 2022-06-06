@@ -94,7 +94,7 @@ export const DealInformation: React.FC<{
         </InfoCell>
         <InfoCell
           title="Deal stage"
-          tooltip="A series of steps that investors go through from depositing funds to vesting deal tokens. The full list of stages are: Pro Rata Redemption, Open Redemption, Redemption closed"
+          tooltip="A series of steps that investors go through from depositing funds to vesting deal tokens. The full list of stages are: Round 1, Round 2, Vesting Cliff and Vesting Period closed"
           value={
             deal.redemption?.stage === 1
               ? 'Round 1: Accept Allocation'
@@ -105,9 +105,8 @@ export const DealInformation: React.FC<{
         />
         <InfoCell
           title="Round 2 deadline"
-          tooltip="The open redemption period is for investors who have maxxed their allocation in the pro rata round"
+          tooltip="The period where investors who maxxed their allocation in Round 1 may purchase any unredeemed deal tokens"
         >
-          <Value>Accept Remaining</Value>
           {deal.redemption &&
           deal.redemption.proRataRedemptionEnd &&
           deal.redemption.openRedemptionEnd ? (
@@ -147,7 +146,7 @@ export const DealInformation: React.FC<{
         </InfoCell>
         <InfoCell
           title="Round 1 deadline"
-          tooltip="The pro rata redemption period is when an investor has the opportunity to max out their allocation for the deal"
+          tooltip="The period when an investor may accept their allocation for the deal"
         >
           {deal.redemption && deal.redemption.proRataRedemptionEnd && (
             <DynamicDeadline
@@ -175,8 +174,8 @@ export const DealInformation: React.FC<{
           <Value>Aelin protocol fee: 2%</Value>
         </InfoCell>
         <InfoCell
-          title="Deal tokens sold"
-          tooltip="The total amount of deal tokens sold to investors"
+          title="Deal tokens accepted"
+          tooltip="The total amount of deal tokens accepted by investors so far"
         >
           <StyledValue>
             {deal.tokensSold.formatted}{' '}

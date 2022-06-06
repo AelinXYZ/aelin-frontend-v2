@@ -67,12 +67,12 @@ export const VestingInformation: React.FC<{
         <InfoCell title="Symbol" value={deal.symbol} />
         <InfoCell
           title="Deal token amount"
-          tooltip="The total amount of underlying deal tokens in the deal"
+          tooltip="The total amount of deal tokens in the deal"
           value={`${deal.underlyingToken.dealAmount.formatted} ${deal.underlyingToken.symbol}`}
         />
         <InfoCell
           title="Vesting period ends"
-          tooltip="The amount of time it takes to vest all underlying deal tokens after the vesting cliff"
+          tooltip="The amount of time it takes to vest all deal tokens after the vesting cliff"
           value={
             pool.deal?.vestingPeriod.cliff.end && pool.deal?.vestingPeriod.vesting.end ? (
               <DynamicDeadline
