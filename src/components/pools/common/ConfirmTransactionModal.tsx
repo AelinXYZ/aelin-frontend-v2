@@ -20,6 +20,7 @@ export type ModalTransactionProps = {
   setGasPrice: (gasPrice: Wei) => void
   onClose: () => void
   title: string
+  subTitle?: string
 }
 
 const ConfirmTransactionModal = ({
@@ -28,6 +29,7 @@ const ConfirmTransactionModal = ({
   onClose,
   onSubmit,
   setGasPrice,
+  subTitle,
   title,
 }: ModalTransactionProps) => {
   const [loadingGas, setLoadingGas] = useState(true)
@@ -36,6 +38,7 @@ const ConfirmTransactionModal = ({
   return (
     <Modal onClose={onClose} title="Confirm transaction">
       <ModalText>{title}</ModalText>
+      {!!subTitle && <ModalText>{subTitle}</ModalText>}
       <ModalLine />
       <GasSelector
         gasLimitEstimate={gasLimitEstimate}

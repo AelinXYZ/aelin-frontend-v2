@@ -409,6 +409,8 @@ function useUserTabs(
         case NotificationType.HolderSet:
           if (pool.deal?.holderAlreadyDeposited) {
             setActiveTab(PoolTab.DealInformation)
+          } else {
+            setActiveTab(PoolTab.PoolInformation)
             setActiveAction(PoolAction.FundDeal)
           }
           break
@@ -445,7 +447,7 @@ function useUserTabs(
           setActiveTab(tabs[tabs.length - 1])
       }
     } else {
-      if (tabs.includes(PoolTab.WithdrawUnredeemed)) {
+      if (tabs.includes(PoolTab.WithdrawUnredeemed) && pool.deal?.unredeemed.raw.gt(0)) {
         setActiveTab(PoolTab.WithdrawUnredeemed)
         setActiveAction(PoolAction.WithdrawUnredeemed)
       } else {

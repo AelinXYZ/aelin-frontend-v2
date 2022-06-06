@@ -11,7 +11,7 @@ type Props = {
 }
 
 function UserInvestmentTokenBalance({ pool }: Props) {
-  const { address } = useWeb3Connection()
+  const { address, isWalletConnected } = useWeb3Connection()
   const [userInvestmentTokenBalance] = useERC20Call(
     pool.chainId,
     pool.investmentToken,
@@ -20,7 +20,9 @@ function UserInvestmentTokenBalance({ pool }: Props) {
   )
   return (
     <>
-      {formatToken(userInvestmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals) || 0}{' '}
+      {isWalletConnected
+        ? formatToken(userInvestmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals) || 0
+        : 0}{' '}
       {pool.investmentTokenSymbol}
     </>
   )
