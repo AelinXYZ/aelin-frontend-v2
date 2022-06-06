@@ -5,13 +5,13 @@ import { Modal as BaseModal } from '@/src/components/common/Modal'
 import AddressesWhiteList, {
   AddressWhitelistProps,
   initialWhitelistValues,
-} from '@/src/components/pools/whitelist/AddressesWhiteList'
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import {
   NftType,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/NftCollectionsSection'
-import NftWhiteList, { NftWhiteListStep } from '@/src/components/pools/whitelist/NftWhiteList'
-import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/WhiteListTabs'
+} from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
+import NftWhiteList, { NftWhiteListStep } from '@/src/components/pools/whitelist/nft/NftWhiteList'
+import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/nft/WhiteListTabs'
 
 const Modal = styled(BaseModal)`
   .modalCard {

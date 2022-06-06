@@ -4,7 +4,7 @@ import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import {
   NftType,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/NftCollectionsSection'
+} from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
 
 const Description = styled.p`
   color: ${({ theme }) => theme.colors.textColor};

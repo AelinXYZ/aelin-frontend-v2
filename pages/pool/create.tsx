@@ -16,8 +16,8 @@ import {
 } from '@/src/components/pools/common/Create'
 import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInput'
 import { Summary } from '@/src/components/pools/common/Summary'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/AddressesWhiteList'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import {
   ButtonPrimaryLight,
   GradientButton,

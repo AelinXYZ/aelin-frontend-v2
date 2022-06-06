@@ -4,9 +4,9 @@ import { StepContents } from '@/src/components/pools/common/Create'
 import NftCollectionsSection, {
   NftType,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/NftCollectionsSection'
-import NftTypeSection from '@/src/components/pools/whitelist/NftTypeSection'
-import NftWhiteListProcessSection from '@/src/components/pools/whitelist/NftWhiteListProcessSection'
+} from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
+import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
+import NftWhiteListProcessSection from '@/src/components/pools/whitelist/nft/NftWhiteListProcessSection'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 

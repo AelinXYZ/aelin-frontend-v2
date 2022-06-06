@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 
 import { ModalButtonCSS } from '@/src/components/common/Modal'
-import UploadCSV from '@/src/components/pools/whitelist/UploadWhiteListCsv'
+import UploadCSV from '@/src/components/pools/whitelist/addresses/UploadWhiteListCsv'
 import {
   ButtonPrimaryLightSm,
   GradientButton,
