@@ -143,7 +143,7 @@ export const Timeline: React.FC<{ timelineSteps?: TimelineSteps }> = ({
       content: (
         <>
           <Title>{PoolTimelineStateTitles[state]}</Title>
-          {timelineSteps?.[state]?.deadline ? (
+          {timelineSteps?.[state]?.withDeadlineBar ? (
             <>
               <Deadline progress={timelineSteps?.[state]?.deadlineProgress || '0'} width="180px">
                 <Value>{timelineSteps?.[state]?.deadline}</Value>

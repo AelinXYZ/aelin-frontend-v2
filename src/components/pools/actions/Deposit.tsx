@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
+import { TextPrimary } from '../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -17,6 +19,27 @@ type Props = {
   pool: ParsedAelinPool
   poolHelpers: Funding
 }
+
+const StyledTokenInput = styled(TokenInput)<{ isPrivate?: boolean }>`
+  margin-bottom: ${(props) => (props.isPrivate ? '0px' : '40px')};
+`
+
+export const Contents = styled.p`
+  color: ${({ theme }) => theme.colors.textColorLight};
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 15px 0 30px 0;
+  text-align: left;
+  text-decoration: none;
+  width: 100%;
+`
+
+const Allowance = ({ allowance }: { allowance: string }) => (
+  <Contents>
+    Allowance: <TextPrimary>{allowance}</TextPrimary>
+  </Contents>
+)
 
 function Deposit({ pool, poolHelpers }: Props) {
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
@@ -83,15 +106,21 @@ function Deposit({ pool, poolHelpers }: Props) {
 
   return (
     <>
-      <TokenInput
+      <StyledTokenInput
         decimals={investmentTokenDecimals}
         error={inputError}
+        isPrivate={isPrivatePool(pool.poolType)}
         maxValue={sortedBalances[0].raw.toString()}
         maxValueFormatted={investmentTokenBalance.formatted || '0'}
         setValue={setTokenInputValue}
         symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
+      {isPrivatePool(pool.poolType) && !!userMaxDepositPrivateAmount?.formatted && (
+        <Allowance
+          allowance={`${userMaxDepositPrivateAmount.formatted} ${pool.investmentTokenSymbol}`}
+        />
+      )}
       <ButtonGradient
         disabled={
           !address ||

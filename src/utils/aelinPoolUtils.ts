@@ -263,3 +263,18 @@ export function getCurrentStage(pool: ParsedAelinPool) {
 export function isPrivatePool(poolType: string) {
   return poolType.toLowerCase() === Privacy.PRIVATE
 }
+
+export function getTokensSold(
+  redeemed: DetailedNumber,
+  rate: DetailedNumber,
+  dealTokenDecimals: number,
+  investmentTokenDecimals: number,
+) {
+  const _redeemed = new Wei(redeemed.raw, dealTokenDecimals, true)
+  const _rate = new Wei(rate.raw, dealTokenDecimals, true)
+  const tokensSold = _redeemed.div(_rate).toBN()
+  return {
+    raw: tokensSold,
+    formatted: formatToken(tokensSold, investmentTokenDecimals),
+  }
+}

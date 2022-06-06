@@ -17,14 +17,31 @@ const Column = styled.div`
   row-gap: 20px;
 `
 
+const StyledValue = styled(Value)`
+  gap: 5px;
+`
+
 const UserStatsInfoCell = genericSuspense(
-  ({ pool }: { pool: ParsedAelinPool }) => {
+  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
     const userStats = useAelinDealUserStats(pool)
     return (
-      <>
+      <InfoCell title={title} tooltip={tooltip}>
         <Value>Remaining pro-rata allocation: {userStats.userMaxAllocation.formatted}</Value>
         <Value>Withdrawn: {userStats.userTotalWithdrawn.formatted}</Value>
-      </>
+        <Value>Accepted: {userStats.totalAmountAccepted.formatted}</Value>
+      </InfoCell>
+    )
+  },
+  () => <InlineLoading />,
+)
+
+const DealParticipantsInfoCell = genericSuspense(
+  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
+    return (
+      <InfoCell title={title} tooltip={tooltip}>
+        <Value>Accepted: {pool.deal?.totalUsersAccepted || 0}</Value>
+        <Value>Rejected: {pool.deal?.totalUsersRejected || 0}</Value>
+      </InfoCell>
     )
   },
   () => <InlineLoading />,
@@ -35,9 +52,9 @@ export const DealInformation: React.FC<{
 }> = ({ pool }) => {
   const { chainId, deal, sponsorFee } = pool
 
-  return !deal ? (
-    <div>No Deal presented yet.</div>
-  ) : (
+  if (!deal) return <div>No Deal presented yet.</div>
+
+  return (
     <>
       <Column>
         <InfoCell
@@ -50,15 +67,24 @@ export const DealInformation: React.FC<{
           }
         />
         <InfoCell
-          title="Deal token"
-          tooltip="The token an investor may claim after an optional vesting period if they accept the deal"
-          value={
+          title="Token totals"
+          tooltip="The total amount of investment tokens funded and deal tokens available"
+        >
+          <StyledValue>
+            Investment token: {pool.funded.formatted}{' '}
+            <ExternalLink
+              href={getExplorerUrl(pool.investmentToken, chainId)}
+              label={pool.investmentTokenSymbol}
+            />
+          </StyledValue>
+          <StyledValue>
+            Deal token: {deal.underlyingToken.dealAmount.formatted}
             <ExternalLink
               href={getExplorerUrl(deal.underlyingToken.token, chainId)}
               label={deal.underlyingToken.symbol}
             />
-          }
-        />
+          </StyledValue>
+        </InfoCell>
         <InfoCell
           title="Exchange rates"
           tooltip="The ratio at which investment tokens deposited in the pool will be exchanged for deal tokens"
@@ -82,13 +108,18 @@ export const DealInformation: React.FC<{
           tooltip="The open redemption period is for investors who have maxxed their allocation in the pro rata round"
         >
           <Value>Accept Remaining</Value>
-          {deal.redemption && deal.redemption.openRedemptionEnd ? (
+          {deal.redemption &&
+          deal.redemption.proRataRedemptionEnd &&
+          deal.redemption.openRedemptionEnd ? (
             <DynamicDeadline
               deadline={deal.redemption.openRedemptionEnd}
-              start={deal.redemption.start}
+              hideWhenDeadlineIsReached={true}
+              start={deal.redemption.proRataRedemptionEnd}
               width="180px"
             >
-              <Value>{formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)}</Value>
+              {deal.redemption
+                ? formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)
+                : 'N/A'}
             </DynamicDeadline>
           ) : (
             <Value>N/A</Value>
@@ -99,14 +130,14 @@ export const DealInformation: React.FC<{
           <Value>Total redeem: {pool.redeem.formatted}</Value>
           <Value>Total withdrawn: {pool.withdrawn.formatted}</Value>
         </InfoCell>
+        <DealParticipantsInfoCell
+          pool={pool}
+          title="Deal participants"
+          tooltip="Total amount of users who accepted or rejected the deal"
+        />
       </Column>
       <Column>
         <InfoCell title="Symbol" value={deal.symbol} />
-        <InfoCell
-          title="Deal token amount"
-          tooltip="The total amount of underlying deal tokens in the deal"
-          value={`${deal.underlyingToken.dealAmount.formatted} ${deal.underlyingToken.symbol}`}
-        />
         <InfoCell
           title="Vesting data"
           tooltip="The time investors need to wait before claiming their deal tokens after the deal is complete"
@@ -117,21 +148,43 @@ export const DealInformation: React.FC<{
         <InfoCell
           title="Round 1 deadline"
           tooltip="The pro rata redemption period is when an investor has the opportunity to max out their allocation for the deal"
-          value={
-            deal.redemption
-              ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
-              : 'N/A'
-          }
-        />
-        <InfoCell title="User stats" tooltip="Pool stats for an investor connected to the app">
-          <UserStatsInfoCell pool={pool} />
+        >
+          {deal.redemption && deal.redemption.proRataRedemptionEnd && (
+            <DynamicDeadline
+              deadline={deal.redemption.proRataRedemptionEnd}
+              hideWhenDeadlineIsReached={true}
+              start={deal.redemption.start}
+              width="180px"
+            >
+              {deal.redemption
+                ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+                : 'N/A'}
+            </DynamicDeadline>
+          )}
         </InfoCell>
+        <UserStatsInfoCell
+          pool={pool}
+          title="User stats"
+          tooltip="Pool stats for an investor connected to the app"
+        />
         <InfoCell
           title="Fees charged on accept"
           tooltip="A 2% protocol fee in addition to a sponsor fee is only charged on deal acceptance"
         >
           <Value>Sponsor Fee: {sponsorFee.formatted}</Value>
           <Value>Aelin protocol fee: 2%</Value>
+        </InfoCell>
+        <InfoCell
+          title="Deal tokens sold"
+          tooltip="The total amount of deal tokens sold to investors"
+        >
+          <StyledValue>
+            {deal.tokensSold.formatted}{' '}
+            <ExternalLink
+              href={getExplorerUrl(deal.underlyingToken.token, chainId)}
+              label={deal.underlyingToken.symbol}
+            />
+          </StyledValue>
         </InfoCell>
       </Column>
     </>

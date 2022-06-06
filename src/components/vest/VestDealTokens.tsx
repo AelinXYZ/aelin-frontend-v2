@@ -13,9 +13,9 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
   ButtonDropdown,
   ButtonGradientSm,
+  ButtonPrimaryLight,
   ButtonPrimaryLightSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
-import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell as BaseCell,
   HideOnDesktop,
@@ -49,6 +49,13 @@ const TableCard = styled.div`
   }
 `
 
+export const WrapperEmpty = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
 const Cell = styled(BaseCell)`
   font-weight: 400;
 `
@@ -60,6 +67,10 @@ const Title = styled(BaseTitle)`
     display: block;
     margin-bottom: 20px;
   }
+`
+
+const Subtitle = styled.p`
+  text-align: center;
 `
 
 const ButtonCSS = css`
@@ -261,12 +272,21 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
 
   if (!data.length) {
     return (
-      <Wrapper {...restProps}>
-        <BaseCard>
-          You don't have any deal tokens to vest. Once you do, vesting information will be shown
-          below!
-        </BaseCard>
-      </Wrapper>
+      <WrapperEmpty>
+        <Title>Vest</Title>
+        <Subtitle>
+          You don't have any deal tokens to vest. Once you do,
+          <br />
+          vesting information will be shown below!
+        </Subtitle>
+        <ButtonPrimaryLight
+          onClick={() => {
+            router.push('/')
+          }}
+        >
+          Join a pool
+        </ButtonPrimaryLight>
+      </WrapperEmpty>
     )
   }
 
@@ -346,7 +366,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                 <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
                   <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
                   <DynamicDeadline deadline={vestingPeriodEnds} start={vestingPeriodStarts}>
-                    {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
+                    {getFormattedDurationFromDateToNow(vestingPeriodEnds)}
                   </DynamicDeadline>
                 </Cell>
                 <Cell justifyContent="center" mobileJustifyContent="center">

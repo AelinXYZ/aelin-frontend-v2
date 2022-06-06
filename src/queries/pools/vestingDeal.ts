@@ -9,6 +9,7 @@ export const VESTING_DEALS = gql`
       remainingAmountToVest
       totalVested
       underlyingDealTokenDecimals
+      lastClaim
     }
   }
 `

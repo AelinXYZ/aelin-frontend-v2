@@ -27,6 +27,7 @@ export const VESTING_DEALS = gql`
       vestingPeriodStarts
       underlyingDealTokenDecimals
       poolAddress
+      lastClaim
       pool {
         dealAddress
       }

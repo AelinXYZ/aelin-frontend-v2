@@ -33,6 +33,7 @@ function AcceptDeal({ pool }: Props) {
   const { refetchUserStats, userMaxAllocation: userProRataAllocation } = useAelinDealUserStats(pool)
 
   const stage = pool.deal?.redemption?.stage
+
   if (!stage) {
     throw new Error("It's not possible to accept a deal at this pool stage.")
   }

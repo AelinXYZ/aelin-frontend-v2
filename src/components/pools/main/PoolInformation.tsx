@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import styled from 'styled-components'
 
+import isAfter from 'date-fns/isAfter'
+
 import { TokenIcon } from '../common/TokenIcon'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -42,7 +44,20 @@ const UserStatsInfoCell = genericSuspense(
   () => <InlineLoading />,
 )
 
+const PoolParticipantsInfoCell = genericSuspense(
+  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
+    return (
+      <InfoCell title={title} tooltip={tooltip}>
+        <Value>{pool.totalUsersInvested}</Value>
+      </InfoCell>
+    )
+  },
+  () => <InlineLoading />,
+)
+
 export const PoolInformation = ({ pool }: Props) => {
+  const now = new Date()
+
   return (
     <>
       <Column>
@@ -86,15 +101,31 @@ export const PoolInformation = ({ pool }: Props) => {
           title="Investment deadline"
           tooltip="The amount of time investors have to deposit Investment tokens"
         >
-          <DynamicDeadline deadline={pool.purchaseExpiry} start={pool.start} width="180px">
-            <Value>{formatDate(pool.purchaseExpiry, DATE_DETAILED)}</Value>
+          <DynamicDeadline
+            deadline={pool.purchaseExpiry}
+            hideWhenDeadlineIsReached={true}
+            start={pool.start}
+            width="180px"
+          >
+            {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
           </DynamicDeadline>
         </InfoCell>
         <InfoCell
           title="Deal deadline"
           tooltip="The amount of time a sponsor has to find a deal before investors can withdraw their funds. A deal may still be created after the deadline if funds are still in the pool."
           value={formatDate(pool.dealDeadline, DATE_DETAILED)}
-        />
+        >
+          {isAfter(now, pool.purchaseExpiry) && (
+            <DynamicDeadline
+              deadline={pool.dealDeadline}
+              hideWhenDeadlineIsReached={true}
+              start={pool.purchaseExpiry}
+              width="180px"
+            >
+              {formatDate(pool.dealDeadline, DATE_DETAILED)}
+            </DynamicDeadline>
+          )}
+        </InfoCell>
         <InfoCell
           title="Sponsor"
           tooltip="The sponsor will seek a deal on behalf of purchasers entering this pool"
@@ -104,6 +135,11 @@ export const PoolInformation = ({ pool }: Props) => {
           title="Sponsor fee"
           tooltip="The fee paid to the sponsor for each deal token redeemed, paid in deal tokens"
           value={pool.sponsorFee.formatted}
+        />
+        <PoolParticipantsInfoCell
+          pool={pool}
+          title="Pool participants"
+          tooltip="Total amount of users who invested in the pool"
         />
       </Column>
     </>
