@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import {
   NftType,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
+} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const Wrapper = styled.div`

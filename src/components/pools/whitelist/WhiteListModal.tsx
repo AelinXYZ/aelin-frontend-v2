@@ -6,12 +6,12 @@ import AddressesWhiteList, {
   AddressWhitelistProps,
   initialWhitelistValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import NftWhiteList, { NftWhiteListStep } from '@/src/components/pools/whitelist/nft/NftWhiteList'
+import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/nft/WhiteListTabs'
 import {
   NftType,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
-import NftWhiteList, { NftWhiteListStep } from '@/src/components/pools/whitelist/nft/NftWhiteList'
-import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/nft/WhiteListTabs'
+} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 
 const Modal = styled(BaseModal)`
   .modalCard {
