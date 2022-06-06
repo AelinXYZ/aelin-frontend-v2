@@ -10,8 +10,11 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 const Wrapper = styled.div`
   display: grid;
   gap: 40px;
-  grid-template-columns: 1fr 1fr;
   flex-grow: 1;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    grid-template-columns: 1fr 1fr;
+  }
 `
 
 const StakeGrid = ({ ...restProps }) => {
