@@ -44,6 +44,17 @@ const UserStatsInfoCell = genericSuspense(
   () => <InlineLoading />,
 )
 
+const PoolParticipantsInfoCell = genericSuspense(
+  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
+    return (
+      <InfoCell title={title} tooltip={tooltip}>
+        <Value>{pool.totalUsersInvested}</Value>
+      </InfoCell>
+    )
+  },
+  () => <InlineLoading />,
+)
+
 export const PoolInformation = ({ pool }: Props) => {
   const now = new Date()
 
@@ -124,6 +135,11 @@ export const PoolInformation = ({ pool }: Props) => {
           title="Sponsor fee"
           tooltip="The fee paid to the sponsor for each deal token redeemed, paid in deal tokens"
           value={pool.sponsorFee.formatted}
+        />
+        <PoolParticipantsInfoCell
+          pool={pool}
+          title="Pool participants"
+          tooltip="Total amount of users who invested in the pool"
         />
       </Column>
     </>
