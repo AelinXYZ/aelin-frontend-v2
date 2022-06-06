@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
-import { BigNumber } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
 import ms from 'ms'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
@@ -39,28 +39,29 @@ function Vest({ pool }: Props) {
     { refreshInterval: ms('10s') },
   )
 
-  const { totalVested, underlyingDealTokenDecimals } = data?.vestingDeal || {}
+  const { lastClaim, totalVested, underlyingDealTokenDecimals } = data?.vestingDeal || {}
 
   const now = new Date()
+
   const isVestingCliffEnded = isAfter(now, pool.deal?.vestingPeriod.cliff.end as Date)
   const isVestindPeriodEnded = isAfter(now, pool.deal?.vestingPeriod.vesting.end as Date)
 
-  const hasRemainingTokens = !(
-    BigNumber.from(data?.vestingDeal?.remainingAmountToVest || 0).eq(ZERO_BN) ||
-    // Temp fix: Sometimes remainingAmountToVest is negative
-    BigNumber.from(data?.vestingDeal?.remainingAmountToVest || 0).lt(ZERO_BN)
-  )
-
-  const isVestButtonDisabled = useMemo(() => {
-    return !address || !isAppConnected || isSubmitting || !hasRemainingTokens
-  }, [address, hasRemainingTokens, isAppConnected, isSubmitting])
-
   const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
+
   const [amountToVest, refetchAmountToVest] = useAelinAmountToVest(
     pool.address,
     pool.chainId,
     withinInterval,
   )
+
+  const hasRemainingTokens =
+    Number(lastClaim) !== 0
+      ? isBefore(lastClaim * 1000, pool.deal?.vestingPeriod.vesting.end as Date)
+      : !amountToVest.eq(ZERO_BN)
+
+  const isVestButtonDisabled = useMemo(() => {
+    return !address || !isAppConnected || isSubmitting || !hasRemainingTokens
+  }, [address, hasRemainingTokens, isAppConnected, isSubmitting])
 
   const handleVest = async () => {
     setConfigAndOpenModal({

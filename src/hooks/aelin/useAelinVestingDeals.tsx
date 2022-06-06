@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { isAfter, isBefore } from 'date-fns'
 import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
@@ -49,15 +50,18 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
                 variables.where?.user as string,
               )
 
+              const canVest =
+                Number(vestingDeal.lastClaim) !== 0
+                  ? isBefore(vestingDeal.lastClaim * 1000, vestingDeal.vestingPeriodEnds * 1000)
+                  : BigNumber.from(vestingDeal.remainingAmountToVest).gt(ZERO_BN)
+
               return {
                 poolName: parsePoolName(vestingDeal.poolName),
                 tokenSymbol: vestingDeal.tokenToVestSymbol,
                 amountToVest: amountToVest,
                 totalAmount: vestingDeal.investorDealTotal,
                 totalVested: vestingDeal.totalVested,
-                canVest:
-                  BigNumber.from(vestingDeal.remainingAmountToVest).gt(ZERO_BN) &&
-                  now > vestingDeal.vestingPeriodStarts * 1000,
+                canVest: canVest,
                 remainingAmountToVest: vestingDeal.remainingAmountToVest,
                 vestingPeriodEnds: new Date(vestingDeal.vestingPeriodEnds * 1000),
                 vestingPeriodStarts: new Date(vestingDeal.vestingPeriodStarts * 1000),
