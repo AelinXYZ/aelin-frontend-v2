@@ -20,6 +20,7 @@ import {
   getPurchaseExpiry,
   getPurchaseTokenCap,
   getSponsorFee,
+  getTokensSold,
   getVestingDates,
   getVestingEnds,
   getVestingStarts,
@@ -55,6 +56,7 @@ export type ParsedAelinPool = {
   vestingEnds: Date
   dealsCreated: number
   stage: PoolStages
+  totalUsersInvested: number
   deal?: {
     name: string
     symbol: string
@@ -101,6 +103,9 @@ export type ParsedAelinPool = {
     createdAt: Date
     fundedAt: Date | null
     unredeemed: DetailedNumber
+    totalUsersAccepted: number
+    totalUsersRejected: number
+    tokensSold: DetailedNumber
   }
 }
 
@@ -149,6 +154,7 @@ export const getParsedPool = ({
     }),
     deal: undefined,
     dealsCreated: pool.dealsCreated,
+    totalUsersInvested: pool.totalUsersInvested,
   }
 
   const dealDetails = pool.deal
@@ -165,6 +171,13 @@ export const getParsedPool = ({
       )
     : null
 
+  const exchangeRates = dealExchangeRates(
+    dealDetails.purchaseTokenTotalForDeal,
+    purchaseTokenDecimals,
+    dealDetails.underlyingDealTokenTotal,
+    dealDetails.underlyingDealTokenDecimals,
+  )
+
   res.deal = {
     name: dealDetails.name.split('aeDeal-').pop() || '',
     symbol: dealDetails.symbol,
@@ -177,12 +190,7 @@ export const getParsedPool = ({
         dealDetails.underlyingDealTokenDecimals,
       ),
     },
-    exchangeRates: dealExchangeRates(
-      dealDetails.purchaseTokenTotalForDeal,
-      purchaseTokenDecimals,
-      dealDetails.underlyingDealTokenTotal,
-      dealDetails.underlyingDealTokenDecimals,
-    ),
+    exchangeRates,
     vestingPeriod: getVestingDates(
       redemptionInfo?.end,
       dealDetails.vestingCliff,
@@ -199,6 +207,14 @@ export const getParsedPool = ({
     unredeemed: getDetailedNumber(
       dealDetails.totalAmountUnredeemed || ZERO_BN,
       dealDetails.underlyingDealTokenDecimals,
+    ),
+    totalUsersAccepted: dealDetails.totalUsersAccepted,
+    totalUsersRejected: dealDetails.totalUsersRejected,
+    tokensSold: getTokensSold(
+      res.redeem,
+      exchangeRates.investmentPerDeal,
+      dealDetails.underlyingDealTokenDecimals,
+      purchaseTokenDecimals,
     ),
   }
 
