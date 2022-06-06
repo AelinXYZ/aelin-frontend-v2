@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useReducer, useState } from 'react'
 import styled from 'styled-components'
 
 import { Modal as BaseModal } from '@/src/components/common/Modal'
@@ -7,10 +7,10 @@ import AddressesWhiteList, {
   AddressWhitelistProps,
   initialWhitelistValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
-import NftWhiteList, { NftWhiteListStep } from '@/src/components/pools/whitelist/nft/NftWhiteList'
+import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import {
-  NftType,
-  NftWhitelistProcess,
+  initialState,
+  nftWhiteListReducer,
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 
 const Modal = styled(BaseModal)`
@@ -36,9 +36,7 @@ const WhiteListModal = ({
     currentList.length ? currentList : initialWhitelistValues,
   )
 
-  const [currentNftWhiteListStep, setCurrentNftWhiteListStep] = useState(NftWhiteListStep.nftType)
-  const [nftType, setNftType] = useState(NftType.erc721)
-  const [nftWhiteListProcess, setNftWhiteListProcess] = useState(NftWhitelistProcess.unlimited)
+  const [nftWhiteListState, dispatch] = useReducer(nftWhiteListReducer, initialState)
 
   return (
     <Modal onClose={onClose} size="794px" title="Whitelist">
@@ -59,13 +57,9 @@ const WhiteListModal = ({
         )}
         {activeTab === WhiteListTab.Nft && (
           <NftWhiteList
-            currentStep={currentNftWhiteListStep}
-            nftType={nftType}
+            dispatch={dispatch}
+            nftWhiteListState={nftWhiteListState}
             onClose={onClose}
-            setCurrentStep={setCurrentNftWhiteListStep}
-            setNftType={setNftType}
-            setWhiteListProcess={setNftWhiteListProcess}
-            whiteListProcess={nftWhiteListProcess}
           ></NftWhiteList>
         )}
       </WhiteListTabs>

@@ -20,7 +20,7 @@ const Description = styled.p`
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.4;
-  margin: 0 0 40px;
+  margin: 0;
   max-width: 100%;
   text-align: center;
 `
@@ -67,20 +67,22 @@ const getDescription = (active: NftWhitelistProcess): string => {
   }
 }
 
+type NftWhiteListProcessSectionProps = {
+  active: NftWhitelistProcess
+  nftType: NftType
+  onChange: (value: NftWhitelistProcess) => void
+}
+
 const NftWhiteListProcessSection = ({
   active,
   nftType,
-  setActive,
-}: {
-  nftType: NftType
-  active: NftWhitelistProcess
-  setActive: (active: NftWhitelistProcess) => void
-}) => {
+  onChange,
+}: NftWhiteListProcessSectionProps) => {
   return (
     <>
       <Wrapper>
         {getItems(nftType).map(([key, value]) => (
-          <Item isActive={active === value} key={key} onClick={() => setActive(value)}>
+          <Item isActive={active === value} key={key} onClick={() => onChange(value)}>
             {value}
           </Item>
         ))}

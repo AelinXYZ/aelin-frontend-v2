@@ -1,15 +1,21 @@
+import { Dispatch } from 'react'
 import styled from 'styled-components'
 
 import { StepContents } from '@/src/components/pools/common/Create'
+import {
+  NftWhiteListAction,
+  NftWhiteListState,
+  NftWhiteListStep,
+} from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
 import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
 import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
 import NftWhiteListProcessSection from '@/src/components/pools/whitelist/nft/NftWhiteListProcessSection'
-import {
-  NftType,
-  NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
+
+const Wrapper = styled.div`
+  width: 620px;
+`
 
 const Title = styled.h2`
   color: ${({ theme }) => theme.colors.textColor};
@@ -20,7 +26,6 @@ const Title = styled.h2`
   margin: 0 0 21px;
   max-width: 100%;
   text-align: center;
-  width: 620px;
 `
 
 const NftTypeRemark = styled.p`
@@ -33,11 +38,9 @@ const NftTypeRemark = styled.p`
   text-align: center;
 `
 
-export enum NftWhiteListStep {
-  nftType = 'nftType',
-  whiteListProcess = 'whiteListProcess',
-  nftCollection = 'nftCollection',
-}
+const Button = styled(GradientButton)`
+  margin-top: 40px;
+`
 
 interface NftWhiteListStepInfo {
   order: number
@@ -72,24 +75,13 @@ const getStepIndicatorData = (
   }))
 
 type NftWhiteListProps = {
-  currentStep: NftWhiteListStep
-  setCurrentStep: (currentStep: NftWhiteListStep) => void
-  nftType: NftType
-  setNftType: (nftType: NftType) => void
-  whiteListProcess: NftWhitelistProcess
-  setWhiteListProcess: (whiteListProcess: NftWhitelistProcess) => void
+  nftWhiteListState: NftWhiteListState
+  dispatch: Dispatch<NftWhiteListAction>
   onClose: () => void
 }
 
-const NftWhiteList = ({
-  currentStep,
-  nftType,
-  onClose,
-  setCurrentStep,
-  setNftType,
-  setWhiteListProcess,
-  whiteListProcess,
-}: NftWhiteListProps) => {
+const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProps) => {
+  const { currentStep, nftType, selectedCollections, whiteListProcess } = nftWhiteListState
   const { order, title } = nftWhiteListStepsConfig[currentStep]
 
   const getContent = (): JSX.Element => {
@@ -98,8 +90,9 @@ const NftWhiteList = ({
         return (
           <NftTypeSection
             active={nftType}
-            setActive={setNftType}
-            setWhitelistProcess={setWhiteListProcess}
+            onChange={(value) => {
+              dispatch({ type: 'updateNftType', payload: value })
+            }}
           />
         )
       case NftWhiteListStep.whiteListProcess:
@@ -107,16 +100,24 @@ const NftWhiteList = ({
           <NftWhiteListProcessSection
             active={whiteListProcess}
             nftType={nftType}
-            setActive={setWhiteListProcess}
+            onChange={(value) => {
+              dispatch({ type: 'updateWhiteListProcess', payload: value })
+            }}
           />
         )
       case NftWhiteListStep.nftCollection:
-        return <NftCollectionsSection />
+        return (
+          <NftCollectionsSection
+            dispatch={dispatch}
+            selectedCollections={selectedCollections}
+            whiteListProcess={whiteListProcess}
+          />
+        )
     }
   }
 
   return (
-    <>
+    <Wrapper>
       <StepIndicator
         currentStepOrder={order}
         data={getStepIndicatorData(currentStep)}
@@ -133,7 +134,7 @@ const NftWhiteList = ({
           <StepContents key={index}>
             <Title>{title}</Title>
             {getContent()}
-            <GradientButton
+            <Button
               onClick={() => {
                 if (isLastStep) {
                   onClose()
@@ -144,19 +145,19 @@ const NftWhiteList = ({
                   ({ order }) => order === nftWhiteListStepsConfig[currentStep].order + 1,
                 )?.id
                 if (nextStep) {
-                  setCurrentStep(nextStep)
+                  dispatch({ type: 'updateStep', payload: nextStep })
                 }
               }}
             >
               {isLastStep ? 'Whitelist' : 'Next'}
-            </GradientButton>
+            </Button>
             {currentStep === NftWhiteListStep.nftType && (
               <NftTypeRemark>*Including Cryptopunks</NftTypeRemark>
             )}
           </StepContents>
         )
       })}
-    </>
+    </Wrapper>
   )
 }
 
