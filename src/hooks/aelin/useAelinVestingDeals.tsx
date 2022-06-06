@@ -42,8 +42,6 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
         .then((res) =>
           Promise.all(
             res.vestingDeals.map(async (vestingDeal) => {
-              const now = new Date().getTime()
-
               const amountToVest = await fetchAmountToVest(
                 vestingDeal.pool.dealAddress,
                 chainId,
@@ -53,7 +51,7 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
               const canVest =
                 Number(vestingDeal.lastClaim) !== 0
                   ? isBefore(vestingDeal.lastClaim * 1000, vestingDeal.vestingPeriodEnds * 1000)
-                  : BigNumber.from(vestingDeal.remainingAmountToVest).gt(ZERO_BN)
+                  : amountToVest.gt(ZERO_BN)
 
               return {
                 poolName: parsePoolName(vestingDeal.poolName),
