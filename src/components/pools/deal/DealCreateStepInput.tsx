@@ -148,7 +148,7 @@ export const DealCreateStepInput: React.FC<Props> = ({
               checked={totalPurchase === 'all'}
               label={'All'}
               onClick={() => {
-                onSetDealField(amountInPool.formatted)
+                onSetDealField(amountInPool.wei.toString())
                 onSetTotalPurchase('all')
               }}
             />
