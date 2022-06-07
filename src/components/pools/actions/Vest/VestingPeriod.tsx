@@ -24,7 +24,6 @@ function VestingPeriod({
   totalVested,
   underlyingDealTokenDecimals,
 }: VestingPeriodProps) {
-  console.log('totalAmount: ', totalAmount)
   return (
     <Wrapper title={'Vesting Schedule'}>
       <Contents style={{ marginBottom: '18px' }}>Your deal tokens can be vested.</Contents>
