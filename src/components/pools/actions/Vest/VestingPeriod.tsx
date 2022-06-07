@@ -11,6 +11,7 @@ type VestingPeriodProps = {
   isButtonDisabled: boolean
   symbol: string | undefined
   totalVested: BigNumber
+  totalAmount: BigNumber
   underlyingDealTokenDecimals: number | undefined
 }
 
@@ -19,13 +20,21 @@ function VestingPeriod({
   handleVest,
   isButtonDisabled,
   symbol,
+  totalAmount,
   totalVested,
   underlyingDealTokenDecimals,
 }: VestingPeriodProps) {
+  console.log('totalAmount: ', totalAmount)
   return (
     <Wrapper title={'Vesting Schedule'}>
       <Contents style={{ marginBottom: '18px' }}>Your deal tokens can be vested.</Contents>
       <Contents>
+        My deal total:{' '}
+        <TextPrimary>{`${formatToken(
+          totalAmount,
+          underlyingDealTokenDecimals,
+        )} ${symbol}`}</TextPrimary>
+        <br />
         Amount to vest:{' '}
         <TextPrimary>{`${
           BigNumber.isBigNumber(amountToVest)

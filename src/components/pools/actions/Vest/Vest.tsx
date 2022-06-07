@@ -39,7 +39,8 @@ function Vest({ pool }: Props) {
     { refreshInterval: ms('10s') },
   )
 
-  const { lastClaim, totalVested, underlyingDealTokenDecimals } = data?.vestingDeal || {}
+  const { investorDealTotal, lastClaim, totalVested, underlyingDealTokenDecimals } =
+    data?.vestingDeal || {}
 
   const now = new Date()
 
@@ -93,6 +94,7 @@ function Vest({ pool }: Props) {
           handleVest={handleVest}
           isButtonDisabled={isVestButtonDisabled}
           symbol={data?.vestingDeal?.tokenToVestSymbol}
+          totalAmount={investorDealTotal}
           totalVested={totalVested}
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
         />
