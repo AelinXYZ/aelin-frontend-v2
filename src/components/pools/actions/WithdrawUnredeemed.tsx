@@ -51,11 +51,13 @@ function WithdrawUnredeemed({ pool }: Props) {
         Deal tokens that have been rejected by the purchasers
       </Contents>
       <Contents>
-        Amount to withdraw:
-        <TextPrimary>{unredeemed}</TextPrimary>
+        Amount to withdraw:{` `}
+        <TextPrimary>
+          {unredeemed} {pool.deal?.underlyingToken.symbol || ''}
+        </TextPrimary>
       </Contents>
       <ButtonGradient disabled={disableButton} onClick={withdrawUnredeemed}>
-        Withdraw {unredeemed}
+        Withdraw
       </ButtonGradient>
     </Wrapper>
   )
