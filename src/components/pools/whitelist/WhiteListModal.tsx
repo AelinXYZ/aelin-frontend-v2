@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
@@ -17,8 +17,6 @@ import { useThemeContext } from '@/src/providers/themeContextProvider'
 export interface WhitelistProps {
   address: string
   amount: number | null
-  isSaved: boolean
-  error: boolean
 }
 
 const Modal = styled(BaseModal)`
@@ -75,16 +73,13 @@ const Error = styled(BaseError)`
 const WhiteListRow = ({
   address,
   amount,
-  error,
   onChangeRow,
   onDeleteRow,
   rowIndex,
 }: {
   address: string
   amount: number | null
-  isSaved: boolean
-  error: boolean
-  onChangeRow: (value: string | boolean | number | null, key: string, index: number) => void
+  onChangeRow: (value: string | number | null, key: string, index: number) => void
   onDeleteRow: (index: number) => void
   rowIndex: number
 }) => {
@@ -94,12 +89,13 @@ const WhiteListRow = ({
       <Textfield
         onChange={(e) => onChangeRow(e.target.value, 'address', rowIndex)}
         placeholder="Add address..."
-        status={error ? TextfieldState.error : undefined}
+        status={address && !isAddress(address) ? TextfieldState.error : undefined}
         value={address}
       />
       <Textfield
         onChange={(e) => onChangeRow(Number(e.target.value), 'amount', rowIndex)}
         placeholder="Max allocation..."
+        status={address && !amount ? TextfieldState.error : undefined}
         type="number"
         value={amount || ''}
       />
@@ -115,10 +111,25 @@ export const initialWhitelistValues = [
   ...new Array(5).fill({
     address: '',
     amount: null,
-    isSaved: false,
-    error: false,
   } as WhitelistProps),
 ]
+
+enum WhiteListStatus {
+  invalidAddress,
+  invalidAmount,
+  valid,
+}
+
+const getError = (status: WhiteListStatus): ReactElement | null => {
+  switch (status) {
+    case WhiteListStatus.invalidAddress:
+      return <Error textAlign="center">There are some invalid address in the list</Error>
+    case WhiteListStatus.invalidAmount:
+      return <Error textAlign="center">There are some empty amount in the list</Error>
+    case WhiteListStatus.valid:
+      return null
+  }
+}
 
 const WhiteListModal = ({
   currentList,
@@ -129,7 +140,7 @@ const WhiteListModal = ({
   onClose: () => void
   onConfirm: (whitelist: WhitelistProps[]) => void
 }) => {
-  const [error, setError] = useState<boolean>(false)
+  const [status, setStatus] = useState<WhiteListStatus>(WhiteListStatus.valid)
   const [list, setList] = useState<WhitelistProps[]>(
     currentList.length ? currentList : initialWhitelistValues,
   )
@@ -137,13 +148,12 @@ const WhiteListModal = ({
     setList(whitelist)
   }
 
-  const onChangeRow = (value: string | boolean | number | null, key: string, index: number) => {
+  const onChangeRow = (value: string | number | null, key: string, index: number) => {
     const addresses = [...list]
 
     addresses[index] = {
       ...addresses[index],
       [key]: value,
-      error: key === 'address' && !!value && !isAddress(value as string),
     }
     setList(addresses)
   }
@@ -153,19 +163,25 @@ const WhiteListModal = ({
   }
 
   useEffect(() => {
-    const addresses = [...list]
+    if (list.some((item: WhitelistProps) => item.address && !isAddress(item.address))) {
+      setStatus(WhiteListStatus.invalidAddress)
+      return
+    }
 
-    addresses.map((item) => ({ ...item, error: !isAddress(item.address) }))
+    if (list.some((item: WhitelistProps) => item.address && !item.amount)) {
+      setStatus(WhiteListStatus.invalidAmount)
+      return
+    }
 
-    setError(addresses.some((item: WhitelistProps) => item.error))
+    setStatus(WhiteListStatus.valid)
 
     return () => {
-      setError(false)
+      setStatus(WhiteListStatus.valid)
     }
   }, [list])
 
   const handleSave = () => {
-    //remove empty rows
+    // Remove empty rows.
     const filterRows = [...list.filter((row: WhitelistProps) => row.address)]
     onConfirm(filterRows)
     onClose()
@@ -188,15 +204,14 @@ const WhiteListModal = ({
               onDeleteRow={onDeleteRow}
               rowIndex={rowIndex}
             />
-            {/*{listItem.error && <Error>Invalid Address</Error>}*/}
           </>
         ))}
       </Grid>
       <ButtonPrimaryLightSm onClick={() => setList(list.concat(initialWhitelistValues))}>
         Add more rows
       </ButtonPrimaryLightSm>
-      {error && <Error textAlign="center">There are some invalid address in the list</Error>}
-      <ButtonSave disabled={error} onClick={handleSave}>
+      {getError(status)}
+      <ButtonSave disabled={status !== WhiteListStatus.valid} onClick={handleSave}>
         Save
       </ButtonSave>
     </Modal>
