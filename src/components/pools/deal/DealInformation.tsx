@@ -71,7 +71,7 @@ export const DealInformation: React.FC<{
           tooltip="The total amount of investment tokens funded and deal tokens available"
         >
           <StyledValue>
-            Investment token: {pool.funded.formatted}{' '}
+            Investment token: {deal.underlyingToken.investmentAmount.formatted}{' '}
             <ExternalLink
               href={getExplorerUrl(pool.investmentToken, chainId)}
               label={pool.investmentTokenSymbol}

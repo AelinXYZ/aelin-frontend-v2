@@ -15,6 +15,7 @@ import {
   getDealDeadline,
   getDetailedNumber,
   getFunded,
+  getInvestmentDealToken,
   getPoolCreatedDate,
   getProRataRedemptionDates,
   getPurchaseExpiry,
@@ -67,6 +68,7 @@ export type ParsedAelinPool = {
       // totalSupply: DetailedNumber
       // The amount of underlying tokens for the deal, for example the Sponsor offers 500k USD in exchange of the invested tokens.
       dealAmount: DetailedNumber
+      investmentAmount: DetailedNumber
     }
     //purchaseTokensForDeal:
     exchangeRates: {
@@ -188,6 +190,11 @@ export const getParsedPool = ({
       dealAmount: getDetailedNumber(
         dealDetails.underlyingDealTokenTotal,
         dealDetails.underlyingDealTokenDecimals,
+      ),
+      investmentAmount: getInvestmentDealToken(
+        dealDetails.underlyingDealTokenTotal,
+        dealDetails.underlyingDealTokenDecimals,
+        exchangeRates.investmentPerDeal,
       ),
     },
     exchangeRates,
