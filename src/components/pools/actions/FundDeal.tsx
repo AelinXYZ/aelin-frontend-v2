@@ -36,7 +36,7 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
         <>
           <Contents>
             Deal amount:{' '}
-            <TextPrimary>{`${pool.deal?.underlyingToken.dealAmount.formatted}`}</TextPrimary>
+            <TextPrimary>{`${pool.deal?.underlyingToken.dealAmount.formatted} ${pool.deal?.underlyingToken.symbol}`}</TextPrimary>
           </Contents>
           <HolderDeposit pool={pool} />
         </>

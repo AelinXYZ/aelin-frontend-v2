@@ -53,7 +53,7 @@ function HolderDeposit({ pool }: Props) {
         }
         onClick={depositTokens}
       >
-        {`Fund ${pool.deal?.underlyingToken.dealAmount.formatted} ${pool.deal?.underlyingToken.symbol}`}
+        Fund Deal
       </ButtonGradient>
     </>
   )
