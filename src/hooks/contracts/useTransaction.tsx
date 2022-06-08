@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 
 import * as optimismSDK from '@eth-optimism/sdk'
+import { BigNumber } from '@ethersproject/bignumber'
 import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers'
 import { toast } from 'react-hot-toast'
@@ -118,7 +119,7 @@ export default function useTransaction<
           const result = await (
             web3Provider as optimismSDK.L2Provider<Web3Provider>
           ).estimateTotalGasCost(tx) // L1 + L2 fees
-          return result
+          return result.div(BigNumber.from(1e9)) // GWei
         }
         const result = await contract.estimateGas[method as string](..._params)
         return result

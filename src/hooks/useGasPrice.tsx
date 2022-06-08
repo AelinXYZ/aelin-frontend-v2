@@ -1,3 +1,5 @@
+import { BigNumber } from '@ethersproject/bignumber'
+import { wei } from '@synthetixio/wei'
 import ms from 'ms'
 import useSWR from 'swr'
 
@@ -8,73 +10,39 @@ import { GasPrices, GasSpeed } from '@/types/utils'
 
 export const GAS_SPEEDS: GasSpeed[] = ['average', 'fast', 'fastest']
 
-const GAS_STATION_API_URL = process.env.NEXT_PUBLIC_ETH_GAS_STATION_API_URL || ''
-const GAS_NOW_API_URL = process.env.NEXT_PUBLIC_GAS_NOW_API_URL || ''
-
-type EthGasStationResponse = {
-  average: number
-  avgWait: number
-  blockNum: number
-  block_time: number
-  fast: number
-  fastWait: number
-  fastest: number
-  fastestWait: number
-  gasPriceRange: Record<number, number>
-  safeLow: number
-  safeLowWait: number
-  speed: number
-}
-
-type GasNowResponse = {
-  code: number
-  data: {
-    rapid: number
-    fast: number
-    standard: number
-    slow: number
-    timestamp: number
-  }
-}
-
 const useEthGasPrice = () => {
   const { appChainId, readOnlyAppProvider } = useWeb3Connection()
+  const MULTIPLIER = wei(2)
+
+  const getGasPriceFromProvider = async () => {
+    const gasPrice = formatGwei((await readOnlyAppProvider.getGasPrice()).toNumber())
+
+    return {
+      fastest: gasPrice,
+      fast: gasPrice,
+      average: gasPrice,
+    }
+  }
+
+  const computeGasFee = (baseFeePerGas: BigNumber, maxPriorityFeePerGas: number) =>
+    wei(baseFeePerGas, 9).mul(MULTIPLIER).add(wei(maxPriorityFeePerGas, 9)).toNumber()
 
   const { data, isValidating } = useSWR<GasPrices, Error>(
     appChainId ? ['network', 'gasPrice', appChainId] : null,
     async () => {
-      if (appChainId === Chains.mainnet) {
-        try {
-          const response = await fetch(GAS_NOW_API_URL)
-          const result: GasNowResponse = await response.json()
-          const { fast, rapid: fastest, standard } = result.data
-
-          return {
-            fastest: Math.round(formatGwei(fastest)),
-            fast: Math.round(formatGwei(fast)),
-            average: Math.round(formatGwei(standard)),
-          }
-        } catch (e) {
-          const response = await fetch(GAS_STATION_API_URL)
-          const data: EthGasStationResponse = await response.json()
-          const { average, fast, fastest } = data
-
-          return {
-            fastest: Math.round(fastest / 10),
-            fast: Math.round(fast / 10),
-            average: Math.round(average / 10),
-          }
-        }
-      }
-
       try {
-        const gasPrice = formatGwei((await readOnlyAppProvider.getGasPrice()).toNumber())
-
-        return {
-          fastest: gasPrice,
-          fast: gasPrice,
-          average: gasPrice,
+        if (appChainId === Chains.mainnet) {
+          const block = await readOnlyAppProvider.getBlock('latest')
+          if (!block?.baseFeePerGas) {
+            return await getGasPriceFromProvider()
+          }
+          return {
+            fastest: computeGasFee(block.baseFeePerGas, 6),
+            fast: computeGasFee(block.baseFeePerGas, 4),
+            average: computeGasFee(block.baseFeePerGas, 2),
+          }
         }
+        return await getGasPriceFromProvider()
       } catch (e) {
         throw new Error('Cannot retrieve gas price from provider. ' + e)
       }
