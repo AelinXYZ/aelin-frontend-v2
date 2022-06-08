@@ -116,7 +116,6 @@ export const Modal: React.FC<Props> = ({
         <Card
           className="modalCard"
           onClick={(e) => {
-            e.preventDefault()
             e.stopPropagation()
           }}
           size={size}
