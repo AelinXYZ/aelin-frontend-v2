@@ -8,10 +8,11 @@ import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { MAX_BN } from '@/src/constants/misc'
+import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -201,6 +202,9 @@ function useUserActions(
   derivedStatus: DerivedStatus,
 ): PoolAction[] {
   const { address: walletAddress } = useWeb3Connection()
+  const [balance] = useERC20Call(pool.chainId, pool.address, 'balanceOf', [
+    walletAddress || ZERO_ADDRESS,
+  ])
   const currentStatus = derivedStatus.current
 
   return useMemo(() => {
@@ -263,8 +267,9 @@ function useUserActions(
 
       // Withdraw
       if (
-        isAfter(now, pool.dealDeadline) ||
-        (pool.dealAddress && pool.deal?.holderAlreadyDeposited)
+        balance &&
+        !balance.eq(ZERO_BN) &&
+        (isAfter(now, pool.dealDeadline) || (pool.dealAddress && pool.deal?.holderAlreadyDeposited))
       ) {
         actions.push(PoolAction.Withdraw)
       }
@@ -304,7 +309,11 @@ function useUserActions(
 
       // Withdraw investment. For investors
       // if holder already deposited or if the deadline to fund the pool is reached.
-      if (isAfter(now, pool.deal.holderFundingExpiration) || pool.deal.holderAlreadyDeposited) {
+      if (
+        balance &&
+        !balance.eq(ZERO_BN) &&
+        (isAfter(now, pool.deal.holderFundingExpiration) || pool.deal.holderAlreadyDeposited)
+      ) {
         actions.push(PoolAction.Withdraw)
       }
 
@@ -312,15 +321,27 @@ function useUserActions(
     }
 
     if (currentStatus === PoolStatus.Closed) {
-      return [PoolAction.Withdraw]
+      const result = []
+
+      if (balance && !balance.eq(ZERO_BN)) {
+        result.push(PoolAction.Withdraw)
+      }
+
+      return result
     }
 
     if (currentStatus === PoolStatus.Vesting) {
-      return [PoolAction.Vest, PoolAction.Withdraw]
+      const result = [PoolAction.Vest]
+
+      if (balance && !balance.eq(ZERO_BN)) {
+        result.push(PoolAction.Withdraw)
+      }
+
+      return result
     }
 
     return []
-  }, [userRole, currentStatus, pool, walletAddress])
+  }, [userRole, currentStatus, pool, walletAddress, balance])
 }
 
 function useUserTabs(
@@ -423,7 +444,6 @@ function useUserTabs(
           }
           break
         case NotificationType.FundingWindowEnded:
-          console.log(userRole)
           setActiveTab(PoolTab.PoolInformation)
           userRole === UserRole.Sponsor
             ? setActiveAction(PoolAction.CreateDeal)
