@@ -9,6 +9,7 @@ import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
+import { Funding } from '@/types/aelinPool'
 
 const Column = styled.div`
   display: flex;
@@ -49,7 +50,8 @@ const DealParticipantsInfoCell = genericSuspense(
 
 export const DealInformation: React.FC<{
   pool: ParsedAelinPool
-}> = ({ pool }) => {
+  poolHelpers: Funding
+}> = ({ pool, poolHelpers }) => {
   const { chainId, deal, sponsorFee } = pool
 
   if (!deal) return <div>No Deal presented yet.</div>
@@ -126,7 +128,9 @@ export const DealInformation: React.FC<{
         </InfoCell>
         <InfoCell title="Pool stats" tooltip="Stats across all investors in the pool">
           <Value>Amount in pool: {pool.amountInPool.formatted}</Value>
-          <Value>Total redeem: {pool.redeem.formatted}</Value>
+          <Value>
+            Total redeem: {pool.redeem.formatted} {poolHelpers.capReached && '(cap reached)'}
+          </Value>
           <Value>Total withdrawn: {pool.withdrawn.formatted}</Value>
         </InfoCell>
         <DealParticipantsInfoCell

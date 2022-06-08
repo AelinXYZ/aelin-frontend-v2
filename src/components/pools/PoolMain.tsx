@@ -100,7 +100,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             <ContentGrid>
               {tabs.active === PoolTab.PoolInformation && <PoolInformation pool={pool} />}
               {tabs.active === PoolTab.DealInformation && !!pool.deal && (
-                <DealInformation pool={pool} />
+                <DealInformation pool={pool} poolHelpers={funding} />
               )}
               {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
