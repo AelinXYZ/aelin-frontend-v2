@@ -1,10 +1,13 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 
+import * as optimismSDK from '@eth-optimism/sdk'
 import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
+import { Web3Provider } from '@ethersproject/providers'
 import { toast } from 'react-hot-toast'
 
 import { notify } from '@/src/components/toast/Toast'
 import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
+import { Chains } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { TransactionError } from '@/src/utils/TransactionError'
@@ -18,7 +21,7 @@ export default function useTransaction<
   Method extends keyof MyContract,
   Params extends Parameters<MyContract[Method]>,
 >(address: string, abi: any[], method: Method) {
-  const { getExplorerUrl, isAppConnected, web3Provider } = useWeb3Connection()
+  const { appChainId, getExplorerUrl, isAppConnected, web3Provider } = useWeb3Connection()
 
   const execute = useCallback(
     async (params?: Params, options?: Overrides) => {
@@ -93,7 +96,7 @@ export default function useTransaction<
   const estimate = useCallback(
     async (params?: Params) => {
       const signer = web3Provider?.getSigner()
-      if (!signer) {
+      if (!signer || !web3Provider) {
         notify({ type: FAILED_TYPE, message: 'There is no provider' })
         console.error('Transaction failed, there is no provider')
         return null
@@ -109,6 +112,14 @@ export default function useTransaction<
       const contract = new Contract(address, abi, signer) as MyContract
       try {
         console.info('Calculating transaction gas.')
+        if (appChainId === Chains.optimism) {
+          const txReq = await contract.populateTransaction[method as string](..._params)
+          const tx = await signer.populateTransaction(txReq)
+          const result = await (
+            web3Provider as optimismSDK.L2Provider<Web3Provider>
+          ).estimateTotalGasCost(tx) // L1 + L2 fees
+          return result
+        }
         const result = await contract.estimateGas[method as string](..._params)
         return result
       } catch (e: any) {
@@ -116,7 +127,7 @@ export default function useTransaction<
         return ZERO_BN
       }
     },
-    [abi, address, isAppConnected, method, web3Provider],
+    [abi, address, isAppConnected, method, web3Provider, appChainId],
   )
 
   return { execute, estimate }
