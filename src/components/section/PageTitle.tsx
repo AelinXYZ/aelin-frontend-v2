@@ -26,8 +26,17 @@ const Title = styled.h1`
 const TitleText = styled.span`
   align-items: center;
   color: ${({ theme }) => theme.pageTitle.color};
-  display: inline-flex;
+  display: block;
   gap: 12px;
+
+  width: 370px;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    width: 640px;
+  }
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   text-decoration: none;
 
   &[href]:hover {

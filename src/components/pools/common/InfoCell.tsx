@@ -41,7 +41,7 @@ const Contents = styled.div``
 
 export const Value = styled.div`
   color: ${({ theme }) => theme.colors.textColorLight};
-  display: flex;
+  display: block;
   font-size: 1.2rem;
   font-weight: 400;
   gap: 12px;
@@ -50,6 +50,11 @@ export const Value = styled.div`
   text-decoration: none;
   white-space: normal;
   word-break: break-word;
+  text-align: left;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     font-size: 1.4rem;

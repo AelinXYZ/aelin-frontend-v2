@@ -16,6 +16,7 @@ import {
   TableBody,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
+import { NameCell } from '@/src/components/table/NameCell'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinDealsSponsored from '@/src/hooks/aelin/history/useAelinDealsSponsored'
@@ -145,9 +146,9 @@ export const DealsSponsored: React.FC = () => {
               key={index}
             >
               <Cell mobileJustifyContent="center">{formatDate(timestamp, DATE_DETAILED)}</Cell>
-              <Cell light mobileJustifyContent="center">
+              <NameCell light mobileJustifyContent="center">
                 {poolName}
-              </Cell>
+              </NameCell>
               <Cell light mobileJustifyContent="center">
                 {totalInvested}
               </Cell>

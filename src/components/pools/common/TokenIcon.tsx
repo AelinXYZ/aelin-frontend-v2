@@ -14,7 +14,7 @@ const Wrapper = styled.div<{ direction?: Direction }>`
   display: flex;
   flex-direction: ${({ direction }) => direction};
   font-size: 13px;
-  justify-content: center;
+  justify-content: left;
   row-gap: 3px;
   text-align: center;
 `

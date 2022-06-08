@@ -19,9 +19,7 @@ const Wrapper = styled.a`
   overflow: hidden;
   padding: 0 20px;
   text-decoration: none;
-  text-overflow: ellipsis;
   transition: background-color 0.1s linear;
-  white-space: nowrap;
 
   &:hover {
     background-color: ${({ theme }) => lighten(0.1, theme.myPool.backgroundColor)};
