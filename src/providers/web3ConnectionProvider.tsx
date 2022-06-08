@@ -11,13 +11,14 @@ import {
 } from 'react'
 
 import { getAddress } from '@ethersproject/address'
-import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
+import { JsonRpcProvider } from '@ethersproject/providers'
 import Onboard from 'bnc-onboard'
 import { API, Wallet } from 'bnc-onboard/dist/src/interfaces'
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
 import nullthrows from 'nullthrows'
 import { toast } from 'react-hot-toast'
 
+import { Provider, useWeb3Provider } from '../hooks/useWeb3Provider'
 import { getExplorerUrl } from '../utils/getExplorerUrl'
 import {
   Chains,
@@ -134,7 +135,7 @@ export type Web3Context = {
   setAppChainId: Dispatch<SetStateAction<ChainsValues>>
   wallet: Wallet | null
   walletChainId: number | null
-  web3Provider: Web3Provider | null
+  web3Provider: Provider | null
   getExplorerUrl: (hash: string) => string
 }
 
@@ -152,7 +153,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
   const [appChainId, setAppChainId] = useState<ChainsValues>(INITIAL_APP_CHAIN_ID)
   const supportedChainIds = getChainsByEnvironmentArray().map(({ chainId }) => chainId)
 
-  const web3Provider = wallet?.provider != null ? new Web3Provider(wallet.provider) : null
+  const web3Provider = useWeb3Provider(wallet, walletChainId)
 
   const isWalletConnected = web3Provider != null && address != null
 
