@@ -68,7 +68,7 @@ export const DealInformation: React.FC<{
         />
         <InfoCell
           title="Token totals"
-          tooltip="The total amount of investment tokens funded and deal tokens available"
+          tooltip="The total amount of investment and deal tokens for the deal"
         >
           <StyledValue>
             Investment token: {pool.funded.formatted}{' '}
@@ -94,7 +94,7 @@ export const DealInformation: React.FC<{
         </InfoCell>
         <InfoCell
           title="Deal stage"
-          tooltip="A series of steps that investors go through from depositing funds to vesting deal tokens. The full list of stages are: Round 1, Round 2, Vesting Cliff and Vesting Period closed"
+          tooltip="A series of steps that investors go through from depositing funds to vesting deal tokens. The full list of stages are: Round 1, Round 2, Vesting Cliff, Vesting Period and Closed"
           value={
             deal.redemption?.stage === 1
               ? 'Round 1: Accept Allocation'
@@ -105,7 +105,7 @@ export const DealInformation: React.FC<{
         />
         <InfoCell
           title="Round 2 deadline"
-          tooltip="The period where investors who maxxed their allocation in Round 1 may purchase any unredeemed deal tokens"
+          tooltip="The period where investors who maxed their allocation in Round 1 may purchase any unredeemed deal tokens"
         >
           {deal.redemption &&
           deal.redemption.proRataRedemptionEnd &&
