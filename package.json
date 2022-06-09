@@ -5,6 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
+    "dev:prod": "NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID=10 NEXT_PUBLIC_APP_ENV=production next dev",
     "lint": "next lint",
     "lint:fix": "eslint --fix \"./**/*.{js,jsx,ts,tsx}\"",
     "prepare": "husky install",
