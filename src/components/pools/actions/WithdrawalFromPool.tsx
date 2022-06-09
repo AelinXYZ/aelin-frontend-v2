@@ -84,8 +84,8 @@ function WithdrawalFromPool({ pool }: Props) {
   return (
     <Wrapper title="Withdraw">
       <Contents>
-        The duration for this pool has ended. You may withdraw your funds now although the sponsor
-        may still create a deal for you if you remain in the pool.
+        The deal deadline has passed. You may withdraw your funds now although the sponsor may still
+        create a deal for you if you remain in the pool.
       </Contents>
       <TokenInput
         decimals={investmentTokenDecimals}

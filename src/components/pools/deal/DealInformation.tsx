@@ -68,7 +68,7 @@ export const DealInformation: React.FC<{
         />
         <InfoCell
           title="Token totals"
-          tooltip="The total amount of investment tokens funded and deal tokens available"
+          tooltip="The total amount of investment and deal tokens for the deal"
         >
           <StyledValue>
             Investment token: {pool.funded.formatted}{' '}
@@ -94,18 +94,18 @@ export const DealInformation: React.FC<{
         </InfoCell>
         <InfoCell
           title="Deal stage"
-          tooltip="A series of steps that investors go through from depositing funds to vesting deal tokens. The full list of stages are: Pro Rata Redemption, Open Redemption, Redemption closed"
+          tooltip="A series of steps that investors go through from depositing funds to vesting deal tokens. The full list of stages are: Round 1, Round 2, Vesting Cliff, Vesting Period and Closed"
           value={
             deal.redemption?.stage === 1
-              ? 'Round 1: Pro Rata Redemption'
+              ? 'Round 1: Accept Allocation'
               : deal.redemption?.stage === 2
-              ? 'Round 2: Open Redemption'
+              ? 'Round 2: Accept Remaining'
               : 'Redemption closed'
           }
         />
         <InfoCell
           title="Round 2 deadline"
-          tooltip="The open redemption period is for investors who have maxxed their allocation in the pro rata round"
+          tooltip="The period where investors who maxed their allocation in Round 1 may purchase any unredeemed deal tokens"
         >
           {deal.redemption &&
           deal.redemption.proRataRedemptionEnd &&
@@ -121,7 +121,7 @@ export const DealInformation: React.FC<{
                 : 'N/A'}
             </DynamicDeadline>
           ) : (
-            <Value>No open period</Value>
+            <Value>N/A</Value>
           )}
         </InfoCell>
         <InfoCell title="Pool stats" tooltip="Stats across all investors in the pool">
@@ -146,7 +146,7 @@ export const DealInformation: React.FC<{
         </InfoCell>
         <InfoCell
           title="Round 1 deadline"
-          tooltip="The pro rata redemption period is when an investor has the opportunity to max out their allocation for the deal"
+          tooltip="The period when an investor may accept their allocation for the deal"
         >
           {deal.redemption && deal.redemption.proRataRedemptionEnd && (
             <DynamicDeadline
@@ -174,8 +174,8 @@ export const DealInformation: React.FC<{
           <Value>Aelin protocol fee: 2%</Value>
         </InfoCell>
         <InfoCell
-          title="Deal tokens sold"
-          tooltip="The total amount of deal tokens sold to investors"
+          title="Deal tokens accepted"
+          tooltip="The total amount of deal tokens accepted by investors so far"
         >
           <StyledValue>
             {deal.tokensSold.formatted}{' '}

@@ -78,7 +78,7 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     id: CreateDealSteps.dealToken,
     order: 1,
     title: 'Deal token',
-    text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool as your deal. Examples - SNX Address (0x8700daec35af8ff88c16bdf0418774cb3d7599b4)',
+    text: 'Copy and paste the deal token address (ERC-20) that is being presented to the pool for your deal.',
     placeholder: 'Enter deal token address',
     getSummaryValue: (currentState: CreateDealStateComplete) => (
       <TokenIcon
@@ -93,14 +93,14 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
   [CreateDealSteps.totalPurchaseAmount]: {
     id: CreateDealSteps.totalPurchaseAmount,
     order: 2,
-    title: 'Total purchase amount',
+    title: 'Total investment amount',
     text: (
       <>
-        "All" - Every purchase token will be exchanged for a deal token, no investor will be
-        deallocated. <br />
-        <br /> "Partial" - Only a certain number of investment tokens will be exchanged for deal
-        tokens. All pool investors are deallocated the same amount, no one receives preferential
-        treatment.'
+        You have two options for how many investment tokens you'll accept for the deal. <br />
+        1. All: Every investment token will be exchanged for a deal token.
+        <br />
+        2. Partial: A partial amount of investment tokens in the pool will be exchangeable for deal
+        tokens
       </>
     ),
     placeholder: 'Enter total purchase amount...',
@@ -111,7 +111,7 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     id: CreateDealSteps.dealTokenTotal,
     order: 3,
     title: 'Deal token total',
-    text: 'Total amount of deal tokens that are being distributed to the pool. This determines the exchange rate between investment tokens and deal tokens.',
+    text: 'Amount of tokens for the deal, which determines the exchange rate',
     placeholder: 'Enter deal token total...',
     getSummaryValue: (currentState: CreateDealStateComplete) =>
       formatNumber(Number(currentState[CreateDealSteps.dealTokenTotal])),
@@ -136,7 +136,7 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     id: CreateDealSteps.vestingPeriod,
     order: 5,
     title: 'Vesting period',
-    text: 'How long after the vesting cliff (if applicable), tokens will vest for. They will be unlocked linearly over this time.',
+    text: 'At the end of the vesting cliff, the period where deal tokens unlock linearly over time',
     placeholder: undefined,
     getSummaryValue: (currentState: CreateDealStateComplete) => {
       const value = currentState[CreateDealSteps.vestingPeriod]
@@ -151,8 +151,8 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
   [CreateDealSteps.proRataPeriod]: {
     id: CreateDealSteps.proRataPeriod,
     order: 6,
-    title: 'Pro rata period',
-    text: 'Time period where investors confirm their allocation of deal tokens. We recommend giving investors ample time so they do not miss accepting tokens. Note - If investors do not accept their pro rata period, they will effectively decline the deal.',
+    title: 'Round 1: Accept Allocation',
+    text: 'Round 1 is when investors may accept their allocation of deal tokens or reject the deal and receive their investment tokens back.',
     placeholder: undefined,
     getSummaryValue: (currentState: CreateDealStateComplete) => {
       const value = currentState[CreateDealSteps.proRataPeriod]
@@ -163,8 +163,8 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
   [CreateDealSteps.openPeriod]: {
     id: CreateDealSteps.openPeriod,
     order: 7,
-    title: 'Open period',
-    text: 'Everyone who maxed out their allocation in the Pro-Rata period is eligible to buy any remaining tokens with any leftover purchase tokens they have not withdrawn. Note: this period is based on first-come, first-serve.',
+    title: 'Round 2: Accept Remaining',
+    text: 'In Round 2, investors who accept their entire allocation in Round 1 can purchase any remaining tokens on a first-come, first-serve basis.',
     placeholder: undefined,
     getSummaryValue: (currentState: CreateDealStateComplete, isOpenPeriodDisabled): string => {
       const value = currentState[CreateDealSteps.openPeriod]
@@ -184,8 +184,8 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
   [CreateDealSteps.counterPartyFundingPeriod]: {
     id: CreateDealSteps.counterPartyFundingPeriod,
     order: 8,
-    title: 'Counter party funding period',
-    text: 'Time period that the counter party (token holder) will have to deposit deal tokens to the pool. These tokens will be exchanged for investment tokens once their deposit is complete.',
+    title: 'Token Holder Funding Period',
+    text: 'Time period the token holder will have to deposit the total amount of deal tokens, which will be exchangeable for investment tokens',
     placeholder: undefined,
     getSummaryValue: (currentState: CreateDealStateComplete) => {
       const value = currentState[CreateDealSteps.counterPartyFundingPeriod]
@@ -196,8 +196,8 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
   [CreateDealSteps.counterPartyAddress]: {
     id: CreateDealSteps.counterPartyAddress,
     order: 9,
-    title: 'Counter party address',
-    text: 'Copy and paste the EOA/multisig address for the counter party (token holder) who is depositing deal tokens. Note - Only this address will be able to deposit deal tokens, no other addresses can be added at a later time.',
+    title: 'Token Holder Address',
+    text: 'Copy and paste the EOA/multisig address for the token holder who is depositing deal tokens. Note - Only this address will be able to deposit deal tokens, no other addresses can be added at a later time.',
     placeholder: 'Enter counter party address',
     getSummaryValue: (currentState: CreateDealState): string => {
       const value = currentState[CreateDealSteps.counterPartyAddress] || ''

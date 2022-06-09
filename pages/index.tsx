@@ -24,9 +24,9 @@ const Home: NextPage = () => {
           button={{ title: 'Create pool', onClick: () => router.push('/pool/create') }}
           title="Pools"
         >
-          Aelin is a fully decentralized and community-based fundraising protocol. Invest in a pool
-          to access deals brought by sponsors. Aelin does not endorse any pools, follow an
-          investor's best practices in our docs, and do your own research.
+          Aelin is a decentralized and community-based fundraising protocol. Invest in a pool to
+          access deals brought by sponsors. Aelin does not endorse any pools, follow an investor's
+          best practices in our docs, and do your own research.
         </SectionIntro>
         <ListWithFilters userPoolsInvested={userResponse?.poolsInvested} />
       </LeftSidebarLayout>
