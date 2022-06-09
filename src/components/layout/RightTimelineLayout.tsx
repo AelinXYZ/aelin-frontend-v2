@@ -6,7 +6,7 @@ import { Timeline } from '@/src/components/pools/common/Timeline'
 import { TimelineSteps } from '@/types/aelinPool'
 
 export const Wrapper = styled.main`
-  --timeline-width: 296px;
+  --timeline-width: 300px;
 
   column-gap: 40px;
   display: grid;
