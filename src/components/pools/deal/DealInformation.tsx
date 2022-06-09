@@ -78,7 +78,7 @@ export const DealInformation: React.FC<{
             />
           </StyledValue>
           <StyledValue>
-            Deal token: {deal.underlyingToken.dealAmount.formatted}
+            Deal token: {deal.underlyingToken.dealAmount.formatted}{' '}
             <ExternalLink
               href={getExplorerUrl(deal.underlyingToken.token, chainId)}
               label={deal.underlyingToken.symbol}

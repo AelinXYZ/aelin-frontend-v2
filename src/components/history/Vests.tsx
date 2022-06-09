@@ -16,6 +16,7 @@ import {
   TableBody,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
+import { NameCell } from '@/src/components/table/NameCell'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinVests from '@/src/hooks/aelin/history/useAelinVests'
@@ -135,7 +136,7 @@ export const Vests: React.FC = () => {
               href={`/pool/${getKeyChainByValue(network)}/${id}`}
               key={index}
             >
-              <Cell light>{poolName}</Cell>
+              <NameCell light>{poolName}</NameCell>
               <Cell mobileJustifyContent="center">{formatDate(timestamp, DATE_DETAILED)}</Cell>
               <Cell light mobileJustifyContent="center">
                 {amountVested}

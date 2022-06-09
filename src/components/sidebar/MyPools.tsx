@@ -50,6 +50,14 @@ const ButtonContainer = styled.div`
   margin: 15px 0 0 0;
 `
 
+const PoolName = styled.span`
+  width: 100%;
+  overflow: hidden;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`
+
 type PoolData = {
   stage: string
   href: string
@@ -179,7 +187,7 @@ const MyPools: React.FC = ({ ...restProps }) => {
                 appChainId,
               ).map(({ href, name, notifications, stage }, index) => (
                 <Pool href={href} key={index} notifications={notifications} stage={stage}>
-                  {name}
+                  <PoolName>{name}</PoolName>
                 </Pool>
               ))
             ) : (
