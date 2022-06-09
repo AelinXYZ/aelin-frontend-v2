@@ -278,3 +278,17 @@ export function getTokensSold(
     formatted: formatToken(tokensSold, investmentTokenDecimals),
   }
 }
+
+export function getInvestmentDealToken(
+  underlyingDealTokenTotal: string,
+  underlyingDecimals: number,
+  exchangeRate: DetailedNumber,
+) {
+  const _underlyingDealTokenTotal = new Wei(underlyingDealTokenTotal, underlyingDecimals, true)
+  const _exchangeRate = new Wei(exchangeRate.raw, underlyingDecimals, true)
+  const _investmentDealToken = _underlyingDealTokenTotal.mul(_exchangeRate).toBN()
+  return {
+    raw: _investmentDealToken,
+    formatted: formatToken(_investmentDealToken, underlyingDecimals),
+  }
+}
