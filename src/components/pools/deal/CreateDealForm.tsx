@@ -43,7 +43,7 @@ import useAelinCreateDeal, {
   getCreateDealSummaryData,
 } from '@/src/hooks/aelin/useAelinCreateDeal'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
-import { useAelinPoolTimelineAndUserRole } from '@/src/hooks/aelin/useAelinPoolStatus'
+import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { UserRole } from '@/types/aelinPool'
@@ -92,7 +92,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     showWarningOnLeave,
   } = useAelinCreateDeal(appChainId, pool)
 
-  const { timeline, userRole } = useAelinPoolTimelineAndUserRole(chainId, poolAddress as string)
+  const { timeline, userRole } = useAelinPoolStatus(chainId, poolAddress as string)
 
   const currentStepConfig = createDealConfig[createDealState.currentStep]
   const { order, text, title } = currentStepConfig
