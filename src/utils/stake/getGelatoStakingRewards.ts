@@ -45,8 +45,8 @@ export const getGelatoStakingRewards = async ({ address, chainId }: GelatoStakin
       contractCall(gelatoStakingAddress, GelatoPoolABI, provider, 'totalSupply', []),
       contractCall(stakingAddress, AelinStakingABI, provider, 'getRewardForDuration', []),
       contractCall(stakingAddress, AelinStakingABI, provider, 'rewardsDuration', []),
-      contractCall(stakingAddress, GelatoPoolABI, provider, 'balanceOf', [address]),
-      contractCall(stakingAddress, GelatoPoolABI, provider, 'earned', [address]),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'balanceOf', [address]),
+      contractCall(stakingAddress, AelinStakingABI, provider, 'earned', [address]),
       getAelinETHRates(),
     ]
 
