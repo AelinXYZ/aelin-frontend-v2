@@ -24,8 +24,11 @@ import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
+import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { PoolAction, PoolTab } from '@/types/aelinPool'
 
@@ -69,9 +72,19 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     query: { notification },
   } = useRouter()
 
-  const { funding, pool, tabs, timeline } = useAelinPoolStatus(chainId, poolAddress as string, {
-    tabs: notification as NotificationType,
-  })
+  const { address: walletAddress } = useWeb3Connection()
+  const [balance, refetchBalance] = useERC20Call(chainId, poolAddress, 'balanceOf', [
+    walletAddress || ZERO_ADDRESS,
+  ])
+
+  const { funding, pool, tabs, timeline } = useAelinPoolStatus(
+    chainId,
+    poolAddress as string,
+    balance,
+    {
+      tabs: notification as NotificationType,
+    },
+  )
 
   return (
     <>
@@ -125,7 +138,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 )}
                 {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
                 {tabs.actionTabs.active === PoolAction.Withdraw && (
-                  <WithdrawalFromPool pool={pool} />
+                  <WithdrawalFromPool
+                    balance={balance}
+                    pool={pool}
+                    refetchBalance={refetchBalance}
+                  />
                 )}
                 {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
                 {tabs.actionTabs.active === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}

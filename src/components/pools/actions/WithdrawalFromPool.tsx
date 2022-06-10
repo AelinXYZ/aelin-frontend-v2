@@ -6,27 +6,25 @@ import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
-import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
 type Props = {
   pool: ParsedAelinPool
+  balance: BigNumber | null
+  refetchBalance: () => void
 }
 
-function WithdrawalFromPool({ pool }: Props) {
+function WithdrawalFromPool({ balance, pool, refetchBalance }: Props) {
   const { chainId, investmentTokenDecimals, investmentTokenSymbol } = pool
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()
-  const [balance, refetchBalance] = useERC20Call(chainId, pool.address, 'balanceOf', [
-    address || ZERO_ADDRESS,
-  ])
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 

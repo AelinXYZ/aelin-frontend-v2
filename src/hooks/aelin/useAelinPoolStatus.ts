@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
@@ -8,11 +9,10 @@ import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { MAX_BN, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { MAX_BN, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -200,11 +200,9 @@ function useUserActions(
   userRole: UserRole,
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
+  balance: BigNumber | null,
 ): PoolAction[] {
   const { address: walletAddress } = useWeb3Connection()
-  const [balance] = useERC20Call(pool.chainId, pool.address, 'balanceOf', [
-    walletAddress || ZERO_ADDRESS,
-  ])
   const currentStatus = derivedStatus.current
 
   return useMemo(() => {
@@ -348,10 +346,11 @@ function useUserTabs(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
   userRole: UserRole,
-  defaultTab?: NotificationType,
+  balance: BigNumber | null,
+  defaultTab: NotificationType,
 ): TabsState {
   const { history } = derivedStatus
-  const userActions = useUserActions(userRole, pool, derivedStatus)
+  const userActions = useUserActions(userRole, pool, derivedStatus, balance)
   const tabsActions = useMemo(
     () => userActions.filter((action) => action !== PoolAction.ReleaseFunds),
     [userActions],
@@ -408,7 +407,7 @@ function useUserTabs(
       tabs.push(PoolTab.Vest)
     }
 
-    if (defaultTab && isNotificationType(defaultTab)) {
+    if (isNotificationType(defaultTab)) {
       switch (defaultTab) {
         case NotificationType.DealNotFunded:
           setActiveTab(PoolTab.PoolInformation)
@@ -725,7 +724,8 @@ type InitialData = {
 export default function useAelinPoolStatus(
   chainId: ChainsValues,
   poolAddress: string,
-  initialData?: InitialData,
+  balance: BigNumber | null,
+  initialData: InitialData,
 ) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
     refreshInterval: ms('30s'),
@@ -737,7 +737,7 @@ export default function useAelinPoolStatus(
   const derivedStatus = useCurrentStatus(poolResponse)
 
   const userRole = useUserRole(address, poolResponse, derivedStatus)
-  const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
+  const tabs = useUserTabs(poolResponse, derivedStatus, userRole, balance, initialData?.tabs)
   const funding = useFundingStatus(poolResponse, derivedStatus)
   const timeline = useTimelineStatus(poolResponse)
 
@@ -745,11 +745,31 @@ export default function useAelinPoolStatus(
     () => ({
       refetchPool,
       pool: poolResponse,
-      userRole,
       funding,
       tabs,
       timeline,
     }),
-    [refetchPool, poolResponse, userRole, funding, tabs, timeline],
+    [refetchPool, poolResponse, funding, tabs, timeline],
+  )
+}
+
+export function useAelinPoolTimelineAndUserRole(chainId: ChainsValues, poolAddress: string) {
+  const { pool: poolResponse } = useAelinPool(chainId, poolAddress, {
+    refreshInterval: ms('30s'),
+  })
+  const { address } = useWeb3Connection()
+
+  const timeline = useTimelineStatus(poolResponse)
+
+  // derive data for UI
+  const derivedStatus = useCurrentStatus(poolResponse)
+  const userRole = useUserRole(address, poolResponse, derivedStatus)
+
+  return useMemo(
+    () => ({
+      timeline,
+      userRole,
+    }),
+    [timeline, userRole],
   )
 }
