@@ -2,6 +2,7 @@ import { FC } from 'react'
 import styled from 'styled-components'
 
 import { Etherscan } from '@/src/components/assets/Etherscan'
+import ExternalLink from '@/src/components/common/ExternalLink'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -55,9 +56,11 @@ interface StakeSectionProps {
   textTooltip: string
   textTooltipAPY: string
   title: string
+  blockExplorerUrl: string[]
 }
 
 const StakeSection: FC<StakeSectionProps> = ({
+  blockExplorerUrl,
   contractAddresses,
   stakeType,
   textTooltip,
@@ -81,7 +84,9 @@ const StakeSection: FC<StakeSectionProps> = ({
 
   return (
     <Wrapper {...restProps}>
-      <Icon />
+      <a href={`${blockExplorerUrl[0]}address/${stakingAddress}`} rel="noreferrer" target="_blank">
+        <Icon />
+      </a>
       <TitleWrapper>
         <BaseTitle>{title}</BaseTitle>
         <Tooltip text={textTooltip} />
