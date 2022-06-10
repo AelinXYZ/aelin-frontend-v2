@@ -52,16 +52,16 @@ interface StakeSectionProps {
     stakingAddress: string
     tokenAddress: string
   }
+  explorerUrl: string
   stakeType: StakingEnum
   textTooltip: string
   textTooltipAPY: string
   title: string
-  blockExplorerUrl: string[]
 }
 
 const StakeSection: FC<StakeSectionProps> = ({
-  blockExplorerUrl,
   contractAddresses,
+  explorerUrl,
   stakeType,
   textTooltip,
   textTooltipAPY,
@@ -84,7 +84,7 @@ const StakeSection: FC<StakeSectionProps> = ({
 
   return (
     <Wrapper {...restProps}>
-      <a href={`${blockExplorerUrl[0]}address/${stakingAddress}`} rel="noreferrer" target="_blank">
+      <a href={explorerUrl} rel="noreferrer" target="_blank">
         <Icon />
       </a>
       <TitleWrapper>
