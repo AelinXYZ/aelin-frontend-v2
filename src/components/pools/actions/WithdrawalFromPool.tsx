@@ -15,11 +15,11 @@ import { formatToken } from '@/src/web3/bigNumber'
 
 type Props = {
   pool: ParsedAelinPool
-  userPoolBalance: BigNumber | null
-  refetchUserPoolBalance: () => void
+  balance: BigNumber | null
+  refetchBalance: () => void
 }
 
-function WithdrawalFromPool({ pool, refetchUserPoolBalance, userPoolBalance }: Props) {
+function WithdrawalFromPool({ balance, pool, refetchBalance }: Props) {
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
 
   const [tokenInputValue, setTokenInputValue] = useState('')
@@ -34,16 +34,16 @@ function WithdrawalFromPool({ pool, refetchUserPoolBalance, userPoolBalance }: P
   )
 
   useEffect(() => {
-    if (!userPoolBalance) {
+    if (!balance) {
       setInputError('User balance is not available!')
       return
     }
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(userPoolBalance)) {
+    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance)) {
       setInputError('Insufficient balance')
     } else {
       setInputError('')
     }
-  }, [tokenInputValue, userPoolBalance])
+  }, [tokenInputValue, balance])
 
   const withdrawFromPool = async () => {
     if (inputError) {
@@ -53,7 +53,7 @@ function WithdrawalFromPool({ pool, refetchUserPoolBalance, userPoolBalance }: P
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await execute([tokenInputValue], txGasOptions)
         if (receipt) {
-          refetchUserPoolBalance()
+          refetchBalance()
           setTokenInputValue('')
           setInputError('')
         }
@@ -64,8 +64,8 @@ function WithdrawalFromPool({ pool, refetchUserPoolBalance, userPoolBalance }: P
   }
 
   const maxValueFormatted = useMemo(
-    () => formatToken(userPoolBalance || ZERO_BN, investmentTokenDecimals) || '0',
-    [userPoolBalance, investmentTokenDecimals],
+    () => formatToken(balance || ZERO_BN, investmentTokenDecimals) || '0',
+    [balance, investmentTokenDecimals],
   )
   const disableButton = useMemo(
     () =>
@@ -88,7 +88,7 @@ function WithdrawalFromPool({ pool, refetchUserPoolBalance, userPoolBalance }: P
       <TokenInput
         decimals={investmentTokenDecimals}
         error={inputError}
-        maxValue={(userPoolBalance || ZERO_BN).toString()}
+        maxValue={(balance || ZERO_BN).toString()}
         maxValueFormatted={maxValueFormatted}
         setValue={setTokenInputValue}
         symbol={investmentTokenSymbol}

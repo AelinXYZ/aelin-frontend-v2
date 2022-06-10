@@ -1,5 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
-
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import Approve from '@/src/components/pools/actions/Approve'
 import Deposit from '@/src/components/pools/actions/Deposit'
@@ -14,17 +12,9 @@ import { Funding } from '@/types/aelinPool'
 type Props = {
   pool: ParsedAelinPool
   poolHelpers: Funding
-  userPoolBalance: BigNumber | null
-  refetchUserPoolBalance: () => void
 }
 
-const Invest: React.FC<Props> = ({
-  pool,
-  poolHelpers,
-  refetchUserPoolBalance,
-  userPoolBalance,
-  ...restProps
-}) => {
+const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
   const { address } = useWeb3Connection()
   const [userAllowance, refetchUserAllowance] = useERC20Call(
     pool.chainId,
@@ -32,11 +22,7 @@ const Invest: React.FC<Props> = ({
     'allowance',
     [address || ZERO_ADDRESS, pool.address],
   )
-  const { isUserAllowedToInvest, userAlreadyInvested } = useUserAvailableToDeposit(
-    pool,
-    userPoolBalance,
-    refetchUserPoolBalance,
-  )
+  const { isUserAllowedToInvest, userAlreadyInvested } = useUserAvailableToDeposit(pool)
 
   return (
     <Wrapper title="Deposit tokens" {...restProps}>
@@ -49,12 +35,7 @@ const Invest: React.FC<Props> = ({
       ) : userAlreadyInvested ? (
         <Contents>This address have already invested in this pool.</Contents>
       ) : userAllowance.gt(ZERO_ADDRESS) ? (
-        <Deposit
-          pool={pool}
-          poolHelpers={poolHelpers}
-          refetchUserPoolBalance={refetchUserPoolBalance}
-          userPoolBalance={userPoolBalance}
-        />
+        <Deposit pool={pool} poolHelpers={poolHelpers} />
       ) : (
         <Approve
           description={`Before you can deposit, the pool needs your permission to transfer your ${pool.investmentTokenSymbol}`}

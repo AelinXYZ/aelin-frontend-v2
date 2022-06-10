@@ -73,17 +73,14 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   } = useRouter()
 
   const { address: walletAddress } = useWeb3Connection()
-  const [userPoolBalance, refetchUserPoolBalance] = useERC20Call(
-    chainId,
-    poolAddress,
-    'balanceOf',
-    [walletAddress || ZERO_ADDRESS],
-  )
+  const [balance, refetchBalance] = useERC20Call(chainId, poolAddress, 'balanceOf', [
+    walletAddress || ZERO_ADDRESS,
+  ])
 
   const { funding, pool, tabs, timeline } = useAelinPoolStatus(
     chainId,
     poolAddress as string,
-    userPoolBalance,
+    balance,
     {
       tabs: notification as NotificationType,
     },
@@ -137,19 +134,14 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 {!tabs.actionTabs.states.length && <div>No actions available</div>}
 
                 {tabs.actionTabs.active === PoolAction.Invest && (
-                  <Invest
-                    pool={pool}
-                    poolHelpers={funding}
-                    refetchUserPoolBalance={refetchUserPoolBalance}
-                    userPoolBalance={userPoolBalance}
-                  />
+                  <Invest pool={pool} poolHelpers={funding} />
                 )}
                 {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
                 {tabs.actionTabs.active === PoolAction.Withdraw && (
                   <WithdrawalFromPool
+                    balance={balance}
                     pool={pool}
-                    refetchUserPoolBalance={refetchUserPoolBalance}
-                    userPoolBalance={userPoolBalance}
+                    refetchBalance={refetchBalance}
                   />
                 )}
                 {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
