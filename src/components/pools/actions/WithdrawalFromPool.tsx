@@ -15,11 +15,11 @@ import { formatToken } from '@/src/web3/bigNumber'
 
 type Props = {
   pool: ParsedAelinPool
-  balance: BigNumber | null
-  refetchBalance: () => void
+  userPoolBalance: BigNumber | null
+  refetchUserPoolBalance: () => void
 }
 
-function WithdrawalFromPool({ balance, pool, refetchBalance }: Props) {
+function WithdrawalFromPool({ pool, refetchUserPoolBalance, userPoolBalance }: Props) {
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
 
   const [tokenInputValue, setTokenInputValue] = useState('')
@@ -34,16 +34,16 @@ function WithdrawalFromPool({ balance, pool, refetchBalance }: Props) {
   )
 
   useEffect(() => {
-    if (!balance) {
+    if (!userPoolBalance) {
       setInputError('User balance is not available!')
       return
     }
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(balance)) {
+    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(userPoolBalance)) {
       setInputError('Insufficient balance')
     } else {
       setInputError('')
     }
-  }, [tokenInputValue, balance])
+  }, [tokenInputValue, userPoolBalance])
 
   const withdrawFromPool = async () => {
     if (inputError) {
@@ -53,7 +53,7 @@ function WithdrawalFromPool({ balance, pool, refetchBalance }: Props) {
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await execute([tokenInputValue], txGasOptions)
         if (receipt) {
-          refetchBalance()
+          refetchUserPoolBalance()
           setTokenInputValue('')
           setInputError('')
         }
@@ -64,8 +64,8 @@ function WithdrawalFromPool({ balance, pool, refetchBalance }: Props) {
   }
 
   const maxValueFormatted = useMemo(
-    () => formatToken(balance || ZERO_BN, investmentTokenDecimals) || '0',
-    [balance, investmentTokenDecimals],
+    () => formatToken(userPoolBalance || ZERO_BN, investmentTokenDecimals) || '0',
+    [userPoolBalance, investmentTokenDecimals],
   )
   const disableButton = useMemo(
     () =>
@@ -88,7 +88,7 @@ function WithdrawalFromPool({ balance, pool, refetchBalance }: Props) {
       <TokenInput
         decimals={investmentTokenDecimals}
         error={inputError}
-        maxValue={(balance || ZERO_BN).toString()}
+        maxValue={(userPoolBalance || ZERO_BN).toString()}
         maxValueFormatted={maxValueFormatted}
         setValue={setTokenInputValue}
         symbol={investmentTokenSymbol}

@@ -1,6 +1,8 @@
+import { BigNumber } from '@ethersproject/bignumber'
+
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
+import useAelinPoolCall from '@/src/hooks/contracts/useAelinPoolCall'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
@@ -25,7 +27,11 @@ export type UserPoolBalance = {
   investmentTokenBalance: DetailedNumberExtended
 }
 
-export function useUserAvailableToDeposit(pool: ParsedAelinPool): UserPoolBalance {
+export function useUserAvailableToDeposit(
+  pool: ParsedAelinPool,
+  userPoolBalance: BigNumber | null,
+  refetchUserPoolBalance: () => void,
+): UserPoolBalance {
   const { address } = useWeb3Connection()
 
   const [investmentTokenBalance, refetchUserInvestmentTokenBalance] = useERC20Call(
@@ -35,30 +41,22 @@ export function useUserAvailableToDeposit(pool: ParsedAelinPool): UserPoolBalanc
     [address || ZERO_ADDRESS],
   )
 
-  const [[allowListAmount, userPoolBalance], refetchAllowListBalance] = useAelinPoolCallMultiple(
+  const [allowListAmount, refetchAllowListAmount] = useAelinPoolCall(
     pool.chainId,
     pool.address,
-    [
-      {
-        method: 'allowList',
-        params: [address || ''],
-      },
-      {
-        method: 'balanceOf',
-        params: [address || ''],
-      },
-    ],
+    'allowList',
+    [address || ZERO_ADDRESS],
   )
 
   const isUserAllowedToInvest = !isPrivatePool(pool.poolType)
     ? true
-    : userPoolBalance.gt(ZERO_BN) || allowListAmount.gt(ZERO_BN)
+    : (userPoolBalance ?? ZERO_BN).gt(ZERO_BN) || (allowListAmount ?? ZERO_BN).gt(ZERO_BN)
 
   return {
     isUserAllowedToInvest,
     userMaxDepositPrivateAmount: {
-      raw: allowListAmount,
-      formatted: formatToken(allowListAmount, pool.investmentTokenDecimals),
+      raw: allowListAmount ?? ZERO_BN,
+      formatted: formatToken(allowListAmount ?? ZERO_BN, pool.investmentTokenDecimals),
       type: AmountTypes.maxDepositAllowedPrivate,
     },
     investmentTokenBalance: {
@@ -67,10 +65,13 @@ export function useUserAvailableToDeposit(pool: ParsedAelinPool): UserPoolBalanc
       type: AmountTypes.investmentTokenBalance,
     },
     userAlreadyInvested:
-      isUserAllowedToInvest && isPrivatePool(pool.poolType) && allowListAmount.eq(ZERO_BN),
+      isUserAllowedToInvest &&
+      isPrivatePool(pool.poolType) &&
+      (allowListAmount ?? ZERO_BN).eq(ZERO_BN),
     refetchBalances: () => {
       refetchUserInvestmentTokenBalance()
-      isPrivatePool(pool.poolType) && refetchAllowListBalance()
+      refetchUserPoolBalance()
+      isPrivatePool(pool.poolType) && refetchAllowListAmount()
     },
   }
 }

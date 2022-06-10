@@ -18,6 +18,8 @@ import { Funding } from '@/types/aelinPool'
 type Props = {
   pool: ParsedAelinPool
   poolHelpers: Funding
+  userPoolBalance: BigNumber | null
+  refetchUserPoolBalance: () => void
 }
 
 const StyledTokenInput = styled(TokenInput)<{ isPrivate?: boolean }>`
@@ -41,10 +43,10 @@ const Allowance = ({ allowance }: { allowance: string }) => (
   </Contents>
 )
 
-function Deposit({ pool, poolHelpers }: Props) {
+function Deposit({ pool, poolHelpers, refetchUserPoolBalance, userPoolBalance }: Props) {
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
   const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
-    useUserAvailableToDeposit(pool)
+    useUserAvailableToDeposit(pool, userPoolBalance, refetchUserPoolBalance)
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()

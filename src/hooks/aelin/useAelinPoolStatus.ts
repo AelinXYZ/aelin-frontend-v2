@@ -200,7 +200,7 @@ function useUserActions(
   userRole: UserRole,
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
-  balance: BigNumber | null,
+  userPoolBalance: BigNumber | null,
 ): PoolAction[] {
   const { address: walletAddress } = useWeb3Connection()
   const currentStatus = derivedStatus.current
@@ -265,8 +265,8 @@ function useUserActions(
 
       // Withdraw
       if (
-        balance &&
-        !balance.eq(ZERO_BN) &&
+        userPoolBalance &&
+        !userPoolBalance.eq(ZERO_BN) &&
         (isAfter(now, pool.dealDeadline) || (pool.dealAddress && pool.deal?.holderAlreadyDeposited))
       ) {
         actions.push(PoolAction.Withdraw)
@@ -308,8 +308,8 @@ function useUserActions(
       // Withdraw investment. For investors
       // if holder already deposited or if the deadline to fund the pool is reached.
       if (
-        balance &&
-        !balance.eq(ZERO_BN) &&
+        userPoolBalance &&
+        !userPoolBalance.eq(ZERO_BN) &&
         (isAfter(now, pool.deal.holderFundingExpiration) || pool.deal.holderAlreadyDeposited)
       ) {
         actions.push(PoolAction.Withdraw)
@@ -321,7 +321,7 @@ function useUserActions(
     if (currentStatus === PoolStatus.Closed) {
       const result = []
 
-      if (balance && !balance.eq(ZERO_BN)) {
+      if (userPoolBalance && !userPoolBalance.eq(ZERO_BN)) {
         result.push(PoolAction.Withdraw)
       }
 
@@ -331,7 +331,7 @@ function useUserActions(
     if (currentStatus === PoolStatus.Vesting) {
       const result = [PoolAction.Vest]
 
-      if (balance && !balance.eq(ZERO_BN)) {
+      if (userPoolBalance && !userPoolBalance.eq(ZERO_BN)) {
         result.push(PoolAction.Withdraw)
       }
 
@@ -339,18 +339,18 @@ function useUserActions(
     }
 
     return []
-  }, [userRole, currentStatus, pool, walletAddress, balance])
+  }, [userRole, currentStatus, pool, walletAddress, userPoolBalance])
 }
 
 function useUserTabs(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
   userRole: UserRole,
-  balance: BigNumber | null,
+  userPoolBalance: BigNumber | null,
   defaultTab: NotificationType,
 ): TabsState {
   const { history } = derivedStatus
-  const userActions = useUserActions(userRole, pool, derivedStatus, balance)
+  const userActions = useUserActions(userRole, pool, derivedStatus, userPoolBalance)
   const tabsActions = useMemo(
     () => userActions.filter((action) => action !== PoolAction.ReleaseFunds),
     [userActions],
@@ -724,7 +724,7 @@ type InitialData = {
 export default function useAelinPoolStatus(
   chainId: ChainsValues,
   poolAddress: string,
-  balance: BigNumber | null,
+  userPoolBalance: BigNumber | null,
   initialData: InitialData,
 ) {
   const { pool: poolResponse, refetch: refetchPool } = useAelinPool(chainId, poolAddress, {
@@ -737,7 +737,13 @@ export default function useAelinPoolStatus(
   const derivedStatus = useCurrentStatus(poolResponse)
 
   const userRole = useUserRole(address, poolResponse, derivedStatus)
-  const tabs = useUserTabs(poolResponse, derivedStatus, userRole, balance, initialData?.tabs)
+  const tabs = useUserTabs(
+    poolResponse,
+    derivedStatus,
+    userRole,
+    userPoolBalance,
+    initialData?.tabs,
+  )
   const funding = useFundingStatus(poolResponse, derivedStatus)
   const timeline = useTimelineStatus(poolResponse)
 
