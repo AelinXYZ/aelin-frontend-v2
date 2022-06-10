@@ -20,7 +20,7 @@ type Props = {
 }
 
 function WithdrawalFromPool({ balance, pool, refetchBalance }: Props) {
-  const { chainId, investmentTokenDecimals, investmentTokenSymbol } = pool
+  const { investmentTokenDecimals, investmentTokenSymbol } = pool
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
