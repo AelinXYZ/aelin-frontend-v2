@@ -22,6 +22,10 @@ const StyledValue = styled(Value)`
   gap: 5px;
 `
 
+const Warning = styled(Value)`
+  color: ${({ theme }) => theme.colors.error};
+`
+
 const UserStatsInfoCell = genericSuspense(
   ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
     const userStats = useAelinDealUserStats(pool)
@@ -127,10 +131,11 @@ export const DealInformation: React.FC<{
           )}
         </InfoCell>
         <InfoCell title="Pool stats" tooltip="Stats across all investors in the pool">
-          <Value>Amount in pool: {pool.amountInPool.formatted}</Value>
-          <Value>
-            Total redeem: {pool.redeem.formatted} {poolHelpers.capReached && '(cap reached)'}
-          </Value>
+          <StyledValue>
+            Amount in pool: {pool.amountInPool.formatted}
+            <Warning>{poolHelpers.capReached && 'cap reached'}</Warning>
+          </StyledValue>
+          <Value>Total redeem: {pool.redeem.formatted}</Value>
           <Value>Total withdrawn: {pool.withdrawn.formatted}</Value>
         </InfoCell>
         <DealParticipantsInfoCell
