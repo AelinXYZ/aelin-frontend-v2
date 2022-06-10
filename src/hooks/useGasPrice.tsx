@@ -1,48 +1,29 @@
-import { BigNumber } from '@ethersproject/bignumber'
-import { wei } from '@synthetixio/wei'
 import ms from 'ms'
 import useSWR from 'swr'
 
-import { Chains } from '@/src/constants/chains'
+import { getGasPriceEIP1559, getGasPriceFromProvider } from '../utils/gasUtils'
+import { mainnetRpcProvider } from './useEnsResolvers'
+import { chainsConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import formatGwei from '@/src/utils/formatGwai'
 import { GasPrices, GasSpeed } from '@/types/utils'
 
 export const GAS_SPEEDS: GasSpeed[] = ['average', 'fast', 'fastest']
 
 const useEthGasPrice = () => {
   const { appChainId, readOnlyAppProvider } = useWeb3Connection()
-  const MULTIPLIER = wei(2)
-
-  const getGasPriceFromProvider = async () => {
-    const gasPrice = formatGwei((await readOnlyAppProvider.getGasPrice()).toNumber())
-
-    return {
-      fastest: gasPrice,
-      fast: gasPrice,
-      average: gasPrice,
-    }
-  }
-
-  const computeGasFee = (baseFeePerGas: BigNumber, maxPriorityFeePerGas: number) =>
-    wei(baseFeePerGas, 9).mul(MULTIPLIER).add(wei(maxPriorityFeePerGas, 9)).toNumber()
+  const isL2Chain = chainsConfig[appChainId]?.isL2
 
   const { data, isValidating } = useSWR<GasPrices, Error>(
     appChainId ? ['network', 'gasPrice', appChainId] : null,
     async () => {
       try {
-        if (appChainId === Chains.mainnet) {
-          const block = await readOnlyAppProvider.getBlock('latest')
-          if (!block?.baseFeePerGas) {
-            return await getGasPriceFromProvider()
-          }
-          return {
-            fastest: computeGasFee(block.baseFeePerGas, 6),
-            fast: computeGasFee(block.baseFeePerGas, 4),
-            average: computeGasFee(block.baseFeePerGas, 2),
-          }
+        const block = await mainnetRpcProvider.getBlock('latest')
+        return {
+          l1: block?.baseFeePerGas
+            ? getGasPriceEIP1559(block.baseFeePerGas)
+            : await getGasPriceFromProvider(mainnetRpcProvider),
+          l2: isL2Chain ? await getGasPriceFromProvider(readOnlyAppProvider) : undefined,
         }
-        return await getGasPriceFromProvider()
       } catch (e) {
         throw new Error('Cannot retrieve gas price from provider. ' + e)
       }

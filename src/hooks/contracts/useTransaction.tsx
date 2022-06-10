@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 
 import * as optimismSDK from '@eth-optimism/sdk'
-import { BigNumber } from '@ethersproject/bignumber'
 import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers'
 import { toast } from 'react-hot-toast'
@@ -116,16 +115,20 @@ export default function useTransaction<
         if (appChainId === Chains.optimism) {
           const txReq = await contract.populateTransaction[method as string](..._params)
           const tx = await signer.populateTransaction(txReq)
-          const result = await (
-            web3Provider as optimismSDK.L2Provider<Web3Provider>
-          ).estimateTotalGasCost(tx) // L1 + L2 fees
-          return result.div(BigNumber.from(1e9)) // GWei
+
+          const l1Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateL1Gas(
+            tx,
+          )
+
+          const l2Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateGas(tx)
+
+          return { l1Gas, l2Gas }
         }
-        const result = await contract.estimateGas[method as string](..._params)
-        return result
+        const l1Gas = await contract.estimateGas[method as string](..._params)
+        return { l1Gas, l2Gas: ZERO_BN }
       } catch (e: any) {
         console.error('Gas estimate failed', e.message)
-        return ZERO_BN
+        return { l1Gas: ZERO_BN, l2Gas: ZERO_BN }
       }
     },
     [abi, address, isAppConnected, method, web3Provider, appChainId],

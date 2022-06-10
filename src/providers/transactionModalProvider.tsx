@@ -16,12 +16,11 @@ import ConfirmTransactionModal, {
 } from '@/src/components/pools/common/ConfirmTransactionModal'
 import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
 import { GasLimitEstimate } from '@/types/utils'
-
 const ModalTransactionContext = createContext<ModalTransactionContext | undefined>(undefined)
 
 export type GasOptions = {
-  gasPrice: BigNumber | undefined
-  gasLimit: BigNumber | undefined
+  gasPrice?: BigNumber
+  gasLimit?: BigNumber
 }
 
 export type ModalTransactionContext = {
@@ -33,9 +32,14 @@ type Props = {
   children: ReactNode
 }
 
+type GasEstimate = {
+  l1Gas: BigNumber
+  l2Gas?: BigNumber
+}
+
 type ModalConfig = {
   /** estimate tx function */
-  estimate: () => Promise<BigNumber | null>
+  estimate: () => Promise<GasEstimate | null>
   /** Action on modal submit (expected: execute transaction with gas calculated on estimate fn) */
   onConfirm: ({ gasLimit, gasPrice }: GasOptions) => Promise<void>
   /** The modal title */
@@ -64,11 +68,8 @@ export default function TransactionModalProvider({ children }: Props) {
 
   const txGasOptions: GasOptions = useMemo(
     () => ({
-      gasPrice: gasPrice && gasPrice.gt(wei(0)) ? gasPrice.toBN() : undefined,
-      gasLimit:
-        gasLimitEstimate && gasLimitEstimate.gt(wei(0))
-          ? getGasEstimateWithBuffer(gasLimitEstimate)?.toBN()
-          : undefined,
+      gasPrice: gasPrice?.gt(wei(0)) ? gasPrice.toBN() : undefined,
+      gasLimit: getGasEstimateWithBuffer(gasLimitEstimate),
     }),
     [gasLimitEstimate, gasPrice],
   )
@@ -77,7 +78,7 @@ export default function TransactionModalProvider({ children }: Props) {
     () =>
       modalConfig && {
         disableButton: isSubmitting,
-        gasLimitEstimate: gasLimitEstimate,
+        gasLimitEstimate,
         onClose: () => {
           setShowModalTransaction(false)
           cleanState()
@@ -111,11 +112,15 @@ export default function TransactionModalProvider({ children }: Props) {
   )
 
   useEffect(() => {
-    // when estimate is setted, is called too
+    // when estimate is set, is called too
     if (modalConfig && modalConfig.estimate) {
       try {
         modalConfig.estimate().then((estimate) => {
-          if (estimate) setGasLimitEstimate(wei(estimate, 0))
+          if (estimate)
+            setGasLimitEstimate({
+              l1: wei(estimate.l1Gas, 0),
+              l2: estimate.l2Gas ? wei(estimate.l2Gas, 0) : undefined,
+            })
           setIsSubmitting(false)
         })
       } catch (e) {
