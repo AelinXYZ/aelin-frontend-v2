@@ -58,7 +58,7 @@ const Link = styled(BaseLink)`
   }
 `
 
-const SubTitle = styled.p`
+const SubTitle = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.colors.textColorLight};
   display: flex;
