@@ -31,7 +31,7 @@ const Name = styled.div`
   font-weight: 400;
   font-size: 1rem;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.7);
+  color: ${({ theme }) => theme.colors.textColorLight};
 `
 
 export type NftCollectionAttributeProps = {

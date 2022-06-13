@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 `
 
 const Description = styled.p`
-  color: rgba(255, 255, 255, 0.7);
+  color: ${({ theme }) => theme.colors.textColorLight};
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.4;
