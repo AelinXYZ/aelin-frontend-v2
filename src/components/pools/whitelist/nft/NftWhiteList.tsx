@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { StepContents } from '@/src/components/pools/common/Create'
 import {
   NftWhiteListAction,
+  NftWhiteListActionType,
   NftWhiteListState,
   NftWhiteListStep,
 } from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
@@ -91,7 +92,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
           <NftTypeSection
             active={nftType}
             onChange={(value) => {
-              dispatch({ type: 'updateNftType', payload: value })
+              dispatch({ type: NftWhiteListActionType.updateNftType, payload: value })
             }}
           />
         )
@@ -101,7 +102,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
             active={whiteListProcess}
             nftType={nftType}
             onChange={(value) => {
-              dispatch({ type: 'updateWhiteListProcess', payload: value })
+              dispatch({ type: NftWhiteListActionType.updateWhiteListProcess, payload: value })
             }}
           />
         )
@@ -145,7 +146,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
                   ({ order }) => order === nftWhiteListStepsConfig[currentStep].order + 1,
                 )?.id
                 if (nextStep) {
-                  dispatch({ type: 'updateStep', payload: nextStep })
+                  dispatch({ type: NftWhiteListActionType.updateStep, payload: nextStep })
                 }
               }}
             >

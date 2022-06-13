@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import NftCollection from '@/src/components/pools/whitelist/nft/NftCollection'
 import {
   NftWhiteListAction,
+  NftWhiteListActionType,
   NftWhitelistProcess,
   SelectedNftCollectionData,
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -42,19 +43,19 @@ const NftCollectionsSection = ({
           key={selectedCollection.nftCollectionData?.id ?? 'empty'}
           onAmountPerNftChange={(amount) => {
             dispatch({
-              type: 'updateAmountPerNft',
+              type: NftWhiteListActionType.updateAmountPerNft,
               payload: { index: index, amount: amount },
             })
           }}
           onAmountPerWalletChange={(amount) => {
             dispatch({
-              type: 'updateAmountPerWallet',
+              type: NftWhiteListActionType.updateAmountPerWallet,
               payload: { index: index, amount: amount },
             })
           }}
           onCollectionChange={(value) => {
             dispatch({
-              type: 'updateCollection',
+              type: NftWhiteListActionType.updateCollection,
               payload: {
                 index: index,
                 newCollection: value,
@@ -63,19 +64,19 @@ const NftCollectionsSection = ({
           }}
           onCollectionRemove={() => {
             dispatch({
-              type: 'removeCollection',
+              type: NftWhiteListActionType.removeCollection,
               payload: index,
             })
           }}
           onNewNftAdd={() => {
             dispatch({
-              type: 'addEmptyNft',
+              type: NftWhiteListActionType.addEmptyNft,
               payload: index,
             })
           }}
           onNftDelete={(nftIndex) => {
             dispatch({
-              type: 'deleteNft',
+              type: NftWhiteListActionType.deleteNft,
               payload: {
                 collectionIndex: index,
                 nftIndex: nftIndex,
@@ -84,7 +85,7 @@ const NftCollectionsSection = ({
           }}
           onNftIdChange={(nftIndex, id) => {
             dispatch({
-              type: 'updateNftId',
+              type: NftWhiteListActionType.updateNftId,
               payload: {
                 collectionIndex: index,
                 nftIndex: nftIndex,
@@ -94,7 +95,7 @@ const NftCollectionsSection = ({
           }}
           onNftMinimumAmountChange={(nftIndex, amount) => {
             dispatch({
-              type: 'updateNftMinimumAmount',
+              type: NftWhiteListActionType.updateNftMinimumAmount,
               payload: {
                 collectionIndex: index,
                 nftIndex: nftIndex,
@@ -110,7 +111,7 @@ const NftCollectionsSection = ({
         <AddButton
           onClick={() => {
             dispatch({
-              type: 'addEmptyCollection',
+              type: NftWhiteListActionType.addEmptyCollection,
               payload: undefined,
             })
           }}

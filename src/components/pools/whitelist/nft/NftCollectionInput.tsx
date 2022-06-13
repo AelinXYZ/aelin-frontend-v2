@@ -1,12 +1,15 @@
 import Image from 'next/image'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled from 'styled-components'
+
+import debounce from 'lodash/debounce'
 
 import { SelectedNftCollectionData } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import useNftCollectionList, {
   NftCollectionData,
 } from '@/src/components/pools/whitelist/nft/useNftCollectionList'
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
+import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 
 const Wrapper = styled.div`
   display: flex;
@@ -73,27 +76,31 @@ type NftCollectionInputProps = {
 }
 
 const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInputProps) => {
-  const [search, setSearch] = useState<string | undefined>(undefined)
+  const [input, setInput] = useState<string | undefined>(undefined)
+  const [query, setQuery] = useState<string>('')
 
-  const { collections } = useNftCollectionList(search?.trim().toLowerCase() ?? '')
+  const debouncedChangeHandler = useMemo(() => debounce(setQuery, DEBOUNCED_INPUT_TIME), [setQuery])
+
+  const { collections } = useNftCollectionList(query)
 
   return (
     <Wrapper
       onBlur={() => {
-        setSearch(undefined)
+        setInput(undefined)
       }}
       onFocus={() => {
-        setSearch(selectedCollection.nftCollectionData?.name)
+        setInput(selectedCollection.nftCollectionData?.name)
       }}
     >
       {/* TODO [AELIP-15]: Replace with collection selector. */}
       <Input
         onChange={(e) => {
-          setSearch(e.target.value)
+          setInput(e.target.value)
+          debouncedChangeHandler(e.target.value.trim().toLowerCase())
         }}
         placeholder="Enter NFT collection name..."
         type="text"
-        value={search ?? selectedCollection.nftCollectionData?.name ?? ''}
+        value={input ?? selectedCollection.nftCollectionData?.name ?? ''}
       />
       {collections.length > 0 && (
         <Collections>
@@ -107,7 +114,7 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
                 key={collection.id}
                 onMouseDown={() => {
                   onChange(collection)
-                  setSearch(undefined)
+                  setInput(undefined)
                 }}
               >
                 <Details>
