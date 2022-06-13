@@ -7,6 +7,7 @@ import ReactTooltip from 'react-tooltip'
 import { TokenIcon } from '../common/TokenIcon'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
+import { Lock } from '@/src/components/assets/Lock'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -26,6 +27,7 @@ import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/consta
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
+import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 const Name = styled.span`
@@ -41,6 +43,21 @@ const TokenIconSmall = styled(TokenIcon)`
   .externalLink {
     font-size: 1.2rem !important;
   }
+`
+
+const Label = styled.span`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  background: ${({ theme }) => theme.buttonPrimary.backgroundColor};
+  border: 0.5px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.colors.primary};
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 14px;
 `
 
 const HideOnDesktop = styled(BaseHideOnDesktop)`
@@ -73,7 +90,7 @@ export const List: React.FC<{
       investmentToken: 'center',
       network: 'center',
     },
-    widths: '120px 120px 90px 1fr 1fr 165px 80px',
+    widths: '190px 120px 90px 0.8fr 1fr 165px 80px',
   }
 
   const tableHeaderCells = [
@@ -189,6 +206,12 @@ export const List: React.FC<{
                     >
                       {activeNotifications.toString()}
                     </Badge>
+                  )}
+                  {isPrivatePool(pool.poolType) && (
+                    <Label>
+                      <span>private</span>
+                      <Lock />
+                    </Label>
                   )}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                 </NameCell>
