@@ -3,7 +3,7 @@ import styled from 'styled-components'
 const Wrapper = styled.button`
   --dimensions: 30px;
 
-  background-color: ${({ theme: { colors } }) => colors.gray};
+  background-color: ${({ theme: { buttonPrevNext } }) => buttonPrevNext.backgroundColor};
   background-position: 50% 50%;
   background-repeat: no-repeat;
   border-radius: 50%;
@@ -25,7 +25,7 @@ const Wrapper = styled.button`
   &[disabled] {
     &,
     &:hover {
-      background-color: ${({ theme: { colors } }) => colors.gray};
+      background-color: ${({ theme: { buttonPrevNext } }) => buttonPrevNext.backgroundColor};
       box-shadow: none;
       cursor: not-allowed;
       opacity: 0.5;

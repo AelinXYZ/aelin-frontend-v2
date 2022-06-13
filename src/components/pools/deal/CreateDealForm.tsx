@@ -23,8 +23,8 @@ import { Summary } from '@/src/components/pools/common/Summary'
 import DealCalculationModal from '@/src/components/pools/deal/DealCalculationModal'
 import DealCreateStepInput from '@/src/components/pools/deal/DealCreateStepInput'
 import {
+  ButtonGradient,
   ButtonPrimaryLight,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
@@ -124,7 +124,6 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
 
   useEffect(() => {
     if (isOpenPeriodDisabled && createDealState.currentStep === CreateDealSteps.openPeriod) {
-      console.log('asd')
       setDealField({ days: 0, hours: undefined, minutes: undefined })
     }
   }, [createDealState.currentStep, isOpenPeriodDisabled, setDealField])
@@ -155,10 +154,11 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                   <Description>{text}</Description>
                   <DealCreateStepInput
                     amountInPool={{
-                      number: wei(pool.amountInPool.raw, pool.investmentTokenDecimals).toNumber(),
+                      wei: wei(pool.amountInPool.raw, pool.investmentTokenDecimals),
                       formatted: pool.amountInPool.formatted as string,
                     }}
                     currentState={createDealState}
+                    investmentTokenDecimals={pool.investmentTokenDecimals}
                     isOpenPeriodDisabled={isOpenPeriodDisabled}
                     onCalculateDealModal={() => setShowDealCalculationModal(true)}
                     onKeyUp={handleKeyUp}
@@ -168,7 +168,12 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                     totalPurchase={totalPurchase}
                   />
                   {createDealState.currentStep === CreateDealSteps.openPeriod &&
-                    isOpenPeriodDisabled && <Error textAlign="center">Pool supply maxed.</Error>}
+                    isOpenPeriodDisabled && (
+                      <Error textAlign="center">
+                        Round 2 is bypassed when all investment tokens have been allocated. Please
+                        click next to proceed
+                      </Error>
+                    )}
                   {currentStepError && typeof currentStepError === 'string' && (
                     <Error textAlign="center">{currentStepError}</Error>
                   )}
@@ -178,14 +183,14 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                         Back
                       </BackButton>
                       {!isFinalStep ? (
-                        <GradientButton
+                        <ButtonGradient
                           disabled={!!currentStepError}
                           onClick={() => moveStep('next')}
                         >
                           Next
-                        </GradientButton>
+                        </ButtonGradient>
                       ) : (
-                        <GradientButton
+                        <ButtonGradient
                           disabled={disableSubmit}
                           key={`${step}_button`}
                           onClick={() => {
@@ -193,7 +198,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                           }}
                         >
                           Create Deal
-                        </GradientButton>
+                        </ButtonGradient>
                       )}
                     </MobileButtonWrapper>
                   </ButtonWrapper>
@@ -215,6 +220,10 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       {showDealCalculationModal && (
         <DealCalculationModal
           dealToken={createDealState.dealToken as Token}
+          dealTokenAmount={wei(
+            createDealState.dealTokenTotal || ZERO_BN,
+            createDealState.dealToken?.decimals,
+          )}
           investmentToken={investmentTokenInfo as Token}
           onClose={() => setShowDealCalculationModal(false)}
           onConfirm={(value) => {
@@ -229,7 +238,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
       )}
       {!currentUserIsSponsor && (
         <Modal title="Invalid address">
-          <Error>You are not the sponsor of the pool</Error>
+          <Error textAlign="center">You are not the sponsor of the pool</Error>
         </Modal>
       )}
       {pool.amountInPool.raw.eq(ZERO_BN) && (

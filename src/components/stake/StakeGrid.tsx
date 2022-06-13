@@ -6,12 +6,16 @@ import { Chains } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
 const Wrapper = styled.div`
   display: grid;
   gap: 40px;
-  grid-template-columns: 1fr 1fr;
   flex-grow: 1;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    grid-template-columns: 1fr 1fr;
+  }
 `
 
 const StakeGrid = ({ ...restProps }) => {
@@ -25,6 +29,10 @@ const StakeGrid = ({ ...restProps }) => {
             stakingAddress: contracts.STAKING_REWARDS.address[Chains.optimism],
             tokenAddress: contracts.AELIN_TOKEN.address[Chains.optimism],
           }}
+          explorerUrl={getExplorerUrl(
+            contracts.STAKING_REWARDS.address[Chains.optimism],
+            appChainId,
+          )}
           key={StakingEnum.AELIN}
           stakeType={StakingEnum.AELIN}
           textTooltip={
@@ -41,6 +49,10 @@ const StakeGrid = ({ ...restProps }) => {
             stakingAddress: contracts.LP_STAKING_REWARDS.address[Chains.optimism],
             tokenAddress: contracts.LP_TOKEN.address[Chains.optimism],
           }}
+          explorerUrl={getExplorerUrl(
+            contracts.LP_STAKING_REWARDS.address[Chains.optimism],
+            appChainId,
+          )}
           key={StakingEnum.GELATO}
           stakeType={StakingEnum.GELATO}
           textTooltip={
@@ -58,6 +70,10 @@ const StakeGrid = ({ ...restProps }) => {
             stakingAddress: contracts.LP_STAKING_REWARDS.address[Chains.mainnet],
             tokenAddress: contracts.LP_TOKEN.address[Chains.mainnet],
           }}
+          explorerUrl={getExplorerUrl(
+            contracts.LP_STAKING_REWARDS.address[Chains.mainnet],
+            appChainId,
+          )}
           key={StakingEnum.UNISWAP}
           stakeType={StakingEnum.UNISWAP}
           textTooltip={
@@ -72,7 +88,7 @@ const StakeGrid = ({ ...restProps }) => {
       [Chains.goerli]: [],
       [Chains.kovan]: [],
     }),
-    [],
+    [appChainId],
   )
 
   const stakeBoxes = useMemo(() => stakePerChain[appChainId], [appChainId, stakePerChain])

@@ -5,9 +5,9 @@ import { Link as LinkIcon } from '@/src/components/assets/Link'
 const Wrapper = styled.a`
   align-items: center;
   color: ${({ theme }) => theme.colors.textColorLight};
-  display: flex;
+  display: inline-block;
   gap: 5px;
-  justify-content: center;
+  justify-content: left;
   text-decoration: none;
 
   &:hover {
@@ -22,6 +22,7 @@ export const ExternalLink: React.FC<{
   return (
     <Wrapper href={href} rel="noreferrer" target="_blank" {...restProps}>
       {label}
+      {` `}
       <LinkIcon />
     </Wrapper>
   )

@@ -5,11 +5,12 @@ import { DealsAccepted } from '@/src/components/history/DealsAccepted'
 import { DealsFunded } from '@/src/components/history/DealsFunded'
 import { DealsSponsored } from '@/src/components/history/DealsSponsored'
 import { Deposits } from '@/src/components/history/Deposits'
+import { HistorySectionIntro } from '@/src/components/history/HistorySectionIntro'
 import { Vests } from '@/src/components/history/Vests'
 import { Withdraws } from '@/src/components/history/Withdraws'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
-import { SectionIntro } from '@/src/components/section/SectionIntro'
 import { SectionTabs } from '@/src/components/section/SectionTabs'
+import { RequiredConnection } from '@/src/hooks/requiredConnection'
 
 const History: NextPage = () => {
   const items = [
@@ -27,10 +28,13 @@ const History: NextPage = () => {
         <title>Aelin - History</title>
       </Head>
       <LeftSidebarLayout>
-        <SectionIntro backgroundImage="/resources/svg/bg-history.svg" title="History">
-          All of your past investments are listed below.
-        </SectionIntro>
-        <SectionTabs items={items} />
+        <HistorySectionIntro />
+        <RequiredConnection
+          isNotConnectedText="You must be logged to see your history"
+          minHeight={120}
+        >
+          <SectionTabs items={items} />
+        </RequiredConnection>
       </LeftSidebarLayout>
     </>
   )

@@ -4,8 +4,10 @@ import { PoolStatus } from '@/graphql-schema'
 export const POOLS_RESULTS_PER_CHAIN = 20
 export const VESTING_DEALS_RESULTS_PER_CHAIN = 20
 export const NOTIFICATIONS_RESULTS_PER_CHAIN = 20
+export const NOTIFICATIONS_BADGE_MAX = 9
 export const USERS_RESULTS_PER_CHAIN = 20
 export const HISTORY_RESULTS_PER_CHAIN = 20
+export const SPONSORS_RESULTS_PER_CHAIN = 20
 
 export const MAX_ALLOWED_DEALS = 5
 

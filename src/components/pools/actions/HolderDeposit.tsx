@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolDealTransaction } from '@/src/hooks/contracts/useAelinPoolDealTransaction'
@@ -44,7 +44,7 @@ function HolderDeposit({ pool }: Props) {
 
   return (
     <>
-      <GradientButton
+      <ButtonGradient
         disabled={
           !isAppConnected ||
           isSubmitting ||
@@ -53,8 +53,8 @@ function HolderDeposit({ pool }: Props) {
         }
         onClick={depositTokens}
       >
-        {`Fund ${pool.deal?.underlyingToken.dealAmount.formatted} ${pool.deal?.underlyingToken.symbol}`}
-      </GradientButton>
+        Fund Deal
+      </ButtonGradient>
     </>
   )
 }

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
 import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
@@ -13,7 +13,7 @@ import { formatToken } from '@/src/web3/bigNumber'
 const Wrapper = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.transparentWhite2};
-  border-radius: ${({ theme: { card } }) => card.borderRadius};
+  border-radius: 8px;
   border: 1px solid ${({ theme: { card } }) => card.borderColor};
   display: flex;
   flex-direction: column;
@@ -46,7 +46,7 @@ const Value = styled.span`
   color: ${({ theme }) => theme.colors.primary};
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   min-width: 160px;
 `
 

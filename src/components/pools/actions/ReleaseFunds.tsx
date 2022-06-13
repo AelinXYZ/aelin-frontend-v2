@@ -12,18 +12,6 @@ import { AelinPool } from '@/types/typechain'
 const Button = styled(ButtonPrimaryLight)`
   margin: 40px auto 0;
 `
-
-const Message = styled.div`
-  border: 1px solid ${({ theme }) => theme.colors.borderColor};
-  color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
-  font-weight: 400;
-  line-height: 1.6;
-  margin: 20px 0 0 0;
-  padding: 12px 20px;
-  width: 100%;
-`
-
 type Props = {
   pool: ParsedAelinPool
 }
@@ -54,8 +42,9 @@ function ReleaseFunds({ pool }: Props) {
 
     setConfigAndOpenModal({
       estimate: () => createDealEstimate(args),
-
-      title: 'Create deal',
+      title: 'Release funds',
+      subTitle:
+        "Cancelling a pool takes 30 minutes. After the process is finished funds are released and the investors are allowed to withdraw from the pool for as long as the deal's deadline has not been met.",
       onConfirm: async (txGasOptions: GasOptions) => {
         try {
           const receipt = await execute(args, txGasOptions)
@@ -74,11 +63,6 @@ function ReleaseFunds({ pool }: Props) {
       <Button disabled={isSubmitting || actionBlocked} onClick={onReleaseFunds}>
         Release funds
       </Button>
-      <Message>
-        Cancelling a pool takes 30 minutes. After the process is finished funds are released and the
-        investors are allowed to withdraw from the pool for as long as the deal's deadline has not
-        been met.
-      </Message>
     </>
   )
 }

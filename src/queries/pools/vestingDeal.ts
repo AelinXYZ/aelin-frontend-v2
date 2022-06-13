@@ -8,7 +8,9 @@ export const VESTING_DEALS = gql`
       tokenToVestSymbol
       remainingAmountToVest
       totalVested
+      investorDealTotal
       underlyingDealTokenDecimals
+      lastClaim
     }
   }
 `

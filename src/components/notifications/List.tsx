@@ -20,6 +20,7 @@ import {
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ClearedNotifications } from '@/src/hooks/aelin/useAelinNotifications'
 import { useNotifications } from '@/src/providers/notificationsProvider'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 
 const TableBody = styled(BaseTableBody)`
@@ -111,6 +112,8 @@ export const List: React.FC = () => {
       }, clearedNotifications),
     )
 
+  const { currentThemeName } = useThemeContext()
+
   return (
     <>
       <InfiniteScroll
@@ -129,7 +132,7 @@ export const List: React.FC = () => {
               return (
                 <RowLink
                   columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
+                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}?notification=${type}`}
                   key={index}
                 >
                   <Cell className="cellTitle">{formatDate(triggerStart, DATE_DETAILED)}</Cell>
@@ -139,6 +142,7 @@ export const List: React.FC = () => {
                   <LinkCell className="cellLink" justifyContent={columns.alignment.seePool}>
                     <ButtonPrimaryLightSm
                       onClick={(e) => {
+                        e.preventDefault()
                         e.stopPropagation()
                         router.push(
                           `/pool/${getKeyChainByValue(
@@ -150,7 +154,9 @@ export const List: React.FC = () => {
                       Go to pool
                     </ButtonPrimaryLightSm>
                     <ButtonRemove
+                      currentThemeName={currentThemeName}
                       onClick={(e) => {
+                        e.preventDefault()
                         e.stopPropagation()
                         handleClearSingleNotification(id)
                       }}

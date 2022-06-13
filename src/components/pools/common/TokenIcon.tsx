@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { ExternalLink as BaseExternalLink } from '@/src/components/table/ExternalLink'
@@ -14,7 +15,7 @@ const Wrapper = styled.div<{ direction?: Direction }>`
   display: flex;
   flex-direction: ${({ direction }) => direction};
   font-size: 13px;
-  justify-content: center;
+  justify-content: left;
   row-gap: 3px;
   text-align: center;
 `
@@ -62,7 +63,12 @@ export const TokenIcon: React.FC<Props> = ({
   ...restProps
 }) => {
   const { tokens: tokensBySymbol } = useTokenIcons()
-  const investmentTokenImage = tokensBySymbol[symbol.toLowerCase()]?.logoURI
+  const [investmentTokenImage, setInvestmentTokenImage] = useState<string>()
+
+  useEffect(
+    () => setInvestmentTokenImage(tokensBySymbol[symbol.toLowerCase()]?.logoURI),
+    [tokensBySymbol, symbol],
+  )
 
   return investmentTokenImage ? (
     <Wrapper direction={type} {...restProps}>

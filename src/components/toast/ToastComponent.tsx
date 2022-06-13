@@ -6,58 +6,57 @@ import { Toast, toast } from 'react-hot-toast'
 import { Close } from '@/src/components/assets/Close'
 
 const Wapper = styled.div`
+  background-color: ${({ theme: { toast } }) => toast.backgroundColor};
+  border-radius: 8px;
+  border-style: solid;
+  border-width: 0.5px;
+  box-shadow: ${({ theme: { toast } }) => toast.boxShadow};
   display: grid;
   grid-template-columns: 50px 200px;
+  min-height: 70px;
   padding: 10px;
-  height: 70px;
-  border-radius: ${({ theme: { toast } }) => toast.borderRadius};
-  border-style: ${({ theme: { toast } }) => toast.borderStyle};
-  border-width: ${({ theme: { toast } }) => toast.borderWidth};
-  background-color: ${({ theme: { toast } }) => toast.backgroundColor};
-  box-shadow: ${({ theme: { toast } }) => toast.boxShadow};
 `
 
 const IconContainer = styled.div`
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 50px;
 `
 
 const InnerWrapper = styled.div`
-  display: flex;
-  position: relative;
-  justify-content: space-between;
   align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
 `
 
-const TextContainer = styled.div`
-  padding: 5px;
-`
+const TextContainer = styled.div``
 
 const ButtonClose = styled.button`
+  background: transparent;
+  border: 0;
   cursor: pointer;
   margin: 0;
-  border: 0;
-  padding: 0;
   outline: none;
-  background: transparent;
+  padding: 0;
 `
 
 const Title = styled.p`
   font-size: 1.4rem;
   font-weight: 500;
-  margin 2px;
+  margin: 5px 0;
 `
 
 const Link = styled.a`
-  font-size: 1.2rem;
   color: ${({ theme: { colors } }) => colors.textColorLight};
+  font-size: 1.2rem;
+  margin: 5px 0;
 `
 
 const Text = styled.p`
-  font-size: 1.2rem;
   color: ${({ theme: { colors } }) => colors.textColorLight};
+  font-size: 1.2rem;
+  margin: 5px 0;
 `
 
 export const ToastComponent = ({

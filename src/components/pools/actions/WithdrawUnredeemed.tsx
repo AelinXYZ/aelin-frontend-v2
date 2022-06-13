@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -51,12 +51,14 @@ function WithdrawUnredeemed({ pool }: Props) {
         Deal tokens that have been rejected by the purchasers
       </Contents>
       <Contents>
-        Amount to withdraw:
-        <TextPrimary>{unredeemed}</TextPrimary>
+        Amount to withdraw:{` `}
+        <TextPrimary>
+          {unredeemed} {pool.deal?.underlyingToken.symbol || ''}
+        </TextPrimary>
       </Contents>
-      <GradientButton disabled={disableButton} onClick={withdrawUnredeemed}>
-        Withdraw {unredeemed}
-      </GradientButton>
+      <ButtonGradient disabled={disableButton} onClick={withdrawUnredeemed}>
+        Withdraw
+      </ButtonGradient>
     </Wrapper>
   )
 }

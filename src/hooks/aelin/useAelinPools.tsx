@@ -39,8 +39,8 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
   const networks = network ? [network] : chainIds
 
   const _variables = { ...variables }
-  if (_variables?.where?.sponsor_contains) {
-    _variables.where.sponsor_contains = await ensResolver(_variables.where.sponsor_contains)
+  if (_variables?.where?.filter_contains) {
+    _variables.where.filter_contains = await ensResolver(_variables.where.filter_contains)
   }
 
   // Inject chainId in each pool when promise resolve

@@ -1,6 +1,7 @@
 import { Contents } from '@/src/components/pools/actions/Wrapper'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { MAX_BN } from '@/src/constants/misc'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import { MAX_BN, ZERO_ADDRESS } from '@/src/constants/misc'
+import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -20,11 +21,15 @@ export default function Approve({
   title,
   tokenAddress,
 }: Props) {
-  const { address, isAppConnected } = useWeb3Connection()
+  const { address, appChainId, isAppConnected } = useWeb3Connection()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate, execute: approve } = useERC20Transaction(tokenAddress, 'approve')
+
+  const [userBalance] = useERC20Call(appChainId, tokenAddress || ZERO_ADDRESS, 'balanceOf', [
+    address || ZERO_ADDRESS,
+  ])
 
   const approveInvestmentToken = async () => {
     setConfigAndOpenModal({
@@ -42,12 +47,12 @@ export default function Approve({
   return (
     <>
       <Contents>{description}</Contents>
-      <GradientButton
-        disabled={!address || !isAppConnected || isSubmitting}
+      <ButtonGradient
+        disabled={!address || !isAppConnected || isSubmitting || !userBalance?.gt(0)}
         onClick={approveInvestmentToken}
       >
         Approve
-      </GradientButton>
+      </ButtonGradient>
     </>
   )
 }

@@ -22,11 +22,13 @@ gql`
     totalSupply
     dealsCreated
     holder
+    filter
 
     totalAmountEarnedBySponsor
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
+    totalUsersInvested
 
     vestingEnds
     vestingStarts
@@ -65,7 +67,10 @@ gql`
     holderFundingDuration
     timestamp
     dealFundedAt
+
     totalAmountUnredeemed
+    totalUsersAccepted
+    totalUsersRejected
   }
 `
 

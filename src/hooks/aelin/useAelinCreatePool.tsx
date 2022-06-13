@@ -6,6 +6,8 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
 
+import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -49,11 +51,7 @@ export interface CreatePoolState {
   sponsorFee?: number
   poolPrivacy?: Privacy
   currentStep: CreatePoolSteps
-  whitelist: {
-    address: string
-    amount: number
-    isSaved: boolean
-  }[]
+  whitelist: AddressWhitelistProps[]
 }
 
 export interface CreatePoolStateComplete {
@@ -69,7 +67,6 @@ export interface CreatePoolStateComplete {
   whitelist: {
     address: string
     amount: number
-    isSaved: boolean
   }[]
 }
 
@@ -80,14 +77,14 @@ export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
     id: CreatePoolSteps.poolName,
     order: 1,
     title: 'Pool name',
-    text: 'The name investors will see for the pool. This can be anything and will be one of the first values investors see.',
+    text: 'Create a name for your pool',
     placeholder: 'Choose a pool name...',
   },
   [CreatePoolSteps.poolSymbol]: {
     id: CreatePoolSteps.poolSymbol,
     order: 2,
     title: 'Pool symbol',
-    text: 'Symbol that pool tokens will be named, should be similar to the pool name so investors can associate the two together.',
+    text: 'This symbol for the pool tokens should be similar to the pool name so investors can associate the two together.',
     placeholder: 'Enter pool symbol...',
   },
   [CreatePoolSteps.investmentToken]: {
@@ -101,35 +98,35 @@ export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
     id: CreatePoolSteps.investmentDeadLine,
     order: 4,
     title: 'Investment deadline',
-    text: 'Deadline investors will have to contribute investment tokens to the pool. Note - If this is a capped pool, investors will be unable to contribute if the cap is hit.',
+    text: 'The deadline for investor to contribute invesment tokens to the pool. Note - If this is a capped pool, investors will be unable to contribute after the cap is hit.',
     placeholder: 'USDC, USDT, ETH, etc...',
   },
   [CreatePoolSteps.dealDeadline]: {
     id: CreatePoolSteps.dealDeadline,
     order: 5,
     title: 'Deal deadline',
-    text: 'Deadline sponsor will have to present a deal to the pool. Investors will be able to withdraw investment tokens if a deal is not presented by this time. Note - Deals can be presented after the deal deadline, though investors may have already withdrawn their investment tokens.',
+    text: 'The deadline a sponsor has to present a deal to the pool. Investors will be able to withdraw investment tokens if a deal is not presented by this time. Note - Deals can be presented after the deal deadline, though investors may have already withdrawn their investment tokens.',
     placeholder: undefined,
   },
   [CreatePoolSteps.poolCap]: {
     id: CreatePoolSteps.poolCap,
     order: 6,
     title: 'Pool cap',
-    text: 'Maximum amount of investment tokens that can be contributed to the pool. Aelin protocol recommends to not set a cap so all investors have ample time to join the pool.',
+    text: 'Maximum amount of investment tokens that can be deposited to the pool. An uncappped pool allows all investors have ample time to join the pool. Excess capital will be deallocated proportionately for every investor.',
     placeholder: 'Enter pool cap...',
   },
   [CreatePoolSteps.sponsorFee]: {
     id: CreatePoolSteps.sponsorFee,
     order: 7,
     title: 'Sponsor fee',
-    text: "Fee that you, as the sponsor, will receive when investors accept the deal you've presented. If an investor declines the deal, they will not be charged a sponsor fee.",
+    text: 'Fee the sponsor will receive in the deal token when investors accept the deal. If an investor declines the deal, there is no sponsor fee.',
     placeholder: 'Enter sponsor fee...',
   },
   [CreatePoolSteps.poolPrivacy]: {
     id: CreatePoolSteps.poolPrivacy,
     order: 8,
     title: 'Pool privacy',
-    text: 'If you select Public, anyone will be able to join your pool, if you select Private you will input whitelisted addresses that can join this pool.',
+    text: 'If Public, anyone will be able to join the pool. If Private, only whitelisted addresses can join the pool.',
     placeholder: undefined,
   },
 }
@@ -257,9 +254,10 @@ const createPoolReducer = (state: CreatePoolState, action: CreatePoolAction) => 
 
 export const getCreatePoolSummaryData = (
   createPoolState: CreatePoolState,
-): { title: string; value: string }[] =>
+): { title: string; value: string | JSX.Element }[] =>
   createPoolConfigArr.map((step) => {
-    let value = createPoolState[step.id]
+    let value: string | number | Token | Duration | undefined | JSX.Element =
+      createPoolState[step.id]
 
     if (isDuration(value)) {
       if (step.id === CreatePoolSteps.dealDeadline) {
@@ -287,7 +285,14 @@ export const getCreatePoolSummaryData = (
     }
 
     if (isToken(value)) {
-      value = value?.symbol
+      value = (
+        <TokenIcon
+          address={value.address}
+          network={value.chainId as ChainsValues}
+          symbol={value.symbol}
+          type="row"
+        />
+      )
     }
 
     if (step.id === CreatePoolSteps.sponsorFee && value !== '' && value !== undefined) {
@@ -306,7 +311,7 @@ export const getCreatePoolSummaryData = (
 
     return {
       title: step.title,
-      value: value as string,
+      value: value as JSX.Element | string,
     }
   })
 
@@ -348,7 +353,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
 
     return dispatch({ type: 'updateStep', payload: value })
   }
-
   const handleCreatePool = async () => {
     const {
       dealDeadLineDuration,

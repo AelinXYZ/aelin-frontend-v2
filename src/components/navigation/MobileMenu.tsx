@@ -5,7 +5,7 @@ import { sections } from '@/src/constants/sections'
 
 const Wrapper = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.gray};
+  background-color: ${({ theme }) => theme.mobileMenu.backgroundColor};
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   bottom: 0;
@@ -40,7 +40,7 @@ const Item = styled(NavLink)`
   }
 
   .fill {
-    fill: ${({ theme: { colors } }) => colors.lightGray};
+    fill: ${({ theme }) => theme.mobileMenu.itemColor};
   }
 
   &.active {
@@ -60,7 +60,7 @@ const Icon = styled.span`
 `
 
 const Text = styled.span`
-  color: ${({ theme: { colors } }) => colors.lightGray};
+  color: ${({ theme }) => theme.mobileMenu.itemColor};
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.2;

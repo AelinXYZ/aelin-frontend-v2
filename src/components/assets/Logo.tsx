@@ -6,7 +6,7 @@ const Wrapper = styled.svg`
   flex-shrink: 0;
 
   .fill {
-    fill: ${({ theme }) => theme.colors.primary};
+    fill: ${({ theme }) => theme.logo.color};
   }
 `
 

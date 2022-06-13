@@ -5,7 +5,7 @@ import { Modal as BaseModal } from '@/src/components/common/Modal'
 import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/WhiteListTabs'
 import AddressesWhiteList, {
   AddressWhitelistProps,
-  initialWhitelistValues,
+  initialAddressesWhitelistValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import {
@@ -31,9 +31,8 @@ const WhiteListModal = ({
 }) => {
   const [activeTab, setActiveTab] = useState(WhiteListTab.Addresses)
 
-  const [addressesWhiteListError, setAddressesWhiteListError] = useState<boolean>(false)
   const [addressesWhiteList, setAddressesWhiteList] = useState(
-    currentList.length ? currentList : initialWhitelistValues,
+    currentList.length ? currentList : initialAddressesWhitelistValues,
   )
 
   const [nftWhiteListState, dispatch] = useReducer(nftWhiteListReducer, initialState)
@@ -47,11 +46,9 @@ const WhiteListModal = ({
       >
         {activeTab === WhiteListTab.Addresses && (
           <AddressesWhiteList
-            error={addressesWhiteListError}
             list={addressesWhiteList}
             onClose={onClose}
             onConfirm={onConfirm}
-            setError={setAddressesWhiteListError}
             setList={setAddressesWhiteList}
           ></AddressesWhiteList>
         )}

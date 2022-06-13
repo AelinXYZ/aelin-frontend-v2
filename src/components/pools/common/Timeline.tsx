@@ -56,7 +56,7 @@ const Info = styled.div<{ isActive?: boolean; isDone?: boolean }>`
 
   &::before,
   &::after {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: ${({ theme }) => theme.steps.lineBackgroundColor};
     content: '';
     left: -41px;
     position: absolute;
@@ -129,9 +129,9 @@ export const Timeline: React.FC<{ timelineSteps?: TimelineSteps }> = ({
   const isStepDefined = (state: PoolTimelineState) => timelineSteps?.[state]?.isDefined
   const items = [
     PoolTimelineState.poolCreation,
-    PoolTimelineState.investmentWindow,
+    PoolTimelineState.investmentDeadline,
     PoolTimelineState.dealCreation,
-    PoolTimelineState.dealWindow,
+    PoolTimelineState.dealDeadline,
     PoolTimelineState.proRataRedemption,
     PoolTimelineState.openRedemption,
     PoolTimelineState.vestingCliff,
@@ -143,7 +143,7 @@ export const Timeline: React.FC<{ timelineSteps?: TimelineSteps }> = ({
       content: (
         <>
           <Title>{PoolTimelineStateTitles[state]}</Title>
-          {timelineSteps?.[state]?.deadline ? (
+          {timelineSteps?.[state]?.withDeadlineBar ? (
             <>
               <Deadline progress={timelineSteps?.[state]?.deadlineProgress || '0'} width="180px">
                 <Value>{timelineSteps?.[state]?.deadline}</Value>

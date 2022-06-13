@@ -1,5 +1,4 @@
 import { PoolTimelineState } from '@/src/constants/types'
-import { UserAllowList } from '@/src/hooks/aelin/useAelinUserAllowList'
 import { DetailedNumber } from '@/types/utils'
 
 export enum UserRole {
@@ -33,7 +32,7 @@ export enum PoolAction {
   FundDeal = 'Fund Deal',
   AcceptDeal = 'Accept Deal',
   Withdraw = 'Withdraw',
-  Claim = 'Claim',
+  Vest = 'Vest',
   WithdrawUnredeemed = 'Withdraw Unredeemed',
 }
 
@@ -54,6 +53,7 @@ export type TimelineSteps = {
     active: boolean
     isDone: boolean
     value?: string
+    withDeadlineBar: boolean
     deadline?: string
     deadlineProgress?: string
     isDefined?: boolean

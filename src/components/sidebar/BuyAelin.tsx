@@ -7,7 +7,7 @@ import useSWR from 'swr'
 
 import { Uniswap } from '@/src/components/assets/Uniswap'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import AreaChart from '@/src/components/sidebar/AreaChart'
 import { getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -17,7 +17,7 @@ const Wrapper = styled.div``
 
 const AelinChart = styled.div`
   background-color: ${({ theme: { colors } }) => colors.transparentWhite2};
-  border-radius: ${({ theme: { card } }) => card.borderRadius};
+  border-radius: 8px;
   border: ${({ theme: { card } }) => card.borderColor};
   display: flex;
   flex-direction: column;
@@ -123,8 +123,8 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
             {({ width }) => (
               <AreaChart
                 data={prices}
-                getXValue={(data) => data.date}
-                getYValue={(data) => data.price}
+                getXValue={(data: { date: string }) => data.date}
+                getYValue={(data: { price: string }) => data.price}
                 height={80}
                 width={width}
               />
@@ -133,7 +133,7 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
         </AelinChart>
       )}
       <ButtonContainer>
-        <GradientButton
+        <ButtonGradient
           disabled={!currentChainConfig.buyAelinUrl}
           onClick={() => {
             window.open(currentChainConfig.buyAelinUrl, '_blank')
@@ -141,7 +141,7 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
         >
           <Uniswap />
           Buy Aelin
-        </GradientButton>
+        </ButtonGradient>
       </ButtonContainer>
     </Wrapper>
   )

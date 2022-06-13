@@ -11,7 +11,7 @@ import {
 import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
 import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
 import NftWhiteListProcessSection from '@/src/components/pools/whitelist/nft/NftWhiteListProcessSection'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 
 const Wrapper = styled.div`
@@ -39,7 +39,7 @@ const NftTypeRemark = styled.p`
   text-align: center;
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   margin-top: 40px;
 `
 

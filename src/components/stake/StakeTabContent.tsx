@@ -6,7 +6,7 @@ import { MaxUint256 } from '@ethersproject/constants'
 
 import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
 import { TokenInput as BaseTokenInput } from '@/src/components/form/TokenInput'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TabContent } from '@/src/components/tabs/Tabs'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
@@ -29,7 +29,7 @@ const ButtonsWrapper = styled.div`
   margin: 0 auto;
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   min-width: 160px;
 `
 
@@ -54,7 +54,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   tokenAddress,
 }) => {
   const [inputError, setInputError] = useState('')
-  const [tokenInputValue, setTokenInputValue] = useState('')
+  const [tokenInputValue, setTokenInputValue] = useState(ZERO_BN)
 
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 
@@ -100,12 +100,12 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
   const hasAllowance = (tokenAllowance as BigNumber).gt(ZERO_BN)
 
   useEffect(() => {
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(MaxUint256)) {
+    if (tokenInputValue.gt(MaxUint256)) {
       setInputError('Amount is too big')
       return
     }
 
-    if (tokenInputValue && BigNumber.from(tokenInputValue).gt(totalBalance)) {
+    if (tokenInputValue.gt(totalBalance)) {
       setInputError('Insufficient balance')
       return
     }
@@ -131,8 +131,8 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await executeStake([tokenInputValue], txGasOptions)
         if (receipt) {
-          handleAfterDeposit(stakeType, BigNumber.from(tokenInputValue))
-          setTokenInputValue('')
+          handleAfterDeposit(stakeType, tokenInputValue)
+          setTokenInputValue(ZERO_BN)
           setInputError('')
         }
       },
@@ -146,8 +146,8 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = await executeWithdraw([tokenInputValue], txGasOptions)
         if (receipt) {
-          handleAfterWithdraw(stakeType, BigNumber.from(tokenInputValue))
-          setTokenInputValue('')
+          handleAfterWithdraw(stakeType, tokenInputValue)
+          setTokenInputValue(ZERO_BN)
           setInputError('')
         }
       },
@@ -163,9 +163,11 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
         error={inputError}
         maxValue={totalBalance.toString()}
         maxValueFormatted={formatToken(totalBalance, decimals) || ''}
-        setValue={setTokenInputValue}
+        setValue={(value) => {
+          setTokenInputValue(value.length ? BigNumber.from(value) : ZERO_BN)
+        }}
         symbol={symbol}
-        value={tokenInputValue}
+        value={tokenInputValue.toString()}
       />
       <ButtonsWrapper>
         <Button
@@ -178,10 +180,10 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
           disabled={
             !address ||
             !isAppConnected ||
-            !tokenInputValue ||
             Boolean(inputError) ||
             !hasAllowance ||
-            isSubmitting
+            isSubmitting ||
+            tokenInputValue.eq(ZERO_BN)
           }
           onClick={tabType === DEPOSIT_TYPE ? handleDeposit : handleWithdraw}
         >

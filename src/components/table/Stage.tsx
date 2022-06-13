@@ -23,6 +23,9 @@ export const StageColor = styled.span<{ stage: StageTypes }>`
 
   align-items: center;
   background-color: ${({ stage, theme: { stages } }) => stages[stage] ?? '#fff'};
+  border: 1px solid
+    ${({ stage, theme: { stages } }) =>
+      stage === 'complete' ? 'rgba(71, 87, 97, 0.5)' : stages[stage]};
   border-radius: 50%;
   color: ${({ theme }) => theme.colors.textColor};
   display: flex;
