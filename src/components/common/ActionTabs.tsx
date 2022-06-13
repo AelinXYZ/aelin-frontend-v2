@@ -20,6 +20,7 @@ const Content = styled.div`
   flex-grow: 1;
   padding: 30px 40px;
   width: 100%;
+  justify-content: center;
 `
 
 const Tabs = styled.div`
@@ -34,6 +35,7 @@ const ActiveTabCSS = css`
     ${({ theme }) => theme.colors.gradientEnd} 100%
   );
   border-bottom-color: transparent;
+  color: #fff;
   cursor: default;
   font-weight: 600;
 
@@ -67,11 +69,11 @@ const Tab = styled.h3<{ isActive?: boolean }>`
   ${({ isActive }) => isActive && ActiveTabCSS}
 
   &:first-child {
-    border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-top-left-radius: 8px;
   }
 
   &:last-child {
-    border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-top-right-radius: 8px;
   }
 `
 

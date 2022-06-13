@@ -7,7 +7,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled.div`
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: ${({ theme }) => theme.modal.overlayBackgroundColor};
   display: flex;
   flex-direction: column;
   height: 100vh;

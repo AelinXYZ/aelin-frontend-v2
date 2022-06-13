@@ -22,11 +22,17 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
     [address || ZERO_ADDRESS, pool.dealAddress || ZERO_ADDRESS],
   )
 
+  const releaseFundNote =
+    pool.sponsor === pool.deal?.holderAddress &&
+    pool.investmentToken === pool.deal.underlyingToken.token
+      ? ' As the sponsor and the holder, if you are releasing funds to cancel the pool then do not call this method.'
+      : ''
+
   return (
     <Wrapper title="Fund deal" {...restProps}>
       {(allowance || ZERO_BN).lt(pool.deal?.underlyingToken.dealAmount.raw || ZERO_BN) ? (
         <Approve
-          description={`Before funding the deal, you need to approve the pool to transfer your ${pool.deal?.underlyingToken.symbol}`}
+          description={`Before funding the deal, you need to approve the pool to transfer your ${pool.deal?.underlyingToken.symbol}. ${releaseFundNote}`}
           refetchAllowance={refetch}
           spender={pool.dealAddress || ZERO_ADDRESS}
           title="Fund deal"
@@ -36,7 +42,7 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
         <>
           <Contents>
             Deal amount:{' '}
-            <TextPrimary>{`${pool.deal?.underlyingToken.dealAmount.formatted}`}</TextPrimary>
+            <TextPrimary>{`${pool.deal?.underlyingToken.dealAmount.formatted} ${pool.deal?.underlyingToken.symbol}`}</TextPrimary>
           </Contents>
           <HolderDeposit pool={pool} />
         </>

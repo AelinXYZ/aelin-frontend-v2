@@ -22,7 +22,7 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
         : status === TextfieldState.success
         ? textField.successColor
         : textField.active.borderColor};
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    box-shadow: ${({ theme: { textField } }) => textField.active.boxShadow};
     color: ${({ status, theme: { textField } }) =>
       status === TextfieldState.error ? textField.errorColor : textField.color};
   }
@@ -43,9 +43,9 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
 
   &::placeholder {
     color: ${({ theme: { textField } }) => textField.placeholder.color};
-    font-size: ${({ theme: { textField } }) => textField.placeholder.fontSize};
+    font-size: var(--texfield-font-size);
     font-style: normal;
-    font-weight: 400;
+    font-weight: var(--textfield-font-weight);
     opacity: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -75,6 +75,12 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
 `
 
 export const TextfieldCSS = css<TexfieldCSSProps>`
+  --textfield-border-radius: 8px;
+  --texfield-font-size: 1.4rem;
+  --textfield-padding: 0 15px;
+  --textfield-height: 36px;
+  --textfield-font-weight: 400;
+
   background-color: ${({ theme: { textField } }) => textField.backgroundColor};
   border-color: ${({ status, theme: { textField } }) =>
     status === TextfieldState.error
@@ -82,17 +88,17 @@ export const TextfieldCSS = css<TexfieldCSSProps>`
       : status === TextfieldState.success
       ? textField.successColor
       : textField.borderColor};
-  border-radius: ${({ theme: { textField } }) => textField.borderRadius};
-  border-style: ${({ theme: { textField } }) => textField.borderStyle};
-  border-width: ${({ theme: { textField } }) => textField.borderWidth};
+  border-radius: var(--textfield-border-radius);
+  border-style: solid;
+  border-width: 0.5px;
   color: ${({ status, theme: { textField } }) =>
     status === TextfieldState.error ? textField.errorColor : textField.color};
-  font-size: ${({ theme: { textField } }) => textField.fontSize};
-  font-weight: ${({ theme: { textField } }) => textField.fontWeight};
-  height: ${({ theme: { textField } }) => textField.height};
+  font-size: var(--texfield-font-size);
+  font-weight: var(--textfield-font-weight);
+  height: var(--textfield-height);
   outline: none;
   overflow: hidden;
-  padding: 0 ${({ theme: { textField } }) => textField.paddingHorizontal};
+  padding: var(--textfield-padding);
   text-overflow: ellipsis;
   transition: border-color 0.15s linear;
   white-space: nowrap;

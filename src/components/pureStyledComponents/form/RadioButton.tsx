@@ -5,7 +5,7 @@ export const RadioButton = styled.div<{ checked?: boolean }>`
 
   background-color: ${({ checked, theme: { colors } }) =>
     checked ? colors.primary : 'rgba(255, 255, 255, 0.04)'};
-  border-color: #fff;
+  border-color: ${({ theme: { radioButton } }) => radioButton.borderColor};
   border-radius: 50%;
   border-style: solid;
   border-width: 1px;

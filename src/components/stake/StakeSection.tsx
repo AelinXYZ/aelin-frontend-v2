@@ -2,6 +2,7 @@ import { FC } from 'react'
 import styled from 'styled-components'
 
 import { Etherscan } from '@/src/components/assets/Etherscan'
+import ExternalLink from '@/src/components/common/ExternalLink'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -51,6 +52,7 @@ interface StakeSectionProps {
     stakingAddress: string
     tokenAddress: string
   }
+  explorerUrl: string
   stakeType: StakingEnum
   textTooltip: string
   textTooltipAPY: string
@@ -59,6 +61,7 @@ interface StakeSectionProps {
 
 const StakeSection: FC<StakeSectionProps> = ({
   contractAddresses,
+  explorerUrl,
   stakeType,
   textTooltip,
   textTooltipAPY,
@@ -81,7 +84,9 @@ const StakeSection: FC<StakeSectionProps> = ({
 
   return (
     <Wrapper {...restProps}>
-      <Icon />
+      <a href={explorerUrl} rel="noreferrer" target="_blank">
+        <Icon />
+      </a>
       <TitleWrapper>
         <BaseTitle>{title}</BaseTitle>
         <Tooltip text={textTooltip} />

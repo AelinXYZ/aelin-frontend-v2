@@ -9,7 +9,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import PoolMain from '@/src/components/pools/PoolMain'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { BaseParagraph } from '@/src/components/pureStyledComponents/text/BaseParagraph'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
@@ -25,7 +25,7 @@ const Title = styled(BaseTitle)`
   margin-bottom: 20px;
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   margin: 30px auto 0;
 `
 

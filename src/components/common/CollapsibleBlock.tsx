@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
+import { isMobile } from 'react-device-detect'
+
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -31,6 +33,7 @@ const Header = styled.div`
 `
 
 const Title = styled.h3`
+  color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.4rem;
   font-weight: 700;
@@ -44,12 +47,12 @@ const Title = styled.h3`
 `
 
 const Button = styled.button`
-  --dimensions: 30px;
+  --dimensions: 24px;
 
   align-items: center;
-  background: rgba(255, 255, 255, 0.06);
+  background: ${({ theme: { collapsibleBlock } }) => collapsibleBlock.buttonBackgroundColor};
   border-radius: 50%;
-  border: none;
+  border: 0.5px solid ${({ theme: { collapsibleBlock } }) => collapsibleBlock.buttonBorderColor};
   cursor: pointer;
   display: flex;
   height: var(--dimensions);
@@ -69,8 +72,7 @@ const Button = styled.button`
 `
 
 const CollapsableContents = styled.section<{ isExpanded?: boolean }>`
-  max-height: ${({ isExpanded }) => (isExpanded ? '1080px' : '0')};
-  transition: max-height 0.25s linear;
+  height: ${({ isExpanded }) => (isExpanded ? 'auto' : '0')};
   overflow: hidden;
 `
 
@@ -86,7 +88,7 @@ const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
 }) => {
   const [persistentState, setPersistentState] = useLocalStorage(
     `persistent-state_${name}`,
-    CollapsibleBlockStates.expanded,
+    isMobile ? CollapsibleBlockStates.collapsed : CollapsibleBlockStates.expanded,
   )
   const [state, setState] = useState(
     persistentState ? persistentState : CollapsibleBlockStates.expanded,

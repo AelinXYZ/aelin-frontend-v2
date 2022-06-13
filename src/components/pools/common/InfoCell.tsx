@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Tooltip } from '@/src/components/tooltip/Tooltip'
 
 const Wrapper = styled.div`
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid ${({ theme }) => theme.infoCell.borderBottomColor};
   display: flex;
   flex-direction: column;
   padding-bottom: 20px;
@@ -41,7 +41,7 @@ const Contents = styled.div``
 
 export const Value = styled.div`
   color: ${({ theme }) => theme.colors.textColorLight};
-  display: flex;
+  display: block;
   font-size: 1.2rem;
   font-weight: 400;
   gap: 12px;
@@ -50,6 +50,11 @@ export const Value = styled.div`
   text-decoration: none;
   white-space: normal;
   word-break: break-word;
+  text-align: left;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     font-size: 1.4rem;

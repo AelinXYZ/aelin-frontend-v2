@@ -6,7 +6,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents as BaseContents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ZERO_BN } from '@/src/constants/misc'
 import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -33,6 +33,7 @@ function AcceptDeal({ pool }: Props) {
   const { refetchUserStats, userMaxAllocation: userProRataAllocation } = useAelinDealUserStats(pool)
 
   const stage = pool.deal?.redemption?.stage
+
   if (!stage) {
     throw new Error("It's not possible to accept a deal at this pool stage.")
   }
@@ -78,8 +79,11 @@ function AcceptDeal({ pool }: Props) {
     })
   }
 
+  const userBalance =
+    formatToken(userProRataAllocation.raw || ZERO_BN, investmentTokenDecimals) || '0'
+
   return (
-    <Wrapper title={`Deal allocation stage ${stage}`}>
+    <Wrapper title={`Round ${stage}`}>
       <Contents>
         By clicking "accept deal" you are agreeing to the negotiated exchange rate.
       </Contents>
@@ -87,23 +91,23 @@ function AcceptDeal({ pool }: Props) {
         decimals={investmentTokenDecimals}
         error={inputError}
         maxValue={(userProRataAllocation.raw || ZERO_BN).toString()}
-        maxValueFormatted={
-          formatToken(
-            (userProRataAllocation.raw as BigNumberish) || ZERO_BN,
-            investmentTokenDecimals,
-          ) || '0'
-        }
+        maxValueFormatted={userBalance}
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
-      <GradientButton
+      <ButtonGradient
         disabled={
-          !address || !isAppConnected || isSubmitting || !tokenInputValue || Boolean(inputError)
+          !address ||
+          !isAppConnected ||
+          isSubmitting ||
+          !tokenInputValue ||
+          BigNumber.from(tokenInputValue).eq(0) ||
+          Boolean(inputError)
         }
         onClick={handleAcceptDeal}
       >
         Accept deal
-      </GradientButton>
+      </ButtonGradient>
     </Wrapper>
   )
 }

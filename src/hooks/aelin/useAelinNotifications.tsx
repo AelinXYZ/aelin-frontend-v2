@@ -29,6 +29,7 @@ export type ParsedNotification = {
 
 interface FetcherProps extends NotificationsQueryVariables {
   user?: ParsedUser
+  clearedNotifications?: ClearedNotifications
 }
 
 export type ClearedNotifications = {
@@ -54,7 +55,7 @@ function isUserTarget(user: ParsedUser, notification: ParsedNotification): boole
 }
 
 export async function fetcherNotifications(props: FetcherProps) {
-  const { user, ...variables } = props
+  const { clearedNotifications, user, ...variables } = props
   const allSDK = getAllGqlSDK()
 
   if (!user) return []
@@ -77,7 +78,10 @@ export async function fetcherNotifications(props: FetcherProps) {
                 chainId,
               }
             })
-            .filter((notification) => isUserTarget(user, notification)),
+            .filter(
+              (notification) =>
+                isUserTarget(user, notification) && !clearedNotifications?.[notification.id],
+            ),
         )
         .catch((err) => {
           console.error(`fetch notifications on chain ${chainId} was failed`, err)
@@ -88,7 +92,7 @@ export async function fetcherNotifications(props: FetcherProps) {
   try {
     const notificationsByChainResponses = await Promise.allSettled(queryPromises())
 
-    let result = notificationsByChainResponses
+    let result: (ParsedNotification | undefined)[] = notificationsByChainResponses
       .filter(isSuccessful)
       .reduce((resultAcc: ParsedNotification[], { value }) => [...resultAcc, ...value], [])
 
@@ -97,6 +101,18 @@ export async function fetcherNotifications(props: FetcherProps) {
       variables.orderBy as Notification_OrderBy,
       variables.orderDirection ? [variables.orderDirection] : ['desc'],
     )
+
+    if (
+      result.length > 0 &&
+      result.length < NOTIFICATIONS_RESULTS_PER_CHAIN &&
+      typeof props.skip === 'number'
+    ) {
+      const newResult = await fetcherNotifications({
+        ...props,
+        skip: props.skip * NOTIFICATIONS_RESULTS_PER_CHAIN + NOTIFICATIONS_RESULTS_PER_CHAIN,
+      })
+      result = newResult.length ? [...result, ...newResult] : [...result, undefined]
+    }
 
     return result
   } catch (err) {
@@ -109,6 +125,7 @@ const getSwrKey = (
   currentPage: number,
   previousPageData: ParsedNotification[],
   variables: NotificationsQueryVariables,
+  clearedNotifications?: ClearedNotifications,
   user?: ParsedUser,
 ) => {
   return [
@@ -117,6 +134,7 @@ const getSwrKey = (
       skip: currentPage * NOTIFICATIONS_RESULTS_PER_CHAIN,
       first: NOTIFICATIONS_RESULTS_PER_CHAIN,
       user,
+      clearedNotifications,
     },
   ]
 }
@@ -125,6 +143,8 @@ export default function useAelinNotifications(clearedNotifications?: ClearedNoti
   const { address: userAddress } = useWeb3Connection()
   const { data: userResponse, error: errorUser } = useAelinUser(userAddress)
   const [nowSeconds, setNow] = useState<string>()
+  const [initialClearedNotifications, setInitialClearedNotifications] =
+    useState(clearedNotifications)
 
   if (errorUser) {
     throw errorUser
@@ -152,7 +172,7 @@ export default function useAelinNotifications(clearedNotifications?: ClearedNoti
     setSize: setPage,
     size: currentPage,
   } = useSWRInfinite(
-    (...args) => getSwrKey(...args, variables, userResponse),
+    (...args) => getSwrKey(...args, variables, initialClearedNotifications, userResponse),
     fetcherNotifications,
     {
       revalidateFirstPage: true,
@@ -164,19 +184,23 @@ export default function useAelinNotifications(clearedNotifications?: ClearedNoti
     setPage(currentPage + 1)
   }, [setPage, currentPage])
 
-  const paginatedResult = data?.reduce(
-    (allResults, pageResults) => [...allResults, ...pageResults],
-    [],
-  )
+  const paginatedResult = data
+    ?.reduce(
+      (allResults: ParsedNotification[], pageResults) => [
+        ...allResults,
+        ...pageResults.filter((pR): pR is ParsedNotification => !!pR),
+      ],
+      [],
+    )
+    .filter((notification) => !clearedNotifications?.[notification.id])
 
-  const filteredResults = paginatedResult.filter(
-    (notification: ParsedNotification) => !clearedNotifications?.[notification.id],
-  )
-
-  const hasMore = !error && filteredResults?.length !== 0
+  const hasMore =
+    !error &&
+    data[data.length - 1]?.length !== 0 &&
+    data[data.length - 1].slice(-1).pop() !== undefined
 
   return {
-    data: filteredResults,
+    data: paginatedResult,
     error,
     nextPage,
     currentPage,

@@ -5,8 +5,8 @@ import Wei, { wei } from '@synthetixio/wei'
 
 import { Modal, ModalButtonCSS, ModalText, WidthLimitsCSS } from '@/src/components/common/Modal'
 import {
+  ButtonGradient,
   ButtonPrimaryLightSm,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Tooltip as BaseTooltip } from '@/src/components/tooltip/Tooltip'
@@ -42,7 +42,7 @@ const Note = styled(Label)`
   margin-top: 8px;
 `
 
-const Button = styled(GradientButton)`
+const Button = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 
@@ -56,11 +56,17 @@ export const DealCalculationModal: React.FC<{
   dealToken: Token
   investmentToken: Token
   totalPurchaseAmount: Wei
+  dealTokenAmount: Wei
   onClose: () => void
   onConfirm: (dealTokenTotal: number | undefined) => void
-}> = ({ dealToken, investmentToken, onClose, onConfirm, totalPurchaseAmount }) => {
-  const [exchangeRate, setExchangeRate] = useState<number>(1)
-  const [dealTokenTotal, setDealTokenTotal] = useState<Wei>(totalPurchaseAmount)
+}> = ({ dealToken, dealTokenAmount, investmentToken, onClose, onConfirm, totalPurchaseAmount }) => {
+  const _exchangeRate = dealTokenAmount.gt(wei(0))
+    ? dealTokenAmount.div(totalPurchaseAmount).toNumber()
+    : 1
+  const _dealTokenTotal = dealTokenAmount.gt(wei(0)) ? dealTokenAmount : totalPurchaseAmount
+
+  const [exchangeRate, setExchangeRate] = useState<number>(_exchangeRate)
+  const [dealTokenTotal, setDealTokenTotal] = useState<Wei>(_dealTokenTotal)
   const [rateIsInverted, setRateIsInverted] = useState<boolean>(false)
 
   const ratePair = useMemo(() => {
@@ -85,12 +91,12 @@ export const DealCalculationModal: React.FC<{
     } else {
       setDealTokenTotal(totalPurchaseAmount.mul(wei(exchangeRate, investmentToken.decimals)))
     }
-  }, [exchangeRate, investmentToken.decimals, totalPurchaseAmount, rateIsInverted])
+  }, [exchangeRate, investmentToken.decimals, rateIsInverted, totalPurchaseAmount])
 
   return (
     <Modal onClose={onClose} title="Deal Calculation">
       <Text>
-        Total Purchase Token ({investmentToken?.symbol}):{' '}
+        Total Investment Tokens ({investmentToken?.symbol}):{' '}
         <TokenValue>{totalPurchaseAmount.toNumber()}</TokenValue>
       </Text>
       <Label>

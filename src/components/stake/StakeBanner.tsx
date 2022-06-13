@@ -40,10 +40,10 @@ const StakeBanner = ({ ...restProps }) => {
         button: {
           onClick: () =>
             window.open(
-              'https://www.sorbet.finance/#/pools/0x665d8D87ac09Bdbc1222B8B9E72Ddcb82f76B54A',
+              'https://beta.arrakis.finance/#/vaults/0x665d8D87ac09Bdbc1222B8B9E72Ddcb82f76B54A',
               '_blank',
             ),
-          title: 'Go to Sorbet.Finance',
+          title: 'Go to Arrakis.Finance',
         },
         description: (
           <>
@@ -57,7 +57,7 @@ const StakeBanner = ({ ...restProps }) => {
             <br />
             <br />
             To obtain G-UNI AELIN/ETH LP tokens, first provide liquidity into the AELIN/ETH pool on
-            Uniswap via Sorbet.Finance. A full tutorial can be found on our blog{' '}
+            Uniswap via Arrakis.Finance. A full tutorial can be found on our blog{' '}
             <a
               href="https://mirror.xyz/aelingov.eth/vWMW887qout1flAyGJZ0mPJdpfrdaPSQeRt9X6cQqkQ"
               rel="noreferrer"

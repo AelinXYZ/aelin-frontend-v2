@@ -1,10 +1,9 @@
 import styled from 'styled-components'
 
-import { Deadline } from '@/src/components/common/Deadline'
+import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
-import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
+import { InfoCell } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 
@@ -50,15 +49,14 @@ export const VestingInformation: React.FC<{
           tooltip="After the deal has been finalized, a period where no tokens are vesting"
           value={
             pool.deal?.redemption?.end && pool.deal?.vestingPeriod.cliff.end ? (
-              <Deadline
-                progress={calculateDeadlineProgress(
-                  pool.deal?.vestingPeriod.cliff.end,
-                  pool.deal?.redemption?.end,
-                )}
+              <DynamicDeadline
+                deadline={pool.deal?.vestingPeriod.cliff.end}
+                hideWhenDeadlineIsReached={true}
+                start={pool.deal?.redemption?.end}
                 width="180px"
               >
-                <Value>{formatDate(pool.deal?.vestingPeriod.cliff.end, DATE_DETAILED)}</Value>
-              </Deadline>
+                {formatDate(pool.deal?.vestingPeriod.cliff.end, DATE_DETAILED)}
+              </DynamicDeadline>
             ) : (
               'N/A'
             )
@@ -69,23 +67,22 @@ export const VestingInformation: React.FC<{
         <InfoCell title="Symbol" value={deal.symbol} />
         <InfoCell
           title="Deal token amount"
-          tooltip="The total amount of underlying deal tokens in the deal"
+          tooltip="The total amount of deal tokens in the deal"
           value={`${deal.underlyingToken.dealAmount.formatted} ${deal.underlyingToken.symbol}`}
         />
         <InfoCell
           title="Vesting period ends"
-          tooltip="The amount of time it takes to vest all underlying deal tokens after the vesting cliff"
+          tooltip="The amount of time it takes to vest all deal tokens after the vesting cliff"
           value={
             pool.deal?.vestingPeriod.cliff.end && pool.deal?.vestingPeriod.vesting.end ? (
-              <Deadline
-                progress={calculateDeadlineProgress(
-                  pool.deal?.vestingPeriod.vesting.end,
-                  pool.deal?.vestingPeriod.cliff.end,
-                )}
+              <DynamicDeadline
+                deadline={pool.deal?.vestingPeriod.vesting.end}
+                hideWhenDeadlineIsReached={true}
+                start={pool.deal?.vestingPeriod.cliff.end}
                 width="180px"
               >
-                <Value>{formatDate(pool.deal?.vestingPeriod.vesting.end, DATE_DETAILED)}</Value>
-              </Deadline>
+                {formatDate(pool.deal?.vestingPeriod.vesting.end, DATE_DETAILED)}
+              </DynamicDeadline>
             ) : (
               'N/A'
             )

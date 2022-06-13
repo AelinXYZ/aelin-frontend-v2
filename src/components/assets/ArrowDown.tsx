@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const Wrapper = styled.svg`
   .fill {
-    fill: ${({ theme: { colors } }) => colors.textColor};
+    fill: ${({ theme: { collapsibleBlock } }) => collapsibleBlock.buttonColor};
   }
 `
 
@@ -11,9 +11,9 @@ export const ArrowDown: React.FC<{ className?: string }> = (props) => (
   <Wrapper
     className={`arrowDown ${props.className}`}
     fill="none"
-    height="8"
+    height="7"
     viewBox="0 0 10 8"
-    width="20"
+    width="18"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

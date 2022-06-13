@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
 
+import { BigNumber } from '@synthetixio/wei/node_modules/ethers'
+
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useUserAllocationStats } from '@/src/hooks/aelin/useUserAllocationStats'
@@ -21,26 +23,30 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
     { method: 'balanceOf', params: [walletAddress] },
     { method: 'purchaseTokenTotalForDeal', params: [] },
     { method: 'totalAmountAccepted', params: [] },
+    { method: 'amountWithdrawn', params: [walletAddress] },
+    { method: 'amountAccepted', params: [walletAddress] },
   ])
 
   return useMemo(() => {
-    const maxProRataAmountBalance = data[0] || ZERO_BN
-    const safeWalletPoolBalance = data[1] || ZERO_BN
-    const maxPurchaseDealAllowed = data[2] || ZERO_BN
-    const totalAmountAccepted = data[3] || ZERO_BN
+    const maxProRataAmountBalance = (data[0] as BigNumber) || ZERO_BN
+    const userPoolBalance = (data[1] as BigNumber) || ZERO_BN
+    const maxPurchaseDealAllowed = (data[2] as BigNumber) || ZERO_BN
+    const totalAmountAccepted = (data[3] as BigNumber) || ZERO_BN
 
     const userAmountWithdrawn = userAllocationStats?.totalWithdrawn || ZERO_BN
 
     const maxOpenRedemptionAvailable =
       maxPurchaseDealAllowed?.sub(totalAmountAccepted || ZERO_BN) || ZERO_BN
 
-    const maxOpenRedemptionBalance = safeWalletPoolBalance.gt(maxOpenRedemptionAvailable)
+    const maxOpenRedemptionBalance = userPoolBalance.gt(maxOpenRedemptionAvailable)
       ? maxOpenRedemptionAvailable
-      : safeWalletPoolBalance
+      : userPoolBalance
 
     const userMaxAllocation =
       pool.deal?.redemption?.stage === 1
-        ? maxProRataAmountBalance || ZERO_BN
+        ? userPoolBalance.lt(maxProRataAmountBalance)
+          ? userPoolBalance
+          : maxProRataAmountBalance
         : maxOpenRedemptionBalance
 
     return {
@@ -50,11 +56,15 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
       },
       userTotalWithdrawn: {
         raw: userAmountWithdrawn,
-        formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals),
+        formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals) || '0',
       },
       userMaxAllocation: {
         raw: userMaxAllocation,
         formatted: formatToken(userMaxAllocation, pool.investmentTokenDecimals) || '0',
+      },
+      totalAmountAccepted: {
+        raw: totalAmountAccepted,
+        formatted: formatToken(totalAmountAccepted, pool.investmentTokenDecimals),
       },
     }
   }, [

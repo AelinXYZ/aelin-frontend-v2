@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components'
 
+import { ThemeType } from '@/src/constants/types'
+
 export const DisabledButtonCSS = css`
   cursor: not-allowed;
   opacity: 0.5;
@@ -13,14 +15,14 @@ export const ButtonCSS = css`
   cursor: pointer;
   display: flex;
   font-family: ${({ theme }) => theme.fonts.fontFamily};
-  font-size: ${({ theme }) => theme.fonts.fontSize};
+  font-size: 1.4rem;
   font-weight: 400;
   gap: 8px;
-  height: ${({ theme }) => theme.button.height};
+  height: 36px;
   justify-content: center;
   line-height: 1;
   outline: none;
-  padding: ${({ theme }) => theme.button.padding};
+  padding: 0 24px;
   text-align: center;
   text-decoration: none;
   transition: all 0.15s ease-out;
@@ -109,7 +111,7 @@ export const ButtonGradientCSS = css`
     ${({ theme }) => theme.colors.gradientEnd} 100%
   );
   border: none;
-  color: ${({ theme }) => theme.colors.textColor};
+  color: ${({ theme }) => theme.buttonGradient.color};
   font-weight: 500;
 
   &:hover {
@@ -134,6 +136,7 @@ export const TabButtonCSS = css<{ isActive?: boolean }>`
   font-weight: 400;
   height: 24px;
   margin: 0;
+  min-width: 0;
   opacity: 0.7;
   padding-left: 7px;
   padding-right: 7px;
@@ -152,9 +155,9 @@ export const ButtonDropdownIsOpenCSS = css`
   border-bottom-color: transparent;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  border-left-color: ${({ theme }) => theme.textField.borderColor};
-  border-right-color: ${({ theme }) => theme.textField.borderColor};
-  border-top-color: ${({ theme }) => theme.textField.borderColor};
+  border-left-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+  border-right-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+  border-top-color: ${({ theme }) => theme.buttonDropdown.borderColor};
   color: ${({ theme }) => theme.buttonDropdown.color};
 
   &::after {
@@ -162,13 +165,13 @@ export const ButtonDropdownIsOpenCSS = css`
   }
 `
 
-export const ButtonDropdownCSS = css`
+export const ButtonDropdownCSS = css<{ currentThemeName?: ThemeType }>`
   background-color: ${({ theme }) => theme.buttonDropdown.backgroundColor};
   border-bottom: none;
-  border-color: ${({ theme }) => theme.textField.borderColor};
-  border-radius: ${({ theme }) => theme.textField.borderRadius};
-  border-style: ${({ theme }) => theme.textField.borderStyle};
-  border-width: ${({ theme }) => theme.textField.borderWidth};
+  border-color: ${({ theme }) => theme.buttonDropdown.borderColor};
+  border-radius: 8px;
+  border-style: solid;
+  border-width: 0.5px;
   color: ${({ theme }) => theme.buttonDropdown.color};
   justify-content: center;
   padding-left: 20px;
@@ -189,12 +192,21 @@ export const ButtonDropdownCSS = css`
     --dimensions: 8px;
 
     content: '';
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00IDZMLjUzNiAwaDYuOTI4TDQgNnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=');
+
     background-position: 50% 50%;
     background-repeat: no-repeat;
     gap: 10px;
     height: var(--dimensions);
     width: var(--dimensions);
+
+    ${({ currentThemeName }) =>
+      currentThemeName === 'dark'
+        ? css`
+            background-image: url('data:image/svg+xml;base64, PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00IDZMLjUzNiAwaDYuOTI4TDQgNnoiIGZpbGw9IiNmZmYiLz48L3N2Zz4=');
+          `
+        : css`
+            background-image: url('data:image/svg+xml;base64, PHN2ZyB3aWR0aD0iOCIgaGVpZ2h0PSI2IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00IDZMLjUzNiAwaDYuOTI4TDQgNnoiIGZpbGw9IiM2NjYiLz48L3N2Zz4=');
+          `}
   }
 
   .isOpen & {
@@ -236,10 +248,10 @@ export const ButtonPrimaryLighter = styled(Button)`
   ${ButtonPrimaryLighterCSS}
 `
 
-export const GradientButton = styled(Button)`
+export const ButtonGradient = styled(Button)`
   ${ButtonGradientCSS}
 `
-export const GradientButtonSm = styled(Button)`
+export const ButtonGradientSm = styled(Button)`
   ${ButtonGradientSmCSS}
 `
 
@@ -247,6 +259,6 @@ export const TabButton = styled(ButtonPrimary)<{ isActive?: boolean }>`
   ${TabButtonCSS}
 `
 
-export const ButtonDropdown = styled(Button)`
+export const ButtonDropdown = styled(Button)<{ currentThemeName?: ThemeType }>`
   ${ButtonDropdownCSS}
 `

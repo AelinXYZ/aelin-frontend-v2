@@ -19,8 +19,8 @@ import { Summary } from '@/src/components/pools/common/Summary'
 import { AddressWhitelistProps } from '@/src/components/pools/whitelist/AddressesWhiteList'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
 import {
+  ButtonGradient,
   ButtonPrimaryLight,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
@@ -123,7 +123,7 @@ const Create: NextPage = () => {
                         Back
                       </BackButton>
                       {isFinalStep ? (
-                        <GradientButton
+                        <ButtonGradient
                           disabled={disableSubmit}
                           key={`${step}_button`}
                           onClick={() => {
@@ -131,15 +131,15 @@ const Create: NextPage = () => {
                           }}
                         >
                           Create Pool
-                        </GradientButton>
+                        </ButtonGradient>
                       ) : (
-                        <GradientButton
+                        <ButtonGradient
                           disabled={!!currentStepError}
                           key={`${step}_button`}
                           onClick={() => moveStep('next')}
                         >
                           Next
-                        </GradientButton>
+                        </ButtonGradient>
                       )}
                     </MobileButtonWrapper>
                   </ButtonWrapper>

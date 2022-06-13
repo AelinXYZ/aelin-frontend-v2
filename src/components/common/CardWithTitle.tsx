@@ -18,6 +18,7 @@ const TitleActiveCSS = css`
     ${({ theme }) => theme.colors.gradientStart} 9.37%,
     ${({ theme }) => theme.colors.gradientEnd} 100%
   );
+  color: #fff;
   cursor: default;
   font-weight: 600;
 
@@ -55,11 +56,11 @@ export const CardTitle = styled.h2<{ isActive?: boolean }>`
   ${({ isActive }) => isActive && TitleActiveCSS}
 
   &:first-child {
-    border-top-left-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-top-left-radius: 8px;
   }
 
   &:last-child {
-    border-top-right-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-top-right-radius: 8px;
   }
 `
 

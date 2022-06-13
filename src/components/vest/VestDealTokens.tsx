@@ -2,51 +2,58 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
+import isAfter from 'date-fns/isAfter'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
-import { Deadline } from '@/src/components/common/Deadline'
 import { Dropdown as BaseDropdown, DropdownItem } from '@/src/components/common/Dropdown'
+import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
   ButtonDropdown,
+  ButtonGradientSm,
+  ButtonPrimaryLight,
   ButtonPrimaryLightSm,
-  GradientButtonSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
-import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell as BaseCell,
   HideOnDesktop,
   LinkCell,
   LoadingTableRow,
-  RowLink,
+  Row,
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { BaseTitle } from '@/src/components/pureStyledComponents/text/BaseTitle'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { getKeyChainByValue } from '@/src/constants/chains'
+import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
+import { getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
-import useAelinClaimableTokens from '@/src/hooks/aelin/useAelinClaimableTokens'
-import useAelinVestingDeals, {
-  ParsedVestingDeal,
-  VestingDealsFilter,
-} from '@/src/hooks/aelin/useAelinVestingDeals'
+import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
+import useAelinVestingDeals, { VestingDealsFilter } from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
+import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
-import formatNumber from '@/src/utils/formatNumber'
+import { formatToken } from '@/src/web3/bigNumber'
 
 const TableCard = styled.div`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     background-color: ${({ theme: { card } }) => card.backgroundColor};
-    border-radius: ${({ theme: { card } }) => card.borderRadius};
+    border-radius: 8px;
     border-width: 1px;
     border: ${({ theme: { card } }) => card.borderColor};
     padding: 40px;
   }
+`
+
+export const WrapperEmpty = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
 const Cell = styled(BaseCell)`
@@ -62,6 +69,10 @@ const Title = styled(BaseTitle)`
   }
 `
 
+const Subtitle = styled.p`
+  text-align: center;
+`
+
 const ButtonCSS = css`
   min-width: 80px;
 
@@ -70,7 +81,7 @@ const ButtonCSS = css`
   }
 `
 
-const VestButton = styled(GradientButtonSm)`
+const VestButton = styled(ButtonGradientSm)`
   ${ButtonCSS}
 `
 
@@ -108,17 +119,18 @@ type Order = {
 const VestActionButton = ({
   dealAddress,
   disabled,
-  mutate,
+  refetch,
   ...restProps
 }: {
   disabled: boolean
   dealAddress: string
-  mutate: () => void
+  refetch: () => void
 }) => {
   const { execute: vestTokens } = useAelinDealTransaction(dealAddress, 'claim')
+
   const handleVestTokens = async () => {
     await vestTokens()
-    mutate()
+    refetch()
   }
 
   return (
@@ -135,14 +147,49 @@ const VestActionButton = ({
   )
 }
 
-const AmountToVestCell = ({ ...item }: ParsedVestingDeal) => {
-  const { chainId, myDealTotal, poolAddress, totalVested } = item
-  const amountToVest = useAelinClaimableTokens(poolAddress, chainId, myDealTotal, totalVested)
+type AmountToVestCellProps = {
+  vestingPeriodStarts: Date
+  vestingPeriodEnds: Date
+  amountToVest: BigNumber | null
+  poolAddress: string
+  tokenSymbol: string
+  chainId: ChainsValues
+  underlyingDealTokenDecimals: number
+}
+
+const Wrapper: React.FC = ({ children, ...restProps }) => (
+  <TableCard id="outerWrapper" {...restProps}>
+    <Title>Vest Deal Tokens</Title>
+    {children}
+  </TableCard>
+)
+
+const AmountToVestCell: React.FC<AmountToVestCellProps> = ({
+  amountToVest,
+  chainId,
+  poolAddress,
+  tokenSymbol,
+  underlyingDealTokenDecimals,
+  vestingPeriodEnds,
+  vestingPeriodStarts,
+}) => {
+  const now = new Date()
+  const isVestingCliffEnded = isAfter(now, vestingPeriodStarts)
+  const isVestindPeriodEnded = isAfter(now, vestingPeriodEnds)
+
+  const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
+  const [currentAmountToVest] = useAelinAmountToVest(poolAddress, chainId, withinInterval)
 
   return (
     <Cell mobileJustifyContent="center">
       <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
-      <Value>{formatNumber(amountToVest)}</Value>
+      <Value>
+        {formatToken(
+          currentAmountToVest !== null ? currentAmountToVest : (amountToVest as BigNumber),
+          underlyingDealTokenDecimals,
+        )}{' '}
+        {tokenSymbol}
+      </Value>
     </Cell>
   )
 }
@@ -157,7 +204,13 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
     VestingDealsFilter.Active,
   )
 
-  const { data, error, hasMore, mutate, nextPage } = useAelinVestingDeals(
+  const {
+    data,
+    error,
+    hasMore,
+    mutate: refetch,
+    nextPage,
+  } = useAelinVestingDeals(
     {
       where: { user: user?.toLocaleLowerCase() || ZERO_ADDRESS },
       orderBy: order.orderBy,
@@ -176,16 +229,12 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
       network: 'center',
       seePool: 'right',
     },
-    widths: '110px 115px 115px 132px 105px 165px 1fr',
+    widths: '110px 115px 132px 115px 170px 80px 1fr',
   }
 
   const tableHeaderCells = [
     {
       title: 'Pool Name',
-      sortKey: VestingDeal_OrderBy.TokenToVest,
-    },
-    {
-      title: 'Token to vest',
       sortKey: VestingDeal_OrderBy.TokenToVest,
     },
     {
@@ -204,6 +253,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
       title: 'Vesting period ends',
       sortKey: VestingDeal_OrderBy.VestingPeriodEnds,
     },
+    { title: 'Network' },
   ]
 
   const handleSort = (sortBy: VestingDeal_OrderBy) => {
@@ -220,9 +270,28 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
 
   const vestingDealsFilterArr = Object.values(VestingDealsFilter) as Array<VestingDealsFilter>
 
+  if (!data.length) {
+    return (
+      <WrapperEmpty>
+        <Title>Vest</Title>
+        <Subtitle>
+          You don't have any deal tokens to vest. Once you do,
+          <br />
+          vesting information will be shown below!
+        </Subtitle>
+        <ButtonPrimaryLight
+          onClick={() => {
+            router.push('/')
+          }}
+        >
+          Join a pool
+        </ButtonPrimaryLight>
+      </WrapperEmpty>
+    )
+  }
+
   return (
-    <TableCard id="outerWrapper" {...restProps}>
-      <Title>Vest Deal Tokens</Title>
+    <Wrapper {...restProps}>
       <Dropdown
         currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
         dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
@@ -245,77 +314,94 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
               isActive={order.orderBy === sortKey}
               key={index}
               onClick={() => {
-                handleSort(sortKey)
+                if (sortKey) handleSort(sortKey)
               }}
             >
               {title}
             </SortableTH>
           ))}
         </TableHead>
-        {!data.length ? (
-          <BaseCard>No data.</BaseCard>
-        ) : (
-          <TableBody>
-            {data.map((item, index) => {
-              const {
-                canVest,
-                chainId,
-                dealAddress,
-                myDealTotal,
-                poolAddress,
-                poolName,
-                tokenToVest,
-                totalVested,
-                vestingPeriodEnds,
-                vestingPeriodStarts,
-              } = item
-              return (
-                <RowLink
-                  columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`}
-                  key={index}
-                >
-                  <NameCell mobileJustifyContent="center">{poolName}</NameCell>
-                  <Cell mobileJustifyContent="center">{tokenToVest}</Cell>
-                  <Cell mobileJustifyContent="center">
-                    <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
-                    <Value>{myDealTotal}</Value>
-                  </Cell>
-                  <AmountToVestCell {...item} />
-                  <Cell mobileJustifyContent="center">
-                    <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
-                    <Value>{totalVested}</Value>
-                  </Cell>
-                  <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
-                    <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
-                    <Deadline
-                      progress={calculateDeadlineProgress(vestingPeriodEnds, vestingPeriodStarts)}
-                    >
-                      {getFormattedDurationFromDateToNow(vestingPeriodEnds, 'ended')}
-                    </Deadline>
-                  </Cell>
-                  <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
+        <TableBody>
+          {data.map((item, index) => {
+            const {
+              amountToVest,
+              canVest,
+              chainId,
+              dealAddress,
+              poolAddress,
+              poolName,
+              tokenSymbol,
+              totalAmount,
+              totalVested,
+              underlyingDealTokenDecimals,
+              vestingPeriodEnds,
+              vestingPeriodStarts,
+            } = item
+            return (
+              <Row columns={columns.widths} key={index}>
+                <NameCell mobileJustifyContent="center">{poolName}</NameCell>
+                <Cell mobileJustifyContent="center">
+                  <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
+                  <Value>
+                    {formatToken(totalAmount, underlyingDealTokenDecimals)} {tokenSymbol}
+                  </Value>
+                </Cell>
+
+                <AmountToVestCell
+                  amountToVest={amountToVest}
+                  chainId={chainId}
+                  poolAddress={poolAddress}
+                  tokenSymbol={tokenSymbol}
+                  underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+                  vestingPeriodEnds={vestingPeriodEnds}
+                  vestingPeriodStarts={vestingPeriodStarts}
+                />
+
+                <Cell mobileJustifyContent="center">
+                  <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
+                  <Value>
+                    {formatToken(totalVested, underlyingDealTokenDecimals)} {tokenSymbol}
+                  </Value>
+                </Cell>
+                <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
+                  <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
+                  <DynamicDeadline deadline={vestingPeriodEnds} start={vestingPeriodStarts}>
+                    {getFormattedDurationFromDateToNow(vestingPeriodEnds)}
+                  </DynamicDeadline>
+                </Cell>
+                <Cell justifyContent="center" mobileJustifyContent="center">
+                  <HideOnDesktop>Network</HideOnDesktop>
+                  {getNetworkConfig(chainId).icon}
+                </Cell>
+                <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
+                  <RequiredConnection
+                    buttonSize="sm"
+                    isNotConnectedText=""
+                    isWrongNetworkText=""
+                    networkToCheck={chainId}
+                  >
                     <VestActionButton
                       dealAddress={dealAddress}
                       disabled={!canVest}
-                      mutate={mutate}
+                      refetch={refetch}
                     />
-                    <SeePoolButton
-                      onClick={(e) => {
-                        e.preventDefault()
-                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                      }}
-                    >
-                      See Pool
-                    </SeePoolButton>
-                  </LinkCell>
-                </RowLink>
-              )
-            })}
-          </TableBody>
-        )}
+                  </RequiredConnection>
+
+                  <SeePoolButton
+                    onClick={(e) => {
+                      e.preventDefault()
+                      router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                    }}
+                  >
+                    See Pool
+                  </SeePoolButton>
+                </LinkCell>
+              </Row>
+            )
+          })}
+        </TableBody>
       </InfiniteScroll>
-    </TableCard>
+    </Wrapper>
   )
 }
 

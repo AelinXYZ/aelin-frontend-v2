@@ -6,7 +6,7 @@ export const Badge = styled.span`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.primary};
   border-radius: 50%;
-  color: ${({ theme }) => theme.colors.textColor};
+  color: #fff;
   display: flex;
   font-size: 1rem;
   font-weight: 600;

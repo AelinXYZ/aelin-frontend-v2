@@ -34,9 +34,9 @@ const Item = styled(ButtonPrimaryLighter)<{ isActive?: boolean }>`
   font-size: 1rem;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    font-size: ${({ theme }) => theme.button.fontSize};
-    height: ${({ theme }) => theme.button.height};
-    padding: ${({ theme }) => theme.button.padding};
+    font-size: 1.4rem;
+    height: 36px;
+    padding: 0 20px;
   }
 
   ${({ isActive }) => isActive && ActiveItemCSS}

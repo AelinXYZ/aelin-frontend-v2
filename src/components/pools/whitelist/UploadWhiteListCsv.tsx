@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FC } from 'react'
 
-import { isAddress } from '@ethersproject/address'
 import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
@@ -19,12 +18,9 @@ const UploadCSV: FC<IUploadCSV> = ({ onUploadCSV }) => {
     const whitelist = csv.data.reduce((accum, curr) => {
       const [address, amount] = curr
 
-      if (!isAddress(address)) return accum
-
       accum.push({
         address,
         amount: Number(amount),
-        isSaved: isAddress(address) && !!amount,
       })
 
       return accum

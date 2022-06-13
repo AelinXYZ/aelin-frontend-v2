@@ -1,7 +1,6 @@
 import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { ThemeProvider } from 'styled-components'
 
 import { SWRConfig } from 'swr'
 
@@ -13,10 +12,9 @@ import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
 import LayoutStatusProvider from '@/src/providers/layoutStatusProvider'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
+import Theme from '@/src/providers/themeContextProvider'
 import TransactionModalProvider from '@/src/providers/transactionModalProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
-import { theme } from '@/src/theme'
-import { GlobalStyle } from '@/src/theme/globalStyle'
 
 // Should be rendered on client side only!
 const TokenIconsProvider = dynamic(() => import('@/src/providers/tokenIconsProvider'), {
@@ -54,7 +52,7 @@ function App({ Component, pageProps }: AppProps) {
       </Head>
       <Web3ConnectionProvider>
         <LayoutStatusProvider>
-          <ThemeProvider theme={theme}>
+          <Theme>
             <SWRConfig
               value={{
                 suspense: true,
@@ -64,7 +62,6 @@ function App({ Component, pageProps }: AppProps) {
               <StakingRewardsProvider>
                 <TransactionModalProvider>
                   <NotificationsProvider>
-                    <GlobalStyle />
                     <SafeSuspense>
                       <TokenIconsProvider>
                         <Header />
@@ -78,7 +75,7 @@ function App({ Component, pageProps }: AppProps) {
                 </TransactionModalProvider>
               </StakingRewardsProvider>
             </SWRConfig>
-          </ThemeProvider>
+          </Theme>
         </LayoutStatusProvider>
       </Web3ConnectionProvider>
     </>

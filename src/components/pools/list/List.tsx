@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
+import ReactTooltip from 'react-tooltip'
 
 import { TokenIcon } from '../common/TokenIcon'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
-import { Deadline } from '@/src/components/common/Deadline'
+import { Lock } from '@/src/components/assets/Lock'
+import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
@@ -25,7 +27,7 @@ import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/consta
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
-import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
+import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 const Name = styled.span`
@@ -41,6 +43,21 @@ const TokenIconSmall = styled(TokenIcon)`
   .externalLink {
     font-size: 1.2rem !important;
   }
+`
+
+const Label = styled.span`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  background: ${({ theme }) => theme.buttonPrimary.backgroundColor};
+  border: 0.5px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.colors.primary};
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 14px;
 `
 
 const HideOnDesktop = styled(BaseHideOnDesktop)`
@@ -73,7 +90,7 @@ export const List: React.FC<{
       investmentToken: 'center',
       network: 'center',
     },
-    widths: '120px 120px 90px 1fr 1fr 165px 80px',
+    widths: '190px 120px 90px 0.8fr 1fr 165px 80px',
   }
 
   const tableHeaderCells = [
@@ -83,11 +100,11 @@ export const List: React.FC<{
     },
     {
       title: 'Sponsor',
-      sortKey: PoolCreated_OrderBy.Sponsor,
+      // sortKey: PoolCreated_OrderBy.Sponsor,
     },
     {
       title: 'Network',
-      justifyContent: columns.alignment.network,
+      // justifyContent: columns.alignment.network,
     },
     {
       title: 'Amount in Pool',
@@ -100,11 +117,11 @@ export const List: React.FC<{
     {
       title: 'Investment token',
       justifyContent: columns.alignment.investmentToken,
-      sortKey: PoolCreated_OrderBy.PurchaseToken,
+      // sortKey: PoolCreated_OrderBy.PurchaseToken,
     },
     {
       title: 'Stage',
-      sortKey: PoolCreated_OrderBy.PoolStatus,
+      // sortKey: PoolCreated_OrderBy.PoolStatus,
     },
   ]
 
@@ -126,6 +143,13 @@ export const List: React.FC<{
     }
   }
 
+  const getSortableHandler = (sortKey: PoolCreated_OrderBy | undefined) =>
+    sortKey ? () => handleSort(sortKey) : undefined
+
+  useEffect(() => {
+    ReactTooltip.rebuild()
+  })
+
   return (
     <InfiniteScroll
       dataLength={data.length}
@@ -139,9 +163,7 @@ export const List: React.FC<{
             isActive={sortBy === sortKey}
             justifyContent={justifyContent}
             key={index}
-            onClick={() => {
-              handleSort(sortKey)
-            }}
+            onClick={getSortableHandler(sortKey)}
           >
             {title}
           </SortableTH>
@@ -174,7 +196,23 @@ export const List: React.FC<{
               >
                 <NameCell>
                   <Name>{name.split('aePool-').pop()}</Name>
-                  {activeNotifications ? <Badge>{activeNotifications.toString()}</Badge> : null}
+                  {!!activeNotifications && (
+                    <Badge
+                      data-html={true}
+                      data-multiline={true}
+                      data-tip={`You have ${
+                        activeNotifications > 1 ? 'notifications' : 'one notification'
+                      } for this pool.`}
+                    >
+                      {activeNotifications.toString()}
+                    </Badge>
+                  )}
+                  {isPrivatePool(pool.poolType) && (
+                    <Label>
+                      <span>private</span>
+                      <Lock />
+                    </Label>
+                  )}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                 </NameCell>
                 <ENSOrAddress address={sponsor} network={network} />
@@ -197,9 +235,13 @@ export const List: React.FC<{
                     />
                   </HideOnDesktop>
                 </Cell>
-                <Deadline progress={calculateDeadlineProgress(purchaseExpiry, start)}>
-                  {getFormattedDurationFromDateToNow(purchaseExpiry, 'ended')}
-                </Deadline>
+                <DynamicDeadline
+                  deadline={purchaseExpiry}
+                  hideWhenDeadlineIsReached={false}
+                  start={start}
+                >
+                  {getFormattedDurationFromDateToNow(purchaseExpiry)}
+                </DynamicDeadline>
                 <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
                   <TokenIcon
                     address={investmentToken}

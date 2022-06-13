@@ -2,8 +2,10 @@ import React, { ReactElement, ReactNode } from 'react'
 import styled from 'styled-components'
 
 import {
+  ButtonGradient,
+  ButtonGradientSm,
   ButtonPrimaryLight,
-  GradientButton,
+  ButtonPrimaryLightSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -18,8 +20,7 @@ const Wrapper = styled.div`
 
 const Text = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
-  display: flex;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.5;
   margin: 0 auto 10px;
@@ -48,37 +49,55 @@ const withRequiredConnection = (Component: React.FC) =>
 type RequiredConnectionProps = {
   children: ReactElement
   minHeight?: number
-  text?: string
+  buttonSize?: string
+  isNotConnectedText?: string
+  isWrongNetworkText?: string
   networkToCheck?: ChainsValues
 }
 
 const RequiredConnection: React.FC<RequiredConnectionProps> = ({
   children,
   minHeight,
+  buttonSize,
   networkToCheck,
-  text = 'You must be logged in.',
+  isNotConnectedText = 'You must be logged in.',
+  isWrongNetworkText = `Please switch to this pool's network`,
   ...restProps
-}: RequiredConnectionProps) => {
+}) => {
   const { address, connectWallet, isWalletConnected, pushNetwork, walletChainId } =
     useWeb3Connection()
   const isConnected = isWalletConnected && address
   const isWrongNetwork = isConnected && networkToCheck && walletChainId !== networkToCheck
 
-  return !isConnected ? (
-    <Wrapper style={{ minHeight }} {...restProps}>
-      <Text>{text}</Text>
-      <ButtonPrimaryLight onClick={connectWallet}>Connect wallet</ButtonPrimaryLight>
-    </Wrapper>
-  ) : isWrongNetwork ? (
-    <Wrapper style={{ minHeight }} {...restProps}>
-      <TextBig>Please switch to this pool's network</TextBig>
-      <GradientButton onClick={() => pushNetwork(networkToCheck)}>
-        Switch to {chainsConfig[networkToCheck].name}
-      </GradientButton>
-    </Wrapper>
-  ) : (
-    children
-  )
+  if (!isConnected) {
+    return (
+      <Wrapper style={{ minHeight }} {...restProps}>
+        {!!isNotConnectedText.length && <Text>{isNotConnectedText}</Text>}
+        {buttonSize === 'sm' ? (
+          <ButtonPrimaryLightSm onClick={connectWallet}>Connect wallet</ButtonPrimaryLightSm>
+        ) : (
+          <ButtonPrimaryLight onClick={connectWallet}>Connect wallet</ButtonPrimaryLight>
+        )}
+      </Wrapper>
+    )
+  }
+
+  if (isWrongNetwork) {
+    return (
+      <Wrapper style={{ minHeight }} {...restProps}>
+        {!!isWrongNetworkText.length && <TextBig>{isWrongNetworkText}</TextBig>}
+        {buttonSize === 'sm' ? (
+          <ButtonGradientSm onClick={() => pushNetwork(networkToCheck)}> Switch</ButtonGradientSm>
+        ) : (
+          <ButtonGradient onClick={() => pushNetwork(networkToCheck)}>
+            Switch to {chainsConfig[networkToCheck].name}
+          </ButtonGradient>
+        )}
+      </Wrapper>
+    )
+  }
+
+  return children
 }
 
 export { withRequiredConnection, RequiredConnection }

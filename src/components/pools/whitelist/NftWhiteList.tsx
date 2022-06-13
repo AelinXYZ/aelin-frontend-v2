@@ -7,7 +7,7 @@ import NftCollectionsSection, {
 } from '@/src/components/pools/whitelist/NftCollectionsSection'
 import NftTypeSection from '@/src/components/pools/whitelist/NftTypeSection'
 import NftWhiteListProcessSection from '@/src/components/pools/whitelist/NftWhiteListProcessSection'
-import { GradientButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 
 const Title = styled.h2`
@@ -132,7 +132,7 @@ const NftWhiteList = ({
           <StepContents key={index}>
             <Title>{title}</Title>
             {getContent()}
-            <GradientButton
+            <ButtonGradient
               onClick={() => {
                 if (isLastStep) {
                   onClose()
@@ -148,7 +148,7 @@ const NftWhiteList = ({
               }}
             >
               {isLastStep ? 'Whitelist' : 'Next'}
-            </GradientButton>
+            </ButtonGradient>
             {currentStep === NftWhiteListStep.nftType && (
               <NftTypeRemark>*Including Cryptopunks</NftTypeRemark>
             )}

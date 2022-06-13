@@ -7,24 +7,22 @@ import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 
 const Wrapper = styled.a`
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.gray};
+  background-color: ${({ theme: { myPool } }) => myPool.backgroundColor};
   border-radius: 8px;
-  color: ${({ theme: { colors } }) => colors.textColor};
+  border: 1px solid ${({ theme: { myPool } }) => myPool.borderColor};
+  color: ${({ theme: { myPool } }) => myPool.color};
   display: flex;
   font-size: 1.4rem;
   font-weight: 500;
   gap: 14px;
   height: 36px;
-  margin-bottom: 10px;
   overflow: hidden;
   padding: 0 20px;
   text-decoration: none;
-  text-overflow: ellipsis;
   transition: background-color 0.1s linear;
-  white-space: nowrap;
 
   &:hover {
-    background-color: ${({ theme }) => lighten(0.1, theme.colors.gray)};
+    background-color: ${({ theme }) => lighten(0.1, theme.myPool.backgroundColor)};
   }
 
   &:active {
@@ -46,21 +44,23 @@ type StageTypes =
 const State = styled.span<{ stage: StageTypes }>`
   --dimensions: 8px;
 
+  background-color: ${({ stage, theme: { stages } }) => stages[stage] ?? '#fff'};
+  border: 1px solid
+    ${({ stage, theme: { stages } }) =>
+      stage === 'complete' ? 'rgba(71, 87, 97, 0.5)' : stages[stage]};
   border-radius: 5px;
   display: block;
   height: var(--dimensions);
   width: var(--dimensions);
-
-  background-color: ${({ stage, theme: { stages } }) => stages[stage] ?? '#fff'};
 `
 
 interface Props {
-  stage: StageTypes
   href: string
   notifications?: number
+  stage: StageTypes
 }
 
-const Pool: React.FC<Props> = ({ children, href, notifications, stage, ...restProps }) => {
+export const Pool: React.FC<Props> = ({ children, href, notifications, stage, ...restProps }) => {
   return (
     <Link href={href} passHref>
       <Wrapper {...restProps}>

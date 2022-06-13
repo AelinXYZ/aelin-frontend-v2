@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { ReactElement, useMemo } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
@@ -6,20 +6,17 @@ import { isAddress } from '@ethersproject/address'
 import { ModalButtonCSS } from '@/src/components/common/Modal'
 import UploadCSV from '@/src/components/pools/whitelist/UploadWhiteListCsv'
 import {
+  ButtonGradient,
   ButtonPrimaryLightSm,
-  GradientButton,
 } from '@/src/components/pureStyledComponents/buttons/Button'
-import {
-  ButtonEdit,
-  ButtonRemove,
-} from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
-import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
+import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
+import { Textfield, TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 
 export interface AddressWhitelistProps {
   address: string
   amount: number | null
-  isSaved: boolean
 }
 
 const Grid = styled.div`
@@ -58,7 +55,7 @@ const ButtonsGrid = styled.div`
   grid-template-columns: 32px 32px;
 `
 
-const ButtonSave = styled(GradientButton)`
+const ButtonSave = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 
@@ -69,72 +66,98 @@ const Error = styled(BaseError)`
 const WhiteListRow = ({
   address,
   amount,
-  isSaved,
   onChangeRow,
   onDeleteRow,
   rowIndex,
 }: {
   address: string
   amount: number | null
-  isSaved: boolean
-  onChangeRow: (value: string | boolean | number | null, key: string, index: number) => void
+  onChangeRow: (value: string | number | null, key: string, index: number) => void
   onDeleteRow: (index: number) => void
   rowIndex: number
 }) => {
+  const { currentThemeName } = useThemeContext()
   return (
     <>
       <Textfield
-        disabled={isSaved}
         onChange={(e) => onChangeRow(e.target.value, 'address', rowIndex)}
         placeholder="Add address..."
+        status={address && !isAddress(address) ? TextfieldState.error : undefined}
         value={address}
       />
       <Textfield
-        disabled={isSaved}
         onChange={(e) => onChangeRow(Number(e.target.value), 'amount', rowIndex)}
         placeholder="Max allocation..."
+        status={address && !amount ? TextfieldState.error : undefined}
         type="number"
         value={amount || ''}
       />
       <ButtonsGrid>
-        <ButtonEdit onClick={() => onChangeRow(false, 'isSaved', rowIndex)} />
-        <ButtonRemove onClick={() => onDeleteRow(rowIndex)} />
+        <div>&nbsp;</div>
+        <ButtonRemove currentThemeName={currentThemeName} onClick={() => onDeleteRow(rowIndex)} />
       </ButtonsGrid>
     </>
   )
 }
 
-export const initialWhitelistValues = [
+export const initialAddressesWhitelistValues = [
   ...new Array(5).fill({
     address: '',
     amount: null,
-    isSaved: false,
-  }),
+  } as AddressWhitelistProps),
 ]
 
+enum AddressesWhiteListStatus {
+  invalidAddress,
+  invalidAmount,
+  valid,
+}
+
+const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
+  switch (status) {
+    case AddressesWhiteListStatus.invalidAddress:
+      return <Error textAlign="center">There are some invalid address in the list</Error>
+    case AddressesWhiteListStatus.invalidAmount:
+      return <Error textAlign="center">There are some empty amount in the list</Error>
+    case AddressesWhiteListStatus.valid:
+      return null
+  }
+}
+
 const AddressesWhiteList = ({
-  error,
   list,
   onClose,
   onConfirm,
-  setError,
   setList,
 }: {
-  error: boolean
-  setError: (isError: boolean) => void
   list: AddressWhitelistProps[]
   setList: (whitelist: AddressWhitelistProps[]) => void
   onClose: () => void
   onConfirm: (whitelist: AddressWhitelistProps[]) => void
 }) => {
+  const status = useMemo(() => {
+    if (list.some((item: AddressWhitelistProps) => item.address && !isAddress(item.address))) {
+      return AddressesWhiteListStatus.invalidAddress
+    }
+
+    if (list.some((item: AddressWhitelistProps) => item.address && !item.amount)) {
+      return AddressesWhiteListStatus.invalidAmount
+    }
+
+    return AddressesWhiteListStatus.valid
+  }, [list])
+
   const handleUploadCSV = (whitelist: AddressWhitelistProps[]): void => {
     setList(whitelist)
   }
 
-  const onChangeRow = (value: string | boolean | number | null, key: string, index: number) => {
+  const onChangeRow = (value: string | number | null, key: string, index: number) => {
     const addresses = [...list]
 
-    addresses[index] = { ...addresses[index], [key]: value }
+    addresses[index] = {
+      ...addresses[index],
+      [key]: value,
+    }
     setList(addresses)
   }
 
@@ -142,27 +165,10 @@ const AddressesWhiteList = ({
     setList([...list].filter((_, index) => index !== rowIndex))
   }
 
-  useEffect(() => {
-    setError(
-      list.some((item: AddressWhitelistProps) =>
-        item.address && item.amount ? !isAddress(item.address) : false,
-      ),
-    )
-
-    return () => {
-      setError(false)
-    }
-  }, [list, setError])
-
   const handleSave = () => {
-    const filterRows = [
-      ...list.filter(
-        (row: AddressWhitelistProps) => isAddress(row.address) && row.amount && row.amount > 0,
-      ),
-    ]
-    const updateRows = filterRows.map((row) => ({ ...row, isSaved: true }))
-
-    onConfirm(updateRows)
+    // Remove empty rows.
+    const filterRows = [...list.filter((row: AddressWhitelistProps) => row.address)]
+    onConfirm(filterRows)
     onClose()
   }
 
@@ -175,20 +181,22 @@ const AddressesWhiteList = ({
         <Title>Amount</Title>
         <div>&nbsp;</div>
         {list.map((listItem: AddressWhitelistProps, rowIndex: number) => (
-          <WhiteListRow
-            {...listItem}
-            key={rowIndex}
-            onChangeRow={onChangeRow}
-            onDeleteRow={onDeleteRow}
-            rowIndex={rowIndex}
-          />
+          <>
+            <WhiteListRow
+              {...listItem}
+              key={rowIndex}
+              onChangeRow={onChangeRow}
+              onDeleteRow={onDeleteRow}
+              rowIndex={rowIndex}
+            />
+          </>
         ))}
       </Grid>
-      <ButtonPrimaryLightSm onClick={() => setList(list.concat(initialWhitelistValues))}>
+      <ButtonPrimaryLightSm onClick={() => setList(list.concat(initialAddressesWhitelistValues))}>
         Add more rows
       </ButtonPrimaryLightSm>
-      {error && <Error>There are some invalid address in the list</Error>}
-      <ButtonSave disabled={error} onClick={handleSave}>
+      {getError(status)}
+      <ButtonSave disabled={status !== AddressesWhiteListStatus.valid} onClick={handleSave}>
         Save
       </ButtonSave>
     </>

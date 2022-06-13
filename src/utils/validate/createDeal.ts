@@ -1,9 +1,11 @@
 import { isAddress } from '@ethersproject/address'
-import { BigNumberish } from '@ethersproject/bignumber'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
+import Wei, { wei } from '@synthetixio/wei'
 import { Duration } from 'date-fns'
 
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import { ZERO_BN } from '@/src/constants/misc'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS } from '@/src/constants/time'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { convertToSeconds, isEmptyDuration } from '@/src/utils/date'
@@ -11,7 +13,7 @@ import { convertToSeconds, isEmptyDuration } from '@/src/utils/date'
 export type dealErrors = {
   dealToken?: string
   dealTokenTotal?: BigNumberish
-  totalPurchaseAmount?: BigNumberish
+  totalPurchaseAmount?: string
   vestingCliff?: Duration
   vestingPeriod?: Duration
   proRataPeriod?: Duration
@@ -25,18 +27,18 @@ const validateCreateDeal = (values: dealErrors, pool: ParsedAelinPool, chainId: 
 
   const currentNetwork = getNetworkConfig(chainId)
 
+  const currentTotalPurchaseAmount = wei(
+    values.totalPurchaseAmount || '0',
+    pool.investmentTokenDecimals,
+  )
+
   if (!values.dealToken) {
     errors.dealToken = true
   }
 
-  if (!values.totalPurchaseAmount || Number(values.totalPurchaseAmount) <= 0) {
+  if (currentTotalPurchaseAmount.lte(wei(0))) {
     errors.totalPurchaseAmount = true
-  } else if (
-    values.totalPurchaseAmount &&
-    parseUnits(values.totalPurchaseAmount?.toString(), pool.investmentTokenDecimals).gt(
-      pool.amountInPool.raw,
-    )
-  ) {
+  } else if (currentTotalPurchaseAmount.gt(pool.amountInPool.raw)) {
     errors.totalPurchaseAmount = `Max is ${pool.amountInPool.formatted}`
   }
 
@@ -84,11 +86,10 @@ const validateCreateDeal = (values: dealErrors, pool: ParsedAelinPool, chainId: 
   const noOpenValues =
     !values.openPeriod?.days && !values.openPeriod?.hours && !values.openPeriod?.minutes
 
-  const isTotalPurchaseAmountEqualToAmountInPool = values.totalPurchaseAmount
-    ? parseUnits(values.totalPurchaseAmount?.toString(), pool.investmentTokenDecimals).eq(
-        pool.amountInPool.raw,
-      )
-    : false
+  const isTotalPurchaseAmountEqualToAmountInPool = wei(
+    pool.amountInPool.raw,
+    pool.investmentTokenDecimals,
+  ).eq(currentTotalPurchaseAmount)
 
   if (values.totalPurchaseAmount && isTotalPurchaseAmountEqualToAmountInPool && !noOpenValues) {
     errors.openPeriod = 'Pool supply maxed. Set open period to 0'

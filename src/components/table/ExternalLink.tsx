@@ -34,8 +34,8 @@ export const ExternalLink: React.FC<Props> = ({ children, className, href, ...re
   <Wrapper
     className={`${className} externalLink`}
     onClick={(e) => {
-      e.stopPropagation()
       e.preventDefault()
+      e.stopPropagation()
       window.open(href, '_blank')
     }}
     {...restProps}

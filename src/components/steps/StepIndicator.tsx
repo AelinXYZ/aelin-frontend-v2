@@ -30,7 +30,7 @@ const Step = styled(BaseStep)`
   &::before,
   &::after {
     content: '';
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: ${({ theme }) => theme.steps.lineBackgroundColor};
     height: 2px;
     position: absolute;
     top: 11px;
@@ -44,7 +44,6 @@ const Step = styled(BaseStep)`
   }
 
   &::after {
-    content: '';
     left: 50%;
     right: 0;
   }
