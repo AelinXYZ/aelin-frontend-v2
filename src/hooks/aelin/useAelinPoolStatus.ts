@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
@@ -8,10 +9,11 @@ import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { MAX_BN } from '@/src/constants/misc'
+import { MAX_BN, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useUserAllocationStats } from '@/src/hooks/aelin/useUserAllocationStats'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 import { DATE_DETAILED, formatDate, getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -203,10 +205,21 @@ function useUserActions(
   const { address: walletAddress } = useWeb3Connection()
   const currentStatus = derivedStatus.current
 
+  const { data: userAllocationStats, refetch } = useUserAllocationStats(
+    pool.address,
+    pool.chainId,
+    pool.investmentTokenDecimals,
+  )
+
+  useEffect(() => {
+    refetch()
+  }, [refetch, pool.amountInPool])
+
   return useMemo(() => {
     const actions: PoolAction[] = []
     const isSponsor = userRole === UserRole.Sponsor
     const now = new Date()
+    const userPoolBalance = BigNumber.from(userAllocationStats.raw)
 
     // Funding
     if (currentStatus === PoolStatus.Funding) {
@@ -263,8 +276,8 @@ function useUserActions(
 
       // Withdraw
       if (
-        isAfter(now, pool.dealDeadline) ||
-        (pool.dealAddress && pool.deal?.holderAlreadyDeposited)
+        userPoolBalance.gt(ZERO_BN) &&
+        (isAfter(now, pool.dealDeadline) || (pool.dealAddress && pool.deal?.holderAlreadyDeposited))
       ) {
         actions.push(PoolAction.Withdraw)
       }
@@ -304,7 +317,10 @@ function useUserActions(
 
       // Withdraw investment. For investors
       // if holder already deposited or if the deadline to fund the pool is reached.
-      if (isAfter(now, pool.deal.holderFundingExpiration) || pool.deal.holderAlreadyDeposited) {
+      if (
+        userPoolBalance.gt(ZERO_BN) &&
+        (isAfter(now, pool.deal.holderFundingExpiration) || pool.deal.holderAlreadyDeposited)
+      ) {
         actions.push(PoolAction.Withdraw)
       }
 
@@ -312,15 +328,17 @@ function useUserActions(
     }
 
     if (currentStatus === PoolStatus.Closed) {
-      return [PoolAction.Withdraw]
+      return userPoolBalance.gt(ZERO_BN) ? [PoolAction.Withdraw] : []
     }
 
     if (currentStatus === PoolStatus.Vesting) {
-      return [PoolAction.Vest, PoolAction.Withdraw]
+      return userPoolBalance.gt(ZERO_BN)
+        ? [PoolAction.Vest, PoolAction.Withdraw]
+        : [PoolAction.Vest]
     }
 
     return []
-  }, [userRole, currentStatus, pool, walletAddress])
+  }, [userRole, currentStatus, pool, walletAddress, userAllocationStats.raw])
 }
 
 function useUserTabs(
