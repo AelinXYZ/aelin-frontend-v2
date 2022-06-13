@@ -73,12 +73,14 @@ const Error = styled(BaseError)`
 const WhiteListRow = ({
   address,
   amount,
+  maxDecimals,
   onChangeRow,
   onDeleteRow,
   rowIndex,
 }: {
   address: string
   amount: number | null
+  maxDecimals: number
   onChangeRow: (value: string | number | null, key: string, index: number) => void
   onDeleteRow: (index: number) => void
   rowIndex: number
@@ -93,7 +95,21 @@ const WhiteListRow = ({
         value={address}
       />
       <Textfield
-        onChange={(e) => onChangeRow(Number(e.target.value), 'amount', rowIndex)}
+        onChange={(e) => {
+          const amount = Number(e.target.value)
+
+          if (amount < 0) {
+            return
+          }
+
+          const decimalsCount = amount.toString().split('.')[1]?.length ?? 0
+
+          if (decimalsCount > maxDecimals) {
+            return
+          }
+
+          onChangeRow(amount, 'amount', rowIndex)
+        }}
         placeholder="Max allocation..."
         status={address && !amount ? TextfieldState.error : undefined}
         type="number"
@@ -133,10 +149,12 @@ const getError = (status: WhiteListStatus): ReactElement | null => {
 
 const WhiteListModal = ({
   currentList,
+  investmentTokenDecimals,
   onClose,
   onConfirm,
 }: {
   currentList: WhitelistProps[]
+  investmentTokenDecimals: number
   onClose: () => void
   onConfirm: (whitelist: WhitelistProps[]) => void
 }) => {
@@ -200,6 +218,7 @@ const WhiteListModal = ({
             <WhiteListRow
               {...listItem}
               key={rowIndex}
+              maxDecimals={investmentTokenDecimals}
               onChangeRow={onChangeRow}
               onDeleteRow={onDeleteRow}
               rowIndex={rowIndex}

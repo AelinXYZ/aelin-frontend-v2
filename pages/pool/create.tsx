@@ -157,6 +157,7 @@ const Create: NextPage = () => {
       {showWhiteListModal && (
         <WhiteListModal
           currentList={createPoolState.whitelist}
+          investmentTokenDecimals={createPoolState.investmentToken?.decimals ?? 18}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={(whitelist: WhitelistProps[]) => setPoolField(whitelist, 'whitelist')}
         />
