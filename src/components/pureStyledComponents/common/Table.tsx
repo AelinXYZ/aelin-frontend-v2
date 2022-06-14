@@ -92,15 +92,38 @@ export const TableRowCSS = css<RowProps>`
   }
 `
 
+const GradientWrapper = styled.div`
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.colors.gradientStart} 9.37%,
+    ${({ theme }) => theme.colors.gradientEnd} 100%
+  );
+  border-radius: 8px;
+  min-height: 48px;
+  padding: 1px;
+`
+
 export const Row = styled.div<RowProps>`
   ${TableRowCSS}
 `
 
 interface RowLinkProps extends RowProps {
   href: string
+  withGradient?: boolean
 }
 
-export const RowLink: React.FC<RowLinkProps> = ({ children, href, ...restProps }) => {
+export const RowLink: React.FC<RowLinkProps> = ({ children, href, withGradient, ...restProps }) => {
+  if (withGradient) {
+    return (
+      <GradientWrapper>
+        <Link href={href} passHref>
+          <Row as="a" {...restProps}>
+            {children}
+          </Row>
+        </Link>
+      </GradientWrapper>
+    )
+  }
   return (
     <Link href={href} passHref>
       <Row as="a" {...restProps}>
