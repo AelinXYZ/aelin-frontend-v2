@@ -28,6 +28,7 @@ import {
 } from '@/src/utils/aelinPoolUtils'
 import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
+import { parsePoolName } from '@/src/utils/parsePoolName'
 import { DetailedNumber } from '@/types/utils'
 
 export type ParsedAelinPool = {
@@ -127,7 +128,7 @@ export const getParsedPool = ({
     poolStatus: pool.poolStatus,
     name: pool.name,
     symbol: pool.symbol,
-    nameFormatted: pool.name.split('aePool-').pop() || '',
+    nameFormatted: parsePoolName(pool.name),
     poolType: pool.hasAllowList ? 'Private' : 'Public',
     address: poolAddress,
     start: getPoolCreatedDate(pool),

@@ -1,34 +1,30 @@
-import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import InfiniteScroll from 'react-infinite-scroll-component'
-import ReactTooltip from 'react-tooltip'
-
-import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
+import { Verified } from '@/src/components/assets/Verified'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
-import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   HideOnDesktop as BaseHideOnDesktop,
   Cell,
   HideOnMobileCell,
-  LoadingTableRow,
   RowLink,
   TableBody,
-  TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { NameCell } from '@/src/components/table/NameCell'
-import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
-import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
-import useAelinPools from '@/src/hooks/aelin/useAelinPools'
+import useAelinVouchedPools from '@/src/hooks/aelin/useAelinVouchedPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+
+const Wrapper = styled.div`
+  margin: 20px 0 30px 0px;
+`
 
 const Name = styled.span`
   overflow: hidden;
@@ -60,6 +56,22 @@ const Label = styled.span`
   line-height: 14px;
 `
 
+const Title = styled.h3`
+  display: flex;
+  align-items: center;
+  color: ${({ theme: { card } }) => card.titleColor};
+  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 10px 0;
+  padding: 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    font-size: 1.8rem;
+  }
+`
+
 const HideOnDesktop = styled(BaseHideOnDesktop)`
   .networkIcon {
     height: 14px;
@@ -67,23 +79,10 @@ const HideOnDesktop = styled(BaseHideOnDesktop)`
   }
 `
 
-interface FiltersProps {
-  network: ChainsValues | null
-  variables: PoolsCreatedQueryVariables
-}
-
-export const List: React.FC<{
-  filters: FiltersProps
-  setOrderBy: (value: PoolCreated_OrderBy | undefined) => void
-  setOrderDirection: (value: OrderDirection) => void
-}> = ({ filters, setOrderBy, setOrderDirection }) => {
-  const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
+export const VouchedPools: React.FC = () => {
+  const { data, error } = useAelinVouchedPools({})
 
   const { notifications } = useNotifications()
-
-  if (error) {
-    throw error
-  }
 
   const columns = {
     alignment: {
@@ -93,85 +92,19 @@ export const List: React.FC<{
     widths: '190px 120px 90px 0.8fr 1fr 165px 80px',
   }
 
-  const tableHeaderCells = [
-    {
-      title: 'Name',
-      sortKey: PoolCreated_OrderBy.Name,
-    },
-    {
-      title: 'Sponsor',
-      // sortKey: PoolCreated_OrderBy.Sponsor,
-    },
-    {
-      title: 'Network',
-      // justifyContent: columns.alignment.network,
-    },
-    {
-      title: 'Amount in Pool',
-      sortKey: PoolCreated_OrderBy.TotalSupply,
-    },
-    {
-      title: 'Investment deadline',
-      sortKey: PoolCreated_OrderBy.PurchaseExpiry,
-    },
-    {
-      title: 'Investment token',
-      justifyContent: columns.alignment.investmentToken,
-      // sortKey: PoolCreated_OrderBy.PurchaseToken,
-    },
-    {
-      title: 'Stage',
-      // sortKey: PoolCreated_OrderBy.PoolStatus,
-    },
-  ]
-
-  const [sortBy, setSortBy] = useState<string | undefined>()
-
-  const handleSort = (sortBy: PoolCreated_OrderBy | undefined) => {
-    if (sortBy === filters.variables.orderBy) {
-      if (filters.variables.orderDirection === OrderDirection.Desc) {
-        setOrderDirection(OrderDirection.Asc)
-      } else {
-        setOrderDirection(OrderDirection.Desc)
-        setOrderBy(undefined)
-        return setSortBy(undefined)
-      }
-    } else {
-      setSortBy(sortBy)
-      setOrderDirection(OrderDirection.Desc)
-      setOrderBy(sortBy as PoolCreated_OrderBy)
-    }
+  if (error) {
+    throw error
   }
 
-  const getSortableHandler = (sortKey: PoolCreated_OrderBy | undefined) =>
-    sortKey ? () => handleSort(sortKey) : undefined
-
-  useEffect(() => {
-    ReactTooltip.rebuild()
-  })
+  if (!data || !data.length) return null
 
   return (
-    <InfiniteScroll
-      dataLength={data.length}
-      hasMore={hasMore}
-      loader={<LoadingTableRow />}
-      next={nextPage}
-    >
-      <TableHead columns={columns.widths}>
-        {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
-          <SortableTH
-            isActive={sortBy === sortKey}
-            justifyContent={justifyContent}
-            key={index}
-            onClick={getSortableHandler(sortKey)}
-          >
-            {title}
-          </SortableTH>
-        ))}
-      </TableHead>
-      {!data.length ? (
-        <BaseCard>No data.</BaseCard>
-      ) : (
+    <>
+      <Title>
+        Verified Pools &nbsp;
+        <Verified />
+      </Title>
+      <Wrapper>
         <TableBody>
           {data.map((pool) => {
             const {
@@ -193,6 +126,7 @@ export const List: React.FC<{
                 columns={columns.widths}
                 href={`/pool/${getKeyChainByValue(network)}/${id}`}
                 key={id}
+                withGradient
               >
                 <NameCell>
                   <Name>{nameFormatted}</Name>
@@ -255,9 +189,7 @@ export const List: React.FC<{
             )
           })}
         </TableBody>
-      )}
-    </InfiniteScroll>
+      </Wrapper>
+    </>
   )
 }
-
-export default List

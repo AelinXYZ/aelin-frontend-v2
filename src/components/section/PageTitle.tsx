@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Link as BaseLink } from '@/src/components/assets/Link'
+import { Verified } from '@/src/components/assets/Verified'
 
 const Wrapper = styled.div`
   margin: 0 auto 30px;
@@ -25,8 +26,9 @@ const Title = styled.h1`
 
 const TitleText = styled.span`
   align-items: center;
+  justify-content: left;
   color: ${({ theme }) => theme.pageTitle.color};
-  display: block;
+  display: flex;
   gap: 12px;
 
   width: 370px;
@@ -40,7 +42,7 @@ const TitleText = styled.span`
   text-decoration: none;
 
   &[href]:hover {
-    text-decoration: underline;
+    text-decoration: none;
   }
 `
 
@@ -83,14 +85,20 @@ export const PageTitle: React.FC<{
   network?: ReactNode
   subTitle?: string
   title: string | React.ReactNode
-}> = ({ href, network, subTitle, title, ...restProps }) => {
+  isVerified?: boolean
+}> = ({ href, isVerified, network, subTitle, title, ...restProps }) => {
   const titleLinkProps = href ? { href: href, target: '_blank' } : {}
 
   return (
     <Wrapper {...restProps}>
       <Title>
-        <TitleText as={href ? 'a' : 'span'} {...titleLinkProps}>
-          {title} {href && <Link />}
+        <TitleText as={'span'}>
+          {title} {isVerified && <Verified />}{' '}
+          {href && (
+            <a {...titleLinkProps}>
+              <Link />
+            </a>
+          )}
         </TitleText>
       </Title>
       <SubTitle>
