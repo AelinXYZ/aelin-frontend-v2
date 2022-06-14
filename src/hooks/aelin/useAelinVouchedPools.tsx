@@ -32,7 +32,7 @@ const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) =
 type Props = Omit<PoolsCreatedQueryVariables, 'where'>
 
 const useAelinVouchedPools = (variables: Props) => {
-  const { data, isValidating } = useSWR<any, Error>(
+  return useSWR<ParsedAelinPool[], Error>(
     'vouched-pools',
     async () => {
       const allSDK = getAllGqlSDK()
@@ -81,9 +81,9 @@ const useAelinVouchedPools = (variables: Props) => {
         )
 
         return result
+      } catch (err) {
+        console.error(err)
         return []
-      } catch (e) {
-        throw new Error('Cannot retrieve gas price from provider. ' + e)
       }
     },
     {
@@ -91,8 +91,6 @@ const useAelinVouchedPools = (variables: Props) => {
       revalidateOnMount: true,
     },
   )
-
-  return { data, isValidating }
 }
 
 export default useAelinVouchedPools
