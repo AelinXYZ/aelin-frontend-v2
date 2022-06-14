@@ -25,6 +25,7 @@ import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
+import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { PoolAction, PoolTab } from '@/types/aelinPool'
@@ -73,6 +74,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     tabs: notification as NotificationType,
   })
 
+  const isVerified = useCheckVerifiedPool(pool)
+
   return (
     <>
       <Head>
@@ -80,6 +83,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       </Head>
       <PageTitle
         href={getExplorerUrl(pool.address || '', pool.chainId)}
+        isVerified={isVerified ?? false}
         network={chainsConfig[pool.chainId].icon}
         subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
         title={pool.nameFormatted}
