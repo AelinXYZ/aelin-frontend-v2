@@ -9,6 +9,7 @@ import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
+import { parseDealName } from '@/src/utils/parsePoolName'
 import { Funding } from '@/types/aelinPool'
 
 const Column = styled.div`
@@ -68,7 +69,7 @@ export const DealInformation: React.FC<{
           value={
             <ExternalLink
               href={getExplorerUrl(pool.dealAddress || '', chainId)}
-              label={deal.name}
+              label={parseDealName(deal.name)}
             />
           }
         />

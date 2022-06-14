@@ -9,3 +9,5 @@ export const parsePoolName = (name: string) => {
 
   return poolName
 }
+
+export const parseDealName = (name: string) => parsePoolName(name)
