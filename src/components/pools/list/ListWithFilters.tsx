@@ -21,10 +21,26 @@ const Wrapper = styled.div`
 
   display: grid;
   gap: var(--gap);
-  margin-bottom: 20px;
+  margin: 20px 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     grid-template-columns: 1fr 1fr;
+  }
+`
+
+const Title = styled.h3`
+  display: flex;
+  align-items: center;
+  color: ${({ theme: { card } }) => card.titleColor};
+  font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 10px 0;
+  padding: 0;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    font-size: 1.8rem;
   }
 `
 
@@ -242,6 +258,7 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
 
   return (
     <>
+      <Title>All Pools</Title>
       <Wrapper>
         <SearchWrapper>
           <Search
