@@ -6,6 +6,7 @@ import { InfoCell } from '@/src/components/pools/common/InfoCell'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
+import { parseDealName } from '@/src/utils/parsePoolName'
 
 const Column = styled.div`
   display: flex;
@@ -29,7 +30,7 @@ export const VestingInformation: React.FC<{
           value={
             <ExternalLink
               href={getExplorerUrl(pool.dealAddress || '', pool.chainId)}
-              label={deal.name}
+              label={parseDealName(deal.name)}
             />
           }
         />

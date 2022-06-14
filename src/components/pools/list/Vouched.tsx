@@ -12,8 +12,10 @@ import {
   HideOnMobileCell,
   RowLink,
   TableBody,
+  TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { NameCell } from '@/src/components/table/NameCell'
+import { SortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
@@ -92,6 +94,31 @@ export const VouchedPools: React.FC = () => {
     widths: '190px 120px 90px 0.8fr 1fr 165px 80px',
   }
 
+  const tableHeaderCells = [
+    {
+      title: 'Name',
+    },
+    {
+      title: 'Sponsor',
+    },
+    {
+      title: 'Network',
+    },
+    {
+      title: 'Amount in Pool',
+    },
+    {
+      title: 'Investment deadline',
+    },
+    {
+      title: 'Investment token',
+      justifyContent: columns.alignment.investmentToken,
+    },
+    {
+      title: 'Stage',
+    },
+  ]
+
   if (error) {
     throw error
   }
@@ -105,6 +132,13 @@ export const VouchedPools: React.FC = () => {
         <Verified />
       </Title>
       <Wrapper>
+        <TableHead columns={columns.widths}>
+          {tableHeaderCells.map(({ justifyContent, title }, index) => (
+            <SortableTH justifyContent={justifyContent} key={index}>
+              {title}
+            </SortableTH>
+          ))}
+        </TableHead>
         <TableBody>
           {data.map((pool) => {
             const {
