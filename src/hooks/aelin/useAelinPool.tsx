@@ -220,9 +220,9 @@ export const getParsedPool = ({
     totalUsersRejected: dealDetails.totalUsersRejected,
     tokensSold: getTokensSold(
       res.redeem,
-      exchangeRates.investmentPerDeal,
-      dealDetails.underlyingDealTokenDecimals,
+      exchangeRates.dealPerInvestment,
       purchaseTokenDecimals,
+      dealDetails.underlyingDealTokenDecimals,
     ),
   }
 
