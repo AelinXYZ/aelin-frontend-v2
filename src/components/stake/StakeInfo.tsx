@@ -42,8 +42,6 @@ type StakeInfoProps = {
 }
 
 const StakeInfo: FC<StakeInfoProps> = ({ rewards, stakeType }) => {
-  const isPool2 = stakeType === StakingEnum.GELATO || stakeType === StakingEnum.UNISWAP
-
   return (
     <Wrapper>
       {stakeType === StakingEnum.GELATO && (
