@@ -195,7 +195,7 @@ export const getParsedPool = ({
       investmentAmount: getInvestmentDealToken(
         dealDetails.underlyingDealTokenTotal,
         dealDetails.underlyingDealTokenDecimals,
-        exchangeRates.investmentPerDeal,
+        exchangeRates.dealPerInvestment,
       ),
     },
     exchangeRates,
