@@ -34,7 +34,7 @@ const UserStatsInfoCell = genericSuspense(
       <InfoCell title={title} tooltip={tooltip}>
         <Value>Remaining pro-rata allocation: {userStats.userMaxAllocation.formatted}</Value>
         <Value>Withdrawn: {userStats.userTotalWithdrawn.formatted}</Value>
-        <Value>Accepted: {userStats.totalAmountAccepted.formatted}</Value>
+        <Value>Accepted: {userStats.userAmountAccepted.formatted}</Value>
       </InfoCell>
     )
   },
