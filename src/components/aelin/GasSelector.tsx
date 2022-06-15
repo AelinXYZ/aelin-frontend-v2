@@ -15,7 +15,7 @@ import useEthGasPrice, { GAS_SPEEDS } from '@/src/hooks/useGasPrice'
 import useEthPriceUnitInUSD from '@/src/hooks/useGasPriceUnitInUSD'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getTransactionPrice } from '@/src/utils/gasUtils'
-import { GasLimitEstimate, GasPrices, GasSpeed } from '@/types/utils'
+import { GasLimitEstimate, GasSpeed } from '@/types/utils'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -111,27 +111,40 @@ const GasSelector = ({
 
   const [gasSpeed, setGasSpeed] = useState<GasSpeed>(initialGasSpeed)
 
-  const gasPrices = useMemo(() => ethGasPriceData ?? ({} as GasPrices), [ethGasPriceData])
+  const isL2Chain = !!chainsConfig[appChainId]?.isL2
+
+  const ethGasPriceDataL1 = ethGasPriceData?.l1
+  const ethGasPriceDataL2 = ethGasPriceData?.l2
+
+  const gasPrices = useMemo(
+    () => (isL2Chain ? ethGasPriceDataL2 : ethGasPriceDataL1),
+    [ethGasPriceDataL1, ethGasPriceDataL2, isL2Chain],
+  )
+
+  const gasPriceL1: Wei | null = useMemo(() => {
+    if (!ethGasPriceDataL1) return null
+
+    return wei(ethGasPriceDataL1[gasSpeed], GWEI_PRECISION)
+  }, [ethGasPriceDataL1, gasSpeed])
 
   const gasPrice: Wei | null = useMemo(() => {
     try {
       return wei(customGasPrice, GWEI_PRECISION)
     } catch (_) {
-      if (!ethGasPriceData) return null
+      if (!ethGasPriceDataL2 || !isL2Chain) return gasPriceL1
 
-      return wei(ethGasPriceData[gasSpeed], GWEI_PRECISION)
+      return wei(ethGasPriceDataL2[gasSpeed], GWEI_PRECISION)
     }
-  }, [customGasPrice, ethGasPriceData, gasSpeed])
-
-  const isL2Chain = chainsConfig[appChainId]?.isL2
+  }, [customGasPrice, gasPriceL1, ethGasPriceDataL2, gasSpeed, isL2Chain])
 
   const transactionFee = useMemo(
-    () => getTransactionPrice(gasPrice, gasLimitEstimate, ethPriceInUSD) ?? 0,
-    [gasPrice, gasLimitEstimate, ethPriceInUSD],
+    () =>
+      getTransactionPrice(gasPriceL1, gasPrice, isL2Chain, gasLimitEstimate, ethPriceInUSD) ?? 0,
+    [gasPrice, gasPriceL1, gasLimitEstimate, ethPriceInUSD, isL2Chain],
   )
 
   const formattedGasPrice = useMemo(() => {
-    const nGasPrice = Number(gasPrices[gasSpeed] ?? 0)
+    const nGasPrice = Number(gasPrices?.[gasSpeed] ?? 0)
     const nCustomGasPrice = Number(customGasPrice)
 
     if (!nCustomGasPrice) {
@@ -168,24 +181,26 @@ const GasSelector = ({
 
   return (
     <Wrapper {...restProps}>
-      <Text>Gas Price:</Text>&nbsp;
-      <GasInput
-        onBlur={() => {
-          setIsEditing(false)
-        }}
-        onChange={(e) => {
-          setCustomGasPrice(e.target.value)
-        }}
-        onKeyUp={(event) => {
-          if (event.code === 'Enter') {
+      <div>
+        <Text>Gas Price:</Text>&nbsp;
+        <GasInput
+          onBlur={() => {
             setIsEditing(false)
-          }
-        }}
-        readOnly={!isEditing}
-        ref={inputRef}
-        type="number"
-        value={isEditing ? customGasPrice : formattedGasPrice}
-      />
+          }}
+          onChange={(e) => {
+            setCustomGasPrice(e.target.value)
+          }}
+          onKeyUp={(event) => {
+            if (event.code === 'Enter') {
+              setIsEditing(false)
+            }
+          }}
+          readOnly={!isEditing}
+          ref={inputRef}
+          type="number"
+          value={isEditing ? customGasPrice : formattedGasPrice}
+        />
+      </div>
       &nbsp;
       <DollarValue>(${transactionFee})</DollarValue>
       <Dropdown
@@ -206,7 +221,7 @@ const GasSelector = ({
             }}
           >
             {`${gasSpeed[0].toUpperCase()}${gasSpeed.slice(1)}`}:{' '}
-            {Number(gasPrices[gasSpeed]).toFixed(3)}
+            {Number(gasPrices?.[gasSpeed]).toFixed(3)}
           </DropdownItem>
         ))}
       />

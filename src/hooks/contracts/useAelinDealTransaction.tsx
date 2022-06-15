@@ -15,7 +15,13 @@ export function useAelinDealTransaction<
 export function useAelinDealEstimate<
   MethodName extends keyof AelinDeal['functions'],
   Params extends Parameters<AelinDeal[MethodName]>,
->(address: string, method: MethodName): (params: Params) => Promise<BigNumber | null> {
+>(
+  address: string,
+  method: MethodName,
+): (params: Params) => Promise<{
+  l1Gas: BigNumber
+  l2Gas: BigNumber
+} | null> {
   const { estimate } = useTransaction(address, aelinDeal, method)
   return estimate
 }
