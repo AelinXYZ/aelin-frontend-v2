@@ -46,7 +46,7 @@ const StakeInfo: FC<StakeInfoProps> = ({ rewards, stakeType }) => {
 
   return (
     <Wrapper>
-      {isPool2 && (
+      {stakeType === StakingEnum.GELATO && (
         <>
           <Text>
             ETH in pool via G-UNI:{' '}
@@ -72,7 +72,33 @@ const StakeInfo: FC<StakeInfoProps> = ({ rewards, stakeType }) => {
           </Text>
         </>
       )}
-      {!isPool2 && (
+      {stakeType === StakingEnum.UNISWAP && (
+        <>
+          <Text>
+            ETH in pool:{' '}
+            <Value>{`${
+              BigNumber.isBigNumber(rewards.ethInPool)
+                ? formatToken(rewards.ethInPool, rewards.decimals)
+                : Number(rewards.ethInPool).toFixed(2)
+            }`}</Value>
+          </Text>
+          <Text>
+            Aelin in pool:{' '}
+            <Value>{`${
+              BigNumber.isBigNumber(rewards.aelinInPool)
+                ? formatToken(rewards.aelinInPool, rewards.decimals)
+                : Number(rewards.aelinInPool).toFixed(2)
+            }`}</Value>
+          </Text>
+          <Text>
+            My stake:{' '}
+            <Value>{`${formatToken(rewards.userStake, rewards.decimals, STAKING_DECIMALS)} ${
+              rewards.symbol
+            }`}</Value>
+          </Text>
+        </>
+      )}
+      {stakeType === StakingEnum.AELIN && (
         <>
           <Text>
             Total Aelin Staked:{' '}
