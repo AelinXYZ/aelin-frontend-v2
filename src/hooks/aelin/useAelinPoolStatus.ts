@@ -311,7 +311,11 @@ function useUserActions(
       }
 
       // Accept deal. For investors
-      if (pool.deal.redemption && isBefore(now, pool.deal.redemption?.end)) {
+      if (
+        userPoolBalance.gt(ZERO_BN) &&
+        pool.deal.redemption &&
+        isBefore(now, pool.deal.redemption?.end)
+      ) {
         actions.push(PoolAction.AcceptDeal)
       }
 
@@ -747,7 +751,8 @@ export default function useAelinPoolStatus(
       funding,
       tabs,
       timeline,
+      derivedStatus,
     }),
-    [refetchPool, poolResponse, userRole, funding, tabs, timeline],
+    [refetchPool, poolResponse, userRole, funding, tabs, timeline, derivedStatus],
   )
 }
