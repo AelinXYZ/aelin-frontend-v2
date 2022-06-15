@@ -32,11 +32,12 @@ const EmptyPools = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 0;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 500;
-  height: 36px;
   justify-content: center;
   white-space: normal;
+  padding: 12px;
+  text-align: center;
 `
 
 const MoreButton = styled(TabButton)`
