@@ -2,7 +2,6 @@ import { FC } from 'react'
 import styled from 'styled-components'
 
 import { Etherscan } from '@/src/components/assets/Etherscan'
-import ExternalLink from '@/src/components/common/ExternalLink'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -92,9 +91,14 @@ const StakeSection: FC<StakeSectionProps> = ({
         <Tooltip text={textTooltip} />
       </TitleWrapper>
       <APYWrapper>
-        <APYValue>APY: {`${Math.round(rewards?.APY ?? 0)}% `}</APYValue>
-        <Tooltip text={textTooltipAPY} />
+        {stakeType !== StakingEnum.UNISWAP && (
+          <>
+            <APYValue>APY: {`${Math.round(rewards?.APY ?? 0)}% `}</APYValue>
+            <Tooltip text={textTooltipAPY} />
+          </>
+        )}
       </APYWrapper>
+
       <Tabs>
         <Tab label="Deposit">
           <StakeTabContent
