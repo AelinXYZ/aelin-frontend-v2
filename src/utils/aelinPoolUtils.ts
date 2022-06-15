@@ -275,7 +275,7 @@ export function getTokensSold(
   const tokensSold = _redeemed.div(_rate).toBN()
   return {
     raw: tokensSold,
-    formatted: formatToken(tokensSold, dealTokenDecimals),
+    formatted: formatToken(tokensSold, investmentTokenDecimals),
   }
 }
 
