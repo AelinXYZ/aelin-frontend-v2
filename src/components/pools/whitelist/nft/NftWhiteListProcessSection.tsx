@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import {
   NftType,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/NftCollectionsSection'
+} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const Wrapper = styled.div`
@@ -16,11 +16,11 @@ const Wrapper = styled.div`
 `
 
 const Description = styled.p`
-  color: rgba(255, 255, 255, 0.7);
+  color: ${({ theme }) => theme.colors.textColorLight};
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.4;
-  margin: 0 0 40px;
+  margin: 0;
   max-width: 100%;
   text-align: center;
 `
@@ -67,20 +67,22 @@ const getDescription = (active: NftWhitelistProcess): string => {
   }
 }
 
+type NftWhiteListProcessSectionProps = {
+  active: NftWhitelistProcess
+  nftType: NftType
+  onChange: (value: NftWhitelistProcess) => void
+}
+
 const NftWhiteListProcessSection = ({
   active,
   nftType,
-  setActive,
-}: {
-  nftType: NftType
-  active: NftWhitelistProcess
-  setActive: (active: NftWhitelistProcess) => void
-}) => {
+  onChange,
+}: NftWhiteListProcessSectionProps) => {
   return (
     <>
       <Wrapper>
         {getItems(nftType).map(([key, value]) => (
-          <Item isActive={active === value} key={key} onClick={() => setActive(value)}>
+          <Item isActive={active === value} key={key} onClick={() => onChange(value)}>
             {value}
           </Item>
         ))}

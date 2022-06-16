@@ -1,17 +1,17 @@
-import { useState } from 'react'
+import { useReducer, useState } from 'react'
 import styled from 'styled-components'
 
 import { Modal as BaseModal } from '@/src/components/common/Modal'
+import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/WhiteListTabs'
 import AddressesWhiteList, {
   AddressWhitelistProps,
   initialAddressesWhitelistValues,
-} from '@/src/components/pools/whitelist/AddressesWhiteList'
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import {
-  NftType,
-  NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/NftCollectionsSection'
-import NftWhiteList, { NftWhiteListStep } from '@/src/components/pools/whitelist/NftWhiteList'
-import { WhiteListTab, WhiteListTabs } from '@/src/components/pools/whitelist/WhiteListTabs'
+  initialState,
+  nftWhiteListReducer,
+} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 
 const Modal = styled(BaseModal)`
   .modalCard {
@@ -35,9 +35,7 @@ const WhiteListModal = ({
     currentList.length ? currentList : initialAddressesWhitelistValues,
   )
 
-  const [currentNftWhiteListStep, setCurrentNftWhiteListStep] = useState(NftWhiteListStep.nftType)
-  const [nftType, setNftType] = useState(NftType.erc721)
-  const [nftWhiteListProcess, setNftWhiteListProcess] = useState(NftWhitelistProcess.unlimited)
+  const [nftWhiteListState, dispatch] = useReducer(nftWhiteListReducer, initialState)
 
   return (
     <Modal onClose={onClose} size="794px" title="Whitelist">
@@ -56,13 +54,9 @@ const WhiteListModal = ({
         )}
         {activeTab === WhiteListTab.Nft && (
           <NftWhiteList
-            currentStep={currentNftWhiteListStep}
-            nftType={nftType}
+            dispatch={dispatch}
+            nftWhiteListState={nftWhiteListState}
             onClose={onClose}
-            setCurrentStep={setCurrentNftWhiteListStep}
-            setNftType={setNftType}
-            setWhiteListProcess={setNftWhiteListProcess}
-            whiteListProcess={nftWhiteListProcess}
           ></NftWhiteList>
         )}
       </WhiteListTabs>

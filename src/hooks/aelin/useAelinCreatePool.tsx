@@ -7,7 +7,7 @@ import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
 
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/AddressesWhiteList'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'

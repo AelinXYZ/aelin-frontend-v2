@@ -1,6 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/AddressesWhiteList'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { Privacy } from '@/src/constants/pool'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'

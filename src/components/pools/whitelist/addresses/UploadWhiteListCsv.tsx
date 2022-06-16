@@ -4,7 +4,7 @@ import React, { FC } from 'react'
 import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/AddressesWhiteList'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 
 export interface IUploadCSV {
