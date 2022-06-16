@@ -16,6 +16,7 @@ import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTrans
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
+import { isFirstAelinPool } from '@/src/utils/isFirstAelinPool'
 
 type Props = {
   pool: ParsedAelinPool
@@ -61,7 +62,13 @@ function Vest({ pool }: Props) {
       : amountToVest.gt(ZERO_BN)
 
   const isVestButtonDisabled = useMemo(() => {
-    return !address || !isAppConnected || isSubmitting || !hasRemainingTokens
+    return (
+      !address ||
+      !isAppConnected ||
+      isSubmitting ||
+      !hasRemainingTokens ||
+      isFirstAelinPool(address)
+    )
   }, [address, hasRemainingTokens, isAppConnected, isSubmitting])
 
   const handleVest = async () => {

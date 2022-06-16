@@ -6,6 +6,7 @@ export const ONE_BN = BigNumber.from(1)
 export const TWO_BN = BigNumber.from(2)
 export const MAX_BN = BigNumber.from(2).pow(256).sub(1)
 
+export const FIRST_AELIN_POOL = '0x04432a6fd94e8bC8559d10AC1D98f15Cd9C08363'
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const WAD_DECIMALS = 18
 export const WAIT_BLOCKS = 8
