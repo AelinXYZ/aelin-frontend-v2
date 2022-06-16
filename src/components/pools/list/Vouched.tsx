@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+import { PoolCreated_OrderBy } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
 import { Verified } from '@/src/components/assets/Verified'
@@ -82,7 +83,9 @@ const HideOnDesktop = styled(BaseHideOnDesktop)`
 `
 
 export const VouchedPools: React.FC = () => {
-  const { data, error } = useAelinVouchedPools({})
+  const { data, error } = useAelinVouchedPools({
+    orderBy: PoolCreated_OrderBy.Timestamp,
+  })
 
   const { notifications } = useNotifications()
 
