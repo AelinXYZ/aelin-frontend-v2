@@ -5,7 +5,7 @@ import Wei, { wei } from '@synthetixio/wei'
 
 import formatGwei from './formatGwai'
 import { GWEI_UNIT, ZERO_BN } from '@/src/constants/misc'
-import { GasLimitEstimate, Rates } from '@/types/utils'
+import { Eip1559GasPrice, GasLimitEstimate, Rates } from '@/types/utils'
 
 export const iStandardSynth = (currencyKey: CurrencyKey) => currencyKey.startsWith('s')
 export const synthToAsset = (currencyKey: CurrencyKey) =>
@@ -20,23 +20,35 @@ export const getExchangeRatesForCurrencies = (
 const GAS_LIMIT_BUFFER_MULTIPLIER = 20
 
 export const getTransactionPrice = (
-  gasPriceL1: Wei | null,
-  gasPrice: Wei | null,
+  gasPriceL1: Eip1559GasPrice | Wei | null,
+  gasPrice: Eip1559GasPrice | Wei | null,
   isL2Chain: boolean | undefined,
   gasLimit: GasLimitEstimate,
   ethPrice: Wei | undefined,
 ) => {
   if (!gasPrice || !gasLimit || !ethPrice || !gasPriceL1) return null
 
-  return isL2Chain
-    ? gasPrice
-        .mul(ethPrice)
-        .mul(gasLimit.l2)
-        .div(GWEI_UNIT)
-        .add(gasPriceL1.mul(ethPrice).mul(gasLimit.l1).div(GWEI_UNIT))
-        .toNumber()
-        .toFixed(4)
-    : gasPrice.mul(ethPrice).mul(gasLimit.l1).div(GWEI_UNIT).toNumber().toFixed(4)
+  if (isL2Chain) {
+    return (gasPrice as Wei)
+      .mul(ethPrice)
+      .mul(gasLimit.l2)
+      .div(GWEI_UNIT)
+      .add((gasPriceL1 as Wei).mul(ethPrice).mul(gasLimit.l1).div(GWEI_UNIT))
+      .toNumber()
+      .toFixed(4)
+  }
+
+  if (gasPrice instanceof Wei) {
+    return gasPrice.mul(ethPrice).mul(gasLimit.l1).div(GWEI_UNIT).toNumber().toFixed(4)
+  }
+
+  return gasPrice.maxFeePerGas
+    .add(gasPrice.maxPriorityFeePerGas)
+    .mul(ethPrice)
+    .mul(gasLimit.l1)
+    .div(GWEI_UNIT)
+    .toNumber()
+    .toFixed(4)
 }
 
 export const MIN_GAS_ESTIMATE = wei(21000, 18)
@@ -67,18 +79,23 @@ export const getGasPriceFromProvider = async (provider: JsonRpcProvider) => {
   const gasPrice = formatGwei((await provider.getGasPrice()).toNumber())
 
   return {
-    fastest: gasPrice,
-    fast: gasPrice,
-    average: gasPrice,
+    aggressive: gasPrice,
+    market: gasPrice,
+    low: gasPrice,
   }
 }
 
-export const computeGasFee = (baseFeePerGas: BigNumber, maxPriorityFeePerGas: number) => {
-  return wei(baseFeePerGas, 9).mul(wei(2)).add(wei(maxPriorityFeePerGas, 9)).toNumber()
-}
-
 export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber) => ({
-  fastest: computeGasFee(baseFeePerGas, 6),
-  fast: computeGasFee(baseFeePerGas, 4),
-  average: computeGasFee(baseFeePerGas, 2),
+  low: {
+    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)),
+    maxPriorityFeePerGas: wei(1, 9),
+  },
+  market: {
+    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.5)),
+    maxPriorityFeePerGas: wei(1.5, 9),
+  },
+  aggressive: {
+    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)),
+    maxPriorityFeePerGas: wei(2, 9),
+  },
 })

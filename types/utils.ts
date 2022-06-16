@@ -22,17 +22,21 @@ export type GasLimitEstimate = {
 } | null
 
 export type GasPrices = {
-  l1: GasPrice
-  l2?: GasPrice
+  l1: GasPrice<Eip1559GasPrice | number>
+  l2?: GasPrice<number>
 }
 
-export type GasPrice = {
-  fastest: number
-  fast: number
-  average: number
+export type GasPrice<T> = {
+  aggressive: T
+  market: T
+  low: T
 }
 
-export type GasSpeed = keyof GasPrice
+export type Eip1559GasPrice = {
+  maxFeePerGas: Wei
+  maxPriorityFeePerGas: Wei
+}
+export type GasSpeed = keyof GasPrice<number>
 export type Rates = Record<string, Wei>
 
 export type UseTransactionReturn<Params> = {

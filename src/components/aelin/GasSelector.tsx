@@ -11,11 +11,11 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 import { chainsConfig } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
-import useEthGasPrice, { GAS_SPEEDS } from '@/src/hooks/useGasPrice'
+import useEthGasPrice, { GAS_SPEEDS, useEthGasPriceLegacy } from '@/src/hooks/useGasPrice'
 import useEthPriceUnitInUSD from '@/src/hooks/useGasPriceUnitInUSD'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getTransactionPrice } from '@/src/utils/gasUtils'
-import { GasLimitEstimate, GasSpeed } from '@/types/utils'
+import { Eip1559GasPrice, GasLimitEstimate, GasSpeed } from '@/types/utils'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -90,17 +90,18 @@ const EditButton = styled(ButtonPrimaryLight)`
 
 const GasSelector = ({
   gasLimitEstimate,
-  initialGasSpeed = 'fast',
+  initialGasSpeed = 'market',
   onChange,
   setLoadingGas,
   ...restProps
 }: {
   gasLimitEstimate: GasLimitEstimate
   initialGasSpeed?: GasSpeed
-  onChange: (value: Wei) => void
+  onChange: (value: Wei | Eip1559GasPrice) => void
   setLoadingGas: (value: boolean) => void
 }) => {
   const { data: ethGasPriceData, isValidating } = useEthGasPrice()
+  const { data: ethGasPriceDataLegacy, isValidating: isValidatingLegacy } = useEthGasPriceLegacy()
   const { data: ethPriceInUSD } = useEthPriceUnitInUSD()
 
   const { appChainId } = useWeb3Connection()
@@ -121,13 +122,33 @@ const GasSelector = ({
     [ethGasPriceDataL1, ethGasPriceDataL2, isL2Chain],
   )
 
-  const gasPriceL1: Wei | null = useMemo(() => {
-    if (!ethGasPriceDataL1) return null
+  const gasPriceL1: Eip1559GasPrice | Wei | null = useMemo(() => {
+    if (!ethGasPriceDataL1 || !ethGasPriceDataLegacy) return null
 
-    return wei(ethGasPriceDataL1[gasSpeed], GWEI_PRECISION)
-  }, [ethGasPriceDataL1, gasSpeed])
+    const getL1gasPrice = () => {
+      try {
+        return wei(ethGasPriceDataL1[gasSpeed], GWEI_PRECISION)
+      } catch (_) {
+        return ethGasPriceDataL1[gasSpeed] as Eip1559GasPrice
+      }
+    }
 
-  const gasPrice: Wei | null = useMemo(() => {
+    return isL2Chain ? wei(ethGasPriceDataLegacy[gasSpeed], GWEI_PRECISION) : getL1gasPrice()
+  }, [ethGasPriceDataL1, ethGasPriceDataLegacy, gasSpeed, isL2Chain])
+
+  const renderGasPrices = (gasPrice?: number | Eip1559GasPrice) => {
+    if (!gasPrice) {
+      return 0
+    }
+
+    if (isL2Chain || typeof gasPrice === 'number') {
+      return (gasPrice as number).toFixed(3)
+    }
+
+    return Number(gasPrice.maxFeePerGas.add(gasPrice.maxPriorityFeePerGas)).toFixed(3)
+  }
+
+  const gasPrice: Eip1559GasPrice | Wei | null = useMemo(() => {
     try {
       return wei(customGasPrice, GWEI_PRECISION)
     } catch (_) {
@@ -144,7 +165,17 @@ const GasSelector = ({
   )
 
   const formattedGasPrice = useMemo(() => {
-    const nGasPrice = Number(gasPrices?.[gasSpeed] ?? 0)
+    let nGasPrice
+
+    if (!gasPrices?.[gasSpeed]) {
+      nGasPrice = 0
+    } else if (isL2Chain || typeof gasPrices[gasSpeed] === 'number') {
+      nGasPrice = gasPrices[gasSpeed] as number
+    } else {
+      const gasPrice = gasPrices[gasSpeed] as Eip1559GasPrice
+      nGasPrice = Number(gasPrice.maxFeePerGas.add(gasPrice.maxPriorityFeePerGas))
+    }
+
     const nCustomGasPrice = Number(customGasPrice)
 
     if (!nCustomGasPrice) {
@@ -154,7 +185,7 @@ const GasSelector = ({
 
     if (!Number.isInteger(nCustomGasPrice)) return nCustomGasPrice.toFixed(3)
     return nCustomGasPrice
-  }, [customGasPrice, gasPrices, gasSpeed])
+  }, [customGasPrice, gasPrices, gasSpeed, isL2Chain])
 
   const debouncedChangeHandler = debounce(onChange, DEBOUNCED_INPUT_TIME)
 
@@ -176,8 +207,8 @@ const GasSelector = ({
   }
 
   useEffect(() => {
-    setLoadingGas(!customGasPrice && !isEditing ? isValidating : false)
-  }, [customGasPrice, isEditing, isValidating, setLoadingGas])
+    setLoadingGas(!customGasPrice && !isEditing ? isValidating || isValidatingLegacy : false)
+  }, [customGasPrice, isEditing, isValidating, isValidatingLegacy, setLoadingGas])
 
   return (
     <Wrapper {...restProps}>
@@ -203,28 +234,30 @@ const GasSelector = ({
       </div>
       &nbsp;
       <DollarValue>(${transactionFee})</DollarValue>
-      <Dropdown
-        currentItem={GAS_SPEEDS.findIndex((speed) => speed === gasSpeed)}
-        dropdownButtonContent={
-          <ButtonDropdown>
-            <ChevronDown />
-          </ButtonDropdown>
-        }
-        dropdownPosition={DropdownPosition.right}
-        items={GAS_SPEEDS.map((gasSpeed) => (
-          <DropdownItem
-            key={gasSpeed}
-            onClick={() => {
-              setCustomGasPrice('')
-              setIsEditing(false)
-              setGasSpeed(gasSpeed)
-            }}
-          >
-            {`${gasSpeed[0].toUpperCase()}${gasSpeed.slice(1)}`}:{' '}
-            {Number(gasPrices?.[gasSpeed]).toFixed(3)}
-          </DropdownItem>
-        ))}
-      />
+      {!isL2Chain && (
+        <Dropdown
+          currentItem={GAS_SPEEDS.findIndex((speed) => speed === gasSpeed)}
+          dropdownButtonContent={
+            <ButtonDropdown>
+              <ChevronDown />
+            </ButtonDropdown>
+          }
+          dropdownPosition={DropdownPosition.right}
+          items={GAS_SPEEDS.map((gasSpeed) => (
+            <DropdownItem
+              key={gasSpeed}
+              onClick={() => {
+                setCustomGasPrice('')
+                setIsEditing(false)
+                setGasSpeed(gasSpeed)
+              }}
+            >
+              {`${gasSpeed[0].toUpperCase()}${gasSpeed.slice(1)}`}:{' '}
+              {renderGasPrices(gasPrices?.[gasSpeed])}
+            </DropdownItem>
+          ))}
+        />
+      )}
       {!isL2Chain && <EditButton onClick={onEdit}>Edit</EditButton>}
     </Wrapper>
   )

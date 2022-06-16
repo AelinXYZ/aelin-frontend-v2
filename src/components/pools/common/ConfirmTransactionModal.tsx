@@ -7,7 +7,7 @@ import GasSelector from '@/src/components/aelin/GasSelector'
 import { Modal, ModalButtonCSS, ModalLine, ModalText } from '@/src/components/common/Modal'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { GasLimitEstimate } from '@/types/utils'
+import { Eip1559GasPrice, GasLimitEstimate } from '@/types/utils'
 
 const Button = styled(ButtonGradient)`
   ${ModalButtonCSS}
@@ -17,7 +17,7 @@ export type ModalTransactionProps = {
   disableButton: boolean
   gasLimitEstimate: GasLimitEstimate
   onSubmit: () => void
-  setGasPrice: (gasPrice: Wei) => void
+  setGasPrice: (gasPrice: Wei | Eip1559GasPrice) => void
   onClose: () => void
   title: string
   subTitle?: string

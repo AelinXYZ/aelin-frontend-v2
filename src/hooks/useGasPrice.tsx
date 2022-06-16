@@ -5,9 +5,9 @@ import { getGasPriceEIP1559, getGasPriceFromProvider } from '../utils/gasUtils'
 import { mainnetRpcProvider } from './useEnsResolvers'
 import { chainsConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { GasPrices, GasSpeed } from '@/types/utils'
+import { GasPrice, GasPrices, GasSpeed } from '@/types/utils'
 
-export const GAS_SPEEDS: GasSpeed[] = ['average', 'fast', 'fastest']
+export const GAS_SPEEDS: GasSpeed[] = ['aggressive', 'market', 'low']
 
 const useEthGasPrice = () => {
   const { appChainId, readOnlyAppProvider } = useWeb3Connection()
@@ -24,6 +24,31 @@ const useEthGasPrice = () => {
             : await getGasPriceFromProvider(mainnetRpcProvider),
           l2: isL2Chain ? await getGasPriceFromProvider(readOnlyAppProvider) : undefined,
         }
+      } catch (e) {
+        throw new Error('Cannot retrieve gas price from provider. ' + e)
+      }
+    },
+    {
+      refreshWhenHidden: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
+      refreshWhenOffline: false,
+      refreshInterval: ms('10s'),
+    },
+  )
+
+  return { data, isValidating }
+}
+
+export const useEthGasPriceLegacy = () => {
+  const { appChainId } = useWeb3Connection()
+
+  const { data, isValidating } = useSWR<GasPrice<number>, Error>(
+    appChainId ? ['network', 'gasPrice', 'legacy', appChainId] : null,
+    async () => {
+      try {
+        return await getGasPriceFromProvider(mainnetRpcProvider)
       } catch (e) {
         throw new Error('Cannot retrieve gas price from provider. ' + e)
       }
