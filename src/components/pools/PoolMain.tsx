@@ -25,9 +25,10 @@ import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
+import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
-import { PoolAction, PoolTab } from '@/types/aelinPool'
+import { PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -69,9 +70,15 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     query: { notification },
   } = useRouter()
 
-  const { funding, pool, tabs, timeline } = useAelinPoolStatus(chainId, poolAddress as string, {
-    tabs: notification as NotificationType,
-  })
+  const { derivedStatus, funding, pool, tabs, timeline } = useAelinPoolStatus(
+    chainId,
+    poolAddress as string,
+    {
+      tabs: notification as NotificationType,
+    },
+  )
+
+  const isVerified = useCheckVerifiedPool(pool)
 
   return (
     <>
@@ -80,6 +87,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       </Head>
       <PageTitle
         href={getExplorerUrl(pool.address || '', pool.chainId)}
+        isVerified={isVerified ?? false}
         network={chainsConfig[pool.chainId].icon}
         subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
         title={pool.nameFormatted}
@@ -118,7 +126,13 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               networkToCheck={pool.chainId}
             >
               <>
-                {!tabs.actionTabs.states.length && <div>No actions available</div>}
+                {!tabs.actionTabs.states.length && (
+                  <div>
+                    {derivedStatus.current === PoolStatus.DealPresented
+                      ? 'You have not participated in this pool'
+                      : 'No actions available'}
+                  </div>
+                )}
 
                 {tabs.actionTabs.active === PoolAction.Invest && (
                   <Invest pool={pool} poolHelpers={funding} />

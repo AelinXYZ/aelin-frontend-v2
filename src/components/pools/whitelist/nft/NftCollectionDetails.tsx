@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import styled from 'styled-components'
 
-import { Verified as VerifiedIcon } from '@/src/components/assets/Verified'
+import { VerifiedNftCollection as VerifiedIcon } from '@/src/components/assets/VerifiedNftCollection'
 import NftCollectionAttribute, {
   NftCollectionAttributeProps,
 } from '@/src/components/pools/whitelist/nft/NftCollectionAttribute'

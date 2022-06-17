@@ -1,80 +1,54 @@
 import ms from 'ms'
 import useSWR from 'swr'
 
-import { Chains } from '@/src/constants/chains'
+import { getGasPriceEIP1559, getGasPriceFromProvider } from '../utils/gasUtils'
+import { mainnetRpcProvider } from './useEnsResolvers'
+import { chainsConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import formatGwei from '@/src/utils/formatGwai'
-import { GasPrices, GasSpeed } from '@/types/utils'
+import { GasPrice, GasPrices, GasSpeed } from '@/types/utils'
 
-export const GAS_SPEEDS: GasSpeed[] = ['average', 'fast', 'fastest']
-
-const GAS_STATION_API_URL = process.env.NEXT_PUBLIC_ETH_GAS_STATION_API_URL || ''
-const GAS_NOW_API_URL = process.env.NEXT_PUBLIC_GAS_NOW_API_URL || ''
-
-type EthGasStationResponse = {
-  average: number
-  avgWait: number
-  blockNum: number
-  block_time: number
-  fast: number
-  fastWait: number
-  fastest: number
-  fastestWait: number
-  gasPriceRange: Record<number, number>
-  safeLow: number
-  safeLowWait: number
-  speed: number
-}
-
-type GasNowResponse = {
-  code: number
-  data: {
-    rapid: number
-    fast: number
-    standard: number
-    slow: number
-    timestamp: number
-  }
-}
+export const GAS_SPEEDS: GasSpeed[] = ['aggressive', 'market', 'low']
 
 const useEthGasPrice = () => {
   const { appChainId, readOnlyAppProvider } = useWeb3Connection()
+  const isL2Chain = chainsConfig[appChainId]?.isL2
 
   const { data, isValidating } = useSWR<GasPrices, Error>(
     appChainId ? ['network', 'gasPrice', appChainId] : null,
     async () => {
-      if (appChainId === Chains.mainnet) {
-        try {
-          const response = await fetch(GAS_NOW_API_URL)
-          const result: GasNowResponse = await response.json()
-          const { fast, rapid: fastest, standard } = result.data
-
-          return {
-            fastest: Math.round(formatGwei(fastest)),
-            fast: Math.round(formatGwei(fast)),
-            average: Math.round(formatGwei(standard)),
-          }
-        } catch (e) {
-          const response = await fetch(GAS_STATION_API_URL)
-          const data: EthGasStationResponse = await response.json()
-          const { average, fast, fastest } = data
-
-          return {
-            fastest: Math.round(fastest / 10),
-            fast: Math.round(fast / 10),
-            average: Math.round(average / 10),
-          }
-        }
-      }
-
       try {
-        const gasPrice = formatGwei((await readOnlyAppProvider.getGasPrice()).toNumber())
-
+        const block = await mainnetRpcProvider.getBlock('latest')
         return {
-          fastest: gasPrice,
-          fast: gasPrice,
-          average: gasPrice,
+          l1: block?.baseFeePerGas
+            ? getGasPriceEIP1559(block.baseFeePerGas)
+            : await getGasPriceFromProvider(mainnetRpcProvider),
+          l2: isL2Chain ? await getGasPriceFromProvider(readOnlyAppProvider) : undefined,
         }
+      } catch (e) {
+        throw new Error('Cannot retrieve gas price from provider. ' + e)
+      }
+    },
+    {
+      refreshWhenHidden: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
+      refreshWhenOffline: false,
+      refreshInterval: ms('10s'),
+    },
+  )
+
+  return { data, isValidating }
+}
+
+export const useEthGasPriceLegacy = () => {
+  const { appChainId } = useWeb3Connection()
+
+  const { data, isValidating } = useSWR<GasPrice<number>, Error>(
+    appChainId ? ['network', 'gasPrice', 'legacy', appChainId] : null,
+    async () => {
+      try {
+        return await getGasPriceFromProvider(mainnetRpcProvider)
       } catch (e) {
         throw new Error('Cannot retrieve gas price from provider. ' + e)
       }

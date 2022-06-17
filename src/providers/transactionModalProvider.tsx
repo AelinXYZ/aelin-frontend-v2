@@ -15,13 +15,14 @@ import ConfirmTransactionModal, {
   ModalTransactionProps,
 } from '@/src/components/pools/common/ConfirmTransactionModal'
 import { getGasEstimateWithBuffer } from '@/src/utils/gasUtils'
-import { GasLimitEstimate } from '@/types/utils'
-
+import { Eip1559GasPrice, GasLimitEstimate } from '@/types/utils'
 const ModalTransactionContext = createContext<ModalTransactionContext | undefined>(undefined)
 
 export type GasOptions = {
-  gasPrice: BigNumber | undefined
-  gasLimit: BigNumber | undefined
+  gasPrice?: BigNumber
+  gasLimit?: BigNumber
+  maxFeePerGas?: BigNumber
+  maxPriorityFeePerGas?: BigNumber
 }
 
 export type ModalTransactionContext = {
@@ -33,9 +34,14 @@ type Props = {
   children: ReactNode
 }
 
+type GasEstimate = {
+  l1Gas: BigNumber
+  l2Gas?: BigNumber
+}
+
 type ModalConfig = {
   /** estimate tx function */
-  estimate: () => Promise<BigNumber | null>
+  estimate: () => Promise<GasEstimate | null>
   /** Action on modal submit (expected: execute transaction with gas calculated on estimate fn) */
   onConfirm: ({ gasLimit, gasPrice }: GasOptions) => Promise<void>
   /** The modal title */
@@ -47,7 +53,7 @@ type ModalConfig = {
 export default function TransactionModalProvider({ children }: Props) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [gasLimitEstimate, setGasLimitEstimate] = useState<GasLimitEstimate>(null)
-  const [gasPrice, setGasPrice] = useState<Wei | null>(null)
+  const [gasPrice, setGasPrice] = useState<Eip1559GasPrice | Wei | null>(null)
 
   const [showModalTransaction, setShowModalTransaction] = useState<boolean>(false)
 
@@ -62,22 +68,25 @@ export default function TransactionModalProvider({ children }: Props) {
     setModalConfig(null)
   }
 
-  const txGasOptions: GasOptions = useMemo(
-    () => ({
-      gasPrice: gasPrice && gasPrice.gt(wei(0)) ? gasPrice.toBN() : undefined,
-      gasLimit:
-        gasLimitEstimate && gasLimitEstimate.gt(wei(0))
-          ? getGasEstimateWithBuffer(gasLimitEstimate)?.toBN()
-          : undefined,
-    }),
-    [gasLimitEstimate, gasPrice],
-  )
+  const txGasOptions: GasOptions = useMemo(() => {
+    if (gasPrice && gasPrice instanceof Wei) {
+      return {
+        gasPrice: gasPrice?.gt(wei(0)) ? gasPrice.toBN() : undefined,
+        gasLimit: getGasEstimateWithBuffer(gasLimitEstimate),
+      }
+    }
+    return {
+      maxFeePerGas: gasPrice?.maxFeePerGas.gt(wei(0)) ? gasPrice.maxFeePerGas.toBN() : undefined,
+      maxPriorityFeePerGas: gasPrice?.maxPriorityFeePerGas.toBN(),
+      gasLimit: getGasEstimateWithBuffer(gasLimitEstimate),
+    }
+  }, [gasLimitEstimate, gasPrice])
 
   const modalProps: ModalTransactionProps | null = useMemo(
     () =>
       modalConfig && {
         disableButton: isSubmitting,
-        gasLimitEstimate: gasLimitEstimate,
+        gasLimitEstimate,
         onClose: () => {
           setShowModalTransaction(false)
           cleanState()
@@ -111,11 +120,15 @@ export default function TransactionModalProvider({ children }: Props) {
   )
 
   useEffect(() => {
-    // when estimate is setted, is called too
+    // when estimate is set, is called too
     if (modalConfig && modalConfig.estimate) {
       try {
         modalConfig.estimate().then((estimate) => {
-          if (estimate) setGasLimitEstimate(wei(estimate, 0))
+          if (estimate)
+            setGasLimitEstimate({
+              l1: wei(estimate.l1Gas, 0),
+              l2: estimate.l2Gas ? wei(estimate.l2Gas, 0) : undefined,
+            })
           setIsSubmitting(false)
         })
       } catch (e) {

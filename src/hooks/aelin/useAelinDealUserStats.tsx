@@ -32,6 +32,7 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
     const userPoolBalance = (data[1] as BigNumber) || ZERO_BN
     const maxPurchaseDealAllowed = (data[2] as BigNumber) || ZERO_BN
     const totalAmountAccepted = (data[3] as BigNumber) || ZERO_BN
+    const userAmountAccepted = (data[5] as BigNumber) || ZERO_BN
 
     const userAmountWithdrawn = userAllocationStats?.totalWithdrawn || ZERO_BN
 
@@ -62,9 +63,9 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
         raw: userMaxAllocation,
         formatted: formatToken(userMaxAllocation, pool.investmentTokenDecimals) || '0',
       },
-      totalAmountAccepted: {
-        raw: totalAmountAccepted,
-        formatted: formatToken(totalAmountAccepted, pool.investmentTokenDecimals),
+      userAmountAccepted: {
+        raw: userAmountAccepted,
+        formatted: formatToken(userAmountAccepted, pool.investmentTokenDecimals),
       },
     }
   }, [

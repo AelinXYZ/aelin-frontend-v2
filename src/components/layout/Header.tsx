@@ -376,7 +376,7 @@ export const Header: React.FC = (props) => {
                 </DropdownItem>,
                 <DropdownItem
                   as="a"
-                  href="https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=kovan"
+                  href="https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=mainnet"
                   key={'external_links_2'}
                   target="_blank"
                 >

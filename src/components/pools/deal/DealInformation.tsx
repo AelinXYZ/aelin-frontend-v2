@@ -9,6 +9,7 @@ import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
+import { parseDealName } from '@/src/utils/parsePoolName'
 import { Funding } from '@/types/aelinPool'
 
 const Column = styled.div`
@@ -33,7 +34,7 @@ const UserStatsInfoCell = genericSuspense(
       <InfoCell title={title} tooltip={tooltip}>
         <Value>Remaining pro-rata allocation: {userStats.userMaxAllocation.formatted}</Value>
         <Value>Withdrawn: {userStats.userTotalWithdrawn.formatted}</Value>
-        <Value>Accepted: {userStats.totalAmountAccepted.formatted}</Value>
+        <Value>Accepted: {userStats.userAmountAccepted.formatted}</Value>
       </InfoCell>
     )
   },
@@ -68,7 +69,7 @@ export const DealInformation: React.FC<{
           value={
             <ExternalLink
               href={getExplorerUrl(pool.dealAddress || '', chainId)}
-              label={deal.name}
+              label={parseDealName(deal.name)}
             />
           }
         />

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { ListWithFilters } from '@/src/components/pools/list/ListWithFilters'
+import { VouchedPools } from '@/src/components/pools/list/Vouched'
 import { SectionIntro } from '@/src/components/section/SectionIntro'
 import useAelinUser from '@/src/hooks/aelin/useAelinUser'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -28,6 +29,7 @@ const Home: NextPage = () => {
           access deals brought by sponsors. Aelin does not endorse any pools, follow an investor's
           best practices in our docs, and do your own research.
         </SectionIntro>
+        <VouchedPools />
         <ListWithFilters userPoolsInvested={userResponse?.poolsInvested} />
       </LeftSidebarLayout>
     </>

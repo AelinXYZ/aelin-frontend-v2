@@ -22,10 +22,12 @@ const Modal = styled(BaseModal)`
 
 const WhiteListModal = ({
   currentList,
+  investmentTokenDecimals,
   onClose,
   onConfirm,
 }: {
   currentList: AddressWhitelistProps[]
+  investmentTokenDecimals: number
   onClose: () => void
   onConfirm: (whitelist: AddressWhitelistProps[]) => void
 }) => {
@@ -46,6 +48,7 @@ const WhiteListModal = ({
       >
         {activeTab === WhiteListTab.Addresses && (
           <AddressesWhiteList
+            investmentTokenDecimals={investmentTokenDecimals}
             list={addressesWhiteList}
             onClose={onClose}
             onConfirm={onConfirm}
