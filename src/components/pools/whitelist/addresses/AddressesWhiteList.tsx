@@ -7,6 +7,7 @@ import { ModalButtonCSS } from '@/src/components/common/Modal'
 import UploadCSV from '@/src/components/pools/whitelist/addresses/UploadWhiteListCsv'
 import {
   ButtonGradient,
+  ButtonPrimaryLight,
   ButtonPrimaryLightSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
@@ -55,8 +56,12 @@ const ButtonsGrid = styled.div`
   grid-template-columns: 32px 32px;
 `
 
-const ButtonSave = styled(ButtonGradient)`
+const SaveButton = styled(ButtonGradient)`
   ${ModalButtonCSS}
+`
+
+const CancelButton = styled(ButtonPrimaryLight)`
+  min-width: 160px;
 `
 
 const Error = styled(BaseError)`
@@ -215,9 +220,10 @@ const AddressesWhiteList = ({
         Add more rows
       </ButtonPrimaryLightSm>
       {getError(status)}
-      <ButtonSave disabled={status !== AddressesWhiteListStatus.valid} onClick={handleSave}>
+      <SaveButton disabled={status !== AddressesWhiteListStatus.valid} onClick={handleSave}>
         Save
-      </ButtonSave>
+      </SaveButton>
+      <CancelButton onClick={onClose}>Cancel</CancelButton>
     </>
   )
 }

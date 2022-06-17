@@ -10,7 +10,10 @@ import {
 import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
 import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
 import NftWhiteListProcessSection from '@/src/components/pools/whitelist/nft/NftWhiteListProcessSection'
-import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonGradient,
+  ButtonPrimaryLight,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import {
   ButtonNext,
   ButtonPrev,
@@ -66,8 +69,14 @@ const NftTypeRemark = styled.p`
   text-align: center;
 `
 
-const Button = styled(ButtonGradient)`
+const NextButton = styled(ButtonGradient)`
+  min-width: 160px;
   margin-top: 40px;
+  margin-bottom: 10px;
+`
+
+const CancelButton = styled(ButtonPrimaryLight)`
+  min-width: 160px;
 `
 
 interface NftWhiteListStepInfo {
@@ -183,7 +192,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
               />
               <Title>{title}</Title>
               {getContent()}
-              <Button
+              <NextButton
                 onClick={() => {
                   if (isLastStep) {
                     onClose()
@@ -196,7 +205,8 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
                 }}
               >
                 {isLastStep ? 'Whitelist' : 'Next'}
-              </Button>
+              </NextButton>
+              <CancelButton onClick={onClose}>Cancel</CancelButton>
               {currentStep === NftWhiteListStep.nftType && (
                 <NftTypeRemark>*Including Cryptopunks</NftTypeRemark>
               )}

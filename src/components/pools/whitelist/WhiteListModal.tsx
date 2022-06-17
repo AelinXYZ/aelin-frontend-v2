@@ -40,7 +40,7 @@ const WhiteListModal = ({
   const [nftWhiteListState, dispatch] = useReducer(nftWhiteListReducer, initialState)
 
   return (
-    <Modal onClose={onClose} size="794px" title="Whitelist">
+    <Modal onClose={onClose} showCancelButton={false} size="794px" title="Whitelist">
       <WhiteListTabs
         active={activeTab}
         onTabClick={setActiveTab}
