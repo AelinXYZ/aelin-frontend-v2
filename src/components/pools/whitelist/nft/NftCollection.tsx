@@ -14,6 +14,7 @@ import {
 import { NftCollectionData } from '@/src/components/pools/whitelist/nft/useNftCollectionList'
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import abbreviateNumber from '@/src/utils/abbreviateNumber'
 
 const Card = styled(BaseCard)<{ isBorder?: boolean }>`
   display: flex;
@@ -147,26 +148,22 @@ const NftCollection = ({
             attributes={[
               {
                 name: 'Items',
-                // TODO [AELIP-15]: Add proper formatting.
-                value: String(selectedCollection.nftCollectionData.itemsCount),
+                value: abbreviateNumber(selectedCollection.nftCollectionData.itemsCount),
                 currencyImageUrl: undefined,
               },
               {
                 name: 'Owners',
-                // TODO [AELIP-15]: Add proper formatting.
-                value: String(selectedCollection.nftCollectionData.ownersCount),
+                value: abbreviateNumber(selectedCollection.nftCollectionData.ownersCount),
                 currencyImageUrl: undefined,
               },
               {
                 name: 'Floor price',
-                // TODO [AELIP-15]: Add proper formatting.
-                value: String(selectedCollection.nftCollectionData.floorPrice),
+                value: abbreviateNumber(selectedCollection.nftCollectionData.floorPrice),
                 currencyImageUrl: selectedCollection.nftCollectionData.currencyImageUrl,
               },
               {
                 name: 'Volume traded',
-                // TODO [AELIP-15]: Add proper formatting.
-                value: String(selectedCollection.nftCollectionData.volumeTraded),
+                value: abbreviateNumber(selectedCollection.nftCollectionData.volumeTraded),
                 currencyImageUrl: selectedCollection.nftCollectionData.currencyImageUrl,
               },
             ]}
