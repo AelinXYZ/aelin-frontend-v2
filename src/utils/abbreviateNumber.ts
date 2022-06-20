@@ -1,6 +1,6 @@
-export default (value: number): string => {
+export default (value: number, maximumFractionDigits = 1): string => {
   return Intl.NumberFormat('en', {
     notation: 'compact',
-    maximumFractionDigits: 1,
+    maximumFractionDigits: maximumFractionDigits,
   }).format(value)
 }
