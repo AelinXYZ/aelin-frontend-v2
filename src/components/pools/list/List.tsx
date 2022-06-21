@@ -14,6 +14,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   HideOnDesktop as BaseHideOnDesktop,
   Cell,
+  HideOnMobile,
   HideOnMobileCell,
   LoadingTableRow,
   RowLink,
@@ -107,8 +108,8 @@ export const List: React.FC<{
       // justifyContent: columns.alignment.network,
     },
     {
-      title: 'Amount in Pool',
-      sortKey: PoolCreated_OrderBy.TotalSupply,
+      title: 'Total deposited',
+      // sortKey: PoolCreated_OrderBy.TotalAmountFunded,
     },
     {
       title: 'Investment deadline',
@@ -176,8 +177,8 @@ export const List: React.FC<{
           {data.map((pool) => {
             const {
               address: id,
-              amountInPool,
               chainId: network,
+              funded,
               investmentToken,
               investmentTokenSymbol,
               nameFormatted,
@@ -223,7 +224,9 @@ export const List: React.FC<{
                   {getNetworkConfig(network).icon}
                 </HideOnMobileCell>
                 <Cell>
-                  ${amountInPool.formatted}&nbsp;
+                  {funded.formatted}
+                  &nbsp;
+                  <HideOnMobile>{investmentTokenSymbol}</HideOnMobile>
                   <HideOnDesktop>
                     <TokenIconSmall
                       address={investmentToken}
