@@ -1,7 +1,6 @@
 import { Dispatch } from 'react'
 import styled from 'styled-components'
 
-import { StepContents } from '@/src/components/pools/common/Create'
 import {
   NftWhiteListAction,
   NftWhiteListActionType,
@@ -11,11 +10,42 @@ import {
 import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
 import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
 import NftWhiteListProcessSection from '@/src/components/pools/whitelist/nft/NftWhiteListProcessSection'
-import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonGradient,
+  ButtonPrimaryLight,
+} from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonNext,
+  ButtonPrev,
+} from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 
-const Wrapper = styled.div`
+const WrapperGrid = styled.div`
   width: 620px;
+  display: grid;
+  grid-template-columns: 50px 1fr 50px;
+`
+
+const StepContents = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+const PrevWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-right: 20px;
+`
+
+const NextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20px;
 `
 
 const Title = styled.h2`
@@ -39,8 +69,14 @@ const NftTypeRemark = styled.p`
   text-align: center;
 `
 
-const Button = styled(ButtonGradient)`
+const NextButton = styled(ButtonGradient)`
+  min-width: 160px;
   margin-top: 40px;
+  margin-bottom: 10px;
+`
+
+const CancelButton = styled(ButtonPrimaryLight)`
+  min-width: 160px;
 `
 
 interface NftWhiteListStepInfo {
@@ -118,47 +154,78 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
   }
 
   return (
-    <Wrapper>
-      <StepIndicator
-        currentStepOrder={order}
-        data={getStepIndicatorData(currentStep)}
-        direction={undefined}
-      />
+    <>
       {Object.values(NftWhiteListStep).map((step, index) => {
         const isStepVisible = currentStep === step
+        const isFirstStep = nftWhiteListStepsConfig[currentStep].order === 1
         const isLastStep =
           nftWhiteListStepsConfig[currentStep].order === Object.keys(nftWhiteListStepsConfig).length
+
+        const prevStep = Object.values(nftWhiteListStepsConfig).find(
+          ({ order }) => order === nftWhiteListStepsConfig[currentStep].order - 1,
+        )?.id
+
+        const nextStep = Object.values(nftWhiteListStepsConfig).find(
+          ({ order }) => order === nftWhiteListStepsConfig[currentStep].order + 1,
+        )?.id
 
         if (!isStepVisible) return null
 
         return (
-          <StepContents key={index}>
-            <Title>{title}</Title>
-            {getContent()}
-            <Button
-              onClick={() => {
-                if (isLastStep) {
-                  onClose()
-                  return
-                }
+          <WrapperGrid key={index}>
+            <PrevWrapper>
+              {!isFirstStep && (
+                <ButtonPrev
+                  onClick={() => {
+                    if (prevStep) {
+                      dispatch({ type: NftWhiteListActionType.updateStep, payload: prevStep })
+                    }
+                  }}
+                />
+              )}
+            </PrevWrapper>
+            <StepContents>
+              <StepIndicator
+                currentStepOrder={order}
+                data={getStepIndicatorData(currentStep)}
+                direction={undefined}
+              />
+              <Title>{title}</Title>
+              {getContent()}
+              <NextButton
+                onClick={() => {
+                  if (isLastStep) {
+                    onClose()
+                    return
+                  }
 
-                const nextStep = Object.values(nftWhiteListStepsConfig).find(
-                  ({ order }) => order === nftWhiteListStepsConfig[currentStep].order + 1,
-                )?.id
-                if (nextStep) {
-                  dispatch({ type: NftWhiteListActionType.updateStep, payload: nextStep })
-                }
-              }}
-            >
-              {isLastStep ? 'Whitelist' : 'Next'}
-            </Button>
-            {currentStep === NftWhiteListStep.nftType && (
-              <NftTypeRemark>*Including Cryptopunks</NftTypeRemark>
-            )}
-          </StepContents>
+                  if (nextStep) {
+                    dispatch({ type: NftWhiteListActionType.updateStep, payload: nextStep })
+                  }
+                }}
+              >
+                {isLastStep ? 'Whitelist' : 'Next'}
+              </NextButton>
+              <CancelButton onClick={onClose}>Cancel</CancelButton>
+              {currentStep === NftWhiteListStep.nftType && (
+                <NftTypeRemark>*Including Cryptopunks</NftTypeRemark>
+              )}
+            </StepContents>
+            <NextWrapper>
+              {!isLastStep && (
+                <ButtonNext
+                  onClick={() => {
+                    if (nextStep) {
+                      dispatch({ type: NftWhiteListActionType.updateStep, payload: nextStep })
+                    }
+                  }}
+                />
+              )}
+            </NextWrapper>
+          </WrapperGrid>
         )
       })}
-    </Wrapper>
+    </>
   )
 }
 
