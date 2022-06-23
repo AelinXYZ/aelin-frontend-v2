@@ -220,6 +220,14 @@ export const HideOnMobileCell = styled(Cell)`
   }
 `
 
+export const HideOnMobile = styled.span`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: grid;
+  }
+`
+
 export const HideOnDesktop = styled.span`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: none;

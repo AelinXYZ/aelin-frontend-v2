@@ -10,6 +10,7 @@ import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import {
   HideOnDesktop as BaseHideOnDesktop,
   Cell,
+  HideOnMobile,
   HideOnMobileCell,
   RowLink,
   TableBody,
@@ -108,7 +109,7 @@ export const VouchedPools: React.FC = () => {
       title: 'Network',
     },
     {
-      title: 'Amount in Pool',
+      title: 'Total deposited',
     },
     {
       title: 'Investment deadline',
@@ -146,8 +147,8 @@ export const VouchedPools: React.FC = () => {
           {data.map((pool) => {
             const {
               address: id,
-              amountInPool,
               chainId: network,
+              funded,
               investmentToken,
               investmentTokenSymbol,
               nameFormatted,
@@ -194,7 +195,9 @@ export const VouchedPools: React.FC = () => {
                   {getNetworkConfig(network).icon}
                 </HideOnMobileCell>
                 <Cell>
-                  ${amountInPool.formatted}&nbsp;
+                  {funded.formatted}
+                  &nbsp;
+                  <HideOnMobile>{investmentTokenSymbol}</HideOnMobile>
                   <HideOnDesktop>
                     <TokenIconSmall
                       address={investmentToken}
