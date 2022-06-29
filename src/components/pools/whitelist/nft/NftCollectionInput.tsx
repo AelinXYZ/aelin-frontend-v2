@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import debounce from 'lodash/debounce'
 
+import { Search } from '@/src/components/assets/Search'
 import { SelectedNftCollectionData } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import useNftCollectionList, {
   NftCollectionData,
@@ -12,23 +13,44 @@ import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 
 const Wrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   flex-grow: 1;
   color: ${({ theme: { colors } }) => colors.textColor};
 `
 
-const Input = styled(Textfield)`
+const Input = styled(Textfield)<{ isOpen: boolean }>`
+  position: relative;
+  padding-left: 42px;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
   border: ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
+
+  ${({ isOpen }) =>
+    isOpen &&
+    'border-bottom: none; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;'}
+`
+
+const SearchWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 20px;
+  top: 0;
+  height: 36px;
+  pointer-events: none;
+  z-index: 10;
 `
 
 const Collections = styled.div`
   display: flex;
   flex-direction: column;
-  border: ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
-  border-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
+  max-height: 216px;
+  overflow-y: scroll;
+  border: 1px solid ${({ theme: { textField } }) => textField.active.borderColor};
+  border-top: none;
+  border-bottom-left-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
+  border-bottom-right-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
 `
 
 const Item = styled.div<{ isActive: boolean }>`
@@ -47,11 +69,6 @@ const Item = styled.div<{ isActive: boolean }>`
   padding: 15px 14px 15px 10px;
   cursor: pointer;
   user-select: none;
-
-  &:first-child {
-    border-top-left-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
-    border-top-right-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
-  }
 
   &:last-child {
     border-bottom-left-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
@@ -87,13 +104,17 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
     <Wrapper
       onBlur={() => {
         setInput(undefined)
+        setQuery('')
       }}
       onFocus={() => {
         setInput(selectedCollection.nftCollectionData?.name)
       }}
     >
-      {/* TODO [AELIP-15]: Replace with collection selector. */}
+      <SearchWrapper>
+        <Search />
+      </SearchWrapper>
       <Input
+        isOpen={!!input && collections.length > 0}
         onChange={(e) => {
           setInput(e.target.value)
           debouncedChangeHandler(e.target.value.trim().toLowerCase())
@@ -102,7 +123,7 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
         type="text"
         value={input ?? selectedCollection.nftCollectionData?.name ?? ''}
       />
-      {collections.length > 0 && (
+      {!!input && collections.length > 0 && (
         <Collections>
           {collections.map((collection) => {
             return (
@@ -115,6 +136,7 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
                 onMouseDown={() => {
                   onChange(collection)
                   setInput(undefined)
+                  setQuery('')
                 }}
               >
                 <Details>
