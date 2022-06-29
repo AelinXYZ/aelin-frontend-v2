@@ -48,22 +48,21 @@ const getInitialNftWhitelistProcess = (
   }
 }
 
-const getInitialSelectedCollection = (nftType: NftType): SelectedNftCollectionData => {
-  let selectedNftsData: SelectedNftData[]
+const getInitialSelectedNftsData = (nftType: NftType): SelectedNftData[] => {
   switch (nftType) {
     case NftType.erc721:
-      selectedNftsData = []
-      break
+      return []
     case NftType.erc1155:
-      selectedNftsData = [{ id: '', minimumAmount: 0 }]
-      break
+      return [{ id: '', minimumAmount: 0 }]
   }
+}
 
+const getInitialSelectedCollection = (nftType: NftType): SelectedNftCollectionData => {
   return {
     nftCollectionData: undefined,
     amountPerNft: 0,
     amountPerWallet: 0,
-    selectedNftsData: selectedNftsData,
+    selectedNftsData: getInitialSelectedNftsData(nftType),
   }
 }
 
@@ -174,6 +173,9 @@ export const nftWhiteListReducer = (
     case NftWhiteListActionType.updateCollection:
       newSelectedCollections = [...state.selectedCollections]
       newSelectedCollections[payload.index].nftCollectionData = payload.newCollection
+      newSelectedCollections[payload.index].selectedNftsData = getInitialSelectedNftsData(
+        state.nftType,
+      )
       return { ...state, selectedCollections: newSelectedCollections }
     case NftWhiteListActionType.removeCollection:
       newSelectedCollections = [...state.selectedCollections]

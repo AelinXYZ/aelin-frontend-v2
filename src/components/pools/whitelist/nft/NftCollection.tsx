@@ -14,6 +14,7 @@ import {
 import { NftCollectionData } from '@/src/components/pools/whitelist/nft/useNftCollectionList'
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 import abbreviateNumber from '@/src/utils/abbreviateNumber'
 
 const Card = styled(BaseCard)<{ isBorder?: boolean }>`
@@ -71,6 +72,8 @@ const NftCollection = ({
   selectedCollection,
   whiteListProcess,
 }: NftCollectionProps) => {
+  const { currentThemeName } = useThemeContext()
+
   const dispatchUpdateCollection = (value: NftCollectionData) => {
     onCollectionChange(value)
   }
@@ -126,6 +129,7 @@ const NftCollection = ({
         {canRemove && (
           <ButtonRemoveWrapper isOffset={whiteListProcess !== NftWhitelistProcess.unlimited}>
             <ButtonRemove
+              currentThemeName={currentThemeName}
               onClick={() => {
                 onCollectionRemove()
               }}
@@ -141,6 +145,7 @@ const NftCollection = ({
               onNftDelete={onNftDelete}
               onNftIdChange={onNftIdChange}
               onNftMinimumAmountChange={onNftMinimumAmountChange}
+              selectedCollectionNftsIds={selectedCollection.nftCollectionData.nftsIds}
               selectedNftsData={selectedCollection.selectedNftsData}
             />
           )}
