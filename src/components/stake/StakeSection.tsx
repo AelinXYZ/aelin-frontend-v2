@@ -53,7 +53,6 @@ interface StakeSectionProps {
   }
   explorerUrl: string
   stakeType: StakingEnum
-  textTooltip: string
   textTooltipAPY: string
   title: string
 }
@@ -62,7 +61,6 @@ const StakeSection: FC<StakeSectionProps> = ({
   contractAddresses,
   explorerUrl,
   stakeType,
-  textTooltip,
   textTooltipAPY,
   title,
   ...restProps
@@ -88,7 +86,6 @@ const StakeSection: FC<StakeSectionProps> = ({
       </a>
       <TitleWrapper>
         <BaseTitle>{title}</BaseTitle>
-        <Tooltip text={textTooltip} />
       </TitleWrapper>
       <APYWrapper>
         {stakeType !== StakingEnum.UNISWAP && (
