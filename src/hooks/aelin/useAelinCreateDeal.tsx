@@ -25,10 +25,10 @@ export enum CreateDealSteps {
   dealToken = 'dealToken',
   totalPurchaseAmount = 'totalPurchaseAmount',
   dealTokenTotal = 'dealTokenTotal',
-  proRataPeriod = 'proRataPeriod',
-  openPeriod = 'openPeriod',
   vestingCliff = 'vestingCliff',
   vestingPeriod = 'vestingPeriod',
+  proRataPeriod = 'proRataPeriod',
+  openPeriod = 'openPeriod',
   counterPartyFundingPeriod = 'counterPartyFundingPeriod',
   counterPartyAddress = 'counterPartyAddress',
 }
@@ -116,9 +116,41 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
     getSummaryValue: (currentState: CreateDealStateComplete) =>
       formatNumber(Number(currentState[CreateDealSteps.dealTokenTotal])),
   },
+
+  [CreateDealSteps.vestingCliff]: {
+    id: CreateDealSteps.vestingCliff,
+    order: 4,
+    title: 'Vesting cliff',
+    text: 'Investors will not begin vesting any deal tokens until this point.',
+    placeholder: undefined,
+    getSummaryValue: (currentState: CreateDealStateComplete) => {
+      const value = currentState[CreateDealSteps.vestingCliff]
+
+      return (
+        getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma') ??
+        `No ${camelCaseToTitleCase(CreateDealSteps.vestingCliff)}`
+      )
+    },
+  },
+  [CreateDealSteps.vestingPeriod]: {
+    id: CreateDealSteps.vestingPeriod,
+    order: 5,
+    title: 'Vesting period',
+    text: 'At the end of the vesting cliff, the period where deal tokens unlock linearly over time',
+    placeholder: undefined,
+    getSummaryValue: (currentState: CreateDealStateComplete) => {
+      const value = currentState[CreateDealSteps.vestingPeriod]
+      const valueWithVestingCliff = sumDurations(currentState[CreateDealSteps.vestingCliff], value)
+
+      return Object.values(value).some((val) => val > 0)
+        ? getFormattedDurationFromNowToDuration(valueWithVestingCliff, '~LLL dd, yyyy HH:mma') ||
+            '--'
+        : `No ${camelCaseToTitleCase(CreateDealSteps.vestingPeriod)}`
+    },
+  },
   [CreateDealSteps.proRataPeriod]: {
     id: CreateDealSteps.proRataPeriod,
-    order: 4,
+    order: 6,
     title: 'Round 1: Accept Allocation',
     text: 'Round 1 is when investors may accept their allocation of deal tokens or reject the deal and receive their investment tokens back.',
     placeholder: undefined,
@@ -130,7 +162,7 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
   },
   [CreateDealSteps.openPeriod]: {
     id: CreateDealSteps.openPeriod,
-    order: 5,
+    order: 7,
     title: 'Round 2: Accept Remaining',
     text: 'In Round 2, investors who accept their entire allocation in Round 1 can purchase any remaining tokens on a first-come, first-serve basis.',
     placeholder: undefined,
@@ -147,48 +179,6 @@ export const createDealConfig: Record<CreateDealSteps, CreateDealStepInfo> = {
         : isOpenPeriodDisabled
         ? `No ${camelCaseToTitleCase(CreateDealSteps.openPeriod)}`
         : `--`
-    },
-  },
-  [CreateDealSteps.vestingCliff]: {
-    id: CreateDealSteps.vestingCliff,
-    order: 6,
-    title: 'Vesting cliff',
-    text: 'Investors will not begin vesting any deal tokens until this point.',
-    placeholder: undefined,
-    getSummaryValue: (currentState: CreateDealStateComplete, isOpenPeriodDisabled) => {
-      const value = currentState[CreateDealSteps.vestingCliff]
-      let valueWithRounds = sumDurations(currentState[CreateDealSteps.proRataPeriod], value)
-      if (!isOpenPeriodDisabled) {
-        valueWithRounds = sumDurations(currentState[CreateDealSteps.openPeriod], valueWithRounds)
-      }
-
-      return (
-        getFormattedDurationFromNowToDuration(valueWithRounds, '~LLL dd, yyyy HH:mma') ??
-        `No ${camelCaseToTitleCase(CreateDealSteps.vestingCliff)}`
-      )
-    },
-  },
-  [CreateDealSteps.vestingPeriod]: {
-    id: CreateDealSteps.vestingPeriod,
-    order: 7,
-    title: 'Vesting period',
-    text: 'At the end of the vesting cliff, the period where deal tokens unlock linearly over time',
-    placeholder: undefined,
-    getSummaryValue: (currentState: CreateDealStateComplete, isOpenPeriodDisabled) => {
-      const value = currentState[CreateDealSteps.vestingPeriod]
-      const valueWithVestingCliff = sumDurations(currentState[CreateDealSteps.vestingCliff], value)
-      let valueWithRounds = sumDurations(
-        currentState[CreateDealSteps.proRataPeriod],
-        valueWithVestingCliff,
-      )
-
-      if (!isOpenPeriodDisabled) {
-        valueWithRounds = sumDurations(currentState[CreateDealSteps.openPeriod], valueWithRounds)
-      }
-
-      return Object.values(value).some((val) => val > 0)
-        ? getFormattedDurationFromNowToDuration(valueWithRounds, '~LLL dd, yyyy HH:mma') || '--'
-        : `No ${camelCaseToTitleCase(CreateDealSteps.vestingPeriod)}`
     },
   },
   [CreateDealSteps.counterPartyFundingPeriod]: {
