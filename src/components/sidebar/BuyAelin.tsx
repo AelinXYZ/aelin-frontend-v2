@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import ParentSize from '@visx/responsive/lib/components/ParentSize'
@@ -7,10 +7,12 @@ import useSWR from 'swr'
 
 import { Uniswap } from '@/src/components/assets/Uniswap'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import NftsPickerModal from '@/src/components/pools/actions/NftsPickerModal'
+import { NftWhitelistProcess } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import AreaChart from '@/src/components/sidebar/AreaChart'
-import { getNetworkConfig } from '@/src/constants/chains'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+// import { getNetworkConfig } from '@/src/constants/chains'
+// import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import formatNumber from '@/src/utils/formatNumber'
 
 const Wrapper = styled.div``
@@ -106,9 +108,12 @@ const getPriceDifferenceFormatted = (prices: PriceData[]) => {
 const BuyAelin: React.FC = ({ ...restProps }) => {
   const prices = useAelinUSDPrices(1, 'hourly')
 
-  const { appChainId } = useWeb3Connection()
+  // const { appChainId } = useWeb3Connection()
 
-  const currentChainConfig = getNetworkConfig(appChainId)
+  // const currentChainConfig = getNetworkConfig(appChainId)
+
+  // TODO [AELIP-15]: Just for testing, will move in investment section in next PR.
+  const [showNftsPickerModal, setShowNftsPickerModal] = useState<boolean>(false)
 
   return (
     <Wrapper {...restProps}>
@@ -134,15 +139,43 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
       )}
       <ButtonContainer>
         <ButtonGradient
-          disabled={!currentChainConfig.buyAelinUrl}
+          // disabled={!currentChainConfig.buyAelinUrl}
           onClick={() => {
-            window.open(currentChainConfig.buyAelinUrl, '_blank')
+            // window.open(currentChainConfig.buyAelinUrl, '_blank')
+            setShowNftsPickerModal(true)
           }}
         >
           <Uniswap />
           Buy Aelin
         </ButtonGradient>
       </ButtonContainer>
+      {showNftsPickerModal && (
+        <NftsPickerModal
+          allocationCurrency="USDC"
+          blacklistNfts={{
+            '0x0000000000000000000000000000000000000001': new Set(['5']),
+            '0x0000000000000000000000000000000000000003': new Set(['3']),
+          }}
+          nftWhitelistProcess={NftWhitelistProcess.limitedPerNft}
+          onClose={() => setShowNftsPickerModal(false)}
+          onSave={(selectedNfts) => {
+            setShowNftsPickerModal(false)
+            console.log('xxx selectedNfts', selectedNfts)
+          }}
+          whitelistRules={{
+            '0x0000000000000000000000000000000000000001': {
+              amountPerWallet: 1,
+              amountPerNft: 10,
+              nftsMinimumAmounts: {},
+            },
+            '0x0000000000000000000000000000000000000003': {
+              amountPerWallet: 2,
+              amountPerNft: 100,
+              nftsMinimumAmounts: {},
+            },
+          }}
+        />
+      )}
     </Wrapper>
   )
 }
