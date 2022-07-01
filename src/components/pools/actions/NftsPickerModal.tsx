@@ -236,6 +236,21 @@ const NftsPickerModal = ({
     setNfts(result)
   }, [userNfts, whitelistRules, blacklistNfts])
 
+  useEffect(() => {
+    if (
+      nfts.reduce((acc, nft) => acc && (nft.isBlacklisted ? true : nft.isSelected), true) === true
+    ) {
+      setIsClear(true)
+      return
+    }
+
+    if (
+      nfts.reduce((acc, nft) => acc && (nft.isBlacklisted ? true : !nft.isSelected), true) === true
+    ) {
+      setIsClear(false)
+    }
+  }, [nfts])
+
   const allocation = useMemo(() => {
     let allocation = 0
 
@@ -298,36 +313,21 @@ const NftsPickerModal = ({
                 <RadioButton
                   checked={nft.isSelected}
                   onClick={() => {
-                    setNfts((prev) => {
-                      const prevNfts = [...prev]
-                      const targetNft = prevNfts.find(
-                        (prevNft) =>
-                          prevNft.collectionId === nft.collectionId && prevNft.id === nft.id,
+                    setNfts((prevNfts) => {
+                      const newNfts = [...prevNfts]
+                      const index = newNfts.findIndex(
+                        (newNft) =>
+                          newNft.collectionId === nft.collectionId && newNft.id === nft.id,
                       )
 
-                      if (targetNft) {
-                        targetNft.isSelected = !targetNft.isSelected
+                      if (index !== -1) {
+                        newNfts[index] = {
+                          ...newNfts[index],
+                          isSelected: !newNfts[index].isSelected,
+                        }
                       }
 
-                      if (
-                        prevNfts.reduce(
-                          (acc, nft) => acc && (nft.isBlacklisted ? true : !nft.isSelected),
-                          true,
-                        ) === true
-                      ) {
-                        setIsClear(false)
-                      }
-
-                      if (
-                        prevNfts.reduce(
-                          (acc, nft) => acc && (nft.isBlacklisted ? true : nft.isSelected),
-                          true,
-                        ) === true
-                      ) {
-                        setIsClear(true)
-                      }
-
-                      return prevNfts
+                      return newNfts
                     })
                   }}
                 />
@@ -337,16 +337,14 @@ const NftsPickerModal = ({
         </Items>
         <AllButton
           onClick={() => {
-            setIsClear((prevIsClear) => {
-              setNfts((prevNfts) => {
-                const newNfts = [...prevNfts]
-                newNfts.forEach(
-                  (nft) => (nft.isSelected = nft.isBlacklisted ? nft.isSelected : !prevIsClear),
-                )
-                return newNfts
-              })
+            setNfts((prevNfts) => {
+              const newNfts = [...prevNfts]
 
-              return !prevIsClear
+              newNfts.forEach(
+                (nft) => (nft.isSelected = nft.isBlacklisted ? nft.isSelected : !isClear),
+              )
+
+              return newNfts
             })
           }}
         >
