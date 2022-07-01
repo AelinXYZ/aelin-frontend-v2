@@ -300,7 +300,7 @@ const NftsPickerModal = ({
       </ChangeWallet>
       <Card>
         <Items>
-          {nfts.map((nft) => (
+          {nfts.map((nft, index) => (
             <Item key={`${nft.collectionId}-${nft.id}`}>
               <NftImage
                 alt=""
@@ -315,16 +315,10 @@ const NftsPickerModal = ({
                   onClick={() => {
                     setNfts((prevNfts) => {
                       const newNfts = [...prevNfts]
-                      const index = newNfts.findIndex(
-                        (newNft) =>
-                          newNft.collectionId === nft.collectionId && newNft.id === nft.id,
-                      )
 
-                      if (index !== -1) {
-                        newNfts[index] = {
-                          ...newNfts[index],
-                          isSelected: !newNfts[index].isSelected,
-                        }
+                      newNfts[index] = {
+                        ...newNfts[index],
+                        isSelected: !newNfts[index].isSelected,
                       }
 
                       return newNfts
