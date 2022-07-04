@@ -35,9 +35,6 @@ const StakeGrid = ({ ...restProps }) => {
           )}
           key={StakingEnum.AELIN}
           stakeType={StakingEnum.AELIN}
-          textTooltipAPY={
-            'Estimation based on the total amount of rewards for a year and the total value staked in the contract.'
-          }
           title={'Aelin staking'}
         />,
 
@@ -52,9 +49,6 @@ const StakeGrid = ({ ...restProps }) => {
           )}
           key={StakingEnum.GELATO}
           stakeType={StakingEnum.GELATO}
-          textTooltipAPY={
-            'Estimation based on the total amount of rewards for a year and the total value staked in the contract. Trading fees from Uniswap not included.'
-          }
           title={'AELIN/ETH staking'}
         />,
       ],
@@ -70,9 +64,6 @@ const StakeGrid = ({ ...restProps }) => {
           )}
           key={StakingEnum.UNISWAP}
           stakeType={StakingEnum.UNISWAP}
-          textTooltipAPY={
-            'Estimation based on the total amount of rewards for a year and the total value staked in the contract. Trading fees from Uniswap not included.'
-          }
           title={'AELIN/ETH staking'}
         />,
       ],
