@@ -1,6 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 
-import { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { Privacy } from '@/src/constants/pool'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
@@ -17,7 +17,7 @@ export type poolErrors = {
   poolCap?: number
   sponsorFee?: number
   poolPrivacy?: Privacy
-  whitelist?: WhitelistProps[]
+  whitelist?: AddressWhitelistProps[]
 }
 
 const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {

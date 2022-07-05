@@ -2,6 +2,7 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ["tokens.1inch.io"]
+    // TODO [AELIP-15]: Not sure that it's safe though.
+    domains: ["tokens.1inch.io", 'rarify-public.s3.amazonaws.com']
   }
 }

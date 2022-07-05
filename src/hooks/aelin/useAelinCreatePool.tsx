@@ -7,7 +7,7 @@ import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
 
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
-import { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -51,7 +51,7 @@ export interface CreatePoolState {
   sponsorFee?: number
   poolPrivacy?: Privacy
   currentStep: CreatePoolSteps
-  whitelist: WhitelistProps[]
+  whitelist: AddressWhitelistProps[]
 }
 
 export interface CreatePoolStateComplete {

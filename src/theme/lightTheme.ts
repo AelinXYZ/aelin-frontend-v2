@@ -178,6 +178,11 @@ export const lightTheme = {
     backgroundColor: '#fff',
     boxShadow: '0 0 10px rgba(255, 255, 255, 0.25)',
   },
+  nftWhiteList: {
+    border: '1px solid rgba(71, 87, 97, 0.2)',
+    borderRadius: '8px',
+    layerBackgroundColor: 'rgba(0, 0, 0, 0.04)',
+  },
   stages: {
     open: green,
     awaitingdeal: yellow,
