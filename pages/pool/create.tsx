@@ -18,6 +18,7 @@ import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInp
 import { Summary } from '@/src/components/pools/common/Summary'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
 import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { NftWhiteListData } from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import {
   ButtonGradient,
   ButtonPrimaryLight,
@@ -157,10 +158,16 @@ const Create: NextPage = () => {
       </RightTimelineLayout>
       {showWhiteListModal && (
         <WhiteListModal
-          currentList={createPoolState.whitelist}
+          curentNftWhitelist={createPoolState.nftWhitelist}
+          currentAddressesWhitelist={createPoolState.addressesWhitelist}
           investmentTokenDecimals={createPoolState.investmentToken?.decimals ?? 18}
+          onAddressesWhitelistSave={(addressesWhitelist: AddressWhitelistProps[]) =>
+            setPoolField(addressesWhitelist, 'addressesWhitelist')
+          }
           onClose={() => setShowWhiteListModal(false)}
-          onConfirm={(whitelist: AddressWhitelistProps[]) => setPoolField(whitelist, 'whitelist')}
+          onNftWhitelistSave={(nftWhitelist: NftWhiteListData) =>
+            setPoolField(nftWhitelist, 'nftWhitelist')
+          }
         />
       )}
     </>

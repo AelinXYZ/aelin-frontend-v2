@@ -149,14 +149,14 @@ const AddressesWhiteList = ({
   investmentTokenDecimals,
   list,
   onClose,
-  onConfirm,
+  onSave,
   setList,
 }: {
   list: AddressWhitelistProps[]
   investmentTokenDecimals: number
   setList: (whitelist: AddressWhitelistProps[]) => void
   onClose: () => void
-  onConfirm: (whitelist: AddressWhitelistProps[]) => void
+  onSave: (whitelist: AddressWhitelistProps[]) => void
 }) => {
   const status = useMemo(() => {
     if (list.some((item: AddressWhitelistProps) => item.address && !isAddress(item.address))) {
@@ -191,7 +191,7 @@ const AddressesWhiteList = ({
   const handleSave = () => {
     // Remove empty rows.
     const filterRows = [...list.filter((row: AddressWhitelistProps) => row.address)]
-    onConfirm(filterRows)
+    onSave(filterRows)
     onClose()
   }
 

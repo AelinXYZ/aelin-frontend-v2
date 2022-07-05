@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 
 export type NftCollectionData = {
   id: string
+  address: string
   name: string
   itemsCount: number
   ownersCount: number
@@ -23,6 +24,7 @@ function useNftCollectionList(query: string) {
           : [
               {
                 id: 'aaa',
+                address: '0x0000000000000000000000000000000000000000',
                 name: 'aaa',
                 itemsCount: 1,
                 ownersCount: 2,
@@ -36,6 +38,7 @@ function useNftCollectionList(query: string) {
               },
               {
                 id: 'aab',
+                address: '0x0000000000000000000000000000000000000000',
                 name: 'aab',
                 itemsCount: 10,
                 ownersCount: 20,
@@ -49,6 +52,7 @@ function useNftCollectionList(query: string) {
               },
               {
                 id: 'abb',
+                address: '0x0000000000000000000000000000000000000000',
                 name: 'abb',
                 itemsCount: 100,
                 ownersCount: 200,
@@ -62,6 +66,7 @@ function useNftCollectionList(query: string) {
               },
               {
                 id: 'Bored',
+                address: '0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b',
                 name: 'Bored',
                 itemsCount: 1000,
                 ownersCount: 2000,
@@ -75,6 +80,7 @@ function useNftCollectionList(query: string) {
               },
               {
                 id: 'bbb',
+                address: '0x0000000000000000000000000000000000000000',
                 name: 'bbb',
                 itemsCount: 10000,
                 ownersCount: 20000,
@@ -88,6 +94,7 @@ function useNftCollectionList(query: string) {
               },
               {
                 id: 'bbbb',
+                address: '0x0000000000000000000000000000000000000000',
                 name: 'bbbb',
                 itemsCount: 100000,
                 ownersCount: 200000,

@@ -2,10 +2,13 @@ import { Dispatch } from 'react'
 import styled from 'styled-components'
 
 import {
+  NftType,
   NftWhiteListAction,
   NftWhiteListActionType,
   NftWhiteListState,
   NftWhiteListStep,
+  NftWhitelistProcess,
+  SelectedNftCollectionData,
 } from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
 import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
 import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
@@ -111,13 +114,20 @@ const getStepIndicatorData = (
     title: nftWhiteListStepsConfig[step].title,
   }))
 
+export type NftWhiteListData = {
+  nftType: NftType
+  whiteListProcess: NftWhitelistProcess
+  selectedCollections: SelectedNftCollectionData[]
+}
+
 type NftWhiteListProps = {
   nftWhiteListState: NftWhiteListState
   dispatch: Dispatch<NftWhiteListAction>
   onClose: () => void
+  onSave: (nftWhitelist: NftWhiteListData) => void
 }
 
-const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProps) => {
+const NftWhiteList = ({ dispatch, nftWhiteListState, onClose, onSave }: NftWhiteListProps) => {
   const { currentStep, nftType, selectedCollections, whiteListProcess } = nftWhiteListState
   const { order, title } = nftWhiteListStepsConfig[currentStep]
 
@@ -195,6 +205,11 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
               <NextButton
                 onClick={() => {
                   if (isLastStep) {
+                    onSave({
+                      nftType: nftWhiteListState.nftType,
+                      whiteListProcess: nftWhiteListState.whiteListProcess,
+                      selectedCollections: nftWhiteListState.selectedCollections,
+                    })
                     onClose()
                     return
                   }
