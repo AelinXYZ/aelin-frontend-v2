@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: already addressed
 const { getAddress } = require('@ethersproject/address')
 const cheerio = require('cheerio')
 const fs = require('fs/promises')
@@ -211,5 +214,3 @@ Promise.all([OpenSeaMetadataCollector(), QuixoticMetadataCollector()])
     console.log(err)
     process.exit(1)
   })
-
-export {}
