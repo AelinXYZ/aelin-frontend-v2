@@ -20,8 +20,8 @@ const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) =
       return orderBy
     case PoolCreated_OrderBy.Timestamp:
       return 'start'
-    case PoolCreated_OrderBy.TotalSupply:
-      return 'amountInPool'
+    case PoolCreated_OrderBy.TotalAmountFunded:
+      return 'funded'
     case PoolCreated_OrderBy.PurchaseExpiry:
       return 'investmentDeadline'
     case PoolCreated_OrderBy.PurchaseToken:
