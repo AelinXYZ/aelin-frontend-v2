@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: already addressed
+// @ts-ignore: already addressed using tsconfig.json
+require('isomorphic-fetch')
+require('dotenv').config({ path: '.env.local' })
+
 const { getAddress } = require('@ethersproject/address')
 const cheerio = require('cheerio')
 const fs = require('fs/promises')
@@ -98,7 +101,6 @@ const withPage = (browser: typeof Browser) => async (fn: (page: typeof Page) => 
 }
 
 const OpenSeaMetadataCollector = async () => {
-  // Get top 100 nft collections
   const collections = OpenSeaResponse.data.rankings.edges.slice(0, MAX_OPENSEA_ITEMS)
 
   const metadata = await withBrowser(async (browser) => {
@@ -125,12 +127,30 @@ const OpenSeaMetadataCollector = async () => {
           const links = $('a[target="_blank"]')
 
           let address = ''
+          let contractType = ''
 
           links.each(function (this: cheerio.Element) {
             if ($(this).attr('href').includes('etherscan')) {
               address = getAddress($(this).attr('href').split('/').pop())
             }
           })
+
+          if (address.length) {
+            // We need to use this approach to avoid a forbidden code response
+            await page.goto(`https://api.opensea.io/api/v1/asset_contract/${address}?format=json`)
+
+            const pageData = await page.evaluate(() => ({
+              html: document.documentElement.innerHTML,
+            }))
+
+            const $ = cheerio.load(pageData.html)
+
+            const content = $('pre').text()
+
+            const json = JSON.parse(content)
+
+            contractType = json.schema_name ? json.schema_name.toLowerCase() : ''
+          }
 
           return {
             id: index,
@@ -141,6 +161,7 @@ const OpenSeaMetadataCollector = async () => {
             isVerified,
             numOwners,
             totalSupply,
+            contractType,
             floorPrice: floorPrice !== null ? Number(floorPrice.eth) : null,
             totalVolume: totalVolume !== null ? Number(totalVolume.unit) : null,
             paymentSymbol: nativePaymentAsset !== null ? nativePaymentAsset.symbol : null,
@@ -165,38 +186,55 @@ const OpenSeaMetadataCollector = async () => {
   )
 }
 
-const QuixoticMetadataCollector = () => {
-  // Get top 50 nft collections
+const QuixoticMetadataCollector = async () => {
   const collections = QuixoticResponse.results.slice(0, MAX_QUIXOTIC_ITEMS)
 
-  const metadata = collections.map((collection: QuixoticCollection, index: number) => {
-    const {
-      address,
-      floor: floorPrice,
-      image_url: imageUrl,
-      name,
-      owners: numOwners,
-      slug,
-      supply: totalSupply,
-      verified: isVerified,
-      volume: totalVolume,
-    } = collection
+  const options = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'X-API-KEY': process.env.QUIXOTIC_API_TOKEN || '',
+    },
+  }
 
-    return {
-      id: index,
-      name,
-      slug,
-      imageUrl,
-      address,
-      isVerified,
-      numOwners,
-      totalSupply,
-      floorPrice,
-      totalVolume,
-      paymentSymbol: 'ETH',
-      network: 10,
-    }
-  })
+  const metadata = await Promise.all(
+    collections.map(async (collection: QuixoticCollection, index: number) => {
+      const {
+        address,
+        floor: floorPrice,
+        image_url: imageUrl,
+        name,
+        owners: numOwners,
+        slug,
+        supply: totalSupply,
+        verified: isVerified,
+        volume: totalVolume,
+      } = collection
+
+      const response = await fetch(
+        `https://api.quixotic.io/api/v1/collection/${address}/`,
+        options,
+      ).then((response) => response.json())
+
+      const { contract_type } = response
+
+      return {
+        id: index,
+        name,
+        slug,
+        imageUrl,
+        address,
+        isVerified,
+        numOwners,
+        totalSupply,
+        floorPrice,
+        totalVolume,
+        contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
+        paymentSymbol: 'ETH',
+        network: 10,
+      }
+    }),
+  )
 
   return fs.writeFile(
     `${process.cwd()}/public/data/nft-metadata/quixotic-metadata.json`,
