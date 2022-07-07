@@ -10,7 +10,6 @@ export type NftCollectionData = {
   currencyImageUrl: string
   imageUrl: string
   url: string
-  nftsIds: string[]
   isVerified: boolean
 }
 
@@ -31,7 +30,6 @@ function useNftCollectionList(query: string) {
                 currencyImageUrl: 'https://rarify-public.s3.amazonaws.com/eth_logo.svg',
                 imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png',
                 url: 'https://www.larvalabs.com/cryptopunks',
-                nftsIds: ['1', '2', '3'],
                 isVerified: true,
               },
               {
@@ -44,7 +42,6 @@ function useNftCollectionList(query: string) {
                 currencyImageUrl: 'https://rarify-public.s3.amazonaws.com/eth_logo.svg',
                 imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png',
                 url: 'https://www.larvalabs.com/cryptopunks',
-                nftsIds: ['1', '2', '3'],
                 isVerified: false,
               },
               {
@@ -57,7 +54,6 @@ function useNftCollectionList(query: string) {
                 currencyImageUrl: 'https://rarify-public.s3.amazonaws.com/eth_logo.svg',
                 imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png',
                 url: 'https://www.larvalabs.com/cryptopunks',
-                nftsIds: ['1', '2', '3'],
                 isVerified: false,
               },
               {
@@ -70,7 +66,6 @@ function useNftCollectionList(query: string) {
                 currencyImageUrl: 'https://rarify-public.s3.amazonaws.com/eth_logo.svg',
                 imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png',
                 url: 'https://www.larvalabs.com/cryptopunks',
-                nftsIds: ['1', '2', '3', '11', '121', '311', '0'],
                 isVerified: true,
               },
               {
@@ -83,7 +78,6 @@ function useNftCollectionList(query: string) {
                 currencyImageUrl: 'https://rarify-public.s3.amazonaws.com/eth_logo.svg',
                 imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png',
                 url: 'https://www.larvalabs.com/cryptopunks',
-                nftsIds: ['1', '2', '3'],
                 isVerified: false,
               },
               {
@@ -96,7 +90,6 @@ function useNftCollectionList(query: string) {
                 currencyImageUrl: 'https://rarify-public.s3.amazonaws.com/eth_logo.svg',
                 imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png',
                 url: 'https://www.larvalabs.com/cryptopunks',
-                nftsIds: ['1', '2', '3'],
                 isVerified: false,
               },
             ].filter((collection) => collection.name.toLowerCase().includes(query)),
