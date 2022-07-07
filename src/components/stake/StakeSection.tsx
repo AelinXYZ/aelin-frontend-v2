@@ -10,7 +10,6 @@ import ClaimBox from '@/src/components/stake/ClaimBox'
 import StakeInfo from '@/src/components/stake/StakeInfo'
 import StakeTabContent from '@/src/components/stake/StakeTabContent'
 import Tabs, { Tab } from '@/src/components/tabs/Tabs'
-import { Tooltip } from '@/src/components/tooltip/Tooltip'
 import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '@/src/constants/types'
 import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 
@@ -29,21 +28,8 @@ const TitleWrapper = styled.div`
   display: flex;
   gap: 10px;
   justify-content: center;
-  margin: 0 0 5px;
-`
-
-const APYWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin: 0 0 10px;
-`
-
-const APYValue = styled.span`
-  color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.6rem;
-  font-weight: 600;
+  margin: 0;
+  margin-bottom: 10px;
 `
 
 interface StakeSectionProps {
@@ -53,7 +39,6 @@ interface StakeSectionProps {
   }
   explorerUrl: string
   stakeType: StakingEnum
-  textTooltipAPY: string
   title: string
 }
 
@@ -61,7 +46,6 @@ const StakeSection: FC<StakeSectionProps> = ({
   contractAddresses,
   explorerUrl,
   stakeType,
-  textTooltipAPY,
   title,
   ...restProps
 }) => {
@@ -87,14 +71,6 @@ const StakeSection: FC<StakeSectionProps> = ({
       <TitleWrapper>
         <BaseTitle>{title}</BaseTitle>
       </TitleWrapper>
-      <APYWrapper>
-        {stakeType !== StakingEnum.UNISWAP && (
-          <>
-            <APYValue>APY: {`${Math.round(rewards?.APY ?? 0)}% `}</APYValue>
-            <Tooltip text={textTooltipAPY} />
-          </>
-        )}
-      </APYWrapper>
 
       <Tabs>
         <Tab label="Deposit">
