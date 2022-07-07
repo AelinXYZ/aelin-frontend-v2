@@ -27,7 +27,7 @@ function ReleaseFunds({ pool }: Props) {
   )
 
   const onReleaseFunds = () => {
-    const thirtyMins = (isDev ? 30 : 1) * 60
+    const thirtyMins = (isDev ? 1 : 30) * 60
     const args: Parameters<AelinPool['functions']['createDeal']> = [
       pool.investmentToken, // underlyingDealToken
       pool.amountInPool.raw, // purchaseTokenTotal
