@@ -1,33 +1,31 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+// Note: Add "type": "module" to the package.json before running the script
+import 'isomorphic-fetch'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore: already addressed using tsconfig.json
-require('isomorphic-fetch')
-require('dotenv').config({ path: '.env.local' })
+import { getAddress } from '@ethersproject/address'
+import cheerio from 'cheerio'
+import detenv from 'dotenv'
+import fs from 'fs/promises'
+import puppeteer, { Browser, Page } from 'puppeteer'
 
-const { getAddress } = require('@ethersproject/address')
-const cheerio = require('cheerio')
-const fs = require('fs/promises')
-const puppeteer = require('puppeteer')
-const { Browser, Page } = require('puppeteer')
+import OpenSeaResponse from '../data/open-sea-response.json' assert { type: 'json' }
+import QuixoticResponse from '../data/quixotic-response.json' assert { type: 'json' }
 
-const OpenSeaResponse = require('../data/open-sea-response.json')
-const QuixoticResponse = require('../data/quixotic-response.json')
+detenv.config({ path: '.env.local' })
 
 const MAX_QUIXOTIC_ITEMS = 50
 const MAX_OPENSEA_ITEMS = 100
 
 type OpenSeaCollection = {
   node: {
-    isVerified: true
+    isVerified: boolean
     logo: string
     name: string
     nativePaymentAsset: { symbol: string }
     slug: string
     statsV2: {
       floorPrice: { eth: string } | null
-      numOwners: string
-      totalSupply: string
+      numOwners: number
+      totalSupply: number
       totalVolume: { unit: string }
     }
   }
@@ -35,13 +33,13 @@ type OpenSeaCollection = {
 
 type QuixoticCollection = {
   name: string
-  slug: string
+  slug: string | null
   image_url: string
   owners: number
   supply: number
   verified: boolean
   volume: number
-  floor: number
+  floor: number | null
   address: string
 }
 
@@ -49,7 +47,7 @@ type NFTCollections = {
   id: string
   address: string
   name: string
-  slug: string
+  slug: string | null
   imageUrl: string
   isVerified: boolean
   numOwners: number
@@ -62,7 +60,7 @@ type NFTCollections = {
 
 const formatGwei = (wei: number) => wei / 1e8 / 10
 
-const withBrowser = async (fn: (browser: typeof Browser) => void) => {
+const withBrowser = async (fn: (browser: Browser) => void) => {
   const browser = await puppeteer.launch({
     headless: false,
     args: ['--start-maximized'],
@@ -76,7 +74,7 @@ const withBrowser = async (fn: (browser: typeof Browser) => void) => {
   }
 }
 
-const withPage = (browser: typeof Browser) => async (fn: (page: typeof Page) => void) => {
+const withPage = (browser: Browser) => async (fn: (page: Page) => void) => {
   const page = await browser.newPage()
 
   await page.setDefaultNavigationTimeout(0)
@@ -132,7 +130,11 @@ const OpenSeaMetadataCollector = async () => {
           let contractType = ''
 
           links.each(function (this: cheerio.Element) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore: this is not undefined
             if ($(this).attr('href').includes('etherscan')) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore: this is not undefined
               address = getAddress($(this).attr('href').split('/').pop())
             }
           })
@@ -199,6 +201,8 @@ const QuixoticMetadataCollector = async () => {
     },
   }
 
+  console.log('options: ', options)
+
   const metadata = await Promise.all(
     collections.map(async (collection: QuixoticCollection, index: number) => {
       const {
@@ -229,7 +233,7 @@ const QuixoticMetadataCollector = async () => {
         isVerified,
         numOwners,
         totalSupply,
-        floorPrice: formatGwei(floorPrice),
+        floorPrice: floorPrice ? formatGwei(floorPrice) : null,
         totalVolume: formatGwei(totalVolume),
         contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
         paymentSymbol: 'ETH',

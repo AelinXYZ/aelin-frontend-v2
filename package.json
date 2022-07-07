@@ -15,7 +15,7 @@
     "schema": "bash scripts/apollo-schema.sh",
     "sdk": "graphql-codegen --config codegen.js",
     "postinstall": "yarn typechain && yarn sdk",
-    "create:nft:metadata": "ts-node --project scripts/tsconfig.json scripts/generate-nft-metadata.ts"
+    "create:nft:metadata": "node --experimental-json-modules --loader ts-node/esm scripts/generate-nft-metadata.ts"
   },
   "dependencies": {
     "@eth-optimism/sdk": "^1.1.8",
