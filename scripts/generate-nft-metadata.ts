@@ -60,6 +60,8 @@ type NFTCollections = {
   network: number
 }
 
+const formatGwei = (wei: number) => wei / 1e8 / 10
+
 const withBrowser = async (fn: (browser: typeof Browser) => void) => {
   const browser = await puppeteer.launch({
     headless: false,
@@ -227,8 +229,8 @@ const QuixoticMetadataCollector = async () => {
         isVerified,
         numOwners,
         totalSupply,
-        floorPrice,
-        totalVolume,
+        floorPrice: formatGwei(floorPrice),
+        totalVolume: formatGwei(totalVolume),
         contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
         paymentSymbol: 'ETH',
         network: 10,
