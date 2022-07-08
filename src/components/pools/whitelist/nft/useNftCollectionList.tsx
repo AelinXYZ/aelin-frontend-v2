@@ -1,4 +1,7 @@
-import { useMemo } from 'react'
+import Fuse from 'fuse.js'
+import useSWR from 'swr'
+
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 export type NftCollectionData = {
   id: string
@@ -14,7 +17,63 @@ export type NftCollectionData = {
   isVerified: boolean
 }
 
+type NFTCollections = {
+  id: string
+  address: string
+  name: string
+  slug: string | null
+  imageUrl: string
+  isVerified: boolean
+  numOwners: number
+  totalSupply: number
+  floorPrice: number | null
+  totalVolume: number | null
+  paymentSymbol: string | null
+  network: number
+}
+
+const MAINNET_NFT_COLLECTIONS = '/data/open-sea-metadata.json'
+const OPTIMISM_NFT_COLLECTIONS = '/data/quixotic-metadata.json'
+
 function useNftCollectionList(query: string) {
+  const { appChainId } = useWeb3Connection()
+
+  return useSWR<NFTCollections[] | unknown[], Error>(
+    'search-nft-collections',
+    async () => {
+      console.log('query: ', query)
+      if (!query.length) return []
+
+      const collections = await Promise.all([
+        appChainId === 1 && fetch(MAINNET_NFT_COLLECTIONS).then((response) => response.json()),
+        appChainId === 10 && fetch(OPTIMISM_NFT_COLLECTIONS).then((response) => response.json()),
+      ])
+
+      const response = await fetch(MAINNET_NFT_COLLECTIONS).then((response) => response.json())
+      const mainnetCollections = await response.json()
+
+      console.log('mainnetCollections: ', mainnetCollections)
+      console.log('collections: ', collections)
+
+      const fuse = new Fuse<NFTCollections>(collections, {
+        keys: ['name'],
+        includeScore: true,
+      })
+
+      const search = fuse.search(query)
+
+      console.log('search: ', search)
+
+      return []
+    },
+    {
+      revalidateOnFocus: true,
+      revalidateOnMount: true,
+    },
+  )
+}
+
+/*
   return useMemo(() => {
     return {
       collections:
@@ -129,5 +188,7 @@ function useNftCollectionList(query: string) {
 
 //   return data
 // }
+
+*/
 
 export default useNftCollectionList

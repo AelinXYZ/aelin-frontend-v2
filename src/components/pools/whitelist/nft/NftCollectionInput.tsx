@@ -98,8 +98,19 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
 
   const debouncedChangeHandler = useMemo(() => debounce(setQuery, DEBOUNCED_INPUT_TIME), [setQuery])
 
-  const { collections } = useNftCollectionList(query)
+  const collections = useNftCollectionList(query)
 
+  if (collections.error) {
+    throw new Error('Unexpected error when fetching nft collections')
+  }
+
+  return null
+
+  /*
+  const collections = foundCollections.map((collection) => {
+    return collection.item
+  })
+  
   return (
     <Wrapper
       onBlur={() => {
@@ -156,6 +167,8 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
       )}
     </Wrapper>
   )
+
+  */
 }
 
 export default NftCollectionInput
