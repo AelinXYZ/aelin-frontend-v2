@@ -6,7 +6,6 @@ import NftCollectionAttribute, {
   NftCollectionAttributeProps,
 } from '@/src/components/pools/whitelist/nft/NftCollectionAttribute'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
-import { ExternalLink } from '@/src/components/table/ExternalLink'
 
 const Card = styled(BaseCard)`
   display: flex;
@@ -45,7 +44,6 @@ type NftCollectionDetailsProps = {
   imageUrl: string
   name: string
   isVerified: boolean
-  url: string
   attributes: NftCollectionAttributeProps[]
 }
 
@@ -54,7 +52,6 @@ const NftCollectionDetails = ({
   imageUrl,
   isVerified,
   name,
-  url,
 }: NftCollectionDetailsProps) => {
   return (
     <Card>
@@ -63,7 +60,6 @@ const NftCollectionDetails = ({
         <Title>{name}</Title>
         {isVerified && <VerifiedIcon />}
       </Row>
-      <ExternalLink href={url} />
       <AttributesWrapper>
         {attributes.map(({ currencyImageUrl, name, value }) => (
           <NftCollectionAttribute

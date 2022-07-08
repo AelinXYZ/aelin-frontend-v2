@@ -100,23 +100,16 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
 
   const collections = useNftCollectionList(query)
 
+  console.log('collections: ', collections)
+
   if (collections.error) {
-    throw new Error('Unexpected error when fetching nft collections')
+    throw new Error('Unexpected error when fetching nft metadata')
   }
 
-  return null
+  const { data } = collections
 
-  /*
-  const collections = foundCollections.map((collection) => {
-    return collection.item
-  })
-  
   return (
     <Wrapper
-      onBlur={() => {
-        setInput(undefined)
-        setQuery('')
-      }}
       onFocus={() => {
         setInput(selectedCollection.nftCollectionData?.name)
       }}
@@ -125,7 +118,7 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
         <Search />
       </SearchWrapper>
       <Input
-        isOpen={!!input && collections.length > 0}
+        isOpen={!!input && !!data && data.length > 0}
         onChange={(e) => {
           setInput(e.target.value)
           debouncedChangeHandler(e.target.value.trim().toLowerCase())
@@ -134,16 +127,16 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
         type="text"
         value={input ?? selectedCollection.nftCollectionData?.name ?? ''}
       />
-      {!!input && collections.length > 0 && (
+      {!!input && data && data.length > 0 && (
         <Collections>
-          {collections.map((collection) => {
+          {data.map((collection) => {
             return (
               <Item
                 isActive={
                   !!selectedCollection.nftCollectionData &&
                   collection.id === selectedCollection.nftCollectionData.id
                 }
-                key={collection.id}
+                key={`${collection.network}-${collection.id}`}
                 onMouseDown={() => {
                   onChange(collection)
                   setInput(undefined)
@@ -155,9 +148,8 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
                   <span>{collection.name}</span>
                 </Details>
                 <Details>
-                  <Image alt="" height={15} src={collection.currencyImageUrl} width={8} />
-                  <span>{`${collection.itemsCount} ${
-                    collection.itemsCount === 1 ? 'item' : 'items'
+                  <span>{`${collection.totalSupply} ${
+                    collection.totalSupply === 1 ? 'item' : 'items'
                   }`}</span>
                 </Details>
               </Item>
@@ -167,8 +159,6 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
       )}
     </Wrapper>
   )
-
-  */
 }
 
 export default NftCollectionInput
