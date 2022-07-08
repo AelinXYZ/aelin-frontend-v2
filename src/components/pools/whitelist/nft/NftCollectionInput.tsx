@@ -100,8 +100,6 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
 
   const collections = useNftCollectionList(query)
 
-  console.log('collections: ', collections)
-
   if (collections.error) {
     throw new Error('Unexpected error when fetching nft metadata')
   }
