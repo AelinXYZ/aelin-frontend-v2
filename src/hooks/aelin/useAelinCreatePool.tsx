@@ -198,21 +198,23 @@ const parseValuesToCreatePool = async (
     allowListAddresses: poolAddresses,
     allowListAmounts: poolAddressesAmounts,
     nftCollectionRules: nftWhitelist
-      ? nftWhitelist.selectedCollections.map((selectedCollection) => ({
-          purchaseAmount: selectedCollection.amountPerNft
-            ? parseUnits(String(selectedCollection.amountPerNft), investmentToken.decimals)
-            : selectedCollection.amountPerWallet
-            ? parseUnits(String(selectedCollection.amountPerWallet), investmentToken.decimals)
-            : MaxUint256,
-          collectionAddress: selectedCollection.nftCollectionData!.address,
-          purchaseAmountPerToken: selectedCollection.amountPerNft > 0,
-          tokenIds: selectedCollection.selectedNftsData.map((selectedNft) =>
-            parseEther(selectedNft.id),
-          ),
-          minTokensEligible: selectedCollection.selectedNftsData.map((selectedNft) =>
-            parseEther(String(selectedNft.minimumAmount)),
-          ),
-        }))
+      ? nftWhitelist.selectedCollections
+          .filter((selectedCollection) => selectedCollection.nftCollectionData !== undefined)
+          .map((selectedCollection) => ({
+            purchaseAmount: selectedCollection.amountPerNft
+              ? parseUnits(String(selectedCollection.amountPerNft), investmentToken.decimals)
+              : selectedCollection.amountPerWallet
+              ? parseUnits(String(selectedCollection.amountPerWallet), investmentToken.decimals)
+              : ZERO_BN,
+            collectionAddress: selectedCollection.nftCollectionData!.address,
+            purchaseAmountPerToken: !!selectedCollection.amountPerNft,
+            tokenIds: selectedCollection.selectedNftsData
+              .filter((selectedNft) => selectedNft.nftId !== undefined)
+              .map((selectedNft) => parseEther(String(selectedNft.nftId))),
+            minTokensEligible: selectedCollection.selectedNftsData
+              .filter((selectedNft) => selectedNft.nftId !== undefined)
+              .map((selectedNft) => parseEther(String(selectedNft.minimumAmount))),
+          }))
       : [],
   }
 }
