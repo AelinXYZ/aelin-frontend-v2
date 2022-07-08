@@ -7,8 +7,9 @@ import AddressesWhiteList, {
   AddressWhitelistProps,
   initialAddressesWhitelistValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
-import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
+import NftWhiteList, { NftWhiteListData } from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import {
+  NftWhiteListStep,
   initialState,
   nftWhiteListReducer,
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -21,23 +22,32 @@ const Modal = styled(BaseModal)`
 `
 
 const WhiteListModal = ({
-  currentList,
+  curentNftWhitelist,
+  currentAddressesWhitelist,
   investmentTokenDecimals,
+  onAddressesWhitelistSave,
   onClose,
-  onConfirm,
+  onNftWhitelistSave,
 }: {
-  currentList: AddressWhitelistProps[]
+  currentAddressesWhitelist: AddressWhitelistProps[]
+  curentNftWhitelist?: NftWhiteListData
   investmentTokenDecimals: number
   onClose: () => void
-  onConfirm: (whitelist: AddressWhitelistProps[]) => void
+  onAddressesWhitelistSave: (addressesWhitelist: AddressWhitelistProps[]) => void
+  onNftWhitelistSave: (nftWhitelist: NftWhiteListData) => void
 }) => {
   const [activeTab, setActiveTab] = useState(WhiteListTab.Addresses)
 
   const [addressesWhiteList, setAddressesWhiteList] = useState(
-    currentList.length ? currentList : initialAddressesWhitelistValues,
+    currentAddressesWhitelist.length ? currentAddressesWhitelist : initialAddressesWhitelistValues,
   )
 
-  const [nftWhiteListState, dispatch] = useReducer(nftWhiteListReducer, initialState)
+  const [nftWhiteListState, dispatch] = useReducer(
+    nftWhiteListReducer,
+    curentNftWhitelist
+      ? { ...curentNftWhitelist, currentStep: NftWhiteListStep.nftCollection }
+      : initialState,
+  )
 
   return (
     <Modal onClose={onClose} showCancelButton={false} size="794px" title="Whitelist">
@@ -51,7 +61,7 @@ const WhiteListModal = ({
             investmentTokenDecimals={investmentTokenDecimals}
             list={addressesWhiteList}
             onClose={onClose}
-            onConfirm={onConfirm}
+            onSave={onAddressesWhitelistSave}
             setList={setAddressesWhiteList}
           ></AddressesWhiteList>
         )}
@@ -60,6 +70,7 @@ const WhiteListModal = ({
             dispatch={dispatch}
             nftWhiteListState={nftWhiteListState}
             onClose={onClose}
+            onSave={onNftWhitelistSave}
           ></NftWhiteList>
         )}
       </WhiteListTabs>
