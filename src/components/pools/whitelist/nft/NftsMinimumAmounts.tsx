@@ -1,10 +1,9 @@
 import styled from 'styled-components'
 
-import NftIdSelector from './NftIdSelector'
 import { SelectedNftData } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
-import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
+import { Textfield, TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 
 const Column = styled.div<{ gap: number }>`
@@ -30,12 +29,15 @@ export const Label = styled.div`
   color: ${({ theme: { colors } }) => colors.textColor};
 `
 
+export const IdInput = styled(Textfield)`
+  display: flex;
+  flex-grow: 1;
+`
+
 export const AmountInput = styled(Textfield)`
   display: flex;
   flex-shrink: 0;
   width: 140px;
-  background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
-  border: ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
 `
 
 export const ButtonRemoveWrapper = styled.div<{ isOffset?: boolean }>`
@@ -50,20 +52,20 @@ const AddButton = styled(ButtonPrimaryLightSm)`
 `
 
 type NftsMinimumAmountsProps = {
-  selectedCollectionNftsIds: string[]
   selectedNftsData: SelectedNftData[]
+  invalidNftIds: Set<number>
   onNftMinimumAmountChange: (nftIndex: number, amount: number) => void
   onNewNftAdd: () => void
-  onNftIdChange: (nftIndex: number, id: string) => void
+  onNftIdChange: (nftIndex: number, nftId?: number) => void
   onNftDelete: (nftIndex: number) => void
 }
 
 const NftsMinimumAmounts = ({
+  invalidNftIds,
   onNewNftAdd,
   onNftDelete,
   onNftIdChange,
   onNftMinimumAmountChange,
-  selectedCollectionNftsIds,
   selectedNftsData,
 }: NftsMinimumAmountsProps) => {
   const { currentThemeName } = useThemeContext()
@@ -71,35 +73,64 @@ const NftsMinimumAmounts = ({
   return (
     <Column gap={16}>
       <Column gap={10}>
-        {selectedNftsData.map((selectedNft, nftIndex) => (
-          <Row key={selectedNft.id ?? 'empty'}>
+        {selectedNftsData.map((selectedNft, selectedNftIndex) => (
+          <Row key={selectedNft.id}>
             <Column gap={12}>
-              {nftIndex === 0 && <Label>ID(s)</Label>}
-              <NftIdSelector
-                ids={selectedCollectionNftsIds}
-                onChange={(id) => onNftIdChange(nftIndex, id)}
-                selectedId={selectedNft.id}
+              {selectedNftIndex === 0 && <Label>ID(s)</Label>}
+              <IdInput
+                onChange={(e) => {
+                  if (e.target.value.trim() === '') {
+                    onNftIdChange(selectedNftIndex, undefined)
+                    return
+                  }
+
+                  const id = Number(e.target.value)
+                  if (isNaN(id) || id < 0 || id % 1 !== 0) {
+                    return
+                  }
+
+                  onNftIdChange(selectedNftIndex, id)
+                }}
+                pattern="[0-9]"
+                placeholder="Enter ERC-1155 ID"
+                status={invalidNftIds.has(selectedNft.id) ? TextfieldState.error : undefined}
+                type="text"
+                value={selectedNft.nftId === undefined ? '' : selectedNft.nftId}
               />
             </Column>
             <Column gap={12}>
-              {nftIndex === 0 && <Label>Minimum amount</Label>}
+              {selectedNftIndex === 0 && <Label>Minimum amount</Label>}
               <AmountInput
-                key={nftIndex}
-                maxLength={8}
                 onChange={(e) => {
-                  onNftMinimumAmountChange(nftIndex, Number(e.target.value))
+                  if (e.target.value.trim() === '') {
+                    onNftMinimumAmountChange(selectedNftIndex, 0)
+                    return
+                  }
+
+                  const amount = Number(e.target.value)
+                  if (isNaN(amount) || amount < 0 || amount % 1 !== 0) {
+                    return
+                  }
+
+                  onNftMinimumAmountChange(selectedNftIndex, amount)
                 }}
+                pattern="[0-9]"
                 placeholder="0"
-                type="number"
+                status={
+                  selectedNft.nftId !== undefined && selectedNft.minimumAmount === 0
+                    ? TextfieldState.error
+                    : undefined
+                }
+                type="text"
                 value={selectedNft.minimumAmount || ''}
               />
             </Column>
             {selectedNftsData.length > 1 && (
-              <ButtonRemoveWrapper isOffset={nftIndex === 0}>
+              <ButtonRemoveWrapper isOffset={selectedNftIndex === 0}>
                 <ButtonRemove
                   currentThemeName={currentThemeName}
                   onClick={() => {
-                    onNftDelete(nftIndex)
+                    onNftDelete(selectedNftIndex)
                   }}
                 />
               </ButtonRemoveWrapper>
@@ -107,15 +138,13 @@ const NftsMinimumAmounts = ({
           </Row>
         ))}
       </Column>
-      {selectedNftsData[selectedNftsData.length - 1]?.id && (
-        <AddButton
-          onClick={() => {
-            onNewNftAdd()
-          }}
-        >
-          Add ID
-        </AddButton>
-      )}
+      <AddButton
+        onClick={() => {
+          onNewNftAdd()
+        }}
+      >
+        Add ID
+      </AddButton>
     </Column>
   )
 }

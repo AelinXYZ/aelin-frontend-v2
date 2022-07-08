@@ -14,6 +14,7 @@ import {
 import { NftCollectionData } from '@/src/components/pools/whitelist/nft/useNftCollectionList'
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import { TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 import abbreviateNumber from '@/src/utils/abbreviateNumber'
 
@@ -50,11 +51,11 @@ type NftCollectionProps = {
   isBorder: boolean
   onCollectionChange: (value: NftCollectionData) => void
   onCollectionRemove: () => void
-  onAmountPerWalletChange: (amount: number) => void
-  onAmountPerNftChange: (amount: number) => void
+  onAmountPerWalletChange: (amount?: number) => void
+  onAmountPerNftChange: (amount?: number) => void
   onNftMinimumAmountChange: (nftIndex: number, amount: number) => void
   onNewNftAdd: () => void
-  onNftIdChange: (nftIndex: number, id: string) => void
+  onNftIdChange: (nftIndex: number, nftId?: number) => void
   onNftDelete: (nftIndex: number) => void
 }
 
@@ -88,6 +89,11 @@ const NftCollection = ({
       </Card>
     )
 
+  const selectedCollectionAmount =
+    whiteListProcess === NftWhitelistProcess.limitedPerWallet
+      ? selectedCollection.amountPerWallet
+      : selectedCollection.amountPerNft
+
   return (
     <Card isBorder={isBorder}>
       <Row>
@@ -107,22 +113,25 @@ const NftCollection = ({
                 : 'Amount per NFT'}
             </Label>
             <AmountInput
-              maxLength={8}
+              min="0"
               onChange={(e) => {
+                const amount = e.target.value.trim() === '' ? undefined : Number(e.target.value)
+
                 if (whiteListProcess === NftWhitelistProcess.limitedPerWallet) {
-                  onAmountPerWalletChange(Number(e.target.value))
+                  onAmountPerWalletChange(amount)
                   return
                 }
 
-                onAmountPerNftChange(Number(e.target.value))
+                onAmountPerNftChange(amount)
               }}
               placeholder="0"
-              type="number"
-              value={
-                (whiteListProcess === NftWhitelistProcess.limitedPerWallet
-                  ? selectedCollection.amountPerWallet
-                  : selectedCollection.amountPerNft) || ''
+              status={
+                selectedCollectionAmount === undefined || selectedCollectionAmount <= 0
+                  ? TextfieldState.error
+                  : undefined
               }
+              type="number"
+              value={selectedCollectionAmount ?? ''}
             />
           </Column>
         )}
@@ -141,11 +150,11 @@ const NftCollection = ({
         <>
           {whiteListProcess === NftWhitelistProcess.minimumAmount && (
             <NftsMinimumAmounts
+              invalidNftIds={selectedCollection.invalidNftIds}
               onNewNftAdd={onNewNftAdd}
               onNftDelete={onNftDelete}
               onNftIdChange={onNftIdChange}
               onNftMinimumAmountChange={onNftMinimumAmountChange}
-              selectedCollectionNftsIds={selectedCollection.nftCollectionData.nftsIds}
               selectedNftsData={selectedCollection.selectedNftsData}
             />
           )}
