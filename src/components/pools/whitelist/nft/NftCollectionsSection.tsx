@@ -83,13 +83,13 @@ const NftCollectionsSection = ({
               },
             })
           }}
-          onNftIdChange={(nftIndex, id) => {
+          onNftIdChange={(nftIndex, nftId) => {
             dispatch({
               type: NftWhiteListActionType.updateNftId,
               payload: {
                 collectionIndex: index,
                 nftIndex: nftIndex,
-                id: id,
+                nftId: nftId,
               },
             })
           }}

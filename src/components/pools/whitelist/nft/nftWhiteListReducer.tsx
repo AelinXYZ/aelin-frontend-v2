@@ -19,15 +19,17 @@ export enum NftWhitelistProcess {
 }
 
 export type SelectedNftData = {
-  id: string
+  id: number
+  nftId?: number
   minimumAmount: number
 }
 
 export type SelectedNftCollectionData = {
   nftCollectionData: NftCollectionData | undefined
-  amountPerWallet: number
-  amountPerNft: number
+  amountPerWallet?: number
+  amountPerNft?: number
   selectedNftsData: SelectedNftData[]
+  invalidNftIds: Set<number>
 }
 
 export type NftWhiteListState = {
@@ -53,16 +55,17 @@ const getInitialSelectedNftsData = (nftType: NftType): SelectedNftData[] => {
     case NftType.erc721:
       return []
     case NftType.erc1155:
-      return [{ id: '', minimumAmount: 0 }]
+      return [{ id: 0, nftId: undefined, minimumAmount: 0 }]
   }
 }
 
 const getInitialSelectedCollection = (nftType: NftType): SelectedNftCollectionData => {
   return {
     nftCollectionData: undefined,
-    amountPerNft: 0,
-    amountPerWallet: 0,
+    amountPerNft: undefined,
+    amountPerWallet: undefined,
     selectedNftsData: getInitialSelectedNftsData(nftType),
+    invalidNftIds: new Set(),
   }
 }
 
@@ -115,11 +118,11 @@ export type NftWhiteListAction =
     }
   | {
       type: NftWhiteListActionType.updateAmountPerWallet
-      payload: { index: number; amount: number }
+      payload: { index: number; amount?: number }
     }
   | {
       type: NftWhiteListActionType.updateAmountPerNft
-      payload: { index: number; amount: number }
+      payload: { index: number; amount?: number }
     }
   | {
       type: NftWhiteListActionType.addEmptyNft
@@ -127,7 +130,7 @@ export type NftWhiteListAction =
     }
   | {
       type: NftWhiteListActionType.updateNftId
-      payload: { collectionIndex: number; nftIndex: number; id: string }
+      payload: { collectionIndex: number; nftIndex: number; nftId?: number }
     }
   | {
       type: NftWhiteListActionType.updateNftMinimumAmount
@@ -145,6 +148,7 @@ export const nftWhiteListReducer = (
   const { payload, type } = action
   let newSelectedCollections: SelectedNftCollectionData[]
   let newSelectedNftsData: SelectedNftData[]
+  let newInvalidNftIds: Set<number>
 
   switch (type) {
     case NftWhiteListActionType.updateStep:
@@ -199,7 +203,14 @@ export const nftWhiteListReducer = (
       newSelectedCollections = [...state.selectedCollections]
       newSelectedNftsData = [
         ...state.selectedCollections[payload].selectedNftsData,
-        { id: '', minimumAmount: 0 },
+        {
+          id:
+            state.selectedCollections[payload].selectedNftsData[
+              state.selectedCollections[payload].selectedNftsData.length - 1
+            ].id + 1,
+          nftId: undefined,
+          minimumAmount: 0,
+        },
       ]
       newSelectedCollections[payload] = {
         ...newSelectedCollections[payload],
@@ -209,15 +220,40 @@ export const nftWhiteListReducer = (
     case NftWhiteListActionType.updateNftId:
       newSelectedCollections = [...state.selectedCollections]
       newSelectedNftsData = [...state.selectedCollections[payload.collectionIndex].selectedNftsData]
+      newInvalidNftIds = new Set(state.selectedCollections[payload.collectionIndex].invalidNftIds)
+      if (!newInvalidNftIds.has(newSelectedNftsData[payload.nftIndex].id)) {
+        const firstConflictingId = newSelectedNftsData.filter(
+          (nftData) =>
+            nftData.id !== newSelectedNftsData[payload.nftIndex].id &&
+            nftData.nftId === newSelectedNftsData[payload.nftIndex].nftId,
+        )[0]?.id
+
+        if (firstConflictingId) {
+          newInvalidNftIds.delete(firstConflictingId)
+        }
+      }
+      if (
+        newSelectedNftsData.findIndex((nftData) =>
+          nftData.nftId === undefined ? false : nftData.nftId === payload.nftId,
+        ) === -1
+      ) {
+        newInvalidNftIds.delete(newSelectedNftsData[payload.nftIndex].id)
+      } else {
+        newInvalidNftIds.add(newSelectedNftsData[payload.nftIndex].id)
+      }
       newSelectedNftsData[payload.nftIndex] = {
         ...newSelectedNftsData[payload.nftIndex],
-        id: payload.id,
+        nftId: payload.nftId,
       }
       newSelectedCollections[payload.collectionIndex] = {
         ...newSelectedCollections[payload.collectionIndex],
         selectedNftsData: newSelectedNftsData,
+        invalidNftIds: newInvalidNftIds,
       }
-      return { ...state, selectedCollections: newSelectedCollections }
+      return {
+        ...state,
+        selectedCollections: newSelectedCollections,
+      }
     case NftWhiteListActionType.updateNftMinimumAmount:
       newSelectedCollections = [...state.selectedCollections]
       newSelectedNftsData = [...state.selectedCollections[payload.collectionIndex].selectedNftsData]
@@ -233,11 +269,31 @@ export const nftWhiteListReducer = (
     case NftWhiteListActionType.deleteNft:
       newSelectedCollections = [...state.selectedCollections]
       newSelectedNftsData = [...state.selectedCollections[payload.collectionIndex].selectedNftsData]
+      newInvalidNftIds = new Set(state.selectedCollections[payload.collectionIndex].invalidNftIds)
+      if (
+        newSelectedNftsData[payload.nftIndex].nftId !== undefined &&
+        !newInvalidNftIds.has(newSelectedNftsData[payload.nftIndex].id)
+      ) {
+        const firstConflictingId = newSelectedNftsData.filter(
+          (nftData) =>
+            nftData.id !== newSelectedNftsData[payload.nftIndex].id &&
+            nftData.nftId === newSelectedNftsData[payload.nftIndex].nftId,
+        )[0]?.id
+
+        if (firstConflictingId) {
+          newInvalidNftIds.delete(firstConflictingId)
+        }
+      }
+      newInvalidNftIds.delete(newSelectedNftsData[payload.nftIndex].id)
       newSelectedNftsData.splice(payload.nftIndex, 1)
       newSelectedCollections[payload.collectionIndex] = {
         ...newSelectedCollections[payload.collectionIndex],
         selectedNftsData: newSelectedNftsData,
+        invalidNftIds: newInvalidNftIds,
       }
-      return { ...state, selectedCollections: newSelectedCollections }
+      return {
+        ...state,
+        selectedCollections: newSelectedCollections,
+      }
   }
 }

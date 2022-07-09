@@ -1,4 +1,4 @@
-import { Dispatch } from 'react'
+import { Dispatch, ReactElement } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -6,6 +6,7 @@ import {
   NftWhiteListActionType,
   NftWhiteListState,
   NftWhiteListStep,
+  NftWhitelistProcess,
 } from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
 import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
 import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
@@ -18,6 +19,7 @@ import {
   ButtonNext,
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
+import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 
 const WrapperGrid = styled.div`
@@ -68,6 +70,8 @@ const NftTypeRemark = styled.p`
   max-width: 100%;
   text-align: center;
 `
+
+const Error = styled(BaseError)``
 
 const NextButton = styled(ButtonGradient)`
   min-width: 160px;
@@ -153,6 +157,77 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
     }
   }
 
+  const getError = (): ReactElement | null => {
+    if (currentStep !== NftWhiteListStep.nftCollection) {
+      return null
+    }
+
+    if (nftWhiteListState.selectedCollections[0].nftCollectionData === undefined) {
+      return <Error textAlign="center">You should add at least one NFT collection</Error>
+    }
+
+    if (
+      whiteListProcess === NftWhitelistProcess.limitedPerWallet &&
+      nftWhiteListState.selectedCollections
+        .filter((selectedCollection) => selectedCollection.nftCollectionData !== undefined)
+        .findIndex((selectedCollection) =>
+          selectedCollection.amountPerWallet === undefined
+            ? true
+            : selectedCollection.amountPerWallet <= 0,
+        ) !== -1
+    ) {
+      return <Error textAlign="center">Amount per wallet should be greater than zero</Error>
+    }
+
+    if (
+      whiteListProcess === NftWhitelistProcess.limitedPerNft &&
+      nftWhiteListState.selectedCollections
+        .filter((selectedCollection) => selectedCollection.nftCollectionData !== undefined)
+        .findIndex((selectedCollection) =>
+          selectedCollection.amountPerNft === undefined
+            ? true
+            : selectedCollection.amountPerNft <= 0,
+        ) !== -1
+    ) {
+      return <Error textAlign="center">Amount per NFT should be greater than zero</Error>
+    }
+
+    if (whiteListProcess === NftWhitelistProcess.minimumAmount) {
+      if (
+        nftWhiteListState.selectedCollections
+          .filter((selectedCollection) => selectedCollection.nftCollectionData !== undefined)
+          .findIndex(
+            (selectedCollection) =>
+              selectedCollection.selectedNftsData.filter((nftData) => nftData.nftId !== undefined)
+                .length === 0,
+          ) !== -1
+      ) {
+        return <Error textAlign="center">You should add at least one ERC-1155 ID</Error>
+      }
+
+      if (
+        nftWhiteListState.selectedCollections.findIndex(
+          (selectedCollection) => selectedCollection.invalidNftIds.size > 0,
+        ) !== -1
+      ) {
+        return <Error textAlign="center">All IDs should be unique</Error>
+      }
+
+      if (
+        nftWhiteListState.selectedCollections.findIndex(
+          (selectedCollection) =>
+            selectedCollection.selectedNftsData.findIndex(
+              (nftData) => nftData.nftId !== undefined && nftData.minimumAmount <= 0,
+            ) !== -1,
+        ) !== -1
+      ) {
+        return <Error textAlign="center">Minimum amount should be greater than zero</Error>
+      }
+    }
+
+    return null
+  }
+
   return (
     <>
       {Object.values(NftWhiteListStep).map((step, index) => {
@@ -192,7 +267,9 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
               />
               <Title>{title}</Title>
               {getContent()}
+              {getError()}
               <NextButton
+                disabled={getError() !== null}
                 onClick={() => {
                   if (isLastStep) {
                     onClose()
