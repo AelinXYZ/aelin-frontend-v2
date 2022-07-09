@@ -1,11 +1,14 @@
+import { useEffect, useState } from 'react'
+
 import Fuse from 'fuse.js'
 import useSWR from 'swr'
 
-import { Chains } from '@/src/constants/chains'
+import { Chains, ChainsValues } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import isDev from '@/src/utils/isDev'
 
 export type NftCollectionData = {
-  id: string
+  id: number
   address: string
   name: string
   slug: string | null
@@ -24,33 +27,33 @@ const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/quixotic-metadata.json'
 
 function useNftCollectionList(query: string) {
   const { appChainId } = useWeb3Connection()
+  const [collections, setCollections] = useState<NftCollectionData[]>([])
+
+  useEffect(() => {
+    const fetchCollections = async (appChainId: ChainsValues) => {
+      const collections: NftCollectionData[] = (
+        await Promise.all([
+          (appChainId === Chains.mainnet || isDev) &&
+            fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
+          (appChainId === Chains.optimism || isDev) &&
+            fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+        ])
+      )
+        .filter(Boolean)
+        .flat()
+
+      setCollections(collections)
+    }
+
+    fetchCollections(appChainId)
+  }, [appChainId])
 
   return useSWR<NftCollectionData[], Error>(
-    'search-nft-collections',
+    ['search-nft-collections', query, collections],
     async () => {
-      const optimimsmCollectionsResponse = await fetch(OPTIMISM_NFT_COLLECTIONS)
-      const optimismCollections = await optimimsmCollectionsResponse.json()
+      if (!query.length) return []
 
-      const mainnetCollectionsResponse = await fetch(MAINNET_NFT_COLLECTIONS)
-      const mainnetCollections = await mainnetCollectionsResponse.json()
-
-      const collections = []
-
-      switch (appChainId) {
-        case Chains.mainnet: {
-          collections.push(...mainnetCollections)
-          break
-        }
-        case Chains.optimism: {
-          collections.push(...optimismCollections)
-          break
-        }
-        default: {
-          collections.push(...mainnetCollections)
-          collections.push(...optimismCollections)
-          break
-        }
-      }
+      console.log('collections: ', collections)
 
       const fuse = new Fuse<NftCollectionData>(collections, {
         keys: ['name'],

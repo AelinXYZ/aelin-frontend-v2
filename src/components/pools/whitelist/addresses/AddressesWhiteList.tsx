@@ -207,7 +207,7 @@ const AddressesWhiteList = ({
           <>
             <WhiteListRow
               {...listItem}
-              key={rowIndex}
+              key={`${listItem.address}-${rowIndex}`}
               maxDecimals={investmentTokenDecimals}
               onChangeRow={onChangeRow}
               onDeleteRow={onDeleteRow}

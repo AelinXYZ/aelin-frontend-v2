@@ -21,7 +21,6 @@ const Row = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  margin: 8px 0 12px;
 `
 
 const Title = styled.h1`

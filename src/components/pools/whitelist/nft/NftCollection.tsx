@@ -11,9 +11,9 @@ import {
   NftWhitelistProcess,
   SelectedNftCollectionData,
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
-import { NftCollectionData } from '@/src/components/pools/whitelist/nft/useNftCollectionList'
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 import abbreviateNumber from '@/src/utils/abbreviateNumber'
 
