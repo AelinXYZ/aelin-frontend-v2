@@ -53,8 +53,6 @@ function useNftCollectionList(query: string) {
     async () => {
       if (!query.length) return []
 
-      console.log('collections: ', collections)
-
       const fuse = new Fuse<NftCollectionData>(collections, {
         keys: ['name'],
         includeScore: true,
