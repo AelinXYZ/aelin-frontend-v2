@@ -232,6 +232,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
       console.warn('Unable to connect, onboard is not defined')
       return
     }
+    setAddress(null)
     onboard.walletReset()
     window.localStorage.removeItem(STORAGE_CONNECTED_WALLET)
   }
