@@ -11,10 +11,10 @@ import {
   NftWhitelistProcess,
   SelectedNftCollectionData,
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
-import { NftCollectionData } from '@/src/components/pools/whitelist/nft/useNftCollectionList'
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
+import { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 import abbreviateNumber from '@/src/utils/abbreviateNumber'
 
@@ -162,29 +162,28 @@ const NftCollection = ({
             attributes={[
               {
                 name: 'Items',
-                value: abbreviateNumber(selectedCollection.nftCollectionData.itemsCount),
+                value: abbreviateNumber(selectedCollection.nftCollectionData.totalSupply),
                 currencyImageUrl: undefined,
               },
               {
                 name: 'Owners',
-                value: abbreviateNumber(selectedCollection.nftCollectionData.ownersCount),
+                value: abbreviateNumber(selectedCollection.nftCollectionData.numOwners),
                 currencyImageUrl: undefined,
               },
               {
                 name: 'Floor price',
-                value: abbreviateNumber(selectedCollection.nftCollectionData.floorPrice),
-                currencyImageUrl: selectedCollection.nftCollectionData.currencyImageUrl,
+                value: abbreviateNumber(selectedCollection.nftCollectionData.floorPrice ?? 0),
+                currencyImageUrl: undefined,
               },
               {
                 name: 'Volume traded',
-                value: abbreviateNumber(selectedCollection.nftCollectionData.volumeTraded),
-                currencyImageUrl: selectedCollection.nftCollectionData.currencyImageUrl,
+                value: abbreviateNumber(selectedCollection.nftCollectionData.totalVolume ?? 0),
+                currencyImageUrl: undefined,
               },
             ]}
             imageUrl={selectedCollection.nftCollectionData.imageUrl}
             isVerified={selectedCollection.nftCollectionData.isVerified}
             name={selectedCollection.nftCollectionData.name}
-            url={selectedCollection.nftCollectionData.url}
           />
         </>
       )}

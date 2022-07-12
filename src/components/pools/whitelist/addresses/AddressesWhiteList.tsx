@@ -204,16 +204,14 @@ const AddressesWhiteList = ({
         <Title>Amount</Title>
         <div>&nbsp;</div>
         {list.map((listItem: AddressWhitelistProps, rowIndex: number) => (
-          <>
-            <WhiteListRow
-              {...listItem}
-              key={rowIndex}
-              maxDecimals={investmentTokenDecimals}
-              onChangeRow={onChangeRow}
-              onDeleteRow={onDeleteRow}
-              rowIndex={rowIndex}
-            />
-          </>
+          <WhiteListRow
+            {...listItem}
+            key={rowIndex}
+            maxDecimals={investmentTokenDecimals}
+            onChangeRow={onChangeRow}
+            onDeleteRow={onDeleteRow}
+            rowIndex={rowIndex}
+          />
         ))}
       </Grid>
       <ButtonPrimaryLightSm onClick={() => setList(list.concat(initialAddressesWhitelistValues))}>

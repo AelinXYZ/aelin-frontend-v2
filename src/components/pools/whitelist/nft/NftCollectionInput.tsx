@@ -6,11 +6,9 @@ import debounce from 'lodash/debounce'
 
 import { Search } from '@/src/components/assets/Search'
 import { SelectedNftCollectionData } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
-import useNftCollectionList, {
-  NftCollectionData,
-} from '@/src/components/pools/whitelist/nft/useNftCollectionList'
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
+import useNftCollectionList, { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
 
 const Wrapper = styled.div`
   position: relative;
@@ -93,49 +91,47 @@ type NftCollectionInputProps = {
 }
 
 const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInputProps) => {
-  const [input, setInput] = useState<string | undefined>(undefined)
+  const [input, setInput] = useState<string>('')
   const [query, setQuery] = useState<string>('')
 
   const debouncedChangeHandler = useMemo(() => debounce(setQuery, DEBOUNCED_INPUT_TIME), [setQuery])
 
-  const { collections } = useNftCollectionList(query)
+  const collections = useNftCollectionList(query)
+
+  if (collections.error) {
+    throw new Error('Unexpected error when fetching nft metadata')
+  }
+
+  const { data } = collections
 
   return (
-    <Wrapper
-      onBlur={() => {
-        setInput(undefined)
-        setQuery('')
-      }}
-      onFocus={() => {
-        setInput(selectedCollection.nftCollectionData?.name)
-      }}
-    >
+    <Wrapper>
       <SearchWrapper>
         <Search />
       </SearchWrapper>
       <Input
-        isOpen={!!input && collections.length > 0}
+        isOpen={!!input.length && !!data && data.length > 0}
         onChange={(e) => {
           setInput(e.target.value)
           debouncedChangeHandler(e.target.value.trim().toLowerCase())
         }}
         placeholder="Enter NFT collection name..."
         type="text"
-        value={input ?? selectedCollection.nftCollectionData?.name ?? ''}
+        value={selectedCollection.nftCollectionData?.name ?? input ?? ''}
       />
-      {!!input && collections.length > 0 && (
+      {!!input.length && !!data?.length && (
         <Collections>
-          {collections.map((collection) => {
+          {data?.map((collection) => {
             return (
               <Item
                 isActive={
                   !!selectedCollection.nftCollectionData &&
                   collection.id === selectedCollection.nftCollectionData.id
                 }
-                key={collection.id}
+                key={`${collection.network}-${collection.id}`}
                 onMouseDown={() => {
                   onChange(collection)
-                  setInput(undefined)
+                  setInput('')
                   setQuery('')
                 }}
               >
@@ -144,9 +140,8 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
                   <span>{collection.name}</span>
                 </Details>
                 <Details>
-                  <Image alt="" height={15} src={collection.currencyImageUrl} width={8} />
-                  <span>{`${collection.itemsCount} ${
-                    collection.itemsCount === 1 ? 'item' : 'items'
+                  <span>{`${collection.totalSupply} ${
+                    collection.totalSupply === 1 ? 'item' : 'items'
                   }`}</span>
                 </Details>
               </Item>

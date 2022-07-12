@@ -201,8 +201,6 @@ const QuixoticMetadataCollector = async () => {
     },
   }
 
-  console.log('options: ', options)
-
   const metadata = await Promise.all(
     collections.map(async (collection: QuixoticCollection, index: number) => {
       const {
