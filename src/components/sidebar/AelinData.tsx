@@ -9,7 +9,7 @@ import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Filters } from '@/src/components/pureStyledComponents/common/Filters'
 import { Chains } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { ZERO_BN } from '@/src/constants/misc'
+import { STAKING_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
 import { useLayoutStatus } from '@/src/providers/layoutStatusProvider'
 import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
@@ -108,19 +108,29 @@ const AelinData: React.FC = ({ ...restProps }) => {
     {
       title: getBalanceTitle(activeTab),
       value: !isDev
-        ? `${formatToken(rewards?.tokenBalance as BigNumber, rewards?.decimals)} ${rewards?.symbol}`
+        ? `${formatToken(
+            rewards?.tokenBalance as BigNumber,
+            rewards?.decimals,
+            STAKING_DECIMALS,
+          )} ${rewards?.symbol}`
         : '0 AELIN',
     },
     {
       title: 'My stake:',
       value: !isDev
-        ? `${formatToken(rewards?.userStake as BigNumber, rewards?.decimals)} ${rewards?.symbol}`
+        ? `${formatToken(rewards?.userStake as BigNumber, rewards?.decimals, STAKING_DECIMALS)} ${
+            rewards?.symbol
+          }`
         : '0 AELIN',
     },
     {
       title: 'My rewards:',
       value: !isDev
-        ? `${formatToken(rewards?.userRewards as BigNumber, rewards?.decimals)} ${rewards?.symbol}`
+        ? `${formatToken(
+            rewards?.userRewards as BigNumber,
+            rewards?.decimals,
+            STAKING_DECIMALS,
+          )} AELIN`
         : '0 AELIN',
     },
   ]
