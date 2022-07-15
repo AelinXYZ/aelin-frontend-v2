@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Interface, LogDescription } from '@ethersproject/abi'
 import { Contract } from '@ethersproject/contracts'
@@ -42,9 +42,8 @@ export default function useWhitelistedUserNfts(whitelistRules: Record<string, Wh
   const [isLoading, setIsLoading] = useState(false)
 
   const { address: userAddress, appChainId } = useWeb3Connection()
-  const provider = new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl)
 
-  const fetchWhitelistedUserNfts = async () => {
+  const fetchWhitelistedUserNfts = useCallback(async () => {
     try {
       setData({})
       setIsError(false)
@@ -54,6 +53,7 @@ export default function useWhitelistedUserNfts(whitelistRules: Record<string, Wh
 
       const fetchCollectionNfts = async (collectionAddress: string) => {
         const abi = getAbi(collectionAddress, whitelistRules[collectionAddress].minimumAmounts)
+        const provider = new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl)
         const contract = new Contract(collectionAddress, abi, provider)
         const abiInterface = new Interface(abi)
 
@@ -139,11 +139,10 @@ export default function useWhitelistedUserNfts(whitelistRules: Record<string, Wh
       await Promise.all(collectionsNftsRequests)
     } catch (err: any) {
       setIsError(!!err?.message)
-      console.log('xxx err', err)
     }
 
     setIsLoading(false)
-  }
+  }, [userAddress, appChainId, whitelistRules])
 
   return { data, isLoading, isError, fetchWhitelistedUserNfts }
 }
