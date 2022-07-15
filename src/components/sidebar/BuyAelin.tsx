@@ -105,21 +105,15 @@ const getPriceDifferenceFormatted = (prices: PriceData[]) => {
   return `${diff > 0 ? '+' : ''}${diff.toFixed(2)}%`
 }
 
-const mockBlacklistNfts = {
-  '0x0000000000000000000000000000000000000001': new Set(['5']),
-  '0x0000000000000000000000000000000000000003': new Set(['3']),
+const mockBlacklistedNfts = {
+  '0x0000000000000000000000000000000000000001': new Set([5]),
+  '0x0000000000000000000000000000000000000003': new Set([3]),
 }
 
 const mockWhitelistRules = {
-  '0x0000000000000000000000000000000000000001': {
-    amountPerWallet: 1,
-    amountPerNft: 10,
-    nftsMinimumAmounts: {},
-  },
-  '0x0000000000000000000000000000000000000003': {
-    amountPerWallet: 2,
-    amountPerNft: 100,
-    nftsMinimumAmounts: {},
+  '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b': {
+    allocationAmount: 100,
+    minimumAmounts: null,
   },
 }
 
@@ -170,7 +164,7 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
       {showNftsPickerModal && (
         <NftsPickerModal
           allocationCurrency="USDC"
-          blacklistNfts={mockBlacklistNfts}
+          blacklistedNfts={mockBlacklistedNfts}
           nftWhitelistProcess={NftWhitelistProcess.limitedPerNft}
           onClose={() => setShowNftsPickerModal(false)}
           onSave={(selectedNfts) => {
