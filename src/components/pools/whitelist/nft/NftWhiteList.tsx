@@ -19,7 +19,7 @@ import {
   ButtonNext,
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
-import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
+import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 
 const WrapperGrid = styled.div`
@@ -70,8 +70,6 @@ const NftTypeRemark = styled.p`
   max-width: 100%;
   text-align: center;
 `
-
-const Error = styled(BaseError)``
 
 const NextButton = styled(ButtonGradient)`
   min-width: 160px;
