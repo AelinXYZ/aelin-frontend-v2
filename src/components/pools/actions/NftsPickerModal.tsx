@@ -14,6 +14,8 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { RadioButton } from '@/src/components/pureStyledComponents/form/RadioButton'
+import { Error } from '@/src/components/pureStyledComponents/text/Error'
+import useWhitelistedUserNfts, { WhitelistRule } from '@/src/hooks/contracts/useWhitelistedUserNfts'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { shortenAddress } from '@/src/utils/string'
 
@@ -151,41 +153,9 @@ const SaveButton = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 
-type UserNft = {
-  id: string
-  imageUrl: string
-}
-
-const mockNfts: Record<string, UserNft[]> = {
-  '0x0000000000000000000000000000000000000001': [
-    { id: '1', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '2', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '3', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '4', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '5', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-  ],
-  '0x0000000000000000000000000000000000000002': [
-    { id: '1', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '2', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '3', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-  ],
-  '0x0000000000000000000000000000000000000003': [
-    { id: '1', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '2', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '3', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-    { id: '4', imageUrl: 'https://rarify-public.s3.amazonaws.com/cryptopunks.png' },
-  ],
-}
-
-type WhitelistRule = {
-  amountPerWallet: number
-  amountPerNft: number
-  nftsMinimumAmounts: Record<string, number>
-}
-
 type Nft = {
-  collectionId: string
-  id: string
+  collectionAddress: string
+  id: number
   imageUrl: string
   isBlacklisted: boolean
   isSelected: boolean
@@ -194,15 +164,15 @@ type Nft = {
 export type NftsPickerModalProps = {
   nftWhitelistProcess: NftWhitelistProcess
   whitelistRules: Record<string, WhitelistRule>
-  blacklistNfts: Record<string, Set<string>>
+  blacklistedNfts: Record<string, Set<number>>
   allocationCurrency: string
   onClose: () => void
-  onSave: (selectedNfts: Record<string, Set<string>>) => void
+  onSave: (selectedNfts: Record<string, Set<number>>) => void
 }
 
 const NftsPickerModal = ({
   allocationCurrency,
-  blacklistNfts,
+  blacklistedNfts,
   nftWhitelistProcess,
   onClose,
   onSave,
@@ -213,28 +183,34 @@ const NftsPickerModal = ({
 
   const { address = '' } = useWeb3Connection()
 
-  // TODO [AELIP-15]: Replace mock.
-  const userNfts = mockNfts
+  const {
+    data: whitelistedUserNfts,
+    fetchWhitelistedUserNfts,
+    isError,
+    isLoading,
+  } = useWhitelistedUserNfts(whitelistRules)
+
+  useEffect(() => {
+    fetchWhitelistedUserNfts()
+  }, [fetchWhitelistedUserNfts])
 
   useEffect(() => {
     const result: Nft[] = []
 
-    for (const collectionId in userNfts) {
-      if (Object.prototype.hasOwnProperty.call(whitelistRules, collectionId)) {
-        userNfts[collectionId].forEach((nft) =>
-          result.push({
-            collectionId: collectionId,
-            id: nft.id,
-            imageUrl: nft.imageUrl,
-            isBlacklisted: blacklistNfts[collectionId].has(nft.id),
-            isSelected: false,
-          }),
-        )
-      }
+    for (const collectionAddress in whitelistedUserNfts) {
+      whitelistedUserNfts[collectionAddress].forEach((nft) =>
+        result.push({
+          collectionAddress: collectionAddress,
+          id: nft.id,
+          imageUrl: nft.imageUrl,
+          isBlacklisted: blacklistedNfts[collectionAddress]?.has(nft.id),
+          isSelected: false,
+        }),
+      )
     }
 
     setNfts(result)
-  }, [userNfts, whitelistRules, blacklistNfts])
+  }, [whitelistedUserNfts, blacklistedNfts])
 
   useEffect(() => {
     if (
@@ -251,6 +227,22 @@ const NftsPickerModal = ({
     }
   }, [nfts])
 
+  const getStatusInfo = () => {
+    if (isLoading) {
+      return <Description>Loading...</Description>
+    }
+
+    if (isError) {
+      return <Error textAlign="center">Something went wrong</Error>
+    }
+
+    if (nfts.length === 0) {
+      return <Error textAlign="center">You don't have whitelisted NFTs to unlock deposit</Error>
+    }
+
+    return null
+  }
+
   const allocation = useMemo(() => {
     let allocation = 0
 
@@ -264,7 +256,7 @@ const NftsPickerModal = ({
 
         break
       case NftWhitelistProcess.limitedPerNft:
-        for (const collectionId in whitelistRules) {
+        for (const collectionAddress in whitelistRules) {
           for (const nft of nfts) {
             if (nft.collectionId === collectionId && nft.isSelected) {
               allocation += Number(whitelistRules[collectionId].amountPerNft)
@@ -298,53 +290,56 @@ const NftsPickerModal = ({
           items={[<ChangeWalletMenu key={'wallet_dopdown'} />]}
         />
       </ChangeWallet>
-      <Card>
-        <Items>
-          {nfts.map((nft, index) => (
-            <Item key={`${nft.collectionId}-${nft.id}`}>
-              <NftImage
-                alt=""
-                height={128}
-                isDisabled={nft.isBlacklisted}
-                src={nft.imageUrl}
-                width={128}
-              />
-              {!nft.isBlacklisted && (
-                <RadioButton
-                  checked={nft.isSelected}
-                  onClick={() => {
-                    setNfts((prevNfts) => {
-                      const newNfts = [...prevNfts]
-
-                      newNfts[index] = {
-                        ...newNfts[index],
-                        isSelected: !newNfts[index].isSelected,
-                      }
-
-                      return newNfts
-                    })
-                  }}
+      {nfts.length > 0 && (
+        <Card>
+          <Items>
+            {nfts.map((nft, index) => (
+              <Item key={`${nft.collectionAddress}-${nft.id}`}>
+                <NftImage
+                  alt=""
+                  height={128}
+                  isDisabled={nft.isBlacklisted}
+                  src={nft.imageUrl}
+                  width={128}
                 />
-              )}
-            </Item>
-          ))}
-        </Items>
-        <AllButton
-          onClick={() => {
-            setNfts((prevNfts) => {
-              const newNfts = [...prevNfts]
+                {!nft.isBlacklisted && (
+                  <RadioButton
+                    checked={nft.isSelected}
+                    onClick={() => {
+                      setNfts((prevNfts) => {
+                        const newNfts = [...prevNfts]
 
-              newNfts.forEach(
-                (nft) => (nft.isSelected = nft.isBlacklisted ? nft.isSelected : !isClear),
-              )
+                        newNfts[index] = {
+                          ...newNfts[index],
+                          isSelected: !newNfts[index].isSelected,
+                        }
 
-              return newNfts
-            })
-          }}
-        >
-          {isClear ? 'Clear all' : 'Select all'}
-        </AllButton>
-      </Card>
+                        return newNfts
+                      })
+                    }}
+                  />
+                )}
+              </Item>
+            ))}
+          </Items>
+          <AllButton
+            onClick={() => {
+              setNfts((prevNfts) => {
+                const newNfts = [...prevNfts]
+
+                newNfts.forEach(
+                  (nft) => (nft.isSelected = nft.isBlacklisted ? nft.isSelected : !isClear),
+                )
+
+                return newNfts
+              })
+            }}
+          >
+            {isClear ? 'Clear all' : 'Select all'}
+          </AllButton>
+        </Card>
+      )}
+      {getStatusInfo()}
       {allocation > 0 && (
         <Allocation>
           <AllocationLabel>Your allocation :</AllocationLabel>
@@ -353,17 +348,17 @@ const NftsPickerModal = ({
       )}
       <SaveButton
         onClick={() => {
-          const selectedNfts: Record<string, Set<string>> = {}
+          const selectedNfts: Record<string, Set<number>> = {}
 
           for (const nft of nfts) {
             if (!nft.isSelected) {
               continue
             }
 
-            if (Object.prototype.hasOwnProperty.call(selectedNfts, nft.collectionId)) {
-              selectedNfts[nft.collectionId].add(nft.id)
+            if (Object.prototype.hasOwnProperty.call(selectedNfts, nft.collectionAddress)) {
+              selectedNfts[nft.collectionAddress].add(nft.id)
             } else {
-              selectedNfts[nft.collectionId] = new Set([nft.id])
+              selectedNfts[nft.collectionAddress] = new Set([nft.id])
             }
           }
 
