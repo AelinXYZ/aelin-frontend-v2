@@ -137,6 +137,7 @@ export type Web3Context = {
   walletChainId: number | null
   web3Provider: Provider | null
   getExplorerUrl: (hash: string) => string
+  changeWallet: () => void
 }
 
 const Web3ContextConnection = createContext<Web3Context | undefined>(undefined)
@@ -176,6 +177,27 @@ export default function Web3ConnectionProvider({ children }: Props) {
 
     if (previouslySelectedWallet) {
       await onboard.walletSelect(previouslySelectedWallet)
+    }
+  }
+
+  const changeWallet = async (): Promise<void> => {
+    if (!onboard || !wallet || wallet.name !== 'MetaMask') {
+      console.warn('Unable to change wallet')
+      return
+    }
+
+    const provider = wallet.provider
+    try {
+      await provider.request({
+        method: 'wallet_requestPermissions',
+        params: [
+          {
+            eth_accounts: {},
+          },
+        ],
+      })
+    } catch (_) {
+      console.error('Unable to change wallet')
     }
   }
 
@@ -307,6 +329,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
     disconnectWallet,
     pushNetwork,
     setAppChainId: setAppChainId,
+    changeWallet,
   }
 
   return <Web3ContextConnection.Provider value={value}>{children}</Web3ContextConnection.Provider>
