@@ -261,6 +261,7 @@ export const Header: React.FC = (props) => {
   const {
     address = '',
     appChainId,
+    changeWallet,
     connectWallet,
     disconnectWallet,
     isWalletConnected,
@@ -357,7 +358,7 @@ export const Header: React.FC = (props) => {
                           </ExternalLink>
                         </WalletDropdownRow>
                       )}
-                      <WalletButton>Change wallet</WalletButton>
+                      <WalletButton onClick={changeWallet}>Change wallet</WalletButton>
                       <WalletButton onClick={disconnectWallet}>Disconnect</WalletButton>
                     </WalletDropdownContents>,
                   ]}
