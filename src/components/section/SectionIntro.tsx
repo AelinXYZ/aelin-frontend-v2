@@ -1,7 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonGradient,
+  ButtonPrimaryLight,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
@@ -65,20 +68,36 @@ const Button = styled(ButtonGradient)`
     margin: 0;
   }
 `
-
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 15px;
+`
 export const SectionIntro: React.FC<{
   backgroundImage?: string
   button?: {
     onClick: () => void
     title: string
   }
+  secondaryButton?: {
+    onClick: () => void
+    title: string
+  }
   title: string
-}> = ({ backgroundImage, button, children, title, ...restProps }) => {
+}> = ({ backgroundImage, button, children, secondaryButton, title, ...restProps }) => {
   return (
     <Wrapper backgroundImage={backgroundImage} {...restProps}>
       <Title>{title}</Title>
       <Description>{children}</Description>
-      {button && <Button onClick={button.onClick}>{button.title}</Button>}
+      {(!!button || !!secondaryButton) && (
+        <ButtonWrapper>
+          {button && <Button onClick={button.onClick}>{button.title}</Button>}
+          {secondaryButton && (
+            <ButtonPrimaryLight onClick={secondaryButton.onClick}>
+              {secondaryButton.title}
+            </ButtonPrimaryLight>
+          )}
+        </ButtonWrapper>
+      )}
     </Wrapper>
   )
 }

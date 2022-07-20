@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
 
 import { SectionIntro } from '@/src/components/section/SectionIntro'
@@ -5,33 +6,28 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const StakeBanner = ({ ...restProps }) => {
   const { appChainId } = useWeb3Connection()
+  const router = useRouter()
 
   const bannerPerChain = useMemo(
     () => ({
       1: {
         backgroundImage: 'bg-stake.svg',
-        button: {
-          onClick: () =>
-            window.open(
-              'https://app.uniswap.org/#/add/v2/0xa9c125bf4c8bb26f299c00969532b66732b1f758/ETH?chain=mainnet',
-              '_blank',
-            ),
-          title: 'Go to Uniswap',
-        },
         title: 'Stake',
         description: (
           <>
-            Aelin Tokenholders can stake their AELIN or AELIN/ETH liquidity tokens to receive
-            inflationary reward, deal fees, and governance voting power. Read more about the
-            benefits of staking Aelin{' '}
-            <a href="https://docs.aelin.xyz/general-info/staking" rel="noreferrer" target="_blank">
+            The incentive program for Aelin/ETH on L1 has concluded, and all rewards have been paid
+            out. You can withdraw your LP tokens at anypoint.
+            <br />
+            <br />
+            Still interested in earning rewards? Read more about our new incentive programs for LP's{' '}
+            <a
+              href="https://mirror.xyz/aelinnews.eth/0tttX4Liu0rK_1om-oyS9dnPSjO-p09DVZDpkcR9B2Y"
+              rel="noreferrer"
+              target="_blank"
+            >
               here
             </a>
             .
-            <br />
-            <br />
-            To obtain UNI-V2 AELIN/ETH LP tokens, first provide liquidity into the AELIN/ETH pool on
-            Uniswap.
           </>
         ),
       },
@@ -40,26 +36,46 @@ const StakeBanner = ({ ...restProps }) => {
         button: {
           onClick: () =>
             window.open(
-              'https://beta.arrakis.finance/#/vaults/0x665d8D87ac09Bdbc1222B8B9E72Ddcb82f76B54A',
+              'https://app.velodrome.finance/liquidity/manage?address=0x3eec44e94ee86ce79f34bb26dc3cdbbee18d6d17',
               '_blank',
             ),
-          title: 'Go to Arrakis.Finance',
+          title: 'Go to Velodrome!',
         },
-        description: (
+        secondaryButton: !router.pathname.includes('deprecated')
+          ? {
+              onClick: () => router.push('/stake/deprecated'),
+              title: 'Deprecated Pool',
+            }
+          : undefined,
+        description: router.pathname.includes('deprecated') ? (
+          <>
+            The Sorbet/Arkkais Pool 2 has been deprecated. If you have funds in this pool, you will
+            be able to withdraw them and move them over to Velodrome. For more information about the
+            Velodrome pool click{' '}
+            <a
+              href="https://mirror.xyz/aelinnews.eth/0tttX4Liu0rK_1om-oyS9dnPSjO-p09DVZDpkcR9B2Y"
+              rel="noreferrer"
+              target="_blank"
+            >
+              here
+            </a>
+          </>
+        ) : (
           <>
             Aelin Tokenholders can stake their AELIN or AELIN/ETH liquidity tokens to receive
-            inflationary reward, deal fees, and governance voting power. Read more about the
-            benefits of staking Aelin{' '}
+            rewards, deal fees, and governance voting power. Read more about the benefits of staking
+            Aelin{' '}
             <a href="https://docs.aelin.xyz/general-info/staking" rel="noreferrer" target="_blank">
               here
             </a>
             .
             <br />
             <br />
-            To obtain G-UNI AELIN/ETH LP tokens, first provide liquidity into the AELIN/ETH pool on
-            Uniswap via Arrakis.Finance. A full tutorial can be found on our blog{' '}
+            If you already have funds in the deprecated Sorbet/Arkkais Pool 2, you will be able to
+            easily withdraw them and move them over to new <b>Velodrome Aelin/WETH Pool 2</b>. For
+            more information about the Velodrome pool click{' '}
             <a
-              href="https://mirror.xyz/aelingov.eth/vWMW887qout1flAyGJZ0mPJdpfrdaPSQeRt9X6cQqkQ"
+              href="https://mirror.xyz/aelinnews.eth/0tttX4Liu0rK_1om-oyS9dnPSjO-p09DVZDpkcR9B2Y"
               rel="noreferrer"
               target="_blank"
             >
@@ -81,7 +97,7 @@ const StakeBanner = ({ ...restProps }) => {
         description: `Staking is not available on test networks.`,
       },
     }),
-    [],
+    [router],
   )
 
   const banner = bannerPerChain[appChainId]
@@ -90,6 +106,7 @@ const StakeBanner = ({ ...restProps }) => {
     <SectionIntro
       backgroundImage={`resources/svg/${banner.backgroundImage}`}
       button={'button' in banner ? banner.button : undefined}
+      secondaryButton={'secondaryButton' in banner ? banner.secondaryButton : undefined}
       title={banner.title}
       {...restProps}
     >

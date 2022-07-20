@@ -35,7 +35,7 @@ const StakeGrid = ({ ...restProps }) => {
           )}
           key={StakingEnum.AELIN}
           stakeType={StakingEnum.AELIN}
-          title={'Aelin staking'}
+          title={'Deprecated Aelin staking'}
         />,
 
         <StakeSection
@@ -49,7 +49,7 @@ const StakeGrid = ({ ...restProps }) => {
           )}
           key={StakingEnum.GELATO}
           stakeType={StakingEnum.GELATO}
-          title={'AELIN/ETH staking'}
+          title={'Deprecated AELIN/ETH staking'}
         />,
       ],
       [Chains.mainnet]: [

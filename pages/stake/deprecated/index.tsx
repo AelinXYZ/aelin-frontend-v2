@@ -9,7 +9,7 @@ const Stake: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Aelin - Stake</title>
+        <title>Aelin - Deprecated Stake</title>
       </Head>
       <LeftSidebarLayout>
         <StakeBanner />
