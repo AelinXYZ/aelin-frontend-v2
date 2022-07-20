@@ -4,11 +4,27 @@ import React, { useMemo } from 'react'
 import { SectionIntro } from '@/src/components/section/SectionIntro'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
+type Banner = {
+  [key: number]: {
+    backgroundImage: string
+    title: string
+    button?: {
+      onClick: () => void
+      title: string
+    }
+    secondaryButton?: {
+      onClick: () => void
+      title: string
+    }
+    description: string | JSX.Element
+  }
+}
+
 const StakeBanner = ({ ...restProps }) => {
   const { appChainId } = useWeb3Connection()
   const router = useRouter()
 
-  const bannerPerChain = useMemo(
+  const bannerPerChain: Banner = useMemo(
     () => ({
       1: {
         backgroundImage: 'bg-stake.svg',
@@ -49,7 +65,7 @@ const StakeBanner = ({ ...restProps }) => {
           : undefined,
         description: router.pathname.includes('deprecated') ? (
           <>
-            The Sorbet/Arkkais Pool 2 has been deprecated. If you have funds in this pool, you will
+            The Sorbet/Arrakis Pool 2 has been deprecated. If you have funds in this pool, you will
             be able to withdraw them and move them over to Velodrome. For more information about the
             Velodrome pool click{' '}
             <a
@@ -62,18 +78,17 @@ const StakeBanner = ({ ...restProps }) => {
           </>
         ) : (
           <>
-            Aelin Tokenholders can stake their AELIN or AELIN/ETH liquidity tokens to receive
-            rewards, deal fees, and governance voting power. Read more about the benefits of staking
-            Aelin{' '}
+            Aelin holders can stake their AELIN or AELIN/ETH liquidity tokens to receive rewards and
+            deal fees. Read more about the benefits of staking Aelin{' '}
             <a href="https://docs.aelin.xyz/general-info/staking" rel="noreferrer" target="_blank">
               here
             </a>
             .
             <br />
             <br />
-            If you already have funds in the deprecated Sorbet/Arkkais Pool 2, you will be able to
-            easily withdraw them and move them over to new <b>Velodrome Aelin/WETH Pool 2</b>. For
-            more information about the Velodrome pool click{' '}
+            If you already have funds in the deprecated Sorbet/Arrakis Pool 2, you will be able to
+            easily withdraw them and move them over to the new <b>Velodrome Aelin/WETH Pool 2</b>.
+            For more information about the Velodrome pool click{' '}
             <a
               href="https://mirror.xyz/aelinnews.eth/0tttX4Liu0rK_1om-oyS9dnPSjO-p09DVZDpkcR9B2Y"
               rel="noreferrer"
