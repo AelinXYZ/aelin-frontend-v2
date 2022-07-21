@@ -78,17 +78,10 @@ const StakeBanner = ({ ...restProps }) => {
           </>
         ) : (
           <>
-            Aelin holders can stake their AELIN or AELIN/ETH liquidity tokens to receive rewards and
-            deal fees. Read more about the benefits of staking Aelin{' '}
-            <a href="https://docs.aelin.xyz/general-info/staking" rel="noreferrer" target="_blank">
-              here
-            </a>
-            .
-            <br />
-            <br />
-            If you already have funds in the deprecated Sorbet/Arrakis Pool 2, you will be able to
-            easily withdraw them and move them over to the new <b>Velodrome Aelin/WETH Pool 2</b>.
-            For more information about the Velodrome pool click{' '}
+            Holders can stake their AELIN or AELIN/ETH liquidity tokens to receive rewards and deal
+            fees. If you already have funds in the deprecated Sorbet/Arrakis Pool 2, you can easily
+            withdraw them and move them over to the new Velodrome AELIN/wETH Pool 2. For more
+            information on the Velodrome pool click{' '}
             <a
               href="https://mirror.xyz/aelinnews.eth/0tttX4Liu0rK_1om-oyS9dnPSjO-p09DVZDpkcR9B2Y"
               rel="noreferrer"
