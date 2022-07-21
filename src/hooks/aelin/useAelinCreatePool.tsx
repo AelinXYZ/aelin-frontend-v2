@@ -70,7 +70,26 @@ export interface CreatePoolStateComplete {
   }[]
 }
 
-type CreatePoolValues = keyof CreatePoolState
+type NftCollectionRulesProps = {
+  purchaseAmount: BigNumber
+  collectionAddress: string
+  purchaseAmountPerToken: boolean
+  tokenIds: BigNumber[]
+  minTokensEligible: BigNumber[]
+}
+
+type CreatePoolValues = {
+  name: string
+  symbol: string
+  purchaseTokenCap: BigNumberish
+  purchaseToken: string
+  duration: BigNumberish
+  sponsorFee: BigNumberish
+  purchaseDuration: BigNumberish
+  allowListAddresses: string[]
+  allowListAmounts: BigNumberish[]
+  nftCollectionRules: NftCollectionRulesProps[]
+}
 
 export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
   [CreatePoolSteps.poolName]: {
@@ -133,21 +152,7 @@ export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
 
 export const createPoolConfigArr = Object.values(createPoolConfig)
 
-type createPoolValues = {
-  poolName: string
-  poolSymbol: string
-  poolCap: BigNumberish
-  sponsorFee: BigNumberish
-  investmentDeadLineDuration: number
-  dealDeadLineDuration: number
-  investmentToken: string
-  poolAddresses: string[]
-  poolAddressesAmounts: BigNumber[]
-}
-
-const parseValuesToCreatePool = async (
-  createPoolState: CreatePoolStateComplete,
-): Promise<createPoolValues> => {
+const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): CreatePoolValues => {
   const {
     dealDeadline,
     investmentDeadLine,
@@ -196,15 +201,17 @@ const parseValuesToCreatePool = async (
   }
 
   return {
-    poolName,
-    poolSymbol,
-    poolCap: poolCap ? parseUnits(poolCap.toString(), investmentToken?.decimals) : ZERO_BN,
+    name: poolName,
+    symbol: poolSymbol,
+    purchaseTokenCap: poolCap ? parseUnits(poolCap.toString(), investmentToken?.decimals) : ZERO_BN,
+    purchaseToken: investmentToken.address,
     sponsorFee: sponsorFee ? parseEther(sponsorFee?.toString()) : ZERO_BN,
-    investmentDeadLineDuration,
-    dealDeadLineDuration,
-    investmentToken: investmentToken.address,
-    poolAddressesAmounts,
-    poolAddresses,
+    purchaseDuration: investmentDeadLineDuration,
+    duration: dealDeadLineDuration,
+    allowListAddresses: poolAddresses,
+    allowListAmounts: poolAddressesAmounts,
+    // TODO: add nft creation pool
+    nftCollectionRules: [],
   }
 }
 
@@ -225,7 +232,7 @@ type CreatePoolAction =
   | {
       type: 'updatePool'
       payload: {
-        field: CreatePoolValues
+        field: CreatePoolValues | CreatePoolSteps | string
         value: unknown
       }
     }
@@ -240,7 +247,8 @@ const createPoolReducer = (state: CreatePoolState, action: CreatePoolAction) => 
 
   if (type === 'updatePool') {
     const { field, value } = action.payload
-    return { ...state, [field]: value }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return { ...state, [field as any]: value }
   }
   if (type === 'updateStep') {
     return { ...state, currentStep: action.payload }
@@ -355,29 +363,33 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   }
   const handleCreatePool = async () => {
     const {
-      dealDeadLineDuration,
-      investmentDeadLineDuration,
-      investmentToken,
-      poolAddresses,
-      poolAddressesAmounts,
-      poolCap,
-      poolName,
-      poolSymbol,
+      allowListAddresses,
+      allowListAmounts,
+      duration,
+      name,
+      nftCollectionRules,
+      purchaseDuration,
+      purchaseToken,
+      purchaseTokenCap,
       sponsorFee,
+      symbol,
     } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
     setConfigAndOpenModal({
       estimate: () =>
         createPoolEstimate([
-          poolName,
-          poolSymbol,
-          poolCap,
-          investmentToken,
-          dealDeadLineDuration,
-          sponsorFee,
-          investmentDeadLineDuration,
-          poolAddresses,
-          poolAddressesAmounts,
+          {
+            name,
+            symbol,
+            purchaseTokenCap,
+            purchaseToken,
+            duration,
+            sponsorFee,
+            purchaseDuration,
+            allowListAddresses,
+            allowListAmounts,
+            nftCollectionRules,
+          },
         ]),
       title: 'Create pool',
       onConfirm: async (txGasOptions: GasOptions) => {
@@ -386,15 +398,18 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
         try {
           const receipt = await execute(
             [
-              poolName,
-              poolSymbol,
-              poolCap,
-              investmentToken,
-              dealDeadLineDuration,
-              sponsorFee,
-              investmentDeadLineDuration,
-              poolAddresses,
-              poolAddressesAmounts,
+              {
+                name,
+                symbol,
+                purchaseTokenCap,
+                purchaseToken,
+                duration,
+                sponsorFee,
+                purchaseDuration,
+                allowListAddresses,
+                allowListAmounts,
+                nftCollectionRules,
+              },
             ],
             txGasOptions,
           )
@@ -410,7 +425,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   }
 
   const setPoolField = useCallback(
-    (value: unknown, field?: CreatePoolValues) =>
+    (value: unknown, field?: CreatePoolValues | string) =>
       dispatch({
         type: 'updatePool',
         payload: { field: field || createPoolState.currentStep, value },

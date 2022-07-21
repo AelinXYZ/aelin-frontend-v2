@@ -1,6 +1,5 @@
 import { Interface } from '@ethersproject/abi'
-import { BigNumber } from '@ethersproject/bignumber'
-import { ContractReceipt, Overrides } from '@ethersproject/contracts'
+import { ContractReceipt } from '@ethersproject/contracts'
 
 import useTransaction from './useTransaction'
 import aelinPoolCreate from '@/src/abis/AelinPoolCreate.json'
