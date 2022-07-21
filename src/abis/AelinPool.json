@@ -72,6 +72,25 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "purchaser",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "allowlistAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "AllowlistAddress",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "owner",
         "type": "address"
       },
@@ -195,6 +214,81 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "voucher",
+        "type": "address"
+      }
+    ],
+    "name": "Disavow",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "collectionAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "purchaseAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "purchaseAmountPerToken",
+        "type": "bool"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "tokenIds",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "minTokensEligible",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "PoolWith1155",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "collectionAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "purchaseAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "purchaseAmountPerToken",
+        "type": "bool"
+      }
+    ],
+    "name": "PoolWith721",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "purchaser",
         "type": "address"
       },
@@ -252,6 +346,19 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "voucher",
+        "type": "address"
+      }
+    ],
+    "name": "Vouch",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "purchaser",
         "type": "address"
       },
@@ -269,7 +376,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "poolTokenAmount",
+        "name": "_poolTokenAmount",
         "type": "uint256"
       }
     ],
@@ -320,7 +427,20 @@
   },
   {
     "inputs": [],
-    "name": "aelinRewardsAddress",
+    "name": "aelinEscrowLogicAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "aelinTreasuryAddress",
     "outputs": [
       {
         "internalType": "address",
@@ -456,19 +576,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "calledInitialize",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -492,7 +599,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_vestingCliff",
+        "name": "_vestingCliffPeriod",
         "type": "uint256"
       },
       {
@@ -566,6 +673,13 @@
   },
   {
     "inputs": [],
+    "name": "disavow",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "futureSponsor",
     "outputs": [
       {
@@ -580,6 +694,19 @@
   {
     "inputs": [],
     "name": "hasAllowList",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "hasNftList",
     "outputs": [
       {
         "internalType": "bool",
@@ -643,44 +770,93 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_symbol",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_purchaseTokenCap",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_purchaseToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_duration",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_sponsorFee",
-        "type": "uint256"
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "purchaseTokenCap",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "purchaseToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "duration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sponsorFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "purchaseDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "allowListAddresses",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "allowListAmounts",
+            "type": "uint256[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "purchaseAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "collectionAddress",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "purchaseAmountPerToken",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "tokenIds",
+                "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "minTokensEligible",
+                "type": "uint256[]"
+              }
+            ],
+            "internalType": "struct IAelinPool.NftCollectionRules[]",
+            "name": "nftCollectionRules",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct IAelinPool.PoolData",
+        "name": "_poolData",
+        "type": "tuple"
       },
       {
         "internalType": "address",
         "name": "_sponsor",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_purchaseDuration",
-        "type": "uint256"
       },
       {
         "internalType": "address",
@@ -689,7 +865,12 @@
       },
       {
         "internalType": "address",
-        "name": "_aelinRewardsAddress",
+        "name": "_aelinTreasuryAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_aelinEscrowLogicAddress",
         "type": "address"
       }
     ],
@@ -702,7 +883,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "purchaser",
+        "name": "_purchaser",
         "type": "address"
       }
     ],
@@ -721,7 +902,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "purchaser",
+        "name": "_purchaser",
         "type": "address"
       }
     ],
@@ -744,6 +925,83 @@
         "internalType": "string",
         "name": "",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "nftCollectionDetails",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "purchaseAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "collectionAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "purchaseAmountPerToken",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "nftId",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "nftWalletUsedForPurchase",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -842,6 +1100,36 @@
       }
     ],
     "name": "purchasePoolTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "collectionAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "tokenIds",
+            "type": "uint256[]"
+          }
+        ],
+        "internalType": "struct IAelinPool.NftPurchaseList[]",
+        "name": "_nftPurchaseList",
+        "type": "tuple[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_purchaseTokenAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "purchasePoolTokensWithNft",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -993,12 +1281,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "dst",
+        "name": "_dst",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "_amount",
         "type": "uint256"
       }
     ],
@@ -1017,17 +1305,17 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "src",
+        "name": "_src",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "dst",
+        "name": "_dst",
         "type": "address"
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "_amount",
         "type": "uint256"
       }
     ],
@@ -1043,19 +1331,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "_allowList",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_allowListAmounts",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "updateAllowList",
+    "inputs": [],
+    "name": "vouch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1064,7 +1341,7 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "purchaseTokenAmount",
+        "name": "_purchaseTokenAmount",
         "type": "uint256"
       }
     ],
