@@ -8,6 +8,7 @@ import NftsMinimumAmounts, {
   Label,
 } from '@/src/components/pools/whitelist/nft/NftsMinimumAmounts'
 import {
+  NftType,
   NftWhitelistProcess,
   SelectedNftCollectionData,
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -57,11 +58,13 @@ type NftCollectionProps = {
   onNewNftAdd: () => void
   onNftIdChange: (nftIndex: number, nftId?: number) => void
   onNftDelete: (nftIndex: number) => void
+  nftType: NftType
 }
 
 const NftCollection = ({
   canRemove,
   isBorder,
+  nftType,
   onAmountPerNftChange,
   onAmountPerWalletChange,
   onCollectionChange,
@@ -83,6 +86,7 @@ const NftCollection = ({
     return (
       <Card isBorder={isBorder}>
         <NftCollectionInput
+          nftType={nftType}
           onChange={dispatchUpdateCollection}
           selectedCollection={selectedCollection}
         />
@@ -94,12 +98,50 @@ const NftCollection = ({
       ? selectedCollection.amountPerWallet
       : selectedCollection.amountPerNft
 
+  const generateAttributes = (nftCollectionData: NftCollectionData) => {
+    const attributes = []
+    if (nftCollectionData.totalSupply) {
+      attributes.push({
+        name: 'Items',
+        value: abbreviateNumber(nftCollectionData.totalSupply),
+        currencyImageUrl: undefined,
+      })
+    }
+
+    if (nftCollectionData.numOwners) {
+      attributes.push({
+        name: 'Owners',
+        value: abbreviateNumber(nftCollectionData.numOwners),
+        currencyImageUrl: undefined,
+      })
+    }
+
+    if (nftCollectionData.floorPrice) {
+      attributes.push({
+        name: 'Floor price',
+        value: abbreviateNumber(nftCollectionData.floorPrice),
+        currencyImageUrl: undefined,
+      })
+    }
+
+    if (nftCollectionData.totalVolume) {
+      attributes.push({
+        name: 'Volume traded',
+        value: abbreviateNumber(nftCollectionData.totalVolume),
+        currencyImageUrl: undefined,
+      })
+    }
+
+    return attributes
+  }
+
   return (
     <Card isBorder={isBorder}>
       <Row>
         <Column>
           {whiteListProcess !== NftWhitelistProcess.unlimited && <Label>NFT Collection</Label>}
           <NftCollectionInput
+            nftType={nftType}
             onChange={dispatchUpdateCollection}
             selectedCollection={selectedCollection}
           />
@@ -159,28 +201,7 @@ const NftCollection = ({
             />
           )}
           <NftCollectionDetails
-            attributes={[
-              {
-                name: 'Items',
-                value: abbreviateNumber(selectedCollection.nftCollectionData.totalSupply),
-                currencyImageUrl: undefined,
-              },
-              {
-                name: 'Owners',
-                value: abbreviateNumber(selectedCollection.nftCollectionData.numOwners),
-                currencyImageUrl: undefined,
-              },
-              {
-                name: 'Floor price',
-                value: abbreviateNumber(selectedCollection.nftCollectionData.floorPrice ?? 0),
-                currencyImageUrl: undefined,
-              },
-              {
-                name: 'Volume traded',
-                value: abbreviateNumber(selectedCollection.nftCollectionData.totalVolume ?? 0),
-                currencyImageUrl: undefined,
-              },
-            ]}
+            attributes={generateAttributes(selectedCollection.nftCollectionData)}
             imageUrl={selectedCollection.nftCollectionData.imageUrl}
             isVerified={selectedCollection.nftCollectionData.isVerified}
             name={selectedCollection.nftCollectionData.name}

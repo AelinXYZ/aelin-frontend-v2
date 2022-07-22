@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import NftCollection from '@/src/components/pools/whitelist/nft/NftCollection'
 import {
+  NftType,
   NftWhiteListAction,
   NftWhiteListActionType,
   NftWhitelistProcess,
@@ -24,6 +25,7 @@ const AddButton = styled(ButtonPrimaryLightSm)`
 `
 
 type NftCollectionsSectionProps = {
+  nftType: NftType
   whiteListProcess: NftWhitelistProcess
   selectedCollections: SelectedNftCollectionData[]
   dispatch: Dispatch<NftWhiteListAction>
@@ -31,6 +33,7 @@ type NftCollectionsSectionProps = {
 
 const NftCollectionsSection = ({
   dispatch,
+  nftType,
   selectedCollections,
   whiteListProcess,
 }: NftCollectionsSectionProps) => {
@@ -41,6 +44,7 @@ const NftCollectionsSection = ({
           canRemove={selectedCollections.length > 1 && !!selectedCollection.nftCollectionData}
           isBorder={selectedCollections.length > 1 || !!selectedCollection.nftCollectionData}
           key={selectedCollection.nftCollectionData?.id ?? 'empty'}
+          nftType={nftType}
           onAmountPerNftChange={(amount) => {
             dispatch({
               type: NftWhiteListActionType.updateAmountPerNft,
