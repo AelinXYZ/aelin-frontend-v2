@@ -5,10 +5,17 @@ import styled from 'styled-components'
 import debounce from 'lodash/debounce'
 
 import { Search } from '@/src/components/assets/Search'
-import { SelectedNftCollectionData } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
+import { Loading } from '@/src/components/common/Loading'
+import {
+  NftType,
+  SelectedNftCollectionData,
+} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
-import useNftCollectionList, { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
+import useNftCollectionList, {
+  NFTType,
+  NftCollectionData,
+} from '@/src/hooks/aelin/useNftCollectionList'
 
 const Wrapper = styled.div`
   position: relative;
@@ -86,23 +93,26 @@ const Details = styled.div`
 `
 
 type NftCollectionInputProps = {
+  nftType: NftType
   selectedCollection: SelectedNftCollectionData
   onChange: (value: NftCollectionData) => void
 }
 
-const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInputProps) => {
+const NftCollectionInput = ({ nftType, onChange, selectedCollection }: NftCollectionInputProps) => {
   const [input, setInput] = useState<string>('')
   const [query, setQuery] = useState<string>('')
 
   const debouncedChangeHandler = useMemo(() => debounce(setQuery, DEBOUNCED_INPUT_TIME), [setQuery])
+  const NFTtypeSelected = useMemo(() => {
+    if (nftType && nftType.includes('1155')) return NFTType.ERC1155
+    return NFTType.ERC721
+  }, [nftType])
 
-  const collections = useNftCollectionList(query)
+  const { data: collections, error, isValidating } = useNftCollectionList(query, NFTtypeSelected)
 
-  if (collections.error) {
+  if (error) {
     throw new Error('Unexpected error when fetching nft metadata')
   }
-
-  const { data } = collections
 
   return (
     <Wrapper>
@@ -110,7 +120,7 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
         <Search />
       </SearchWrapper>
       <Input
-        isOpen={!!input.length && !!data && data.length > 0}
+        isOpen={!!input.length && !!collections && collections.length > 0}
         onChange={(e) => {
           setInput(e.target.value)
           debouncedChangeHandler(e.target.value.trim().toLowerCase())
@@ -119,9 +129,14 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
         type="text"
         value={selectedCollection.nftCollectionData?.name ?? input ?? ''}
       />
-      {!!input.length && !!data?.length && (
+      {isValidating && (
         <Collections>
-          {data?.map((collection) => {
+          <Loading />
+        </Collections>
+      )}
+      {!!input.length && !!collections?.length && !isValidating && (
+        <Collections>
+          {collections?.map((collection) => {
             return (
               <Item
                 isActive={
@@ -136,14 +151,18 @@ const NftCollectionInput = ({ onChange, selectedCollection }: NftCollectionInput
                 }}
               >
                 <Details>
-                  <Image alt="" height={24} src={collection.imageUrl} width={24} />
+                  {!!collection.imageUrl && (
+                    <Image alt="" height={24} src={collection.imageUrl} width={24} />
+                  )}
                   <span>{collection.name}</span>
                 </Details>
-                <Details>
-                  <span>{`${collection.totalSupply} ${
-                    collection.totalSupply === 1 ? 'item' : 'items'
-                  }`}</span>
-                </Details>
+                {!!collection.totalSupply && (
+                  <Details>
+                    <span>{`${collection.totalSupply} ${
+                      collection.totalSupply === 1 ? 'item' : 'items'
+                    }`}</span>
+                  </Details>
+                )}
               </Item>
             )
           })}
