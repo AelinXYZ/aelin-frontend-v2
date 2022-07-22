@@ -5,7 +5,6 @@ import useSWR from 'swr'
 
 import { Chains, ChainsValues } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import isDev from '@/src/utils/isDev'
 
 export type NftCollectionData = {
   id: number
@@ -24,6 +23,7 @@ export type NftCollectionData = {
 
 const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/opensea-metadata.json'
 const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/quixotic-metadata.json'
+const GOERLI_NFT_COLLECTIONS = '/data/nft-metadata/goerli-metadata.json'
 
 function useNftCollectionList(query: string) {
   const { appChainId } = useWeb3Connection()
@@ -33,10 +33,9 @@ function useNftCollectionList(query: string) {
     const fetchCollections = async (appChainId: ChainsValues) => {
       const collections: NftCollectionData[] = (
         await Promise.all([
-          (appChainId === Chains.mainnet || isDev) &&
-            fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
-          (appChainId === Chains.optimism || isDev) &&
-            fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.mainnet && fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.optimism && fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.goerli && fetch(GOERLI_NFT_COLLECTIONS).then((r) => r.json()),
         ])
       )
         .filter(Boolean)

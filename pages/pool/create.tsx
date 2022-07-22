@@ -18,6 +18,7 @@ import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInp
 import { Summary } from '@/src/components/pools/common/Summary'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
 import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,
   ButtonPrimaryLight,
@@ -32,6 +33,7 @@ import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {
   CreatePoolSteps,
+  NftCollectionRulesProps,
   createPoolConfig,
   getCreatePoolStepIndicatorData,
   getCreatePoolSummaryData,
@@ -160,7 +162,12 @@ const Create: NextPage = () => {
           currentList={createPoolState.whitelist}
           investmentTokenDecimals={createPoolState.investmentToken?.decimals ?? 18}
           onClose={() => setShowWhiteListModal(false)}
-          onConfirm={(whitelist: AddressWhitelistProps[]) => setPoolField(whitelist, 'whitelist')}
+          onConfirm={(
+            whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
+            type: NftType | string,
+          ) => {
+            setPoolField(whitelist, type)
+          }}
         />
       )}
     </>

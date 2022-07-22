@@ -1,7 +1,10 @@
 import { Dispatch, ReactElement } from 'react'
 import styled from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
+
 import {
+  NftType,
   NftWhiteListAction,
   NftWhiteListActionType,
   NftWhiteListState,
@@ -21,6 +24,7 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
+import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
 
 const WrapperGrid = styled.div`
   width: 620px;
@@ -118,10 +122,11 @@ const getStepIndicatorData = (
 type NftWhiteListProps = {
   nftWhiteListState: NftWhiteListState
   dispatch: Dispatch<NftWhiteListAction>
+  onConfirm: (nftCollectionRules: NftCollectionRulesProps[], type: NftType) => void
   onClose: () => void
 }
 
-const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProps) => {
+const NftWhiteList = ({ dispatch, nftWhiteListState, onClose, onConfirm }: NftWhiteListProps) => {
   const { currentStep, nftType, selectedCollections, whiteListProcess } = nftWhiteListState
   const { order, title } = nftWhiteListStepsConfig[currentStep]
 
@@ -173,7 +178,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
         .findIndex((selectedCollection) =>
           selectedCollection.amountPerWallet === undefined
             ? true
-            : selectedCollection.amountPerWallet <= 0,
+            : Number(selectedCollection.amountPerWallet) <= 0,
         ) !== -1
     ) {
       return <Error textAlign="center">Amount per wallet should be greater than zero</Error>
@@ -186,7 +191,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
         .findIndex((selectedCollection) =>
           selectedCollection.amountPerNft === undefined
             ? true
-            : selectedCollection.amountPerNft <= 0,
+            : Number(selectedCollection.amountPerNft) <= 0,
         ) !== -1
     ) {
       return <Error textAlign="center">Amount per NFT should be greater than zero</Error>
@@ -217,7 +222,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
         nftWhiteListState.selectedCollections.findIndex(
           (selectedCollection) =>
             selectedCollection.selectedNftsData.findIndex(
-              (nftData) => nftData.nftId !== undefined && nftData.minimumAmount <= 0,
+              (nftData) => nftData.nftId !== undefined && Number(nftData.minimumAmount) <= 0,
             ) !== -1,
         ) !== -1
       ) {
@@ -272,6 +277,50 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose }: NftWhiteListProp
                 disabled={getError() !== null}
                 onClick={() => {
                   if (isLastStep) {
+                    const nftCollectionRules = nftWhiteListState.selectedCollections.map(
+                      (collection) => {
+                        const collectionAddress = collection.nftCollectionData?.address ?? ''
+
+                        const purchaseAmountPerToken = [
+                          NftWhitelistProcess.limitedPerNft,
+                          NftWhitelistProcess.unlimited,
+                        ].includes(nftWhiteListState.whiteListProcess)
+
+                        let purchaseAmount = 0
+                        let tokenIds: Array<BigNumber> = []
+                        let minTokensEligible: Array<BigNumber> = []
+
+                        if (nftWhiteListState.nftType === NftType.erc721) {
+                          purchaseAmount =
+                            NftWhitelistProcess.unlimited === nftWhiteListState.whiteListProcess
+                              ? 0
+                              : NftWhitelistProcess.limitedPerNft ===
+                                nftWhiteListState.whiteListProcess
+                              ? collection.amountPerNft ?? 0
+                              : collection.amountPerWallet ?? 0
+                        }
+
+                        if (nftWhiteListState.nftType === NftType.erc1155) {
+                          tokenIds = collection.selectedNftsData.map((collection) => {
+                            return BigNumber.from(collection.nftId as number)
+                          })
+
+                          minTokensEligible = collection.selectedNftsData.map((collection) =>
+                            BigNumber.from(collection.minimumAmount),
+                          )
+                        }
+
+                        return {
+                          collectionAddress,
+                          purchaseAmountPerToken,
+                          purchaseAmount,
+                          tokenIds,
+                          minTokensEligible,
+                        }
+                      },
+                    )
+
+                    onConfirm(nftCollectionRules, nftType)
                     onClose()
                     return
                   }

@@ -6,7 +6,8 @@ module.exports = {
       "tokens.1inch.io",
       "lh3.googleusercontent.com",
       "openseauserdata.com",
-      "fanbase-1.s3.amazonaws.com"
+      "fanbase-1.s3.amazonaws.com",
+      "storage.googleapis.com"
     ]
   }
 }

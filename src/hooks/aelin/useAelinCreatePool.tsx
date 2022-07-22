@@ -8,6 +8,7 @@ import { parseEther, parseUnits } from '@ethersproject/units'
 
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -52,9 +53,12 @@ export interface CreatePoolState {
   poolPrivacy?: Privacy
   currentStep: CreatePoolSteps
   whitelist: AddressWhitelistProps[]
+  nftCollectionRules: NftCollectionRulesProps[]
 }
 
 export interface CreatePoolStateComplete {
+  [NftType.erc1155]: NftCollectionRulesProps[]
+  [NftType.erc721]: NftCollectionRulesProps[]
   poolName: string
   poolSymbol: string
   investmentToken: Token
@@ -64,14 +68,12 @@ export interface CreatePoolStateComplete {
   sponsorFee?: number
   poolPrivacy: Privacy
   currentStep: CreatePoolSteps
-  whitelist: {
-    address: string
-    amount: number
-  }[]
+  whitelist: AddressWhitelistProps[]
+  nftCollectionRules: NftCollectionRulesProps[]
 }
 
-type NftCollectionRulesProps = {
-  purchaseAmount: BigNumber
+export type NftCollectionRulesProps = {
+  purchaseAmount: BigNumberish
   collectionAddress: string
   purchaseAmountPerToken: boolean
   tokenIds: BigNumber[]
@@ -181,8 +183,12 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
 
   let poolAddresses: string[] = []
   let poolAddressesAmounts: BigNumber[] = []
+  let nftCollectionRules: NftCollectionRulesProps[] = []
 
-  if (poolPrivacy === Privacy.PRIVATE) {
+  if (
+    poolPrivacy === Privacy.PRIVATE &&
+    [NftType.erc1155, NftType.erc721].some((type) => !Object.hasOwn(createPoolState, type))
+  ) {
     const formattedWhiteList = whitelist.reduce((accum, curr) => {
       const { address, amount } = curr
 
@@ -200,6 +206,23 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
     poolAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
   }
 
+  if (poolPrivacy === Privacy.PRIVATE && Object.hasOwn(createPoolState, NftType.erc721)) {
+    nftCollectionRules = createPoolState[NftType.erc721]
+  }
+
+  if (poolPrivacy === Privacy.PRIVATE && Object.hasOwn(createPoolState, NftType.erc1155)) {
+    nftCollectionRules = createPoolState[NftType.erc1155]
+  }
+
+  if (nftCollectionRules.length) {
+    nftCollectionRules.forEach((collection) => {
+      collection.purchaseAmount = parseUnits(
+        collection.purchaseAmount.toString(),
+        investmentToken.decimals,
+      )
+    })
+  }
+
   return {
     name: poolName,
     symbol: poolSymbol,
@@ -210,8 +233,7 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
     duration: dealDeadLineDuration,
     allowListAddresses: poolAddresses,
     allowListAmounts: poolAddressesAmounts,
-    // TODO: add nft creation pool
-    nftCollectionRules: [],
+    nftCollectionRules: nftCollectionRules,
   }
 }
 
@@ -226,6 +248,7 @@ const initialState: CreatePoolState = {
   [CreatePoolSteps.poolPrivacy]: undefined,
   currentStep: CreatePoolSteps.poolName,
   whitelist: [],
+  nftCollectionRules: [],
 }
 
 type CreatePoolAction =
@@ -375,6 +398,9 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       symbol,
     } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
+    // Run, create a pool and review the values
+    console.log('nftCollectionRules: ', nftCollectionRules)
+
     setConfigAndOpenModal({
       estimate: () =>
         createPoolEstimate([
@@ -437,34 +463,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const isFirstStep = createPoolState.currentStep === CreatePoolSteps.poolName
 
   useEffect(() => {
-    const {
-      dealDeadline,
-      investmentDeadLine,
-      investmentToken,
-      poolCap,
-      poolName,
-      poolPrivacy,
-      poolSymbol,
-      sponsorFee,
-      whitelist,
-    } = createPoolState
-
-    setErrors(
-      validateCreatePool(
-        {
-          dealDeadline,
-          investmentDeadLine,
-          investmentToken,
-          poolCap,
-          poolName,
-          poolPrivacy,
-          poolSymbol,
-          sponsorFee,
-          whitelist,
-        },
-        chainId,
-      ),
-    )
+    setErrors(validateCreatePool(createPoolState, chainId))
   }, [createPoolState, chainId])
 
   useEffect(() => {
