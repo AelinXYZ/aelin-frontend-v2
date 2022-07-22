@@ -127,7 +127,7 @@ const NftCollectionInput = ({ nftType, onChange, selectedCollection }: NftCollec
         }}
         placeholder="Enter NFT collection name..."
         type="text"
-        value={selectedCollection.nftCollectionData?.name ?? input ?? ''}
+        value={input ?? selectedCollection.nftCollectionData?.name ?? ''}
       />
       {isValidating && (
         <Collections>
