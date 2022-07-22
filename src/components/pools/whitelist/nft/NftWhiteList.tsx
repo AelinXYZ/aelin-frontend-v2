@@ -155,6 +155,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose, onConfirm }: NftWh
         return (
           <NftCollectionsSection
             dispatch={dispatch}
+            nftType={nftType}
             selectedCollections={selectedCollections}
             whiteListProcess={whiteListProcess}
           />
