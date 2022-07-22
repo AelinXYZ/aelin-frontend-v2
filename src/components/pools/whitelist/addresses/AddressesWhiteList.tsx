@@ -13,6 +13,7 @@ import {
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { Textfield, TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
+import { PrivacyType } from '@/src/constants/pool'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 
 export interface AddressWhitelistProps {
@@ -156,7 +157,7 @@ const AddressesWhiteList = ({
   investmentTokenDecimals: number
   setList: (whitelist: AddressWhitelistProps[]) => void
   onClose: () => void
-  onConfirm: (whitelist: AddressWhitelistProps[]) => void
+  onConfirm: (whitelist: AddressWhitelistProps[], type: string) => void
 }) => {
   const status = useMemo(() => {
     if (list.some((item: AddressWhitelistProps) => item.address && !isAddress(item.address))) {
@@ -191,7 +192,7 @@ const AddressesWhiteList = ({
   const handleSave = () => {
     // Remove empty rows.
     const filterRows = [...list.filter((row: AddressWhitelistProps) => row.address)]
-    onConfirm(filterRows)
+    onConfirm(filterRows, PrivacyType.WHITELIST)
     onClose()
   }
 

@@ -61,6 +61,7 @@ interface Props {
   error?: string
   maxDisabled?: boolean
   maxValue: string
+  withBalance?: boolean
   maxValueFormatted: string
   setValue: (value: string) => void
   value: string
@@ -77,6 +78,7 @@ export const TokenInput = ({
   setValue,
   symbol,
   value,
+  withBalance = true,
   ...restProps
 }: Props) => {
   const setMax = () => setValue(maxValue)
@@ -102,9 +104,11 @@ export const TokenInput = ({
           Max
         </MaxButton>
       </InputWrapper>
-      <Balance>
-        Balance: {maxValueFormatted} {symbol ? symbol : 'Pool tokens'}
-      </Balance>
+      {withBalance && (
+        <Balance>
+          Balance: {maxValueFormatted} {symbol ? symbol : 'Pool tokens'}
+        </Balance>
+      )}
       {error && <Error>{error}</Error>}
     </Wrapper>
   )

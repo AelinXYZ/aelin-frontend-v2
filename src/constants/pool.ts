@@ -12,6 +12,12 @@ export enum Privacy {
   PRIVATE = 'private',
 }
 
+export enum PrivacyType {
+  WHITELIST = 'whitelist',
+  ERC721 = 'erc721',
+  ERC1155 = 'erc1155',
+}
+
 export enum PoolStages {
   Open = 'Open',
   AwaitingDeal = 'AwaitingDeal',

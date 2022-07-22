@@ -9,9 +9,11 @@ import AddressesWhiteList, {
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import {
+  NftType,
   initialState,
   nftWhiteListReducer,
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
+import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
 
 const Modal = styled(BaseModal)`
   .modalCard {
@@ -29,7 +31,10 @@ const WhiteListModal = ({
   currentList: AddressWhitelistProps[]
   investmentTokenDecimals: number
   onClose: () => void
-  onConfirm: (whitelist: AddressWhitelistProps[]) => void
+  onConfirm: (
+    whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
+    type: NftType | string,
+  ) => void
 }) => {
   const [activeTab, setActiveTab] = useState(WhiteListTab.Addresses)
 
@@ -53,14 +58,15 @@ const WhiteListModal = ({
             onClose={onClose}
             onConfirm={onConfirm}
             setList={setAddressesWhiteList}
-          ></AddressesWhiteList>
+          />
         )}
         {activeTab === WhiteListTab.Nft && (
           <NftWhiteList
             dispatch={dispatch}
             nftWhiteListState={nftWhiteListState}
             onClose={onClose}
-          ></NftWhiteList>
+            onConfirm={onConfirm}
+          />
         )}
       </WhiteListTabs>
     </Modal>

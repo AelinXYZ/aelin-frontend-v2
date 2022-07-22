@@ -258,7 +258,7 @@ const NftsPickerModal = ({
       case NftWhitelistProcess.limitedPerWallet:
         for (const collectionId in whitelistRules) {
           if (nfts.findIndex((nft) => nft.collectionId === collectionId && nft.isSelected) !== -1) {
-            allocation += whitelistRules[collectionId].amountPerWallet
+            allocation += Number(whitelistRules[collectionId].amountPerWallet)
           }
         }
 
@@ -267,7 +267,7 @@ const NftsPickerModal = ({
         for (const collectionId in whitelistRules) {
           for (const nft of nfts) {
             if (nft.collectionId === collectionId && nft.isSelected) {
-              allocation += whitelistRules[collectionId].amountPerNft
+              allocation += Number(whitelistRules[collectionId].amountPerNft)
             }
           }
         }

@@ -40,10 +40,10 @@ const AttributesWrapper = styled.div`
 `
 
 type NftCollectionDetailsProps = {
-  imageUrl: string
   name: string
-  isVerified: boolean
   attributes: NftCollectionAttributeProps[]
+  imageUrl?: string
+  isVerified?: boolean
 }
 
 const NftCollectionDetails = ({
@@ -54,21 +54,23 @@ const NftCollectionDetails = ({
 }: NftCollectionDetailsProps) => {
   return (
     <Card>
-      <Image alt="" height={44} src={imageUrl} width={44} />
+      {!!imageUrl && <Image alt="" height={44} src={imageUrl} width={44} />}
       <Row>
         <Title>{name}</Title>
         {isVerified && <VerifiedIcon />}
       </Row>
-      <AttributesWrapper>
-        {attributes.map(({ currencyImageUrl, name, value }) => (
-          <NftCollectionAttribute
-            currencyImageUrl={currencyImageUrl}
-            key={name}
-            name={name}
-            value={value}
-          />
-        ))}
-      </AttributesWrapper>
+      {!!attributes.length && (
+        <AttributesWrapper>
+          {attributes.map(({ currencyImageUrl, name, value }) => (
+            <NftCollectionAttribute
+              currencyImageUrl={currencyImageUrl}
+              key={name}
+              name={name}
+              value={value}
+            />
+          ))}
+        </AttributesWrapper>
+      )}
     </Card>
   )
 }
