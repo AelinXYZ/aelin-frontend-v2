@@ -20,6 +20,6 @@ export function useAelinPoolCreateTransaction<
  */
 export const getPoolCreatedId = (receipt: ContractReceipt) => {
   const poolCreateInterface = new Interface(aelinPoolCreate)
-  const parsedLogs = poolCreateInterface.parseLog(receipt.logs[2])
+  const parsedLogs = poolCreateInterface.parseLog(receipt.logs[receipt.logs.length - 1])
   return parsedLogs.args[0]
 }

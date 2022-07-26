@@ -439,6 +439,9 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
             ],
             txGasOptions,
           )
+
+          console.log('receipt: ', receipt)
+
           if (receipt) {
             router.push(`/pool/${getKeyChainByValue(chainId)}/${getPoolCreatedId(receipt)}`)
           }
