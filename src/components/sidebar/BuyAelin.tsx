@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import styled from 'styled-components'
 
 import ParentSize from '@visx/responsive/lib/components/ParentSize'
@@ -7,12 +6,10 @@ import useSWR from 'swr'
 
 import { Uniswap } from '@/src/components/assets/Uniswap'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import NftsPickerModal from '@/src/components/pools/actions/NftsPickerModal'
-import { NftWhitelistProcess } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import AreaChart from '@/src/components/sidebar/AreaChart'
-// import { getNetworkConfig } from '@/src/constants/chains'
-// import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getNetworkConfig } from '@/src/constants/chains'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import formatNumber from '@/src/utils/formatNumber'
 
 const Wrapper = styled.div``
@@ -105,27 +102,12 @@ const getPriceDifferenceFormatted = (prices: PriceData[]) => {
   return `${diff > 0 ? '+' : ''}${diff.toFixed(2)}%`
 }
 
-const mockBlacklistedNfts = {
-  '0x0000000000000000000000000000000000000001': new Set([5]),
-  '0x0000000000000000000000000000000000000003': new Set([3]),
-}
-
-const mockWhitelistRules = {
-  '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b': {
-    allocationAmount: 100,
-    minimumAmounts: null,
-  },
-}
-
 const BuyAelin: React.FC = ({ ...restProps }) => {
   const prices = useAelinUSDPrices(1, 'hourly')
 
-  // const { appChainId } = useWeb3Connection()
+  const { appChainId } = useWeb3Connection()
 
-  // const currentChainConfig = getNetworkConfig(appChainId)
-
-  // TODO [AELIP-15]: Just for testing, will move in investment section in next PR.
-  const [showNftsPickerModal, setShowNftsPickerModal] = useState<boolean>(false)
+  const currentChainConfig = getNetworkConfig(appChainId)
 
   return (
     <Wrapper {...restProps}>
@@ -151,29 +133,15 @@ const BuyAelin: React.FC = ({ ...restProps }) => {
       )}
       <ButtonContainer>
         <ButtonGradient
-          // disabled={!currentChainConfig.buyAelinUrl}
+          disabled={!currentChainConfig.buyAelinUrl}
           onClick={() => {
-            // window.open(currentChainConfig.buyAelinUrl, '_blank')
-            setShowNftsPickerModal(true)
+            window.open(currentChainConfig.buyAelinUrl, '_blank')
           }}
         >
           <Uniswap />
           Buy Aelin
         </ButtonGradient>
       </ButtonContainer>
-      {showNftsPickerModal && (
-        <NftsPickerModal
-          allocationCurrency="USDC"
-          blacklistedNfts={mockBlacklistedNfts}
-          nftWhitelistProcess={NftWhitelistProcess.limitedPerNft}
-          onClose={() => setShowNftsPickerModal(false)}
-          onSave={(selectedNfts) => {
-            setShowNftsPickerModal(false)
-            console.log('xxx selectedNfts', selectedNfts)
-          }}
-          whitelistRules={mockWhitelistRules}
-        />
-      )}
     </Wrapper>
   )
 }

@@ -20,6 +20,24 @@ export type PoolDates = {
   vestingEnds: string
 }
 
+export interface RawNftCollectionRules {
+  collectionAddress: string
+  erc721Blacklisted: string[]
+  erc1155TokenIds: string[]
+  erc1155TokensAmtEligible: string[]
+  nftType: 'ERC721' | 'ERC1155'
+  poolAddress: string
+  purchaseAmount: string
+  purchaseAmountPerToken: boolean
+}
+
+export interface ParsedNftCollectionRules extends Omit<RawNftCollectionRules, 'purchaseAmount'> {
+  purchaseAmount: {
+    raw: BigNumber
+    formatted: string | undefined
+  }
+}
+
 // timestamp when the pool was created
 export function getPoolCreatedDate<PD extends PoolDates>(pool: PD): Date {
   return new Date(Number(pool.timestamp) * 1000)
@@ -291,4 +309,19 @@ export function getInvestmentDealToken(
     raw: _investmentDealToken,
     formatted: formatToken(_investmentDealToken, underlyingDecimals),
   }
+}
+
+export function parseNftCollectionRules(
+  nftCollectionsRules: RawNftCollectionRules[],
+): ParsedNftCollectionRules[] {
+  return nftCollectionsRules.map((collectionRule) => {
+    const purchaseAmountBN = new Wei(collectionRule.purchaseAmount, 18, true)
+    return {
+      ...collectionRule,
+      purchaseAmount: {
+        raw: purchaseAmountBN.toBN(),
+        formatted: formatToken(purchaseAmountBN.toBN(), 18, 3),
+      },
+    }
+  })
 }

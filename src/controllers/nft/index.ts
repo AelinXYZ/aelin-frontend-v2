@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
-import { getNftCollectionData } from '@/src/services/nft'
+import { getNftOwnedByAddress } from '@/src/services/nft'
 import { CustomError } from '@/src/utils/error'
 
-export const getNftCollectionDataController = async (req: NextApiRequest, res: NextApiResponse) => {
+export const getNftOwnedByAddressController = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { chainId, collectionAddress } = req.query
+    const { chainId, collectionAddress, walletAddress } = req.query
 
     if (
       !chainId ||
@@ -23,7 +23,15 @@ export const getNftCollectionDataController = async (req: NextApiRequest, res: N
       return res.status(404).json({ success: false, message: 'Invalid collection address' })
     }
 
-    const data = await getNftCollectionData(Number(chainId) as ChainsValues, collectionAddress)
+    if (!walletAddress || typeof walletAddress !== 'string') {
+      return res.status(404).json({ success: false, message: 'Invalid walletAddress address' })
+    }
+
+    const data = await getNftOwnedByAddress(
+      Number(chainId) as ChainsValues,
+      collectionAddress,
+      walletAddress,
+    )
 
     return res.status(200).json({ success: true, data })
   } catch (error) {

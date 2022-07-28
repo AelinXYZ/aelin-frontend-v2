@@ -35,6 +35,11 @@ gql`
     holder
 
     filter
+
+    hasNftList
+    nftCollectionRules {
+      ...NftCollectionRuleDetails
+    }
   }
 `
 
@@ -105,5 +110,19 @@ gql`
         ...PoolDeal
       }
     }
+  }
+`
+
+gql`
+  fragment NftCollectionRuleDetails on NftCollectionRule {
+    id
+    poolAddress
+    nftType
+    collectionAddress
+    purchaseAmount
+    purchaseAmountPerToken
+    erc1155TokenIds
+    erc721Blacklisted
+    erc1155TokensAmtEligible
   }
 `

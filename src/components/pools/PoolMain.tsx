@@ -12,7 +12,7 @@ import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout
 import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import FundDeal from '@/src/components/pools/actions/FundDeal'
-import Invest from '@/src/components/pools/actions/Invest'
+import Invest from '@/src/components/pools/actions/Invest/Invest'
 import ReleaseFunds from '@/src/components/pools/actions/ReleaseFunds'
 import Vest from '@/src/components/pools/actions/Vest/Vest'
 import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
@@ -27,6 +27,7 @@ import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
+import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
 
@@ -120,36 +121,38 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             onTabClick={tabs.actionTabs.setActive}
             tabs={tabs.actionTabs.states}
           >
-            <RequiredConnection
-              isNotConnectedText="Connect your wallet"
-              minHeight={175}
-              networkToCheck={pool.chainId}
-            >
-              <>
-                {!tabs.actionTabs.states.length && (
-                  <div>
-                    {derivedStatus.current === PoolStatus.DealPresented
-                      ? 'You have not participated in this pool'
-                      : 'No actions available'}
-                  </div>
-                )}
+            <NftSelectionProvider>
+              <RequiredConnection
+                isNotConnectedText="Connect your wallet"
+                minHeight={175}
+                networkToCheck={pool.chainId}
+              >
+                <>
+                  {!tabs.actionTabs.states.length && (
+                    <div>
+                      {derivedStatus.current === PoolStatus.DealPresented
+                        ? 'You have not participated in this pool'
+                        : 'No actions available'}
+                    </div>
+                  )}
 
-                {tabs.actionTabs.active === PoolAction.Invest && (
-                  <Invest pool={pool} poolHelpers={funding} />
-                )}
-                {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
-                {tabs.actionTabs.active === PoolAction.Withdraw && (
-                  <WithdrawalFromPool pool={pool} />
-                )}
-                {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.Vest && <Vest pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
-                  <WithdrawUnredeemed pool={pool} />
-                )}
-              </>
-            </RequiredConnection>
+                  {tabs.actionTabs.active === PoolAction.Invest && (
+                    <Invest pool={pool} poolHelpers={funding} />
+                  )}
+                  {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
+                  {tabs.actionTabs.active === PoolAction.Withdraw && (
+                    <WithdrawalFromPool pool={pool} />
+                  )}
+                  {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
+                  {tabs.actionTabs.active === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
+                  {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
+                  {tabs.actionTabs.active === PoolAction.Vest && <Vest pool={pool} />}
+                  {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
+                    <WithdrawUnredeemed pool={pool} />
+                  )}
+                </>
+              </RequiredConnection>
+            </NftSelectionProvider>
           </ActionTabs>
         </MainGrid>
       </RightTimelineLayout>
