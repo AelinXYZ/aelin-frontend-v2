@@ -64,10 +64,14 @@ const RequiredConnection: React.FC<RequiredConnectionProps> = ({
   isWrongNetworkText = `Please switch to this pool's network`,
   ...restProps
 }) => {
-  const { address, connectWallet, isWalletConnected, pushNetwork, walletChainId } =
+  const { address, appChainId, connectWallet, isWalletConnected, pushNetwork, walletChainId } =
     useWeb3Connection()
   const isConnected = isWalletConnected && address
-  const isWrongNetwork = isConnected && networkToCheck && walletChainId !== networkToCheck
+
+  const isWrongNetwork =
+    isConnected &&
+    networkToCheck &&
+    (walletChainId !== networkToCheck || appChainId !== networkToCheck)
 
   if (!isConnected) {
     return (

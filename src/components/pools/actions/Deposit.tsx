@@ -10,6 +10,7 @@ import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Bu
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
@@ -35,6 +36,15 @@ export const Contents = styled.p`
   width: 100%;
 `
 
+const ButtonsWrapper = styled.div`
+  display: flex;
+  gap: 5px;
+`
+
+const Button = styled(ButtonGradient)`
+  width: 110px;
+`
+
 const Allowance = ({ allowance }: { allowance: string }) => (
   <Contents>
     Allowance: <TextPrimary>{allowance}</TextPrimary>
@@ -42,6 +52,8 @@ const Allowance = ({ allowance }: { allowance: string }) => (
 )
 
 function Deposit({ pool, poolHelpers }: Props) {
+  const { handleOpenNftSelectionModal, hasStoredSelectedNft, storedSelectedNfts } =
+    useNftSelection()
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
   const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
     useUserAvailableToDeposit(pool)
@@ -51,10 +63,11 @@ function Deposit({ pool, poolHelpers }: Props) {
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const { estimate: purchasePoolTokensEstimate, execute } = useAelinPoolTransaction(
-    pool.address,
-    'purchasePoolTokens',
-  )
+  const { estimate: purchasePoolTokensEstimate, execute: purchasePoolTokens } =
+    useAelinPoolTransaction(pool.address, 'purchasePoolTokens')
+
+  const { estimate: purchasePoolTokensWithNftEstimate, execute: purchasePoolTokensWithNft } =
+    useAelinPoolTransaction(pool.address, 'purchasePoolTokensWithNft')
 
   const balances = [
     investmentTokenBalance,
@@ -92,7 +105,9 @@ function Deposit({ pool, poolHelpers }: Props) {
 
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await execute([tokenInputValue], txGasOptions)
+        const receipt = pool.hasNftList
+          ? await purchasePoolTokensWithNft([storedSelectedNfts, tokenInputValue], txGasOptions)
+          : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
           refetchBalances()
           setTokenInputValue('')
@@ -100,7 +115,10 @@ function Deposit({ pool, poolHelpers }: Props) {
         }
       },
       title: `Deposit ${investmentTokenSymbol}`,
-      estimate: () => purchasePoolTokensEstimate([tokenInputValue]),
+      estimate: () =>
+        pool.hasNftList
+          ? purchasePoolTokensWithNftEstimate([storedSelectedNfts, tokenInputValue])
+          : purchasePoolTokensEstimate([tokenInputValue]),
     })
   }
 
@@ -121,19 +139,23 @@ function Deposit({ pool, poolHelpers }: Props) {
           allowance={`${userMaxDepositPrivateAmount.formatted} ${pool.investmentTokenSymbol}`}
         />
       )}
-      <ButtonGradient
-        disabled={
-          !address ||
-          !isAppConnected ||
-          poolHelpers.capReached ||
-          isSubmitting ||
-          !tokenInputValue ||
-          Boolean(inputError)
-        }
-        onClick={depositTokens}
-      >
-        Deposit
-      </ButtonGradient>
+      <ButtonsWrapper>
+        <Button
+          disabled={
+            !address ||
+            !isAppConnected ||
+            poolHelpers.capReached ||
+            isSubmitting ||
+            !tokenInputValue ||
+            Boolean(inputError) ||
+            (pool.hasNftList && !hasStoredSelectedNft)
+          }
+          onClick={depositTokens}
+        >
+          Deposit
+        </Button>
+        {pool.hasNftList && <Button onClick={handleOpenNftSelectionModal}>Select NFT</Button>}
+      </ButtonsWrapper>
     </>
   )
 }

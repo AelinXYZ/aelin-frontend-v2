@@ -7,7 +7,8 @@ module.exports = {
       "lh3.googleusercontent.com",
       "openseauserdata.com",
       "fanbase-1.s3.amazonaws.com",
-      "storage.googleapis.com"
+      "storage.googleapis.com",
+      "ipfs.io"
     ]
   }
 }

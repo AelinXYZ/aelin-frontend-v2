@@ -18,6 +18,7 @@
     "create:nft:metadata": "node --experimental-json-modules --loader ts-node/esm scripts/generate-nft-metadata.ts"
   },
   "dependencies": {
+    "@alch/alchemy-sdk": "^1.2.0",
     "@eth-optimism/sdk": "^1.1.8",
     "@ethersproject/abi": "^5.6.4",
     "@ethersproject/address": "5.6.0",
