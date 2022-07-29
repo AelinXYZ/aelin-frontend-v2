@@ -16,6 +16,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-self: stretch;
   gap: 20px;
+  align-items: center;
 `
 
 const AddButton = styled(ButtonPrimaryLightSm)`

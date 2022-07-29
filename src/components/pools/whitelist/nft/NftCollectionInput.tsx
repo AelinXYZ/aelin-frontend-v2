@@ -34,6 +34,10 @@ const Input = styled(Textfield)<{ isOpen: boolean }>`
   ${({ isOpen }) =>
     isOpen &&
     'border-bottom: none; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;'}
+  width: 400px;
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    width: 300px;
+  }
 `
 
 const SearchWrapper = styled.div`
@@ -56,6 +60,10 @@ const Collections = styled.div`
   border-top: none;
   border-bottom-left-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
   border-bottom-right-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
+  width: 400px;
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    width: 300px;
+  }
 `
 
 const Item = styled.div<{ isActive: boolean }>`
