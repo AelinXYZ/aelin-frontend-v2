@@ -1,0 +1,32 @@
+[
+  {
+    "id": 0,
+    "address": "0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b",
+    "name": "Test ERC-721",
+    "slug": "test-erc-721",
+    "imageUrl": "https://storage.googleapis.com/goerli-pixxiti/c7f8510719344f67d90fb82a3bae2161b848171d",
+    "isVerified": true,
+    "numOwners": 8,
+    "totalSupply": 9999,
+    "contractType": "erc-721",
+    "floorPrice": 0.23,
+    "totalVolume": 23.1921932853,
+    "paymentSymbol": "ETH",
+    "network": 5
+  },
+  {
+    "id": 1,
+    "address": "0x0771aAdbDDA5edD20d682d1d4877065361858522",
+    "name": "Test ERC-1155",
+    "slug": "test-erc-1155",
+    "imageUrl": "https://storage.googleapis.com/goerli-pixxiti/c7f8510719344f67d90fb82a3bae2161b848171d",
+    "isVerified": true,
+    "numOwners": 8,
+    "totalSupply": 9999,
+    "contractType": "erc-1155",
+    "floorPrice": 0.23,
+    "totalVolume": 23.1921932853,
+    "paymentSymbol": "ETH",
+    "network": 5
+  }
+]

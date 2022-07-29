@@ -1,6 +1,5 @@
 import { Interface } from '@ethersproject/abi'
-import { BigNumber } from '@ethersproject/bignumber'
-import { ContractReceipt, Overrides } from '@ethersproject/contracts'
+import { ContractReceipt } from '@ethersproject/contracts'
 
 import useTransaction from './useTransaction'
 import aelinPoolCreate from '@/src/abis/AelinPoolCreate.json'
@@ -21,6 +20,6 @@ export function useAelinPoolCreateTransaction<
  */
 export const getPoolCreatedId = (receipt: ContractReceipt) => {
   const poolCreateInterface = new Interface(aelinPoolCreate)
-  const parsedLogs = poolCreateInterface.parseLog(receipt.logs[2])
+  const parsedLogs = poolCreateInterface.parseLog(receipt.logs[receipt.logs.length - 1])
   return parsedLogs.args[0]
 }

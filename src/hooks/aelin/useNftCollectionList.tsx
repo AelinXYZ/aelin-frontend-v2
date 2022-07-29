@@ -10,7 +10,17 @@ import erc721 from '@/src/abis/ERC721.json'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'
-import isDev from '@/src/utils/isDev'
+
+export enum NFTType {
+  ERC721 = 'erc721',
+  ERC1155 = 'erc1155',
+  PUNKS = 'cryptopunks',
+}
+
+export enum ERCInterface {
+  ERC721 = '0x80ac58cd',
+  ERC1155 = '0xd9b67a26',
+}
 
 export enum NFTType {
   ERC721 = 'erc721',
@@ -43,6 +53,29 @@ export type NftCollectionData = {
 
 const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/opensea-metadata.json'
 const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/quixotic-metadata.json'
+const GOERLI_NFT_COLLECTIONS = '/data/nft-metadata/goerli-metadata.json'
+
+const parseOpenseaResponse = async (
+  openSeaRes: Response,
+): Promise<Omit<NftCollectionData, 'totalSupply'>> => {
+  const data = await openSeaRes.json()
+  return {
+    id: 0,
+    address: data.address,
+    name: data.name,
+    symbol: data.symbol,
+    description: data.description,
+    imageUrl: data.image_url,
+    contractType: data.schema_name.includes('721') ? NFTType.ERC721 : NFTType.ERC1155,
+    network: Chains.mainnet,
+  }
+}
+
+const getParsedNFTCollectionData = async (collectionAddress: string, chainId: ChainsValues) => {
+  const url =
+    chainId === Chains.optimism
+      ? `/api/nft/${Chains.optimism}/${collectionAddress}`
+      : `https://api.opensea.io/api/v1/asset_contract/${collectionAddress}?format=json`
 
 const parseOpenseaResponse = async (
   openSeaRes: Response,
@@ -85,10 +118,9 @@ function useNftCollectionList(query: string, nftType: NFTType) {
     const fetchCollections = async (appChainId: ChainsValues) => {
       const collections: NftCollectionData[] = (
         await Promise.all([
-          (appChainId === Chains.mainnet || isDev) &&
-            fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
-          (appChainId === Chains.optimism || isDev) &&
-            fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.mainnet && fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.optimism && fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.goerli && fetch(GOERLI_NFT_COLLECTIONS).then((r) => r.json()),
         ])
       )
         .filter(Boolean)
