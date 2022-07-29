@@ -47,6 +47,8 @@ const getInitialNftWhitelistProcess = (
       return NftWhitelistProcess.unlimited
     case NftType.erc1155:
       return NftWhitelistProcess.minimumAmount
+    default:
+      throw new Error('Unexpected nft type')
   }
 }
 
