@@ -234,6 +234,8 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
     allowListAddresses: poolAddresses,
     allowListAmounts: poolAddressesAmounts,
     nftCollectionRules: nftCollectionRules,
+    // TODO: add nft creation pool
+    nftCollectionRules: [],
   }
 }
 
