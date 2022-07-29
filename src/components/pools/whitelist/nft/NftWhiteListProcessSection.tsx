@@ -9,10 +9,13 @@ import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/button
 const Wrapper = styled.div`
   column-gap: 20px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
   margin: 19px 0 20px;
   row-gap: 10px;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    flex-direction: row;
+  }
 `
 
 const Description = styled.p`
@@ -21,7 +24,7 @@ const Description = styled.p`
   font-weight: 400;
   line-height: 1.4;
   margin: 0;
-  max-width: 100%;
+  max-width: 300px;
   text-align: center;
 `
 

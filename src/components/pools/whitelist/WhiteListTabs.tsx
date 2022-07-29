@@ -3,6 +3,10 @@ import styled, { css } from 'styled-components'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    width: auto;
+  }
+  width: 315px;
   align-items: center;
   display: flex;
   flex-direction: column;
