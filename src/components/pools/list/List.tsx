@@ -208,9 +208,17 @@ export const List: React.FC<{
                       {activeNotifications.toString()}
                     </Badge>
                   )}
+
                   {isPrivatePool(pool.poolType) && (
                     <Label>
-                      <span>private</span>
+                      <span>Private</span>
+                      <Lock />
+                    </Label>
+                  )}
+
+                  {!!pool.hasNftList && (
+                    <Label>
+                      <span>NFT</span>
                       <Lock />
                     </Label>
                   )}

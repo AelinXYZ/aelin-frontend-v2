@@ -28,6 +28,7 @@ import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
+import { getPoolType } from '@/src/utils/aelinPoolUtils'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
 
@@ -90,7 +91,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         href={getExplorerUrl(pool.address || '', pool.chainId)}
         isVerified={isVerified ?? false}
         network={chainsConfig[pool.chainId].icon}
-        subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
+        subTitle={
+          pool.poolType || pool.hasNftList
+            ? getPoolType(pool.poolType, pool.hasNftList) + ' pool'
+            : ''
+        }
         title={pool.nameFormatted}
       />
       <RightTimelineLayout timelineSteps={timeline}>
