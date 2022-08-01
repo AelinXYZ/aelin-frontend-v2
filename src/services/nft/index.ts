@@ -89,14 +89,19 @@ export const getNftOwnedByAddress = async (
     // PUT HERE THE NFTs <<YOU OWN>> TO TEST GOERLI POOLS
     return [
       {
-        id: '1',
-        contractAddress: '0x56E89a09CE99445044E979F43b038CB9e55a0688',
+        id: '1199',
+        contractAddress: '0x39Ec448b891c476e166b3C3242A90830DB556661',
         imgUrl: 'https://ipfs.io/ipfs/bafkreigcentehhdnbbk57x3mu6exjvtlp4k4fqqhkdpxg4xlfbevywcuvm',
       },
       {
-        id: '2',
-        contractAddress: '0x56E89a09CE99445044E979F43b038CB9e55a0688',
+        id: '1160',
+        contractAddress: '0x39Ec448b891c476e166b3C3242A90830DB556661',
         imgUrl: 'https://ipfs.io/ipfs/bafkreidwycvpunxiyz4hewq3htynvrj63umkruysshwwud56ko66i4xvsa',
+      },
+      {
+        id: '373815',
+        contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
+        imgUrl: 'https://live---metadata-5covpqijaa-uc.a.run.app/images/1',
       },
     ]
   }

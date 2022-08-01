@@ -59,7 +59,7 @@ function useNftUserAllocation(nfts: SelectedNfts, pool: ParsedAelinPool) {
           // Add allocation granted if user owns at least one nft of the collection
           return collectionNftsSelected.length
             ? acc + Number(collectionRule.purchaseAmount.formatted)
-            : 0
+            : acc
         }
       },
       0,

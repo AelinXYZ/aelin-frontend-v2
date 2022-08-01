@@ -36,10 +36,13 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
   const handleCloseNftSelectionModal = () => setShowNftSelectionModal(false)
   const handleStoreSelectedNfts = (selectedNfts: SelectedNfts) => {
     const groupedNfts = groupBy(selectedNfts, 'contractAddress')
-    const nftPurchaseList = Object.entries(groupedNfts).map(([collectionAddress, nftList]) => ({
-      collectionAddress,
-      tokenIds: nftList.map((nft) => Number(nft.id)),
-    }))
+    const nftPurchaseList = Object.entries(groupedNfts)
+      .map(([collectionAddress, nftList]) => ({
+        collectionAddress,
+        tokenIds: nftList.filter((nft) => nft.selected).map((nft) => Number(nft.id)),
+      }))
+      .filter((list) => list.tokenIds?.length)
+
     setStoredSelectedNfts([...nftPurchaseList])
   }
 
