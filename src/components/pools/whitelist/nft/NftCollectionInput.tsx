@@ -1,9 +1,9 @@
-import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import debounce from 'lodash/debounce'
 
+import NftMedia from '../../actions/Invest/NftMedia'
 import { Search } from '@/src/components/assets/Search'
 import { Loading } from '@/src/components/common/Loading'
 import {
@@ -160,7 +160,7 @@ const NftCollectionInput = ({ nftType, onChange, selectedCollection }: NftCollec
               >
                 <Details>
                   {!!collection.imageUrl && (
-                    <Image alt="" height={24} src={collection.imageUrl} width={24} />
+                    <NftMedia height={24} spinner={false} src={collection.imageUrl} width={24} />
                   )}
                   <span>{collection.name}</span>
                 </Details>

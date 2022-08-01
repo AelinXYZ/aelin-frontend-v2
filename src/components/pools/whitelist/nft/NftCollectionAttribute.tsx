@@ -1,5 +1,6 @@
-import Image from 'next/image'
 import styled from 'styled-components'
+
+import NftMedia from '../../actions/Invest/NftMedia'
 
 const Card = styled.div`
   display: flex;
@@ -44,7 +45,7 @@ const NftCollectionAttribute = ({ currencyImageUrl, name, value }: NftCollection
   return (
     <Card>
       <Row>
-        {currencyImageUrl && <Image alt="" height={15} src={currencyImageUrl} width={8} />}
+        {currencyImageUrl && <NftMedia height={15} src={currencyImageUrl} width={8} />}
         <Value>{value}</Value>
       </Row>
       <Name>{name}</Name>
