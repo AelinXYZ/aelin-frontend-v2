@@ -115,6 +115,7 @@ const Items = styled.div`
   max-height: 344px;
   overflow-y: scroll;
   width: 105%;
+  overflow: auto;
 `
 
 const Item = styled.div`
