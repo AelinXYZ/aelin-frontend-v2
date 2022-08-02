@@ -40,14 +40,20 @@ const LoadingWrapper = styled.div`
 `
 
 const NftMedia = ({
+  height = 128,
   isDisabled = false,
   onClick,
+  spinner = true,
   src,
+  width = 128,
   ...rest
 }: {
   src: string
-  isDisabled: boolean
-  onClick: () => void
+  height?: number
+  width?: number
+  isDisabled?: boolean
+  onClick?: () => void
+  spinner?: boolean
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isVideo, setIsVideo] = useState<boolean>(false)
@@ -71,32 +77,34 @@ const NftMedia = ({
         <Video
           {...rest}
           autoPlay
-          height={128}
+          height={height}
           isDisabled={isDisabled}
           loop
           onClick={onClick}
           onLoadedData={() => setIsLoading(false)}
           src={src}
-          width={128}
+          width={width}
         />
       ) : (
         <Image
           {...rest}
           alt=""
-          height={128}
+          height={height}
           isDisabled={isDisabled}
           onClick={onClick}
           onLoad={() => setIsLoading(false)}
           src={src}
-          width={128}
+          width={width}
         />
       )}
       {isLoading && (
         <>
-          <MediaPlaceHolder height={128} width={128} />
-          <LoadingWrapper>
-            <Loading />
-          </LoadingWrapper>
+          <MediaPlaceHolder height={height} width={width} />
+          {spinner && (
+            <LoadingWrapper>
+              <Loading />
+            </LoadingWrapper>
+          )}
         </>
       )}
     </MediaWrapper>
