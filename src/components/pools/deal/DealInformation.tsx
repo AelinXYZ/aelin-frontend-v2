@@ -136,7 +136,7 @@ export const DealInformation: React.FC<{
             Amount in pool: {pool.amountInPool.formatted}
             <Warning>{poolHelpers.capReached && 'cap reached'}</Warning>
           </StyledValue>
-          <Value>Total redeem: {pool.redeem.formatted}</Value>
+          <Value>Total redeemed: {pool.redeem.formatted}</Value>
           <Value>Total withdrawn: {pool.withdrawn.formatted}</Value>
         </InfoCell>
         <DealParticipantsInfoCell
