@@ -1,4 +1,5 @@
 import { Network, OwnedNft, getNftsForOwner, initializeAlchemy } from '@alch/alchemy-sdk'
+import { getAddress } from '@ethersproject/address'
 
 import { Chains, ChainsValues } from '@/src/constants/chains'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
@@ -103,24 +104,52 @@ export const getNftOwnedByAddress = async (
     }
     return parseQuixoticNFTsResponse(quixoticRes)
   } else if (chainId === Chains.goerli) {
-    // PUT HERE THE NFTs <<YOU OWN>> TO TEST GOERLI POOLS
-    return [
-      {
-        id: '1199',
-        contractAddress: '0x39Ec448b891c476e166b3C3242A90830DB556661',
-        imgUrl: 'https://ipfs.io/ipfs/bafkreigcentehhdnbbk57x3mu6exjvtlp4k4fqqhkdpxg4xlfbevywcuvm',
-      },
-      {
-        id: '1160',
-        contractAddress: '0x39Ec448b891c476e166b3C3242A90830DB556661',
-        imgUrl: 'https://ipfs.io/ipfs/bafkreidwycvpunxiyz4hewq3htynvrj63umkruysshwwud56ko66i4xvsa',
-      },
-      {
-        id: '373815',
-        contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
-        imgUrl: 'https://live---metadata-5covpqijaa-uc.a.run.app/images/1',
-      },
-    ]
+    // Saeta dev address
+    if (getAddress('0xa834e550B45B4a469a05B846fb637bfcB12e3Df8') === getAddress(walletAddress)) {
+      return [
+        {
+          id: '373814',
+          contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
+          imgUrl:
+            'https://ipfs.io/ipfs/bafybeiezeds576kygarlq672cnjtimbsrspx5b3tr3gct2lhqud6abjgiu',
+        },
+        {
+          id: '373813',
+          contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
+          imgUrl:
+            'https://ipfs.io/ipfs/bafybeiezeds576kygarlq672cnjtimbsrspx5b3tr3gct2lhqud6abjgiu',
+        },
+        {
+          id: '373812',
+          contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
+          imgUrl:
+            'https://ipfs.io/ipfs/bafybeiezeds576kygarlq672cnjtimbsrspx5b3tr3gct2lhqud6abjgiu',
+        },
+      ]
+    }
+
+    // Linus dev address
+    if (getAddress('0xEade2f82c66eBda112987edd95E26cd3088f33DD') === getAddress(walletAddress)) {
+      return [
+        {
+          id: '1199',
+          contractAddress: '0x39Ec448b891c476e166b3C3242A90830DB556661',
+          imgUrl:
+            'https://ipfs.io/ipfs/bafkreigcentehhdnbbk57x3mu6exjvtlp4k4fqqhkdpxg4xlfbevywcuvm',
+        },
+        {
+          id: '1160',
+          contractAddress: '0x39Ec448b891c476e166b3C3242A90830DB556661',
+          imgUrl:
+            'https://ipfs.io/ipfs/bafkreidwycvpunxiyz4hewq3htynvrj63umkruysshwwud56ko66i4xvsa',
+        },
+        {
+          id: '373815',
+          contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
+          imgUrl: 'https://live---metadata-5covpqijaa-uc.a.run.app/images/1',
+        },
+      ]
+    }
   }
 
   throw new Error('Unsupported network.', 400)
