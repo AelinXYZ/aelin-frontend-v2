@@ -160,7 +160,7 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
   const [isClear, setIsClear] = useState(false)
   const { error, nfts } = useUserNftsByCollections(pool)
   const { handleStoreSelectedNfts, selectedNfts, setSelectedNfts } = useNftSelection()
-  const allocation = useNftUserAllocation(selectedNfts, pool)
+  const allocation = useNftUserAllocation(pool)
 
   if (error) {
     throw new Error('Error getting nfts.')
@@ -243,7 +243,7 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
       <Allocation>
         <AllocationLabel>Your allocation :</AllocationLabel>
         <AllocationValue>
-          {allocation} {pool.investmentTokenSymbol}
+          {allocation.unlimited ? 'Unlimited' : allocation.formatted} {pool.investmentTokenSymbol}
         </AllocationValue>
       </Allocation>
       <SaveButton onClick={handleSave}>Save</SaveButton>
