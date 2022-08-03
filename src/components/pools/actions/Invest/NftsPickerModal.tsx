@@ -172,9 +172,6 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
     }
   }, [nfts, setSelectedNfts])
 
-  const isErc721BlackListed = (tokenId: string, erc721Blacklisted: string[]) =>
-    erc721Blacklisted.indexOf(tokenId) !== -1
-
   const handleNftSelection = (nft: NftSelected) => {
     setSelectedNfts((prev) => ({
       ...prev,
@@ -222,17 +219,14 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
               <Item key={index}>
                 {!!nft.imgUrl && (
                   <NftMedia
-                    isDisabled={isErc721BlackListed(
-                      nft.id,
-                      pool.nftCollectionRules[0].erc721Blacklisted,
-                    )}
-                    onClick={() => handleNftSelection(nft)}
+                    isDisabled={nft.blackListed}
+                    onClick={() => !nft.blackListed && handleNftSelection(nft)}
                     src={nft.imgUrl}
                   />
                 )}
                 <RadioButton
-                  checked={!!selectedNfts?.[nft.id]?.selected}
-                  onClick={() => handleNftSelection(nft)}
+                  checked={!!selectedNfts?.[nft.id]?.selected && !nft.blackListed}
+                  onClick={() => !nft.blackListed && handleNftSelection(nft)}
                 />
               </Item>
             ))}

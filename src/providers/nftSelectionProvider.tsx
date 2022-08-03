@@ -5,7 +5,11 @@ import groupBy from 'lodash/groupBy'
 
 import { ParsedOwnedNft } from '../services/nft'
 
-export type NftSelected = ParsedOwnedNft & { selected?: boolean; balance: BigNumber }
+export type NftSelected = ParsedOwnedNft & {
+  selected?: boolean
+  balance: BigNumber
+  blackListed: boolean
+}
 
 export type SelectedNfts = Record<string, NftSelected>
 
