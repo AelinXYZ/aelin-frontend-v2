@@ -115,6 +115,7 @@ const Items = styled.div`
   max-height: 344px;
   overflow-y: scroll;
   width: 105%;
+  overflow: auto;
 `
 
 const Item = styled.div`
@@ -160,7 +161,7 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
   const [isClear, setIsClear] = useState(false)
   const { error, nfts } = useUserNftsByCollections(pool)
   const { handleStoreSelectedNfts, selectedNfts, setSelectedNfts } = useNftSelection()
-  const allocation = useNftUserAllocation(selectedNfts, pool)
+  const allocation = useNftUserAllocation(pool)
 
   if (error) {
     throw new Error('Error getting nfts.')
@@ -171,9 +172,6 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
       setSelectedNfts({ ...nfts })
     }
   }, [nfts, setSelectedNfts])
-
-  const isErc721BlackListed = (tokenId: string, erc721Blacklisted: string[]) =>
-    erc721Blacklisted.indexOf(tokenId) !== -1
 
   const handleNftSelection = (nft: NftSelected) => {
     setSelectedNfts((prev) => ({
@@ -222,17 +220,14 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
               <Item key={index}>
                 {!!nft.imgUrl && (
                   <NftMedia
-                    isDisabled={isErc721BlackListed(
-                      nft.id,
-                      pool.nftCollectionRules[0].erc721Blacklisted,
-                    )}
-                    onClick={() => handleNftSelection(nft)}
+                    isDisabled={nft.blackListed}
+                    onClick={() => !nft.blackListed && handleNftSelection(nft)}
                     src={nft.imgUrl}
                   />
                 )}
                 <RadioButton
-                  checked={!!selectedNfts?.[nft.id]?.selected}
-                  onClick={() => handleNftSelection(nft)}
+                  checked={!!selectedNfts?.[nft.id]?.selected && !nft.blackListed}
+                  onClick={() => !nft.blackListed && handleNftSelection(nft)}
                 />
               </Item>
             ))}
@@ -243,7 +238,7 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
       <Allocation>
         <AllocationLabel>Your allocation :</AllocationLabel>
         <AllocationValue>
-          {allocation} {pool.investmentTokenSymbol}
+          {allocation.unlimited ? 'Unlimited' : allocation.formatted} {pool.investmentTokenSymbol}
         </AllocationValue>
       </Allocation>
       <SaveButton onClick={handleSave}>Save</SaveButton>
