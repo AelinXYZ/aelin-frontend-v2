@@ -1,0 +1,17 @@
+[
+  {
+    "id": 0,
+    "address": "0xA433e0Bf662Dd934833C66D4f03711e1CCE9c9B2",
+    "name": "Ethernauts",
+    "slug": "ethernauts",
+    "imageUrl": "https://fanbase-1.s3.amazonaws.com/quixotic-collection-profile/7LlM5uXp_400x400.jpeg",
+    "isVerified": true,
+    "numOwners": 129,
+    "totalSupply": 187,
+    "contractType": "erc721",
+    "floorPrice": 0.25,
+    "totalVolume": 0,
+    "paymentSymbol": "ETH",
+    "network": 10
+  }
+]

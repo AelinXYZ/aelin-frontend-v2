@@ -70,7 +70,7 @@ export const getNftOwnedByAddress = async (
 ) => {
   if (chainId === Chains.mainnet) {
     const settings = {
-      apiKey: process.env.ALCHEMY_API_KEY_MAINNET,
+      apiKey: process.env.NEXT_PUBLIC_TOKEN_PROVIDER,
       network: Network.ETH_MAINNET,
       maxRetries: 10,
     }

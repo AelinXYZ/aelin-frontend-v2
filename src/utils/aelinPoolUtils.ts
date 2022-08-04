@@ -7,7 +7,13 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
+import {
+  NftType,
+  NftWhiteListState,
+  NftWhitelistProcess,
+} from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
 import { PoolStages, Privacy } from '@/src/constants/pool'
+import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
 import { formatToken } from '@/src/web3/bigNumber'
 import { DetailedNumber } from '@/types/utils'
 
@@ -331,4 +337,50 @@ export function parseNftCollectionRules(
       },
     }
   })
+}
+
+export const getParsedNftCollectionRules = (
+  nftWhiteListState: NftWhiteListState,
+): NftCollectionRulesProps[] => {
+  const nftCollectionRules = nftWhiteListState.selectedCollections.map((collection) => {
+    const collectionAddress = collection.nftCollectionData?.address ?? ''
+
+    const purchaseAmountPerToken = [
+      NftWhitelistProcess.limitedPerNft,
+      NftWhitelistProcess.unlimited,
+    ].includes(nftWhiteListState.whiteListProcess)
+
+    let purchaseAmount = 0
+    let tokenIds: Array<BigNumber> = []
+    let minTokensEligible: Array<BigNumber> = []
+
+    if (nftWhiteListState.nftType === NftType.erc721) {
+      purchaseAmount =
+        NftWhitelistProcess.unlimited === nftWhiteListState.whiteListProcess
+          ? 0
+          : NftWhitelistProcess.limitedPerNft === nftWhiteListState.whiteListProcess
+          ? collection.amountPerNft ?? 0
+          : collection.amountPerWallet ?? 0
+    }
+
+    if (nftWhiteListState.nftType === NftType.erc1155) {
+      tokenIds = collection.selectedNftsData.map((collection) => {
+        return BigNumber.from(collection.nftId as number)
+      })
+
+      minTokensEligible = collection.selectedNftsData.map((collection) =>
+        BigNumber.from(collection.minimumAmount),
+      )
+    }
+
+    return {
+      collectionAddress,
+      purchaseAmountPerToken,
+      purchaseAmount,
+      tokenIds,
+      minTokensEligible,
+    }
+  })
+
+  return nftCollectionRules
 }
