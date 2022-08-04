@@ -12,7 +12,7 @@ function fetcher(...urls: string[]) {
 }
 
 export interface UserNfts {
-  [tokenId: string]: ParsedOwnedNft & { balance: BigNumber }
+  [tokenId: string]: ParsedOwnedNft & { balance: BigNumber; blackListed: boolean }
 }
 
 const useUserNftsByCollections = (pool: ParsedAelinPool) => {
