@@ -3,14 +3,25 @@ import { useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { ParsedAelinPool } from './useAelinPool'
-import { SelectedNfts } from '@/src/providers/nftSelectionProvider'
+import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
+import { formatToken } from '@/src/web3/bigNumber'
 
-function useNftUserAllocation(nfts: SelectedNfts, pool: ParsedAelinPool) {
-  const isERC721Unlimited = pool?.nftCollectionRules.some(
-    (collectionRule) =>
-      collectionRule.purchaseAmount.formatted === '0' && collectionRule.nftType === 'ERC721',
-  )
+function useNftUserAllocation(pool: ParsedAelinPool) {
+  const { selectedNfts: nfts } = useNftSelection()
+  const isERC721Unlimited = pool?.nftCollectionRules.some((collectionRule) => {
+    const collectionNftsSelected = Object.values(nfts).filter(
+      (nft) =>
+        nft.selected &&
+        nft.contractAddress.toLowerCase() === collectionRule.collectionAddress.toLowerCase(),
+    )
+
+    return (
+      collectionRule.purchaseAmount.formatted === '0' &&
+      collectionRule.nftType === 'ERC721' &&
+      collectionNftsSelected.some((nft) => !!nft?.selected)
+    )
+  })
 
   const isERC1155 = pool?.nftCollectionRules.some(
     (collectionRule) => collectionRule.nftType === 'ERC1155',
@@ -40,10 +51,10 @@ function useNftUserAllocation(nfts: SelectedNfts, pool: ParsedAelinPool) {
   }, [isERC1155, nfts, pool.nftCollectionRules])
 
   const allocation = useMemo(() => {
-    if (!nfts || !pool.nftCollectionRules) return 0
+    if (!nfts || !pool.nftCollectionRules) return BigNumber.from(0)
 
     return Object.values(pool.nftCollectionRules).reduce(
-      (acc: number, collectionRule: ParsedNftCollectionRules) => {
+      (acc: BigNumber, collectionRule: ParsedNftCollectionRules) => {
         const collectionNftsSelected = Object.values(nfts).filter(
           (nft) =>
             nft.selected &&
@@ -52,21 +63,23 @@ function useNftUserAllocation(nfts: SelectedNfts, pool: ParsedAelinPool) {
 
         if (collectionRule.purchaseAmountPerToken) {
           // Add allocation granted per collection's nft
-          return (
-            acc + Number(collectionRule.purchaseAmount.formatted) * collectionNftsSelected.length
+          return acc.add(
+            collectionRule.purchaseAmount.raw.mul(BigNumber.from(collectionNftsSelected.length)),
           )
         } else {
           // Add allocation granted if user owns at least one nft of the collection
-          return collectionNftsSelected.length
-            ? acc + Number(collectionRule.purchaseAmount.formatted)
-            : acc
+          return collectionNftsSelected.length ? acc.add(collectionRule.purchaseAmount.raw) : acc
         }
       },
-      0,
+      BigNumber.from(0),
     )
   }, [nfts, pool.nftCollectionRules])
 
-  return isERC721Unlimited || isERC1155Unlimited ? 'Unlimited' : `${allocation}`
+  return {
+    formatted: formatToken(allocation, 18, 4),
+    raw: allocation,
+    unlimited: isERC721Unlimited || isERC1155Unlimited,
+  }
 }
 
 export default useNftUserAllocation

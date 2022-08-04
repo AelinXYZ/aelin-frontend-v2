@@ -8,6 +8,7 @@ import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
@@ -55,6 +56,7 @@ function Deposit({ pool, poolHelpers }: Props) {
   const { handleOpenNftSelectionModal, hasStoredSelectedNft, storedSelectedNfts } =
     useNftSelection()
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
+  const allocation = useNftUserAllocation(pool)
   const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
     useUserAvailableToDeposit(pool)
   const [tokenInputValue, setTokenInputValue] = useState('')
@@ -84,8 +86,16 @@ function Deposit({ pool, poolHelpers }: Props) {
       return
     }
 
+    const nftAllocationExceeded =
+      pool.hasNftList &&
+      tokenInputValue &&
+      allocation &&
+      !allocation.unlimited &&
+      BigNumber.from(tokenInputValue).gt(allocation.raw)
+
     const isInputError =
-      tokenInputValue && BigNumber.from(tokenInputValue).gt(sortedBalances[0].raw)
+      (tokenInputValue && BigNumber.from(tokenInputValue).gt(sortedBalances[0].raw)) ||
+      nftAllocationExceeded
 
     if (!isInputError) {
       setInputError('')
@@ -94,9 +104,11 @@ function Deposit({ pool, poolHelpers }: Props) {
         ? setInputError(`Max allowed to invest is ${sortedBalances[0].formatted}`)
         : sortedBalances[0].type === AmountTypes.maxDepositAllowed
         ? setInputError(`Max cap allowance ${sortedBalances[0].formatted}`)
+        : nftAllocationExceeded
+        ? setInputError(`Purchase amount should be less the max allocation`)
         : setInputError(`Insufficient balance`)
     }
-  }, [investmentTokenBalance.raw, sortedBalances, tokenInputValue])
+  }, [investmentTokenBalance.raw, sortedBalances, tokenInputValue, allocation, pool.hasNftList])
 
   const depositTokens = async () => {
     if (inputError) {
