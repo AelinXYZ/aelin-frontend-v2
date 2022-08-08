@@ -67,9 +67,9 @@ function Vest({ pool }: Props) {
       !isAppConnected ||
       isSubmitting ||
       !hasRemainingTokens ||
-      isFirstAelinPool(address)
+      isFirstAelinPool(pool.address)
     )
-  }, [address, hasRemainingTokens, isAppConnected, isSubmitting])
+  }, [address, hasRemainingTokens, isAppConnected, isSubmitting, pool.address])
 
   const handleVest = async () => {
     setConfigAndOpenModal({
