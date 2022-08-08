@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
+import NoActions from './actions/NoActions'
 import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import {
@@ -28,7 +29,7 @@ import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
-import { PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
+import { PoolAction, PoolTab } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -126,14 +127,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               networkToCheck={pool.chainId}
             >
               <>
-                {!tabs.actionTabs.states.length && (
-                  <div>
-                    {derivedStatus.current === PoolStatus.DealPresented
-                      ? 'You have not participated in this pool'
-                      : 'No actions available'}
-                  </div>
-                )}
-
+                {!tabs.actionTabs.states.length && <NoActions pool={pool} status={derivedStatus} />}
                 {tabs.actionTabs.active === PoolAction.Invest && (
                   <Invest pool={pool} poolHelpers={funding} />
                 )}
