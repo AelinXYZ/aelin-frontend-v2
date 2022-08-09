@@ -38,13 +38,20 @@ const parseAlchemyResponse = (ownedNfts: OwnedNft[]): ParsedOwnedNft[] => {
   }))
 }
 
-const parseQuixoticNFTsResponse = async (quixoticRes: Response): Promise<ParsedOwnedNft[]> => {
+const parseQuixoticNFTsResponse = async (
+  quixoticRes: Response,
+  contractAddress: string,
+): Promise<ParsedOwnedNft[]> => {
   const data = await quixoticRes.json()
-  return data.results.map((nft: QuixoticNft) => ({
-    id: nft.token_id,
-    contractAddress: nft.collection.address,
-    imgUrl: nft.image_url,
-  }))
+  return data.results
+    .map((nft: QuixoticNft) => ({
+      id: nft.token_id,
+      contractAddress: nft.collection.address,
+      imgUrl: nft.image_url,
+    }))
+    .filter(
+      (nft: ParsedOwnedNft) => nft.contractAddress.toLowerCase() === contractAddress.toLowerCase(),
+    )
 }
 
 const parseQuixoticCollectionResponse = async (
@@ -102,7 +109,7 @@ export const getNftOwnedByAddress = async (
     if (quixoticRes.status !== 200) {
       throw new Error('Quixotic request failed.', 400)
     }
-    return parseQuixoticNFTsResponse(quixoticRes)
+    return parseQuixoticNFTsResponse(quixoticRes, collectionAddress)
   } else if (chainId === Chains.goerli) {
     // Saeta dev address
     if (getAddress('0xa834e550B45B4a469a05B846fb637bfcB12e3Df8') === getAddress(walletAddress)) {
