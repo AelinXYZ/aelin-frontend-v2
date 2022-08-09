@@ -65,7 +65,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     } else if (
       !currentNetwork.isProd
         ? investmentDeadLineSeconds < ONE_MINUTE_IN_SECS // min purchase expiry in test networks 1 min
-        : investmentDeadLineSeconds < ONE_MINUTE_IN_SECS * 30 // min purchase expiry in main networks 30 min
+        : investmentDeadLineSeconds < ONE_MINUTE_IN_SECS * 1 // min purchase expiry in main networks 30 min
     ) {
       errors.investmentDeadLine = 'Min purchase expiry is 30 mins'
     }
