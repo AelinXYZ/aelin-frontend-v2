@@ -37,9 +37,7 @@ const ONBOARD_STATE_DELAY = 100
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME
 
 // Default chain id from env var
-const INITIAL_APP_CHAIN_ID = Number(
-  process.env.NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID || 4,
-) as ChainsValues
+const INITIAL_APP_CHAIN_ID = Number(10) as ChainsValues
 
 nullthrows(
   Object.values(Chains).includes(INITIAL_APP_CHAIN_ID) ? INITIAL_APP_CHAIN_ID : null,
