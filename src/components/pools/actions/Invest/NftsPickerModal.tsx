@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import NftMedia from './NftMedia'
@@ -167,16 +167,14 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
     throw new Error('Error getting nfts.')
   }
 
-  useEffect(() => {
-    if (nfts && nfts.length) {
-      setSelectedNfts({ ...nfts })
-    }
-  }, [nfts, setSelectedNfts])
-
   const handleNftSelection = (nft: NftSelected) => {
+    const nftKey = nft.contractAddress + '-' + nft.id
     setSelectedNfts((prev) => ({
       ...prev,
-      [nft.id]: { ...nft, selected: !prev[nft.id]?.selected },
+      [nftKey]: {
+        ...nft,
+        selected: !prev[nftKey]?.selected,
+      },
     }))
   }
 
@@ -184,7 +182,7 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
     if (!nfts) return
     setSelectedNfts(() => {
       return Object.values(nfts).reduce(
-        (a, b) => ({ ...a, [b.id]: { ...b, selected: !isClear } }),
+        (a, b) => ({ ...a, [b.contractAddress + '-' + b.id]: { ...b, selected: !isClear } }),
         {},
       )
     })
@@ -216,21 +214,23 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
       {!!nfts && Object.keys(nfts).length && (
         <Card>
           <Items>
-            {Object.values(nfts).map((nft: NftSelected, index: number) => (
-              <Item key={index}>
-                {!!nft.imgUrl && (
-                  <NftMedia
-                    isDisabled={nft.blackListed}
+            {Object.entries(nfts).map(
+              ([nftKey, nft]: [nftKey: string, nft: NftSelected], index: number) => (
+                <Item key={index}>
+                  {!!nft.imgUrl && (
+                    <NftMedia
+                      isDisabled={nft.blackListed}
+                      onClick={() => !nft.blackListed && handleNftSelection(nft)}
+                      src={nft.imgUrl}
+                    />
+                  )}
+                  <RadioButton
+                    checked={!!selectedNfts?.[nftKey]?.selected && !nft.blackListed}
                     onClick={() => !nft.blackListed && handleNftSelection(nft)}
-                    src={nft.imgUrl}
                   />
-                )}
-                <RadioButton
-                  checked={!!selectedNfts?.[nft.id]?.selected && !nft.blackListed}
-                  onClick={() => !nft.blackListed && handleNftSelection(nft)}
-                />
-              </Item>
-            ))}
+                </Item>
+              ),
+            )}
           </Items>
           <AllButton onClick={handleSelectAll}>{isClear ? 'Clear all' : 'Select all'}</AllButton>
         </Card>

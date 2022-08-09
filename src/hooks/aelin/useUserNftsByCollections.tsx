@@ -47,8 +47,9 @@ const useUserNftsByCollections = (pool: ParsedAelinPool) => {
   const nfts = ([] as ParsedOwnedNft[]).concat(...nftData).reduce(
     (prev: UserNfts, curr: ParsedOwnedNft, index: number) => ({
       ...prev,
-      [`${curr.contractAddress}-${curr.id}`]: {
+      [`${curr.contractAddress.toLowerCase()}-${curr.id}`]: {
         ...curr,
+        contractAddress: curr.contractAddress.toLowerCase(),
         blackListed: isNftBlackListed(curr.id),
         balance: balances?.length ? balances[index] : BigNumber.from(0),
       },
