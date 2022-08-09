@@ -177,6 +177,13 @@ export const nftWhiteListReducer = (
         ],
       }
     case NftWhiteListActionType.updateCollection:
+      if (
+        state.selectedCollections.some(
+          (c) => c.nftCollectionData?.address === payload.newCollection.address,
+        )
+      ) {
+        return { ...state }
+      }
       newSelectedCollections = [...state.selectedCollections]
       newSelectedCollections[payload.index].nftCollectionData = payload.newCollection
       newSelectedCollections[payload.index].selectedNftsData = getInitialSelectedNftsData(
