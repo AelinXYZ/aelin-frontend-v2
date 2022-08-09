@@ -1,8 +1,6 @@
 import { Dispatch, ReactElement } from 'react'
 import styled from 'styled-components'
 
-import { BigNumber } from '@ethersproject/bignumber'
-
 import {
   NftType,
   NftWhiteListAction,
@@ -25,6 +23,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
+import { getParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 
 const WrapperGrid = styled.div`
   width: 620px;
@@ -276,48 +275,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose, onConfirm }: NftWh
                 disabled={getError() !== null}
                 onClick={() => {
                   if (isLastStep) {
-                    const nftCollectionRules = nftWhiteListState.selectedCollections.map(
-                      (collection) => {
-                        const collectionAddress = collection.nftCollectionData?.address ?? ''
-
-                        const purchaseAmountPerToken = [
-                          NftWhitelistProcess.limitedPerNft,
-                          NftWhitelistProcess.unlimited,
-                        ].includes(nftWhiteListState.whiteListProcess)
-
-                        let purchaseAmount = 0
-                        let tokenIds: Array<BigNumber> = []
-                        let minTokensEligible: Array<BigNumber> = []
-
-                        if (nftWhiteListState.nftType === NftType.erc721) {
-                          purchaseAmount =
-                            NftWhitelistProcess.unlimited === nftWhiteListState.whiteListProcess
-                              ? 0
-                              : NftWhitelistProcess.limitedPerNft ===
-                                nftWhiteListState.whiteListProcess
-                              ? collection.amountPerNft ?? 0
-                              : collection.amountPerWallet ?? 0
-                        }
-
-                        if (nftWhiteListState.nftType === NftType.erc1155) {
-                          tokenIds = collection.selectedNftsData.map((collection) => {
-                            return BigNumber.from(collection.nftId as number)
-                          })
-
-                          minTokensEligible = collection.selectedNftsData.map((collection) =>
-                            BigNumber.from(collection.minimumAmount),
-                          )
-                        }
-
-                        return {
-                          collectionAddress,
-                          purchaseAmountPerToken,
-                          purchaseAmount,
-                          tokenIds,
-                          minTokensEligible,
-                        }
-                      },
-                    )
+                    const nftCollectionRules = getParsedNftCollectionRules(nftWhiteListState)
 
                     onConfirm(nftCollectionRules, nftType)
                     onClose()

@@ -40,6 +40,8 @@ export type NftCollectionData = {
   paymentSymbol?: string
 }
 
+const AELIN_MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/aelin-mainnet-metadata.json'
+const AELIN_OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-optimism-metadata.json'
 const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/opensea-metadata.json'
 const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/quixotic-metadata.json'
 const GOERLI_NFT_COLLECTIONS = '/data/nft-metadata/goerli-metadata.json'
@@ -85,8 +87,15 @@ function useNftCollectionList(query: string, nftType: NFTType) {
     const fetchCollections = async (appChainId: ChainsValues) => {
       const collections: NftCollectionData[] = (
         await Promise.all([
+          // NFTs added manually
+          appChainId === Chains.mainnet &&
+            fetch(AELIN_MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.optimism &&
+            fetch(AELIN_OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+          // NFTs fetched by API
           appChainId === Chains.mainnet && fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
           appChainId === Chains.optimism && fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+          // NFT for testing reasons
           appChainId === Chains.goerli && fetch(GOERLI_NFT_COLLECTIONS).then((r) => r.json()),
         ])
       )
@@ -98,8 +107,8 @@ function useNftCollectionList(query: string, nftType: NFTType) {
 
     try {
       fetchCollections(appChainId)
-    } catch (err) {
-      console.log('effect', err)
+    } catch (_) {
+      setCollections([])
     }
   }, [appChainId])
 
@@ -129,10 +138,10 @@ function useNftCollectionList(query: string, nftType: NFTType) {
       if (isCollectionAddress) {
         const res: { data: NftCollectionData } = await getParsedNFTCollectionData(query, appChainId)
         const provider = new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl)
+
         if (!res?.data) {
           // no data found in marketplace, wrong address or unknown error
           // Get minimal information directly from the contract
-
           try {
             const contractType = await getTokenType(query, provider)
 
@@ -187,6 +196,7 @@ function useNftCollectionList(query: string, nftType: NFTType) {
         .filter((r) => {
           const contractType = r.contractType
           const chainId = r.network
+
           if (contractType === NFTType.PUNKS && appChainId === Chains.mainnet) return true
 
           return chainId === appChainId && contractType === nftType
