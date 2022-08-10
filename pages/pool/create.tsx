@@ -117,7 +117,12 @@ const Create: NextPage = () => {
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
                       <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit whitelisted addresses
+                        Edit allowlisted addresses
+                      </ButtonPrimaryLight>
+                    )}
+                    {isFinalStep && createPoolState.poolPrivacy === Privacy.NFT && (
+                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                        Edit NFT collections
                       </ButtonPrimaryLight>
                     )}
                     <MobileButtonWrapper>
@@ -168,6 +173,7 @@ const Create: NextPage = () => {
           ) => {
             setPoolField(whitelist, type)
           }}
+          poolPrivacy={createPoolState.poolPrivacy}
         />
       )}
     </>
