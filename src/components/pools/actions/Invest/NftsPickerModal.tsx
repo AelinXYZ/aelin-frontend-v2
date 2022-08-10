@@ -169,13 +169,28 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
 
   const handleNftSelection = (nft: NftSelected) => {
     const nftKey = nft.contractAddress + '-' + nft.id
-    setSelectedNfts((prev) => ({
-      ...prev,
-      [nftKey]: {
-        ...nft,
-        selected: !prev[nftKey]?.selected,
-      },
-    }))
+    if (allocation?.unlimited) {
+      setSelectedNfts((prev) =>
+        Object.values(nfts).reduce(
+          (a, b) => ({
+            ...a,
+            [b.contractAddress + '-' + b.id]: {
+              ...b,
+              selected: b.contractAddress + '-' + b.id === nftKey,
+            },
+          }),
+          {},
+        ),
+      )
+    } else {
+      setSelectedNfts((prev) => ({
+        ...prev,
+        [nftKey]: {
+          ...nft,
+          selected: !prev[nftKey]?.selected,
+        },
+      }))
+    }
   }
 
   const handleSelectAll = () => {
