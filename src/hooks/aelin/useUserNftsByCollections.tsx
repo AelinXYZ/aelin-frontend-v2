@@ -28,9 +28,12 @@ const useUserNftsByCollections = (pool: ParsedAelinPool) => {
     revalidateOnMount: true,
   })
 
-  const isNftBlackListed = (tokenId: string) => {
+  const isNftBlackListed = (tokenId: string, collectionAddress: string) => {
     return !!nftCollectionRules?.some((collectionRule) => {
-      return collectionRule.erc721Blacklisted.indexOf(tokenId) !== -1
+      return (
+        collectionRule.erc721Blacklisted.indexOf(tokenId) !== -1 &&
+        collectionAddress === collectionRule.collectionAddress.toLowerCase()
+      )
     })
   }
 
@@ -50,7 +53,7 @@ const useUserNftsByCollections = (pool: ParsedAelinPool) => {
       [`${curr.contractAddress.toLowerCase()}-${curr.id}`]: {
         ...curr,
         contractAddress: curr.contractAddress.toLowerCase(),
-        blackListed: isNftBlackListed(curr.id),
+        blackListed: isNftBlackListed(curr.id, curr.contractAddress.toLowerCase()),
         balance: balances?.length ? balances[index] : BigNumber.from(0),
       },
     }),
