@@ -6,7 +6,9 @@ import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { Metamask } from '@/src/components/assets/Metamask'
 import ChangeWalletMenu from '@/src/components/common/ChangeWalletMenu'
 import { Dropdown, DropdownPosition } from '@/src/components/common/Dropdown'
+import { Loading } from '@/src/components/common/Loading'
 import { Modal, ModalButtonCSS } from '@/src/components/common/Modal'
+import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
   ButtonGradient,
   ButtonPrimaryLight,
@@ -151,21 +153,28 @@ const SaveButton = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 
+const LoadingWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 50px;
+`
+
 export type NftsPickerModalProps = {
   onClose: () => void
   pool: ParsedAelinPool
 }
 
-const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
-  const { address } = useWeb3Connection()
-  const [isClear, setIsClear] = useState(false)
-  const { error, nfts } = useUserNftsByCollections(pool)
-  const { handleStoreSelectedNfts, selectedNfts, setSelectedNfts } = useNftSelection()
-  const allocation = useNftUserAllocation(pool)
+const OwnedNfts = genericSuspense(
+  ({ onClose, pool }: NftsPickerModalProps) => {
+    const [isClear, setIsClear] = useState(false)
+    const { error, nfts } = useUserNftsByCollections(pool)
+    const { handleStoreSelectedNfts, selectedNfts, setSelectedNfts } = useNftSelection()
+    const allocation = useNftUserAllocation(pool)
 
-  if (error) {
-    throw new Error('Error getting nfts.')
-  }
+    if (error) {
+      throw new Error('Error getting nfts.')
+    }
 
   const handleNftSelection = (nft: NftSelected) => {
     const nftKey = nft.contractAddress + '-' + nft.id
@@ -193,22 +202,68 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
     }
   }
 
-  const handleSelectAll = () => {
-    if (!nfts) return
-    setSelectedNfts(() => {
-      return Object.values(nfts).reduce(
-        (a, b) => ({ ...a, [b.contractAddress + '-' + b.id]: { ...b, selected: !isClear } }),
-        {},
-      )
-    })
-    setIsClear((prev) => !prev)
-  }
+    const handleSelectAll = () => {
+      if (!nfts) return
+      setSelectedNfts(() => {
+        return Object.values(nfts).reduce(
+          (a, b) => ({ ...a, [b.contractAddress + '-' + b.id]: { ...b, selected: !isClear } }),
+          {},
+        )
+      })
+      setIsClear((prev) => !prev)
+    }
 
-  const handleSave = () => {
-    handleStoreSelectedNfts(selectedNfts)
-    onClose()
-  }
+    const handleSave = () => {
+      handleStoreSelectedNfts(selectedNfts)
+      onClose()
+    }
 
+    return (
+      <>
+        {!!nfts && Object.keys(nfts).length && (
+          <Card>
+            <Items>
+              {Object.entries(nfts).map(
+                ([nftKey, nft]: [nftKey: string, nft: NftSelected], index: number) => (
+                  <Item key={index}>
+                    {!!nft.imgUrl && (
+                      <NftMedia
+                        isDisabled={nft.blackListed}
+                        onClick={() => !nft.blackListed && handleNftSelection(nft)}
+                        src={nft.imgUrl}
+                      />
+                    )}
+                    <RadioButton
+                      checked={!!selectedNfts?.[nftKey]?.selected && !nft.blackListed}
+                      onClick={() => !nft.blackListed && handleNftSelection(nft)}
+                    />
+                  </Item>
+                ),
+              )}
+            </Items>
+            <AllButton onClick={handleSelectAll}>{isClear ? 'Clear all' : 'Select all'}</AllButton>
+          </Card>
+        )}
+        <Allocation>
+          <AllocationLabel>Your allocation :</AllocationLabel>
+          <AllocationValue>
+            {allocation.unlimited ? 'Unlimited' : allocation.formatted} {pool.investmentTokenSymbol}
+          </AllocationValue>
+        </Allocation>
+        <SaveButton onClick={handleSave}>Save</SaveButton>
+      </>
+    )
+  },
+  () => (
+    <LoadingWrapper>
+      <Loading />
+      Getting owned NFTs
+    </LoadingWrapper>
+  ),
+)
+
+const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
+  const { address } = useWeb3Connection()
   return (
     <Modal onClose={onClose} size="794px" title="Select NFT(s)">
       <Description>Select the NFTs you hold in your wallet to unlock deposit</Description>
@@ -226,42 +281,7 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
           items={[<ChangeWalletMenu key={'wallet_dopdown'} />]}
         />
       </ChangeWallet>
-      {!!nfts && Object.keys(nfts).length && (
-        <Card>
-          <Items>
-            {Object.entries(nfts).map(
-              ([nftKey, nft]: [nftKey: string, nft: NftSelected], index: number) => (
-                <Item key={index}>
-                  {!!nft.imgUrl && (
-                    <NftMedia
-                      isDisabled={nft.blackListed}
-                      onClick={() => !nft.blackListed && handleNftSelection(nft)}
-                      src={nft.imgUrl}
-                    />
-                  )}
-                  <RadioButton
-                    checked={!!selectedNfts?.[nftKey]?.selected && !nft.blackListed}
-                    onClick={() => !nft.blackListed && handleNftSelection(nft)}
-                  />
-                </Item>
-              ),
-            )}
-          </Items>
-          <AllButton
-            disabled={Object.values(nfts).every((nft) => nft.blackListed)}
-            onClick={handleSelectAll}
-          >
-            {isClear ? 'Clear all' : 'Select all'}
-          </AllButton>
-        </Card>
-      )}
-      <Allocation>
-        <AllocationLabel>Your allocation :</AllocationLabel>
-        <AllocationValue>
-          {allocation.unlimited ? 'Unlimited' : allocation.formatted} {pool.investmentTokenSymbol}
-        </AllocationValue>
-      </Allocation>
-      <SaveButton onClick={handleSave}>Save</SaveButton>
+      <OwnedNfts onClose={onClose} pool={pool} />
     </Modal>
   )
 }
