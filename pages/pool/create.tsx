@@ -111,7 +111,7 @@ const Create: NextPage = () => {
                     role="none"
                     setPoolField={setPoolField}
                   />
-                  
+
                   {currentStepError && typeof currentStepError === 'string' && (
                     <Error textAlign="center">{currentStepError}</Error>
                   )}
