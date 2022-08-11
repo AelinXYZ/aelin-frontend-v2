@@ -10,6 +10,7 @@ export const MAX_ALLOWED_DEALS = 5
 export enum Privacy {
   PUBLIC = 'public',
   PRIVATE = 'private',
+  NFT = 'nft',
 }
 
 export enum PrivacyType {

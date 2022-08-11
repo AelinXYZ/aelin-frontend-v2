@@ -49,24 +49,31 @@ const Item = styled(ButtonPrimaryLight)<{ isActive?: boolean }>`
 
 const getItems = (nftType: NftType): [string, NftWhitelistProcess][] => {
   const entries = Object.entries(NftWhitelistProcess)
+
   switch (nftType) {
     case NftType.erc721:
       return entries.splice(0, 3)
     case NftType.erc1155:
       return entries.splice(3, entries.length - 3)
+    default:
+      throw new Error('Unknown nft type')
   }
 }
 
 const getDescription = (active: NftWhitelistProcess): string => {
   switch (active) {
     case NftWhitelistProcess.unlimited:
-      return 'Each wallet holding a qualified NFT can deposit an unlimited amount of Investment tokens.'
+      return 'Each wallet holding a qualified NFT can deposit an unlimited amount of Investment tokens. Each NFT may only participate once in a pool'
+    /*
     case NftWhitelistProcess.limitedPerWallet:
       return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens, regardless of the number of qualified NFTs held.'
+    */
     case NftWhitelistProcess.limitedPerNft:
       return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens, regarding of the number of qualified NFTs held.'
     case NftWhitelistProcess.minimumAmount:
       return 'Each wallet holding a qualified ERC-1155 can deposit a minimum amount of Investment tokens.'
+    default:
+      throw new Error('Unknown nft type')
   }
 }
 
@@ -84,11 +91,16 @@ const NftWhiteListProcessSection = ({
   return (
     <>
       <Wrapper>
-        {getItems(nftType).map(([key, value]) => (
-          <Item isActive={active === value} key={key} onClick={() => onChange(value)}>
-            {value}
-          </Item>
-        ))}
+        {getItems(nftType)
+          // Filter out limitedPerWallet option
+          .filter(([_, value]) => {
+            return value !== NftWhitelistProcess.limitedPerWallet
+          })
+          .map(([key, value]) => (
+            <Item isActive={active === value} key={key} onClick={() => onChange(value)}>
+              {value}
+            </Item>
+          ))}
       </Wrapper>
       <Description>{getDescription(active)}</Description>
     </>
