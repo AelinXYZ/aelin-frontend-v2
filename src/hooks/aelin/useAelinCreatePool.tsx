@@ -206,11 +206,11 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
     poolAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
   }
 
-  if (poolPrivacy === Privacy.PRIVATE && Object.hasOwn(createPoolState, NftType.erc721)) {
+  if (poolPrivacy === Privacy.NFT && Object.hasOwn(createPoolState, NftType.erc721)) {
     nftCollectionRules = createPoolState[NftType.erc721]
   }
 
-  if (poolPrivacy === Privacy.PRIVATE && Object.hasOwn(createPoolState, NftType.erc1155)) {
+  if (poolPrivacy === Privacy.NFT && Object.hasOwn(createPoolState, NftType.erc1155)) {
     nftCollectionRules = createPoolState[NftType.erc1155]
   }
 
