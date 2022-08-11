@@ -146,8 +146,8 @@ export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
   [CreatePoolSteps.poolPrivacy]: {
     id: CreatePoolSteps.poolPrivacy,
     order: 8,
-    title: 'Pool privacy',
-    text: 'If Public, anyone will be able to join the pool. If Private, only whitelisted addresses can join the pool.',
+    title: 'Pool Access',
+    text: 'If Public, anyone will be able to join the pool. If Private, only allowlisted addresses can join the pool. If NFT, only holder of collections can join the pool',
     placeholder: undefined,
   },
 }
@@ -397,9 +397,6 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       sponsorFee,
       symbol,
     } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
-
-    // Run, create a pool and review the values
-    console.log('nftCollectionRules: ', nftCollectionRules)
 
     setConfigAndOpenModal({
       estimate: () =>

@@ -84,25 +84,20 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     }
   }
 
-  if (
-    !values.poolPrivacy &&
-    !Object.hasOwn(values, NftType.erc721) &&
-    !Object.hasOwn(values, NftType.erc1155)
-  ) {
+  if (!values.poolPrivacy) {
     errors.poolPrivacy = true
   }
 
-  Object.hasOwn(values, NftType.erc721)
-  Object.hasOwn(values, NftType.erc1155)
+  if (values.poolPrivacy === Privacy.PRIVATE && !values.whitelist?.length) {
+    errors.poolPrivacy = 'Add allowlist addresses or change pool access to public'
+  }
 
   if (
-    values.poolPrivacy === Privacy.PRIVATE &&
-    !values.whitelist?.length &&
+    values.poolPrivacy === Privacy.NFT &&
     !Object.hasOwn(values, NftType.erc721) &&
     !Object.hasOwn(values, NftType.erc1155)
   ) {
-    errors.poolPrivacy =
-      'Add white list addresses or add white list nft addresses or change pool privacy to public'
+    errors.poolPrivacy = 'Add nft collections or change pool access to public'
   }
 
   if (!values.sponsorFee || values.sponsorFee < 0) {

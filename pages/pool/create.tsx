@@ -111,6 +111,7 @@ const Create: NextPage = () => {
                     role="none"
                     setPoolField={setPoolField}
                   />
+
                   {currentStepError && typeof currentStepError === 'string' && (
                     <Error textAlign="center">{currentStepError}</Error>
                   )}
@@ -175,6 +176,7 @@ const Create: NextPage = () => {
           ) => {
             setPoolField(whitelist, type)
           }}
+          poolPrivacy={createPoolState.poolPrivacy}
         />
       )}
     </>
