@@ -232,7 +232,12 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
               ),
             )}
           </Items>
-          <AllButton onClick={handleSelectAll}>{isClear ? 'Clear all' : 'Select all'}</AllButton>
+          <AllButton
+            disabled={Object.values(nfts).every((nft) => nft.blackListed)}
+            onClick={handleSelectAll}
+          >
+            {isClear ? 'Clear all' : 'Select all'}
+          </AllButton>
         </Card>
       )}
       <Allocation>
