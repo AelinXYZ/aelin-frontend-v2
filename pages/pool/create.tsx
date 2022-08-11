@@ -111,20 +111,23 @@ const Create: NextPage = () => {
                     role="none"
                     setPoolField={setPoolField}
                   />
+                  
                   {currentStepError && typeof currentStepError === 'string' && (
                     <Error textAlign="center">{currentStepError}</Error>
                   )}
+
+                  {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
+                    <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                      Edit allowlisted addresses
+                    </ButtonPrimaryLight>
+                  )}
+                  {isFinalStep && createPoolState.poolPrivacy === Privacy.NFT && (
+                    <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                      Edit NFT collections
+                    </ButtonPrimaryLight>
+                  )}
+
                   <ButtonWrapper>
-                    {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
-                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit allowlisted addresses
-                      </ButtonPrimaryLight>
-                    )}
-                    {isFinalStep && createPoolState.poolPrivacy === Privacy.NFT && (
-                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit NFT collections
-                      </ButtonPrimaryLight>
-                    )}
                     <MobileButtonWrapper>
                       <BackButton disabled={isFirstStep} onClick={() => moveStep('prev')}>
                         Back

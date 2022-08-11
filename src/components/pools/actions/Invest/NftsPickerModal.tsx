@@ -169,13 +169,28 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
 
   const handleNftSelection = (nft: NftSelected) => {
     const nftKey = nft.contractAddress + '-' + nft.id
-    setSelectedNfts((prev) => ({
-      ...prev,
-      [nftKey]: {
-        ...nft,
-        selected: !prev[nftKey]?.selected,
-      },
-    }))
+    if (allocation?.unlimited) {
+      setSelectedNfts((prev) =>
+        Object.values(nfts).reduce(
+          (a, b) => ({
+            ...a,
+            [b.contractAddress + '-' + b.id]: {
+              ...b,
+              selected: b.contractAddress + '-' + b.id === nftKey,
+            },
+          }),
+          {},
+        ),
+      )
+    } else {
+      setSelectedNfts((prev) => ({
+        ...prev,
+        [nftKey]: {
+          ...nft,
+          selected: !prev[nftKey]?.selected,
+        },
+      }))
+    }
   }
 
   const handleSelectAll = () => {
@@ -232,7 +247,12 @@ const NftsPickerModal: React.FC<NftsPickerModalProps> = ({ onClose, pool }) => {
               ),
             )}
           </Items>
-          <AllButton onClick={handleSelectAll}>{isClear ? 'Clear all' : 'Select all'}</AllButton>
+          <AllButton
+            disabled={Object.values(nfts).every((nft) => nft.blackListed)}
+            onClick={handleSelectAll}
+          >
+            {isClear ? 'Clear all' : 'Select all'}
+          </AllButton>
         </Card>
       )}
       <Allocation>
