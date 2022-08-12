@@ -33,11 +33,24 @@ const NftSelectionContext = createContext<NftSelectionContextType>({} as any)
 
 const NftSelectionContextProvider: React.FC = ({ children }) => {
   const [selectedNfts, setSelectedNfts] = useState<SelectedNfts>({})
+  const [lastSelectedNfts, setLastSelectedNfts] = useState<SelectedNfts>({})
   const [storedSelectedNfts, setStoredSelectedNfts] = useState<NftPurchaseList[]>([])
   const [showNftSelectionModal, setShowNftSelectionModal] = useState<boolean>(false)
 
-  const handleOpenNftSelectionModal = () => setShowNftSelectionModal(true)
-  const handleCloseNftSelectionModal = () => setShowNftSelectionModal(false)
+  const handleOpenNftSelectionModal = () => {
+    if (storedSelectedNfts.length) {
+      setSelectedNfts(lastSelectedNfts)
+    }
+    setShowNftSelectionModal(true)
+  }
+
+  const handleCloseNftSelectionModal = () => {
+    if (!storedSelectedNfts.length) {
+      setSelectedNfts({})
+    }
+    setShowNftSelectionModal(false)
+  }
+
   const handleStoreSelectedNfts = (selectedNfts: SelectedNfts) => {
     const groupedNfts = groupBy(selectedNfts, 'contractAddress')
     const nftPurchaseList = Object.entries(groupedNfts)
@@ -48,6 +61,7 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
       .filter((list) => list.tokenIds?.length)
 
     setStoredSelectedNfts([...nftPurchaseList])
+    setLastSelectedNfts(selectedNfts)
   }
 
   const hasStoredSelectedNft = useMemo(() => {
