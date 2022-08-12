@@ -46,7 +46,11 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
     setShowNftSelectionModal(true)
   }
 
-  const clearStoredSelectedNfts = () => setStoredSelectedNfts([])
+  const clearStoredSelectedNfts = () => {
+    setStoredSelectedNfts([])
+    setLastSelectedNfts({})
+    setSelectedNfts({})
+  }
 
   const handleCloseNftSelectionModal = () => {
     if (!storedSelectedNfts.length) {
