@@ -27,6 +27,7 @@ export type NftSelectionContextType = {
   handleOpenNftSelectionModal: () => void
   handleCloseNftSelectionModal: () => void
   showNftSelectionModal: boolean
+  clearStoredSelectedNfts: () => void
 }
 // eslint-disable-next-line
 const NftSelectionContext = createContext<NftSelectionContextType>({} as any)
@@ -43,6 +44,8 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
     }
     setShowNftSelectionModal(true)
   }
+
+  const clearStoredSelectedNfts = () => setStoredSelectedNfts([])
 
   const handleCloseNftSelectionModal = () => {
     if (!storedSelectedNfts.length) {
@@ -82,6 +85,7 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
         handleOpenNftSelectionModal,
         handleCloseNftSelectionModal,
         showNftSelectionModal,
+        clearStoredSelectedNfts,
       }}
     >
       {children}
