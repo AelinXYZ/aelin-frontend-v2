@@ -48,6 +48,10 @@ const BackButton = styled(ButtonPrimaryLight)`
   }
 `
 
+const StyledError = styled(Error)`
+  margin-bottom: 0;
+`
+
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
   const {
@@ -113,9 +117,7 @@ const Create: NextPage = () => {
                   />
 
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error style={{ marginBottom: 0 }} textAlign="center">
-                      {currentStepError}
-                    </Error>
+                    <StyledError textAlign="center">{currentStepError}</StyledError>
                   )}
 
                   <ButtonWrapper>
