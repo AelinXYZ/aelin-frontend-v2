@@ -9,7 +9,13 @@ import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 
 function useNftUserAllocation(pool: ParsedAelinPool) {
-  const { selectedNfts: nfts } = useNftSelection()
+  const { lastSelectedNfts, selectedNfts } = useNftSelection()
+
+  const nfts = useMemo(() => {
+    if (Object.values(lastSelectedNfts).length) return lastSelectedNfts
+    return selectedNfts
+  }, [lastSelectedNfts, selectedNfts])
+
   const isERC721Unlimited = pool?.nftCollectionRules.some((collectionRule) => {
     const collectionNftsSelected = Object.values(nfts).filter(
       (nft) =>

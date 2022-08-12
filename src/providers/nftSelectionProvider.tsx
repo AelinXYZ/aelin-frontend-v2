@@ -20,6 +20,7 @@ export interface NftPurchaseList {
 
 export type NftSelectionContextType = {
   selectedNfts: SelectedNfts
+  lastSelectedNfts: SelectedNfts
   storedSelectedNfts: NftPurchaseList[]
   setSelectedNfts: Dispatch<SetStateAction<SelectedNfts>>
   handleStoreSelectedNfts: (selectedNfts: SelectedNfts) => void
@@ -77,6 +78,7 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
   return (
     <NftSelectionContext.Provider
       value={{
+        lastSelectedNfts,
         selectedNfts,
         setSelectedNfts,
         hasStoredSelectedNft,
