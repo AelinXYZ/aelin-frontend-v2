@@ -21,6 +21,7 @@ import useUserNftsByCollections from '@/src/hooks/aelin/useUserNftsByCollections
 import { NftSelected, useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { shortenAddress } from '@/src/utils/string'
+import { formatToken } from '@/src/web3/bigNumber'
 
 const Description = styled.div`
   display: flex;
@@ -250,7 +251,10 @@ const OwnedNfts = genericSuspense(
         <Allocation>
           <AllocationLabel>Your allocation :</AllocationLabel>
           <AllocationValue>
-            {allocation.unlimited ? 'Unlimited' : allocation.formatted} {pool.investmentTokenSymbol}
+            {allocation.unlimited
+              ? 'Unlimited'
+              : formatToken(allocation.raw, 18, pool.investmentTokenDecimals)}{' '}
+            {pool.investmentTokenSymbol}
           </AllocationValue>
         </Allocation>
         <SaveButton onClick={handleSave}>Save</SaveButton>

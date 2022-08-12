@@ -126,10 +126,12 @@ function Deposit({ pool, poolHelpers }: Props) {
           ? await purchasePoolTokensWithNft([storedSelectedNfts, tokenInputValue], txGasOptions)
           : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
-          clearStoredSelectedNfts()
           refetchBalances()
           setTokenInputValue('')
           setInputError('')
+        }
+        if (pool.hasNftList) {
+          clearStoredSelectedNfts()
         }
       },
       title: `Deposit ${investmentTokenSymbol}`,
