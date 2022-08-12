@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { ParsedAelinPool } from './useAelinPool'
+import { ZERO_BN } from '@/src/constants/misc'
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -17,7 +18,7 @@ function useNftUserAllocation(pool: ParsedAelinPool) {
     )
 
     return (
-      collectionRule.purchaseAmount.formatted === '0' &&
+      collectionRule.purchaseAmount.raw.eq(ZERO_BN) &&
       collectionRule.nftType === 'ERC721' &&
       collectionNftsSelected.some((nft) => !!nft?.selected)
     )
