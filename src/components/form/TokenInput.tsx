@@ -55,6 +55,10 @@ const Balance = styled.div`
   margin: 0;
 `
 
+const Allocation = styled(Balance)`
+  margin-top: 5px;
+`
+
 interface Props {
   decimals: number
   disabled?: boolean
@@ -66,12 +70,14 @@ interface Props {
   setValue: (value: string) => void
   value: string
   symbol?: string
+  maxAllocationFormatted?: string
 }
 
 export const TokenInput = ({
   decimals,
   disabled,
   error,
+  maxAllocationFormatted,
   maxDisabled,
   maxValue,
   maxValueFormatted,
@@ -109,6 +115,7 @@ export const TokenInput = ({
           Balance: {maxValueFormatted} {symbol ? symbol : 'Pool tokens'}
         </Balance>
       )}
+      {!!maxAllocationFormatted && <Allocation>Allocation: {maxAllocationFormatted}</Allocation>}
       {error && <Error>{error}</Error>}
     </Wrapper>
   )

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -15,6 +15,7 @@ import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
 
 type Props = {
@@ -139,13 +140,29 @@ function Deposit({ pool, poolHelpers }: Props) {
     })
   }
 
+  const maxValue = useMemo(() => {
+    if (pool.hasNftList && allocation && !allocation.unlimited) {
+      return allocation.raw.toString()
+    }
+    return sortedBalances[0].raw.toString()
+  }, [pool.hasNftList, allocation, sortedBalances])
+
+  const maxAllocationFormatted = useMemo(() => {
+    if (pool.hasNftList && allocation) {
+      return allocation.unlimited
+        ? 'Unlimited per NFT'
+        : `${formatToken(allocation.raw, 18, investmentTokenDecimals)} ${investmentTokenSymbol}`
+    }
+  }, [pool.hasNftList, allocation, investmentTokenSymbol, investmentTokenDecimals])
+
   return (
     <>
       <StyledTokenInput
         decimals={investmentTokenDecimals}
         error={inputError}
         isPrivate={isPrivatePool(pool.poolType)}
-        maxValue={sortedBalances[0].raw.toString()}
+        maxAllocationFormatted={maxAllocationFormatted}
+        maxValue={maxValue}
         maxValueFormatted={investmentTokenBalance.formatted || '0'}
         setValue={setTokenInputValue}
         symbol={investmentTokenSymbol}
