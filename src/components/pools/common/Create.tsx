@@ -58,7 +58,7 @@ export const ButtonWrapper = styled.div`
   gap: 20px;
   justify-content: center;
   margin-bottom: 40px;
-  margin-top: 40px;
+  margin-top: 20px;
 `
 
 export const MobileButtonWrapper = styled.div`
