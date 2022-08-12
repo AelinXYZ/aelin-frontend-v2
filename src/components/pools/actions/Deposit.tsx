@@ -53,8 +53,12 @@ const Allowance = ({ allowance }: { allowance: string }) => (
 )
 
 function Deposit({ pool, poolHelpers }: Props) {
-  const { handleOpenNftSelectionModal, hasStoredSelectedNft, storedSelectedNfts } =
-    useNftSelection()
+  const {
+    clearStoredSelectedNfts,
+    handleOpenNftSelectionModal,
+    hasStoredSelectedNft,
+    storedSelectedNfts,
+  } = useNftSelection()
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
   const allocation = useNftUserAllocation(pool)
   const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
@@ -121,6 +125,7 @@ function Deposit({ pool, poolHelpers }: Props) {
           ? await purchasePoolTokensWithNft([storedSelectedNfts, tokenInputValue], txGasOptions)
           : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
+          clearStoredSelectedNfts()
           refetchBalances()
           setTokenInputValue('')
           setInputError('')
