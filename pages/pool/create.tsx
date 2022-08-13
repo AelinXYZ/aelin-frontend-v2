@@ -128,7 +128,7 @@ const Create: NextPage = () => {
                     )}
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.NFT && (
                       <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit NFT collections
+                        Edit collections
                       </ButtonPrimaryLight>
                     )}
 

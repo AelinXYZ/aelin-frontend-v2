@@ -85,8 +85,8 @@ Tab.defaultProps = {
 }
 
 export enum WhiteListTab {
-  Addresses = 'Addresses whitelist',
-  Nft = 'NFT whitelist',
+  Addresses = 'Addresses allowlist',
+  Nft = 'NFT allowlist',
 }
 
 export const WhiteListTabs: React.FC<{

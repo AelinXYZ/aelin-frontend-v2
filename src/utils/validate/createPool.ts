@@ -89,7 +89,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
   }
 
   if (values.poolPrivacy === Privacy.PRIVATE && !values.whitelist?.length) {
-    errors.poolPrivacy = 'Add allowlist addresses or change pool access to public'
+    errors.poolPrivacy = 'Add addresses or change pool access to public'
   }
 
   if (
@@ -97,7 +97,7 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     !Object.hasOwn(values, NftType.erc721) &&
     !Object.hasOwn(values, NftType.erc1155)
   ) {
-    errors.poolPrivacy = 'Add nft collections or change pool access to public'
+    errors.poolPrivacy = 'Add collections or change pool access to public'
   }
 
   if (!values.sponsorFee || values.sponsorFee < 0) {

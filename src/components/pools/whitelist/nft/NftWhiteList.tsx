@@ -99,7 +99,7 @@ const nftWhiteListStepsConfig: Record<NftWhiteListStep, NftWhiteListStepInfo> = 
   [NftWhiteListStep.whiteListProcess]: {
     id: NftWhiteListStep.whiteListProcess,
     order: 2,
-    title: 'Whitelist process',
+    title: 'Allowlist process',
   },
   [NftWhiteListStep.nftCollection]: {
     id: NftWhiteListStep.nftCollection,
