@@ -26,7 +26,7 @@ const Card = styled(BaseCard)<{ isBorder?: boolean }>`
   width: 80%;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    width: 100%;
+    width: 450px;
   }
 
   background: ${({ isBorder }) =>

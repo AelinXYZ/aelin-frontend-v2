@@ -127,7 +127,7 @@ const NftCollectionInput = ({ nftType, onChange, selectedCollection }: NftCollec
           setInput(e.target.value)
           debouncedChangeHandler(e.target.value.trim().toLowerCase())
         }}
-        placeholder="Enter NFT collection name..."
+        placeholder="Enter collection name or paste address"
         type="text"
         value={input ?? selectedCollection.nftCollectionData?.name ?? ''}
       />
