@@ -18,7 +18,7 @@ const Input = styled(Textfield)<{ isOpen: boolean }>`
   padding-left: 42px;
   padding-right: 32px;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
-  border: ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
+  border: 1px solid ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
 
   ${({ isOpen }) =>
     isOpen &&
