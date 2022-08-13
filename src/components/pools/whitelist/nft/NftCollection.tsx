@@ -23,10 +23,16 @@ const Card = styled(BaseCard)<{ isBorder?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 80%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    width: 100%;
+  }
+
   background: ${({ isBorder }) =>
     isBorder ? ({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor : 'none'};
   border: ${({ isBorder }) =>
-    isBorder ? ({ theme: { nftWhiteList } }) => nftWhiteList.border : 'none'};
+    isBorder ? ({ theme: { nftWhiteList } }) => `1px solid ${nftWhiteList.border}` : 'none'};
 `
 
 const Row = styled.div`

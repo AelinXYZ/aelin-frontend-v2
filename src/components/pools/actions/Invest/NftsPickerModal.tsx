@@ -73,7 +73,7 @@ const ChangeWalletDropdown = styled(Dropdown)`
 const DropdownButton = styled.button`
   align-items: center;
   background: ${({ theme }) => theme.colors.transparentWhite2};
-  border: ${({ theme }) => theme.nftWhiteList.border};
+  border: 1px solid ${({ theme }) => theme.nftWhiteList.border};
   border-radius: 50px;
   color: ${({ theme }) => theme.colors.textColor};
   cursor: pointer;
@@ -105,7 +105,7 @@ const Card = styled(BaseCard)`
   gap: 40px;
   margin-top: 40px;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
-  border: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderColor};
+  border: 1px solid ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
   padding: 40px 53px;
 `
 

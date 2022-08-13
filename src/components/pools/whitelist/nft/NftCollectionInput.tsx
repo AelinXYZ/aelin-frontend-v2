@@ -29,15 +29,12 @@ const Input = styled(Textfield)<{ isOpen: boolean }>`
   position: relative;
   padding-left: 42px;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
-  border: ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
+  border: 1px solid ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
 
   ${({ isOpen }) =>
     isOpen &&
     'border-bottom: none; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;'}
-  width: 400px;
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    width: 300px;
-  }
+  width: 100%;
 `
 
 const SearchWrapper = styled.div`
@@ -60,10 +57,7 @@ const Collections = styled.div`
   border-top: none;
   border-bottom-left-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
   border-bottom-right-radius: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderRadius};
-  width: 400px;
-  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    width: 300px;
-  }
+  width: 100%;
 `
 
 const Item = styled.div<{ isActive: boolean }>`

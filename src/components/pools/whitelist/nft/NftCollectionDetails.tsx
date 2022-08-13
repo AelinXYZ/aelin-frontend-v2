@@ -13,7 +13,7 @@ const Card = styled(BaseCard)`
   align-items: center;
   padding: 10px 0 0;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
-  border: ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
+  border: 1px solid ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
 `
 
 const Row = styled.div`
@@ -35,8 +35,13 @@ const AttributesWrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  padding: 23px 0 23px;
-  gap: 20px;
+  padding: 23px 10px;
+  gap: 10px;
+
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    flex-wrap: wrap;
+    width: 50%;
+  }
 `
 
 type NftCollectionDetailsProps = {

@@ -14,7 +14,7 @@ import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/butt
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-self: stretch;
+  align-self: center;
   gap: 20px;
   align-items: center;
 `

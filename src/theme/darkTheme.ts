@@ -178,7 +178,7 @@ export const darkTheme = {
     boxShadow: '0 0 10px rgba(255, 255, 255, 0.25)',
   },
   nftWhiteList: {
-    border: '1px solid rgba(255, 255, 255, 0.25)',
+    border: 'rgba(255, 255, 255, 0.25)',
     borderRadius: '8px',
     layerBackgroundColor: 'rgba(255, 255, 255, 0.04)',
   },
