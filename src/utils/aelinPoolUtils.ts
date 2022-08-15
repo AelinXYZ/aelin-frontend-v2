@@ -288,11 +288,20 @@ export function isPrivatePool(poolType: string) {
   return poolType.toLowerCase() === Privacy.PRIVATE
 }
 
-export function getPoolType(poolTye: string, hasNftList: boolean) {
+export function getPoolType(poolType: string, hasNftList: boolean) {
   if (hasNftList) return 'NFT'
-  if (poolTye) return 'Private'
 
-  throw new Error('Unexpected pool')
+  switch (poolType.toLowerCase()) {
+    case Privacy.PRIVATE: {
+      return 'Private'
+    }
+    case Privacy.PUBLIC: {
+      return 'Public'
+    }
+    default: {
+      throw new Error('Unexpected pool')
+    }
+  }
 }
 
 export function getTokensSold(
