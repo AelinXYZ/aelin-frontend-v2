@@ -246,8 +246,8 @@ const OwnedNftsCarousel = genericSuspense(
           )}
         </Card>
         <ButtonsWrapper>
-          <SaveButton onClick={handleSave}>Save</SaveButton>
           <CancelButton onClick={onClose}>Cancel</CancelButton>
+          <SaveButton onClick={handleSave}>Save</SaveButton>
         </ButtonsWrapper>
       </CarouselWrapper>
     )
