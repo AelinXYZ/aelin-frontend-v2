@@ -20,7 +20,7 @@ const Wrapper = styled.div`
   overflow: auto;
 `
 
-const Card = styled(BaseCard)<{ size?: modalSize }>`
+export const Card = styled(BaseCard)<{ size?: modalSize }>`
   border-color: ${({ theme }) => theme.colors.lightGray};
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@ const Card = styled(BaseCard)<{ size?: modalSize }>`
     size === 'sm' ? '325px' : size === 'md' ? '500px' : size === 'lg' ? '720px' : `${size}`};
 `
 
-const Title = styled.h1`
+export const Title = styled.h1`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.8rem;

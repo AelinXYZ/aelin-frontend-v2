@@ -75,7 +75,7 @@ const getParsedNFTCollectionData = async (collectionAddress: string, chainId: Ch
   })
 }
 
-function useNftCollectionList(query: string, nftType: NFTType) {
+function useNftCollectionList(query: string, nftType: NFTType, suspense = false) {
   const { appChainId } = useWeb3Connection()
   const [collections, setCollections] = useState<NftCollectionData[]>([])
 
@@ -203,7 +203,7 @@ function useNftCollectionList(query: string, nftType: NFTType) {
         })
     },
     {
-      suspense: false,
+      suspense,
       revalidateOnFocus: true,
       revalidateOnMount: true,
     },

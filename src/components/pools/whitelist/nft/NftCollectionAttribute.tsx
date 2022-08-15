@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import NftMedia from '../../actions/Invest/NftMedia'
+import NftMedia from '../../actions/Invest/nft/NftMedia'
 
 const Card = styled.div`
   display: flex;
