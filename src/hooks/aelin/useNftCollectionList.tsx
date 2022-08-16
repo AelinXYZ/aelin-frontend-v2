@@ -10,12 +10,14 @@ import erc721 from '@/src/abis/ERC721.json'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'
+import getNftType from '@/src/utils/getNftType'
 import { shortenAddress } from '@/src/utils/string'
 
 export enum NFTType {
   ERC721 = 'erc721',
   ERC1155 = 'erc1155',
   PUNKS = 'cryptopunks',
+  UNKNOWN = 'unknown',
 }
 
 export enum ERCInterface {
@@ -58,7 +60,7 @@ const parseOpenseaResponse = async (
     symbol: data.symbol,
     description: data.description,
     imageUrl: data.image_url,
-    contractType: data.schema_name.includes('721') ? NFTType.ERC721 : NFTType.ERC1155,
+    contractType: getNftType(data.schema_name),
     network: Chains.mainnet,
   }
 }

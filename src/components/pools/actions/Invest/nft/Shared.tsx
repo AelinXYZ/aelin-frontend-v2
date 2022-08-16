@@ -88,4 +88,5 @@ export const SectionTitle = styled.h2`
 
 export const ItemsWrapper = styled.div`
   display: flex;
+  justify-content: center;
 `
