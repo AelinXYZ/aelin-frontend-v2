@@ -17,13 +17,20 @@ const Video = styled.video<{ isDisabled?: boolean }>`
   ${({ isDisabled }) => isDisabled && 'opacity: 0.2;'}
 `
 
-const MediaPlaceHolder = styled.div<{ height: number; width: number }>`
+const MediaPlaceHolder = styled.div<{
+  height: number
+  width: number
+  isDisabled?: boolean
+  onClick?: () => void
+}>`
   border-radius: 8px;
   background-color: lightgray;
   position: absolute;
   z-index: 10;
   height: ${(props) => props.height + 'px'};
   width: ${(props) => props.width + 'px'};
+  ${({ isDisabled }) => isDisabled && 'opacity: 0.2;'}
+  ${({ onClick }) => !!onClick && 'cursor: pointer;'}
 `
 
 const MediaWrapper = styled.div<{ height: number; width: number }>`
@@ -76,7 +83,7 @@ const NftMedia = ({
   return (
     <MediaWrapper height={height} width={width}>
       {!src ? (
-        <MediaPlaceHolder height={height} width={width} />
+        <MediaPlaceHolder height={height} isDisabled={isDisabled} onClick={onClick} width={width} />
       ) : isVideo ? (
         <Video
           {...rest}

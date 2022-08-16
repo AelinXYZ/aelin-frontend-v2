@@ -195,13 +195,11 @@ const OwnedNftsCarousel = genericSuspense(
                           {itemsChunk.map(
                             ([nftKey, nft]: [nftKey: string, nft: NftSelected], index: number) => (
                               <Item key={index}>
-                                {!!nft.imgUrl && (
-                                  <NftMedia
-                                    isDisabled={nft.blackListed}
-                                    onClick={() => !nft.blackListed && handleNftSelection(nft)}
-                                    src={nft.imgUrl}
-                                  />
-                                )}
+                                <NftMedia
+                                  isDisabled={nft.blackListed}
+                                  onClick={() => !nft.blackListed && handleNftSelection(nft)}
+                                  src={nft.imgUrl}
+                                />
                                 <RadioButton
                                   checked={!!selectedNfts?.[nftKey]?.selected && !nft.blackListed}
                                   onClick={() => !nft.blackListed && handleNftSelection(nft)}
