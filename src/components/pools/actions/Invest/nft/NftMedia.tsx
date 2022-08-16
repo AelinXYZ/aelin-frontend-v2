@@ -26,9 +26,11 @@ const MediaPlaceHolder = styled.div<{ height: number; width: number }>`
   width: ${(props) => props.width + 'px'};
 `
 
-const MediaWrapper = styled.div`
+const MediaWrapper = styled.div<{ height: number; width: number }>`
   position: relative;
   display: flex;
+  height: ${(props) => props.height + 'px'};
+  width: ${(props) => props.width + 'px'};
 `
 
 const LoadingWrapper = styled.div`
@@ -48,14 +50,14 @@ const NftMedia = ({
   width = 128,
   ...rest
 }: {
-  src: string
+  src?: string
   height?: number
   width?: number
   isDisabled?: boolean
   onClick?: () => void
   spinner?: boolean
 }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(!!src)
   const [isVideo, setIsVideo] = useState<boolean>(false)
 
   useEffect(() => {
@@ -72,8 +74,10 @@ const NftMedia = ({
   }, [src])
 
   return (
-    <MediaWrapper>
-      {isVideo ? (
+    <MediaWrapper height={height} width={width}>
+      {!src ? (
+        <MediaPlaceHolder height={height} width={width} />
+      ) : isVideo ? (
         <Video
           {...rest}
           autoPlay

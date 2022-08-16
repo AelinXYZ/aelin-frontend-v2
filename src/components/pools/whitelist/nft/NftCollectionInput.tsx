@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import debounce from 'lodash/debounce'
 
-import NftMedia from '../../actions/Invest/NftMedia'
+import NftMedia from '../../actions/Invest/nft/NftMedia'
 import { Search } from '@/src/components/assets/Search'
 import { Loading } from '@/src/components/common/Loading'
 import {

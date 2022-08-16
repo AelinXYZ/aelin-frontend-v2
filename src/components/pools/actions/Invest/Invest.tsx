@@ -1,5 +1,5 @@
-import NftsPickerModal from './NftsPickerModal'
-import SelectNft from './SelectNft'
+import NftsPickerModal from './nft/NftsPickerModal'
+import SelectNft from './nft/SelectNft'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import Approve from '@/src/components/pools/actions/Approve'
 import Deposit from '@/src/components/pools/actions/Deposit'
