@@ -10,6 +10,7 @@ import erc721 from '@/src/abis/ERC721.json'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'
+import { shortenAddress } from '@/src/utils/string'
 
 export enum NFTType {
   ERC721 = 'erc721',
@@ -150,9 +151,10 @@ function useNftCollectionList(query: string, nftType: NFTType, suspense = false)
 
             const nftAbi = contractType === NFTType.ERC721 ? erc721 : erc1155
 
-            const name = await contractCall(query, nftAbi, provider, 'name', [])
-            // A name is the minimum info needed
-            if (!name) return []
+            let name = await contractCall(query, nftAbi, provider, 'name', [])
+            if (!name) {
+              name = shortenAddress(query) || ''
+            }
 
             const totalSupply =
               contractType === NFTType.ERC721
@@ -181,7 +183,13 @@ function useNftCollectionList(query: string, nftType: NFTType, suspense = false)
           res.data.contractType === NFTType.ERC721
             ? await contractCall(query, erc721, provider, 'totalSupply', [])
             : undefined
-        return [{ ...res.data, totalSupply: totalSupply?.toNumber() || 0 }]
+
+        let name = res.data.name
+        if (!name) {
+          name = shortenAddress(query) || ''
+        }
+
+        return [{ ...res.data, name, totalSupply: totalSupply?.toNumber() || 0 }]
       }
 
       const fuse = new Fuse<NftCollectionData>(collections, {
