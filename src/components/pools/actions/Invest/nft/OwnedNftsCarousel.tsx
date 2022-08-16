@@ -23,6 +23,7 @@ import {
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { RadioButton } from '@/src/components/pureStyledComponents/form/RadioButton'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { NFTType } from '@/src/hooks/aelin/useNftCollectionList'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import useUserNftsByCollections from '@/src/hooks/aelin/useUserNftsByCollections'
 import { NftSelected, useNftSelection } from '@/src/providers/nftSelectionProvider'
@@ -31,7 +32,7 @@ const AllocationWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: 15px;
+  gap: 5px;
 `
 const Allocation = styled.div`
   display: flex;
@@ -99,6 +100,12 @@ const SaveButton = styled(ButtonGradient)`
 const CancelButton = styled(ButtonPrimaryLight)`
   margin: 30px auto 30px;
   min-width: 160px;
+`
+
+const Erc1155Eligibility = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: ${({ theme: { colors } }) => colors.lightGray};
 `
 
 const NFTS_PER_GROUP = 4
@@ -195,6 +202,12 @@ const OwnedNftsCarousel = genericSuspense(
                           {itemsChunk.map(
                             ([nftKey, nft]: [nftKey: string, nft: NftSelected], index: number) => (
                               <Item key={index}>
+                                {nft.type == NFTType.ERC1155 && (
+                                  <Erc1155Eligibility>
+                                    <div>Balance: {nft.balance.toString()}</div>
+                                    <div>Amount needed: {nft.erc1155AmtEligible}</div>
+                                  </Erc1155Eligibility>
+                                )}
                                 <NftMedia
                                   isDisabled={nft.blackListed}
                                   onClick={() => !nft.blackListed && handleNftSelection(nft)}

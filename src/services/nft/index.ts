@@ -4,11 +4,13 @@ import { getAddress } from '@ethersproject/address'
 import { Chains, ChainsValues } from '@/src/constants/chains'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
 import { CustomError as Error } from '@/src/utils/error'
+import getNftType from '@/src/utils/getNftType'
 
 export interface ParsedOwnedNft {
   id: string
   contractAddress: string
   imgUrl?: string
+  type: NFTType
 }
 
 export interface QuixoticNft {
@@ -33,6 +35,7 @@ export interface QuixoticNft {
 const parseAlchemyResponse = (ownedNfts: OwnedNft[]): ParsedOwnedNft[] => {
   return ownedNfts.map((nft: OwnedNft) => ({
     id: nft.tokenId,
+    type: getNftType(nft.tokenType),
     contractAddress: nft.contract.address,
     imgUrl: nft.media[0].gateway,
   }))
@@ -48,6 +51,7 @@ const parseQuixoticNFTsResponse = async (
       id: nft.token_id,
       contractAddress: nft.collection.address,
       imgUrl: nft.image_url,
+      type: getNftType(nft.collection.contract_type),
     }))
     .filter(
       (nft: ParsedOwnedNft) => nft.contractAddress.toLowerCase() === contractAddress.toLowerCase(),

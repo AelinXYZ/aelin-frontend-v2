@@ -9,6 +9,7 @@ export type NftSelected = ParsedOwnedNft & {
   selected?: boolean
   balance: BigNumber
   blackListed: boolean
+  erc1155AmtEligible: string
 }
 
 export type SelectedNfts = Record<string, NftSelected>

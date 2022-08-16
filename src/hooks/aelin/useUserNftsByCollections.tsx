@@ -3,6 +3,8 @@ import useSWR from 'swr'
 
 import { ParsedAelinPool } from './useAelinPool'
 import useERC1155Balances from './useERC1155Balances'
+import { NFTType } from './useNftCollectionList'
+import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { ParsedOwnedNft } from '@/src/services/nft'
 
@@ -12,7 +14,11 @@ function fetcher(...urls: string[]) {
 }
 
 export interface UserNfts {
-  [tokenId: string]: ParsedOwnedNft & { balance: BigNumber; blackListed: boolean }
+  [tokenId: string]: ParsedOwnedNft & {
+    balance: BigNumber
+    blackListed: boolean
+    erc1155AmtEligible: string
+  }
 }
 
 const useUserNftsByCollections = (pool: ParsedAelinPool) => {
@@ -47,18 +53,38 @@ const useUserNftsByCollections = (pool: ParsedAelinPool) => {
     isERC1155 ? ([] as ParsedOwnedNft[]).concat(...nftData) : [],
   )
 
-  const nfts = ([] as ParsedOwnedNft[]).concat(...nftData).reduce(
-    (prev: UserNfts, curr: ParsedOwnedNft, index: number) => ({
-      ...prev,
-      [`${curr.contractAddress.toLowerCase()}-${curr.id}`]: {
-        ...curr,
-        contractAddress: curr.contractAddress.toLowerCase(),
-        blackListed: isNftBlackListed(curr.id, curr.contractAddress.toLowerCase()),
-        balance: balances?.length ? balances[index] : BigNumber.from(0),
-      },
-    }),
-    {} as UserNfts,
-  )
+  const getAmtEligible = (collectionAddress: string, tokenId: string): string => {
+    const rules = nftCollectionRules.find(
+      (r) => r.collectionAddress === collectionAddress && r.erc1155TokenIds.includes(tokenId),
+    )
+
+    if (!rules) return '0'
+
+    const tokenIdIndex = rules.erc1155TokenIds.indexOf(tokenId)
+
+    return rules.erc1155TokensAmtEligible[tokenIdIndex]
+  }
+
+  const nfts = ([] as ParsedOwnedNft[])
+    .concat(...nftData)
+    .reduce((prev: UserNfts, curr: ParsedOwnedNft, index: number) => {
+      if (
+        curr.type === NFTType.ERC1155 &&
+        getAmtEligible(curr.contractAddress.toLowerCase(), curr.id) === '0'
+      ) {
+        return prev
+      }
+      return {
+        ...prev,
+        [`${curr.contractAddress.toLowerCase()}-${curr.id}`]: {
+          ...curr,
+          contractAddress: curr.contractAddress.toLowerCase(),
+          blackListed: isNftBlackListed(curr.id, curr.contractAddress.toLowerCase()),
+          balance: balances?.length ? balances[index] : BigNumber.from(0),
+          erc1155AmtEligible: getAmtEligible(curr.contractAddress.toLowerCase(), curr.id),
+        },
+      }
+    }, {} as UserNfts)
 
   return {
     nfts,
