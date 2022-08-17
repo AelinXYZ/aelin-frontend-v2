@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import chunk from 'lodash/chunk'
+import { isMobile } from 'react-device-detect'
 
 import NftMedia from './NftMedia'
 import {
@@ -34,8 +35,7 @@ const Card = styled(BaseCard)`
   padding: 2rem 2rem 0rem 2rem;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
   border: ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
-  width: 100%;
-  max-width: 275px;
+  width: 275px;
 `
 
 const Row = styled.div`
@@ -84,11 +84,15 @@ const CollectionRulesWrapper = styled.div<{ arrowsVisible: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
-  /* margin-top: 15px; */
 
-  padding: 0 5rem;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    padding: 0 5rem;
+  }
 
   overflow-x: hidden;
+
+  max-width: -webkit-fill-available;
+  max-width: -moz-available;
 
   &:hover ${ButtonPrev}, &:hover ${ButtonNext} {
     display: ${(props) => (props.arrowsVisible ? 'inline' : 'none')};
@@ -197,6 +201,13 @@ const NftCollectionRules = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
     const itemsRef = useRef<HTMLInputElement>(null)
     const rules = pool.nftCollectionRules
+
+    const carouselGroup = useMemo(() => {
+      if (isMobile) return 1
+
+      return RULES_PER_GROUP
+    }, [])
+
     return (
       <CollectionRulesWrapper arrowsVisible={pool.nftCollectionRules.length > RULES_PER_GROUP}>
         <SectionTitle>Collections eligible to invest in this pool:</SectionTitle>
@@ -212,7 +223,7 @@ const NftCollectionRules = genericSuspense(
             top="40%"
           />
           <Items ref={itemsRef}>
-            {chunk(rules, RULES_PER_GROUP).map((itemsChunk, index, itemsArr) => {
+            {chunk(rules, carouselGroup).map((itemsChunk, index, itemsArr) => {
               return (
                 <ItemsGroup centered={itemsArr.length === 1} key={index}>
                   {itemsChunk.map((rules, index) => (
