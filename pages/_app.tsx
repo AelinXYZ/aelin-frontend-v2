@@ -11,8 +11,9 @@ import { MobileMenu } from '@/src/components/navigation/MobileMenu'
 import Toast from '@/src/components/toast/Toast'
 import TooltipConfig from '@/src/components/tooltip/TooltipConfig'
 import LayoutStatusProvider from '@/src/providers/layoutStatusProvider'
+import NftCreationContextProvider from '@/src/providers/nftCreationState'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
-import Theme from '@/src/providers/themeContextProvider'
+import ThemeProvider from '@/src/providers/themeContextProvider'
 import TransactionModalProvider from '@/src/providers/transactionModalProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 
@@ -52,7 +53,7 @@ function App({ Component, pageProps }: AppProps) {
       </Head>
       <Web3ConnectionProvider>
         <LayoutStatusProvider>
-          <Theme>
+          <ThemeProvider>
             <SWRConfig
               value={{
                 suspense: true,
@@ -62,20 +63,22 @@ function App({ Component, pageProps }: AppProps) {
               <StakingRewardsProvider>
                 <TransactionModalProvider>
                   <NotificationsProvider>
-                    <SafeSuspense>
-                      <TokenIconsProvider>
-                        <Header />
-                        <Component {...pageProps} />
-                        <Toast />
-                      </TokenIconsProvider>
-                    </SafeSuspense>
-                    <TooltipConfig />
-                    <MobileMenu />
+                    <NftCreationContextProvider>
+                      <SafeSuspense>
+                        <TokenIconsProvider>
+                          <Header />
+                          <Component {...pageProps} />
+                          <Toast />
+                        </TokenIconsProvider>
+                      </SafeSuspense>
+                      <TooltipConfig />
+                      <MobileMenu />
+                    </NftCreationContextProvider>
                   </NotificationsProvider>
                 </TransactionModalProvider>
               </StakingRewardsProvider>
             </SWRConfig>
-          </Theme>
+          </ThemeProvider>
         </LayoutStatusProvider>
       </Web3ConnectionProvider>
     </>

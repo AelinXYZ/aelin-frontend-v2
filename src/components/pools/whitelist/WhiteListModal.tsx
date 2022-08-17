@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import { Modal as BaseModal } from '@/src/components/common/Modal'
@@ -7,13 +7,10 @@ import AddressesWhiteList, {
   initialAddressesWhitelistValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
-import {
-  NftType,
-  initialState,
-  nftWhiteListReducer,
-} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
+import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { Privacy } from '@/src/constants/pool'
 import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
+import { useNftCreationState } from '@/src/providers/nftCreationState'
 
 const Modal = styled(BaseModal)`
   .modalCard {
@@ -42,7 +39,7 @@ const WhiteListModal = ({
     currentList.length ? currentList : initialAddressesWhitelistValues,
   )
 
-  const [nftWhiteListState, dispatch] = useReducer(nftWhiteListReducer, initialState)
+  const { dispatch, nftWhiteListState } = useNftCreationState()
 
   if (!poolPrivacy) return null
 
