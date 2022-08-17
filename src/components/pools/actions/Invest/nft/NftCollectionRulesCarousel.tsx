@@ -201,12 +201,7 @@ const NftCollectionRules = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
     const itemsRef = useRef<HTMLInputElement>(null)
     const rules = pool.nftCollectionRules
-
-    const carouselGroup = useMemo(() => {
-      if (isMobile) return 1
-
-      return RULES_PER_GROUP
-    }, [])
+    const carouselGroup = isMobile ? 1 : RULES_PER_GROUP
 
     return (
       <CollectionRulesWrapper arrowsVisible={pool.nftCollectionRules.length > RULES_PER_GROUP}>

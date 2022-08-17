@@ -183,11 +183,7 @@ const OwnedNftsCarousel = genericSuspense(
       return !!nfts && Object.keys(nfts).length > NFTS_PER_GROUP
     }, [nfts])
 
-    const carouselGroup = useMemo(() => {
-      if (isMobile) return 1
-
-      return NFTS_PER_GROUP
-    }, [])
+    const carouselGroup = isMobile ? 1 : NFTS_PER_GROUP
 
     return (
       <CarouselWrapper>

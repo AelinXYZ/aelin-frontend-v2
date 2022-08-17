@@ -74,6 +74,7 @@ export const Item = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: end;
   gap: 15px;
   inline-size: 100%;
   /* aspect-ratio: 16 / 9; */
