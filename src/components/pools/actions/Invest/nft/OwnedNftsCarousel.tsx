@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import chunk from 'lodash/chunk'
+import { isMobile } from 'react-device-detect'
 
 import NftMedia from './NftMedia'
 import {
@@ -80,7 +81,13 @@ const Card = styled(BaseCard)<{ arrowsVisible: boolean }>`
   border: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderColor};
 
   padding: 10px 30px 30px 30px;
-  width: 70%;
+
+  width: 85%;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    width: 70%;
+  }
+
   overflow-x: hidden;
 
   &:hover ${ButtonPrev}, &:hover ${ButtonNext} {
@@ -176,6 +183,8 @@ const OwnedNftsCarousel = genericSuspense(
       return !!nfts && Object.keys(nfts).length > NFTS_PER_GROUP
     }, [nfts])
 
+    const carouselGroup = isMobile ? 1 : NFTS_PER_GROUP
+
     return (
       <CarouselWrapper>
         <Card arrowsVisible={arrowsVisible}>
@@ -195,35 +204,33 @@ const OwnedNftsCarousel = genericSuspense(
                 />
 
                 <Items ref={itemsRef}>
-                  {chunk(Object.entries(nfts), NFTS_PER_GROUP).map(
-                    (itemsChunk, index, itemsArr) => {
-                      return (
-                        <ItemsGroup centered={itemsArr.length === 1} key={index}>
-                          {itemsChunk.map(
-                            ([nftKey, nft]: [nftKey: string, nft: NftSelected], index: number) => (
-                              <Item key={index}>
-                                {nft.type == NFTType.ERC1155 && (
-                                  <Erc1155Eligibility>
-                                    <div>Balance: {nft.balance.toString()}</div>
-                                    <div>Amount needed: {nft.erc1155AmtEligible}</div>
-                                  </Erc1155Eligibility>
-                                )}
-                                <NftMedia
-                                  isDisabled={nft.blackListed}
-                                  onClick={() => !nft.blackListed && handleNftSelection(nft)}
-                                  src={nft.imgUrl}
-                                />
-                                <RadioButton
-                                  checked={!!selectedNfts?.[nftKey]?.selected && !nft.blackListed}
-                                  onClick={() => !nft.blackListed && handleNftSelection(nft)}
-                                />
-                              </Item>
-                            ),
-                          )}
-                        </ItemsGroup>
-                      )
-                    },
-                  )}
+                  {chunk(Object.entries(nfts), carouselGroup).map((itemsChunk, index, itemsArr) => {
+                    return (
+                      <ItemsGroup centered={itemsArr.length === 1} key={index}>
+                        {itemsChunk.map(
+                          ([nftKey, nft]: [nftKey: string, nft: NftSelected], index: number) => (
+                            <Item key={index}>
+                              {nft.type == NFTType.ERC1155 && (
+                                <Erc1155Eligibility>
+                                  <div>Balance: {nft.balance.toString()}</div>
+                                  <div>Amount needed: {nft.erc1155AmtEligible}</div>
+                                </Erc1155Eligibility>
+                              )}
+                              <NftMedia
+                                isDisabled={nft.blackListed}
+                                onClick={() => !nft.blackListed && handleNftSelection(nft)}
+                                src={nft.imgUrl}
+                              />
+                              <RadioButton
+                                checked={!!selectedNfts?.[nftKey]?.selected && !nft.blackListed}
+                                onClick={() => !nft.blackListed && handleNftSelection(nft)}
+                              />
+                            </Item>
+                          ),
+                        )}
+                      </ItemsGroup>
+                    )
+                  })}
                 </Items>
                 <ButtonNext
                   onClick={() => {

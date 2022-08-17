@@ -214,8 +214,6 @@ function useNftCollectionList(query: string, nftType: NFTType, suspense = false)
     },
     {
       suspense,
-      revalidateOnFocus: true,
-      revalidateOnMount: true,
     },
   )
 }

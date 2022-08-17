@@ -42,6 +42,12 @@ export const Items = styled.div`
   scroll-snap-type: inline mandatory;
   scroll-padding-inline: var(3rem, 1rem);
 
+  max-width: 275px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    max-width: none;
+  }
+
   &::-webkit-scrollbar {
     background-color: rgba(255, 255, 255, 0.25);
     height: 0.2rem;
@@ -58,6 +64,7 @@ export const Items = styled.div`
   }
 
   & > * {
+    display: flex;
     justify-content: center;
     scroll-snap-align: start;
   }
@@ -67,6 +74,7 @@ export const Item = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: end;
   gap: 15px;
   inline-size: 100%;
   /* aspect-ratio: 16 / 9; */
