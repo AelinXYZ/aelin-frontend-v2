@@ -445,7 +445,6 @@ function useUserTabs(
           }
           break
         case NotificationType.FundingWindowEnded:
-          console.log(userRole)
           setActiveTab(PoolTab.PoolInformation)
           userRole === UserRole.Sponsor
             ? setActiveAction(PoolAction.CreateDeal)
