@@ -204,7 +204,6 @@ export const Header: React.FC = (props) => {
   const {
     address = '',
     appChainId,
-    changeWallet,
     connectWallet,
     isWalletConnected,
     isWalletNetworkSupported,
