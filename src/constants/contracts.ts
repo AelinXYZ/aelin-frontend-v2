@@ -36,10 +36,10 @@ export const contracts = constantContracts({
   },
   POOL_CREATE: {
     address: {
-      [Chains.mainnet]: '0x2C0979B0de5F99c2bde1E698AeCA13b55695951E',
+      [Chains.mainnet]: '0x722969A3fdc778a5cC7CbC8DC8Ae3e96a288f853',
       [Chains.kovan]: '0x3347b7C7F491B4cD665656796614A729036Ff220',
       [Chains.goerli]: '0xb52736cE26345942134b11083e88A0DD9Ef1be5A',
-      [Chains.optimism]: '0xFE65c4AD2DdAc66538289e11429a4FC8f9Bb29E7',
+      [Chains.optimism]: '0x8B35551d6459a3d49B9A5A0D7333c6D7E0cCbBd9',
     },
     abi: AelinPoolCreateABI,
   },

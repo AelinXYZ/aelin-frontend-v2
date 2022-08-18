@@ -9,8 +9,8 @@ module.exports = {
   schema: [
     //process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_MAINNET,
     // process.env.GRAPH_ENDPOINT_OPTIMISM,
-    // process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_KOVAN,
-    process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI,
+    'https://api.thegraph.com/subgraphs/name/aelin-xyz/aelin-mainnet',
+    'https://api.thegraph.com/subgraphs/name/aelin-xyz/aelin-optimism',
   ],
   documents: 'src/queries/**/*.ts',
   generates: {
