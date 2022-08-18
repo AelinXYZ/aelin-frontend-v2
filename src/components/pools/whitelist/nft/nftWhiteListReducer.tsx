@@ -1,4 +1,4 @@
-import { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
+import { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
 
 export enum NftWhiteListStep {
   nftType = 'nftType',

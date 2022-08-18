@@ -15,7 +15,7 @@ import {
 import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
-import { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
+import { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 import abbreviateNumber from '@/src/utils/abbreviateNumber'
 

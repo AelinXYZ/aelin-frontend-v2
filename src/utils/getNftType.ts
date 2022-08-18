@@ -1,6 +1,6 @@
 import { NftTokenType } from '@alch/alchemy-sdk'
 
-import { NFTType } from '../hooks/aelin/useNftCollectionList'
+import { NFTType } from '../hooks/aelin/useNftCollectionLists'
 
 const getNftType = (nft: NftTokenType | string): NFTType => {
   if (typeof nft === 'string') {
