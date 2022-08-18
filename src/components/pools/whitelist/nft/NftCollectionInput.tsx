@@ -12,10 +12,10 @@ import {
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { Textfield } from '@/src/components/pureStyledComponents/form/Textfield'
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
-import useNftCollectionList, {
+import useNftCollectionLists, {
   NFTType,
   NftCollectionData,
-} from '@/src/hooks/aelin/useNftCollectionList'
+} from '@/src/hooks/aelin/useNftCollectionLists'
 
 const Wrapper = styled.div`
   position: relative;
@@ -110,7 +110,11 @@ const NftCollectionInput = ({ nftType, onChange, selectedCollection }: NftCollec
     return NFTType.ERC721
   }, [nftType])
 
-  const { data: collections, error, isValidating } = useNftCollectionList(query, NFTtypeSelected)
+  const {
+    data: collections,
+    error,
+    isValidating,
+  } = useNftCollectionLists([{ collectionAddress: query, nftType: NFTtypeSelected }])
 
   if (error) {
     throw new Error('Unexpected error when fetching nft metadata')

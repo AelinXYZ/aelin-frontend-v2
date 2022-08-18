@@ -3,8 +3,7 @@ import useSWR from 'swr'
 
 import { ParsedAelinPool } from './useAelinPool'
 import useERC1155Balances from './useERC1155Balances'
-import { NFTType } from './useNftCollectionList'
-import { ZERO_BN } from '@/src/constants/misc'
+import { NFTType } from './useNftCollectionLists'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { ParsedOwnedNft } from '@/src/services/nft'
 

@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
+import NftCollectionInformation from './main/NftCollectionInformation'
 import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import {
@@ -159,6 +160,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               </RequiredConnection>
             </NftSelectionProvider>
           </ActionTabs>
+          {pool.hasNftList && <NftCollectionInformation pool={pool} />}
         </MainGrid>
       </RightTimelineLayout>
     </>

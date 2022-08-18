@@ -24,7 +24,7 @@ import {
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { RadioButton } from '@/src/components/pureStyledComponents/form/RadioButton'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { NFTType } from '@/src/hooks/aelin/useNftCollectionList'
+import { NFTType } from '@/src/hooks/aelin/useNftCollectionLists'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import useUserNftsByCollections from '@/src/hooks/aelin/useUserNftsByCollections'
 import { NftSelected, useNftSelection } from '@/src/providers/nftSelectionProvider'

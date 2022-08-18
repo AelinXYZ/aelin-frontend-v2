@@ -2,7 +2,7 @@ import { Network, OwnedNft, getNftsForOwner, initializeAlchemy } from '@alch/alc
 import { getAddress } from '@ethersproject/address'
 
 import { Chains, ChainsValues } from '@/src/constants/chains'
-import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionList'
+import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
 import { CustomError as Error } from '@/src/utils/error'
 import getNftType from '@/src/utils/getNftType'
 

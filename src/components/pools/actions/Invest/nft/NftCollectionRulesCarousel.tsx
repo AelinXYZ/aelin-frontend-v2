@@ -23,9 +23,11 @@ import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { Chains } from '@/src/constants/chains'
 import { OPENSEA_BASE_URL, QUIXOTIC_BASE_URL, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useNftCollectionList, { NFTType } from '@/src/hooks/aelin/useNftCollectionList'
+import useNftCollectionLists, {
+  NFTType,
+  NftCollectionData,
+} from '@/src/hooks/aelin/useNftCollectionLists'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const Card = styled(BaseCard)`
@@ -101,21 +103,25 @@ const CollectionRulesWrapper = styled.div<{ arrowsVisible: boolean }>`
 
 type NftCollectionRulesCarouselProps = {
   pool: ParsedAelinPool
-  rules: ParsedNftCollectionRules
+  collection: NftCollectionData
 }
 
 const RULES_PER_GROUP = 3
 
-const NftCollectionRulesCarousel = ({ pool, rules }: NftCollectionRulesCarouselProps) => {
+const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCarouselProps) => {
   const { appChainId } = useWeb3Connection()
   const [eligible, setEligible] = useState<boolean>()
   const [tokenId, setTokenId] = useState<string>()
   const searchRef = useRef<HTMLInputElement>(null)
-  const { data: collections, error } = useNftCollectionList(
-    rules.collectionAddress,
-    rules.nftType === 'ERC721' ? NFTType.ERC721 : NFTType.ERC1155,
-    true,
+
+  const rules = pool.nftCollectionRules.find(
+    (rules) => rules.collectionAddress.toLowerCase() === collection.address.toLowerCase(),
   )
+
+  if (!rules) {
+    throw new Error('CollectionRule not found.')
+  }
+
   const { ruleAllocation, ruleText } = useMemo(() => {
     if (rules.purchaseAmountPerToken && rules.purchaseAmount.raw.gt(ZERO_BN)) {
       return {
@@ -134,22 +140,17 @@ const NftCollectionRulesCarousel = ({ pool, rules }: NftCollectionRulesCarouselP
     }
   }, [rules, pool])
 
-  if (error || (collections && collections.length > 1)) {
-    throw new Error('Unexpected error when fetching nft metadata')
-  }
-
-  const imageUrl = collections?.[0]?.imageUrl
-  const name = collections?.[0]?.name
-  const isVerified = collections?.[0]?.isVerified
-  const collectionAddress = collections?.[0]?.address
+  const imageUrl = collection?.imageUrl
+  const name = collection?.name
+  const isVerified = collection?.isVerified
 
   const marketplaceUrl = useMemo(() => {
     if (appChainId === Chains.optimism) {
-      return QUIXOTIC_BASE_URL + 'collection/' + collectionAddress
+      return QUIXOTIC_BASE_URL + 'collection/' + rules.collectionAddress
     }
 
-    return OPENSEA_BASE_URL + 'assets/ethereum/' + collectionAddress
-  }, [collectionAddress, appChainId])
+    return OPENSEA_BASE_URL + 'assets/ethereum/' + rules.collectionAddress
+  }, [rules.collectionAddress, appChainId])
 
   return (
     <Card>
@@ -200,8 +201,18 @@ const NftCollectionRulesCarousel = ({ pool, rules }: NftCollectionRulesCarouselP
 const NftCollectionRules = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
     const itemsRef = useRef<HTMLInputElement>(null)
-    const rules = pool.nftCollectionRules
     const carouselGroup = isMobile ? 1 : RULES_PER_GROUP
+
+    const collectionsInfo = pool.nftCollectionRules.map((rules) => ({
+      collectionAddress: rules.collectionAddress,
+      nftType: rules.nftType === 'ERC1155' ? NFTType.ERC1155 : NFTType.ERC721,
+    }))
+
+    const { data: collections, error } = useNftCollectionLists(collectionsInfo, true)
+
+    if (error) {
+      throw new Error('Error getting collections')
+    }
 
     return (
       <CollectionRulesWrapper arrowsVisible={pool.nftCollectionRules.length > RULES_PER_GROUP}>
@@ -218,11 +229,11 @@ const NftCollectionRules = genericSuspense(
             top="40%"
           />
           <Items ref={itemsRef}>
-            {chunk(rules, carouselGroup).map((itemsChunk, index, itemsArr) => {
+            {chunk(collections, carouselGroup).map((itemsChunk, index, itemsArr) => {
               return (
                 <ItemsGroup centered={itemsArr.length === 1} key={index}>
-                  {itemsChunk.map((rules, index) => (
-                    <NftCollectionRulesCarousel key={index} pool={pool} rules={rules} />
+                  {itemsChunk.map((collection, index) => (
+                    <NftCollectionRulesCarousel collection={collection} key={index} pool={pool} />
                   ))}
                 </ItemsGroup>
               )

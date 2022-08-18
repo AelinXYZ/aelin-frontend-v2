@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 import { JsonRpcProvider } from '@ethersproject/providers'
@@ -78,13 +78,14 @@ const getParsedNFTCollectionData = async (collectionAddress: string, chainId: Ch
   })
 }
 
-function useNftCollectionList(query: string, nftType: NFTType, suspense = false) {
+export interface CollectionInfo {
+  collectionAddress: string
+  nftType: NFTType
+}
+
+function useNftCollectionLists(collectionsData: CollectionInfo[], suspense = false) {
   const { appChainId } = useWeb3Connection()
   const [collections, setCollections] = useState<NftCollectionData[]>([])
-
-  const isCollectionAddress = useMemo(() => {
-    return isAddress(query)
-  }, [query])
 
   useEffect(() => {
     const fetchCollections = async (appChainId: ChainsValues) => {
@@ -133,89 +134,103 @@ function useNftCollectionList(query: string, nftType: NFTType, suspense = false)
     throw new Error('Unsupported token type')
   }
 
-  return useSWR<NftCollectionData[], Error>(
-    ['search-nft-collections', query, collections, isCollectionAddress],
-    async () => {
-      if (!query.length) return []
+  const fetchData = async (collectionData: CollectionInfo) => {
+    if (
+      !collectionData ||
+      (collectionData && (!collectionData.collectionAddress || !collectionData.nftType))
+    ) {
+      return []
+    }
 
-      if (isCollectionAddress) {
-        const res: { data: NftCollectionData } = await getParsedNFTCollectionData(query, appChainId)
-        const provider = new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl)
+    const { collectionAddress, nftType } = collectionData
 
-        if (!res?.data) {
-          // no data found in marketplace, wrong address or unknown error
-          // Get minimal information directly from the contract
-          try {
-            const contractType = await getTokenType(query, provider)
+    if (isAddress(collectionAddress)) {
+      const res: { data: NftCollectionData } = await getParsedNFTCollectionData(
+        collectionAddress,
+        appChainId,
+      )
+      const provider = new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl)
 
-            // NFTType of the address typed does not match with the one selected
-            if (contractType !== nftType) return []
+      if (!res?.data) {
+        // no data found in marketplace, wrong address or unknown error
+        // Get minimal information directly from the contract
+        try {
+          const contractType = await getTokenType(collectionAddress, provider)
 
-            const nftAbi = contractType === NFTType.ERC721 ? erc721 : erc1155
+          // NFTType of the address typed does not match with the one selected
+          if (contractType !== nftType) return []
 
-            let name = await contractCall(query, nftAbi, provider, 'name', [])
-            if (!name) {
-              name = shortenAddress(query) || ''
-            }
+          const nftAbi = contractType === NFTType.ERC721 ? erc721 : erc1155
 
-            const totalSupply =
-              contractType === NFTType.ERC721
-                ? await contractCall(query, erc721, provider, 'totalSupply', [])
-                : undefined
-            const symbol = await contractCall(query, nftAbi, provider, 'symbol', [])
-            return [
-              {
-                id: 0,
-                address: query,
-                name,
-                symbol,
-                totalSupply: totalSupply ?? 0,
-                network: appChainId,
-                contractType,
-              },
-            ]
-          } catch (_) {
-            return []
+          let name = await contractCall(collectionAddress, nftAbi, provider, 'name', [])
+          if (!name) {
+            name = shortenAddress(collectionAddress) || ''
           }
+
+          const totalSupply =
+            contractType === NFTType.ERC721
+              ? await contractCall(collectionAddress, erc721, provider, 'totalSupply', [])
+              : undefined
+          const symbol = await contractCall(collectionAddress, nftAbi, provider, 'symbol', [])
+          return [
+            {
+              id: 0,
+              address: collectionAddress,
+              name,
+              symbol,
+              totalSupply: totalSupply ?? 0,
+              network: appChainId,
+              contractType,
+            },
+          ]
+        } catch (_) {
+          return []
         }
-
-        if (res.data.contractType !== nftType) return []
-
-        const totalSupply =
-          res.data.contractType === NFTType.ERC721
-            ? await contractCall(query, erc721, provider, 'totalSupply', [])
-            : undefined
-
-        let name = res.data.name
-        if (!name) {
-          name = shortenAddress(query) || ''
-        }
-
-        return [{ ...res.data, name, totalSupply: totalSupply?.toNumber() || 0 }]
       }
 
-      const fuse = new Fuse<NftCollectionData>(collections, {
-        keys: ['name'],
-        includeScore: true,
+      if (res.data.contractType !== nftType) return []
+
+      const totalSupply =
+        res.data.contractType === NFTType.ERC721
+          ? await contractCall(collectionAddress, erc721, provider, 'totalSupply', [])
+          : undefined
+
+      let name = res.data.name
+      if (!name) {
+        name = shortenAddress(collectionAddress) || ''
+      }
+
+      return [{ ...res.data, name, totalSupply: totalSupply?.toNumber() || 0 }]
+    }
+
+    const fuse = new Fuse<NftCollectionData>(collections, {
+      keys: ['name'],
+      includeScore: true,
+    })
+
+    const responses = fuse.search(collectionAddress)
+
+    return responses
+      .map((r) => r.item)
+      .filter((r) => {
+        const contractType = r.contractType
+        const chainId = r.network
+
+        if (contractType === NFTType.PUNKS && appChainId === Chains.mainnet) return true
+
+        return chainId === appChainId && contractType === nftType
       })
+  }
 
-      const responses = fuse.search(query)
+  const fetcher = (collectionsData: CollectionInfo[]) => {
+    return Promise.all(collectionsData.map(fetchData)).then((data) =>
+      ([] as NftCollectionData[]).concat(...data),
+    )
+  }
 
-      return responses
-        .map((r) => r.item)
-        .filter((r) => {
-          const contractType = r.contractType
-          const chainId = r.network
-
-          if (contractType === NFTType.PUNKS && appChainId === Chains.mainnet) return true
-
-          return chainId === appChainId && contractType === nftType
-        })
-    },
-    {
-      suspense,
-    },
-  )
+  return useSWR<NftCollectionData[], Error>([collectionsData], fetcher, {
+    suspense,
+  })
 }
 
-export default useNftCollectionList
+export default useNftCollectionLists
