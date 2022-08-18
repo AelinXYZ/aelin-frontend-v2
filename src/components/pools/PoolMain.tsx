@@ -2,8 +2,8 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
-import NftCollectionInformation from './main/NftCollectionInformation'
 import NoActions from './actions/NoActions'
+import NftCollectionInformation from './main/NftCollectionInformation'
 import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import {
@@ -135,9 +135,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 networkToCheck={pool.chainId}
               >
                 <>
-                  {!tabs.actionTabs.states.length && <NoActions pool={pool} status={derivedStatus} />}
+                  {!tabs.actionTabs.states.length && (
+                    <NoActions pool={pool} status={derivedStatus} />
+                  )}
                   {tabs.actionTabs.active === PoolAction.Invest && (
-                      <Invest pool={pool} poolHelpers={funding} />
+                    <Invest pool={pool} poolHelpers={funding} />
                   )}
                   {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
                   {tabs.actionTabs.active === PoolAction.Withdraw && (
