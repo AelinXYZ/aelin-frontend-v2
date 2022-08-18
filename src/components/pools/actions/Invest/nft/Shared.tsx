@@ -79,6 +79,7 @@ export const Item = styled.div`
   inline-size: 100%;
   /* aspect-ratio: 16 / 9; */
   object-fit: cover;
+  min-width: 150px;
 `
 export const LoadingWrapper = styled.div`
   display: flex;
