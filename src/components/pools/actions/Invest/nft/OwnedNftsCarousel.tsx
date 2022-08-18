@@ -130,13 +130,23 @@ const OwnedNftsCarousel = genericSuspense(
     const allocation = useNftUserAllocation(pool)
     const itemsRef = useRef<HTMLInputElement>(null)
 
+    const isERC1155 = pool?.nftCollectionRules.some(
+      (collectionRule) => collectionRule.nftType === 'ERC1155',
+    )
+
+    const selectAllDisabled = useMemo(() => {
+      if (isERC1155) return true
+
+      return !pool.nftCollectionRules.some((rules) => rules.purchaseAmountPerToken)
+    }, [isERC1155, pool.nftCollectionRules])
+
     if (error) {
       throw new Error('Error getting nfts.')
     }
 
     const handleNftSelection = (nft: NftSelected) => {
       const nftKey = nft.contractAddress + '-' + nft.id
-      if (allocation?.unlimited) {
+      if (allocation?.unlimited || isERC1155) {
         setSelectedNfts(() =>
           Object.values(nfts).reduce(
             (a, b) => ({
@@ -251,7 +261,7 @@ const OwnedNftsCarousel = genericSuspense(
                     {pool.investmentTokenSymbol}
                   </AllocationValue>
                 </Allocation>
-                <AllButton onClick={handleSelectAll}>
+                <AllButton disabled={selectAllDisabled} onClick={handleSelectAll}>
                   {isClear ? 'Clear all' : 'Select all'}
                 </AllButton>
               </AllocationWrapper>

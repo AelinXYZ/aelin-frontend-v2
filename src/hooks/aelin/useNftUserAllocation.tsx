@@ -39,7 +39,7 @@ function useNftUserAllocation(pool: ParsedAelinPool) {
       return false
     }
 
-    return Object.values(pool.nftCollectionRules).every(
+    return Object.values(pool.nftCollectionRules).some(
       (collectionRule: ParsedNftCollectionRules) => {
         const collectionNftsSelected = Object.values(nfts).filter(
           (nft) =>
@@ -47,7 +47,7 @@ function useNftUserAllocation(pool: ParsedAelinPool) {
             nft.contractAddress.toLowerCase() === collectionRule.collectionAddress.toLowerCase(),
         )
 
-        return collectionRule.erc1155TokenIds.every((tokenId, index) => {
+        return collectionRule.erc1155TokenIds.some((tokenId, index) => {
           const erc1155TokenAmtEligible = collectionRule.erc1155TokensAmtEligible[index]
           return collectionNftsSelected.some(
             (nft) => nft.id === tokenId && nft.balance.gte(BigNumber.from(erc1155TokenAmtEligible)),
