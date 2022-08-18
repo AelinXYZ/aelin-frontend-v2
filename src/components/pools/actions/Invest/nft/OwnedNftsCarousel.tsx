@@ -112,7 +112,13 @@ const CancelButton = styled(ButtonPrimaryLight)`
 const Erc1155Eligibility = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 3px;
   color: ${({ theme: { colors } }) => colors.lightGray};
+`
+
+const Erc1155EligibilityValue = styled.span`
+  color: ${({ theme: { colors } }) => colors.primary};
 `
 
 const NFTS_PER_GROUP = 4
@@ -222,8 +228,18 @@ const OwnedNftsCarousel = genericSuspense(
                             <Item key={index}>
                               {nft.type == NFTType.ERC1155 && (
                                 <Erc1155Eligibility>
-                                  <div>Balance: {nft.balance.toString()}</div>
-                                  <div>Amount needed: {nft.erc1155AmtEligible}</div>
+                                  <div>
+                                    Balance:{' '}
+                                    <Erc1155EligibilityValue>
+                                      {nft.balance.toString()}
+                                    </Erc1155EligibilityValue>
+                                  </div>
+                                  <div>
+                                    Amount needed:{' '}
+                                    <Erc1155EligibilityValue>
+                                      {nft.erc1155AmtEligible}
+                                    </Erc1155EligibilityValue>
+                                  </div>
                                 </Erc1155Eligibility>
                               )}
                               <NftMedia
