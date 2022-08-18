@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
 import NftCollectionInformation from './main/NftCollectionInformation'
+import NoActions from './actions/NoActions'
 import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import {
@@ -31,7 +32,7 @@ import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
 import { getPoolType } from '@/src/utils/aelinPoolUtils'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
-import { PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
+import { PoolAction, PoolTab } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -134,16 +135,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 networkToCheck={pool.chainId}
               >
                 <>
-                  {!tabs.actionTabs.states.length && (
-                    <div>
-                      {derivedStatus.current === PoolStatus.DealPresented
-                        ? 'You have not participated in this pool'
-                        : 'No actions available'}
-                    </div>
-                  )}
-
+                  {!tabs.actionTabs.states.length && <NoActions pool={pool} status={derivedStatus} />}
                   {tabs.actionTabs.active === PoolAction.Invest && (
-                    <Invest pool={pool} poolHelpers={funding} />
+                      <Invest pool={pool} poolHelpers={funding} />
                   )}
                   {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
                   {tabs.actionTabs.active === PoolAction.Withdraw && (

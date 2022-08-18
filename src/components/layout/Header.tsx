@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
+import { NetworkPlaceholder } from '../common/NetworkPlaceholder'
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { DarkMode } from '@/src/components/assets/DarkMode'
 import { Docs } from '@/src/components/assets/Docs'
@@ -20,6 +21,7 @@ import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyle
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
+import { AELIN_APP_DEV_URL } from '@/src/constants/misc'
 import { ThemeType } from '@/src/constants/types'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -192,10 +194,17 @@ const EllipsisButton = styled.button`
   }
 `
 
+const RedirectLink = styled.a`
+  display: flex;
+  gap: 10px;
+  text-decoration: none;
+`
+
 export const Header: React.FC = (props) => {
   const {
     address = '',
     appChainId,
+    changeWallet,
     connectWallet,
     isWalletConnected,
     isWalletNetworkSupported,
@@ -218,6 +227,15 @@ export const Header: React.FC = (props) => {
       {item.name}
     </DropdownItem>
   ))
+
+  const networksRedirectItem = (
+    <DropdownItem>
+      <RedirectLink href={AELIN_APP_DEV_URL}>
+        <NetworkPlaceholder name="T" />
+        <>Testnet</>
+      </RedirectLink>
+    </DropdownItem>
+  )
 
   return (
     <>
@@ -251,7 +269,7 @@ export const Header: React.FC = (props) => {
                 </DropdownButton>
               }
               dropdownPosition={DropdownPosition.center}
-              items={networksDropdownItems}
+              items={[...networksDropdownItems, networksRedirectItem]}
             />
             {isWalletConnected && (
               <>

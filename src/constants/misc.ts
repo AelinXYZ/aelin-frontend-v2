@@ -22,3 +22,4 @@ export const DEBOUNCED_INPUT_TIME = 600
 
 export const OPENSEA_BASE_URL = 'https://opensea.io/'
 export const QUIXOTIC_BASE_URL = 'https://quixotic.io/'
+export const AELIN_APP_DEV_URL = 'https://testnet.app.aelin.xyz'
