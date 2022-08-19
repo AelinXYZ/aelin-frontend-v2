@@ -16,6 +16,7 @@ import {
 } from '@/src/components/pools/common/Create'
 import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInput'
 import { Summary } from '@/src/components/pools/common/Summary'
+import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
 import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -40,6 +41,7 @@ import useAelinCreatePool, {
 } from '@/src/hooks/aelin/useAelinCreatePool'
 import { useTimelineStatus } from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
+import { useNftCreationState } from '@/src/providers/nftCreationState'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const BackButton = styled(ButtonPrimaryLight)`
@@ -50,6 +52,11 @@ const BackButton = styled(ButtonPrimaryLight)`
 
 const StyledError = styled(Error)`
   margin-bottom: 0;
+`
+
+const NftTableWrapper = styled.div`
+  width: 100%;
+  padding-top: 20px;
 `
 
 const Create: NextPage = () => {
@@ -71,7 +78,7 @@ const Create: NextPage = () => {
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
-
+  const { nftWhiteListState } = useNftCreationState()
   useWarningOnLeavePage(() => showWarningOnLeave)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -158,6 +165,19 @@ const Create: NextPage = () => {
                     </MobileButtonWrapper>
                   </ButtonWrapper>
                   <Summary data={getCreatePoolSummaryData(createPoolState)} />
+                  {createPoolState.poolPrivacy === 'nft' && !!createPoolState.investmentToken ? (
+                    <NftTableWrapper>
+                      <NftCollectionsTable
+                        light
+                        nftCollectionsData={{
+                          ...nftWhiteListState,
+                          ...createPoolState.investmentToken,
+                        }}
+                      />
+                    </NftTableWrapper>
+                  ) : (
+                    <></>
+                  )}
                 </StepContents>
                 <PrevNextWrapper>
                   {!isFinalStep && (
