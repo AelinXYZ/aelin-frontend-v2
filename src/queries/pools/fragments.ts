@@ -29,6 +29,7 @@ gql`
     totalAmountWithdrawn
     totalAmountFunded
     totalUsersInvested
+    totalAddressesInvested
 
     vestingEnds
     vestingStarts
