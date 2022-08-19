@@ -23,6 +23,7 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { RadioButton } from '@/src/components/pureStyledComponents/form/RadioButton'
+import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { NFTType } from '@/src/hooks/aelin/useNftCollectionLists'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
@@ -143,7 +144,7 @@ const OwnedNftsCarousel = genericSuspense(
     const selectAllDisabled = useMemo(() => {
       if (isERC1155) return true
 
-      return !pool.nftCollectionRules.some((rules) => rules.purchaseAmountPerToken)
+      return pool.nftCollectionRules.every((rules) => rules.purchaseAmount.raw.eq(ZERO_BN))
     }, [isERC1155, pool.nftCollectionRules])
 
     if (error) {
