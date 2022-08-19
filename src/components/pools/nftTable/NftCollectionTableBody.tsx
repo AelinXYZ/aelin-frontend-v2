@@ -40,7 +40,8 @@ const NftCollectionTableBody = ({ collectionsData, widths }: CollectionRulesProp
       {collectionsData.collectionsRules.map((rules, index) => (
         <CollectionRulesRow
           collection={collections.find(
-            (collection) => collection.address.toLowerCase() === rules.collectionAddress,
+            (collection) =>
+              collection.address.toLowerCase() === rules.collectionAddress.toLowerCase(),
           )}
           isERC1155={collectionsData.isERC1155}
           key={index}

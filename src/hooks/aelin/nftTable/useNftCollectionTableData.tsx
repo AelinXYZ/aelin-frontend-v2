@@ -56,8 +56,9 @@ const useNftCollectionTableData = (
           }
 
           if (nftType === NFTType.ERC721) {
-            collectionsRules.allocationErc721 =
-              `${collection.amountPerNft?.toString()} ${nftCollectionsData.symbol}` ?? 'Unlimited'
+            collectionsRules.allocationErc721 = collection.amountPerNft
+              ? `${collection.amountPerNft?.toString()} ${nftCollectionsData.symbol}`
+              : 'Unlimited'
           } else {
             collectionsRules.allocationsErc1155 = collection.selectedNftsData
               .filter((n) => !!n.nftId)
