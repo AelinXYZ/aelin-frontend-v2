@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 import { JsonRpcProvider } from '@ethersproject/providers'
@@ -83,9 +83,21 @@ export interface CollectionInfo {
   nftType: NFTType
 }
 
-function useNftCollectionLists(collectionsData: CollectionInfo[], suspense = false) {
-  const { appChainId } = useWeb3Connection()
+function useNftCollectionLists(
+  collectionsData: CollectionInfo[],
+  suspense = false,
+  chainId?: ChainsValues,
+) {
+  const { appChainId: connectedChainId } = useWeb3Connection()
   const [collections, setCollections] = useState<NftCollectionData[]>([])
+
+  const appChainId = useMemo(() => {
+    if (chainId) {
+      return chainId
+    }
+
+    return connectedChainId
+  }, [chainId, connectedChainId])
 
   useEffect(() => {
     const fetchCollections = async (appChainId: ChainsValues) => {

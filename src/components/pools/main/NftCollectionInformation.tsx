@@ -159,29 +159,29 @@ const CollectionRules = genericSuspense(
       collectionAddress: rules.collectionAddress,
       nftType: isERC1155 ? NFTType.ERC1155 : NFTType.ERC721,
     }))
-    const { data: collections, error } = useNftCollectionLists(collectionsInfo, true)
+    const { data: collections, error } = useNftCollectionLists(collectionsInfo, true, pool.chainId)
 
     if (error) {
       throw new Error('Error getting collections')
     }
 
-    return (
+    return !!collections && collections.length ? (
       <>
-        {collections &&
-          collections.length &&
-          pool.nftCollectionRules.map((rules, index) => (
-            <CollectionRulesRow
-              collection={collections.find(
-                (collection) => collection.address.toLowerCase() === rules.collectionAddress,
-              )}
-              isERC1155={isERC1155}
-              key={index}
-              pool={pool}
-              rules={rules}
-              widths={widths}
-            />
-          ))}
+        {pool.nftCollectionRules.map((rules, index) => (
+          <CollectionRulesRow
+            collection={collections.find(
+              (collection) => collection.address.toLowerCase() === rules.collectionAddress,
+            )}
+            isERC1155={isERC1155}
+            key={index}
+            pool={pool}
+            rules={rules}
+            widths={widths}
+          />
+        ))}
       </>
+    ) : (
+      <></>
     )
   },
 )
