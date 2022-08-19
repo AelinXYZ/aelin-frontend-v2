@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
 import NoActions from './actions/NoActions'
-import NftCollectionInformation from './main/NftCollectionInformation'
+import NftCollectionsTable from './nftTable/NftCollectionsTable'
 import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import {
@@ -156,7 +156,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
               </RequiredConnection>
             </NftSelectionProvider>
           </ActionTabs>
-          {pool.hasNftList && <NftCollectionInformation pool={pool} />}
+          {pool.hasNftList && <NftCollectionsTable pool={pool} />}
         </MainGrid>
       </RightTimelineLayout>
     </>
