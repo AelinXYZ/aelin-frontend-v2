@@ -6,6 +6,7 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseEther, parseUnits } from '@ethersproject/units'
 
+import usePrevious from '../common/usePrevious'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -19,6 +20,7 @@ import {
   useAelinPoolCreateTransaction,
 } from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, getFormattedDurationFromNowToDuration, sumDurations } from '@/src/utils/date'
 import { isDuration } from '@/src/utils/isDuration'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
@@ -355,6 +357,8 @@ export const getCreatePoolStepIndicatorData = (
   }))
 
 export default function useAelinCreatePool(chainId: ChainsValues) {
+  const { appChainId } = useWeb3Connection()
+  const prevAppChainId = usePrevious(appChainId)
   const [createPoolState, dispatch] = useReducer(createPoolReducer, initialState)
   const [errors, setErrors] = useState<poolErrors>()
   const [direction, setDirection] = useState<'next' | 'prev' | undefined>()
@@ -365,6 +369,10 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
     contracts.POOL_CREATE.address[chainId],
     'createPool',
   )
+
+  useEffect(() => {
+    if (appChainId && prevAppChainId && prevAppChainId !== appChainId) dispatch({ type: 'reset' })
+  }, [appChainId, prevAppChainId])
 
   const moveStep = (value: 'next' | 'prev') => {
     const { currentStep } = createPoolState
