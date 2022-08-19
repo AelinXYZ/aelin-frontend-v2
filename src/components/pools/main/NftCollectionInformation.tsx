@@ -15,7 +15,7 @@ import { ExternalLink } from '../../table/ExternalLink'
 import { SortableTH } from '../../table/SortableTH'
 import { Value } from '@/src/components/pools/common/InfoCell'
 import { Chains } from '@/src/constants/chains'
-import { OPENSEA_BASE_URL, QUIXOTIC_BASE_URL } from '@/src/constants/misc'
+import { OPENSEA_BASE_URL, QUIXOTIC_BASE_URL, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftCollectionLists, {
   NFTType,
@@ -108,11 +108,11 @@ const CollectionRulesRow = ({
 
   const values = useMemo(() => {
     if (rules.nftType === 'ERC721') {
-      const allocation = rules.purchaseAmountPerToken
-        ? `${formatToken(rules.purchaseAmount.raw, 18, pool.investmentTokenDecimals)} ${
+      const allocation = rules.purchaseAmount.raw.eq(ZERO_BN)
+        ? 'Unlimited'
+        : `${formatToken(rules.purchaseAmount.raw, 18, pool.investmentTokenDecimals)} ${
             pool.investmentTokenSymbol
           }`
-        : 'Unlimited'
       return [
         {
           allocation,
