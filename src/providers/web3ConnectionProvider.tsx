@@ -18,8 +18,6 @@ import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
 import nullthrows from 'nullthrows'
 import { toast } from 'react-hot-toast'
 
-import { Provider, useWeb3Provider } from '../hooks/useWeb3Provider'
-import { getExplorerUrl } from '../utils/getExplorerUrl'
 import {
   Chains,
   ChainsValues,
@@ -27,6 +25,9 @@ import {
   getChainsByEnvironmentArray,
   getNetworkConfig,
 } from '@/src/constants/chains'
+import { Provider, useWeb3Provider } from '@/src/hooks/useWeb3Provider'
+import { getDefaultNetwork } from '@/src/utils/getDefaultNetwork'
+import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { RequiredNonNull } from '@/types/utils'
 
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
@@ -148,7 +149,7 @@ type Props = {
 
 export default function Web3ConnectionProvider({ children }: Props) {
   const [address, setAddress] = useState<string | null>(null)
-  const [walletChainId, setWalletChainId] = useState<number | null>(null)
+  const [walletChainId, setWalletChainId] = useState<ChainsValues | null>(null)
   const [tmpWallet, setTmpWallet] = useState<Wallet | null>(null)
   const [wallet, setWallet] = useState<Wallet | null>(null)
   const [appChainId, setAppChainId] = useState<ChainsValues>(INITIAL_APP_CHAIN_ID)
@@ -201,11 +202,22 @@ export default function Web3ConnectionProvider({ children }: Props) {
     }
   }
 
+  useEffect(() => {
+    const init = async () => {
+      const chainId = await getDefaultNetwork(isWalletConnected)
+      setAppChainId(chainId)
+    }
+
+    init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Instantiate Onboard
   useEffect(() => {
-    initOnboard(INITIAL_APP_CHAIN_ID, {
+    initOnboard(appChainId, {
       network: (network: number) => {
-        setWalletChainId(network || null)
+        setWalletChainId(network as ChainsValues)
+        setAppChainId(network as ChainsValues)
       },
       address: async (address: string | undefined) => {
         toast.dismiss()
@@ -220,6 +232,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
         }
       },
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // recover previous connection
