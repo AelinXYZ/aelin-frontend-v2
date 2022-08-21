@@ -26,7 +26,7 @@ import {
   getNetworkConfig,
 } from '@/src/constants/chains'
 import { Provider, useWeb3Provider } from '@/src/hooks/useWeb3Provider'
-import { getDefaultNetwork } from '@/src/utils/getDefaultNetwork'
+import { getDefaultNetwork, isSupportedNetworkId } from '@/src/utils/getDefaultNetwork'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { RequiredNonNull } from '@/types/utils'
 
@@ -216,6 +216,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
   useEffect(() => {
     initOnboard(appChainId, {
       network: (network: number) => {
+        if (!isSupportedNetworkId(network as ChainsValues)) return null
         setWalletChainId(network as ChainsValues)
         setAppChainId(network as ChainsValues)
       },

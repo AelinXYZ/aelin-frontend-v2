@@ -11,7 +11,7 @@ type EthereumProvider = {
   chainId: string
 }
 
-function isSupportedNetworkId(id: ChainsValues): boolean {
+export function isSupportedNetworkId(id: ChainsValues): boolean {
   const supportedChainIds = getChainsByEnvironmentArray().map(({ chainId }) => chainId)
   return supportedChainIds.includes(id)
 }
