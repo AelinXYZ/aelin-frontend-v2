@@ -13,7 +13,7 @@ import { AllocationErc1155 } from './NftCollectionsTable'
 import { Chains } from '@/src/constants/chains'
 import { OPENSEA_BASE_URL, QUIXOTIC_BASE_URL } from '@/src/constants/misc'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { strToKebabCase } from '@/src/utils/string'
 
 const HideOnDesktop = styled(BaseHideOnDesktop)`
   max-width: 60px;
@@ -70,17 +70,17 @@ const CollectionRulesRow = ({
   rules,
   widths,
 }: NftCollectionRulesRowProps) => {
-  const { appChainId } = useWeb3Connection()
+  const name = collection?.name
+  const imageUrl = collection?.imageUrl
+  const collectionNetwork = collection?.network
+
   const getMarketplaceUrl = (collectionAddress: string) => {
-    if (appChainId === Chains.optimism) {
+    if (collectionNetwork === Chains.optimism) {
       return QUIXOTIC_BASE_URL + 'collection/' + collectionAddress
     }
 
-    return OPENSEA_BASE_URL + 'assets/ethereum/' + collectionAddress
+    return OPENSEA_BASE_URL + 'collection/' + strToKebabCase(name)
   }
-
-  const name = collection?.name
-  const imageUrl = collection?.imageUrl
 
   const values = useMemo(() => {
     if (rules.nftType === NFTType.ERC721) {

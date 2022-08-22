@@ -76,12 +76,12 @@ const AllButton = styled(ButtonPrimaryLight)`
 const Card = styled(BaseCard)<{ arrowsVisible: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 10px;
+  margin-top: 30px;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
   border: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderColor};
 
-  padding: 10px 30px 30px 30px;
+  padding: 30px 30px 20px 30px;
 
   width: 85%;
 
@@ -96,17 +96,17 @@ const Card = styled(BaseCard)<{ arrowsVisible: boolean }>`
   }
 `
 const ButtonsWrapper = styled.div`
-  gap: 20px;
+  gap: 15px;
   display: flex;
 `
 
 const SaveButton = styled(ButtonGradient)`
-  margin: 30px auto 10px;
+  margin: 25px auto 10px;
   min-width: 160px;
 `
 
 const CancelButton = styled(ButtonPrimaryLight)`
-  margin: 30px auto 30px;
+  margin: 25px auto 25px;
   min-width: 160px;
 `
 
@@ -141,11 +141,11 @@ const OwnedNftsCarousel = genericSuspense(
       (collectionRule) => collectionRule.nftType === 'ERC1155',
     )
 
-    const selectAllDisabled = useMemo(() => {
-      if (isERC1155) return true
+    // const showSelectAllButton = useMemo(() => {
+    //   if (isERC1155) return false
 
-      return pool.nftCollectionRules.every((rules) => rules.purchaseAmount.raw.eq(ZERO_BN))
-    }, [isERC1155, pool.nftCollectionRules])
+    //   return !pool.nftCollectionRules.every((rules) => rules.purchaseAmount.raw.eq(ZERO_BN))
+    // }, [isERC1155, pool.nftCollectionRules])
 
     if (error) {
       throw new Error('Error getting nfts.')
@@ -177,19 +177,19 @@ const OwnedNftsCarousel = genericSuspense(
       }
     }
 
-    const handleSelectAll = () => {
-      if (!nfts) return
-      setSelectedNfts(() => {
-        return Object.values(nfts).reduce(
-          (a, b) => ({
-            ...a,
-            [b.contractAddress + '-' + b.id]: { ...b, selected: !isClear && !b.blackListed },
-          }),
-          {},
-        )
-      })
-      setIsClear((prev) => !prev)
-    }
+    // const handleSelectAll = () => {
+    //   if (!nfts) return
+    //   setSelectedNfts(() => {
+    //     return Object.values(nfts).reduce(
+    //       (a, b) => ({
+    //         ...a,
+    //         [b.contractAddress + '-' + b.id]: { ...b, selected: !isClear && !b.blackListed },
+    //       }),
+    //       {},
+    //     )
+    //   })
+    //   setIsClear((prev) => !prev)
+    // }
 
     const handleSave = () => {
       handleStoreSelectedNfts(selectedNfts)
@@ -207,7 +207,6 @@ const OwnedNftsCarousel = genericSuspense(
         <Card arrowsVisible={arrowsVisible}>
           {!!nfts && Object.keys(nfts).length ? (
             <>
-              <SectionTitle>Select NFT(s)</SectionTitle>
               <ItemsWrapper>
                 <ButtonPrev
                   left="12%"
@@ -278,9 +277,11 @@ const OwnedNftsCarousel = genericSuspense(
                     {pool.investmentTokenSymbol}
                   </AllocationValue>
                 </Allocation>
-                <AllButton disabled={selectAllDisabled} onClick={handleSelectAll}>
-                  {isClear ? 'Clear all' : 'Select all'}
-                </AllButton>
+                {/* {showSelectAllButton && (
+                  <AllButton onClick={handleSelectAll}>
+                    {isClear ? 'Clear all' : 'Select all'}
+                  </AllButton>
+                )} */}
               </AllocationWrapper>
             </>
           ) : (
