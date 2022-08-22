@@ -3,6 +3,7 @@ import { isAddress } from '@ethersproject/address'
 import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import { POOL_NAME_MAX_LENGTH } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
 import { Token } from '@/src/constants/token'
@@ -34,8 +35,8 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
 
   if (!values.poolName) {
     errors.poolName = true
-  } else if (values.poolName.length > 15) {
-    errors.poolName = 'No more than 15 chars'
+  } else if (values.poolName.length > POOL_NAME_MAX_LENGTH) {
+    errors.poolName = 'No more than 30 chars'
   }
 
   if (!values.poolSymbol) {

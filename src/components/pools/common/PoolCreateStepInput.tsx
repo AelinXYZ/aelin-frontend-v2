@@ -63,7 +63,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
     <Wrapper onKeyUp={onKeyUp} {...restProps}>
       {step === CreatePoolSteps.poolName ? (
         <Textfield
-          maxLength={16}
+          maxLength={31}
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
           placeholder={createPoolConfig[step].placeholder}
