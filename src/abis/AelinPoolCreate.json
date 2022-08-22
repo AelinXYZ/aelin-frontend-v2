@@ -13,7 +13,12 @@
       },
       {
         "internalType": "address",
-        "name": "_aelinRewards",
+        "name": "_aelinTreasury",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_aelinEscrow",
         "type": "address"
       }
     ],
@@ -102,6 +107,19 @@
   },
   {
     "inputs": [],
+    "name": "AELIN_ESCROW_LOGIC",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "AELIN_POOL_LOGIC",
     "outputs": [
       {
@@ -115,7 +133,7 @@
   },
   {
     "inputs": [],
-    "name": "AELIN_REWARDS",
+    "name": "AELIN_TREASURY",
     "outputs": [
       {
         "internalType": "address",
@@ -129,49 +147,88 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_symbol",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_purchaseTokenCap",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_purchaseToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_duration",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_sponsorFee",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_purchaseDuration",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address[]",
-        "name": "_allowList",
-        "type": "address[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_allowListAmounts",
-        "type": "uint256[]"
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "purchaseTokenCap",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "purchaseToken",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "duration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sponsorFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "purchaseDuration",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "allowListAddresses",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "allowListAmounts",
+            "type": "uint256[]"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "purchaseAmount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "collectionAddress",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "purchaseAmountPerToken",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "tokenIds",
+                "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256[]",
+                "name": "minTokensEligible",
+                "type": "uint256[]"
+              }
+            ],
+            "internalType": "struct IAelinPool.NftCollectionRules[]",
+            "name": "nftCollectionRules",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct IAelinPool.PoolData",
+        "name": "_poolData",
+        "type": "tuple"
       }
     ],
     "name": "createPool",

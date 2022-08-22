@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
 import NoActions from './actions/NoActions'
+import NftCollectionsTable from './nftTable/NftCollectionsTable'
 import { NotificationType } from '@/graphql-schema'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import {
@@ -13,7 +14,7 @@ import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout
 import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import FundDeal from '@/src/components/pools/actions/FundDeal'
-import Invest from '@/src/components/pools/actions/Invest'
+import Invest from '@/src/components/pools/actions/Invest/Invest'
 import ReleaseFunds from '@/src/components/pools/actions/ReleaseFunds'
 import Vest from '@/src/components/pools/actions/Vest/Vest'
 import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
@@ -28,6 +29,8 @@ import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
+import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
+import { getPoolType } from '@/src/utils/aelinPoolUtils'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { PoolAction, PoolTab } from '@/types/aelinPool'
 
@@ -90,7 +93,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         href={getExplorerUrl(pool.address || '', pool.chainId)}
         isVerified={isVerified ?? false}
         network={chainsConfig[pool.chainId].icon}
-        subTitle={pool.poolType ? pool.poolType + ' pool' : ''}
+        subTitle={
+          pool.poolType || pool.hasNftList
+            ? getPoolType(pool.poolType, pool.hasNftList) + ' pool'
+            : ''
+        }
         title={pool.nameFormatted}
       />
       <RightTimelineLayout timelineSteps={timeline}>
@@ -121,30 +128,35 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             onTabClick={tabs.actionTabs.setActive}
             tabs={tabs.actionTabs.states}
           >
-            <RequiredConnection
-              isNotConnectedText="Connect your wallet"
-              minHeight={175}
-              networkToCheck={pool.chainId}
-            >
-              <>
-                {!tabs.actionTabs.states.length && <NoActions pool={pool} status={derivedStatus} />}
-                {tabs.actionTabs.active === PoolAction.Invest && (
-                  <Invest pool={pool} poolHelpers={funding} />
-                )}
-                {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
-                {tabs.actionTabs.active === PoolAction.Withdraw && (
-                  <WithdrawalFromPool pool={pool} />
-                )}
-                {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.Vest && <Vest pool={pool} />}
-                {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
-                  <WithdrawUnredeemed pool={pool} />
-                )}
-              </>
-            </RequiredConnection>
+            <NftSelectionProvider>
+              <RequiredConnection
+                isNotConnectedText="Connect your wallet"
+                minHeight={175}
+                networkToCheck={pool.chainId}
+              >
+                <>
+                  {!tabs.actionTabs.states.length && (
+                    <NoActions pool={pool} status={derivedStatus} />
+                  )}
+                  {tabs.actionTabs.active === PoolAction.Invest && (
+                    <Invest pool={pool} poolHelpers={funding} />
+                  )}
+                  {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
+                  {tabs.actionTabs.active === PoolAction.Withdraw && (
+                    <WithdrawalFromPool pool={pool} />
+                  )}
+                  {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
+                  {tabs.actionTabs.active === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
+                  {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
+                  {tabs.actionTabs.active === PoolAction.Vest && <Vest pool={pool} />}
+                  {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
+                    <WithdrawUnredeemed pool={pool} />
+                  )}
+                </>
+              </RequiredConnection>
+            </NftSelectionProvider>
           </ActionTabs>
+          {pool.hasNftList && <NftCollectionsTable pool={pool} />}
         </MainGrid>
       </RightTimelineLayout>
     </>

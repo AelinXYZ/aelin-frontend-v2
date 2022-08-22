@@ -10,6 +10,13 @@ export const MAX_ALLOWED_DEALS = 5
 export enum Privacy {
   PUBLIC = 'public',
   PRIVATE = 'private',
+  NFT = 'nft',
+}
+
+export enum PrivacyType {
+  WHITELIST = 'whitelist',
+  ERC721 = 'erc721',
+  ERC1155 = 'erc1155',
 }
 
 export enum PoolStages {

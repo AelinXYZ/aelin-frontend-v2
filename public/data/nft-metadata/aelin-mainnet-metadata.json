@@ -1,0 +1,18 @@
+[
+  {
+    "id": 0,
+    "address": "0x16de9D750F4AC24226154C40980Ef83d4D3fD4AD",
+    "name": "Ethlizards",
+    "slug": "ethlizards",
+    "imageUrl": "https://lh3.googleusercontent.com/xQtMH32KlwsBh0Ka2gwzHhy8Qu7-rbh15SQaPqz8xe7ZC1TH_MkSTgLAaNg4hPcsupacDqPVciBaXlqDNpZzDgGOfHHbXYaSxwGzUg=s0",
+    "isVerified": true,
+    "numOwners": 1527,
+    "totalSupply": 5050,
+    "contractType": "erc721",
+    "floorPrice": 1.14,
+    "totalVolume": 6040,
+    "paymentSymbol": "ETH",
+    "network": 1,
+    "updatedAt": 1661195800884
+  }
+]

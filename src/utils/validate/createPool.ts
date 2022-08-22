@@ -1,6 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 
-import { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { Privacy } from '@/src/constants/pool'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS, ONE_YEAR_IN_SECS } from '@/src/constants/time'
@@ -17,7 +18,7 @@ export type poolErrors = {
   poolCap?: number
   sponsorFee?: number
   poolPrivacy?: Privacy
-  whitelist?: WhitelistProps[]
+  whitelist?: AddressWhitelistProps[]
 }
 
 const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
@@ -88,7 +89,15 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
   }
 
   if (values.poolPrivacy === Privacy.PRIVATE && !values.whitelist?.length) {
-    errors.poolPrivacy = 'Add white list addresses or change pool privacy to public'
+    errors.poolPrivacy = 'Add addresses or change pool access to public'
+  }
+
+  if (
+    values.poolPrivacy === Privacy.NFT &&
+    !Object.hasOwn(values, NftType.erc721) &&
+    !Object.hasOwn(values, NftType.erc1155)
+  ) {
+    errors.poolPrivacy = 'Add collections or change pool access to public'
   }
 
   if (!values.sponsorFee || values.sponsorFee < 0) {

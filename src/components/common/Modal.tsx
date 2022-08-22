@@ -20,7 +20,7 @@ const Wrapper = styled.div`
   overflow: auto;
 `
 
-const Card = styled(BaseCard)<{ size?: modalSize }>`
+export const Card = styled(BaseCard)<{ size?: modalSize }>`
   border-color: ${({ theme }) => theme.colors.lightGray};
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@ const Card = styled(BaseCard)<{ size?: modalSize }>`
     size === 'sm' ? '325px' : size === 'md' ? '500px' : size === 'lg' ? '720px' : `${size}`};
 `
 
-const Title = styled.h1`
+export const Title = styled.h1`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.8rem;
@@ -89,6 +89,7 @@ export type modalSize = 'sm' | 'md' | 'lg' | string
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   onClose?: () => void
+  showCancelButton?: boolean
   size?: modalSize
   title?: string
 }
@@ -96,6 +97,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
 export const Modal: React.FC<Props> = ({
   children,
   onClose,
+  showCancelButton = true,
   size = 'md',
   title = '',
   ...restProps
@@ -123,7 +125,7 @@ export const Modal: React.FC<Props> = ({
           <Title>{title}</Title>
           <Contents>
             {children}
-            {validOnClose && <Cancel onClick={close}>Cancel</Cancel>}
+            {showCancelButton && validOnClose && <Cancel onClick={close}>Cancel</Cancel>}
           </Contents>
         </Card>
       </Wrapper>,
