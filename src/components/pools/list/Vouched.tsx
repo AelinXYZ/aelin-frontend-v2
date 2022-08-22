@@ -185,6 +185,13 @@ export const VouchedPools: React.FC = () => {
                       <Lock />
                     </Label>
                   )}
+
+                  {!!pool.hasNftList && (
+                    <Label>
+                      <span>NFT</span>
+                      <Lock />
+                    </Label>
+                  )}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                 </NameCell>
                 <ENSOrAddress address={sponsor} network={network} />
