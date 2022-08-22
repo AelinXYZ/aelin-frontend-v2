@@ -28,6 +28,7 @@ import useNftCollectionLists, {
   NftCollectionData,
 } from '@/src/hooks/aelin/useNftCollectionLists'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { strToKebabCase } from '@/src/utils/string'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const Card = styled(BaseCard)`
@@ -145,12 +146,12 @@ const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCaro
   const isVerified = collection?.isVerified
 
   const marketplaceUrl = useMemo(() => {
-    if (appChainId === Chains.optimism) {
+    if (collection.network === Chains.optimism) {
       return QUIXOTIC_BASE_URL + 'collection/' + rules.collectionAddress
     }
 
-    return OPENSEA_BASE_URL + 'assets/ethereum/' + rules.collectionAddress
-  }, [rules.collectionAddress, appChainId])
+    return OPENSEA_BASE_URL + 'collection/' + strToKebabCase(name)
+  }, [rules.collectionAddress, name, collection.network])
 
   return (
     <Card>
@@ -166,7 +167,7 @@ const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCaro
       <AllocationValue>{ruleAllocation}</AllocationValue>
       {rules.nftType === 'ERC721' && (
         <>
-          <Title>Verify NFT eligibility</Title>
+          <Title>Verify NFT ID eligibility</Title>
           <SubTitle> Each ID may only be used once per pool</SubTitle>
           <Search
             onChange={(e) => {
@@ -231,7 +232,7 @@ const NftCollectionRules = genericSuspense(
           <Items ref={itemsRef}>
             {chunk(collections, carouselGroup).map((itemsChunk, index, itemsArr) => {
               return (
-                <ItemsGroup centered={itemsArr.length === 1} key={index}>
+                <ItemsGroup centered={itemsArr.length === 1} gapped key={index}>
                   {itemsChunk.map((collection, index) => (
                     <NftCollectionRulesCarousel collection={collection} key={index} pool={pool} />
                   ))}

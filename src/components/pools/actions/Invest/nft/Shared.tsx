@@ -21,9 +21,9 @@ export const ButtonPrev = styled(BaseButtonPrev)<{ left: string; top: string }>`
   top: ${(props) => props.top};
 `
 
-export const ItemsGroup = styled.div<{ centered: boolean }>`
+export const ItemsGroup = styled.div<{ centered: boolean; gapped?: boolean }>`
   display: grid;
-  gap: 3rem;
+  gap: ${({ gapped }) => (gapped ? '3rem' : '0')};
   grid-auto-flow: column;
   /* justify-content: ${(props) => (props.centered ? 'center' : 'flex-start')}; */
 `
@@ -93,6 +93,7 @@ export const SectionTitle = styled.h2`
   color: ${({ theme: { colors } }) => colors.textColor};
   font-size: 1.6rem;
   line-height: 1.4;
+  margin: 10px;
 `
 
 export const ItemsWrapper = styled.div`
