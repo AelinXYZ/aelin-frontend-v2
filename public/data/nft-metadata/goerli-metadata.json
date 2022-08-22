@@ -12,7 +12,8 @@
     "floorPrice": 0.23,
     "totalVolume": 23.1921932853,
     "paymentSymbol": "ETH",
-    "network": 5
+    "network": 5,
+    "updatedAt": 1661195800884
   },
   {
     "id": 1,
@@ -27,6 +28,7 @@
     "floorPrice": 0.23,
     "totalVolume": 23.1921932853,
     "paymentSymbol": "ETH",
-    "network": 5
+    "network": 5,
+    "updatedAt": 1661195800884
   }
 ]

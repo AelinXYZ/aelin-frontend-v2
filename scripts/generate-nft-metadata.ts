@@ -135,7 +135,7 @@ const OpenSeaMetadataCollector = async () => {
             if ($(this).attr('href').includes('etherscan')) {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore: this is not undefined
-              address = getAddress($(this).attr('href').split('/').pop())
+              address = getAddress($(this).attr('href').split('/').pop().split('#')[0])
             }
           })
 
@@ -170,6 +170,7 @@ const OpenSeaMetadataCollector = async () => {
             totalVolume: totalVolume !== null ? Number(totalVolume.unit) : null,
             paymentSymbol: nativePaymentAsset !== null ? nativePaymentAsset.symbol : null,
             network: 1,
+            updatedAt: Date.now(),
           }
         })
       }),
@@ -236,6 +237,7 @@ const QuixoticMetadataCollector = async () => {
         contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
         paymentSymbol: 'ETH',
         network: 10,
+        updatedAt: Date.now(),
       }
     }),
   )

@@ -12,6 +12,7 @@
     "floorPrice": 0.25,
     "totalVolume": 0,
     "paymentSymbol": "ETH",
-    "network": 10
+    "network": 10,
+    "updatedAt": 1661195800884
   }
 ]

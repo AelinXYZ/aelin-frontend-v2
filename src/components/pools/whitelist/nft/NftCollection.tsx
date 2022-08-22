@@ -211,6 +211,7 @@ const NftCollection = ({
             imageUrl={selectedCollection.nftCollectionData.imageUrl}
             isVerified={selectedCollection.nftCollectionData.isVerified}
             name={selectedCollection.nftCollectionData.name}
+            updatedAt={selectedCollection.nftCollectionData.updatedAt}
           />
         </>
       )}

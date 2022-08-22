@@ -6,6 +6,7 @@ import NftCollectionAttribute, {
   NftCollectionAttributeProps,
 } from '@/src/components/pools/whitelist/nft/NftCollectionAttribute'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import { DATE_FORMAT_SIMPLE, formatDate } from '@/src/utils/date'
 
 const Card = styled(BaseCard)`
   display: flex;
@@ -43,12 +44,16 @@ const AttributesWrapper = styled.div`
     width: 50%;
   }
 `
+const Small = styled.small`
+  margin: 5px;
+`
 
 type NftCollectionDetailsProps = {
   name: string
   attributes: NftCollectionAttributeProps[]
   imageUrl?: string
   isVerified?: boolean
+  updatedAt?: string
 }
 
 const NftCollectionDetails = ({
@@ -56,6 +61,7 @@ const NftCollectionDetails = ({
   imageUrl,
   isVerified,
   name,
+  updatedAt,
 }: NftCollectionDetailsProps) => {
   return (
     <Card>
@@ -75,6 +81,9 @@ const NftCollectionDetails = ({
             />
           ))}
         </AttributesWrapper>
+      )}
+      {updatedAt && (
+        <Small>Data Updated At {formatDate(new Date(updatedAt), DATE_FORMAT_SIMPLE)}</Small>
       )}
     </Card>
   )

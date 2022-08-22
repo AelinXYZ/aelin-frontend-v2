@@ -41,6 +41,7 @@ export type NftCollectionData = {
   floorPrice?: number
   totalVolume?: number
   paymentSymbol?: string
+  updatedAt?: string
 }
 
 const AELIN_MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/aelin-mainnet-metadata.json'
