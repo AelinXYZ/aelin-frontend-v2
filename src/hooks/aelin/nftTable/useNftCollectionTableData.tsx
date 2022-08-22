@@ -8,6 +8,7 @@ import { NftWhiteListState } from '@/src/components/pools/whitelist/nft/nftWhite
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
+import formatNumber from '@/src/utils/formatNumber'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const useNftCollectionTableData = (
@@ -57,7 +58,9 @@ const useNftCollectionTableData = (
 
           if (nftType === NFTType.ERC721) {
             collectionsRules.allocationErc721 = collection.amountPerNft
-              ? `${collection.amountPerNft?.toString()} ${nftCollectionsData.symbol}`
+              ? `${formatNumber(collection.amountPerNft, nftCollectionsData.decimals)} ${
+                  nftCollectionsData.symbol
+                }`
               : 'Unlimited'
           } else {
             collectionsRules.allocationsErc1155 = collection.selectedNftsData
@@ -94,9 +97,11 @@ const useNftCollectionTableData = (
       if (nftType === NFTType.ERC721) {
         collectionsRules.allocationErc721 = rules.purchaseAmount.raw.eq(ZERO_BN)
           ? 'Unlimited'
-          : `${formatToken(rules.purchaseAmount.raw, 18, pool.investmentTokenDecimals)} ${
-              pool.investmentTokenSymbol
-            }`
+          : `${formatToken(
+              rules.purchaseAmount.raw,
+              pool.investmentTokenDecimals,
+              pool.investmentTokenDecimals,
+            )} ${pool.investmentTokenSymbol}`
       } else {
         collectionsRules.allocationsErc1155 = rules.erc1155TokenIds.map((nftID) => ({
           nftID,
