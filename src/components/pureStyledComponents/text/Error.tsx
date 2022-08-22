@@ -5,7 +5,8 @@ export const Error = styled.p<{ textAlign?: 'center' | 'left' | 'right' | 'justi
   font-size: 1.4rem;
   font-weight: normal;
   line-height: 1.2;
-  margin: 10px auto 20px;
+  margin: 0;
+  margin: 20px;
   max-width: 100%;
   text-align: ${({ textAlign }) => textAlign};
   width: 100%;

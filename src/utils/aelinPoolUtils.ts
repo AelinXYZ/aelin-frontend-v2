@@ -7,7 +7,13 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
+import {
+  NftType,
+  NftWhiteListState,
+  NftWhitelistProcess,
+} from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
 import { PoolStages, Privacy } from '@/src/constants/pool'
+import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
 import { formatToken } from '@/src/web3/bigNumber'
 import { DetailedNumber } from '@/types/utils'
 
@@ -18,6 +24,24 @@ export type PoolDates = {
   purchaseExpiry: string
   vestingStarts: string
   vestingEnds: string
+}
+
+export interface RawNftCollectionRules {
+  collectionAddress: string
+  erc721Blacklisted: string[]
+  erc1155TokenIds: string[]
+  erc1155TokensAmtEligible: string[]
+  nftType: 'ERC721' | 'ERC1155'
+  poolAddress: string
+  purchaseAmount: string
+  purchaseAmountPerToken: boolean
+}
+
+export interface ParsedNftCollectionRules extends Omit<RawNftCollectionRules, 'purchaseAmount'> {
+  purchaseAmount: {
+    raw: BigNumber
+    formatted: string | undefined
+  }
 }
 
 // timestamp when the pool was created
@@ -264,6 +288,22 @@ export function isPrivatePool(poolType: string) {
   return poolType.toLowerCase() === Privacy.PRIVATE
 }
 
+export function getPoolType(poolType: string, hasNftList: boolean) {
+  if (hasNftList) return 'NFT'
+
+  switch (poolType.toLowerCase()) {
+    case Privacy.PRIVATE: {
+      return 'Private'
+    }
+    case Privacy.PUBLIC: {
+      return 'Public'
+    }
+    default: {
+      throw new Error('Unexpected pool')
+    }
+  }
+}
+
 export function getTokensSold(
   redeemed: DetailedNumber,
   rate: DetailedNumber,
@@ -291,4 +331,65 @@ export function getInvestmentDealToken(
     raw: _investmentDealToken,
     formatted: formatToken(_investmentDealToken, underlyingDecimals),
   }
+}
+
+export function parseNftCollectionRules(
+  nftCollectionsRules: RawNftCollectionRules[],
+): ParsedNftCollectionRules[] {
+  return nftCollectionsRules.map((collectionRule) => {
+    const purchaseAmountBN = new Wei(collectionRule.purchaseAmount, 18, true)
+    return {
+      ...collectionRule,
+      purchaseAmount: {
+        raw: purchaseAmountBN.toBN(),
+        formatted: formatToken(purchaseAmountBN.toBN(), 18, 3),
+      },
+    }
+  })
+}
+
+export const getParsedNftCollectionRules = (
+  nftWhiteListState: NftWhiteListState,
+): NftCollectionRulesProps[] => {
+  const nftCollectionRules = nftWhiteListState.selectedCollections.map((collection) => {
+    const collectionAddress = collection.nftCollectionData?.address ?? ''
+
+    const purchaseAmountPerToken = [
+      NftWhitelistProcess.limitedPerNft,
+      NftWhitelistProcess.unlimited,
+    ].includes(nftWhiteListState.whiteListProcess)
+
+    let purchaseAmount = 0
+    let tokenIds: Array<BigNumber> = []
+    let minTokensEligible: Array<BigNumber> = []
+
+    if (nftWhiteListState.nftType === NftType.erc721) {
+      purchaseAmount =
+        NftWhitelistProcess.unlimited === nftWhiteListState.whiteListProcess
+          ? 0
+          : NftWhitelistProcess.limitedPerNft === nftWhiteListState.whiteListProcess
+          ? collection.amountPerNft ?? 0
+          : collection.amountPerWallet ?? 0
+    }
+
+    if (nftWhiteListState.nftType === NftType.erc1155) {
+      tokenIds = collection.selectedNftsData.map((collection) => {
+        return BigNumber.from(collection.nftId as number)
+      })
+
+      minTokensEligible = collection.selectedNftsData.map((collection) =>
+        BigNumber.from(collection.minimumAmount),
+      )
+    }
+
+    return {
+      collectionAddress,
+      purchaseAmountPerToken,
+      purchaseAmount,
+      tokenIds,
+      minTokensEligible,
+    }
+  })
+
+  return nftCollectionRules
 }

@@ -8,19 +8,15 @@ import { Docs } from '@/src/components/assets/Docs'
 import { Ellipsis } from '@/src/components/assets/Ellipsis'
 import { Eth } from '@/src/components/assets/Eth'
 import { LightMode } from '@/src/components/assets/LightMode'
-import { Link as LinkSVG } from '@/src/components/assets/Link'
 import { BootNodeLogo } from '@/src/components/assets/Logo'
 import { Metamask } from '@/src/components/assets/Metamask'
 import { Optimism } from '@/src/components/assets/Optimism'
-import { CopyButton } from '@/src/components/button/CopyButton'
+import ChangeWalletMenu from '@/src/components/common/ChangeWalletMenu'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
 import { Modal } from '@/src/components/common/Modal'
 import { Notifications } from '@/src/components/common/Notifications'
 import { TopMenu as BaseTopMenu } from '@/src/components/navigation/TopMenu'
-import {
-  ButtonPrimary,
-  ButtonPrimaryLight,
-} from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
@@ -182,39 +178,6 @@ const ButtonDropdown = styled(BaseButtonDropdown)`
   width: 250px;
 `
 
-const WalletDropdownContents = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 10px 17px;
-`
-
-const WalletDropdownRow = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  font-size: 1.4rem;
-  gap: 8px;
-  justify-content: center;
-  margin-bottom: 10px;
-  width: 100%;
-`
-
-const WalletButton = styled(ButtonPrimaryLight)`
-  border-width: 0.5px;
-  font-size: 1rem;
-  font-weight: 500;
-  height: 24px;
-  line-height: 1.2;
-  margin-bottom: 6px;
-  width: 100px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-`
-
 const EllipsisButton = styled.button`
   align-items: center;
   background: none;
@@ -231,26 +194,6 @@ const EllipsisButton = styled.button`
   }
 `
 
-const ExternalLink = styled.a`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-decoration: none;
-  transition: opacity 0.15s linear;
-  width: 12px;
-  height: 12px;
-
-  svg {
-    display: block;
-    height: 100%;
-    width: 100%;
-  }
-
-  &:active {
-    opacity: 0.7;
-  }
-`
-
 const RedirectLink = styled.a`
   display: flex;
   gap: 10px;
@@ -261,9 +204,7 @@ export const Header: React.FC = (props) => {
   const {
     address = '',
     appChainId,
-    changeWallet,
     connectWallet,
-    disconnectWallet,
     isWalletConnected,
     isWalletNetworkSupported,
     pushNetwork,
@@ -341,27 +282,7 @@ export const Header: React.FC = (props) => {
                     </DropdownButton>
                   }
                   dropdownPosition={DropdownPosition.center}
-                  items={[
-                    <WalletDropdownContents key={'wallet_dopdown'}>
-                      <WalletDropdownRow>
-                        <Metamask />
-                      </WalletDropdownRow>
-                      <WalletDropdownRow>{address && shortenAddress(address)}</WalletDropdownRow>
-                      {address && (
-                        <WalletDropdownRow>
-                          <CopyButton copyValue={address} />
-                          <ExternalLink
-                            href={`${currentChain.blockExplorerUrls}/address/${address}`}
-                            target="_blank"
-                          >
-                            <LinkSVG />
-                          </ExternalLink>
-                        </WalletDropdownRow>
-                      )}
-                      <WalletButton onClick={changeWallet}>Change wallet</WalletButton>
-                      <WalletButton onClick={disconnectWallet}>Disconnect</WalletButton>
-                    </WalletDropdownContents>,
-                  ]}
+                  items={[<ChangeWalletMenu key={'wallet_dopdown'} />]}
                 />
                 <Line />
                 <Notifications />

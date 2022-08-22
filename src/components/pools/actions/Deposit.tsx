@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -8,11 +8,14 @@ import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
 
 type Props = {
@@ -35,6 +38,15 @@ export const Contents = styled.p`
   width: 100%;
 `
 
+const ButtonsWrapper = styled.div`
+  display: flex;
+  gap: 5px;
+`
+
+const Button = styled(ButtonGradient)`
+  width: 110px;
+`
+
 const Allowance = ({ allowance }: { allowance: string }) => (
   <Contents>
     Allowance: <TextPrimary>{allowance}</TextPrimary>
@@ -42,7 +54,14 @@ const Allowance = ({ allowance }: { allowance: string }) => (
 )
 
 function Deposit({ pool, poolHelpers }: Props) {
+  const {
+    clearStoredSelectedNfts,
+    handleOpenNftSelectionModal,
+    hasStoredSelectedNft,
+    storedSelectedNfts,
+  } = useNftSelection()
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
+  const allocation = useNftUserAllocation(pool)
   const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
     useUserAvailableToDeposit(pool)
   const [tokenInputValue, setTokenInputValue] = useState('')
@@ -51,10 +70,11 @@ function Deposit({ pool, poolHelpers }: Props) {
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const { estimate: purchasePoolTokensEstimate, execute } = useAelinPoolTransaction(
-    pool.address,
-    'purchasePoolTokens',
-  )
+  const { estimate: purchasePoolTokensEstimate, execute: purchasePoolTokens } =
+    useAelinPoolTransaction(pool.address, 'purchasePoolTokens')
+
+  const { estimate: purchasePoolTokensWithNftEstimate, execute: purchasePoolTokensWithNft } =
+    useAelinPoolTransaction(pool.address, 'purchasePoolTokensWithNft')
 
   const balances = [
     investmentTokenBalance,
@@ -71,8 +91,16 @@ function Deposit({ pool, poolHelpers }: Props) {
       return
     }
 
+    const nftAllocationExceeded =
+      pool.hasNftList &&
+      tokenInputValue &&
+      allocation &&
+      !allocation.unlimited &&
+      BigNumber.from(tokenInputValue).gt(allocation.raw)
+
     const isInputError =
-      tokenInputValue && BigNumber.from(tokenInputValue).gt(sortedBalances[0].raw)
+      (tokenInputValue && BigNumber.from(tokenInputValue).gt(sortedBalances[0].raw)) ||
+      nftAllocationExceeded
 
     if (!isInputError) {
       setInputError('')
@@ -81,9 +109,11 @@ function Deposit({ pool, poolHelpers }: Props) {
         ? setInputError(`Max allowed to invest is ${sortedBalances[0].formatted}`)
         : sortedBalances[0].type === AmountTypes.maxDepositAllowed
         ? setInputError(`Max cap allowance ${sortedBalances[0].formatted}`)
+        : nftAllocationExceeded
+        ? setInputError(`Purchase amount should be less the max allocation`)
         : setInputError(`Insufficient balance`)
     }
-  }, [investmentTokenBalance.raw, sortedBalances, tokenInputValue])
+  }, [investmentTokenBalance.raw, sortedBalances, tokenInputValue, allocation, pool.hasNftList])
 
   const depositTokens = async () => {
     if (inputError) {
@@ -92,17 +122,40 @@ function Deposit({ pool, poolHelpers }: Props) {
 
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await execute([tokenInputValue], txGasOptions)
+        const receipt = pool.hasNftList
+          ? await purchasePoolTokensWithNft([storedSelectedNfts, tokenInputValue], txGasOptions)
+          : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
           refetchBalances()
           setTokenInputValue('')
           setInputError('')
         }
+        if (pool.hasNftList) {
+          clearStoredSelectedNfts()
+        }
       },
       title: `Deposit ${investmentTokenSymbol}`,
-      estimate: () => purchasePoolTokensEstimate([tokenInputValue]),
+      estimate: () =>
+        pool.hasNftList
+          ? purchasePoolTokensWithNftEstimate([storedSelectedNfts, tokenInputValue])
+          : purchasePoolTokensEstimate([tokenInputValue]),
     })
   }
+
+  const maxValue = useMemo(() => {
+    if (pool.hasNftList && allocation && !allocation.unlimited) {
+      return allocation.raw.toString()
+    }
+    return sortedBalances[0].raw.toString()
+  }, [pool.hasNftList, allocation, sortedBalances])
+
+  const maxAllocationFormatted = useMemo(() => {
+    if (pool.hasNftList && allocation) {
+      return allocation.unlimited
+        ? 'Unlimited per NFT'
+        : `${formatToken(allocation.raw, 18, investmentTokenDecimals)} ${investmentTokenSymbol}`
+    }
+  }, [pool.hasNftList, allocation, investmentTokenSymbol, investmentTokenDecimals])
 
   return (
     <>
@@ -110,7 +163,8 @@ function Deposit({ pool, poolHelpers }: Props) {
         decimals={investmentTokenDecimals}
         error={inputError}
         isPrivate={isPrivatePool(pool.poolType)}
-        maxValue={sortedBalances[0].raw.toString()}
+        maxAllocationFormatted={maxAllocationFormatted}
+        maxValue={maxValue}
         maxValueFormatted={investmentTokenBalance.formatted || '0'}
         setValue={setTokenInputValue}
         symbol={investmentTokenSymbol}
@@ -121,19 +175,23 @@ function Deposit({ pool, poolHelpers }: Props) {
           allowance={`${userMaxDepositPrivateAmount.formatted} ${pool.investmentTokenSymbol}`}
         />
       )}
-      <ButtonGradient
-        disabled={
-          !address ||
-          !isAppConnected ||
-          poolHelpers.capReached ||
-          isSubmitting ||
-          !tokenInputValue ||
-          Boolean(inputError)
-        }
-        onClick={depositTokens}
-      >
-        Deposit
-      </ButtonGradient>
+      <ButtonsWrapper>
+        <Button
+          disabled={
+            !address ||
+            !isAppConnected ||
+            poolHelpers.capReached ||
+            isSubmitting ||
+            !tokenInputValue ||
+            Boolean(inputError) ||
+            (pool.hasNftList && !hasStoredSelectedNft)
+          }
+          onClick={depositTokens}
+        >
+          Deposit
+        </Button>
+        {pool.hasNftList && <Button onClick={handleOpenNftSelectionModal}>Select NFT</Button>}
+      </ButtonsWrapper>
     </>
   )
 }

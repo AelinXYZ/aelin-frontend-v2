@@ -6,6 +6,7 @@ import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import { HMSInput } from '@/src/components/pools/common/HMSInput'
 import TokenDropdown from '@/src/components/pools/common/TokenDropdown'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
+import { Privacy } from '@/src/constants/pool'
 import {
   CreatePoolState,
   CreatePoolSteps,
@@ -62,7 +63,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
     <Wrapper onKeyUp={onKeyUp} {...restProps}>
       {step === CreatePoolSteps.poolName ? (
         <Textfield
-          maxLength={16}
+          maxLength={31}
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
           placeholder={createPoolConfig[step].placeholder}
@@ -111,14 +112,19 @@ const PoolCreateStepInput: React.FC<Props> = ({
       ) : step === CreatePoolSteps.poolPrivacy ? (
         <PrivacyGrid>
           <LabeledRadioButton
-            checked={currentState[CreatePoolSteps.poolPrivacy] === 'public'}
+            checked={currentState[CreatePoolSteps.poolPrivacy] === Privacy.PUBLIC}
             label={'Public'}
-            onClick={() => setPoolField('public')}
+            onClick={() => setPoolField(Privacy.PUBLIC)}
           />
           <LabeledRadioButton
-            checked={currentState[CreatePoolSteps.poolPrivacy] === 'private'}
+            checked={currentState[CreatePoolSteps.poolPrivacy] === Privacy.PRIVATE}
             label="Private"
-            onClick={() => setPoolField('private')}
+            onClick={() => setPoolField(Privacy.PRIVATE)}
+          />
+          <LabeledRadioButton
+            checked={currentState[CreatePoolSteps.poolPrivacy] === Privacy.NFT}
+            label="NFT"
+            onClick={() => setPoolField(Privacy.NFT)}
           />
         </PrivacyGrid>
       ) : step === CreatePoolSteps.sponsorFee ? (

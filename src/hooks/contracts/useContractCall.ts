@@ -18,6 +18,7 @@ export default function useContractCall<
   abi: ContractInterface,
   method: Method,
   params: Params | null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   skip?: Record<any, any> | any[] | false,
   options?: SWRConfiguration,
 ): [Awaited<Return> | null, KeyedMutator<Return>] {
@@ -38,7 +39,6 @@ export function useContractCallMultiple<
   MyContract extends Contract,
   Method extends keyof MyContract & string,
   Params extends Parameters<MyContract[Method]>,
-  //Return extends ReturnType<MyContract[Method]>,
 >(
   provider: JsonRpcProvider,
   address: string,
@@ -48,6 +48,7 @@ export function useContractCallMultiple<
     params: Params | null
   }[],
   options?: SWRConfiguration,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): [Awaited<any> | null, KeyedMutator<any>] {
   const { address: walletAddress } = useWeb3Connection()
 
@@ -57,6 +58,41 @@ export function useContractCallMultiple<
       const promises = calls.map(async (c) =>
         contractCall(address, abi, provider, c.method, c.params),
       )
+      try {
+        return await Promise.all(promises)
+      } catch (error) {
+        return []
+      }
+    },
+    options,
+  )
+
+  return [data, refetch]
+}
+
+// Same call to multiple contracts (diff params)
+export function useMulitpleContractCall<
+  MyContract extends Contract,
+  Method extends keyof MyContract & string,
+  Params extends Parameters<MyContract[Method]>,
+>(
+  provider: JsonRpcProvider,
+  abi: ContractInterface,
+  calls: {
+    contractAddress: string
+    method: Method
+    params: Params | null
+  }[],
+  options?: SWRConfiguration,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): [Awaited<any> | null, KeyedMutator<any>] {
+  const { data, mutate: refetch } = useSWR(
+    [calls.map((c) => `${c.contractAddress}-${c.method}-${getCacheKey(c.params || [])}`)],
+    async () => {
+      const promises = calls.map(async (c) =>
+        contractCall(c.contractAddress, abi, provider, c.method, c.params),
+      )
+
       try {
         return await Promise.all(promises)
       } catch (error) {

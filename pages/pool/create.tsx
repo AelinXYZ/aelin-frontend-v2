@@ -16,7 +16,10 @@ import {
 } from '@/src/components/pools/common/Create'
 import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInput'
 import { Summary } from '@/src/components/pools/common/Summary'
-import WhiteListModal, { WhitelistProps } from '@/src/components/pools/whitelist/WhiteListModal'
+import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
+import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,
   ButtonPrimaryLight,
@@ -31,18 +34,29 @@ import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {
   CreatePoolSteps,
+  NftCollectionRulesProps,
   createPoolConfig,
   getCreatePoolStepIndicatorData,
   getCreatePoolSummaryData,
 } from '@/src/hooks/aelin/useAelinCreatePool'
 import { useTimelineStatus } from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
+import { useNftCreationState } from '@/src/providers/nftCreationState'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const BackButton = styled(ButtonPrimaryLight)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: none;
   }
+`
+
+const StyledError = styled(Error)`
+  margin-bottom: 0;
+`
+
+const NftTableWrapper = styled.div`
+  width: 100%;
+  padding-top: 20px;
 `
 
 const Create: NextPage = () => {
@@ -64,7 +78,7 @@ const Create: NextPage = () => {
   const { order, text, title } = currentStepConfig
   const currentStepError = errors ? errors[createPoolState.currentStep] : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
-
+  const { nftWhiteListState } = useNftCreationState()
   useWarningOnLeavePage(() => showWarningOnLeave)
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -108,15 +122,23 @@ const Create: NextPage = () => {
                     role="none"
                     setPoolField={setPoolField}
                   />
+
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <Error textAlign="center">{currentStepError}</Error>
+                    <StyledError textAlign="center">{currentStepError}</StyledError>
                   )}
+
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
                       <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit whitelisted addresses
+                        Edit allowlisted addresses
                       </ButtonPrimaryLight>
                     )}
+                    {isFinalStep && createPoolState.poolPrivacy === Privacy.NFT && (
+                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                        Edit collections
+                      </ButtonPrimaryLight>
+                    )}
+
                     <MobileButtonWrapper>
                       <BackButton disabled={isFirstStep} onClick={() => moveStep('prev')}>
                         Back
@@ -143,6 +165,19 @@ const Create: NextPage = () => {
                     </MobileButtonWrapper>
                   </ButtonWrapper>
                   <Summary data={getCreatePoolSummaryData(createPoolState)} />
+                  {createPoolState.poolPrivacy === 'nft' && !!createPoolState.investmentToken ? (
+                    <NftTableWrapper>
+                      <NftCollectionsTable
+                        light
+                        nftCollectionsData={{
+                          ...nftWhiteListState,
+                          ...createPoolState.investmentToken,
+                        }}
+                      />
+                    </NftTableWrapper>
+                  ) : (
+                    <></>
+                  )}
                 </StepContents>
                 <PrevNextWrapper>
                   {!isFinalStep && (
@@ -159,7 +194,13 @@ const Create: NextPage = () => {
           currentList={createPoolState.whitelist}
           investmentTokenDecimals={createPoolState.investmentToken?.decimals ?? 18}
           onClose={() => setShowWhiteListModal(false)}
-          onConfirm={(whitelist: WhitelistProps[]) => setPoolField(whitelist, 'whitelist')}
+          onConfirm={(
+            whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
+            type: NftType | string,
+          ) => {
+            setPoolField(whitelist, type)
+          }}
+          poolPrivacy={createPoolState.poolPrivacy}
         />
       )}
     </>

@@ -8,6 +8,7 @@ import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { PoolStages } from '@/src/constants/pool'
 import {
+  ParsedNftCollectionRules,
   dealExchangeRates,
   getAmountInPool,
   getAmountRedeem,
@@ -25,6 +26,7 @@ import {
   getVestingDates,
   getVestingEnds,
   getVestingStarts,
+  parseNftCollectionRules,
 } from '@/src/utils/aelinPoolUtils'
 import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -59,6 +61,8 @@ export type ParsedAelinPool = {
   dealsCreated: number
   stage: PoolStages
   totalUsersInvested: number
+  hasNftList: boolean
+  nftCollectionRules: ParsedNftCollectionRules[]
   deal?: {
     name: string
     symbol: string
@@ -158,6 +162,8 @@ export const getParsedPool = ({
     deal: undefined,
     dealsCreated: pool.dealsCreated,
     totalUsersInvested: pool.totalUsersInvested,
+    hasNftList: pool.hasNftList,
+    nftCollectionRules: parseNftCollectionRules(pool.nftCollectionRules),
   }
 
   const dealDetails = pool.deal

@@ -1,8 +1,8 @@
 import { DEFAULT_DECIMALS } from '../constants/misc'
 
-export default (value: number): string =>
+export default (value: number, decimals = DEFAULT_DECIMALS): string =>
   value !== undefined
     ? Intl.NumberFormat('en', {
-        maximumFractionDigits: DEFAULT_DECIMALS,
+        maximumFractionDigits: decimals,
       }).format(value)
     : ''

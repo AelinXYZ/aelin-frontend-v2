@@ -22,3 +22,6 @@ export const shortenAddress = (
     ? [String(address).slice(0, first), String(address).slice(-last)].join('...')
     : undefined
 }
+
+export const strToKebabCase = (str?: string): string =>
+  str?.trim().toLocaleLowerCase().replaceAll(' ', '-') || ''
