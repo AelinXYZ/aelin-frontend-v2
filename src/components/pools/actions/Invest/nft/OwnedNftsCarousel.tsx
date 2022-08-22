@@ -56,7 +56,7 @@ const AllocationValue = styled.div`
 `
 
 const NoNfts = styled.div`
-  padding: 2rem 2rem 0 2rem;
+  padding: 2rem 2rem 2rem 2rem;
   font-size: 1.6rem;
   font-weight: 400;
   text-align: center;
