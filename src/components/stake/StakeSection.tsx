@@ -10,7 +10,7 @@ import ClaimBox from '@/src/components/stake/ClaimBox'
 import StakeInfo from '@/src/components/stake/StakeInfo'
 import StakeTabContent from '@/src/components/stake/StakeTabContent'
 import Tabs, { Tab } from '@/src/components/tabs/Tabs'
-import { WITHDRAW_TYPE } from '@/src/constants/types'
+import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '@/src/constants/types'
 import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 
 const Wrapper = styled(BaseCard)`
@@ -73,6 +73,17 @@ const StakeSection: FC<StakeSectionProps> = ({
       </TitleWrapper>
 
       <Tabs>
+        {stakeType === StakingEnum.AELIN && (
+          <Tab label="Deposit">
+            <StakeTabContent
+              rewards={rewards}
+              stakeType={stakeType}
+              stakingAddress={stakingAddress}
+              tabType={DEPOSIT_TYPE}
+              tokenAddress={tokenAddress}
+            />
+          </Tab>
+        )}
         <Tab label="Withdraw">
           <StakeTabContent
             rewards={rewards}
