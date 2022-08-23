@@ -131,6 +131,7 @@ const StakeSection: FC<StakeSectionProps> = ({
         stakingAddress={stakingAddress}
         userRewards={rewards.userRewards}
       />
+      {note && <Note>{note}</Note>}
     </Wrapper>
   )
 }
