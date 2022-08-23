@@ -34,8 +34,11 @@ const StakeGrid = ({ ...restProps }) => {
             appChainId,
           )}
           key={StakingEnum.AELIN}
+          note={
+            'Note: There are no active rewards for pool 1 stakers although in the future there will be a pro rata claim of deal fees for stakers based on time in the pool'
+          }
           stakeType={StakingEnum.AELIN}
-          title={'Deprecated Aelin staking'}
+          title={'Aelin staking'}
         />,
 
         <StakeSection
