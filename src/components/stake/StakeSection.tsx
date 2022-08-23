@@ -40,6 +40,8 @@ const Note = styled.p`
   margin: 10px;
   min-width: 320px;
   padding: 20px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
 `
 
 interface StakeSectionProps {
@@ -92,6 +94,7 @@ const StakeSection: FC<StakeSectionProps> = ({
 
   return (
     <Wrapper {...restProps}>
+      {note && <Note>{note}</Note>}
       <a href={explorerUrl} rel="noreferrer" target="_blank">
         <Icon />
       </a>
@@ -128,7 +131,6 @@ const StakeSection: FC<StakeSectionProps> = ({
         stakingAddress={stakingAddress}
         userRewards={rewards.userRewards}
       />
-      {note && <Note>{note}</Note>}
     </Wrapper>
   )
 }
