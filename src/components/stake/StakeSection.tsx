@@ -1,4 +1,5 @@
-import { FC } from 'react'
+import router from 'next/router'
+import { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { Etherscan } from '@/src/components/assets/Etherscan'
@@ -10,7 +11,7 @@ import ClaimBox from '@/src/components/stake/ClaimBox'
 import StakeInfo from '@/src/components/stake/StakeInfo'
 import StakeTabContent from '@/src/components/stake/StakeTabContent'
 import Tabs, { Tab } from '@/src/components/tabs/Tabs'
-import { WITHDRAW_TYPE } from '@/src/constants/types'
+import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '@/src/constants/types'
 import { StakingEnum, useStakingRewards } from '@/src/providers/stakingRewardsProvider'
 
 const Wrapper = styled(BaseCard)`
@@ -32,12 +33,24 @@ const TitleWrapper = styled.div`
   margin-bottom: 10px;
 `
 
+const Note = styled.p`
+  color: ${({ theme }) => theme.colors.textColor};
+  font-size: 1.4rem;
+  line-height: 1.2;
+  margin: 10px;
+  min-width: 320px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+`
+
 interface StakeSectionProps {
   contractAddresses: {
     stakingAddress: string
     tokenAddress: string
   }
   explorerUrl: string
+  note?: string
   stakeType: StakingEnum
   title: string
 }
@@ -45,15 +58,29 @@ interface StakeSectionProps {
 const StakeSection: FC<StakeSectionProps> = ({
   contractAddresses,
   explorerUrl,
+  note,
   stakeType,
   title,
   ...restProps
 }) => {
+  const [isVisible, setIsVisible] = useState<boolean>(false)
   const { stakingAddress, tokenAddress } = contractAddresses
 
   const { data, error, isLoading } = useStakingRewards()
 
   const rewards = data[stakeType]
+
+  useEffect(() => {
+    if (stakeType === StakingEnum.GELATO) {
+      if (router.pathname.includes('deprecated')) {
+        setIsVisible(true)
+      }
+    }
+
+    if (stakeType === StakingEnum.AELIN) {
+      setIsVisible(true)
+    }
+  }, [stakeType])
 
   if (error) {
     throw error
@@ -63,8 +90,11 @@ const StakeSection: FC<StakeSectionProps> = ({
 
   if (!rewards) return null
 
+  if (!isVisible) return null
+
   return (
     <Wrapper {...restProps}>
+      {note && <Note>{note}</Note>}
       <a href={explorerUrl} rel="noreferrer" target="_blank">
         <Icon />
       </a>
@@ -73,6 +103,17 @@ const StakeSection: FC<StakeSectionProps> = ({
       </TitleWrapper>
 
       <Tabs>
+        {stakeType === StakingEnum.AELIN && (
+          <Tab label="Deposit">
+            <StakeTabContent
+              rewards={rewards}
+              stakeType={stakeType}
+              stakingAddress={stakingAddress}
+              tabType={DEPOSIT_TYPE}
+              tokenAddress={tokenAddress}
+            />
+          </Tab>
+        )}
         <Tab label="Withdraw">
           <StakeTabContent
             rewards={rewards}
@@ -90,6 +131,7 @@ const StakeSection: FC<StakeSectionProps> = ({
         stakingAddress={stakingAddress}
         userRewards={rewards.userRewards}
       />
+      {note && <Note>{note}</Note>}
     </Wrapper>
   )
 }
