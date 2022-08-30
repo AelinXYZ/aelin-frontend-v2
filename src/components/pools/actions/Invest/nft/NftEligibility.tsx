@@ -54,8 +54,9 @@ const Eligibility: React.FC<EligibilityProps> = genericSuspense(
     const eligible = useNftEligible(rules, tokenId)
     return (
       <Eligible>
-        {tokenId && tokenId !== '' ? (
-          eligible ? (
+        {tokenId &&
+          tokenId !== '' &&
+          (eligible ? (
             <>
               NFT Id <b>{tokenId}</b> is eligible to invest.
             </>
@@ -63,10 +64,7 @@ const Eligibility: React.FC<EligibilityProps> = genericSuspense(
             <EligibleError>
               NFT Id <b>{tokenId}</b> is <b>NOT</b> eligible to invest.
             </EligibleError>
-          )
-        ) : (
-          <></>
-        )}
+          ))}
       </Eligible>
     )
   },
