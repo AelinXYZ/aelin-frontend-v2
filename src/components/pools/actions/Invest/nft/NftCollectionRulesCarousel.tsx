@@ -1,9 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
 import chunk from 'lodash/chunk'
 import { isMobile } from 'react-device-detect'
 
+import NftEligibility from './NftEligibility'
 import NftMedia from './NftMedia'
 import {
   ButtonNext,
@@ -18,7 +19,6 @@ import { VerifiedNftCollection as VerifiedIcon } from '@/src/components/assets/V
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
-import { Search } from '@/src/components/pureStyledComponents/form/Search'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { Chains } from '@/src/constants/chains'
 import { OPENSEA_BASE_URL, QUIXOTIC_BASE_URL, ZERO_BN } from '@/src/constants/misc'
@@ -27,7 +27,6 @@ import useNftCollectionLists, {
   NFTType,
   NftCollectionData,
 } from '@/src/hooks/aelin/useNftCollectionLists'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { strToKebabCase } from '@/src/utils/string'
 import { formatToken } from '@/src/web3/bigNumber'
 
@@ -62,26 +61,6 @@ const Title = styled.h1`
   font-size: 1.4rem;
   line-height: 1.4;
 `
-const SubTitle = styled.div`
-  color: ${({ theme: { colors } }) => colors.textColor};
-  font-weight: 400;
-  font-size: 1.25rem;
-  line-height: 1rem;
-  padding-bottom: 1rem;
-`
-
-const Eligible = styled.div`
-  color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.25rem;
-  font-weight: 400;
-  line-height: 1.2;
-  margin: 1rem;
-  min-height: 15px;
-`
-
-const EligibleError = styled.span`
-  color: #ff7777;
-`
 
 const CollectionRulesWrapper = styled.div<{ arrowsVisible: boolean }>`
   position: relative;
@@ -110,11 +89,6 @@ type NftCollectionRulesCarouselProps = {
 const RULES_PER_GROUP = 3
 
 const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCarouselProps) => {
-  const { appChainId } = useWeb3Connection()
-  const [eligible, setEligible] = useState<boolean>()
-  const [tokenId, setTokenId] = useState<string>()
-  const searchRef = useRef<HTMLInputElement>(null)
-
   const rules = pool.nftCollectionRules.find(
     (rules) => rules.collectionAddress.toLowerCase() === collection.address.toLowerCase(),
   )
@@ -165,36 +139,7 @@ const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCaro
       </Row>
       <AllocationText>{ruleText}:</AllocationText>
       <AllocationValue>{ruleAllocation}</AllocationValue>
-      {rules.nftType === 'ERC721' && (
-        <>
-          <Title>Verify NFT ID eligibility</Title>
-          <SubTitle> Each ID may only be used once per pool</SubTitle>
-          <Search
-            onChange={(e) => {
-              setTokenId(e.target.value)
-              setEligible(!rules.erc721Blacklisted.includes(e.target.value))
-            }}
-            placeholder="Enter NFT ID..."
-            ref={searchRef}
-            type="number"
-          />
-          <Eligible>
-            {tokenId && tokenId !== '' ? (
-              eligible ? (
-                <>
-                  NFT Id <b>{tokenId}</b> is eligible to invest.
-                </>
-              ) : (
-                <EligibleError>
-                  NFT Id <b>{tokenId}</b> is <b>NOT</b> eligible to invest.
-                </EligibleError>
-              )
-            ) : (
-              <></>
-            )}
-          </Eligible>
-        </>
-      )}
+      {rules.nftType === 'ERC721' && <NftEligibility rules={rules} />}
     </Card>
   )
 }
