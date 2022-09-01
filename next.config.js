@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
+
 module.exports = {
   reactStrictMode: true,
+  trailingSlash: true,
   images: {
     domains: [
       "tokens.1inch.io",
@@ -9,6 +11,12 @@ module.exports = {
       "fanbase-1.s3.amazonaws.com",
       "storage.googleapis.com",
       "ipfs.io"
-    ]
+    ],
+    loader: 'custom' 
+  },
+  experimental: {
+    images: {
+      unoptimized: true
+    }
   }
 }
