@@ -1,20 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
+import cors from 'cors'
+import { createRouter, expressWrapper } from 'next-connect'
+
 import { getNftCollectionDataController } from '@/src/controllers/nft'
 
-export enum Method {
-  GET = 'GET',
-}
+const router = createRouter<NextApiRequest, NextApiResponse>()
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { method } = req
-  switch (method) {
-    case Method.GET:
-      await getNftCollectionDataController(req, res)
-      break
-    default:
-      return res.status(400).json({ success: false })
-  }
-}
+router.use(expressWrapper(cors()))
 
-export default handler
+router.get((req: NextApiRequest, res: NextApiResponse) => {
+  return getNftCollectionDataController(req, res)
+})
+
+export default router.handler({
+  onError(err, req: NextApiRequest, res: NextApiResponse) {
+    res.status(500).json({
+      error: (err as Error).message,
+    })
+  },
+  onNoMatch: (req: NextApiRequest, res: NextApiResponse) => {
+    res.status(404).end('Page is not found')
+  },
+})

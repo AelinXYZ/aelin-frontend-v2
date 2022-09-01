@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -137,7 +138,10 @@ export const DealsFunded: React.FC = () => {
           return (
             <RowLink
               columns={columns.widths}
-              href={`/pool/${getKeyChainByValue(network)}/${id}`}
+              href={{
+                pathname: '/pool',
+                query: { address: id, network: getKeyChainByValue(network) },
+              }}
               key={index}
             >
               <Cell mobileJustifyContent="center">{formatDate(timestamp, DATE_DETAILED)}</Cell>
@@ -154,13 +158,15 @@ export const DealsFunded: React.FC = () => {
                 {getNetworkConfig(network).icon}
               </HideOnMobileCell>
               <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool} light>
-                <ButtonPrimaryLightSm
-                  onClick={() => {
-                    router.push(`/pool/${getKeyChainByValue(network)}/${id}`)
+                <Link
+                  href={{
+                    pathname: '/pool',
+                    query: { address: id, network: getKeyChainByValue(network) },
                   }}
+                  passHref
                 >
-                  See Pool
-                </ButtonPrimaryLightSm>
+                  <ButtonPrimaryLightSm>See Pool</ButtonPrimaryLightSm>
+                </Link>
                 <ExternalLink
                   href={`${getNetworkConfig(network).blockExplorerUrls}/address/${id}`}
                 />

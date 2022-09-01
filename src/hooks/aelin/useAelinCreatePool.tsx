@@ -446,7 +446,10 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
           )
 
           if (receipt) {
-            router.push(`/pool/${getKeyChainByValue(chainId)}/${getPoolCreatedId(receipt)}`)
+            router.push({
+              pathname: '/pool',
+              query: { address: getPoolCreatedId(receipt), network: getKeyChainByValue(chainId) },
+            })
           }
         } catch (error) {
           console.log(error)

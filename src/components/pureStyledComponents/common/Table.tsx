@@ -108,7 +108,7 @@ export const Row = styled.div<RowProps>`
 `
 
 interface RowLinkProps extends RowProps {
-  href: string
+  href: string | { pathname: string; query: any }
   withGradient?: boolean
 }
 

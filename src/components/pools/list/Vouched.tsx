@@ -162,7 +162,10 @@ export const VouchedPools: React.FC = () => {
             return (
               <RowLink
                 columns={columns.widths}
-                href={`/pool/${getKeyChainByValue(network)}/${id}`}
+                href={{
+                  pathname: '/pool',
+                  query: { address: id, network: getKeyChainByValue(network) },
+                }}
                 key={id}
                 withGradient
               >

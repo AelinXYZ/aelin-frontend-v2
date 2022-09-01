@@ -112,7 +112,7 @@ const StakeBanner = ({ ...restProps }) => {
 
   return (
     <SectionIntro
-      backgroundImage={`resources/svg/${banner.backgroundImage}`}
+      backgroundImage={`/resources/svg/${banner.backgroundImage}`}
       button={'button' in banner ? banner.button : undefined}
       secondaryButton={'secondaryButton' in banner ? banner.secondaryButton : undefined}
       title={banner.title}

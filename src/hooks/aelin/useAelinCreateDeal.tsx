@@ -458,7 +458,10 @@ export default function useAelinCreateDeal(chainId: ChainsValues, pool: ParsedAe
             txGasOptions,
           )
           if (receipt) {
-            router.push(`/pool/${getKeyChainByValue(chainId)}/${pool.address}`)
+            router.push({
+              pathname: '/pool',
+              query: { address: pool.address, network: getKeyChainByValue(chainId) },
+            })
           }
         } catch (error) {
           console.log(error)

@@ -32,7 +32,7 @@ function App({ Component, pageProps }: AppProps) {
       ? window.location
       : { hostname: 'localhost', port: 3000, protocol: 'http:' }
   const portString = port ? `:${port}` : ''
-  const siteURL = typeof window !== 'undefined' ? `${protocol}//${hostname}${portString}` : ''
+  const siteURL = typeof window !== 'undefined' ? `${protocol}//${hostname}${portString}` : '.'
   const title = 'Aelin'
   const description = 'Aelin'
   const twitterHandle = '@'

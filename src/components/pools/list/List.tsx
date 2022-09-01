@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -192,7 +193,10 @@ export const List: React.FC<{
             return (
               <RowLink
                 columns={columns.widths}
-                href={`/pool/${getKeyChainByValue(network)}/${id}`}
+                href={{
+                  pathname: '/pool',
+                  query: { address: id, network: getKeyChainByValue(network) },
+                }}
                 key={id}
               >
                 <NameCell>

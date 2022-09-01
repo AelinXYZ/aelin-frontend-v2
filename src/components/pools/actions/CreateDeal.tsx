@@ -46,7 +46,13 @@ export const CreateDeal: React.FC<Props> = ({ pool, ...restProps }) => {
       )}
       {noFundsInPool ? null : (
         <Link
-          href={`/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}/create-deal`}
+          href={{
+            pathname: '/create-deal',
+            query: {
+              address: pool.address,
+              network: getKeyChainByValue(pool.chainId),
+            },
+          }}
           passHref
         >
           <ButtonGradient as="a">Create Deal</ButtonGradient>

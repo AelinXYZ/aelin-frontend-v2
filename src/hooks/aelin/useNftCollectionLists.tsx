@@ -69,7 +69,7 @@ const parseOpenseaResponse = async (
 const getParsedNFTCollectionData = async (collectionAddress: string, chainId: ChainsValues) => {
   const url =
     chainId === Chains.optimism
-      ? `/api/nft/${Chains.optimism}/${collectionAddress}`
+      ? `${process.env.NEXT_PUBLIC_SERVERLESS_BASE_URL}/api/nft/${Chains.optimism}/${collectionAddress}/`
       : `https://api.opensea.io/api/v1/asset_contract/${collectionAddress}?format=json`
 
   return fetch(url).then(async (res) => {

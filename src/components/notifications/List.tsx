@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
@@ -132,7 +133,14 @@ export const List: React.FC = () => {
               return (
                 <RowLink
                   columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}?notification=${type}`}
+                  href={{
+                    pathname: '/pool',
+                    query: {
+                      address: poolAddress,
+                      network: getKeyChainByValue(chainId),
+                      notification: type,
+                    },
+                  }}
                   key={index}
                 >
                   <Cell className="cellTitle">{formatDate(triggerStart, DATE_DETAILED)}</Cell>
@@ -140,19 +148,19 @@ export const List: React.FC = () => {
                     {message}
                   </Cell>
                   <LinkCell className="cellLink" justifyContent={columns.alignment.seePool}>
-                    <ButtonPrimaryLightSm
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        router.push(
-                          `/pool/${getKeyChainByValue(
-                            chainId,
-                          )}/${poolAddress}?notification=${type}`,
-                        )
+                    <Link
+                      href={{
+                        pathname: '/pool',
+                        query: {
+                          address: poolAddress,
+                          network: getKeyChainByValue(chainId),
+                          notification: type,
+                        },
                       }}
+                      passHref
                     >
-                      Go to pool
-                    </ButtonPrimaryLightSm>
+                      <ButtonPrimaryLightSm>See Pool</ButtonPrimaryLightSm>
+                    </Link>
                     <ButtonRemove
                       currentThemeName={currentThemeName}
                       onClick={(e) => {

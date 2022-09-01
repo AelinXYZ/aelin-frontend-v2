@@ -390,7 +390,10 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                   <SeePoolButton
                     onClick={(e) => {
                       e.preventDefault()
-                      router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                      router.push({
+                        pathname: '/pool',
+                        query: { address: poolAddress, network: getKeyChainByValue(chainId) },
+                      })
                     }}
                   >
                     See Pool

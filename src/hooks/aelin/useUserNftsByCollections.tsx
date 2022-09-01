@@ -26,7 +26,8 @@ const useUserNftsByCollections = (pool: ParsedAelinPool) => {
   const { address, appChainId } = useWeb3Connection()
 
   const urls = nftCollectionRules.map(
-    (collectionRule) => `/api/nft/${appChainId}/${collectionRule.collectionAddress}/${address}`,
+    (collectionRule) =>
+      `${process.env.NEXT_PUBLIC_SERVERLESS_BASE_URL}/api/nft/${appChainId}/${collectionRule.collectionAddress}/${address}/`,
   )
 
   const { data, error } = useSWR(urls, fetcher, {
