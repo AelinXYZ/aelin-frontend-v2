@@ -79,7 +79,6 @@ export const List: React.FC<{
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
-
   const { notifications } = useNotifications()
 
   if (error) {

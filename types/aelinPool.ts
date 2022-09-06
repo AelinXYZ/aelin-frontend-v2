@@ -9,12 +9,15 @@ export enum UserRole {
 }
 
 export enum PoolStatus {
+  //SponsorDeal
   Funding = 'Funding',
   SeekingDeal = 'Seeking Deal',
   DealPresented = 'Deal presented',
   WaitingForHolder = 'Waiting For Holder',
   Vesting = 'Vesting',
   Closed = 'Closed',
+  //UpfrontDeal
+  DealFunding = 'Deal Funding',
 }
 
 export enum PoolTab {
@@ -34,6 +37,8 @@ export enum PoolAction {
   Withdraw = 'Withdraw',
   Vest = 'Vest',
   WithdrawUnredeemed = 'Withdraw Unredeemed',
+  //UpfrontDeal
+  DealInvest = 'Purchase Deal Tokens',
 }
 
 export interface Funding {

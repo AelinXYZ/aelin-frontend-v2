@@ -6,7 +6,9 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
+import { ZERO_BN } from '../constants/misc'
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
+import { DealType, PoolCreated } from '@/graphql-schema'
 import {
   NftType,
   NftWhiteListState,
@@ -45,25 +47,28 @@ export interface ParsedNftCollectionRules extends Omit<RawNftCollectionRules, 'p
 }
 
 // timestamp when the pool was created
-export function getPoolCreatedDate<PD extends PoolDates>(pool: PD): Date {
+export function getPoolCreatedDate(pool: PoolCreated): Date {
   return new Date(Number(pool.timestamp) * 1000)
 }
 
 // the duration of the pool assuming no deal is presented when purchasers can withdraw all of their locked funds
-export function getPurchaseExpiry<P extends PoolDates>(pool: P): Date {
-  return new Date(Number(pool.purchaseExpiry) * 1000)
+export function getPurchaseExpiry(pool: PoolCreated): Date | null {
+  return pool.purchaseExpiry ? new Date(Number(pool.purchaseExpiry) * 1000) : null
 }
 
-export function getVestingStarts<P extends PoolDates>(pool: P): Date {
-  return new Date(Number(pool.vestingStarts) * 1000)
+export function getVestingStarts(pool: PoolCreated): Date | null {
+  return pool.vestingStarts ? new Date(Number(pool.vestingStarts) * 1000) : null
 }
 
-export function getVestingEnds<P extends PoolDates>(pool: P): Date {
-  return new Date(Number(pool.vestingEnds) * 1000)
+export function getVestingEnds(pool: PoolCreated): Date | null {
+  return pool.vestingEnds ? new Date(Number(pool.vestingEnds) * 1000) : null
 }
 
 // if no deal is presented, investors can withdraw their locked funds after this date
-export function getDealDeadline<P extends PoolDates>(pool: P): Date {
+export function getDealDeadline(pool: PoolCreated): Date | null {
+  if (pool.dealType === DealType.UpfrontDeal) {
+    return null
+  }
   const created = getPoolCreatedDate(pool)
   return addSeconds(created, Number(pool.duration) + Number(pool.purchaseDuration))
 }
@@ -244,8 +249,33 @@ export function calculateDeadlineProgress(deadline: Date, start: Date) {
 export function getCurrentStage(pool: ParsedAelinPool) {
   const now = Date.now()
 
+  if (pool.upfrontDeal) {
+    const { upfrontDeal } = pool
+    // Awaiting Deal
+    if (!upfrontDeal.dealStart) {
+      return PoolStages.AwaitingDeal
+    }
+
+    // DealReady
+    if (upfrontDeal.dealStart && pool.vestingStarts && isBefore(now, pool.vestingStarts)) {
+      return PoolStages.AwaitingDeal
+    }
+
+    // Vesting
+    if (
+      upfrontDeal.dealStart &&
+      pool.vestingStarts &&
+      pool.vestingEnds &&
+      isAfter(now, pool.vestingStarts) &&
+      isBefore(now, pool.vestingEnds)
+    ) {
+      return PoolStages.AwaitingDeal
+    }
+
+    return PoolStages.Complete
+  }
   // Open
-  if (isBefore(now, pool.purchaseExpiry)) {
+  if (!pool.purchaseExpiry || (pool.purchaseExpiry && isBefore(now, pool.purchaseExpiry))) {
     return PoolStages.Open
   }
 
@@ -392,4 +422,74 @@ export const getParsedNftCollectionRules = (
   })
 
   return nftCollectionRules
+}
+
+export function parseUpfrontDeal(pool: PoolCreated) {
+  const { purchaseTokenDecimals, upfrontDeal } = pool
+  if (!upfrontDeal) return
+  const now = new Date()
+  const purchaseDurationMs = Number(upfrontDeal.purchaseDuration ?? 0) * 1000
+  const cliffMs = Number(upfrontDeal.vestingCliffPeriod ?? 0) * 1000
+  const vestingMs = Number(upfrontDeal.vestingPeriod ?? 0) * 1000
+  const dealStart = upfrontDeal.dealStart ? new Date(Number(upfrontDeal.dealStart) * 1000) : null
+  const vestingStart = dealStart ? addMilliseconds(dealStart, purchaseDurationMs) : null
+  return {
+    address: upfrontDeal.id,
+    name: upfrontDeal.name,
+    symbol: upfrontDeal.symbol,
+    holder: upfrontDeal.holder,
+    allowDeallocation: upfrontDeal.allowDeallocation,
+    underlyingDealToken: upfrontDeal.underlyingDealToken,
+    underlyingDealTokenSymbol: upfrontDeal.underlyingDealTokenSymbol,
+    underlyingDealTokenTotal: getDetailedNumber(
+      upfrontDeal.underlyingDealTokenTotal,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    underlyingDealTokenTotalSupply: getDetailedNumber(
+      upfrontDeal.underlyingDealTokenTotalSupply,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    underlyingPerDealExchangeRate: getDetailedNumber(
+      upfrontDeal.underlyingPerDealExchangeRate,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    maxDealTotalSupply: getDetailedNumber(
+      upfrontDeal.maxDealTotalSupply,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    purchaseRaiseMinimum: getDetailedNumber(
+      upfrontDeal.purchaseRaiseMinimum,
+      Number(purchaseTokenDecimals),
+    ),
+    purchaseTokenPerDealToken: getDetailedNumber(
+      // Double check
+      upfrontDeal.purchaseTokenPerDealToken,
+      Number(purchaseTokenDecimals),
+    ),
+    purchaseTokenTotalForDeal: getDetailedNumber(
+      upfrontDeal.purchaseTokenTotalForDeal,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    purchaseDuration: upfrontDeal.purchaseDuration,
+    purchaseExpiry: dealStart ? new Date(Number(upfrontDeal.purchaseExpiry) * 1000) : null,
+    vestingPeriod: {
+      cliff: {
+        ms: cliffMs,
+        formatted: formatDistanceStrict(now, addMilliseconds(now, cliffMs)),
+        end: vestingStart ? addMilliseconds(vestingStart, cliffMs) : null,
+      },
+      vesting: {
+        ms: vestingMs,
+        formatted: formatDistanceStrict(now, addMilliseconds(now, vestingMs)),
+        end: vestingStart ? addMilliseconds(vestingStart, cliffMs + vestingMs) : null,
+      },
+      start: vestingStart,
+      end: vestingStart ? addMilliseconds(vestingStart, cliffMs + vestingMs) : null,
+    },
+    unredeemed: getDetailedNumber(
+      ZERO_BN.toString(), // upfrontDeal.totalAmountUnredeemed || ZERO_BN,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    dealStart,
+  }
 }

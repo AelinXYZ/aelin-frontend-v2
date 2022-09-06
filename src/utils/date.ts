@@ -33,8 +33,8 @@ export default function getDailyValueFromValuePerSecond(vps: BigNumber): BigNumb
   return vps.mul(60).mul(60).mul(24)
 }
 
-export const getFormattedDurationFromDateToNow = (date: Date | number) => {
-  if (isAfter(new Date(date), new Date())) {
+export const getFormattedDurationFromDateToNow = (date: Date | number | null) => {
+  if (date && isAfter(new Date(date), new Date())) {
     const duration = intervalToDuration({
       start: new Date(date),
       end: new Date(),
