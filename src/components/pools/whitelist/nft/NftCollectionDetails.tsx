@@ -1,6 +1,6 @@
-import Image from 'next/image'
 import styled from 'styled-components'
 
+import NftMedia from '../../actions/Invest/nft/NftMedia'
 import { VerifiedNftCollection as VerifiedIcon } from '@/src/components/assets/VerifiedNftCollection'
 import NftCollectionAttribute, {
   NftCollectionAttributeProps,
@@ -65,7 +65,7 @@ const NftCollectionDetails = ({
 }: NftCollectionDetailsProps) => {
   return (
     <Card>
-      {!!imageUrl && <Image alt="" height={44} src={imageUrl} width={44} />}
+      <NftMedia height={44} src={imageUrl} width={44} />
       <Row>
         <Title>{name}</Title>
         {isVerified && <VerifiedIcon />}
