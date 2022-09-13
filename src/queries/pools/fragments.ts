@@ -149,11 +149,12 @@ gql`
     underlyingPerDealExchangeRate
     maxDealTotalSupply
     purchaseTokenPerDealToken
-    purchaseDuration
-    purchaseExpiry
     purchaseRaiseMinimum
     vestingCliffPeriod
     allowDeallocation
     dealStart
+    holderClaim
+    sponsorClaim
+    totalAmountUnredeemed
   }
 `

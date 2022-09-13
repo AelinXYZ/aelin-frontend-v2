@@ -14,18 +14,18 @@ const NoMarginContents = styled(Contents)`
 `
 
 type VestingCliffProps = {
-  redemtionEnds: Date | undefined
+  redemptionEnds: Date | undefined | null
   vestingCliffEnds: Date | undefined | null
 }
 
-function VestingCliff({ redemtionEnds, vestingCliffEnds }: VestingCliffProps) {
+function VestingCliff({ redemptionEnds, vestingCliffEnds }: VestingCliffProps) {
   return (
     <Wrapper title={'Vesting Cliff'}>
       <Contents>
         Wait for the vesting cliff to end before being able to vest your deal tokens
       </Contents>
       <Deadline
-        progress={calculateDeadlineProgress(vestingCliffEnds as Date, redemtionEnds as Date)}
+        progress={calculateDeadlineProgress(vestingCliffEnds as Date, redemptionEnds as Date)}
       >
         <NoMarginContents>{formatDate(vestingCliffEnds as Date, DATE_DETAILED)}</NoMarginContents>
       </Deadline>

@@ -121,45 +121,53 @@ const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
     </Item>
   )
 }
-
 export const Timeline: React.FC<{ timelineSteps?: TimelineSteps }> = ({
   timelineSteps,
   ...restProps
 }) => {
   const isStepDefined = (state: PoolTimelineState) => timelineSteps?.[state]?.isDefined
-  const items = [
-    PoolTimelineState.poolCreation,
-    PoolTimelineState.investmentDeadline,
-    PoolTimelineState.dealCreation,
-    PoolTimelineState.dealDeadline,
-    PoolTimelineState.proRataRedemption,
-    PoolTimelineState.openRedemption,
-    PoolTimelineState.vestingCliff,
-    PoolTimelineState.vestingPeriod,
-  ]
-    .filter(isStepDefined)
-    .map((state: PoolTimelineState) => ({
-      state,
-      content: (
-        <>
-          <Title>{PoolTimelineStateTitles[state]}</Title>
-          {timelineSteps?.[state]?.withDeadlineBar ? (
-            <>
-              <Deadline progress={timelineSteps?.[state]?.deadlineProgress || '0'} width="180px">
-                <Value>{timelineSteps?.[state]?.deadline}</Value>
-              </Deadline>
-              {!timelineSteps?.[state]?.isDone && (
-                <Value>{timelineSteps?.[state]?.value ?? '--'}</Value>
-              )}
-            </>
-          ) : (
-            <Value>{timelineSteps?.[state]?.value ?? '--'}</Value>
-          )}
-        </>
-      ),
-    }))
 
-  items.sort((a, b) => (a.state > b.state ? 1 : -1))
+  const poolTimelineTitles = Object.values(PoolTimelineStateTitles)
+
+  const states = [
+    PoolTimelineState.PoolCreation,
+    PoolTimelineState.InvestmentDeadline,
+    PoolTimelineState.DealCreation,
+    PoolTimelineState.DealDeadline,
+    PoolTimelineState.Round1,
+    PoolTimelineState.Round2,
+    PoolTimelineState.VestingCliff,
+    PoolTimelineState.VestingPeriod,
+    //UpfrontDeal
+    PoolTimelineState.UpfrontDealCreation,
+    PoolTimelineState.UpfrontDealRedemption,
+    PoolTimelineState.UpfrontDealVestingCliff,
+    PoolTimelineState.UpfrontDealVestingPeriod,
+  ]
+
+  const items = states.filter(isStepDefined).map((state: PoolTimelineState, index: number) => ({
+    index,
+    state,
+    content: (
+      <>
+        <Title>{poolTimelineTitles[states.indexOf(state)]}</Title>
+        {timelineSteps?.[state]?.withDeadlineBar ? (
+          <>
+            <Deadline progress={timelineSteps?.[state]?.deadlineProgress || '0'} width="180px">
+              <Value>{timelineSteps?.[state]?.deadline}</Value>
+            </Deadline>
+            {!timelineSteps?.[state]?.isDone && (
+              <Value>{timelineSteps?.[state]?.value ?? '--'}</Value>
+            )}
+          </>
+        ) : (
+          <Value>{timelineSteps?.[state]?.value ?? '--'}</Value>
+        )}
+      </>
+    ),
+  }))
+
+  items.sort((a, b) => (a.index > b.index ? 1 : -1))
 
   return (
     <Wrapper {...restProps}>

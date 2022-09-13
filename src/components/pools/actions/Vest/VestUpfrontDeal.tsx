@@ -4,38 +4,42 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import ms from 'ms'
 
+import ClaimUpfrontDealTokens from './ClaimUpfrontDealTokens'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import NothingToClaim from '@/src/components/pools/actions/Vest/NothingToClaim'
 import VestingCliff from '@/src/components/pools/actions/Vest/VestingCliff'
 import VestingCompleted from '@/src/components/pools/actions/Vest/VestingCompleted'
 import VestingPeriod from '@/src/components/pools/actions/Vest/VestingPeriod'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
-import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
+import useAelinAmountToVestUpfrontDeal from '@/src/hooks/aelin/useAelinAmountToVestUpfrontDeal'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
+import useAelinPoolSharesPerUser from '@/src/hooks/aelin/useAelinPoolSharesPerUser'
+import useAelinUserRoles from '@/src/hooks/aelin/useAelinUserRoles'
+import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isFirstAelinPool } from '@/src/utils/isFirstAelinPool'
+import { UserRole } from '@/types/aelinPool'
 
 type Props = {
   pool: ParsedAelinPool
 }
 
-function Vest({ pool }: Props) {
+function VestUpfrontDeal({ pool }: Props) {
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
   const { address, isAppConnected } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const { estimate, execute: claim } = useAelinDealTransaction(
-    pool.dealAddress || ZERO_ADDRESS,
-    'claim',
+  const { estimate, execute: claim } = useAelinPoolUpfrontDealTransaction(
+    pool.upfrontDeal?.address || ZERO_ADDRESS,
+    'claimUnderlying',
   )
 
   const { data, mutate: refetch } = useVestingDealById(
     {
-      id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
+      id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.upfrontDeal?.address}`,
     },
     { refreshInterval: ms('10s') },
   )
@@ -45,21 +49,43 @@ function Vest({ pool }: Props) {
 
   const now = new Date()
 
-  const isVestingCliffEnded = isAfter(now, pool.deal?.vestingPeriod.cliff.end as Date)
-  const isVestindPeriodEnded = isAfter(now, pool.deal?.vestingPeriod.vesting.end as Date)
+  const isVestingCliffEnded = isAfter(now, pool.upfrontDeal?.vestingPeriod.cliff.end as Date)
+  const isVestindPeriodEnded = isAfter(now, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
 
   const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
 
-  const [amountToVest, refetchAmountToVest] = useAelinAmountToVest(
+  const [amountToVest, refetchAmountToVest] = useAelinAmountToVestUpfrontDeal(
     pool.address,
+    pool.chainId,
+    withinInterval,
+  )
+
+  const [poolShares, refetchPoolShares] = useAelinPoolSharesPerUser(
+    pool.upfrontDeal?.address || ZERO_ADDRESS,
+    pool.upfrontDeal?.underlyingToken.decimals || 18,
     pool.chainId,
     withinInterval,
   )
 
   const hasRemainingTokens =
     Number(lastClaim) !== 0
-      ? isBefore(lastClaim * 1000, pool.deal?.vestingPeriod.vesting.end as Date)
+      ? isBefore(lastClaim * 1000, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
       : amountToVest.gt(ZERO_BN)
+
+  const userRoles = useAelinUserRoles(pool)
+
+  const hasToClaimTokens = useMemo(() => {
+    if (!pool.upfrontDeal) return false
+
+    const sponsorClaim = !!pool.upfrontDeal.sponsorClaim
+    const holderClaim = !!pool.upfrontDeal.holderClaim
+
+    if (userRoles.includes(UserRole.Holder) && !holderClaim) return true
+    if (userRoles.includes(UserRole.Sponsor) && !sponsorClaim) return true
+    if (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) return true
+
+    return false
+  }, [poolShares, pool, userRoles])
 
   const isVestButtonDisabled = useMemo(() => {
     return (
@@ -89,10 +115,11 @@ function Vest({ pool }: Props) {
 
   return (
     <>
+      {hasToClaimTokens && <ClaimUpfrontDealTokens pool={pool} />}
       {!isVestingCliffEnded && (
         <VestingCliff
-          redemptionEnds={pool.deal?.redemption?.end}
-          vestingCliffEnds={pool.deal?.vestingPeriod.cliff.end}
+          redemptionEnds={pool.upfrontDeal?.vestingPeriod.start}
+          vestingCliffEnds={pool.upfrontDeal?.vestingPeriod.cliff.end}
         />
       )}
       {isVestingCliffEnded && hasRemainingTokens && (
@@ -117,4 +144,4 @@ function Vest({ pool }: Props) {
   )
 }
 
-export default genericSuspense(Vest)
+export default genericSuspense(VestUpfrontDeal)

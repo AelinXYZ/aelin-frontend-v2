@@ -172,6 +172,26 @@ export function dealExchangeRates(
   }
 }
 
+export function upfrontDealExchangeRates(
+  purchaseTokenPerDealToken: string,
+  investmentTokenDecimals: number,
+  dealTokenDecimals: number,
+) {
+  const investmentRate = new Wei(purchaseTokenPerDealToken, investmentTokenDecimals, true)
+  const dealRate = new Wei(1).div(investmentRate)
+
+  return {
+    investmentPerDeal: {
+      raw: investmentRate.toBN(),
+      formatted: formatToken(investmentRate.toBN(), dealTokenDecimals, 3),
+    },
+    dealPerInvestment: {
+      raw: dealRate.toBN(),
+      formatted: formatToken(dealRate.toBN(), 18),
+    },
+  }
+}
+
 export function getProRataRedemptionDates(
   proRataRedemptionPeriodStart: string,
   proRataRedemptionPeriod: string,
@@ -426,33 +446,40 @@ export const getParsedNftCollectionRules = (
 
 export function parseUpfrontDeal(pool: PoolCreated) {
   const { purchaseTokenDecimals, upfrontDeal } = pool
-  if (!upfrontDeal) return
+  if (!upfrontDeal || !purchaseTokenDecimals) return
   const now = new Date()
-  const purchaseDurationMs = Number(upfrontDeal.purchaseDuration ?? 0) * 1000
   const cliffMs = Number(upfrontDeal.vestingCliffPeriod ?? 0) * 1000
   const vestingMs = Number(upfrontDeal.vestingPeriod ?? 0) * 1000
   const dealStart = upfrontDeal.dealStart ? new Date(Number(upfrontDeal.dealStart) * 1000) : null
-  const vestingStart = dealStart ? addMilliseconds(dealStart, purchaseDurationMs) : null
+  const vestingStarts = pool.vestingStarts ? new Date(Number(pool.vestingStarts) * 1000) : null
+  const vestingEnds = pool.vestingEnds ? new Date(Number(pool.vestingEnds) * 1000) : null
+
+  const exchangeRates = upfrontDealExchangeRates(
+    upfrontDeal.purchaseTokenPerDealToken,
+    purchaseTokenDecimals,
+    upfrontDeal.underlyingDealTokenDecimals,
+  )
+
   return {
     address: upfrontDeal.id,
     name: upfrontDeal.name,
     symbol: upfrontDeal.symbol,
     holder: upfrontDeal.holder,
     allowDeallocation: upfrontDeal.allowDeallocation,
-    underlyingDealToken: upfrontDeal.underlyingDealToken,
-    underlyingDealTokenSymbol: upfrontDeal.underlyingDealTokenSymbol,
-    underlyingDealTokenTotal: getDetailedNumber(
-      upfrontDeal.underlyingDealTokenTotal,
-      upfrontDeal.underlyingDealTokenDecimals,
-    ),
-    underlyingDealTokenTotalSupply: getDetailedNumber(
-      upfrontDeal.underlyingDealTokenTotalSupply,
-      upfrontDeal.underlyingDealTokenDecimals,
-    ),
-    underlyingPerDealExchangeRate: getDetailedNumber(
-      upfrontDeal.underlyingPerDealExchangeRate,
-      upfrontDeal.underlyingDealTokenDecimals,
-    ),
+    underlyingToken: {
+      token: upfrontDeal.underlyingDealToken,
+      symbol: upfrontDeal.underlyingDealTokenSymbol,
+      decimals: upfrontDeal.underlyingDealTokenDecimals,
+      dealAmount: getDetailedNumber(
+        upfrontDeal.underlyingDealTokenTotal,
+        upfrontDeal.underlyingDealTokenDecimals,
+      ),
+      totalSupply: getDetailedNumber(
+        upfrontDeal.underlyingDealTokenTotalSupply,
+        upfrontDeal.underlyingDealTokenDecimals,
+      ),
+    },
+    exchangeRates,
     maxDealTotalSupply: getDetailedNumber(
       upfrontDeal.maxDealTotalSupply,
       upfrontDeal.underlyingDealTokenDecimals,
@@ -470,26 +497,26 @@ export function parseUpfrontDeal(pool: PoolCreated) {
       upfrontDeal.purchaseTokenTotalForDeal,
       upfrontDeal.underlyingDealTokenDecimals,
     ),
-    purchaseDuration: upfrontDeal.purchaseDuration,
-    purchaseExpiry: dealStart ? new Date(Number(upfrontDeal.purchaseExpiry) * 1000) : null,
     vestingPeriod: {
       cliff: {
         ms: cliffMs,
         formatted: formatDistanceStrict(now, addMilliseconds(now, cliffMs)),
-        end: vestingStart ? addMilliseconds(vestingStart, cliffMs) : null,
+        end: vestingStarts ? addMilliseconds(vestingStarts, cliffMs) : null,
       },
       vesting: {
         ms: vestingMs,
         formatted: formatDistanceStrict(now, addMilliseconds(now, vestingMs)),
-        end: vestingStart ? addMilliseconds(vestingStart, cliffMs + vestingMs) : null,
+        end: vestingEnds,
       },
-      start: vestingStart,
-      end: vestingStart ? addMilliseconds(vestingStart, cliffMs + vestingMs) : null,
+      start: vestingStarts,
+      end: vestingEnds,
     },
     unredeemed: getDetailedNumber(
       ZERO_BN.toString(), // upfrontDeal.totalAmountUnredeemed || ZERO_BN,
       upfrontDeal.underlyingDealTokenDecimals,
     ),
     dealStart,
+    holderClaim: !!upfrontDeal.holderClaim,
+    sponsorClaim: !!upfrontDeal.sponsorClaim,
   }
 }

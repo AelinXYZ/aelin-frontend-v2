@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 
-import { DealType, PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
+import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { PoolStages } from '@/src/constants/pool'
@@ -68,8 +68,18 @@ export type ParsedAelinPool = {
     address: string
     name: string
     symbol: string
-    underlyingDealToken: string
-    underlyingDealTokenSymbol: string
+    underlyingToken: {
+      token: string
+      symbol: string
+      decimals: number
+      totalSupply: DetailedNumber
+      dealAmount: DetailedNumber
+      // investmentAmount: DetailedNumber
+    }
+    exchangeRates: {
+      investmentPerDeal: DetailedNumber
+      dealPerInvestment: DetailedNumber
+    }
     vestingPeriod: {
       cliff: {
         ms: number
@@ -85,15 +95,14 @@ export type ParsedAelinPool = {
       start: Date | null
     }
     holder: string
-    underlyingPerDealExchangeRate: DetailedNumber
     maxDealTotalSupply: DetailedNumber
     purchaseTokenPerDealToken: DetailedNumber
-    purchaseDuration: string
-    purchaseExpiry: Date | null
     purchaseRaiseMinimum: DetailedNumber
     allowDeallocation: boolean
     unredeemed: DetailedNumber
     dealStart: Date | null
+    holderClaim: boolean
+    sponsorClaim: boolean
   }
   deal?: {
     name: string

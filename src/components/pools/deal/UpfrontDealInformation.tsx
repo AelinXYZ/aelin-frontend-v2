@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+import { TokenIcon } from '../common/TokenIcon'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
@@ -55,128 +56,89 @@ const DealParticipantsInfoCell = genericSuspense(
 
 export const UpfrontDealInformation: React.FC<{
   pool: ParsedAelinPool
-  poolHelpers: Funding
-}> = ({ pool, poolHelpers }) => {
-  const { chainId, sponsorFee } = pool
+}> = ({ pool }) => {
+  const { chainId, sponsorFee, upfrontDeal } = pool
+  if (!upfrontDeal) {
+    throw new Error('UpfrontDeal not found.')
+  }
 
   return (
     <>
       <Column>
-        <InfoCell title="TODO" value="Add all InfoCells" />
-      </Column>
-      {/* <Column>
         <InfoCell
           title="Name"
           value={
             <ExternalLink
               href={getExplorerUrl(pool.dealAddress || '', chainId)}
-              label={parseDealName(deal.name)}
+              label={parseDealName(upfrontDeal.name)}
             />
           }
         />
         <InfoCell
-          title="Token totals"
-          tooltip="The total amount of investment and deal tokens for the deal"
-        >
-          <StyledValue>
-            Investment token: {deal.underlyingToken.investmentAmount.formatted}{' '}
-            <ExternalLink
-              href={getExplorerUrl(pool.investmentToken, chainId)}
-              label={pool.investmentTokenSymbol}
+          title="Deal token"
+          tooltip="The token an investor may claim after an optional vesting period if they accept the deal"
+          value={
+            <TokenIcon
+              address={upfrontDeal.underlyingToken.token}
+              network={pool.chainId}
+              symbol={upfrontDeal.underlyingToken.symbol}
+              type="row"
             />
-          </StyledValue>
-          <StyledValue>
-            Deal token: {deal.underlyingToken.dealAmount.formatted}{' '}
-            <ExternalLink
-              href={getExplorerUrl(deal.underlyingToken.token, chainId)}
-              label={deal.underlyingToken.symbol}
-            />
-          </StyledValue>
-        </InfoCell>
+          }
+        />
         <InfoCell
           title="Exchange rates"
           tooltip="The ratio at which investment tokens deposited in the pool will be exchanged for deal tokens"
         >
-          <Value>{`${deal.exchangeRates.investmentPerDeal.formatted} ${deal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
-          <Value>{`${deal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol} per ${deal.underlyingToken.symbol}`}</Value>
+          <Value>{`${upfrontDeal.exchangeRates.investmentPerDeal.formatted} ${upfrontDeal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
+          <Value>{`${upfrontDeal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol} per ${upfrontDeal.underlyingToken.symbol}`}</Value>
         </InfoCell>
-        <InfoCell
-          title="Deal stage"
-          tooltip="A series of steps that investors go through from depositing funds to vesting deal tokens. The full list of stages are: Round 1, Round 2, Vesting Cliff, Vesting Period and Closed"
-          value={
-            deal.redemption?.stage === 1
-              ? 'Round 1: Accept Allocation'
-              : deal.redemption?.stage === 2
-              ? 'Round 2: Accept Remaining'
-              : 'Redemption closed'
-          }
-        />
-        <InfoCell
-          title="Round 2 deadline"
-          tooltip="The period where investors who maxed their allocation in Round 1 may purchase any unredeemed deal tokens"
-        >
-          {deal.redemption &&
-          deal.redemption.proRataRedemptionEnd &&
-          deal.redemption.openRedemptionEnd ? (
-            <DynamicDeadline
-              deadline={deal.redemption.openRedemptionEnd}
-              hideWhenDeadlineIsReached={true}
-              start={deal.redemption.proRataRedemptionEnd}
-              width="180px"
-            >
-              {deal.redemption
-                ? formatDate(deal.redemption.openRedemptionEnd, DATE_DETAILED)
-                : 'N/A'}
-            </DynamicDeadline>
-          ) : (
-            <Value>N/A</Value>
-          )}
-        </InfoCell>
-        <InfoCell title="Pool stats" tooltip="Stats across all investors in the pool">
-          <StyledValue>
-            Amount in pool: {pool.amountInPool.formatted}
-            <Warning>{poolHelpers.capReached && 'cap reached'}</Warning>
-          </StyledValue>
+        <InfoCell title="Deal stats" tooltip="TBD">
           <Value>Total redeemed: {pool.redeem.formatted}</Value>
-          <Value>Total withdrawn: {pool.withdrawn.formatted}</Value>
+          <Value>Total invested: TBD</Value>
+          <Value>Remaining deal tokens: TBD</Value>
         </InfoCell>
-        <DealParticipantsInfoCell
-          pool={pool}
-          title="Deal participants"
-          tooltip="Total amount of users who accepted or rejected the deal"
-        />
+        <InfoCell title="Deal minimum" tooltip="TBD">
+          <Value>{`${upfrontDeal.purchaseRaiseMinimum.formatted} ${pool.investmentTokenSymbol}`}</Value>
+        </InfoCell>
       </Column>
       <Column>
-        <InfoCell title="Symbol" value={deal.symbol} />
         <InfoCell
-          title="Vesting data"
-          tooltip="The time investors need to wait before claiming their deal tokens after the deal is complete"
-        >
-          <Value>Cliff: {deal.vestingPeriod.cliff.formatted}</Value>
-          <Value>Linear period: {deal.vestingPeriod.vesting.formatted}</Value>
+          title="Investment token"
+          tooltip="The currency used to purchase pool tokens"
+          value={
+            <TokenIcon
+              address={pool.investmentToken}
+              network={pool.chainId}
+              symbol={pool.investmentTokenSymbol}
+              type="row"
+            />
+          }
+        />
+        <InfoCell title="Deal tokens total" tooltip="TBD">
+          <Value>{`${upfrontDeal.underlyingToken.dealAmount.formatted} ${upfrontDeal.underlyingToken.symbol}`}</Value>
         </InfoCell>
         <InfoCell
-          title="Round 1 deadline"
-          tooltip="The period when an investor may accept their allocation for the deal"
+          title="Vesting Data"
+          tooltip="The time investors need to wait before claiming their deal tokens after the deal is complete"
         >
-          {deal.redemption && deal.redemption.proRataRedemptionEnd && (
+          <Value>{`Cliff: ${upfrontDeal.vestingPeriod.cliff.formatted}`}</Value>
+          <Value>{`Linear period: ${upfrontDeal.vestingPeriod.vesting.formatted}`}</Value>
+        </InfoCell>
+        <InfoCell title="Deal redemption deadline" tooltip="TBD">
+          {upfrontDeal?.dealStart && (
             <DynamicDeadline
-              deadline={deal.redemption.proRataRedemptionEnd}
+              deadline={upfrontDeal.vestingPeriod.start}
               hideWhenDeadlineIsReached={true}
-              start={deal.redemption.start}
+              start={upfrontDeal.dealStart}
               width="180px"
             >
-              {deal.redemption
-                ? formatDate(deal.redemption.proRataRedemptionEnd, DATE_DETAILED)
+              {upfrontDeal.vestingPeriod.start
+                ? formatDate(upfrontDeal.vestingPeriod.start, DATE_DETAILED)
                 : 'N/A'}
             </DynamicDeadline>
           )}
         </InfoCell>
-        <UserStatsInfoCell
-          pool={pool}
-          title="User stats"
-          tooltip="Pool stats for an investor connected to the app"
-        />
         <InfoCell
           title="Fees charged on accept"
           tooltip="A 2% protocol fee in addition to a sponsor fee is only charged on deal acceptance"
@@ -184,19 +146,7 @@ export const UpfrontDealInformation: React.FC<{
           <Value>Sponsor Fee: {sponsorFee.formatted}</Value>
           <Value>Aelin protocol fee: 2%</Value>
         </InfoCell>
-        <InfoCell
-          title="Deal tokens accepted"
-          tooltip="The total amount of deal tokens accepted by investors so far"
-        >
-          <StyledValue>
-            {deal.tokensSold.formatted}{' '}
-            <ExternalLink
-              href={getExplorerUrl(deal.underlyingToken.token, chainId)}
-              label={deal.underlyingToken.symbol}
-            />
-          </StyledValue>
-        </InfoCell>
-      </Column> */}
+      </Column>
     </>
   )
 }
