@@ -82,8 +82,9 @@ export const PoolInformation = ({ pool }: Props) => {
           title="Pool stats"
           tooltip="The total amount of tokens all investors have deposited, withdrawn and the remaining amount in the pool"
         >
-          <Value>Amount in Pool: {pool.amountInPool.formatted}</Value>
+          <Value>Funded: {pool.funded.formatted}</Value>
           <Value>Withdrawn: {pool.withdrawn.formatted}</Value>
+          <Value>Amount in Pool: {pool.amountInPool.formatted}</Value>
         </InfoCell>
         <InfoCell
           title={`My ${pool.investmentTokenSymbol} balance`}
