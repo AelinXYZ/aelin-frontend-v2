@@ -108,7 +108,7 @@ export const List: React.FC<{
       // justifyContent: columns.alignment.network,
     },
     {
-      title: 'Amount in Pool',
+      title: 'Total deposited',
       // sortKey: PoolCreated_OrderBy.TotalAmountFunded,
     },
     {

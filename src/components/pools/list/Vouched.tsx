@@ -109,7 +109,7 @@ export const VouchedPools: React.FC = () => {
       title: 'Network',
     },
     {
-      title: 'Amount in Pool',
+      title: 'Total deposited',
     },
     {
       title: 'Investment deadline',
