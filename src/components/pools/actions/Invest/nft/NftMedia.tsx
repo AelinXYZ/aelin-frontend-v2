@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { Loading } from '@/src/components/common/Loading'
+import SpinnerCSS from '@/src/components/assets/SpinnerCSS'
 
 const Image = styled.img<{ isDisabled?: boolean }>`
   border-radius: 8px;
@@ -113,7 +113,7 @@ const NftMedia = ({
           <MediaPlaceHolder height={height} width={width} />
           {spinner && (
             <LoadingWrapper>
-              <Loading />
+              <SpinnerCSS height={height * 0.5} margin={2} stroke={1} width={width * 0.5} />
             </LoadingWrapper>
           )}
         </>
