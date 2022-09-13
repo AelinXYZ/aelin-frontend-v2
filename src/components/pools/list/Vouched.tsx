@@ -109,7 +109,7 @@ export const VouchedPools: React.FC = () => {
       title: 'Network',
     },
     {
-      title: 'Amount in Pool',
+      title: 'Total deposited',
     },
     {
       title: 'Investment deadline',
@@ -147,8 +147,8 @@ export const VouchedPools: React.FC = () => {
           {data.map((pool) => {
             const {
               address: id,
-              amountInPool,
               chainId: network,
+              funded,
               investmentToken,
               investmentTokenSymbol,
               nameFormatted,
@@ -202,7 +202,7 @@ export const VouchedPools: React.FC = () => {
                   {getNetworkConfig(network).icon}
                 </HideOnMobileCell>
                 <Cell>
-                  {amountInPool.formatted}
+                  {funded.formatted}
                   &nbsp;
                   <HideOnMobile>{investmentTokenSymbol}</HideOnMobile>
                   <HideOnDesktop>

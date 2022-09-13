@@ -108,7 +108,7 @@ export const List: React.FC<{
       // justifyContent: columns.alignment.network,
     },
     {
-      title: 'Amount in Pool',
+      title: 'Total deposited',
       // sortKey: PoolCreated_OrderBy.TotalAmountFunded,
     },
     {
@@ -177,8 +177,8 @@ export const List: React.FC<{
           {data.map((pool) => {
             const {
               address: id,
-              amountInPool,
               chainId: network,
+              funded,
               investmentToken,
               investmentTokenSymbol,
               nameFormatted,
@@ -232,7 +232,7 @@ export const List: React.FC<{
                   {getNetworkConfig(network).icon}
                 </HideOnMobileCell>
                 <Cell>
-                  {amountInPool.formatted}
+                  {funded.formatted}
                   &nbsp;
                   <HideOnMobile>{investmentTokenSymbol}</HideOnMobile>
                   <HideOnDesktop>
