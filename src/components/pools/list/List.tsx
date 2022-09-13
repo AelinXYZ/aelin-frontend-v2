@@ -177,8 +177,8 @@ export const List: React.FC<{
           {data.map((pool) => {
             const {
               address: id,
+              amountInPool,
               chainId: network,
-              funded,
               investmentToken,
               investmentTokenSymbol,
               nameFormatted,
@@ -232,7 +232,7 @@ export const List: React.FC<{
                   {getNetworkConfig(network).icon}
                 </HideOnMobileCell>
                 <Cell>
-                  {funded.formatted}
+                  {amountInPool.formatted}
                   &nbsp;
                   <HideOnMobile>{investmentTokenSymbol}</HideOnMobile>
                   <HideOnDesktop>
