@@ -49,7 +49,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Mainnet',
     rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
     shortName: 'Mainnet',
-    tokenListUrl: 'https://tokens.1inch.eth.link/',
+    tokenListUrl: 'https://tokens.1inch.eth.limo/',
     buyAelinUrl:
       'https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=mainnet',
   },
@@ -64,7 +64,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Görli Testnet',
     rpcUrl: `https://eth-goerli.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
     shortName: 'Goerli',
-    tokenListUrl: 'https://tokens.1inch.eth.link/',
+    tokenListUrl: 'https://tokens.1inch.eth.limo/',
     buyAelinUrl: undefined,
   },
   [Chains.kovan]: {
@@ -78,7 +78,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Kovan',
     rpcUrl: `https://eth-kovan.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
     shortName: 'Kovan',
-    tokenListUrl: 'https://tokens.1inch.eth.link/',
+    tokenListUrl: 'https://tokens.1inch.eth.limo/',
     buyAelinUrl: undefined,
   },
   [Chains.optimism]: {
