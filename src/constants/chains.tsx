@@ -50,7 +50,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
     shortName: 'Mainnet',
     tokenListUrl: [
-      'https://tokens.1inch.eth.limo/',
+      'https://tokens.1inch.eth.limo',
       'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
     ],
     buyAelinUrl:
