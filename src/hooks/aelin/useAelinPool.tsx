@@ -27,6 +27,7 @@ import {
   getVestingEnds,
   getVestingStarts,
   parseNftCollectionRules,
+  parseUpfrontDeal,
 } from '@/src/utils/aelinPoolUtils'
 import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -44,8 +45,8 @@ export type ParsedAelinPool = {
   investmentTokenDecimals: number
   investmentDeadline: Date
   investmentTokenSymbol: string
-  purchaseExpiry: Date
-  dealDeadline: Date
+  purchaseExpiry: Date | null
+  dealDeadline: Date | null
   dealAddress: string | null
   sponsor: string
   sponsorFee: DetailedNumber
@@ -56,13 +57,53 @@ export type ParsedAelinPool = {
   withdrawn: DetailedNumber
   poolStatus: PoolStatus
   poolType: string
-  vestingStarts: Date
-  vestingEnds: Date
+  vestingStarts: Date | null
+  vestingEnds: Date | null
   dealsCreated: number
   stage: PoolStages
   totalUsersInvested: number
   hasNftList: boolean
   nftCollectionRules: ParsedNftCollectionRules[]
+  upfrontDeal?: {
+    address: string
+    name: string
+    symbol: string
+    underlyingToken: {
+      token: string
+      symbol: string
+      decimals: number
+      totalSupply: DetailedNumber
+      dealAmount: DetailedNumber
+      // investmentAmount: DetailedNumber
+    }
+    exchangeRates: {
+      investmentPerDeal: DetailedNumber
+      dealPerInvestment: DetailedNumber
+    }
+    vestingPeriod: {
+      cliff: {
+        ms: number
+        formatted: string
+        end: Date | null
+      }
+      vesting: {
+        ms: number
+        formatted: string
+        end: Date | null
+      }
+      end: Date | null
+      start: Date | null
+    }
+    holder: string
+    maxDealTotalSupply: DetailedNumber
+    purchaseTokenPerDealToken: DetailedNumber
+    purchaseRaiseMinimum: DetailedNumber
+    allowDeallocation: boolean
+    unredeemed: DetailedNumber
+    dealStart: Date | null
+    holderClaim: boolean
+    sponsorClaim: boolean
+  }
   deal?: {
     name: string
     symbol: string
@@ -153,13 +194,15 @@ export const getParsedPool = ({
     vestingStarts: getVestingStarts(pool),
     vestingEnds: getVestingEnds(pool),
     stage: calculateStatus({
+      upfrontDeal: pool.upfrontDeal,
       poolStatus: pool.poolStatus,
-      purchaseExpiry: getPurchaseExpiry(pool).getTime(),
-      vestingStarts: getVestingStarts(pool).getTime(),
-      vestingEnds: getVestingEnds(pool).getTime(),
+      purchaseExpiry: getPurchaseExpiry(pool)?.getTime() || 0, // <remove that 0 should be undefined
+      vestingStarts: getVestingStarts(pool)?.getTime() || 0,
+      vestingEnds: getVestingEnds(pool)?.getTime() || 0,
       dealsCreated: pool.dealsCreated,
     }),
     deal: undefined,
+    upfrontDeal: parseUpfrontDeal(pool),
     dealsCreated: pool.dealsCreated,
     totalUsersInvested: pool.totalUsersInvested,
     hasNftList: pool.hasNftList,

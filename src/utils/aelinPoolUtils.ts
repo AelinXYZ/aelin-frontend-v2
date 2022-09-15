@@ -6,7 +6,9 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
+import { ZERO_BN } from '../constants/misc'
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
+import { DealType, PoolCreated } from '@/graphql-schema'
 import {
   NftType,
   NftWhiteListState,
@@ -45,25 +47,28 @@ export interface ParsedNftCollectionRules extends Omit<RawNftCollectionRules, 'p
 }
 
 // timestamp when the pool was created
-export function getPoolCreatedDate<PD extends PoolDates>(pool: PD): Date {
+export function getPoolCreatedDate(pool: PoolCreated): Date {
   return new Date(Number(pool.timestamp) * 1000)
 }
 
 // the duration of the pool assuming no deal is presented when purchasers can withdraw all of their locked funds
-export function getPurchaseExpiry<P extends PoolDates>(pool: P): Date {
-  return new Date(Number(pool.purchaseExpiry) * 1000)
+export function getPurchaseExpiry(pool: PoolCreated): Date | null {
+  return pool.purchaseExpiry ? new Date(Number(pool.purchaseExpiry) * 1000) : null
 }
 
-export function getVestingStarts<P extends PoolDates>(pool: P): Date {
-  return new Date(Number(pool.vestingStarts) * 1000)
+export function getVestingStarts(pool: PoolCreated): Date | null {
+  return pool.vestingStarts ? new Date(Number(pool.vestingStarts) * 1000) : null
 }
 
-export function getVestingEnds<P extends PoolDates>(pool: P): Date {
-  return new Date(Number(pool.vestingEnds) * 1000)
+export function getVestingEnds(pool: PoolCreated): Date | null {
+  return pool.vestingEnds ? new Date(Number(pool.vestingEnds) * 1000) : null
 }
 
 // if no deal is presented, investors can withdraw their locked funds after this date
-export function getDealDeadline<P extends PoolDates>(pool: P): Date {
+export function getDealDeadline(pool: PoolCreated): Date | null {
+  if (pool.dealType === DealType.UpfrontDeal) {
+    return null
+  }
   const created = getPoolCreatedDate(pool)
   return addSeconds(created, Number(pool.duration) + Number(pool.purchaseDuration))
 }
@@ -167,6 +172,26 @@ export function dealExchangeRates(
   }
 }
 
+export function upfrontDealExchangeRates(
+  purchaseTokenPerDealToken: string,
+  investmentTokenDecimals: number,
+  dealTokenDecimals: number,
+) {
+  const investmentRate = new Wei(purchaseTokenPerDealToken, investmentTokenDecimals, true)
+  const dealRate = new Wei(1).div(investmentRate)
+
+  return {
+    investmentPerDeal: {
+      raw: investmentRate.toBN(),
+      formatted: formatToken(investmentRate.toBN(), dealTokenDecimals, 3),
+    },
+    dealPerInvestment: {
+      raw: dealRate.toBN(),
+      formatted: formatToken(dealRate.toBN(), 18),
+    },
+  }
+}
+
 export function getProRataRedemptionDates(
   proRataRedemptionPeriodStart: string,
   proRataRedemptionPeriod: string,
@@ -244,8 +269,33 @@ export function calculateDeadlineProgress(deadline: Date, start: Date) {
 export function getCurrentStage(pool: ParsedAelinPool) {
   const now = Date.now()
 
+  if (pool.upfrontDeal) {
+    const { upfrontDeal } = pool
+    // Awaiting Deal
+    if (!upfrontDeal.dealStart) {
+      return PoolStages.AwaitingDeal
+    }
+
+    // DealReady
+    if (upfrontDeal.dealStart && pool.vestingStarts && isBefore(now, pool.vestingStarts)) {
+      return PoolStages.AwaitingDeal
+    }
+
+    // Vesting
+    if (
+      upfrontDeal.dealStart &&
+      pool.vestingStarts &&
+      pool.vestingEnds &&
+      isAfter(now, pool.vestingStarts) &&
+      isBefore(now, pool.vestingEnds)
+    ) {
+      return PoolStages.AwaitingDeal
+    }
+
+    return PoolStages.Complete
+  }
   // Open
-  if (isBefore(now, pool.purchaseExpiry)) {
+  if (!pool.purchaseExpiry || (pool.purchaseExpiry && isBefore(now, pool.purchaseExpiry))) {
     return PoolStages.Open
   }
 
@@ -392,4 +442,81 @@ export const getParsedNftCollectionRules = (
   })
 
   return nftCollectionRules
+}
+
+export function parseUpfrontDeal(pool: PoolCreated) {
+  const { purchaseTokenDecimals, upfrontDeal } = pool
+  if (!upfrontDeal || !purchaseTokenDecimals) return
+  const now = new Date()
+  const cliffMs = Number(upfrontDeal.vestingCliffPeriod ?? 0) * 1000
+  const vestingMs = Number(upfrontDeal.vestingPeriod ?? 0) * 1000
+  const dealStart = upfrontDeal.dealStart ? new Date(Number(upfrontDeal.dealStart) * 1000) : null
+  const vestingStarts = pool.vestingStarts ? new Date(Number(pool.vestingStarts) * 1000) : null
+  const vestingEnds = pool.vestingEnds ? new Date(Number(pool.vestingEnds) * 1000) : null
+
+  const exchangeRates = upfrontDealExchangeRates(
+    upfrontDeal.purchaseTokenPerDealToken,
+    purchaseTokenDecimals,
+    upfrontDeal.underlyingDealTokenDecimals,
+  )
+
+  return {
+    address: upfrontDeal.id,
+    name: upfrontDeal.name,
+    symbol: upfrontDeal.symbol,
+    holder: upfrontDeal.holder,
+    allowDeallocation: upfrontDeal.allowDeallocation,
+    underlyingToken: {
+      token: upfrontDeal.underlyingDealToken,
+      symbol: upfrontDeal.underlyingDealTokenSymbol,
+      decimals: upfrontDeal.underlyingDealTokenDecimals,
+      dealAmount: getDetailedNumber(
+        upfrontDeal.underlyingDealTokenTotal,
+        upfrontDeal.underlyingDealTokenDecimals,
+      ),
+      totalSupply: getDetailedNumber(
+        upfrontDeal.underlyingDealTokenTotalSupply,
+        upfrontDeal.underlyingDealTokenDecimals,
+      ),
+    },
+    exchangeRates,
+    maxDealTotalSupply: getDetailedNumber(
+      upfrontDeal.maxDealTotalSupply,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    purchaseRaiseMinimum: getDetailedNumber(
+      upfrontDeal.purchaseRaiseMinimum,
+      Number(purchaseTokenDecimals),
+    ),
+    purchaseTokenPerDealToken: getDetailedNumber(
+      // Double check
+      upfrontDeal.purchaseTokenPerDealToken,
+      Number(purchaseTokenDecimals),
+    ),
+    purchaseTokenTotalForDeal: getDetailedNumber(
+      upfrontDeal.purchaseTokenTotalForDeal,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    vestingPeriod: {
+      cliff: {
+        ms: cliffMs,
+        formatted: formatDistanceStrict(now, addMilliseconds(now, cliffMs)),
+        end: vestingStarts ? addMilliseconds(vestingStarts, cliffMs) : null,
+      },
+      vesting: {
+        ms: vestingMs,
+        formatted: formatDistanceStrict(now, addMilliseconds(now, vestingMs)),
+        end: vestingEnds,
+      },
+      start: vestingStarts,
+      end: vestingEnds,
+    },
+    unredeemed: getDetailedNumber(
+      ZERO_BN.toString(), // upfrontDeal.totalAmountUnredeemed || ZERO_BN,
+      upfrontDeal.underlyingDealTokenDecimals,
+    ),
+    dealStart,
+    holderClaim: !!upfrontDeal.holderClaim,
+    sponsorClaim: !!upfrontDeal.sponsorClaim,
+  }
 }

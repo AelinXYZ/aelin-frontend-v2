@@ -43,16 +43,63 @@ interface TabsState {
 }
 
 function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
-  const [poolStatus, setPoolStatus] = useState<DerivedStatus>({
-    current: PoolStatus.Funding,
-    history: [PoolStatus.Funding],
-  })
+  const initialStatus = pool.upfrontDeal
+    ? {
+        current: PoolStatus.WaitingForHolder,
+        history: [PoolStatus.WaitingForHolder],
+      }
+    : {
+        current: PoolStatus.Funding,
+        history: [PoolStatus.Funding],
+      }
+
+  const [poolStatus, setPoolStatus] = useState<DerivedStatus>(initialStatus)
 
   const getStatus = useCallback(() => {
     const now = Date.now()
+    if (pool.upfrontDeal) {
+      //Waiting Holder
+      if (pool.upfrontDeal && !pool.upfrontDeal?.dealStart) {
+        return {
+          current: PoolStatus.WaitingForHolder,
+          history: [PoolStatus.WaitingForHolder],
+        }
+      }
 
+      // Deal Funding
+      if (pool.purchaseExpiry && isBefore(now, pool.purchaseExpiry)) {
+        return {
+          current: PoolStatus.DealFunding,
+          history: [PoolStatus.WaitingForHolder, PoolStatus.DealFunding],
+        }
+      }
+
+      //Refunding
+      if (
+        pool.purchaseExpiry &&
+        isAfter(now, pool.purchaseExpiry) &&
+        pool.upfrontDeal.purchaseRaiseMinimum.raw.lt(pool.redeem.raw)
+      ) {
+        return {
+          current: PoolStatus.Refunding,
+          history: [PoolStatus.WaitingForHolder, PoolStatus.DealFunding, PoolStatus.Refunding],
+        }
+      }
+
+      // Vesting
+      if (pool.vestingStarts && pool.vestingEnds && isAfter(now, pool.vestingStarts)) {
+        return {
+          current: PoolStatus.Vesting,
+          history: [PoolStatus.WaitingForHolder, PoolStatus.DealFunding, PoolStatus.Vesting],
+        }
+      }
+
+      throw new Error('Unexpected stage')
+    }
+
+    //SponsorDeal
     // Funding
-    if (isBefore(now, pool.purchaseExpiry)) {
+    if (pool.purchaseExpiry && isBefore(now, pool.purchaseExpiry)) {
       return {
         current: PoolStatus.Funding,
         history: [PoolStatus.Funding],
@@ -61,8 +108,9 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
 
     // Seeking deal
     if (
-      (isAfter(now, pool.purchaseExpiry) && !pool.deal) ||
-      (isAfter(now, pool.purchaseExpiry) &&
+      (pool.purchaseExpiry && isAfter(now, pool.purchaseExpiry) && !pool.deal) ||
+      (pool.purchaseExpiry &&
+        isAfter(now, pool.purchaseExpiry) &&
         pool.deal &&
         isAfter(now, pool.deal?.holderFundingExpiration as Date) &&
         pool.deal?.holderAlreadyDeposited === false)
@@ -166,8 +214,15 @@ function useFundingStatus(pool: ParsedAelinPool, derivedStatus: DerivedStatus): 
         raw: isCap ? MAX_BN : maxDepositAllowed,
         formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
       },
+      minimumAmount: pool.upfrontDeal?.purchaseRaiseMinimum,
     }
-  }, [pool.funded.raw, pool.investmentTokenDecimals, pool.poolCap.raw, derivedStatus])
+  }, [
+    pool.funded.raw,
+    pool.investmentTokenDecimals,
+    pool.poolCap.raw,
+    derivedStatus,
+    pool.upfrontDeal?.purchaseRaiseMinimum,
+  ])
 }
 
 function useUserRole(
@@ -189,7 +244,10 @@ function useUserRole(
       userRole = UserRole.Sponsor
     }
 
-    if (address === pool.deal?.holderAddress && derivedStatus.current !== PoolStatus.SeekingDeal) {
+    if (
+      (address === pool.deal?.holderAddress && derivedStatus.current !== PoolStatus.SeekingDeal) ||
+      address === pool.upfrontDeal?.holder
+    ) {
       userRole = UserRole.Holder
     }
 
@@ -221,6 +279,29 @@ function useUserActions(
     const now = new Date()
     const userPoolBalance = BigNumber.from(userAllocationStats.raw)
 
+    if (pool.upfrontDeal) {
+      // Waiting for holder
+      if (currentStatus === PoolStatus.WaitingForHolder) {
+        if (userRole !== UserRole.Holder) {
+          actions.push(PoolAction.AwaitingForDeal)
+        } else {
+          actions.push(PoolAction.FundDeal)
+        }
+
+        return actions
+      }
+
+      if (currentStatus === PoolStatus.DealFunding) {
+        return [PoolAction.DealInvest]
+      }
+
+      if (currentStatus === PoolStatus.Vesting) {
+        return [PoolAction.Vest]
+      }
+
+      return []
+    }
+    //SponsorDeal
     // Funding
     if (currentStatus === PoolStatus.Funding) {
       return [PoolAction.Invest]
@@ -256,6 +337,7 @@ function useUserActions(
         (isSponsor && !pool.dealAddress) ||
         (isSponsor &&
           pool.dealAddress &&
+          pool.dealDeadline &&
           isAfter(now, pool.dealDeadline) &&
           pool.deal?.holderAddress === (walletAddress as string).toLowerCase())
       ) {
@@ -269,6 +351,7 @@ function useUserActions(
         (!pool.dealAddress ||
           (pool.dealAddress &&
             !pool.deal?.holderAlreadyDeposited &&
+            pool.dealDeadline &&
             isBefore(now, pool.dealDeadline)))
       ) {
         actions.push(PoolAction.AwaitingForDeal)
@@ -277,7 +360,8 @@ function useUserActions(
       // Withdraw
       if (
         userPoolBalance.gt(ZERO_BN) &&
-        (isAfter(now, pool.dealDeadline) || (pool.dealAddress && pool.deal?.holderAlreadyDeposited))
+        ((pool.dealDeadline && isAfter(now, pool.dealDeadline)) ||
+          (pool.dealAddress && pool.deal?.holderAlreadyDeposited))
       ) {
         actions.push(PoolAction.Withdraw)
       }
@@ -393,7 +477,83 @@ function useUserTabs(
     (Object.values(NotificationType) as Array<NotificationType>).some((n) => n === type)
 
   const tabs = useMemo(() => {
-    const tabs: PoolTab[] = [PoolTab.PoolInformation]
+    let tabs: PoolTab[] = []
+    if (pool.upfrontDeal) {
+      //UpfrontDeal
+      tabs = [PoolTab.DealInformation]
+
+      if (history.includes(PoolStatus.Vesting)) {
+        tabs.push(PoolTab.Vest)
+      }
+
+      if (defaultTab && isNotificationType(defaultTab)) {
+        switch (defaultTab) {
+          case NotificationType.DealNotFunded:
+            setActiveTab(PoolTab.PoolInformation)
+            setActiveAction(PoolAction.CreateDeal)
+            break
+          case NotificationType.InvestmentWindowAlert:
+            setActiveTab(PoolTab.PoolInformation)
+            setActiveAction(tabsActions[0])
+            break
+          case NotificationType.InvestmentWindowEnded:
+            if (pool.deal?.holderAlreadyDeposited) {
+              setActiveTab(PoolTab.DealInformation)
+              setActiveAction(PoolAction.CreateDeal)
+            } else {
+              setActiveTab(tabs[tabs.length - 1])
+              setActiveAction(tabsActions[0])
+            }
+            break
+          case NotificationType.HolderSet:
+            if (pool.deal?.holderAlreadyDeposited) {
+              setActiveTab(PoolTab.DealInformation)
+            } else {
+              setActiveTab(PoolTab.PoolInformation)
+              setActiveAction(PoolAction.FundDeal)
+            }
+            break
+          case NotificationType.DealProposed:
+          case NotificationType.FundingWindowAlert:
+          case NotificationType.VestingCliffBegun:
+            if (pool.deal?.holderAlreadyDeposited) {
+              setActiveTab(PoolTab.DealInformation)
+              setActiveAction(tabsActions[0])
+            }
+            break
+          case NotificationType.FundingWindowEnded:
+            setActiveTab(PoolTab.PoolInformation)
+            userRole === UserRole.Sponsor
+              ? setActiveAction(PoolAction.CreateDeal)
+              : setActiveAction(PoolAction.Withdraw)
+            break
+          case NotificationType.DealTokensVestingBegun:
+          case NotificationType.AllDealTokensVested:
+          case NotificationType.SponsorFeesReady:
+            setActiveTab(PoolTab.Vest)
+            setActiveAction(PoolAction.Vest)
+            break
+          case NotificationType.WithdrawUnredeemed:
+            if (pool.deal?.unredeemed.raw.gt(0) && userRole === UserRole.Holder) {
+              setActiveTab(PoolTab.WithdrawUnredeemed)
+              setActiveAction(PoolAction.WithdrawUnredeemed)
+            } else {
+              setActiveTab(tabs[tabs.length - 1])
+            }
+            break
+          default:
+            setActiveTab(tabs[tabs.length - 1])
+        }
+      } else {
+        setActiveTab(tabs[tabs.length - 1])
+        setActiveAction(tabsActions[0])
+      }
+
+      return tabs
+    }
+
+    //SponsorDeal
+    tabs = [PoolTab.PoolInformation]
 
     if (history.includes(PoolStatus.DealPresented)) {
       // only show dealInformation if the deal was funded by the holder
@@ -501,37 +661,49 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
     return () => clearInterval(interval)
   }, [])
 
+  const isUpfrontDeal = pool && !!pool.upfrontDeal
+
   return useMemo(() => {
     return {
-      [PoolTimelineState.poolCreation]: {
-        isDefined: true,
+      [PoolTimelineState.PoolCreation]: {
+        isDefined: !isUpfrontDeal,
         active: !pool,
         isDone: !!pool,
         withDeadlineBar: false,
         value: pool ? formatDate(pool.start, DATE_DETAILED) : '--',
       },
-      [PoolTimelineState.investmentDeadline]: {
-        isDefined: true,
-        active: pool ? isBefore(now, pool.purchaseExpiry) : false,
-        isDone: pool ? isAfter(now, pool.purchaseExpiry) : false,
+      [PoolTimelineState.InvestmentDeadline]: {
+        isDefined: !isUpfrontDeal,
+        active: pool && pool.purchaseExpiry ? isBefore(now, pool.purchaseExpiry) : false,
+        isDone: pool && pool.purchaseExpiry ? isAfter(now, pool.purchaseExpiry) : false,
         withDeadlineBar: true,
-        deadline: pool
-          ? isBefore(now, pool.purchaseExpiry)
-            ? getFormattedDurationFromDateToNow(pool.purchaseExpiry)
-            : `Ended ${formatDate(pool.purchaseExpiry, DATE_DETAILED)}`
-          : '',
-        deadlineProgress: pool ? calculateDeadlineProgress(pool.purchaseExpiry, pool.start) : '0',
-        value: pool ? `Ends ${formatDate(pool.purchaseExpiry, DATE_DETAILED)}` : '--',
+        deadline:
+          pool && pool.purchaseExpiry
+            ? isBefore(now, pool.purchaseExpiry)
+              ? getFormattedDurationFromDateToNow(pool.purchaseExpiry)
+              : `Ended ${formatDate(pool.purchaseExpiry, DATE_DETAILED)}`
+            : '',
+        deadlineProgress:
+          pool && pool.purchaseExpiry
+            ? calculateDeadlineProgress(pool.purchaseExpiry, pool.start)
+            : '0',
+        value:
+          pool && pool.purchaseExpiry
+            ? `Ends ${formatDate(pool.purchaseExpiry, DATE_DETAILED)}`
+            : '--',
       },
-      [PoolTimelineState.dealCreation]: {
-        isDefined: true,
+      [PoolTimelineState.DealCreation]: {
+        isDefined: !isUpfrontDeal,
         withDeadlineBar: false,
-        active: pool ? isAfter(now, pool.purchaseExpiry) && !pool.dealAddress : false,
+        active:
+          pool && pool.purchaseExpiry
+            ? isAfter(now, pool.purchaseExpiry) && !pool.dealAddress
+            : false,
         isDone: pool ? !!pool.dealAddress : false,
         value: pool?.deal ? formatDate(pool.deal.createdAt, DATE_DETAILED) : '--',
       },
-      [PoolTimelineState.dealDeadline]: {
-        isDefined: true,
+      [PoolTimelineState.DealDeadline]: {
+        isDefined: !isUpfrontDeal,
         withDeadlineBar: true,
         active:
           !!pool?.deal && isAfter(now, pool.deal.createdAt) && !pool.deal?.holderAlreadyDeposited,
@@ -554,8 +726,8 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
             : ''
           : '--',
       },
-      [PoolTimelineState.proRataRedemption]: {
-        isDefined: true,
+      [PoolTimelineState.Round1]: {
+        isDefined: !isUpfrontDeal,
         withDeadlineBar: true,
         active:
           !!pool?.deal?.holderAlreadyDeposited &&
@@ -592,8 +764,8 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
             ? `Ends ${formatDate(pool.deal.redemption.proRataRedemptionEnd, DATE_DETAILED)}`
             : '--',
       },
-      [PoolTimelineState.openRedemption]: {
-        isDefined: !!pool?.deal?.hasDealOpenPeriod,
+      [PoolTimelineState.Round2]: {
+        isDefined: !!pool?.deal?.hasDealOpenPeriod && !isUpfrontDeal,
         withDeadlineBar: true,
         active:
           !!pool?.deal?.holderAlreadyDeposited &&
@@ -633,7 +805,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
             ? `Ends ${formatDate(pool.deal.redemption.openRedemptionEnd, DATE_DETAILED)}`
             : '--',
       },
-      [PoolTimelineState.vestingCliff]: {
+      [PoolTimelineState.VestingCliff]: {
         active:
           !!pool?.deal?.redemption &&
           isWithinInterval(now, {
@@ -642,7 +814,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
           }),
         withDeadlineBar: true,
         isDone: !!pool?.deal?.redemption && isAfter(now, pool.deal.vestingPeriod.cliff.end as Date),
-        isDefined: !!pool?.deal && pool?.deal.vestingPeriod.cliff.ms > 0,
+        isDefined: !!pool?.deal && pool?.deal.vestingPeriod.cliff.ms > 0 && !isUpfrontDeal,
         deadline:
           pool?.deal && pool?.deal?.redemption?.end && pool?.deal?.vestingPeriod.cliff.end
             ? isWithinInterval(now, {
@@ -670,7 +842,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
               )}`
             : '--',
       },
-      [PoolTimelineState.vestingPeriod]: {
+      [PoolTimelineState.VestingPeriod]: {
         active:
           !!pool?.deal?.redemption &&
           !!pool.deal.vestingPeriod.cliff.end &&
@@ -678,7 +850,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
         withDeadlineBar: true,
         isDone:
           !!pool?.deal?.redemption && isAfter(now, pool.deal.vestingPeriod.vesting.end as Date),
-        isDefined: true,
+        isDefined: !isUpfrontDeal,
         deadline:
           pool?.deal && pool?.deal?.redemption && pool.deal.vestingPeriod
             ? isAfter(now, pool.deal.vestingPeriod.cliff.end as Date) &&
@@ -715,8 +887,138 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
             : '--'
           : '--',
       },
+      //UpfrontDeal
+      [PoolTimelineState.UpfrontDealCreation]: {
+        isDefined: isUpfrontDeal,
+        active: !pool?.upfrontDeal,
+        isDone: !!pool?.upfrontDeal?.dealStart,
+        withDeadlineBar: false,
+        value: pool ? formatDate(pool.start, DATE_DETAILED) : '--',
+      },
+      [PoolTimelineState.UpfrontDealRedemption]: {
+        isDefined: isUpfrontDeal,
+        active: pool && pool.purchaseExpiry ? isBefore(now, pool.purchaseExpiry) : false,
+        isDone: pool && pool.purchaseExpiry ? isAfter(now, pool.purchaseExpiry) : false,
+        withDeadlineBar: true,
+        deadline:
+          pool && pool.purchaseExpiry
+            ? isBefore(now, pool.purchaseExpiry)
+              ? getFormattedDurationFromDateToNow(pool.purchaseExpiry)
+              : `Ended ${formatDate(pool.purchaseExpiry, DATE_DETAILED)}`
+            : '',
+        deadlineProgress:
+          pool && pool.purchaseExpiry
+            ? calculateDeadlineProgress(pool.purchaseExpiry, pool.start)
+            : '0',
+        value:
+          pool && pool.purchaseExpiry
+            ? `Ends ${formatDate(pool.purchaseExpiry, DATE_DETAILED)}`
+            : '--',
+      },
+      [PoolTimelineState.UpfrontDealVestingCliff]: {
+        active:
+          !!pool?.upfrontDeal &&
+          !!pool.upfrontDeal.vestingPeriod.start &&
+          !!pool.upfrontDeal.vestingPeriod.cliff.end &&
+          isWithinInterval(now, {
+            start: pool.upfrontDeal.vestingPeriod.start,
+            end: pool.upfrontDeal.vestingPeriod.cliff.end,
+          }),
+        withDeadlineBar: true,
+        isDone:
+          !!pool?.upfrontDeal?.vestingPeriod.cliff.end &&
+          isAfter(now, pool.upfrontDeal.vestingPeriod.cliff.end),
+        isDefined:
+          !!pool?.upfrontDeal && pool.upfrontDeal.vestingPeriod.cliff.ms > 0 && isUpfrontDeal,
+        deadline:
+          pool?.upfrontDeal &&
+          pool?.upfrontDeal?.vestingPeriod?.start &&
+          pool?.upfrontDeal?.vestingPeriod.cliff.end
+            ? isWithinInterval(now, {
+                start: pool.upfrontDeal.vestingPeriod?.start,
+                end: pool.upfrontDeal.vestingPeriod.cliff.end,
+              })
+              ? getFormattedDurationFromDateToNow(pool.upfrontDeal.vestingPeriod.cliff.end)
+              : isAfter(now, pool.upfrontDeal.vestingPeriod.cliff.end)
+              ? `Ended ${formatDate(pool.upfrontDeal.vestingPeriod.cliff.end, DATE_DETAILED)}`
+              : ''
+            : '',
+
+        deadlineProgress:
+          !!pool?.upfrontDeal?.vestingPeriod.cliff.ms &&
+          !!pool?.purchaseExpiry &&
+          isAfter(now, pool.purchaseExpiry)
+            ? calculateDeadlineProgress(
+                addMilliseconds(pool.purchaseExpiry, pool.upfrontDeal.vestingPeriod.cliff.ms),
+                pool.purchaseExpiry,
+              )
+            : '0',
+        value:
+          !!pool?.upfrontDeal?.vestingPeriod.cliff.ms &&
+          !!pool?.purchaseExpiry &&
+          isAfter(now, pool.purchaseExpiry)
+            ? `Ends ${formatDate(
+                addMilliseconds(pool.purchaseExpiry, pool.upfrontDeal.vestingPeriod.cliff.ms),
+                DATE_DETAILED,
+              )}`
+            : '--',
+      },
+      [PoolTimelineState.UpfrontDealVestingPeriod]: {
+        active:
+          (!!pool?.upfrontDeal?.vestingPeriod.cliff.end &&
+            isAfter(now, pool.upfrontDeal.vestingPeriod.cliff.end)) ||
+          (!!pool?.purchaseExpiry &&
+            !pool?.upfrontDeal?.vestingPeriod.cliff.end &&
+            isAfter(now, pool.purchaseExpiry)),
+        withDeadlineBar: true,
+        isDone:
+          !!pool?.upfrontDeal?.vestingPeriod.vesting.end &&
+          isAfter(now, pool.upfrontDeal.vestingPeriod.vesting.end),
+        isDefined: isUpfrontDeal,
+        deadline:
+          !!pool?.upfrontDeal?.vestingPeriod.cliff.end && pool.upfrontDeal.vestingPeriod.vesting.end
+            ? isAfter(now, pool.upfrontDeal.vestingPeriod.cliff.end) &&
+              isBefore(now, pool.upfrontDeal.vestingPeriod.vesting.end)
+              ? getFormattedDurationFromDateToNow(pool.upfrontDeal.vestingPeriod.vesting.end)
+              : isAfter(now, pool.upfrontDeal.vestingPeriod.vesting.end)
+              ? `Ended ${formatDate(pool.upfrontDeal.vestingPeriod.vesting.end, DATE_DETAILED)}`
+              : ''
+            : '',
+        deadlineProgress:
+          !!pool?.upfrontDeal?.vestingPeriod.cliff.end &&
+          pool.upfrontDeal.vestingPeriod.vesting.end &&
+          !!pool?.purchaseExpiry
+            ? isAfter(now, pool.upfrontDeal.vestingPeriod.cliff.end) &&
+              isBefore(now, pool.upfrontDeal.vestingPeriod.vesting.end)
+              ? calculateDeadlineProgress(
+                  addMilliseconds(
+                    pool.purchaseExpiry,
+                    pool.upfrontDeal.vestingPeriod.cliff.ms +
+                      pool.upfrontDeal.vestingPeriod.vesting.ms,
+                  ),
+                  addMilliseconds(pool?.purchaseExpiry, pool.upfrontDeal.vestingPeriod.cliff.ms),
+                )
+              : '0'
+            : '',
+        value:
+          !!pool?.upfrontDeal?.vestingPeriod.cliff.end &&
+          pool.upfrontDeal.vestingPeriod.vesting.end &&
+          !!pool?.purchaseExpiry
+            ? isAfter(now, pool.upfrontDeal.vestingPeriod.cliff.end) &&
+              isBefore(now, pool.upfrontDeal.vestingPeriod.vesting.end)
+              ? `Ends ${formatDate(
+                  addMilliseconds(
+                    pool.purchaseExpiry,
+                    pool.upfrontDeal.vestingPeriod.cliff.ms +
+                      pool.upfrontDeal.vestingPeriod.vesting.ms,
+                  ),
+                  DATE_DETAILED,
+                )}`
+              : '--'
+            : '--',
+      },
     }
-  }, [pool, now])
+  }, [pool, now, isUpfrontDeal])
 }
 
 type InitialData = {

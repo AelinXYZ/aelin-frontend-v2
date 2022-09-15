@@ -8,7 +8,7 @@ import { Value } from '@/src/components/pools/common/InfoCell'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
 
 type DynamicDeadlineProps = {
-  deadline: Date
+  deadline: Date | null
   hideWhenDeadlineIsReached?: boolean
   start: Date
   width?: string
@@ -24,23 +24,25 @@ export const DynamicDeadline: React.FC<DynamicDeadlineProps> = ({
   const now = new Date()
 
   const [progress, setProgress] = useState(() =>
-    isAfter(now, start) ? calculateDeadlineProgress(deadline, start) : '100',
+    !deadline ? '0' : isAfter(now, start) ? calculateDeadlineProgress(deadline, start) : '100',
   )
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date()
+    if (deadline) {
+      const interval = setInterval(() => {
+        const now = new Date()
 
-      const isAlreadyStarted = isAfter(now, start)
+        const isAlreadyStarted = isAfter(now, start)
 
-      if (!isAlreadyStarted) return
+        if (!isAlreadyStarted) return
 
-      const p = calculateDeadlineProgress(deadline, start)
+        const p = calculateDeadlineProgress(deadline, start)
 
-      setProgress(p)
-    }, ms('5s'))
+        setProgress(p)
+      }, ms('5s'))
 
-    return () => clearInterval(interval)
+      return () => clearInterval(interval)
+    }
   }, [deadline, start])
 
   const isEnded = Number(progress) === 0
@@ -49,7 +51,7 @@ export const DynamicDeadline: React.FC<DynamicDeadlineProps> = ({
 
   return (
     <Deadline progress={progress} width={width}>
-      <Value>{!isEnded ? `Ends ${children}` : 'Ended'}</Value>
+      <Value>{deadline ? (!isEnded ? `Ends ${children}` : 'Ended') : 'Not started yet'}</Value>
     </Deadline>
   )
 }
