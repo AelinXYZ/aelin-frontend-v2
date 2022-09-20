@@ -40,7 +40,9 @@ export const getFormattedDurationFromDateToNow = (date: Date | number) => {
       end: new Date(),
     })
 
-    return `~${duration.days}d ${duration.hours}h ${duration.minutes}m`
+    return duration.months
+      ? `~${duration.months}m ${duration.days}d ${duration.hours}h`
+      : `~${duration.days}d ${duration.hours}h ${duration.minutes}m`
   }
 
   return ''
