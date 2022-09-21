@@ -3,15 +3,11 @@ import styled from 'styled-components'
 import { TokenIcon } from '../common/TokenIcon'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
-import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
-import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLoading'
-import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { parseDealName } from '@/src/utils/parsePoolName'
-import { Funding } from '@/types/aelinPool'
 
 const Column = styled.div`
   display: flex;
@@ -19,40 +15,6 @@ const Column = styled.div`
   min-width: 0;
   row-gap: 20px;
 `
-
-const StyledValue = styled(Value)`
-  gap: 5px;
-`
-
-const Warning = styled(Value)`
-  color: ${({ theme }) => theme.colors.error};
-`
-
-const UserStatsInfoCell = genericSuspense(
-  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
-    const userStats = useAelinDealUserStats(pool)
-    return (
-      <InfoCell title={title} tooltip={tooltip}>
-        <Value>Remaining pro-rata allocation: {userStats.userMaxAllocation.formatted}</Value>
-        <Value>Withdrawn: {userStats.userTotalWithdrawn.formatted}</Value>
-        <Value>Accepted: {userStats.userAmountAccepted.formatted}</Value>
-      </InfoCell>
-    )
-  },
-  () => <InlineLoading />,
-)
-
-const DealParticipantsInfoCell = genericSuspense(
-  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
-    return (
-      <InfoCell title={title} tooltip={tooltip}>
-        <Value>Accepted: {pool.deal?.totalUsersAccepted || 0}</Value>
-        <Value>Rejected: {pool.deal?.totalUsersRejected || 0}</Value>
-      </InfoCell>
-    )
-  },
-  () => <InlineLoading />,
-)
 
 export const UpfrontDealInformation: React.FC<{
   pool: ParsedAelinPool
@@ -95,8 +57,8 @@ export const UpfrontDealInformation: React.FC<{
         </InfoCell>
         <InfoCell title="Deal stats" tooltip="TBD">
           <Value>Total redeemed: {pool.redeem.formatted}</Value>
-          <Value>Total invested: TBD</Value>
-          <Value>Remaining deal tokens: TBD</Value>
+          <Value>Total invested: {pool.funded.formatted} </Value>
+          <Value>Remaining deal tokens: {pool.upfrontDeal?.unredeemed.formatted}</Value>
         </InfoCell>
         <InfoCell title="Deal minimum" tooltip="TBD">
           <Value>{`${upfrontDeal.purchaseRaiseMinimum.formatted} ${pool.investmentTokenSymbol}`}</Value>
@@ -126,7 +88,7 @@ export const UpfrontDealInformation: React.FC<{
           <Value>{`Linear period: ${upfrontDeal.vestingPeriod.vesting.formatted}`}</Value>
         </InfoCell>
         <InfoCell title="Deal redemption deadline" tooltip="TBD">
-          {upfrontDeal?.dealStart && (
+          {upfrontDeal?.dealStart ? (
             <DynamicDeadline
               deadline={upfrontDeal.vestingPeriod.start}
               hideWhenDeadlineIsReached={true}
@@ -137,6 +99,8 @@ export const UpfrontDealInformation: React.FC<{
                 ? formatDate(upfrontDeal.vestingPeriod.start, DATE_DETAILED)
                 : 'N/A'}
             </DynamicDeadline>
+          ) : (
+            'Deal has not started yet'
           )}
         </InfoCell>
         <InfoCell

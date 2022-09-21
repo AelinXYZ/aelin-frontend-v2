@@ -3,7 +3,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import ms from 'ms'
 
 import useAelinUpfrontDealCall from '../contracts/useAelinUpfrontDealCall'
-import AelinDealABI from '@/src/abis/AelinDeal.json'
+import AelinUpfrontDealABI from '@/src/abis/AelinUpfrontDeal.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
@@ -17,9 +17,13 @@ export const fetchAmountToVest = (
 ) => {
   const provider = new JsonRpcProvider(getNetworkConfig(chainId).rpcUrl)
 
-  return contractCall(dealAddress as string, AelinDealABI, provider, 'claimableTokens', [
-    userAddress,
-  ]).then(([amountToVest]) => amountToVest)
+  return contractCall(
+    dealAddress as string,
+    AelinUpfrontDealABI,
+    provider,
+    'claimableUnderlyingTokens',
+    [userAddress],
+  )
 }
 
 export default function useAelinAmountToVestUpfrontDeal(

@@ -34,6 +34,7 @@ export async function fetcherDeposits(variables: DepositsQueryVariables) {
             const amountDeposited = formatToken(
               deposit.amountDeposited,
               deposit.pool.purchaseTokenDecimals || 0,
+              6,
             )
 
             return {

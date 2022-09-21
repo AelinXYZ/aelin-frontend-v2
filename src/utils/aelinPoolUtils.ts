@@ -512,7 +512,7 @@ export function parseUpfrontDeal(pool: PoolCreated) {
       end: vestingEnds,
     },
     unredeemed: getDetailedNumber(
-      ZERO_BN.toString(), // upfrontDeal.totalAmountUnredeemed || ZERO_BN,
+      upfrontDeal.totalAmountUnredeemed || ZERO_BN,
       upfrontDeal.underlyingDealTokenDecimals,
     ),
     dealStart,

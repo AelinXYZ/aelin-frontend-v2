@@ -32,7 +32,10 @@ export async function fetcherVests(variables: VestsQueryVariables) {
           return res.vests.map((vest) => {
             const amountVested = formatToken(
               vest.amountVested,
-              vest.pool.deal?.underlyingDealTokenDecimals || 0,
+              vest.pool.deal?.underlyingDealTokenDecimals ||
+                vest.pool.upfrontDeal?.underlyingDealTokenDecimals ||
+                0,
+              10,
             )
 
             return {
@@ -40,7 +43,10 @@ export async function fetcherVests(variables: VestsQueryVariables) {
               network: chainId,
               poolName: parsePoolName(vest.poolName),
               timestamp: new Date(vest.timestamp * 1000),
-              amountVested: `${amountVested} ${vest.pool.deal?.underlyingDealTokenSymbol}`,
+              amountVested: `${amountVested} ${
+                vest.pool.deal?.underlyingDealTokenSymbol ||
+                vest.pool.upfrontDeal?.underlyingDealTokenSymbol
+              }`,
             }
           })
         })

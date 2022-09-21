@@ -146,7 +146,6 @@ gql`
     underlyingDealTokenTotal
     vestingPeriod
     holder
-    underlyingPerDealExchangeRate
     maxDealTotalSupply
     purchaseTokenPerDealToken
     purchaseRaiseMinimum
@@ -156,5 +155,7 @@ gql`
     holderClaim
     sponsorClaim
     totalAmountUnredeemed
+    totalUsersAccepted
+    totalRedeemed
   }
 `

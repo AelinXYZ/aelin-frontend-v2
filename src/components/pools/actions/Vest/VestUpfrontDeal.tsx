@@ -60,7 +60,7 @@ function VestUpfrontDeal({ pool }: Props) {
     withinInterval,
   )
 
-  const [poolShares, refetchPoolShares] = useAelinPoolSharesPerUser(
+  const [poolShares] = useAelinPoolSharesPerUser(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
     pool.upfrontDeal?.underlyingToken.decimals || 18,
     pool.chainId,
@@ -78,10 +78,11 @@ function VestUpfrontDeal({ pool }: Props) {
     if (!pool.upfrontDeal) return false
 
     const sponsorClaim = !!pool.upfrontDeal.sponsorClaim
+    const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
     const holderClaim = !!pool.upfrontDeal.holderClaim
 
     if (userRoles.includes(UserRole.Holder) && !holderClaim) return true
-    if (userRoles.includes(UserRole.Sponsor) && !sponsorClaim) return true
+    if (userRoles.includes(UserRole.Sponsor) && hasSponsorFees && !sponsorClaim) return true
     if (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) return true
 
     return false
@@ -109,7 +110,7 @@ function VestUpfrontDeal({ pool }: Props) {
     })
   }
 
-  if (data?.vestingDeal === null) {
+  if (data?.vestingDeal === null && !hasToClaimTokens) {
     return <NothingToClaim />
   }
 

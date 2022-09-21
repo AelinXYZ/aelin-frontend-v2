@@ -39,7 +39,9 @@ export async function fetcherDealsSponsored(variables: DealSponsoredsQueryVariab
 
             const totalAccepted = formatToken(
               dealSponsored.totalAccepted,
-              dealSponsored.pool.deal?.underlyingDealTokenDecimals || 0,
+              dealSponsored.pool.deal?.underlyingDealTokenDecimals ||
+                dealSponsored.pool.upfrontDeal?.underlyingDealTokenDecimals ||
+                0,
             )
 
             const amountEarned = formatToken(
@@ -56,7 +58,7 @@ export async function fetcherDealsSponsored(variables: DealSponsoredsQueryVariab
               timestamp: new Date(dealSponsored.timestamp * 1000),
               totalInvested: `${totalInvested} ${dealSponsored.pool.purchaseTokenSymbol}`,
               amountEarned: `${amountEarned} ${dealSponsored.pool.purchaseTokenSymbol} (${sponsorFee}%)`,
-              totalAccepted: `${totalAccepted} ${dealSponsored.pool.deal?.underlyingDealTokenSymbol}`,
+              totalAccepted: `${totalAccepted} ${dealSponsored.pool.upfrontDeal?.underlyingDealTokenSymbol}`,
             }
           })
         })

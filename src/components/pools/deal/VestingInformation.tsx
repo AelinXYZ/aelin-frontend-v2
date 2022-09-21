@@ -15,7 +15,21 @@ const Column = styled.div`
   row-gap: 20px;
 `
 
-const SponsorDealVestingInfo = ({ pool }: { pool: ParsedAelinPool }) => {
+export const VestingInformation: React.FC<{
+  pool: ParsedAelinPool
+}> = ({ pool }) => {
+  const { deal, upfrontDeal } = pool
+
+  return !deal && !upfrontDeal ? (
+    <div>No Deal presented yet.</div>
+  ) : upfrontDeal ? (
+    <UpfrontDealVestingInfo pool={pool} />
+  ) : (
+    <SponsorDealVestingInfo pool={pool} />
+  )
+}
+
+function SponsorDealVestingInfo({ pool }: { pool: ParsedAelinPool }) {
   const { deal } = pool
   return !deal ? (
     <div>No Deal presented yet.</div>
@@ -91,7 +105,7 @@ const SponsorDealVestingInfo = ({ pool }: { pool: ParsedAelinPool }) => {
   )
 }
 
-const UpfrontDealVestingInfo = ({ pool }: { pool: ParsedAelinPool }) => {
+function UpfrontDealVestingInfo({ pool }: { pool: ParsedAelinPool }) {
   const { upfrontDeal } = pool
   return !upfrontDeal ? (
     <div>No Deal presented yet.</div>
@@ -164,20 +178,6 @@ const UpfrontDealVestingInfo = ({ pool }: { pool: ParsedAelinPool }) => {
         ></InfoCell>
       </Column>
     </>
-  )
-}
-
-export const VestingInformation: React.FC<{
-  pool: ParsedAelinPool
-}> = ({ pool }) => {
-  const { deal, upfrontDeal } = pool
-
-  return !deal && !upfrontDeal ? (
-    <div>No Deal presented yet.</div>
-  ) : upfrontDeal ? (
-    <UpfrontDealVestingInfo pool={pool} />
-  ) : (
-    <SponsorDealVestingInfo pool={pool} />
   )
 }
 

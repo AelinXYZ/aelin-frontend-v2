@@ -33,6 +33,7 @@ import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getPoolType } from '@/src/utils/aelinPoolUtils'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { PoolAction, PoolTab } from '@/types/aelinPool'
@@ -70,65 +71,6 @@ const CardWithTitle = styled(BaseCardWithTitle)`
 type Props = {
   chainId: ChainsValues
   poolAddress: string
-}
-
-const SponsorDealActionTabs = ({ chainId, poolAddress }: Props) => {
-  const {
-    query: { notification },
-  } = useRouter()
-
-  const { derivedStatus, funding, pool, tabs, timeline } = useAelinPoolStatus(
-    chainId,
-    poolAddress as string,
-    {
-      tabs: notification as NotificationType,
-    },
-  )
-  return (
-    <>
-      {!tabs.actionTabs.states.length && <NoActions pool={pool} status={derivedStatus} />}
-      {tabs.actionTabs.active === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
-      {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
-      {tabs.actionTabs.active === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
-      {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
-      {tabs.actionTabs.active === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
-      {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
-      {tabs.actionTabs.active === PoolAction.Vest && <Vest pool={pool} />}
-      {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
-        <WithdrawUnredeemed pool={pool} />
-      )}
-    </>
-  )
-}
-
-const UpfrontDealActionTabs = ({ chainId, poolAddress }: Props) => {
-  const {
-    query: { notification },
-  } = useRouter()
-
-  const { derivedStatus, funding, pool, tabs, userRole } = useAelinPoolStatus(
-    chainId,
-    poolAddress as string,
-    {
-      tabs: notification as NotificationType,
-    },
-  )
-  return (
-    <>
-      {!tabs.actionTabs.states.length && <NoActions pool={pool} status={derivedStatus} />}
-      {tabs.actionTabs.active === PoolAction.DealInvest && (
-        <Invest pool={pool} poolHelpers={funding} />
-      )}
-      {tabs.actionTabs.active === PoolAction.AwaitingForDeal && (
-        <WaitingForDeal isUpfrontDeal={!!pool.upfrontDeal} />
-      )}
-      {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
-      {tabs.actionTabs.active === PoolAction.Vest && <VestUpfrontDeal pool={pool} />}
-      {tabs.actionTabs.active === PoolAction.Refund && (
-        <ClaimUpfrontDealTokens pool={pool} refund={true} />
-      )}
-    </>
-  )
 }
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
@@ -195,17 +137,88 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 minHeight={175}
                 networkToCheck={pool.chainId}
               >
-                {pool.upfrontDeal ? (
-                  <UpfrontDealActionTabs chainId={chainId} poolAddress={poolAddress} />
-                ) : (
-                  <SponsorDealActionTabs chainId={chainId} poolAddress={poolAddress} />
-                )}
+                <DealActionTabs isUpfrontDeal={!!pool.upfrontDeal} poolAddress={poolAddress} />
               </RequiredConnection>
             </NftSelectionProvider>
           </ActionTabs>
           {pool.hasNftList && <NftCollectionsTable pool={pool} />}
         </MainGrid>
       </RightTimelineLayout>
+    </>
+  )
+}
+
+function DealActionTabs({
+  isUpfrontDeal,
+  poolAddress,
+}: {
+  poolAddress: string
+  isUpfrontDeal: boolean
+}) {
+  const { appChainId: chainId } = useWeb3Connection()
+  return isUpfrontDeal ? (
+    <UpfrontDealActionTabs chainId={chainId} poolAddress={poolAddress} />
+  ) : (
+    <SponsorDealActionTabs chainId={chainId} poolAddress={poolAddress} />
+  )
+}
+
+function SponsorDealActionTabs({ chainId, poolAddress }: Props) {
+  const {
+    query: { notification },
+  } = useRouter()
+
+  const { derivedStatus, funding, pool, tabs } = useAelinPoolStatus(
+    chainId,
+    poolAddress as string,
+    {
+      tabs: notification as NotificationType,
+    },
+  )
+  return (
+    <>
+      {!tabs.actionTabs.states.length && <NoActions pool={pool} status={derivedStatus} />}
+      {tabs.actionTabs.active === PoolAction.Invest && <Invest pool={pool} poolHelpers={funding} />}
+      {tabs.actionTabs.active === PoolAction.AwaitingForDeal && <WaitingForDeal />}
+      {tabs.actionTabs.active === PoolAction.Withdraw && <WithdrawalFromPool pool={pool} />}
+      {tabs.actionTabs.active === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
+      {tabs.actionTabs.active === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
+      {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
+      {tabs.actionTabs.active === PoolAction.Vest && <Vest pool={pool} />}
+      {tabs.actionTabs.active === PoolAction.WithdrawUnredeemed && (
+        <WithdrawUnredeemed pool={pool} />
+      )}
+    </>
+  )
+}
+
+function UpfrontDealActionTabs({ chainId, poolAddress }: Props) {
+  const {
+    query: { notification },
+  } = useRouter()
+
+  const { derivedStatus, funding, pool, tabs } = useAelinPoolStatus(
+    chainId,
+    poolAddress as string,
+    {
+      tabs: notification as NotificationType,
+    },
+  )
+
+  return (
+    <>
+      {!tabs.actionTabs.states.length && <NoActions pool={pool} status={derivedStatus} />}
+      {tabs.actionTabs.active === PoolAction.DealInvest && (
+        <Invest pool={pool} poolHelpers={funding} />
+      )}
+      {tabs.actionTabs.active === PoolAction.AwaitingForDeal && (
+        <WaitingForDeal isUpfrontDeal={!!pool.upfrontDeal} />
+      )}
+      {tabs.actionTabs.active === PoolAction.FundDeal && <FundDeal pool={pool} />}
+      {tabs.actionTabs.active === PoolAction.Vest && <VestUpfrontDeal pool={pool} />}
+      {tabs.actionTabs.active === PoolAction.Refund && (
+        <ClaimUpfrontDealTokens pool={pool} refund={true} />
+      )}
     </>
   )
 }

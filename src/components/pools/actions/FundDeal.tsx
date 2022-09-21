@@ -69,15 +69,15 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
           <Contents>
             Deal amount: <TextPrimary>{amountToFund}</TextPrimary>
           </Contents>
-          {pool.upfrontDeal ? (
-            <HolderDepositUpfrontDeal pool={pool} />
-          ) : (
-            <HolderDeposit pool={pool} />
-          )}
+          <Deposit pool={pool} />
         </>
       )}
     </Wrapper>
   )
+}
+
+function Deposit({ pool }: { pool: ParsedAelinPool }) {
+  return pool.upfrontDeal ? <HolderDepositUpfrontDeal pool={pool} /> : <HolderDeposit pool={pool} />
 }
 
 export default genericSuspense(FundDeal)
