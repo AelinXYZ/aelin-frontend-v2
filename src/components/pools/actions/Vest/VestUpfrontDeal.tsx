@@ -4,7 +4,7 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import ms from 'ms'
 
-import ClaimUpfrontDealTokens from './ClaimUpfrontDealTokens'
+import HasTokensToClaim from './HasTokensToClaim'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import NothingToClaim from '@/src/components/pools/actions/Vest/NothingToClaim'
 import VestingCliff from '@/src/components/pools/actions/Vest/VestingCliff'
@@ -79,9 +79,7 @@ function VestUpfrontDeal({ pool }: Props) {
 
     const sponsorClaim = !!pool.upfrontDeal.sponsorClaim
     const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
-    const holderClaim = !!pool.upfrontDeal.holderClaim
 
-    if (userRoles.includes(UserRole.Holder) && !holderClaim) return true
     if (userRoles.includes(UserRole.Sponsor) && hasSponsorFees && !sponsorClaim) return true
     if (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) return true
 
@@ -116,7 +114,7 @@ function VestUpfrontDeal({ pool }: Props) {
 
   return (
     <>
-      {hasToClaimTokens && <ClaimUpfrontDealTokens pool={pool} />}
+      {hasToClaimTokens && <HasTokensToClaim />}
       {!isVestingCliffEnded && (
         <VestingCliff
           redemptionEnds={pool.upfrontDeal?.vestingPeriod.start}

@@ -134,6 +134,13 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
 
   const userRoles = useAelinUserRoles(pool)
 
+  const [poolShares] = useAelinPoolSharesPerUser(
+    pool.upfrontDeal?.address || ZERO_ADDRESS,
+    pool.upfrontDeal?.underlyingToken.decimals || 18,
+    pool.chainId,
+    true,
+  )
+
   const sponsorClaim = !!upfrontDeal?.sponsorClaim
   const holderClaim = !!upfrontDeal?.holderClaim
   const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
@@ -147,36 +154,40 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
         content.push('Some text saying you can get your purchase tokens used as Purchaser')
       }
 
-      if (userRoles.includes(UserRole.Holder)) {
+      if (userRoles.includes(UserRole.Holder) && holderClaim) {
         content.push('Some text saying you can get your deal tokens deposited as Holder')
       }
     } else {
-      if (userRoles.includes(UserRole.Investor)) {
+      if (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) {
         content.push('Some text saying you can get your accepted deal tokens')
       }
 
-      if (userRoles.includes(UserRole.Sponsor)) {
+      if (userRoles.includes(UserRole.Sponsor) && !sponsorClaim && hasSponsorFees) {
         content.push('Some text saying you can get your fees in deal tokens')
       }
 
-      if (userRoles.includes(UserRole.Holder)) {
+      if (userRoles.includes(UserRole.Holder) && !holderClaim) {
         content.push('Some text saying you can get your raise in purchase tokens')
       }
     }
 
-    return content.map((c) => (
-      <>
-        {c}
-        <br />
-      </>
-    ))
-  }, [refund, userRoles])
+    return content.length ? (
+      content.map((c) => (
+        <>
+          {c}
+          <br />
+        </>
+      ))
+    ) : (
+      <>You've claimed all your tokens.</>
+    )
+  }, [refund, userRoles, poolShares, hasSponsorFees, sponsorClaim, holderClaim])
 
   return (
     <Wrapper title={refund ? 'Refund tokens' : 'Claim deal tokens'}>
       <Contents style={{ marginBottom: '18px' }}>{content}</Contents>
       <ButtonsWrapper>
-        {userRoles.includes(UserRole.Investor) && (
+        {userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN) && (
           <PurchaserClaim chainId={pool.chainId} upfrontDeal={upfrontDeal} />
         )}
         {userRoles.includes(UserRole.Sponsor) && hasSponsorFees && !sponsorClaim && !refund && (

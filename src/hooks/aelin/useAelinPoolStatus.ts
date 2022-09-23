@@ -296,7 +296,7 @@ function useUserActions(
       }
 
       if (currentStatus === PoolStatus.Vesting) {
-        return [PoolAction.Vest]
+        return [PoolAction.Claim, PoolAction.Vest]
       }
 
       return []
@@ -443,7 +443,6 @@ function useUserTabs(
   )
   const [activeTab, setActiveTab] = useState<PoolTab>('' as unknown as PoolTab)
   const [activeAction, setActiveAction] = useState<PoolAction>('' as unknown as PoolAction)
-
   // prevent re-assignation
   useEffect(() => {
     setActiveTab(PoolTab.PoolInformation)
