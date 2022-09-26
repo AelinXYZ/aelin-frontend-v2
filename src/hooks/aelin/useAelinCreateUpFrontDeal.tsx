@@ -6,7 +6,7 @@ import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
-import { parseEther, parseUnits } from '@ethersproject/units'
+import { parseUnits } from '@ethersproject/units'
 import { wei } from '@synthetixio/wei'
 
 import usePrevious from '../common/usePrevious'
@@ -415,7 +415,7 @@ const parseValuesToCreateUpFrontDeal = (
   const purchaseTokenPerDealToken = wei(exchangeRates.exchangeRates, investmentToken.decimals)
 
   const purchaseRaiseMinimum = exchangeRates?.minimumAmount
-    ? parseEther(String(exchangeRates.minimumAmount))
+    ? parseUnits(exchangeRates.minimumAmount.toString(), 18)
     : ZERO_BN
 
   const redemptionDeadlineDuration = getDuration(
@@ -489,7 +489,7 @@ const parseValuesToCreateUpFrontDeal = (
       underlyingDealToken: dealToken.address,
       holder: holderAddress,
       sponsor,
-      sponsorFee: sponsorFee ? parseEther(sponsorFee?.toString()) : ZERO_BN,
+      sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), 18) : ZERO_BN,
     },
     {
       underlyingDealTokenTotal: underlyingDealTokenTotal.toBN(),

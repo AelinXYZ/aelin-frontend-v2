@@ -4,7 +4,7 @@ import { useCallback, useEffect, useReducer, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
-import { parseEther, parseUnits } from '@ethersproject/units'
+import { parseUnits } from '@ethersproject/units'
 
 import usePrevious from '../common/usePrevious'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
@@ -230,7 +230,7 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
     symbol: poolSymbol,
     purchaseTokenCap: poolCap ? parseUnits(poolCap.toString(), investmentToken?.decimals) : ZERO_BN,
     purchaseToken: investmentToken.address,
-    sponsorFee: sponsorFee ? parseEther(sponsorFee?.toString()) : ZERO_BN,
+    sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), 18) : ZERO_BN,
     purchaseDuration: investmentDeadLineDuration,
     duration: dealDeadLineDuration,
     allowListAddresses: poolAddresses,
