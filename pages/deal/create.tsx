@@ -158,7 +158,7 @@ const Create: NextPage = () => {
                             handleCreateUpFrontDeal()
                           }}
                         >
-                          Create Pool
+                          Create deal
                         </ButtonGradient>
                       ) : (
                         <ButtonGradient

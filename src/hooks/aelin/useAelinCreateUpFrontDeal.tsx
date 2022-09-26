@@ -17,7 +17,7 @@ import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReduce
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
-import { EXCHANGE_DECIMALS } from '@/src/constants/misc'
+import { BASE_SPONSOR_FEE, EXCHANGE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token } from '@/src/constants/token'
 import {
@@ -36,6 +36,8 @@ import { formatNumber } from '@/src/utils/formatNumber'
 import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
 
 const VestinScheduleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   white-space: nowrap;
 `
 
@@ -489,7 +491,7 @@ const parseValuesToCreateUpFrontDeal = (
       underlyingDealToken: dealToken.address,
       holder: holderAddress,
       sponsor,
-      sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), 18) : ZERO_BN,
+      sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_SPONSOR_FEE) : ZERO_BN,
     },
     {
       underlyingDealTokenTotal: underlyingDealTokenTotal.toBN(),
