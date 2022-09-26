@@ -92,6 +92,9 @@ export const sumDurations = (...durations: Duration[]): Duration => {
   }, {})
 }
 
-export const isEmptyDuration = (duration: Duration | undefined, emptyValue?: undefined) => {
+export const isEmptyDuration = (
+  duration: Duration | undefined,
+  emptyValue?: undefined | number,
+) => {
   return !duration ? true : Object.values(duration).every((v) => v === emptyValue)
 }

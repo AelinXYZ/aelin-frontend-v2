@@ -366,7 +366,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const router = useRouter()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
   const { estimate: createPoolEstimate, execute } = useAelinPoolCreateTransaction(
-    contracts.POOL_CREATE.address[chainId],
+    contracts.REGULAR_POOL_FACTORY.address[chainId],
     'createPool',
   )
 

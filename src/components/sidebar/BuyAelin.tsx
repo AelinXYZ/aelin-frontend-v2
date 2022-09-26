@@ -10,7 +10,7 @@ import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Bu
 import AreaChart from '@/src/components/sidebar/AreaChart'
 import { getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import formatNumber from '@/src/utils/formatNumber'
+import { formatNumber } from '@/src/utils/formatNumber'
 
 const Wrapper = styled.div``
 

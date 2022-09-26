@@ -107,7 +107,9 @@ const Create: NextPage = () => {
           {Object.values(CreatePoolSteps).map((step, index) => {
             const isStepVisible = createPoolState.currentStep === step
 
-            return !isStepVisible ? null : (
+            if (!isStepVisible) return null
+
+            return (
               <WrapperGrid key={index}>
                 <PrevNextWrapper>
                   {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
@@ -165,7 +167,7 @@ const Create: NextPage = () => {
                     </MobileButtonWrapper>
                   </ButtonWrapper>
                   <Summary data={getCreatePoolSummaryData(createPoolState)} />
-                  {createPoolState.poolPrivacy === 'nft' && !!createPoolState.investmentToken ? (
+                  {createPoolState.poolPrivacy === 'nft' && !!createPoolState.investmentToken && (
                     <NftTableWrapper>
                       <NftCollectionsTable
                         light
@@ -175,8 +177,6 @@ const Create: NextPage = () => {
                         }}
                       />
                     </NftTableWrapper>
-                  ) : (
-                    <></>
                   )}
                 </StepContents>
                 <PrevNextWrapper>
