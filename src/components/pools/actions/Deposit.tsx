@@ -7,10 +7,12 @@ import { TextPrimary } from '../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -76,6 +78,11 @@ function Deposit({ pool, poolHelpers }: Props) {
   const { estimate: purchasePoolTokensWithNftEstimate, execute: purchasePoolTokensWithNft } =
     useAelinPoolTransaction(pool.address, 'purchasePoolTokensWithNft')
 
+  const { estimate: acceptDealEstimate, execute: acceptDeal } = useAelinPoolUpfrontDealTransaction(
+    pool.upfrontDeal?.address || ZERO_ADDRESS,
+    'acceptDeal',
+  )
+
   const balances = [
     investmentTokenBalance,
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
@@ -122,7 +129,9 @@ function Deposit({ pool, poolHelpers }: Props) {
 
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = pool.hasNftList
+        const receipt = pool.upfrontDeal
+          ? await acceptDeal([storedSelectedNfts, tokenInputValue], txGasOptions)
+          : pool.hasNftList
           ? await purchasePoolTokensWithNft([storedSelectedNfts, tokenInputValue], txGasOptions)
           : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
@@ -136,7 +145,9 @@ function Deposit({ pool, poolHelpers }: Props) {
       },
       title: `Deposit ${investmentTokenSymbol}`,
       estimate: () =>
-        pool.hasNftList
+        pool.upfrontDeal
+          ? acceptDealEstimate([storedSelectedNfts, tokenInputValue])
+          : pool.hasNftList
           ? purchasePoolTokensWithNftEstimate([storedSelectedNfts, tokenInputValue])
           : purchasePoolTokensEstimate([tokenInputValue]),
     })
@@ -159,6 +170,12 @@ function Deposit({ pool, poolHelpers }: Props) {
 
   return (
     <>
+      {!!pool?.upfrontDeal && (
+        <Contents>
+          By clicking "accept deal" you are agreeing to the negotiated exchange rate. <br />
+          If there is excess interest in the pool, all investors will be deallocated proportionally
+        </Contents>
+      )}
       <StyledTokenInput
         decimals={investmentTokenDecimals}
         error={inputError}
@@ -188,7 +205,7 @@ function Deposit({ pool, poolHelpers }: Props) {
           }
           onClick={depositTokens}
         >
-          Deposit
+          {pool?.upfrontDeal ? 'Accept Deal' : 'Deposit'}
         </Button>
         {pool.hasNftList && <Button onClick={handleOpenNftSelectionModal}>Select NFT</Button>}
       </ButtonsWrapper>

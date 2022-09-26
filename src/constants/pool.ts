@@ -22,6 +22,7 @@ export enum PrivacyType {
 export enum PoolStages {
   Open = 'Open',
   AwaitingDeal = 'AwaitingDeal',
+  AwaitingDealFunds = 'AwaitingDealFunds',
   DealReady = 'DealReady',
   Vesting = 'Vesting',
   Complete = 'Complete',
@@ -30,6 +31,7 @@ export enum PoolStages {
 export const poolStagesText = {
   [PoolStages.Open]: 'Open',
   [PoolStages.AwaitingDeal]: 'Awaiting deal',
+  [PoolStages.AwaitingDealFunds]: 'Awaiting deal funds',
   [PoolStages.DealReady]: 'Deal ready',
   [PoolStages.Vesting]: 'Vesting',
   [PoolStages.Complete]: 'Complete',
