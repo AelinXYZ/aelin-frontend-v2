@@ -5,7 +5,7 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { ChainsValues } from '@/src/constants/chains'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolSharesPerUser from '@/src/hooks/aelin/useAelinPoolSharesPerUser'
 import useAelinUserRoles from '@/src/hooks/aelin/useAelinUserRoles'
@@ -45,7 +45,7 @@ const PurchaserClaim = ({ chainId, upfrontDeal }: PurchaserClaimProps) => {
 
   const [poolShares, refetchPoolShares] = useAelinPoolSharesPerUser(
     upfrontDeal?.address || ZERO_ADDRESS,
-    upfrontDeal?.underlyingToken.decimals || 18,
+    upfrontDeal?.underlyingToken.decimals || BASE_DECIMALS,
     chainId,
     false,
   )
@@ -136,7 +136,7 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
 
   const [poolShares] = useAelinPoolSharesPerUser(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
-    pool.upfrontDeal?.underlyingToken.decimals || 18,
+    pool.upfrontDeal?.underlyingToken.decimals || BASE_DECIMALS,
     pool.chainId,
     true,
   )

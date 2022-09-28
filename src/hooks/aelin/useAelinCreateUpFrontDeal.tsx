@@ -16,7 +16,7 @@ import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresse
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { BASE_SPONSOR_FEE, EXCHANGE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token } from '@/src/constants/token'
@@ -417,7 +417,7 @@ const parseValuesToCreateUpFrontDeal = (
   const purchaseTokenPerDealToken = wei(exchangeRates.exchangeRates, investmentToken.decimals)
 
   const purchaseRaiseMinimum = exchangeRates?.minimumAmount
-    ? parseUnits(exchangeRates.minimumAmount.toString(), 18)
+    ? parseUnits(exchangeRates.minimumAmount.toString(), BASE_DECIMALS)
     : ZERO_BN
 
   const redemptionDeadlineDuration = getDuration(

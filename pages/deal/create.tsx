@@ -30,6 +30,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
+import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreateUpFrontDeal, {
   CreateUpFrontDealSteps,
@@ -197,7 +198,7 @@ const Create: NextPage = () => {
       {showWhiteListModal && (
         <WhiteListModal
           currentList={createDealState.whitelist}
-          investmentTokenDecimals={createDealState.investmentToken?.decimals ?? 18}
+          investmentTokenDecimals={createDealState.investmentToken?.decimals ?? BASE_DECIMALS}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={(
             whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],

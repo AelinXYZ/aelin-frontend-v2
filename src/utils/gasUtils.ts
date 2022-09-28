@@ -4,7 +4,7 @@ import { CurrencyKey } from '@synthetixio/contracts-interface'
 import Wei, { wei } from '@synthetixio/wei'
 
 import formatGwei from './formatGwei'
-import { GWEI_UNIT, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, GWEI_UNIT, ZERO_BN } from '@/src/constants/misc'
 import { Eip1559GasPrice, GasLimitEstimate, Rates } from '@/types/utils'
 
 export const iStandardSynth = (currencyKey: CurrencyKey) => currencyKey.startsWith('s')
@@ -51,7 +51,7 @@ export const getTransactionPrice = (
     .toFixed(4)
 }
 
-export const MIN_GAS_ESTIMATE = wei(21000, 18)
+export const MIN_GAS_ESTIMATE = wei(21000, BASE_DECIMALS)
 
 export const getGasEstimateWithBuffer = (gasEstimate: GasLimitEstimate) => {
   if (!gasEstimate) return undefined

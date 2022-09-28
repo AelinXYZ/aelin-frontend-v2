@@ -12,7 +12,7 @@ import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresse
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
 import {
@@ -230,7 +230,7 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
     symbol: poolSymbol,
     purchaseTokenCap: poolCap ? parseUnits(poolCap.toString(), investmentToken?.decimals) : ZERO_BN,
     purchaseToken: investmentToken.address,
-    sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), 18) : ZERO_BN,
+    sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_DECIMALS) : ZERO_BN,
     purchaseDuration: investmentDeadLineDuration,
     duration: dealDeadLineDuration,
     allowListAddresses: poolAddresses,

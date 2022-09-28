@@ -7,7 +7,7 @@ import { TextPrimary } from '../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ZERO_ADDRESS } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
@@ -164,7 +164,11 @@ function Deposit({ pool, poolHelpers }: Props) {
     if (pool.hasNftList && allocation) {
       return allocation.unlimited
         ? 'Unlimited per NFT'
-        : `${formatToken(allocation.raw, 18, investmentTokenDecimals)} ${investmentTokenSymbol}`
+        : `${formatToken(
+            allocation.raw,
+            BASE_DECIMALS,
+            investmentTokenDecimals,
+          )} ${investmentTokenSymbol}`
     }
   }, [pool.hasNftList, allocation, investmentTokenSymbol, investmentTokenDecimals])
 
