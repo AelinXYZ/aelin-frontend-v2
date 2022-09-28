@@ -478,6 +478,14 @@ export function parseUpfrontDeal(pool: PoolCreated) {
         upfrontDeal.underlyingDealTokenTotalSupply,
         upfrontDeal.underlyingDealTokenDecimals,
       ),
+      remaining: getDetailedNumber(
+        upfrontDeal.remainingDealTokens,
+        upfrontDeal.underlyingDealTokenDecimals,
+      ),
+      totalRedeemed: getDetailedNumber(
+        upfrontDeal.totalRedeemed,
+        upfrontDeal.underlyingDealTokenDecimals,
+      ),
     },
     exchangeRates,
     maxDealTotalSupply: getDetailedNumber(

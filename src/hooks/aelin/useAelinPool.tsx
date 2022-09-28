@@ -74,7 +74,8 @@ export type ParsedAelinPool = {
       decimals: number
       totalSupply: DetailedNumber
       dealAmount: DetailedNumber
-      // investmentAmount: DetailedNumber
+      remaining: DetailedNumber
+      totalRedeemed: DetailedNumber
     }
     exchangeRates: {
       investmentPerDeal: DetailedNumber
