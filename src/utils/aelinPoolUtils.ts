@@ -6,7 +6,7 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { ZERO_BN } from '../constants/misc'
+import { BASE_DECIMALS, ZERO_BN } from '../constants/misc'
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
 import { DealType, PoolCreated } from '@/graphql-schema'
 import {
@@ -87,7 +87,7 @@ export function getPurchaseTokenCap<
 export function getSponsorFee<P extends { sponsorFee: string }>(pool: P) {
   return {
     raw: BigNumber.from(pool.sponsorFee),
-    formatted: `${formatToken(pool.sponsorFee, 18, 2)}%`,
+    formatted: `${formatToken(pool.sponsorFee, BASE_DECIMALS, 2)}%`,
   }
 }
 
@@ -167,7 +167,7 @@ export function dealExchangeRates(
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
-      formatted: formatToken(dealRate.toBN(), 18),
+      formatted: formatToken(dealRate.toBN(), BASE_DECIMALS),
     },
   }
 }
@@ -187,7 +187,7 @@ export function upfrontDealExchangeRates(
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
-      formatted: formatToken(dealRate.toBN(), 18),
+      formatted: formatToken(dealRate.toBN(), BASE_DECIMALS),
     },
   }
 }
@@ -387,12 +387,12 @@ export function parseNftCollectionRules(
   nftCollectionsRules: RawNftCollectionRules[],
 ): ParsedNftCollectionRules[] {
   return nftCollectionsRules.map((collectionRule) => {
-    const purchaseAmountBN = new Wei(collectionRule.purchaseAmount, 18, true)
+    const purchaseAmountBN = new Wei(collectionRule.purchaseAmount, BASE_DECIMALS, true)
     return {
       ...collectionRule,
       purchaseAmount: {
         raw: purchaseAmountBN.toBN(),
-        formatted: formatToken(purchaseAmountBN.toBN(), 18, 3),
+        formatted: formatToken(purchaseAmountBN.toBN(), BASE_DECIMALS, 3),
       },
     }
   })

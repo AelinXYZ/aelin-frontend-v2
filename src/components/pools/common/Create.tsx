@@ -46,7 +46,7 @@ export const Description = styled.p`
   line-height: 1.4;
   margin: 0 0 50px;
   max-width: 100%;
-  padding: 0 20px;
+  padding: 0 10px;
   text-align: center;
   width: 690px;
 `
