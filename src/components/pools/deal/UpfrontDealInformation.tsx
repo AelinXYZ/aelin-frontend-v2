@@ -56,9 +56,11 @@ export const UpfrontDealInformation: React.FC<{
           <Value>{`${upfrontDeal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol} per ${upfrontDeal.underlyingToken.symbol}`}</Value>
         </InfoCell>
         <InfoCell title="Deal stats" tooltip="TBD">
-          <Value>Total redeemed: {pool.redeem.formatted}</Value>
+          <Value>Total redeemed: {pool.upfrontDeal?.underlyingToken.totalRedeemed.formatted}</Value>
           <Value>Total invested: {pool.funded.formatted} </Value>
-          <Value>Remaining deal tokens: {pool.upfrontDeal?.unredeemed.formatted}</Value>
+          <Value>
+            Remaining deal tokens: {pool.upfrontDeal?.underlyingToken.remaining.formatted}
+          </Value>
         </InfoCell>
         <InfoCell title="Deal minimum" tooltip="TBD">
           <Value>{`${upfrontDeal.purchaseRaiseMinimum.formatted} ${pool.investmentTokenSymbol}`}</Value>

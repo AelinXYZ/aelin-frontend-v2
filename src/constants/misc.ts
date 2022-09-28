@@ -11,7 +11,7 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const WAD_DECIMALS = 18
 export const WAIT_BLOCKS = 8
 
-export const DEFAULT_DECIMALS = 2
+export const DEFAULT_DECIMALS = 6
 export const EXCHANGE_DECIMALS = 4
 export const STAKING_DECIMALS = 4
 

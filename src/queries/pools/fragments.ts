@@ -157,5 +157,6 @@ gql`
     totalAmountUnredeemed
     totalUsersAccepted
     totalRedeemed
+    remainingDealTokens
   }
 `
