@@ -50,9 +50,9 @@ function VestUpfrontDeal({ pool }: Props) {
   const now = new Date()
 
   const isVestingCliffEnded = isAfter(now, pool.upfrontDeal?.vestingPeriod.cliff.end as Date)
-  const isVestindPeriodEnded = isAfter(now, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
+  const isVestingPeriodEnded = isAfter(now, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
 
-  const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
+  const withinInterval = isVestingCliffEnded && !isVestingPeriodEnded
 
   const [amountToVest, refetchAmountToVest] = useAelinAmountToVestUpfrontDeal(
     pool.address,
@@ -132,7 +132,7 @@ function VestUpfrontDeal({ pool }: Props) {
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
         />
       )}
-      {isVestingCliffEnded && isVestindPeriodEnded && !hasRemainingTokens && (
+      {isVestingCliffEnded && isVestingPeriodEnded && !hasRemainingTokens && (
         <VestingCompleted
           symbol={data?.vestingDeal?.tokenToVestSymbol}
           totalVested={totalVested}

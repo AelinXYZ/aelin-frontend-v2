@@ -37,7 +37,7 @@ import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getPoolType } from '@/src/utils/aelinPoolUtils'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
-import { DerivedStatus, Funding, PoolAction, PoolTab } from '@/types/aelinPool'
+import { DerivedStatus, Funding, PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
 
 const MainGrid = styled.div`
   column-gap: 65px;
@@ -123,7 +123,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 <DealInformation pool={pool} poolHelpers={funding} />
               )}
               {tabs.active === PoolTab.DealInformation && !!pool.upfrontDeal && (
-                <UpfrontDealInformation pool={pool} />
+                <UpfrontDealInformation pool={pool} poolHelpers={funding} />
               )}
               {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
@@ -199,8 +199,11 @@ function UpfrontDealActionTabs({ activeTab, derivedStatus, funding, pool }: Deal
       )}
       {activeTab === PoolAction.FundDeal && <FundDeal pool={pool} />}
       {activeTab === PoolAction.Vest && <VestUpfrontDeal pool={pool} />}
-      {(activeTab === PoolAction.Refund || activeTab === PoolAction.Claim) && (
-        <ClaimUpfrontDealTokens pool={pool} refund={activeTab === PoolAction.Refund} />
+      {activeTab === PoolAction.Claim && (
+        <ClaimUpfrontDealTokens
+          pool={pool}
+          refund={derivedStatus.current === PoolStatus.Refunding}
+        />
       )}
     </>
   )

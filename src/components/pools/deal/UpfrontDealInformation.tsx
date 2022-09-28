@@ -8,6 +8,7 @@ import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { parseDealName } from '@/src/utils/parsePoolName'
+import { Funding } from '@/types/aelinPool'
 
 const Column = styled.div`
   display: flex;
@@ -18,7 +19,8 @@ const Column = styled.div`
 
 export const UpfrontDealInformation: React.FC<{
   pool: ParsedAelinPool
-}> = ({ pool }) => {
+  poolHelpers: Funding
+}> = ({ pool, poolHelpers }) => {
   const { chainId, sponsorFee, upfrontDeal } = pool
   if (!upfrontDeal) {
     throw new Error('UpfrontDeal not found.')
@@ -61,6 +63,11 @@ export const UpfrontDealInformation: React.FC<{
           <Value>
             Remaining deal tokens: {pool.upfrontDeal?.underlyingToken.remaining.formatted}
           </Value>
+          {poolHelpers.capReached && (
+            <Value>
+              <b>Cap reached</b>
+            </Value>
+          )}
         </InfoCell>
         <InfoCell title="Deal minimum" tooltip="TBD">
           <Value>{`${upfrontDeal.purchaseRaiseMinimum.formatted} ${pool.investmentTokenSymbol}`}</Value>

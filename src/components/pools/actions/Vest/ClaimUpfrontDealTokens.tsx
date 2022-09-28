@@ -148,13 +148,20 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
   const content = useMemo(() => {
     const content: string[] = []
     if (refund) {
-      content.push('Some text saying that the raise did not pass so tokens will be refunded')
+      if (
+        (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) ||
+        (userRoles.includes(UserRole.Holder) && !holderClaim)
+      ) {
+        content.push('Some text saying that the raise did not pass so tokens will be refunded')
+      } else {
+        content.push('All your tokens have been refunded')
+      }
 
-      if (userRoles.includes(UserRole.Investor)) {
+      if (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) {
         content.push('Some text saying you can get your purchase tokens used as Purchaser')
       }
 
-      if (userRoles.includes(UserRole.Holder) && holderClaim) {
+      if (userRoles.includes(UserRole.Holder) && !holderClaim) {
         content.push('Some text saying you can get your deal tokens deposited as Holder')
       }
     } else {
