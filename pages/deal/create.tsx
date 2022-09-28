@@ -7,14 +7,13 @@ import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import {
   ButtonWrapper,
-  Description,
   MobileButtonWrapper,
   PrevNextWrapper,
   StepContents,
   Title,
   WrapperGrid,
 } from '@/src/components/pools/common/Create'
-import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInput'
+import DealCreateStepInput from '@/src/components/pools/common/DealCreateStepInput'
 import { Summary } from '@/src/components/pools/common/Summary'
 import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
@@ -33,13 +32,13 @@ import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
-import useAelinCreatePool, {
-  CreatePoolSteps,
+import useAelinCreateUpFrontDeal, {
+  CreateUpFrontDealSteps,
   NftCollectionRulesProps,
-  createPoolConfig,
-  getCreatePoolStepIndicatorData,
-  getCreatePoolSummaryData,
-} from '@/src/hooks/aelin/useAelinCreatePool'
+  createDealConfig,
+  getCreateDealStepIndicatorData,
+  getCreateDealSummaryData,
+} from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
 import { useTimelineStatus } from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useWarningOnLeavePage } from '@/src/hooks/useWarningOnLeavePage'
 import { useNftCreationState } from '@/src/providers/nftCreationState'
@@ -63,21 +62,23 @@ const NftTableWrapper = styled.div`
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
   const {
-    createPoolState,
+    createDealState,
     direction,
     errors,
-    handleCreatePool,
+    handleCreateUpFrontDeal,
     isFinalStep,
     isFirstStep,
     isSubmitting,
     moveStep,
-    setPoolField,
+    setDealField,
     showWarningOnLeave,
-  } = useAelinCreatePool(appChainId)
+  } = useAelinCreateUpFrontDeal(appChainId)
   const [showWhiteListModal, setShowWhiteListModal] = useState<boolean>(false)
-  const currentStepConfig = createPoolConfig[createPoolState.currentStep]
-  const { order, text, title } = currentStepConfig
-  const currentStepError = errors ? errors[createPoolState.currentStep] : null
+  const currentStepConfig = createDealConfig[createDealState.currentStep as CreateUpFrontDealSteps]
+  const { order, title } = currentStepConfig
+  const currentStepError = errors
+    ? errors[createDealState.currentStep as CreateUpFrontDealSteps]
+    : null
   const disableSubmit = (errors && Object.values(errors).some((err) => !!err)) || isSubmitting
   const { nftWhiteListState } = useNftCreationState()
   useWarningOnLeavePage(() => showWarningOnLeave)
@@ -92,21 +93,25 @@ const Create: NextPage = () => {
 
   const timeline = useTimelineStatus()
 
+  const withTitle = [CreateUpFrontDealSteps.vestingSchedule, CreateUpFrontDealSteps.dealName].some(
+    (step) => createDealState.currentStep === step,
+  )
+
   return (
     <>
       <Head>
-        <title>{`${createPoolState.poolName || 'Create pool'}`}</title>
+        <title>{`${createDealState.dealName.name || 'Create deal'}`}</title>
       </Head>
-      <PageTitle title={`${createPoolState.poolName || 'Pool creation'}`} />
+      <PageTitle title={`${createDealState.dealName.name || 'Deal creation'}`} />
       <RightTimelineLayout timelineSteps={timeline}>
-        <CardWithTitle titles={<CardTitle>Pool creation</CardTitle>}>
+        <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
           <StepIndicator
             currentStepOrder={order}
-            data={getCreatePoolStepIndicatorData(createPoolState.currentStep)}
+            data={getCreateDealStepIndicatorData(createDealState.currentStep)}
             direction={direction}
           />
-          {Object.values(CreatePoolSteps).map((step, index) => {
-            const isStepVisible = createPoolState.currentStep === step
+          {Object.values(CreateUpFrontDealSteps).map((step, index) => {
+            const isStepVisible = createDealState.currentStep === step
 
             if (!isStepVisible) return null
 
@@ -116,14 +121,14 @@ const Create: NextPage = () => {
                   {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
                 </PrevNextWrapper>
                 <StepContents>
-                  <Title>{title}</Title>
-                  <Description>{text}</Description>
-                  <PoolCreateStepInput
-                    currentState={createPoolState}
+                  {!withTitle && <Title>{title}</Title>}
+
+                  <DealCreateStepInput
+                    currentState={createDealState}
                     key={step}
                     onKeyUp={handleKeyUp}
                     role="none"
-                    setPoolField={setPoolField}
+                    setDealField={setDealField}
                   />
 
                   {currentStepError && typeof currentStepError === 'string' && (
@@ -131,12 +136,12 @@ const Create: NextPage = () => {
                   )}
 
                   <ButtonWrapper>
-                    {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
+                    {isFinalStep && createDealState.dealPrivacy === Privacy.PRIVATE && (
                       <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
                         Edit allowlisted addresses
                       </ButtonPrimaryLight>
                     )}
-                    {isFinalStep && createPoolState.poolPrivacy === Privacy.NFT && (
+                    {isFinalStep && createDealState.dealPrivacy === Privacy.NFT && (
                       <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
                         Edit collections
                       </ButtonPrimaryLight>
@@ -151,10 +156,10 @@ const Create: NextPage = () => {
                           disabled={disableSubmit}
                           key={`${step}_button`}
                           onClick={() => {
-                            handleCreatePool()
+                            handleCreateUpFrontDeal()
                           }}
                         >
-                          Create Pool
+                          Create deal
                         </ButtonGradient>
                       ) : (
                         <ButtonGradient
@@ -167,14 +172,14 @@ const Create: NextPage = () => {
                       )}
                     </MobileButtonWrapper>
                   </ButtonWrapper>
-                  <Summary data={getCreatePoolSummaryData(createPoolState)} />
-                  {createPoolState.poolPrivacy === 'nft' && !!createPoolState.investmentToken && (
+                  <Summary data={getCreateDealSummaryData(createDealState)} />
+                  {createDealState.dealPrivacy === 'nft' && !!createDealState.investmentToken && (
                     <NftTableWrapper>
                       <NftCollectionsTable
                         light
                         nftCollectionsData={{
                           ...nftWhiteListState,
-                          ...createPoolState.investmentToken,
+                          ...createDealState.investmentToken,
                         }}
                       />
                     </NftTableWrapper>
@@ -192,16 +197,16 @@ const Create: NextPage = () => {
       </RightTimelineLayout>
       {showWhiteListModal && (
         <WhiteListModal
-          currentList={createPoolState.whitelist}
-          investmentTokenDecimals={createPoolState.investmentToken?.decimals ?? BASE_DECIMALS}
+          currentList={createDealState.whitelist}
+          investmentTokenDecimals={createDealState.investmentToken?.decimals ?? BASE_DECIMALS}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={(
             whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
             type: NftType | string,
           ) => {
-            setPoolField(whitelist, type)
+            setDealField(whitelist, type)
           }}
-          poolPrivacy={createPoolState.poolPrivacy}
+          poolPrivacy={createDealState.dealPrivacy}
         />
       )}
     </>

@@ -5,6 +5,7 @@ import useSWRInfinite from 'swr/infinite'
 
 import { DealSponsored_OrderBy, DealSponsoredsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { BASE_DECIMALS } from '@/src/constants/misc'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEALS_SPONSORED_QUERY_NAME } from '@/src/queries/history/dealsSponsored'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -49,7 +50,7 @@ export async function fetcherDealsSponsored(variables: DealSponsoredsQueryVariab
               dealSponsored.pool.deal?.underlyingDealTokenDecimals || 0,
             )
 
-            const sponsorFee = formatToken(dealSponsored.pool.sponsorFee, 18)
+            const sponsorFee = formatToken(dealSponsored.pool.sponsorFee, BASE_DECIMALS)
 
             return {
               id: dealSponsored.pool.id,

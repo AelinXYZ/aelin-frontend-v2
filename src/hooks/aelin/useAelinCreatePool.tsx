@@ -4,7 +4,7 @@ import { useCallback, useEffect, useReducer, useState } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
-import { parseEther, parseUnits } from '@ethersproject/units'
+import { parseUnits } from '@ethersproject/units'
 
 import usePrevious from '../common/usePrevious'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
@@ -12,7 +12,7 @@ import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresse
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
 import {
@@ -230,7 +230,7 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
     symbol: poolSymbol,
     purchaseTokenCap: poolCap ? parseUnits(poolCap.toString(), investmentToken?.decimals) : ZERO_BN,
     purchaseToken: investmentToken.address,
-    sponsorFee: sponsorFee ? parseEther(sponsorFee?.toString()) : ZERO_BN,
+    sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_DECIMALS) : ZERO_BN,
     purchaseDuration: investmentDeadLineDuration,
     duration: dealDeadLineDuration,
     allowListAddresses: poolAddresses,
@@ -366,7 +366,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const router = useRouter()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
   const { estimate: createPoolEstimate, execute } = useAelinPoolCreateTransaction(
-    contracts.POOL_CREATE.address[chainId],
+    contracts.REGULAR_POOL_FACTORY.address[chainId],
     'createPool',
   )
 

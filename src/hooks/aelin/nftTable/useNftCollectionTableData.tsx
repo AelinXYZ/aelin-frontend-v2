@@ -8,7 +8,7 @@ import { NftWhiteListState } from '@/src/components/pools/whitelist/nft/nftWhite
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
-import formatNumber from '@/src/utils/formatNumber'
+import { formatNumber } from '@/src/utils/formatNumber'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const useNftCollectionTableData = (
