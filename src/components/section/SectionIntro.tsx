@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import {
   ButtonGradient,
   ButtonPrimaryLight,
+  ButtonSecondaryGradient,
+  ButtonType,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
@@ -61,23 +63,34 @@ const Description = styled.p`
   }
 `
 
-const Button = styled(ButtonGradient)`
+const ButtonPrimary = styled(ButtonGradient)`
   margin: 0 auto;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     margin: 0;
   }
 `
+
+const ButtonSecondary = styled(ButtonSecondaryGradient)`
+  margin: 0 auto;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    margin: 0;
+  }
+`
+
 const ButtonWrapper = styled.div`
   display: flex;
   gap: 15px;
 `
+
 export const SectionIntro: React.FC<{
   backgroundImage?: string
-  button?: {
+  button?: Array<{
     onClick: () => void
     title: string
-  }
+    type: ButtonType
+  }>
   secondaryButton?: {
     onClick: () => void
     title: string
@@ -90,7 +103,17 @@ export const SectionIntro: React.FC<{
       <Description>{children}</Description>
       {(!!button || !!secondaryButton) && (
         <ButtonWrapper>
-          {button && <Button onClick={button.onClick}>{button.title}</Button>}
+          {button?.map((buttonAttr) =>
+            buttonAttr.type === ButtonType.Primary ? (
+              <ButtonPrimary key={buttonAttr.title} onClick={buttonAttr.onClick}>
+                {buttonAttr.title}
+              </ButtonPrimary>
+            ) : (
+              <ButtonSecondary key={buttonAttr.title} onClick={buttonAttr.onClick}>
+                {buttonAttr.title}
+              </ButtonSecondary>
+            ),
+          )}
           {secondaryButton && (
             <ButtonPrimaryLight onClick={secondaryButton.onClick}>
               {secondaryButton.title}

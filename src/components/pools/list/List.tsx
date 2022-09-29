@@ -18,6 +18,7 @@ import {
   HideOnMobileCell,
   LoadingTableRow,
   RowLink,
+  RowType,
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -185,6 +186,7 @@ export const List: React.FC<{
               sponsor,
               stage,
               start,
+              upfrontDeal,
             } = pool
             const activeNotifications = notifications.filter((n) => n.poolAddress === id).length
 
@@ -193,6 +195,7 @@ export const List: React.FC<{
                 columns={columns.widths}
                 href={`/pool/${getKeyChainByValue(network)}/${id}`}
                 key={id}
+                type={!upfrontDeal ? RowType.Primary : RowType.Secondary}
               >
                 <NameCell>
                   <Name>{nameFormatted}</Name>
@@ -219,6 +222,12 @@ export const List: React.FC<{
                     <Label>
                       <span>NFT</span>
                       <Lock />
+                    </Label>
+                  )}
+
+                  {!!pool.upfrontDeal && (
+                    <Label>
+                      <span>Deal</span>
                     </Label>
                   )}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>

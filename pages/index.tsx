@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { ListWithFilters } from '@/src/components/pools/list/ListWithFilters'
 import { VouchedPools } from '@/src/components/pools/list/Vouched'
+import { ButtonType } from '@/src/components/pureStyledComponents/buttons/Button'
 import { SectionIntro } from '@/src/components/section/SectionIntro'
 import useAelinUser from '@/src/hooks/aelin/useAelinUser'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -22,7 +23,18 @@ const Home: NextPage = () => {
       <LeftSidebarLayout>
         <SectionIntro
           backgroundImage="/resources/svg/bg-pools.svg"
-          button={{ title: 'Create pool', onClick: () => router.push('/pool/create') }}
+          button={[
+            {
+              title: 'Create pool',
+              onClick: () => router.push('/pool/create'),
+              type: ButtonType.Primary,
+            },
+            {
+              title: 'Create deal',
+              onClick: () => router.push('/deal/create'),
+              type: ButtonType.Secondary,
+            },
+          ]}
           title="Pools"
         >
           Aelin is a decentralized and community-based fundraising protocol. Invest in a pool to
