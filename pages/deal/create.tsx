@@ -91,7 +91,7 @@ const Create: NextPage = () => {
     }
   }
 
-  const timeline = useTimelineStatus()
+  const timeline = useTimelineStatus(undefined, true)
 
   const withTitle = [CreateUpFrontDealSteps.vestingSchedule, CreateUpFrontDealSteps.dealName].some(
     (step) => createDealState.currentStep === step,
