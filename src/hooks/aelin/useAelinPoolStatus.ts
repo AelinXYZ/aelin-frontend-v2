@@ -491,58 +491,29 @@ function useUserTabs(
 
       if (defaultTab && isNotificationType(defaultTab)) {
         switch (defaultTab) {
-          case NotificationType.DealNotFunded:
-            setActiveTab(PoolTab.PoolInformation)
-            setActiveAction(PoolAction.CreateDeal)
-            break
-          case NotificationType.InvestmentWindowAlert:
-            setActiveTab(PoolTab.PoolInformation)
-            setActiveAction(tabsActions[0])
-            break
-          case NotificationType.InvestmentWindowEnded:
-            if (pool.deal?.holderAlreadyDeposited) {
-              setActiveTab(PoolTab.DealInformation)
-              setActiveAction(PoolAction.CreateDeal)
-            } else {
-              setActiveTab(tabs[tabs.length - 1])
-              setActiveAction(tabsActions[0])
-            }
-            break
           case NotificationType.HolderSet:
-            if (pool.deal?.holderAlreadyDeposited) {
-              setActiveTab(PoolTab.DealInformation)
-            } else {
-              setActiveTab(PoolTab.PoolInformation)
-              setActiveAction(PoolAction.FundDeal)
-            }
+            setActiveTab(PoolTab.DealInformation)
+            setActiveAction(PoolAction.Claim)
             break
-          case NotificationType.DealProposed:
-          case NotificationType.FundingWindowAlert:
+          case NotificationType.UpfrontDealFullyFunded:
+            setActiveTab(PoolTab.DealInformation)
+            setActiveAction(PoolAction.Invest)
+            break
+          case NotificationType.AcceptanceWindowAlert:
+            setActiveTab(PoolTab.DealInformation)
+            setActiveAction(PoolAction.DealInvest)
+            break
+          case NotificationType.SponsorFeesReady:
+          case NotificationType.HolderClaimFunds:
+          case NotificationType.AcceptanceWindowEnded:
           case NotificationType.VestingCliffBegun:
-            if (pool.deal?.holderAlreadyDeposited) {
-              setActiveTab(PoolTab.DealInformation)
-              setActiveAction(tabsActions[0])
-            }
-            break
-          case NotificationType.FundingWindowEnded:
-            setActiveTab(PoolTab.PoolInformation)
-            userRole === UserRole.Sponsor
-              ? setActiveAction(PoolAction.CreateDeal)
-              : setActiveAction(PoolAction.Withdraw)
+            setActiveTab(PoolTab.Vest)
+            setActiveAction(PoolAction.Claim)
             break
           case NotificationType.DealTokensVestingBegun:
           case NotificationType.AllDealTokensVested:
-          case NotificationType.SponsorFeesReady:
             setActiveTab(PoolTab.Vest)
             setActiveAction(PoolAction.Vest)
-            break
-          case NotificationType.WithdrawUnredeemed:
-            if (pool.deal?.unredeemed.raw.gt(0) && userRole === UserRole.Holder) {
-              setActiveTab(PoolTab.WithdrawUnredeemed)
-              setActiveAction(PoolAction.WithdrawUnredeemed)
-            } else {
-              setActiveTab(tabs[tabs.length - 1])
-            }
             break
           default:
             setActiveTab(tabs[tabs.length - 1])
