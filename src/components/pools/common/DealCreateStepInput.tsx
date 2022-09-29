@@ -1,4 +1,4 @@
-import { HTMLAttributes, useEffect, useRef } from 'react'
+import { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
@@ -7,12 +7,14 @@ import { Description, Title } from '@/src/components/pools/common/Create'
 import { HMSInput } from '@/src/components/pools/common/HMSInput'
 import TokenDropdown from '@/src/components/pools/common/TokenDropdown'
 import { Textfield as BaseTextField } from '@/src/components/pureStyledComponents/form/Textfield'
+import { EXCHANGE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import {
   CreateUpFrontDealState,
   CreateUpFrontDealSteps,
   createDealConfig,
 } from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
+import { formatNumber } from '@/src/utils/formatNumber'
 
 const Container = styled.div`
   padding: 10px;
@@ -46,6 +48,11 @@ const PrivacyGrid = styled.div`
   max-width: fit-content;
 `
 
+const ExchangeRateSummary = styled.p`
+  text-align: right;
+  font-size: 1.2rem;
+`
+
 interface Props extends HTMLAttributes<HTMLDivElement> {
   setDealField: (value: unknown, field?: string) => void
   currentState: CreateUpFrontDealState
@@ -59,12 +66,34 @@ const DealCreateStepInput: React.FC<Props> = ({
 }) => {
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
+  const [investmentPerDeal, setInvestmentPerDeal] = useState<string | null>(null)
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current?.focus()
     }
   }, [step])
+
+  useEffect(() => {
+    if (
+      currentState.currentStep !== CreateUpFrontDealSteps.exchangeRates ||
+      [
+        currentState[CreateUpFrontDealSteps.exchangeRates]?.exchangeRates,
+        currentState[CreateUpFrontDealSteps.exchangeRates]?.investmentTokenToRaise,
+      ].some((val) => typeof val === undefined || val === '')
+    ) {
+      setInvestmentPerDeal(null)
+      return
+    }
+
+    const investmentPerDeal = formatNumber(
+      Number(currentState[CreateUpFrontDealSteps.exchangeRates]?.investmentTokenToRaise) /
+        Number(currentState[CreateUpFrontDealSteps.exchangeRates]?.exchangeRates),
+      EXCHANGE_DECIMALS,
+    )
+
+    setInvestmentPerDeal(investmentPerDeal)
+  }, [currentState])
 
   return (
     <Wrapper onKeyUp={onKeyUp} {...restProps}>
@@ -184,7 +213,12 @@ const DealCreateStepInput: React.FC<Props> = ({
               value={currentState[step]?.exchangeRates}
             />
             <br />
-            <br />
+            {investmentPerDeal && (
+              <ExchangeRateSummary>
+                {`(1 ${currentState[CreateUpFrontDealSteps.investmentToken]?.symbol}`} ={' '}
+                {`${investmentPerDeal} ${currentState[CreateUpFrontDealSteps.dealToken]?.symbol})`}
+              </ExchangeRateSummary>
+            )}
             <LabeledCheckbox
               checked={currentState[step]?.isCapped}
               label="Do you want the deal to be capped?"

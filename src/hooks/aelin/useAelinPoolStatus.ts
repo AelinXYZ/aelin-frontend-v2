@@ -627,7 +627,7 @@ function useUserTabs(
   }
 }
 
-export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
+export function useTimelineStatus(pool?: ParsedAelinPool, _isUpfrontDeal?: boolean): TimelineSteps {
   const [now, setNow] = useState(Date.now())
 
   useEffect(() => {
@@ -635,7 +635,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool): TimelineSteps {
     return () => clearInterval(interval)
   }, [])
 
-  const isUpfrontDeal = pool && !!pool.upfrontDeal
+  const isUpfrontDeal = (pool && !!pool.upfrontDeal) || _isUpfrontDeal
 
   return useMemo(() => {
     return {
