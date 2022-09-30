@@ -41,7 +41,6 @@ export const TableBody = styled.div`
 interface RowProps {
   columns?: string
   hasHover?: boolean
-  type?: RowType
 }
 
 export const RowCSS = css<RowProps>`
@@ -106,20 +105,11 @@ const GradientWrapper = styled.div`
 
 export const Row = styled.div<RowProps>`
   ${TableRowCSS}
-
-  ${(props) =>
-    props.type === 'secondary' && `border-color: ${props.theme.colors.borderColorSecondary}`}
 `
 
 interface RowLinkProps extends RowProps {
   href: string
   withGradient?: boolean
-  type?: RowType
-}
-
-export enum RowType {
-  Primary = 'primary',
-  Secondary = 'secondary',
 }
 
 export const RowLink: React.FC<RowLinkProps> = ({ children, href, withGradient, ...restProps }) => {

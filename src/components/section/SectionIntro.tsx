@@ -22,9 +22,8 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-image: ${({ backgroundImage }) =>
       backgroundImage ? `url(${backgroundImage})` : 'none'};
-    background-position: ${({ backgroundImage }) => (backgroundImage ? `100% 100%` : 'initial')};
+    background-position: ${({ backgroundImage }) => (backgroundImage ? `100% 340%` : 'initial')};
     background-size: auto auto;
-    padding: 20px 320px 25px 40px;
   }
 `
 
