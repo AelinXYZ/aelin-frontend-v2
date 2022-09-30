@@ -17,7 +17,7 @@ import {
 import { formatNumber } from '@/src/utils/formatNumber'
 
 const Container = styled.div`
-  padding: 10px;
+  padding: 20px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,6 +67,7 @@ const DealCreateStepInput: React.FC<Props> = ({
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
   const [investmentPerDeal, setInvestmentPerDeal] = useState<string | null>(null)
+  const [hasFee, setHasFee] = useState<boolean>(true)
 
   useEffect(() => {
     if (inputRef.current) {
@@ -80,7 +81,9 @@ const DealCreateStepInput: React.FC<Props> = ({
       [
         currentState[CreateUpFrontDealSteps.exchangeRates]?.exchangeRates,
         currentState[CreateUpFrontDealSteps.exchangeRates]?.investmentTokenToRaise,
-      ].some((val) => typeof val === undefined || val === '')
+      ].some(
+        (val) => typeof val === undefined || val === undefined || val === '' || Number(val) === 0,
+      )
     ) {
       setInvestmentPerDeal(null)
       return
@@ -97,7 +100,7 @@ const DealCreateStepInput: React.FC<Props> = ({
 
   return (
     <Wrapper onKeyUp={onKeyUp} {...restProps}>
-      {step === CreateUpFrontDealSteps.dealName ? (
+      {step === CreateUpFrontDealSteps.dealAttributes ? (
         <>
           <Container>
             <Title>Deal Name</Title>
@@ -149,6 +152,7 @@ const DealCreateStepInput: React.FC<Props> = ({
         <Container>
           <StyledDescription>{createDealConfig[step].text?.[0]}</StyledDescription>
           <SponsorFeeTextfield
+            disabled={!hasFee}
             maxLength={8}
             min="0"
             name={step}
@@ -157,6 +161,20 @@ const DealCreateStepInput: React.FC<Props> = ({
             ref={inputRef}
             type="number"
             value={currentState[step] as unknown as string}
+          />
+          <br />
+          <LabeledCheckbox
+            checked={!hasFee}
+            label="I don't want a fee"
+            onClick={() => {
+              if (hasFee) {
+                setDealField('0')
+              } else {
+                setDealField(undefined)
+              }
+
+              setHasFee(!hasFee)
+            }}
           />
         </Container>
       ) : step === CreateUpFrontDealSteps.holderAddress ? (
@@ -213,12 +231,15 @@ const DealCreateStepInput: React.FC<Props> = ({
               value={currentState[step]?.exchangeRates}
             />
             <br />
-            {investmentPerDeal && (
+            {investmentPerDeal ? (
               <ExchangeRateSummary>
-                {`(1 ${currentState[CreateUpFrontDealSteps.investmentToken]?.symbol}`} ={' '}
-                {`${investmentPerDeal} ${currentState[CreateUpFrontDealSteps.dealToken]?.symbol})`}
+                ({`${investmentPerDeal} ${currentState[CreateUpFrontDealSteps.dealToken]?.symbol}`}{' '}
+                = {`1 ${currentState[CreateUpFrontDealSteps.investmentToken]?.symbol}`})
               </ExchangeRateSummary>
+            ) : (
+              <br />
             )}
+
             <LabeledCheckbox
               checked={currentState[step]?.isCapped}
               label="Do you want the deal to be capped?"

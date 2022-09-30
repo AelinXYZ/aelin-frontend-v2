@@ -26,12 +26,7 @@ import {
 } from '@/src/hooks/contracts/useAelinDirectDealCreateTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import {
-  getDuration,
-  getFormattedDurationFromNowToDuration,
-  isEmptyDuration,
-  sumDurations,
-} from '@/src/utils/date'
+import { getDuration, isEmptyDuration, secondsToDhm } from '@/src/utils/date'
 import { formatNumber } from '@/src/utils/formatNumber'
 import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
 
@@ -42,7 +37,7 @@ const VestinScheduleContainer = styled.div`
 `
 
 export enum CreateUpFrontDealSteps {
-  dealName = 'dealName',
+  dealAttributes = 'dealAttributes',
   investmentToken = 'investmentToken',
   redemptionDeadline = 'redemptionDeadline',
   sponsorFee = 'sponsorFee',
@@ -81,7 +76,7 @@ export type ExchangeRatesAttr = {
 }
 
 export interface CreateUpFrontDealState {
-  dealName: DealAttr
+  dealAttributes: DealAttr
   investmentToken?: Token
   redemptionDeadline?: Duration
   sponsorFee?: BigNumberish
@@ -98,7 +93,7 @@ export interface CreateUpFrontDealState {
 export interface CreateUpFrontDealStateComplete {
   [NftType.erc1155]: NftCollectionRulesProps[]
   [NftType.erc721]: NftCollectionRulesProps[]
-  dealName: DealAttr
+  dealAttributes: DealAttr
   investmentToken: Token
   redemptionDeadline: { days: number; hours: number; minutes: number }
   sponsorFee?: BigNumberish
@@ -156,8 +151,8 @@ export type CreateUpFrontDealValues = [
 ]
 
 export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealStepInfo> = {
-  [CreateUpFrontDealSteps.dealName]: {
-    id: CreateUpFrontDealSteps.dealName,
+  [CreateUpFrontDealSteps.dealAttributes]: {
+    id: CreateUpFrontDealSteps.dealAttributes,
     order: 1,
     title: 'Deal Attributes',
     text: [
@@ -166,7 +161,7 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
     ],
     placeholder: ['Choose a deal name...', 'Choose a deal symbol...'],
     getSummaryValue: (currentState: CreateUpFrontDealStateComplete) => {
-      const value = currentState[CreateUpFrontDealSteps.dealName] as DealAttr
+      const value = currentState[CreateUpFrontDealSteps.dealAttributes] as DealAttr
 
       if (!!value.name.length || !!value.symbol.length) {
         return (
@@ -212,7 +207,11 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
     getSummaryValue: (currentState: CreateUpFrontDealStateComplete) => {
       const value = currentState[CreateUpFrontDealSteps.redemptionDeadline]
 
-      return getFormattedDurationFromNowToDuration(value, '~LLL dd, yyyy HH:mma') ?? `--`
+      const now = new Date()
+
+      const duration = getDuration(now, value.days, value.hours, value.minutes)
+
+      return secondsToDhm(duration) ?? `--`
     },
   },
   [CreateUpFrontDealSteps.sponsorFee]: {
@@ -272,7 +271,7 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
     id: CreateUpFrontDealSteps.exchangeRates,
     order: 7,
     title: 'Exchange rates',
-    text: ['TODO: Wording'],
+    text: ['Decide the rate at which investment tokens will be exchanged for deal tokens'],
     placeholder: [
       'Enter the investment token amount...',
       'Enter an exchange rate...',
@@ -326,28 +325,34 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
       const hasVestingSchedule = !isEmptyDuration(value.vestingPeriod as Duration, undefined)
 
       if (hasVestingCliff && hasVestingSchedule) {
-        const vestingCliffEnds = sumDurations(
-          currentState[CreateUpFrontDealSteps.redemptionDeadline] as Duration,
-          value.vestingCliff as Duration,
+        const vestingCliff = value.vestingCliff as Duration
+        const vestingPeriod = value.vestingPeriod as Duration
+
+        const now = new Date()
+
+        const vestingCliffDuration = getDuration(
+          now,
+          vestingCliff.days ?? 0,
+          vestingCliff.hours ?? 0,
+          vestingCliff.minutes ?? 0,
         )
 
-        const vestingScheduleEnds = sumDurations(vestingCliffEnds, value.vestingPeriod as Duration)
+        const vestingPeriodDuration = getDuration(
+          now,
+          vestingPeriod.days ?? 0,
+          vestingPeriod.hours ?? 0,
+          vestingPeriod.minutes ?? 0,
+        )
 
         return (
           <VestinScheduleContainer>
             <span>
               Cliff:{` `}
-              {getFormattedDurationFromNowToDuration(
-                vestingCliffEnds as Duration,
-                '~LLL dd, yyyy HH:mma',
-              ) ?? '--'}
+              {secondsToDhm(vestingCliffDuration) ?? '--'}
             </span>
             <span>
               Period:{` `}
-              {getFormattedDurationFromNowToDuration(
-                vestingScheduleEnds as Duration,
-                '~LLL dd, yyyy HH:mma',
-              ) ?? '--'}
+              {secondsToDhm(vestingPeriodDuration) ?? '--'}
             </span>
           </VestinScheduleContainer>
         )
@@ -388,7 +393,7 @@ const parseValuesToCreateUpFrontDeal = (
   sponsor: string,
 ): CreateUpFrontDealValues => {
   const {
-    dealName,
+    dealAttributes,
     dealPrivacy,
     dealToken,
     exchangeRates,
@@ -485,8 +490,8 @@ const parseValuesToCreateUpFrontDeal = (
 
   return [
     {
-      name: dealName.name,
-      symbol: dealName.symbol,
+      name: dealAttributes.name,
+      symbol: dealAttributes.symbol,
       purchaseToken: investmentToken.address,
       underlyingDealToken: dealToken.address,
       holder: holderAddress,
@@ -511,7 +516,7 @@ const parseValuesToCreateUpFrontDeal = (
 }
 
 const initialState: CreateUpFrontDealState = {
-  [CreateUpFrontDealSteps.dealName]: {
+  [CreateUpFrontDealSteps.dealAttributes]: {
     name: '',
     symbol: '',
   },
@@ -544,7 +549,7 @@ const initialState: CreateUpFrontDealState = {
     },
   },
   [CreateUpFrontDealSteps.dealPrivacy]: undefined,
-  currentStep: CreateUpFrontDealSteps.dealName,
+  currentStep: CreateUpFrontDealSteps.dealAttributes,
   whitelist: [],
   nftCollectionRules: [],
 }
@@ -691,7 +696,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
   )
 
   const isFinalStep = createDealState.currentStep === CreateUpFrontDealSteps.dealPrivacy
-  const isFirstStep = createDealState.currentStep === CreateUpFrontDealSteps.dealName
+  const isFirstStep = createDealState.currentStep === CreateUpFrontDealSteps.dealAttributes
 
   useEffect(() => {
     setErrors(validateCreateDirectDeal(createDealState, chainId))
