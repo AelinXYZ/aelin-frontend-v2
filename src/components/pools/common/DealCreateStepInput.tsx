@@ -1,6 +1,7 @@
 import { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { Tooltip } from '../../tooltip/Tooltip'
 import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import { Description, Title } from '@/src/components/pools/common/Create'
@@ -51,6 +52,15 @@ const PrivacyGrid = styled.div`
 const ExchangeRateSummary = styled.p`
   text-align: right;
   font-size: 1.2rem;
+`
+
+const ContainerCheckbox = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+
+const StyledLabelCheckbox = styled(LabeledCheckbox)`
+  margin: 0 5px 0 0;
 `
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -239,20 +249,29 @@ const DealCreateStepInput: React.FC<Props> = ({
             ) : (
               <br />
             )}
-
-            <LabeledCheckbox
-              checked={currentState[step]?.isCapped}
-              label="Do you want the deal to be capped?"
-              onClick={() => setDealField(!currentState[step]?.isCapped, `${step}.isCapped`)}
-            />
+            <ContainerCheckbox>
+              <StyledLabelCheckbox
+                checked={currentState[step]?.isCapped}
+                label="Do you want the deal to be capped?"
+                onClick={() => setDealField(!currentState[step]?.isCapped, `${step}.isCapped`)}
+              />
+              <Tooltip
+                text={`Capping the deal means that once the investment total has been reached no further deposits are allowed. By keeping the deal uncapped you may take in more investment tokens than the total and every investor will be deallocated proportionally`}
+              />
+            </ContainerCheckbox>
             <br />
-            <LabeledCheckbox
-              checked={currentState[step]?.hasDealMinimum}
-              label="Do you want to set a deal minimum?"
-              onClick={() =>
-                setDealField(!currentState[step]?.hasDealMinimum, `${step}.hasDealMinimum`)
-              }
-            />
+            <ContainerCheckbox>
+              <StyledLabelCheckbox
+                checked={currentState[step]?.hasDealMinimum}
+                label="Do you want to set a deal minimum?"
+                onClick={() =>
+                  setDealField(!currentState[step]?.hasDealMinimum, `${step}.hasDealMinimum`)
+                }
+              />
+              <Tooltip
+                text={`The deal will be cancelled if the minimum is not reached by the end of the deal acceptance window. Investors will be able to retrieve their investment tokens. Protocols may choose this option if they are unable to achieve their goals with an amount smaller than the minimum`}
+              />
+            </ContainerCheckbox>
             {currentState[step]?.hasDealMinimum && (
               <>
                 <br />
