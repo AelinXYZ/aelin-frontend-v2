@@ -43,7 +43,7 @@ const PurchaserClaim = ({ chainId, upfrontDeal }: PurchaserClaimProps) => {
   )
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const [poolShares, refetchPoolShares] = useAelinPoolSharesPerUser(
+  const [, refetchPoolShares] = useAelinPoolSharesPerUser(
     upfrontDeal?.address || ZERO_ADDRESS,
     upfrontDeal?.underlyingToken.decimals || BASE_DECIMALS,
     chainId,
@@ -68,7 +68,7 @@ const PurchaserClaim = ({ chainId, upfrontDeal }: PurchaserClaimProps) => {
       disabled={!address || !isAppConnected || isSubmitting}
       onClick={claimDealTokens}
     >
-      Claim as Purchaser
+      Settle as Purchaser
     </ButtonGradient>
   )
 }
@@ -96,7 +96,7 @@ const SponsorClaim = ({ upfrontDeal }: SponsorClaimProps) => {
       disabled={!address || !isAppConnected || isSubmitting}
       onClick={claimDealTokens}
     >
-      Claim as Sponsor
+      Settle as Sponsor
     </ButtonGradient>
   )
 }
@@ -124,7 +124,7 @@ const HolderClaim = ({ upfrontDeal }: SponsorClaimProps) => {
       disabled={!address || !isAppConnected || isSubmitting}
       onClick={claimDealTokens}
     >
-      Claim as Holder
+      Claim raised funds
     </ButtonGradient>
   )
 }
@@ -191,7 +191,7 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
   }, [refund, userRoles, poolShares, hasSponsorFees, sponsorClaim, holderClaim])
 
   return (
-    <Wrapper title={refund ? 'Refund tokens' : 'Claim deal tokens'}>
+    <Wrapper title={refund ? 'Refund tokens' : 'Settle Allocation'}>
       <Contents style={{ marginBottom: '18px' }}>{content}</Contents>
       <ButtonsWrapper>
         {userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN) && (

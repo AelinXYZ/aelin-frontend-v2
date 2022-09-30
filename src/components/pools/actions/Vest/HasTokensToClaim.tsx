@@ -12,8 +12,8 @@ const Contents = styled(BaseContents)`
 `
 function HasTokensToClaim() {
   return (
-    <Wrapper title={`Claim tokens`}>
-      <Contents>You haven't claimed all your deal tokens.</Contents>
+    <Wrapper title={`Settle tokens`}>
+      <Contents>Settle your allocation before you can vest your tokens.</Contents>
       <Line />
     </Wrapper>
   )

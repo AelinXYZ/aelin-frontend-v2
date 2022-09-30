@@ -296,11 +296,11 @@ function useUserActions(
       }
 
       if (currentStatus === PoolStatus.Vesting) {
-        return [PoolAction.Claim, PoolAction.Vest]
+        return [PoolAction.Settle, PoolAction.Vest]
       }
 
       if (currentStatus === PoolStatus.Refunding) {
-        return [PoolAction.Claim]
+        return [PoolAction.Settle]
       }
 
       return []
@@ -493,11 +493,11 @@ function useUserTabs(
         switch (defaultTab) {
           case NotificationType.HolderSet:
             setActiveTab(PoolTab.DealInformation)
-            setActiveAction(PoolAction.Claim)
+            setActiveAction(PoolAction.Settle)
             break
           case NotificationType.UpfrontDealFullyFunded:
             setActiveTab(PoolTab.DealInformation)
-            setActiveAction(PoolAction.Invest)
+            setActiveAction(PoolAction.DealInvest)
             break
           case NotificationType.AcceptanceWindowAlert:
             setActiveTab(PoolTab.DealInformation)
@@ -508,7 +508,7 @@ function useUserTabs(
           case NotificationType.AcceptanceWindowEnded:
           case NotificationType.VestingCliffBegun:
             setActiveTab(PoolTab.Vest)
-            setActiveAction(PoolAction.Claim)
+            setActiveAction(PoolAction.Settle)
             break
           case NotificationType.DealTokensVestingBegun:
           case NotificationType.AllDealTokensVested:
