@@ -5,7 +5,16 @@ import { TestnetTokens, Token, TokenListResponse } from '@/src/constants/token'
 
 const getTokenList = (chainId: ChainsValues) => {
   if (chainsConfig[chainId].isProd) {
-    return fetch(chainsConfig[chainId].tokenListUrl).then((x) => x.json())
+    try {
+      return fetch(chainsConfig[chainId].tokenListUrl[0]).then((x) => x.json())
+    } catch (e) {
+      console.error('error: ', e)
+      if (chainsConfig[chainId].tokenListUrl.length >= 2) {
+        return fetch(chainsConfig[chainId].tokenListUrl[1]).then((x) => x.json())
+      } else {
+        throw e
+      }
+    }
   } else {
     return Promise.resolve({ tokens: TestnetTokens[chainId] })
   }
