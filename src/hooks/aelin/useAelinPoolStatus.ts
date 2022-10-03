@@ -447,6 +447,7 @@ function useUserTabs(
   )
   const [activeTab, setActiveTab] = useState<PoolTab>('' as unknown as PoolTab)
   const [activeAction, setActiveAction] = useState<PoolAction>('' as unknown as PoolAction)
+
   // prevent re-assignation
   useEffect(() => {
     setActiveTab(PoolTab.PoolInformation)
@@ -461,6 +462,9 @@ function useUserTabs(
 
   const handleTabChange = (newState: PoolTab) => {
     setActiveTab(newState)
+    if (pool.upfrontDeal) {
+      return
+    }
     if (newState === PoolTab.WithdrawUnredeemed) {
       setActiveAction(PoolAction.WithdrawUnredeemed)
     } else {
@@ -476,6 +480,33 @@ function useUserTabs(
     return tabsActions
   }
 
+  function isValidNotification(status: PoolStatus, notification?: NotificationType) {
+    if (notification === NotificationType.HolderSet && status === PoolStatus.WaitingForHolder) {
+      return true
+    }
+
+    if (
+      (notification === NotificationType.AcceptanceWindowAlert ||
+        notification === NotificationType.UpfrontDealFullyFunded) &&
+      status === PoolStatus.DealFunding
+    ) {
+      return true
+    }
+    if (
+      (notification === NotificationType.SponsorFeesReady ||
+        notification === NotificationType.HolderClaimFunds ||
+        notification === NotificationType.AcceptanceWindowEnded ||
+        notification === NotificationType.VestingCliffBegun ||
+        notification === NotificationType.AllDealTokensVested ||
+        notification === NotificationType.DealTokensVestingBegun) &&
+      status === PoolStatus.Vesting
+    ) {
+      return true
+    }
+
+    return false
+  }
+
   const isNotificationType = (type?: NotificationType) =>
     (Object.values(NotificationType) as Array<NotificationType>).some((n) => n === type)
 
@@ -489,16 +520,21 @@ function useUserTabs(
         tabs.push(PoolTab.Vest)
       }
 
-      if (defaultTab && isNotificationType(defaultTab)) {
+      if (
+        defaultTab &&
+        isNotificationType(defaultTab) &&
+        isValidNotification(derivedStatus.current, defaultTab)
+      ) {
         switch (defaultTab) {
           case NotificationType.HolderSet:
             setActiveTab(PoolTab.DealInformation)
-            setActiveAction(PoolAction.Settle)
+            if (userRole === UserRole.Holder) {
+              setActiveAction(PoolAction.FundDeal)
+            } else {
+              setActiveAction(PoolAction.AwaitingForDeal)
+            }
             break
           case NotificationType.UpfrontDealFullyFunded:
-            setActiveTab(PoolTab.DealInformation)
-            setActiveAction(PoolAction.DealInvest)
-            break
           case NotificationType.AcceptanceWindowAlert:
             setActiveTab(PoolTab.DealInformation)
             setActiveAction(PoolAction.DealInvest)
@@ -612,7 +648,7 @@ function useUserTabs(
     }
 
     return tabs
-  }, [pool, history, userRole, tabsActions, defaultTab])
+  }, [derivedStatus, pool, history, userRole, tabsActions, defaultTab])
 
   return {
     states: tabs,

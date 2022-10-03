@@ -5,6 +5,7 @@ import isBefore from 'date-fns/isBefore'
 import ms from 'ms'
 
 import HasTokensToClaim from './HasTokensToClaim'
+import PoolIsSyncing from './PoolSyncing'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import NothingToClaim from '@/src/components/pools/actions/Vest/NothingToClaim'
 import VestingCliff from '@/src/components/pools/actions/Vest/VestingCliff'
@@ -108,13 +109,18 @@ function VestUpfrontDeal({ pool }: Props) {
     })
   }
 
-  if (data?.vestingDeal === null && !hasToClaimTokens) {
+  if (
+    (data?.vestingDeal === null && !userRoles.includes(UserRole.Investor)) ||
+    (userRoles.includes(UserRole.Sponsor) && !!pool.sponsorFee.raw.gt(ZERO_BN))
+  ) {
     return <NothingToClaim />
   }
 
   return (
     <>
-      {hasToClaimTokens && <HasTokensToClaim />}
+      {hasToClaimTokens && (
+        <HasTokensToClaim showLine={!(isVestingCliffEnded && hasToClaimTokens)} />
+      )}
       {!isVestingCliffEnded && (
         <VestingCliff
           redemptionEnds={pool.upfrontDeal?.vestingPeriod.start}
@@ -138,6 +144,9 @@ function VestUpfrontDeal({ pool }: Props) {
           totalVested={totalVested}
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
         />
+      )}
+      {!hasToClaimTokens && !hasRemainingTokens && isVestingCliffEnded && !isVestingPeriodEnded && (
+        <PoolIsSyncing />
       )}
     </>
   )

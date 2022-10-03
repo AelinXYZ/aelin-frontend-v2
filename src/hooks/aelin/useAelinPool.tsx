@@ -104,6 +104,7 @@ export type ParsedAelinPool = {
     dealStart: Date | null
     holderClaim: boolean
     sponsorClaim: boolean
+    totalUsersAccepted: number
   }
   deal?: {
     name: string

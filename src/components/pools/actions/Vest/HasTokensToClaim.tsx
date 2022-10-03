@@ -10,11 +10,11 @@ const Line = styled.div`
 const Contents = styled(BaseContents)`
   margin-bottom: 30px;
 `
-function HasTokensToClaim() {
+function HasTokensToClaim({ showLine }: { showLine: boolean }) {
   return (
     <Wrapper title={`Settle tokens`}>
       <Contents>Settle your allocation before you can vest your tokens.</Contents>
-      <Line />
+      {showLine && <Line />}
     </Wrapper>
   )
 }

@@ -526,5 +526,6 @@ export function parseUpfrontDeal(pool: PoolCreated) {
     dealStart,
     holderClaim: !!upfrontDeal.holderClaim,
     sponsorClaim: !!upfrontDeal.sponsorClaim,
+    totalUsersAccepted: upfrontDeal.totalUsersAccepted,
   }
 }

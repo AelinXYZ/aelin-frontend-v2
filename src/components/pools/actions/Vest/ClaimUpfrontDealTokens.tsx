@@ -146,6 +146,12 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
   const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
 
   const content = useMemo(() => {
+    if (
+      !userRoles.includes(UserRole.Investor) ||
+      (userRoles.includes(UserRole.Sponsor) && !!pool.sponsorFee.raw.gt(ZERO_BN))
+    ) {
+      return <>You have not participated in this pool</>
+    }
     const content: string[] = []
     if (refund) {
       if (
@@ -186,9 +192,9 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
         </>
       ))
     ) : (
-      <>You've claimed all your tokens.</>
+      <>You've settle all your tokens.</>
     )
-  }, [refund, userRoles, poolShares, hasSponsorFees, sponsorClaim, holderClaim])
+  }, [pool, refund, userRoles, poolShares, hasSponsorFees, sponsorClaim, holderClaim])
 
   return (
     <Wrapper title={refund ? 'Refund tokens' : 'Settle Allocation'}>
