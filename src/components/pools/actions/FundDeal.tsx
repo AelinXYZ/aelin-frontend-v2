@@ -41,6 +41,14 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
     return `${pool.deal?.underlyingToken.dealAmount.formatted} ${pool.deal?.underlyingToken.symbol}`
   }, [pool])
 
+  const approveAmt = useMemo(() => {
+    if (pool.upfrontDeal) {
+      return pool.upfrontDeal.underlyingToken.dealAmount.raw
+    }
+
+    return pool.deal?.underlyingToken.dealAmount.raw
+  }, [pool])
+
   const shouldApprove = useMemo(() => {
     if (pool.upfrontDeal) {
       return (allowance || ZERO_BN).lt(pool.upfrontDeal?.underlyingToken.dealAmount.raw || ZERO_BN)
@@ -52,6 +60,7 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
     <Wrapper title="Fund deal" {...restProps}>
       {shouldApprove ? (
         <Approve
+          approveAmt={approveAmt}
           description={`Before funding the deal, you need to approve the pool to transfer your ${
             pool.deal?.underlyingToken.symbol || pool.upfrontDeal?.underlyingToken.symbol
           }. ${releaseFundNote}`}

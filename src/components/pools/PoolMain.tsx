@@ -34,7 +34,6 @@ import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getPoolType } from '@/src/utils/aelinPoolUtils'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { DerivedStatus, Funding, PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
@@ -199,7 +198,7 @@ function UpfrontDealActionTabs({ activeTab, derivedStatus, funding, pool }: Deal
       )}
       {activeTab === PoolAction.FundDeal && <FundDeal pool={pool} />}
       {activeTab === PoolAction.Vest && <VestUpfrontDeal pool={pool} />}
-      {activeTab === PoolAction.Claim && (
+      {activeTab === PoolAction.Settle && (
         <ClaimUpfrontDealTokens
           pool={pool}
           refund={derivedStatus.current === PoolStatus.Refunding}

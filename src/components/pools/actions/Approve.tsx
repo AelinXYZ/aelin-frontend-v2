@@ -1,3 +1,5 @@
+import { BigNumber } from '@ethersproject/bignumber'
+
 import { Contents } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN, ZERO_ADDRESS } from '@/src/constants/misc'
@@ -12,6 +14,7 @@ type Props = {
   title: string
   description: string
   refetchAllowance: () => void
+  approveAmt?: BigNumber
 }
 
 export default function Approve({
@@ -20,6 +23,7 @@ export default function Approve({
   spender,
   title,
   tokenAddress,
+  approveAmt = MAX_BN,
 }: Props) {
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 
@@ -34,13 +38,13 @@ export default function Approve({
   const approveInvestmentToken = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await approve([spender, MAX_BN], txGasOptions)
+        const receipt = await approve([spender, approveAmt], txGasOptions)
         if (receipt) {
           refetchAllowance()
         }
       },
       title: `${title}`,
-      estimate: () => estimate([spender, MAX_BN]),
+      estimate: () => estimate([spender, approveAmt]),
     })
   }
 

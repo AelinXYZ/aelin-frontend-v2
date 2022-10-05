@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { genericSuspense } from '../../helpers/SafeSuspense'
+import InlineLoading from '../../pureStyledComponents/common/InlineLoading'
 import { TokenIcon } from '../common/TokenIcon'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
@@ -16,6 +18,17 @@ const Column = styled.div`
   min-width: 0;
   row-gap: 20px;
 `
+
+const DealParticipantsInfoCell = genericSuspense(
+  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
+    return (
+      <InfoCell title={title} tooltip={tooltip}>
+        <Value>Accepted: {pool.upfrontDeal?.totalUsersAccepted || 0}</Value>
+      </InfoCell>
+    )
+  },
+  () => <InlineLoading />,
+)
 
 export const UpfrontDealInformation: React.FC<{
   pool: ParsedAelinPool
@@ -72,6 +85,11 @@ export const UpfrontDealInformation: React.FC<{
         <InfoCell title="Deal minimum" tooltip="TBD">
           <Value>{`${upfrontDeal.purchaseRaiseMinimum.formatted} ${pool.investmentTokenSymbol}`}</Value>
         </InfoCell>
+        <DealParticipantsInfoCell
+          pool={pool}
+          title="Deal participants"
+          tooltip="Total amount of users who accepted"
+        />
       </Column>
       <Column>
         <InfoCell

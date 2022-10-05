@@ -41,7 +41,7 @@ export enum PoolAction {
   //UpfrontDeal
   DealInvest = 'Purchase Deal Tokens',
   Refund = 'Refund tokens',
-  Claim = 'Claim',
+  Settle = 'Settle',
 }
 
 export interface Funding {
