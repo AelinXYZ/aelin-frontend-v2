@@ -17,7 +17,7 @@ import {
 import { convertToSeconds } from '@/src/utils/date'
 
 export type dealErrors = {
-  [CreateUpFrontDealSteps.dealName]: DealAttr
+  [CreateUpFrontDealSteps.dealAttributes]: DealAttr
   [CreateUpFrontDealSteps.investmentToken]?: Token
   [CreateUpFrontDealSteps.redemptionDeadline]?: Duration
   [CreateUpFrontDealSteps.sponsorFee]?: BigNumberish
@@ -34,16 +34,16 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
 
   const currentNetwork = getNetworkConfig(chainId)
 
-  if (values.dealName.name == '') {
-    errors.dealName = true
-  } else if (values.dealName.name.length > POOL_NAME_MAX_LENGTH) {
-    errors.dealName = 'No more than 30 chars'
+  if (values.dealAttributes.name == '') {
+    errors.dealAttributes = true
+  } else if (values.dealAttributes.name.length > POOL_NAME_MAX_LENGTH) {
+    errors.dealAttributes = 'No more than 30 chars'
   }
 
-  if (values.dealName?.symbol == '') {
-    errors.dealName = true
-  } else if (values.dealName.symbol.length > 7) {
-    errors.dealName = 'No more than 7 chars'
+  if (values.dealAttributes?.symbol == '') {
+    errors.dealAttributes = true
+  } else if (values.dealAttributes.symbol.length > 7) {
+    errors.dealAttributes = 'No more than 7 chars'
   }
 
   if (!values.investmentToken) {
@@ -56,14 +56,14 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
     errors.sponsorFee = true
   }
 
+  if (Number(values.sponsorFee) > 15) {
+    errors.sponsorFee = 'Must be <= 15'
+  }
+
   if (!values.holderAddress) {
     errors.holderAddress = true
   } else if (!isAddress(values.holderAddress as string)) {
     errors.holderAddress = 'Invalid ethereum address'
-  }
-
-  if (Number(values.sponsorFee) > 15) {
-    errors.sponsorFee = 'Must be <= 15'
   }
 
   if (
@@ -80,13 +80,13 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
     })
 
     if (redemptionDeadLineSeconds > ONE_DAY_IN_SECS * 30) {
-      errors.redemptionDeadline = 'Max purchase expiry is 30 days'
+      errors.redemptionDeadline = 'Max redemption deadline is 30 days'
     } else if (
       !currentNetwork.isProd
-        ? redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS // min purchase expiry in test networks 1 min
-        : redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS * 30 // min purchase expiry in main networks 30 min
+        ? redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS
+        : redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS * 30
     ) {
-      errors.investmentDeadLine = 'Min purchase expiry is 30 mins'
+      errors.investmentDeadLine = 'Min redemption deadline is 30 mins'
     }
   }
 
@@ -122,15 +122,19 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
       if (!values.exchangeRates?.exchangeRates) {
         errors.exchangeRates = 'Set an exchange rate'
       } else {
-        if (values.exchangeRates?.hasDealMinimum) {
-          if (!values.exchangeRates?.minimumAmount) {
-            errors.exchangeRates = 'Invalid minimum amount'
-          } else if (
-            Number(values.exchangeRates?.minimumAmount) >
-            Number(values.exchangeRates?.investmentTokenToRaise)
-          ) {
-            errors.exchangeRates =
-              'The deal minimum has to be equal or less than the amount you would like to raise'
+        if (Number(values.exchangeRates?.exchangeRates) <= 0) {
+          errors.exchangeRates = 'The exchange rate has to be greater than zero'
+        } else {
+          if (values.exchangeRates?.hasDealMinimum) {
+            if (!values.exchangeRates?.minimumAmount) {
+              errors.exchangeRates = 'Invalid minimum amount'
+            } else if (
+              Number(values.exchangeRates?.minimumAmount) >
+              Number(values.exchangeRates?.investmentTokenToRaise)
+            ) {
+              errors.exchangeRates =
+                'The deal minimum has to be equal or less than the amount you would like to raise'
+            }
           }
         }
       }

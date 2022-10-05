@@ -93,16 +93,17 @@ const Create: NextPage = () => {
 
   const timeline = useTimelineStatus(undefined, true)
 
-  const withTitle = [CreateUpFrontDealSteps.vestingSchedule, CreateUpFrontDealSteps.dealName].some(
-    (step) => createDealState.currentStep === step,
-  )
+  const withTitle = [
+    CreateUpFrontDealSteps.vestingSchedule,
+    CreateUpFrontDealSteps.dealAttributes,
+  ].some((step) => createDealState.currentStep === step)
 
   return (
     <>
       <Head>
-        <title>{`${createDealState.dealName.name || 'Create deal'}`}</title>
+        <title>{`${createDealState.dealAttributes.name || 'Create deal'}`}</title>
       </Head>
-      <PageTitle title={`${createDealState.dealName.name || 'Deal creation'}`} />
+      <PageTitle title={`${createDealState.dealAttributes.name || 'Deal creation'}`} />
       <RightTimelineLayout timelineSteps={timeline}>
         <CardWithTitle titles={<CardTitle>Deal creation</CardTitle>}>
           <StepIndicator

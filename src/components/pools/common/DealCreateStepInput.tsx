@@ -1,6 +1,7 @@
 import { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { Tooltip } from '../../tooltip/Tooltip'
 import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import { Description, Title } from '@/src/components/pools/common/Create'
@@ -17,7 +18,7 @@ import {
 import { formatNumber } from '@/src/utils/formatNumber'
 
 const Container = styled.div`
-  padding: 10px;
+  padding: 20px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,6 +54,15 @@ const ExchangeRateSummary = styled.p`
   font-size: 1.2rem;
 `
 
+const ContainerCheckbox = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+
+const StyledLabelCheckbox = styled(LabeledCheckbox)`
+  margin: 0 5px 0 0;
+`
+
 interface Props extends HTMLAttributes<HTMLDivElement> {
   setDealField: (value: unknown, field?: string) => void
   currentState: CreateUpFrontDealState
@@ -67,6 +77,7 @@ const DealCreateStepInput: React.FC<Props> = ({
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
   const [investmentPerDeal, setInvestmentPerDeal] = useState<string | null>(null)
+  const [hasFee, setHasFee] = useState<boolean>(true)
 
   useEffect(() => {
     if (inputRef.current) {
@@ -80,7 +91,9 @@ const DealCreateStepInput: React.FC<Props> = ({
       [
         currentState[CreateUpFrontDealSteps.exchangeRates]?.exchangeRates,
         currentState[CreateUpFrontDealSteps.exchangeRates]?.investmentTokenToRaise,
-      ].some((val) => typeof val === undefined || val === '')
+      ].some(
+        (val) => typeof val === undefined || val === undefined || val === '' || Number(val) === 0,
+      )
     ) {
       setInvestmentPerDeal(null)
       return
@@ -97,7 +110,7 @@ const DealCreateStepInput: React.FC<Props> = ({
 
   return (
     <Wrapper onKeyUp={onKeyUp} {...restProps}>
-      {step === CreateUpFrontDealSteps.dealName ? (
+      {step === CreateUpFrontDealSteps.dealAttributes ? (
         <>
           <Container>
             <Title>Deal Name</Title>
@@ -149,6 +162,7 @@ const DealCreateStepInput: React.FC<Props> = ({
         <Container>
           <StyledDescription>{createDealConfig[step].text?.[0]}</StyledDescription>
           <SponsorFeeTextfield
+            disabled={!hasFee}
             maxLength={8}
             min="0"
             name={step}
@@ -157,6 +171,20 @@ const DealCreateStepInput: React.FC<Props> = ({
             ref={inputRef}
             type="number"
             value={currentState[step] as unknown as string}
+          />
+          <br />
+          <LabeledCheckbox
+            checked={!hasFee}
+            label="I don't want a fee"
+            onClick={() => {
+              if (hasFee) {
+                setDealField('0')
+              } else {
+                setDealField(undefined)
+              }
+
+              setHasFee(!hasFee)
+            }}
           />
         </Container>
       ) : step === CreateUpFrontDealSteps.holderAddress ? (
@@ -213,25 +241,37 @@ const DealCreateStepInput: React.FC<Props> = ({
               value={currentState[step]?.exchangeRates}
             />
             <br />
-            {investmentPerDeal && (
+            {investmentPerDeal ? (
               <ExchangeRateSummary>
-                {`(1 ${currentState[CreateUpFrontDealSteps.investmentToken]?.symbol}`} ={' '}
-                {`${investmentPerDeal} ${currentState[CreateUpFrontDealSteps.dealToken]?.symbol})`}
+                ({`${investmentPerDeal} ${currentState[CreateUpFrontDealSteps.dealToken]?.symbol}`}{' '}
+                = {`1 ${currentState[CreateUpFrontDealSteps.investmentToken]?.symbol}`})
               </ExchangeRateSummary>
+            ) : (
+              <br />
             )}
-            <LabeledCheckbox
-              checked={currentState[step]?.isCapped}
-              label="Do you want the deal to be capped?"
-              onClick={() => setDealField(!currentState[step]?.isCapped, `${step}.isCapped`)}
-            />
+            <ContainerCheckbox>
+              <StyledLabelCheckbox
+                checked={currentState[step]?.isCapped}
+                label="Do you want the deal to be capped?"
+                onClick={() => setDealField(!currentState[step]?.isCapped, `${step}.isCapped`)}
+              />
+              <Tooltip
+                text={`Capping the deal means that once the investment total has been reached no further deposits are allowed. By keeping the deal uncapped you may take in more investment tokens than the total and every investor will be deallocated proportionally`}
+              />
+            </ContainerCheckbox>
             <br />
-            <LabeledCheckbox
-              checked={currentState[step]?.hasDealMinimum}
-              label="Do you want to set a deal minimum?"
-              onClick={() =>
-                setDealField(!currentState[step]?.hasDealMinimum, `${step}.hasDealMinimum`)
-              }
-            />
+            <ContainerCheckbox>
+              <StyledLabelCheckbox
+                checked={currentState[step]?.hasDealMinimum}
+                label="Do you want to set a deal minimum?"
+                onClick={() =>
+                  setDealField(!currentState[step]?.hasDealMinimum, `${step}.hasDealMinimum`)
+                }
+              />
+              <Tooltip
+                text={`The deal will be cancelled if the minimum is not reached by the end of the deal acceptance window. Investors will be able to retrieve their investment tokens. Protocols may choose this option if they are unable to achieve their goals with an amount smaller than the minimum`}
+              />
+            </ContainerCheckbox>
             {currentState[step]?.hasDealMinimum && (
               <>
                 <br />
