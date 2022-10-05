@@ -280,30 +280,37 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
     getSummaryValue: (currentState: CreateUpFrontDealStateComplete) => {
       const value = currentState[CreateUpFrontDealSteps.exchangeRates] as ExchangeRatesAttr
 
-      if (value.investmentTokenToRaise && value.exchangeRates) {
-        const investmentPerDeal = formatNumber(
-          Number(value.investmentTokenToRaise) / Number(value.exchangeRates),
-          EXCHANGE_DECIMALS,
+      const dealTokenSymbol = currentState[CreateUpFrontDealSteps.dealToken]?.symbol
+      const investmentDecimals = currentState[CreateUpFrontDealSteps.investmentToken]?.decimals
+
+      if (
+        value.investmentTokenToRaise &&
+        value.exchangeRates &&
+        value.investmentTokenToRaise > 0 &&
+        Number(value.exchangeRates) > 0
+      ) {
+        const exchangeRatesInWei = wei(value.exchangeRates, investmentDecimals)
+
+        const dealTokenTotalInWei = wei(value.investmentTokenToRaise, investmentDecimals).mul(
+          exchangeRatesInWei,
         )
 
-        const dealPerInvestment = formatNumber(
-          Number(value.exchangeRates) / Number(value.investmentTokenToRaise),
-          EXCHANGE_DECIMALS,
-        )
-
-        const dealTokenSymbol = currentState[CreateUpFrontDealSteps.dealToken]?.symbol
+        const investmentPerDeal = wei(value.investmentTokenToRaise, investmentDecimals)
+          .div(dealTokenTotalInWei)
+          .toNumber()
 
         if (!dealTokenSymbol) return '--'
 
         return (
           <>
             <span>
-              {investmentPerDeal} {dealTokenSymbol} per {` `}
+              {formatNumber(Number(value.exchangeRates), EXCHANGE_DECIMALS)} {dealTokenSymbol} per{' '}
+              {` `}
               {currentState[CreateUpFrontDealSteps.investmentToken]?.symbol}
             </span>
             <span>
-              {dealPerInvestment} {currentState[CreateUpFrontDealSteps.investmentToken]?.symbol} per{' '}
-              {dealTokenSymbol}
+              {formatNumber(investmentPerDeal, EXCHANGE_DECIMALS)}{' '}
+              {currentState[CreateUpFrontDealSteps.investmentToken]?.symbol} per {dealTokenSymbol}
             </span>
           </>
         )
@@ -406,18 +413,10 @@ const parseValuesToCreateUpFrontDeal = (
   } = createDealState
   const now = new Date()
 
-  exchangeRates.investmentTokenToRaise
-  exchangeRates.minimumAmount
-
-  exchangeRates.hasDealMinimum
-  exchangeRates.isCapped
-
-  dealToken.decimals
-
   const underlyingDealTokenTotal = wei(
     exchangeRates?.investmentTokenToRaise,
     investmentToken.decimals,
-  ).div(wei(exchangeRates.exchangeRates, investmentToken.decimals))
+  ).mul(wei(exchangeRates.exchangeRates, investmentToken.decimals))
 
   const purchaseTokenPerDealToken = wei(exchangeRates.exchangeRates, investmentToken.decimals)
 
