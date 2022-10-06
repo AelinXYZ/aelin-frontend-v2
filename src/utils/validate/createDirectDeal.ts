@@ -119,21 +119,25 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
     if (!values.exchangeRates?.investmentTokenToRaise) {
       errors.exchangeRates = 'Set how much you want to raise'
     } else {
-      if (!values.exchangeRates?.exchangeRates) {
-        errors.exchangeRates = 'Set an exchange rate'
+      if (values.exchangeRates?.investmentTokenToRaise <= 0) {
+        errors.exchangeRates = 'The investment has to be greater than zero'
       } else {
-        if (Number(values.exchangeRates?.exchangeRates) <= 0) {
-          errors.exchangeRates = 'The exchange rate has to be greater than zero'
+        if (!values.exchangeRates?.exchangeRates) {
+          errors.exchangeRates = 'Set an exchange rate'
         } else {
-          if (values.exchangeRates?.hasDealMinimum) {
-            if (!values.exchangeRates?.minimumAmount) {
-              errors.exchangeRates = 'Invalid minimum amount'
-            } else if (
-              Number(values.exchangeRates?.minimumAmount) >
-              Number(values.exchangeRates?.investmentTokenToRaise)
-            ) {
-              errors.exchangeRates =
-                'The deal minimum has to be equal or less than the amount you would like to raise'
+          if (Number(values.exchangeRates?.exchangeRates) <= 0) {
+            errors.exchangeRates = 'The exchange rate has to be greater than zero'
+          } else {
+            if (values.exchangeRates?.hasDealMinimum) {
+              if (!values.exchangeRates?.minimumAmount) {
+                errors.exchangeRates = 'Invalid minimum amount'
+              } else if (
+                Number(values.exchangeRates?.minimumAmount) >
+                Number(values.exchangeRates?.investmentTokenToRaise)
+              ) {
+                errors.exchangeRates =
+                  'The deal minimum has to be equal or less than the amount you would like to raise'
+              }
             }
           }
         }

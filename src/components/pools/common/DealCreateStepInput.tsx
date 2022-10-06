@@ -1,6 +1,8 @@
 import { HTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { wei } from '@synthetixio/wei'
+
 import { Tooltip } from '../../tooltip/Tooltip'
 import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
@@ -49,9 +51,15 @@ const PrivacyGrid = styled.div`
   max-width: fit-content;
 `
 
-const ExchangeRateSummary = styled.p`
-  text-align: right;
+const ExchangeRateSummary = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0 15px 0;
+`
+
+const ExchangeRateSpan = styled.span`
   font-size: 1.2rem;
+  text-align: right;
 `
 
 const ContainerCheckbox = styled.div`
@@ -77,6 +85,7 @@ const DealCreateStepInput: React.FC<Props> = ({
   const step = currentState.currentStep
   const inputRef = useRef<HTMLInputElement>(null)
   const [investmentPerDeal, setInvestmentPerDeal] = useState<string | null>(null)
+  const [dealTotal, setDealTotal] = useState<string | null>(null)
   const [hasFee, setHasFee] = useState<boolean>(true)
 
   useEffect(() => {
@@ -86,26 +95,42 @@ const DealCreateStepInput: React.FC<Props> = ({
   }, [step])
 
   useEffect(() => {
+    const exchangeRates = currentState[CreateUpFrontDealSteps.exchangeRates]?.exchangeRates
+    const investmentTokenToRaise =
+      currentState[CreateUpFrontDealSteps.exchangeRates]?.investmentTokenToRaise
+
     if (
       currentState.currentStep !== CreateUpFrontDealSteps.exchangeRates ||
-      [
-        currentState[CreateUpFrontDealSteps.exchangeRates]?.exchangeRates,
-        currentState[CreateUpFrontDealSteps.exchangeRates]?.investmentTokenToRaise,
-      ].some(
+      [exchangeRates, investmentTokenToRaise].some(
         (val) => typeof val === undefined || val === undefined || val === '' || Number(val) === 0,
       )
     ) {
       setInvestmentPerDeal(null)
-      return
+    } else {
+      const investmentPerDeal = formatNumber(Number(exchangeRates), EXCHANGE_DECIMALS)
+
+      setInvestmentPerDeal(investmentPerDeal)
     }
+  }, [currentState])
 
-    const investmentPerDeal = formatNumber(
-      Number(currentState[CreateUpFrontDealSteps.exchangeRates]?.investmentTokenToRaise) /
-        Number(currentState[CreateUpFrontDealSteps.exchangeRates]?.exchangeRates),
-      EXCHANGE_DECIMALS,
-    )
+  useEffect(() => {
+    const exchangeRates = currentState[CreateUpFrontDealSteps.exchangeRates]?.exchangeRates
+    const investmentTokenToRaise =
+      currentState[CreateUpFrontDealSteps.exchangeRates]?.investmentTokenToRaise
+    const decimals = currentState[CreateUpFrontDealSteps.investmentToken]?.decimals
 
-    setInvestmentPerDeal(investmentPerDeal)
+    if (
+      currentState.currentStep !== CreateUpFrontDealSteps.exchangeRates ||
+      [exchangeRates, investmentTokenToRaise].some(
+        (val) => typeof val === undefined || val === undefined || val === '' || Number(val) === 0,
+      )
+    ) {
+      setDealTotal(null)
+    } else {
+      const dealTotal = wei(exchangeRates, decimals).mul(wei(investmentTokenToRaise, decimals))
+
+      setDealTotal(formatNumber(dealTotal.toNumber(), EXCHANGE_DECIMALS))
+    }
   }, [currentState])
 
   return (
@@ -175,7 +200,7 @@ const DealCreateStepInput: React.FC<Props> = ({
           <br />
           <LabeledCheckbox
             checked={!hasFee}
-            label="I don't want a fee"
+            label="No sponsor fee"
             onClick={() => {
               if (hasFee) {
                 setDealField('0')
@@ -241,14 +266,24 @@ const DealCreateStepInput: React.FC<Props> = ({
               value={currentState[step]?.exchangeRates}
             />
             <br />
-            {investmentPerDeal ? (
-              <ExchangeRateSummary>
-                ({`${investmentPerDeal} ${currentState[CreateUpFrontDealSteps.dealToken]?.symbol}`}{' '}
-                = {`1 ${currentState[CreateUpFrontDealSteps.investmentToken]?.symbol}`})
-              </ExchangeRateSummary>
-            ) : (
-              <br />
-            )}
+            <ExchangeRateSummary>
+              <>
+                {dealTotal && (
+                  <ExchangeRateSpan>
+                    Deal Total: {dealTotal} {currentState[CreateUpFrontDealSteps.dealToken]?.symbol}
+                  </ExchangeRateSpan>
+                )}
+                {investmentPerDeal && (
+                  <ExchangeRateSpan>
+                    (
+                    {`${investmentPerDeal} ${
+                      currentState[CreateUpFrontDealSteps.dealToken]?.symbol
+                    }`}{' '}
+                    = {`1 ${currentState[CreateUpFrontDealSteps.investmentToken]?.symbol}`})
+                  </ExchangeRateSpan>
+                )}
+              </>
+            </ExchangeRateSummary>
             <ContainerCheckbox>
               <StyledLabelCheckbox
                 checked={currentState[step]?.isCapped}
