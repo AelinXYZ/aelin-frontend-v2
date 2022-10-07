@@ -16,7 +16,7 @@ export enum PoolTimelineStateTitles {
   'Pool Creation',
   'Investment Deadline',
   'Deal Creation',
-  'Deal Deadline',
+  'Deal Funding Deadline',
   'Round 1: Accept Allocation',
   'Round 2: Accept Remaining',
   'Vesting Cliff',
