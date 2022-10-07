@@ -111,8 +111,8 @@ export const PoolInformation = ({ pool }: Props) => {
           </DynamicDeadline>
         </InfoCell>
         <InfoCell
-          title="Deal deadline"
-          tooltip="The amount of time a sponsor has to find a deal before investors can withdraw their funds. A deal may still be created after the deadline if funds are still in the pool."
+          title="Deal Creation Deadline"
+          tooltip="The amount of time a sponsor has to create a deal before investors can withdraw their funds. A deal may still be created after the deadline if funds are still in the pool."
           value={formatDate(pool.dealDeadline, DATE_DETAILED)}
         >
           {isAfter(now, pool.purchaseExpiry) && (
