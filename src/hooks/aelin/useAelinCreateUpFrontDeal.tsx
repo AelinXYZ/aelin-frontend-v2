@@ -16,8 +16,7 @@ import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresse
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { BASE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
-import { BASE_SPONSOR_FEE, EXCHANGE_DECIMALS } from '@/src/constants/misc'
+import { BASE_DECIMALS, EXCHANGE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token } from '@/src/constants/token'
 import {
@@ -495,7 +494,7 @@ const parseValuesToCreateUpFrontDeal = (
       underlyingDealToken: dealToken.address,
       holder: holderAddress,
       sponsor,
-      sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_SPONSOR_FEE) : ZERO_BN,
+      sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_DECIMALS) : ZERO_BN,
     },
     {
       underlyingDealTokenTotal: underlyingDealTokenTotal.toBN(),
