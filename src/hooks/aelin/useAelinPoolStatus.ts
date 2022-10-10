@@ -260,7 +260,9 @@ function useUserActions(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
 ): PoolAction[] {
-  const { address: walletAddress } = useWeb3Connection()
+  const { address: walletAddress, isWalletConnected } = useWeb3Connection()
+  const isConnected = isWalletConnected && walletAddress
+
   const currentStatus = derivedStatus.current
 
   const { data: userAllocationStats, refetch } = useUserAllocationStats(
@@ -280,6 +282,9 @@ function useUserActions(
     const userPoolBalance = BigNumber.from(userAllocationStats.raw)
 
     if (pool.upfrontDeal) {
+      if (!isConnected) {
+        return []
+      }
       // Waiting for holder
       if (currentStatus === PoolStatus.WaitingForHolder) {
         if (userRole !== UserRole.Holder) {
@@ -430,7 +435,7 @@ function useUserActions(
     }
 
     return []
-  }, [userRole, currentStatus, pool, walletAddress, userAllocationStats.raw])
+  }, [isConnected, userRole, currentStatus, pool, walletAddress, userAllocationStats.raw])
 }
 
 function useUserTabs(
