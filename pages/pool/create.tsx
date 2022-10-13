@@ -202,6 +202,7 @@ const Create: NextPage = () => {
             setPoolField(whitelist, type)
           }}
           poolPrivacy={createPoolState.poolPrivacy}
+          withMerkleTree={false}
         />
       )}
     </>

@@ -19,13 +19,7 @@ const Modal = styled(BaseModal)`
   }
 `
 
-const WhiteListModal = ({
-  currentList,
-  investmentTokenDecimals,
-  onClose,
-  onConfirm,
-  poolPrivacy,
-}: {
+type WhiteListType = {
   poolPrivacy: Privacy | undefined
   currentList: AddressWhitelistProps[]
   investmentTokenDecimals: number
@@ -34,7 +28,16 @@ const WhiteListModal = ({
     whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
     type: NftType | string,
   ) => void
-}) => {
+  withMerkleTree: boolean | undefined
+}
+
+const WhiteListModal = ({
+  currentList,
+  investmentTokenDecimals,
+  onClose,
+  onConfirm,
+  poolPrivacy,
+}: WhiteListType) => {
   const [addressesWhiteList, setAddressesWhiteList] = useState(
     currentList.length ? currentList : initialAddressesWhitelistValues,
   )

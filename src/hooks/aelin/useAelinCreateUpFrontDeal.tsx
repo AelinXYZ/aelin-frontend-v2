@@ -27,6 +27,8 @@ import { GasOptions, useTransactionModal } from '@/src/providers/transactionModa
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, isEmptyDuration, secondsToDhm } from '@/src/utils/date'
 import { formatNumber } from '@/src/utils/formatNumber'
+import { mergeArrayKeyValuePairs } from '@/src/utils/mergeArrayKeyValuePairs'
+import { parseBalanceMap } from '@/src/utils/merkle-tree/parse-balance-map'
 import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
 
 const VestinScheduleContainer = styled.div`
@@ -86,6 +88,7 @@ export interface CreateUpFrontDealState {
   dealPrivacy?: Privacy
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
+  withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
 
@@ -106,6 +109,7 @@ export interface CreateUpFrontDealStateComplete {
   exchangeRates: ExchangeRatesAttr
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
+  withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
 
@@ -409,6 +413,7 @@ const parseValuesToCreateUpFrontDeal = (
     sponsorFee,
     vestingSchedule,
     whitelist,
+    withMerkleTree,
   } = createDealState
   const now = new Date()
 
@@ -486,6 +491,12 @@ const parseValuesToCreateUpFrontDeal = (
     })
   }
 
+  if (withMerkleTree) {
+    const balances = mergeArrayKeyValuePairs(dealAddresses, dealAddressesAmounts)
+    const merkleRoot = parseBalanceMap(balances)
+    console.log('merkleRoot: ', merkleRoot)
+  }
+
   return [
     {
       name: dealAttributes.name,
@@ -549,6 +560,7 @@ const initialState: CreateUpFrontDealState = {
   [CreateUpFrontDealSteps.dealPrivacy]: undefined,
   currentStep: CreateUpFrontDealSteps.dealAttributes,
   whitelist: [],
+  withMerkleTree: false,
   nftCollectionRules: [],
 }
 
@@ -655,33 +667,37 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
         address ?? ZERO_ADDRESS,
       )
 
-    setConfigAndOpenModal({
-      estimate: () =>
-        createUpFrontDealEstimate([
-          upFrontDealData,
-          upFrontDealConfig,
-          nftCollectionRules,
-          allowListAddresses,
-        ]),
-      title: 'Create deal',
-      onConfirm: async (txGasOptions: GasOptions) => {
-        setShowWarningOnLeave(false)
+    if (createDealState.withMerkleTree) {
+      // TODO: Create a deal using a merkle tree
+    } else {
+      setConfigAndOpenModal({
+        estimate: () =>
+          createUpFrontDealEstimate([
+            upFrontDealData,
+            upFrontDealConfig,
+            nftCollectionRules,
+            allowListAddresses,
+          ]),
+        title: 'Create deal',
+        onConfirm: async (txGasOptions: GasOptions) => {
+          setShowWarningOnLeave(false)
 
-        try {
-          const receipt = await execute(
-            [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses],
-            txGasOptions,
-          )
+          try {
+            const receipt = await execute(
+              [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses],
+              txGasOptions,
+            )
 
-          if (receipt) {
-            router.push(`/pool/${getKeyChainByValue(chainId)}/${getDealCreatedId(receipt)}`)
+            if (receipt) {
+              router.push(`/pool/${getKeyChainByValue(chainId)}/${getDealCreatedId(receipt)}`)
+            }
+          } catch (error) {
+            console.log(error)
+            setShowWarningOnLeave(true)
           }
-        } catch (error) {
-          console.log(error)
-          setShowWarningOnLeave(true)
-        }
-      },
-    })
+        },
+      })
+    }
   }
 
   const setDealField = useCallback(
