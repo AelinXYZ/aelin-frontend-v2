@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import isAfter from 'date-fns/isAfter'
 
 import { TokenIcon } from '../common/TokenIcon'
-import { DealType } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
