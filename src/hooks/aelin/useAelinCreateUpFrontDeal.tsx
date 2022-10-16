@@ -30,6 +30,7 @@ import { formatNumber } from '@/src/utils/formatNumber'
 import { mergeArrayKeyValuePairs } from '@/src/utils/mergeArrayKeyValuePairs'
 import { parseBalanceMap } from '@/src/utils/merkle-tree/parse-balance-map'
 import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
+import { storeJson } from '@/src/utils/web3storage'
 
 const VestinScheduleContainer = styled.div`
   display: flex;
@@ -141,16 +142,16 @@ export type UpFrontDealConfig = {
   allowDeallocation: boolean
 }
 
-export type allowlist = {
+export type Allowlist = {
   allowListAddresses: string[]
-  allowListAmounts: BigNumberish[]
+  allowListAmounts: BigNumber[]
 }
 
 export type CreateUpFrontDealValues = [
   UpFrontDealData,
   UpFrontDealConfig,
   NftCollectionRulesProps[],
-  allowlist,
+  Allowlist,
 ]
 
 export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealStepInfo> = {
@@ -413,7 +414,6 @@ const parseValuesToCreateUpFrontDeal = (
     sponsorFee,
     vestingSchedule,
     whitelist,
-    withMerkleTree,
   } = createDealState
   const now = new Date()
 
@@ -489,12 +489,6 @@ const parseValuesToCreateUpFrontDeal = (
         investmentToken.decimals,
       )
     })
-  }
-
-  if (withMerkleTree) {
-    const balances = mergeArrayKeyValuePairs(dealAddresses, dealAddressesAmounts)
-    const merkleRoot = parseBalanceMap(balances)
-    console.log('merkleRoot: ', merkleRoot)
   }
 
   return [
@@ -668,6 +662,17 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
       )
 
     if (createDealState.withMerkleTree) {
+      const balances = mergeArrayKeyValuePairs(
+        allowListAddresses.allowListAddresses,
+        allowListAddresses.allowListAmounts,
+      )
+
+      // Generate the merkle data
+      const merkleData = parseBalanceMap(balances)
+
+      // Upload the merkle tree json to ipfs
+      const response = await storeJson(merkleData, createDealState.dealAttributes.symbol)
+
       // TODO: Create a deal using a merkle tree
     } else {
       setConfigAndOpenModal({
