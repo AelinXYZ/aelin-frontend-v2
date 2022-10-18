@@ -221,6 +221,12 @@ export const List: React.FC<{
                       <Lock />
                     </Label>
                   )}
+
+                  {!!pool.upfrontDeal && (
+                    <Label>
+                      <span>Deal</span>
+                    </Label>
+                  )}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                 </NameCell>
                 <ENSOrAddress address={sponsor} network={network} />
