@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
 
+import { ButtonType } from '../pureStyledComponents/buttons/Button'
 import { SectionIntro } from '@/src/components/section/SectionIntro'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
@@ -8,10 +9,11 @@ type Banner = {
   [key: number]: {
     backgroundImage: string
     title: string
-    button?: {
+    button?: Array<{
       onClick: () => void
       title: string
-    }
+      type: ButtonType
+    }>
     secondaryButton?: {
       onClick: () => void
       title: string
@@ -49,14 +51,17 @@ const StakeBanner = ({ ...restProps }) => {
       },
       10: {
         backgroundImage: 'bg-stake.svg',
-        button: {
-          onClick: () =>
-            window.open(
-              'https://app.velodrome.finance/liquidity/manage?address=0x3eec44e94ee86ce79f34bb26dc3cdbbee18d6d17',
-              '_blank',
-            ),
-          title: 'Go to Velodrome!',
-        },
+        button: [
+          {
+            onClick: () =>
+              window.open(
+                'https://app.velodrome.finance/liquidity/manage?address=0x3eec44e94ee86ce79f34bb26dc3cdbbee18d6d17',
+                '_blank',
+              ),
+            title: 'Go to Velodrome!',
+            type: ButtonType.Primary,
+          },
+        ],
         secondaryButton: !router.pathname.includes('deprecated')
           ? {
               onClick: () => router.push('/stake/deprecated'),

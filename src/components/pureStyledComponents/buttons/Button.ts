@@ -7,6 +7,12 @@ export const DisabledButtonCSS = css`
   opacity: 0.5;
 `
 
+export enum ButtonType {
+  Primary = 'primary',
+  Secondary = 'secondary',
+  Tertiary = 'tertiary',
+}
+
 export const ButtonCSS = css`
   align-items: center;
   border-radius: 25px;
@@ -51,6 +57,26 @@ export const ButtonPrimaryCSS = css`
     background-color: ${({ theme }) => theme.buttonPrimary.borderColor};
     border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
     color: ${({ theme }) => theme.buttonPrimary.color};
+  }
+`
+
+export const ButtonSecondaryCSS = css`
+  background-color: ${({ theme }) => theme.buttonSecondary.backgroundColor};
+  border-color: ${({ theme }) => theme.buttonSecondary.borderColor};
+  color: ${({ theme }) => theme.buttonSecondary.color};
+
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonSecondary.backgroundColorHover};
+    border-color: ${({ theme }) => theme.buttonSecondary.borderColorHover};
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+    color: ${({ theme }) => theme.buttonSecondary.colorHover};
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: ${({ theme }) => theme.buttonSecondary.borderColor};
+    border-color: ${({ theme }) => theme.buttonSecondary.borderColor};
+    color: ${({ theme }) => theme.buttonSecondary.color};
   }
 `
 
@@ -104,6 +130,21 @@ export const ButtonPrimaryLighterCSS = css`
   }
 `
 
+export const ButtonSecondaryGradientCSS = css`
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.colors.secondaryGradientStart} 9.37%,
+    ${({ theme }) => theme.colors.secondaryGradientEnd} 100%
+  );
+  border: none;
+  color: ${({ theme }) => theme.buttonGradient.color};
+  font-weight: 500;
+
+  &:hover {
+    box-shadow: 0 0 10px #000;
+  }
+`
+
 export const ButtonGradientCSS = css`
   background: linear-gradient(
     90deg,
@@ -118,6 +159,7 @@ export const ButtonGradientCSS = css`
     box-shadow: 0 0 10px #000;
   }
 `
+
 export const ButtonGradientSmCSS = css`
   ${ButtonGradientCSS}
 
@@ -234,6 +276,14 @@ export const Button = styled(BaseButton)`
 
 export const ButtonPrimary = styled(Button)`
   ${ButtonPrimaryCSS}
+`
+
+export const ButtonSecondary = styled(Button)`
+  ${ButtonSecondaryCSS}
+`
+
+export const ButtonSecondaryGradient = styled(Button)`
+  ${ButtonSecondaryGradientCSS}
 `
 
 export const ButtonPrimaryLight = styled(Button)`
