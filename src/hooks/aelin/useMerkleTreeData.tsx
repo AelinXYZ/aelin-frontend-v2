@@ -1,3 +1,4 @@
+import * as isIPFS from 'is-ipfs'
 import useSWR from 'swr'
 
 import { MerkleDistributorInfo } from '@/src/utils/merkle-tree/parse-balance-map'
@@ -7,18 +8,24 @@ type Props = {
 }
 
 const getMerkleTreeIpfsGatewayUrl = (ipfsHash: string) =>
-  `https://${process.env.NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL}/${ipfsHash}`
+  `${process.env.NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL}/${ipfsHash}`
 
 const useMerkleTreeData = (variables: Props) => {
   return useSWR<MerkleDistributorInfo, Error>(
     'merkle-tree-data',
     async () => {
-      const url = getMerkleTreeIpfsGatewayUrl(variables.ipfsHash)
+      if (!isIPFS.cid(variables.ipfsHash)) throw new Error('Invalid IPFS hash')
+      try {
+        const url = getMerkleTreeIpfsGatewayUrl(variables.ipfsHash)
 
-      const response = await fetch(url)
-      const merkleTreeDataJson = await response.json()
+        const response = await fetch(url)
+        const merkleTreeDataJson = await response.json()
 
-      return merkleTreeDataJson
+        return merkleTreeDataJson
+      } catch (err) {
+        console.error(err)
+        return {}
+      }
     },
     {
       revalidateOnFocus: false,
