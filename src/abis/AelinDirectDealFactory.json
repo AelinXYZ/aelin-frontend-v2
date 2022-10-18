@@ -65,7 +65,9 @@
       },
       { "indexed": true, "internalType": "address", "name": "holder", "type": "address" },
       { "indexed": true, "internalType": "address", "name": "sponsor", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "sponsorFee", "type": "uint256" }
+      { "indexed": false, "internalType": "uint256", "name": "sponsorFee", "type": "uint256" },
+      { "indexed": false, "internalType": "bytes32", "name": "merkleRoot", "type": "bytes32" },
+      { "indexed": false, "internalType": "string", "name": "ipfsHash", "type": "string" }
     ],
     "name": "CreateUpFrontDeal",
     "type": "event"
@@ -313,7 +315,9 @@
           { "internalType": "address", "name": "underlyingDealToken", "type": "address" },
           { "internalType": "address", "name": "holder", "type": "address" },
           { "internalType": "address", "name": "sponsor", "type": "address" },
-          { "internalType": "uint256", "name": "sponsorFee", "type": "uint256" }
+          { "internalType": "uint256", "name": "sponsorFee", "type": "uint256" },
+          { "internalType": "bytes32", "name": "merkleRoot", "type": "bytes32" },
+          { "internalType": "string", "name": "ipfsHash", "type": "string" }
         ],
         "internalType": "struct IAelinUpFrontDeal.UpFrontDealData",
         "name": "_dealData",
