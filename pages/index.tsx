@@ -42,9 +42,9 @@ const Home: NextPage = () => {
             ]}
             title="Deals"
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Direct Deals are for new and established protocols looking to raise capital from
+            investors at pre-established deal terms. Aelin Deals allow for customizable features,
+            such as a defined vesting period and a vesting cliff.
           </SectionIntro>
           <SectionIntro
             backgroundImage="/resources/svg/bg-pools.svg"
@@ -57,9 +57,9 @@ const Home: NextPage = () => {
             ]}
             title="Pools"
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Pools are for protocols/sponsors that don't have set deal terms yet but are gauging
+            investor interest. Pools are best suited for protocols without a set target valuation
+            and sponsors using Aelin to source a future deal. Aelin Pools are most similar to SPACs.
           </SectionIntro>
         </Container>
 
