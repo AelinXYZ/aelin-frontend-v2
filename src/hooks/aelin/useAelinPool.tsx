@@ -105,6 +105,8 @@ export type ParsedAelinPool = {
     holderClaim: boolean
     sponsorClaim: boolean
     totalUsersAccepted: number
+    merkleRoot: string | null
+    ipfsHash: string | null
   }
   deal?: {
     name: string
@@ -176,7 +178,7 @@ export const getParsedPool = ({
     name: pool.name,
     symbol: pool.symbol,
     nameFormatted: parsePoolName(pool.name),
-    poolType: pool.hasAllowList ? 'Private' : 'Public',
+    poolType: pool.hasAllowList || !!pool.upfrontDeal?.merkleRoot ? 'Private' : 'Public',
     address: poolAddress,
     start: getPoolCreatedDate(pool),
     investmentToken: pool.purchaseToken,

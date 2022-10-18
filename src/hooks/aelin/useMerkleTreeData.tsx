@@ -4,7 +4,7 @@ import useSWR from 'swr'
 import { MerkleDistributorInfo } from '@/src/utils/merkle-tree/parse-balance-map'
 
 type Props = {
-  ipfsHash: string
+  ipfsHash: string | null
 }
 
 const getMerkleTreeIpfsGatewayUrl = (ipfsHash: string) =>
@@ -15,6 +15,8 @@ const useMerkleTreeData = (variables: Props) => {
     'merkle-tree-data',
     async () => {
       try {
+        if (!variables.ipfsHash) return {}
+
         if (!isIPFS.cid(variables.ipfsHash)) throw new Error('Invalid ipfs hash')
 
         const url = getMerkleTreeIpfsGatewayUrl(variables.ipfsHash)
