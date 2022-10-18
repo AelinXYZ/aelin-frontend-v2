@@ -3,6 +3,7 @@
 import { Wallet } from '@ethersproject/wallet'
 import fs from 'fs/promises'
 import json2csv from 'json-2-csv'
+import path from 'path'
 
 const MAX_WALLETS = 10000
 const MAX_ALLOCATION = 100000
@@ -12,9 +13,19 @@ type Rows = {
   address: string
   allocation: number
 }
+const fileExists = async (path: string) => !!(await fs.stat(path).catch((e) => false))
 
 const createCSVFile = async (rows: Rows[]) => {
   const csv = await json2csv.json2csvAsync(rows)
+
+  const fileName = 'csv-for-merkel-tree.csv'
+  const folder = `${process.cwd()}/public/data/csv-for-merkel-tree/`
+
+  const isExist = await fileExists(path.join(folder, fileName))
+
+  if (isExist) {
+    await fs.unlink(path.join(folder, fileName))
+  }
 
   return fs.appendFile(
     `${process.cwd()}/public/data/csv-for-merkel-tree/csv-for-merkel-tree.csv`,
