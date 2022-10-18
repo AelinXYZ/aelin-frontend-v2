@@ -3,17 +3,17 @@ import useSWR from 'swr'
 import { MerkleDistributorInfo } from '@/src/utils/merkle-tree/parse-balance-map'
 
 type Props = {
-  cid: string
+  ipfsHash: string
 }
 
-const getMerkleTreeIpfsGatewayUrl = (cid: string) =>
-  `https://${process.env.NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL}/${cid}`
+const getMerkleTreeIpfsGatewayUrl = (ipfsHash: string) =>
+  `https://${process.env.NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL}/${ipfsHash}`
 
 const useMerkleTreeData = (variables: Props) => {
   return useSWR<MerkleDistributorInfo, Error>(
     'merkle-tree-data',
     async () => {
-      const url = getMerkleTreeIpfsGatewayUrl(variables.cid)
+      const url = getMerkleTreeIpfsGatewayUrl(variables.ipfsHash)
 
       const response = await fetch(url)
       const merkleTreeDataJson = await response.json()

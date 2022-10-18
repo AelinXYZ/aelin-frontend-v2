@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
-import { MaxUint256 } from '@ethersproject/constants'
+import { HashZero, MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { wei } from '@synthetixio/wei'
 
@@ -130,6 +130,8 @@ export type UpFrontDealData = {
   holder: string
   sponsor: string
   sponsorFee: BigNumber
+  merkleRoot: string
+  ipfsHash: string
 }
 
 export type UpFrontDealConfig = {
@@ -402,6 +404,8 @@ export const getCreateDealSummaryData = (
 const parseValuesToCreateUpFrontDeal = (
   createDealState: CreateUpFrontDealStateComplete,
   sponsor: string,
+  merkleRoot?: string,
+  ipfsHash?: string,
 ): CreateUpFrontDealValues => {
   const {
     dealAttributes,
@@ -500,6 +504,8 @@ const parseValuesToCreateUpFrontDeal = (
       holder: holderAddress,
       sponsor,
       sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_DECIMALS) : ZERO_BN,
+      merkleRoot: merkleRoot ?? HashZero,
+      ipfsHash: ipfsHash ?? HashZero,
     },
     {
       underlyingDealTokenTotal: underlyingDealTokenTotal.toBN(),
@@ -661,7 +667,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
         address ?? ZERO_ADDRESS,
       )
 
-    if (createDealState.withMerkleTree) {
+    if (createDealState.withMerkleTree && createDealState.dealPrivacy === Privacy.PRIVATE) {
+      // Format data for the merkle tree
       const balances = mergeArrayKeyValuePairs(
         allowListAddresses.allowListAddresses,
         allowListAddresses.allowListAmounts,
@@ -671,9 +678,51 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
       const merkleData = parseBalanceMap(balances)
 
       // Upload the merkle tree json to ipfs
-      const response = await storeJson(merkleData, createDealState.dealAttributes.symbol)
+      const ipfsHash = await storeJson(merkleData, createDealState.dealAttributes.symbol)
 
-      // TODO: Create a deal using a merkle tree
+      const upFrontDealDataFull = {
+        ...upFrontDealData,
+        merkleRoot: merkleData.merkleRoot,
+        ipfsHash: ipfsHash,
+      }
+
+      /*
+        Do not use allowlist values here
+        because we already have the merkle tree data
+        So, send it like empty arrays
+      */
+      const emptyAllowlistData = {
+        allowListAddresses: [],
+        allowListAmounts: [],
+      }
+
+      setConfigAndOpenModal({
+        estimate: () =>
+          createUpFrontDealEstimate([
+            upFrontDealDataFull,
+            upFrontDealConfig,
+            nftCollectionRules,
+            emptyAllowlistData,
+          ]),
+        title: 'Create deal',
+        onConfirm: async (txGasOptions: GasOptions) => {
+          setShowWarningOnLeave(false)
+
+          try {
+            const receipt = await execute(
+              [upFrontDealDataFull, upFrontDealConfig, nftCollectionRules, emptyAllowlistData],
+              txGasOptions,
+            )
+
+            if (receipt) {
+              router.push(`/pool/${getKeyChainByValue(chainId)}/${getDealCreatedId(receipt)}`)
+            }
+          } catch (error) {
+            console.log(error)
+            setShowWarningOnLeave(true)
+          }
+        },
+      })
     } else {
       setConfigAndOpenModal({
         estimate: () =>

@@ -13,13 +13,13 @@ const _makeFileObjects = (merkleTreeData: MerkleDistributorInfo, fileName: strin
 export const storeJson = async (merkleTreeData: MerkleDistributorInfo, fileName: string) => {
   const files = _makeFileObjects(merkleTreeData, fileName)
 
-  const promisePut = new Promise((resolve, reject) => {
+  const promisePut = new Promise<string>((resolve, reject) => {
     try {
       return client.put(files, {
         name: fileName,
         wrapWithDirectory: false,
-        onRootCidReady(cid) {
-          resolve(cid)
+        onRootCidReady(ipfsHash) {
+          resolve(ipfsHash)
         },
       })
     } catch (err) {
@@ -27,7 +27,7 @@ export const storeJson = async (merkleTreeData: MerkleDistributorInfo, fileName:
     }
   })
 
-  const cid = await promisePut
+  const ipfsHash = await promisePut
 
-  return cid
+  return ipfsHash
 }
