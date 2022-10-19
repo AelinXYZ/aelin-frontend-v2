@@ -1,3 +1,4 @@
+import useAelinUserMerkleTreeData from './merkle-tree/useAelinUserMerkleTreeData'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
@@ -50,15 +51,28 @@ export function useUserAvailableToDeposit(pool: ParsedAelinPool): UserPoolBalanc
     ],
   )
 
+  const userMerkleData = useAelinUserMerkleTreeData(pool)
+  const isMerklePool = !!pool.upfrontDeal?.merkleRoot
+
   const isUserAllowedToInvest = !isPrivatePool(pool.poolType)
     ? true
+    : isMerklePool
+    ? userMerkleData?.isEligible
     : userPoolBalance.gt(ZERO_BN) || allowListAmount.gt(ZERO_BN)
+
+  const userAlreadyInvested = isMerklePool
+    ? userMerkleData?.hasInvested
+    : isUserAllowedToInvest && isPrivatePool(pool.poolType) && allowListAmount.eq(ZERO_BN)
+
+  const allowedAmountToDeposit = isMerklePool
+    ? userMerkleData?.data.amount || ZERO_BN
+    : allowListAmount
 
   return {
     isUserAllowedToInvest,
     userMaxDepositPrivateAmount: {
-      raw: allowListAmount,
-      formatted: formatToken(allowListAmount, pool.investmentTokenDecimals),
+      raw: allowedAmountToDeposit,
+      formatted: formatToken(allowedAmountToDeposit, pool.investmentTokenDecimals),
       type: AmountTypes.maxDepositAllowedPrivate,
     },
     investmentTokenBalance: {
@@ -66,8 +80,7 @@ export function useUserAvailableToDeposit(pool: ParsedAelinPool): UserPoolBalanc
       formatted: formatToken(investmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals),
       type: AmountTypes.investmentTokenBalance,
     },
-    userAlreadyInvested:
-      isUserAllowedToInvest && isPrivatePool(pool.poolType) && allowListAmount.eq(ZERO_BN),
+    userAlreadyInvested,
     refetchBalances: () => {
       refetchUserInvestmentTokenBalance()
       isPrivatePool(pool.poolType) && refetchAllowListBalance()
