@@ -146,7 +146,7 @@ export type UpFrontDealConfig = {
 
 export type Allowlist = {
   allowListAddresses: string[]
-  allowListAmounts: BigNumber[]
+  allowListAmounts: BigNumberish[]
 }
 
 export type CreateUpFrontDealValues = [
@@ -418,6 +418,7 @@ const parseValuesToCreateUpFrontDeal = (
     sponsorFee,
     vestingSchedule,
     whitelist,
+    withMerkleTree,
   } = createDealState
   const now = new Date()
 
@@ -454,7 +455,7 @@ const parseValuesToCreateUpFrontDeal = (
   )
 
   let dealAddresses: string[] = []
-  let dealAddressesAmounts: BigNumber[] = []
+  let dealAddressesAmounts: BigNumberish[] = []
   let nftCollectionRules: NftCollectionRulesProps[] = []
 
   if (
@@ -466,13 +467,20 @@ const parseValuesToCreateUpFrontDeal = (
 
       if (!address.length) return accum
 
-      accum.push({
-        address,
-        amount: amount ? parseUnits(String(amount), investmentToken.decimals) : MaxUint256,
-      })
+      if (withMerkleTree) {
+        accum.push({
+          address,
+          amount: amount ? amount : 0,
+        })
+      } else {
+        accum.push({
+          address,
+          amount: amount ? parseUnits(String(amount), investmentToken.decimals) : MaxUint256,
+        })
+      }
 
       return accum
-    }, [] as { address: string; amount: BigNumber }[])
+    }, [] as { address: string; amount: number | BigNumber }[])
 
     dealAddresses = formattedWhiteList.map(({ address }) => address)
     dealAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
