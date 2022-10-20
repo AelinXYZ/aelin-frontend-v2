@@ -19,13 +19,14 @@ export type UserMerkleData = {
 export type MerkleTreeUserData = {
   hasInvested: boolean
   isEligible: boolean
+  refetchUser: () => void
   data: UserMerkleData
 }
 
 function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData | null {
   const { address: userAddress } = useWeb3Connection()
   const [userData, setUserData] = useState<MerkleTreeUserData | null>(null)
-  const userRoles = useAelinUserRoles(pool)
+  const { refetchUser, userRoles } = useAelinUserRoles(pool)
 
   const ipfsHash = pool.upfrontDeal?.ipfsHash || null
   const { data: merkleTreeData } = useMerkleTreeData({ ipfsHash })
@@ -38,6 +39,7 @@ function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData |
       setUserData({
         isEligible,
         hasInvested,
+        refetchUser,
         data: {
           index: merkleTreeData.claims[userAddress].index,
           account: userAddress,
@@ -50,7 +52,7 @@ function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData |
         },
       })
     }
-  }, [pool, hasInvested, isEligible, merkleTreeData, userAddress])
+  }, [pool, hasInvested, isEligible, merkleTreeData, userAddress, refetchUser])
 
   return userData
 }

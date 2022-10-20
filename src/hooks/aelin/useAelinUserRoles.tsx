@@ -5,16 +5,21 @@ import useAelinUser from './useAelinUser'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { UserRole } from '@/types/aelinPool'
 
-function useAelinUserRoles(pool: ParsedAelinPool): UserRole[] {
+type UserRoles = {
+  userRoles: UserRole[]
+  refetchUser: () => void
+}
+
+function useAelinUserRoles(pool: ParsedAelinPool): UserRoles {
   const { address: userAddress } = useWeb3Connection()
 
-  const { data: userResponse, error: errorUser } = useAelinUser(userAddress)
+  const { data: userResponse, error: errorUser, mutate: refetchUser } = useAelinUser(userAddress)
 
   if (errorUser) {
     throw new Error('Error getting user role')
   }
 
-  return useMemo<UserRole[]>(() => {
+  const userRoles = useMemo<UserRole[]>(() => {
     if (userResponse && pool) {
       const roles: UserRole[] = []
       const isInvestor = !!userResponse.poolsInvested.filter(
@@ -38,6 +43,7 @@ function useAelinUserRoles(pool: ParsedAelinPool): UserRole[] {
     }
     return [UserRole.Visitor]
   }, [userResponse, pool])
+  return { userRoles, refetchUser }
 }
 
 export default useAelinUserRoles

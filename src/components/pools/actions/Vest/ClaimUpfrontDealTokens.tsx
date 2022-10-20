@@ -132,7 +132,7 @@ const HolderClaim = ({ upfrontDeal }: SponsorClaimProps) => {
 function ClaimUpfrontDealTokens({ pool, refund }: Props) {
   const { upfrontDeal } = pool
 
-  const userRoles = useAelinUserRoles(pool)
+  const { userRoles } = useAelinUserRoles(pool)
 
   const [poolShares] = useAelinPoolSharesPerUser(
     pool.upfrontDeal?.address || ZERO_ADDRESS,

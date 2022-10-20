@@ -73,7 +73,7 @@ function VestUpfrontDeal({ pool }: Props) {
       ? isBefore(lastClaim * 1000, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
       : amountToVest.gt(ZERO_BN)
 
-  const userRoles = useAelinUserRoles(pool)
+  const { userRoles } = useAelinUserRoles(pool)
 
   const hasToClaimTokens = useMemo(() => {
     if (!pool.upfrontDeal) return false
