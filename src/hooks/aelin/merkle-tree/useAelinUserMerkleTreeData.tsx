@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { wei } from '@synthetixio/wei'
+import ms from 'ms'
 
 import { ParsedAelinPool } from '../useAelinPool'
 import useAelinUserRoles from '../useAelinUserRoles'
@@ -25,7 +26,7 @@ export type MerkleTreeUserData = {
 function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData | null {
   const { address: userAddress } = useWeb3Connection()
   const [userData, setUserData] = useState<MerkleTreeUserData | null>(null)
-  const userRoles = useAelinUserRoles(pool)
+  const userRoles = useAelinUserRoles(pool, { refreshInterval: ms('5s') })
 
   const ipfsHash = pool.upfrontDeal?.ipfsHash || null
   const { data: merkleTreeData } = useMerkleTreeData({ ipfsHash })

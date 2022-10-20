@@ -1,5 +1,5 @@
 import orderBy from 'lodash/orderBy'
-import useSWR from 'swr'
+import useSWR, { SWRConfiguration } from 'swr'
 
 import { DealAccepted, PoolCreated } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
@@ -123,6 +123,6 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
   }
 }
 
-export default function useAelinUser(userAddress: string | null) {
-  return useSWR(userAddress?.toLocaleLowerCase(), fetcherUser)
+export default function useAelinUser(userAddress: string | null, config?: SWRConfiguration) {
+  return useSWR(userAddress?.toLocaleLowerCase(), fetcherUser, config)
 }
