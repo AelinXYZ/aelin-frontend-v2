@@ -20,7 +20,7 @@ export type dealErrors = {
   [CreateUpFrontDealSteps.dealAttributes]: DealAttr
   [CreateUpFrontDealSteps.investmentToken]?: Token
   [CreateUpFrontDealSteps.redemptionDeadline]?: Duration
-  [CreateUpFrontDealSteps.sponsorFee]?: BigNumberish
+  [CreateUpFrontDealSteps.sponsorFee]: number
   [CreateUpFrontDealSteps.holderAddress]?: string
   [CreateUpFrontDealSteps.dealToken]?: Token
   [CreateUpFrontDealSteps.exchangeRates]?: ExchangeRatesAttr
@@ -52,7 +52,8 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
     errors.investmentToken = 'Invalid Ethereum address'
   }
 
-  if (!values.sponsorFee || values.sponsorFee < 0) {
+  if (values.sponsorFee < 0) {
+    console.log('values.sponsorFee : ', values.sponsorFee)
     errors.sponsorFee = true
   }
 

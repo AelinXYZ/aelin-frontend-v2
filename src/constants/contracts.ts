@@ -49,7 +49,7 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '',
       [Chains.kovan]: '',
-      [Chains.goerli]: '0x0562f48cd8ac921a63a2500467e93cab308fdc65',
+      [Chains.goerli]: '0x10ab2D498De404a063a8102771434B3141ec33E8',
       [Chains.optimism]: '',
     },
     abi: AelinDirectDealFactoryABI,

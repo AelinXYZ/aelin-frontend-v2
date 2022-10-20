@@ -81,9 +81,25 @@ const main = async () => {
     },
   ]
 
+  const DmitryAddresses = [
+    {
+      address: '0x4F1abd0E5c4506C95a4Fd5259371BD9a877D9488',
+      allocation: parseUnits('0.0001', 18).toString(),
+    },
+  ]
+
+  const MattAddresses = [
+    {
+      address: '0x4b3337f7f0f95c21b91f4e9be5f90d4992129c58',
+      allocation: parseUnits('0.0001', 18).toString(),
+    },
+  ]
+
   rows.push(...LinusAddresses)
   rows.push(...SaetaAddresses)
   rows.push(...AlexAddresses)
+  rows.push(...DmitryAddresses)
+  rows.push(...MattAddresses)
 
   return createCSVFile(rows)
 }
