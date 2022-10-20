@@ -158,5 +158,7 @@ gql`
     totalUsersAccepted
     totalRedeemed
     remainingDealTokens
+    merkleRoot
+    ipfsHash
   }
 `

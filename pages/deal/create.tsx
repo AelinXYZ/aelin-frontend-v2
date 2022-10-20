@@ -30,7 +30,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
-import { BASE_DECIMALS } from '@/src/constants/misc'
+import { BASE_DECIMALS, MAX_PRIVATE_ROWS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreateUpFrontDeal, {
   CreateUpFrontDealSteps,
@@ -206,8 +206,13 @@ const Create: NextPage = () => {
             type: NftType | string,
           ) => {
             setDealField(whitelist, type)
+
+            if (whitelist.length > MAX_PRIVATE_ROWS) {
+              setDealField(true, 'withMerkleTree')
+            }
           }}
           poolPrivacy={createDealState.dealPrivacy}
+          withMerkleTree={true}
         />
       )}
     </>

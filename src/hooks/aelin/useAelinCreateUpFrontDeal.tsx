@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
-import { MaxUint256 } from '@ethersproject/constants'
+import { HashZero, MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { wei } from '@synthetixio/wei'
 
@@ -27,7 +27,10 @@ import { GasOptions, useTransactionModal } from '@/src/providers/transactionModa
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, isEmptyDuration, secondsToDhm } from '@/src/utils/date'
 import { formatNumber } from '@/src/utils/formatNumber'
+import { mergeArrayKeyValuePairs } from '@/src/utils/mergeArrayKeyValuePairs'
+import { parseBalanceMap } from '@/src/utils/merkle-tree/parse-balance-map'
 import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
+import { storeJson } from '@/src/utils/web3storage'
 
 const VestinScheduleContainer = styled.div`
   display: flex;
@@ -86,6 +89,7 @@ export interface CreateUpFrontDealState {
   dealPrivacy?: Privacy
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
+  withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
 
@@ -106,6 +110,7 @@ export interface CreateUpFrontDealStateComplete {
   exchangeRates: ExchangeRatesAttr
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
+  withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
 
@@ -125,6 +130,8 @@ export type UpFrontDealData = {
   holder: string
   sponsor: string
   sponsorFee: BigNumber
+  merkleRoot: string
+  ipfsHash: string
 }
 
 export type UpFrontDealConfig = {
@@ -137,7 +144,7 @@ export type UpFrontDealConfig = {
   allowDeallocation: boolean
 }
 
-export type allowlist = {
+export type Allowlist = {
   allowListAddresses: string[]
   allowListAmounts: BigNumberish[]
 }
@@ -146,7 +153,7 @@ export type CreateUpFrontDealValues = [
   UpFrontDealData,
   UpFrontDealConfig,
   NftCollectionRulesProps[],
-  allowlist,
+  Allowlist,
 ]
 
 export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealStepInfo> = {
@@ -397,6 +404,8 @@ export const getCreateDealSummaryData = (
 const parseValuesToCreateUpFrontDeal = (
   createDealState: CreateUpFrontDealStateComplete,
   sponsor: string,
+  merkleRoot?: string,
+  ipfsHash?: string,
 ): CreateUpFrontDealValues => {
   const {
     dealAttributes,
@@ -409,6 +418,7 @@ const parseValuesToCreateUpFrontDeal = (
     sponsorFee,
     vestingSchedule,
     whitelist,
+    withMerkleTree,
   } = createDealState
   const now = new Date()
 
@@ -445,7 +455,7 @@ const parseValuesToCreateUpFrontDeal = (
   )
 
   let dealAddresses: string[] = []
-  let dealAddressesAmounts: BigNumber[] = []
+  let dealAddressesAmounts: BigNumberish[] = []
   let nftCollectionRules: NftCollectionRulesProps[] = []
 
   if (
@@ -457,13 +467,20 @@ const parseValuesToCreateUpFrontDeal = (
 
       if (!address.length) return accum
 
-      accum.push({
-        address,
-        amount: amount ? parseUnits(String(amount), investmentToken.decimals) : MaxUint256,
-      })
+      if (withMerkleTree) {
+        accum.push({
+          address,
+          amount: amount ? amount : 0,
+        })
+      } else {
+        accum.push({
+          address,
+          amount: amount ? parseUnits(String(amount), investmentToken.decimals) : MaxUint256,
+        })
+      }
 
       return accum
-    }, [] as { address: string; amount: BigNumber }[])
+    }, [] as { address: string; amount: number | BigNumber }[])
 
     dealAddresses = formattedWhiteList.map(({ address }) => address)
     dealAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
@@ -495,6 +512,8 @@ const parseValuesToCreateUpFrontDeal = (
       holder: holderAddress,
       sponsor,
       sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_DECIMALS) : ZERO_BN,
+      merkleRoot: merkleRoot ?? HashZero,
+      ipfsHash: ipfsHash ?? HashZero,
     },
     {
       underlyingDealTokenTotal: underlyingDealTokenTotal.toBN(),
@@ -549,6 +568,7 @@ const initialState: CreateUpFrontDealState = {
   [CreateUpFrontDealSteps.dealPrivacy]: undefined,
   currentStep: CreateUpFrontDealSteps.dealAttributes,
   whitelist: [],
+  withMerkleTree: false,
   nftCollectionRules: [],
 }
 
@@ -655,33 +675,91 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
         address ?? ZERO_ADDRESS,
       )
 
-    setConfigAndOpenModal({
-      estimate: () =>
-        createUpFrontDealEstimate([
-          upFrontDealData,
-          upFrontDealConfig,
-          nftCollectionRules,
-          allowListAddresses,
-        ]),
-      title: 'Create deal',
-      onConfirm: async (txGasOptions: GasOptions) => {
-        setShowWarningOnLeave(false)
+    if (createDealState.withMerkleTree && createDealState.dealPrivacy === Privacy.PRIVATE) {
+      // Format data for the merkle tree
+      const balances = mergeArrayKeyValuePairs(
+        allowListAddresses.allowListAddresses,
+        allowListAddresses.allowListAmounts,
+      )
 
-        try {
-          const receipt = await execute(
-            [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses],
-            txGasOptions,
-          )
+      // Generate the merkle data
+      const merkleData = parseBalanceMap(balances)
 
-          if (receipt) {
-            router.push(`/pool/${getKeyChainByValue(chainId)}/${getDealCreatedId(receipt)}`)
+      // Upload the merkle tree json to ipfs
+      const ipfsHash = await storeJson(merkleData, createDealState.dealAttributes.symbol)
+
+      const upFrontDealDataFull = {
+        ...upFrontDealData,
+        merkleRoot: merkleData.merkleRoot,
+        ipfsHash: ipfsHash,
+      }
+
+      /*
+        Do not use allowlist values here
+        because we already have the merkle tree data
+        So, send it like empty arrays
+      */
+      const emptyAllowlistData = {
+        allowListAddresses: [],
+        allowListAmounts: [],
+      }
+
+      setConfigAndOpenModal({
+        estimate: () =>
+          createUpFrontDealEstimate([
+            upFrontDealDataFull,
+            upFrontDealConfig,
+            nftCollectionRules,
+            emptyAllowlistData,
+          ]),
+        title: 'Create deal',
+        onConfirm: async (txGasOptions: GasOptions) => {
+          setShowWarningOnLeave(false)
+
+          try {
+            const receipt = await execute(
+              [upFrontDealDataFull, upFrontDealConfig, nftCollectionRules, emptyAllowlistData],
+              txGasOptions,
+            )
+
+            if (receipt) {
+              router.push(`/pool/${getKeyChainByValue(chainId)}/${getDealCreatedId(receipt)}`)
+            }
+          } catch (error) {
+            console.log(error)
+            setShowWarningOnLeave(true)
           }
-        } catch (error) {
-          console.log(error)
-          setShowWarningOnLeave(true)
-        }
-      },
-    })
+        },
+      })
+    } else {
+      setConfigAndOpenModal({
+        estimate: () =>
+          createUpFrontDealEstimate([
+            upFrontDealData,
+            upFrontDealConfig,
+            nftCollectionRules,
+            allowListAddresses,
+          ]),
+        title: 'Create deal',
+        onConfirm: async (txGasOptions: GasOptions) => {
+          setShowWarningOnLeave(false)
+
+          try {
+            const receipt = await execute(
+              [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses],
+              txGasOptions,
+            )
+
+            if (receipt) {
+              router.push(`/pool/${getKeyChainByValue(chainId)}/${getDealCreatedId(receipt)}`)
+            }
+          } catch (error) {
+            console.log(error)
+            setShowWarningOnLeave(true)
+          }
+        },
+      })
+    }
   }
 
   const setDealField = useCallback(

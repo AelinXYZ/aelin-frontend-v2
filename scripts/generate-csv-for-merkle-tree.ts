@@ -1,25 +1,34 @@
 // Note: Add "type": "module" to the package.json before running the script
 
+import { parseUnits } from '@ethersproject/units'
 import { Wallet } from '@ethersproject/wallet'
 import fs from 'fs/promises'
 import json2csv from 'json-2-csv'
+import path from 'path'
 
-const MAX_WALLETS = 10000
+const MAX_WALLETS = 50
 const MAX_ALLOCATION = 100000
 const MIN_ALLOCATION = 1
 
 type Rows = {
   address: string
-  allocation: number
+  allocation: string
 }
+const fileExists = async (path: string) => !!(await fs.stat(path).catch((e) => false))
 
 const createCSVFile = async (rows: Rows[]) => {
   const csv = await json2csv.json2csvAsync(rows)
 
-  return fs.appendFile(
-    `${process.cwd()}/public/data/csv-for-merkel-tree/csv-for-merkel-tree.csv`,
-    csv,
-  )
+  const fileName = 'csv-for-merkel-tree.csv'
+  const folder = `${process.cwd()}/public/data/csv-for-merkel-tree/`
+
+  const isExist = await fileExists(path.join(folder, fileName))
+
+  if (isExist) {
+    await fs.unlink(path.join(folder, fileName))
+  }
+
+  return fs.appendFile(path.join(folder, fileName), csv)
 }
 
 const main = async () => {
@@ -29,9 +38,11 @@ const main = async () => {
 
   for (let x = 0; x < MAX_WALLETS; x++) {
     const randomWallet = Wallet.createRandom()
-    const randomAllocation = Math.round(
-      Math.random() * (MAX_ALLOCATION - MIN_ALLOCATION) + MIN_ALLOCATION,
-    )
+
+    const randomAllocation = parseUnits(
+      String(Math.random() * (MAX_ALLOCATION - MIN_ALLOCATION) + MIN_ALLOCATION),
+      18,
+    ).toString()
 
     const row = {
       address: randomWallet.address,
@@ -40,6 +51,39 @@ const main = async () => {
 
     rows.push(row)
   }
+
+  const LinusAddresses = [
+    {
+      address: '0xEade2f82c66eBda112987edd95E26cd3088f33DD',
+      allocation: parseUnits('0.0001', 18).toString(),
+    },
+    {
+      address: '0xF25128854443E18290FFD61200E051d94B8e4069',
+      allocation: parseUnits('0.0002', 18).toString(),
+    },
+  ]
+
+  const SaetaAddresses = [
+    {
+      address: '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8',
+      allocation: parseUnits('0.0001', 18).toString(),
+    },
+    {
+      address: '0x051C7C18E63FE9Ec71BB4B5D2fCE2807F764dB5e',
+      allocation: parseUnits('0.0002', 18).toString(),
+    },
+  ]
+
+  const AlexAddresses = [
+    {
+      address: '0x6144DAf8e2e583cD30C3567861C8E1D95cfA51B5',
+      allocation: parseUnits('0.0001', 18).toString(),
+    },
+  ]
+
+  rows.push(...LinusAddresses)
+  rows.push(...SaetaAddresses)
+  rows.push(...AlexAddresses)
 
   return createCSVFile(rows)
 }

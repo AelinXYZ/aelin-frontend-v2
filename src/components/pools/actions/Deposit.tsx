@@ -8,6 +8,9 @@ import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BASE_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
+import useAelinUserMerkleTreeData, {
+  UserMerkleData,
+} from '@/src/hooks/aelin/merkle-tree/useAelinUserMerkleTreeData'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
@@ -83,6 +86,9 @@ function Deposit({ pool, poolHelpers }: Props) {
     'acceptDeal',
   )
 
+  const userMerkle = useAelinUserMerkleTreeData(pool)
+  const userMerkleData = userMerkle?.data || ({} as UserMerkleData)
+
   const balances = [
     investmentTokenBalance,
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
@@ -130,7 +136,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = pool.upfrontDeal
-          ? await acceptDeal([storedSelectedNfts, tokenInputValue], txGasOptions)
+          ? await acceptDeal([storedSelectedNfts, userMerkleData, tokenInputValue], txGasOptions)
           : pool.hasNftList
           ? await purchasePoolTokensWithNft([storedSelectedNfts, tokenInputValue], txGasOptions)
           : await purchasePoolTokens([tokenInputValue], txGasOptions)
@@ -146,7 +152,7 @@ function Deposit({ pool, poolHelpers }: Props) {
       title: `Deposit ${investmentTokenSymbol}`,
       estimate: () =>
         pool.upfrontDeal
-          ? acceptDealEstimate([storedSelectedNfts, tokenInputValue])
+          ? acceptDealEstimate([storedSelectedNfts, userMerkleData, tokenInputValue])
           : pool.hasNftList
           ? purchasePoolTokensWithNftEstimate([storedSelectedNfts, tokenInputValue])
           : purchasePoolTokensEstimate([tokenInputValue]),

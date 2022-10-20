@@ -186,6 +186,18 @@
                 "internalType": "uint256",
                 "name": "sponsorFee",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "merkleRoot",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "ipfsHash",
+                "type": "string"
             }
         ],
         "name": "CreateUpFrontDeal",
@@ -560,6 +572,33 @@
                 "type": "tuple[]"
             },
             {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "index",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "account",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "amount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bytes32[]",
+                        "name": "merkleProof",
+                        "type": "bytes32[]"
+                    }
+                ],
+                "internalType": "struct MerkleTree.UpFrontMerkleData",
+                "name": "merkleData",
+                "type": "tuple"
+            },
+            {
                 "internalType": "uint256",
                 "name": "_purchaseTokenAmount",
                 "type": "uint256"
@@ -822,6 +861,16 @@
                 "internalType": "uint256",
                 "name": "sponsorFee",
                 "type": "uint256"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "merkleRoot",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "string",
+                "name": "ipfsHash",
+                "type": "string"
             }
         ],
         "stateMutability": "view",
@@ -1100,6 +1149,25 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "_index",
+                "type": "uint256"
+            }
+        ],
+        "name": "hasPurchasedMerkle",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "holderClaim",
         "outputs": [],
@@ -1168,6 +1236,16 @@
                         "internalType": "uint256",
                         "name": "sponsorFee",
                         "type": "uint256"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "merkleRoot",
+                        "type": "bytes32"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "ipfsHash",
+                        "type": "string"
                     }
                 ],
                 "internalType": "struct IAelinUpFrontDeal.UpFrontDealData",
@@ -1264,11 +1342,6 @@
                 "internalType": "struct AelinAllowList.InitData",
                 "name": "_allowListInit",
                 "type": "tuple"
-            },
-            {
-                "internalType": "address",
-                "name": "_dealCreator",
-                "type": "address"
             },
             {
                 "internalType": "address",
@@ -1459,12 +1532,12 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "to",
+                "name": "_dst",
                 "type": "address"
             },
             {
                 "internalType": "uint256",
-                "name": "amount",
+                "name": "_amount",
                 "type": "uint256"
             }
         ],
@@ -1483,17 +1556,17 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "from",
+                "name": "_src",
                 "type": "address"
             },
             {
                 "internalType": "address",
-                "name": "to",
+                "name": "_dst",
                 "type": "address"
             },
             {
                 "internalType": "uint256",
-                "name": "amount",
+                "name": "_amount",
                 "type": "uint256"
             }
         ],
