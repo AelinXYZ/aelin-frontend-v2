@@ -142,7 +142,6 @@ function Deposit({ pool, poolHelpers }: Props) {
           : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
           refetchBalances()
-          userMerkle?.refetchUser()
           setTokenInputValue('')
           setInputError('')
         }

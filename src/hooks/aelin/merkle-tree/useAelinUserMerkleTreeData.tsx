@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { wei } from '@synthetixio/wei'
+import ms from 'ms'
 
 import { ParsedAelinPool } from '../useAelinPool'
 import useAelinUserRoles from '../useAelinUserRoles'
@@ -19,14 +20,13 @@ export type UserMerkleData = {
 export type MerkleTreeUserData = {
   hasInvested: boolean
   isEligible: boolean
-  refetchUser: () => void
   data: UserMerkleData
 }
 
 function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData | null {
   const { address: userAddress } = useWeb3Connection()
   const [userData, setUserData] = useState<MerkleTreeUserData | null>(null)
-  const { refetchUser, userRoles } = useAelinUserRoles(pool)
+  const userRoles = useAelinUserRoles(pool, { refreshInterval: ms('5s') })
 
   const ipfsHash = pool.upfrontDeal?.ipfsHash || null
   const { data: merkleTreeData } = useMerkleTreeData({ ipfsHash })
@@ -39,7 +39,6 @@ function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData |
       setUserData({
         isEligible,
         hasInvested,
-        refetchUser,
         data: {
           index: merkleTreeData.claims[userAddress].index,
           account: userAddress,
@@ -52,7 +51,7 @@ function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData |
         },
       })
     }
-  }, [pool, hasInvested, isEligible, merkleTreeData, userAddress, refetchUser])
+  }, [pool, hasInvested, isEligible, merkleTreeData, userAddress])
 
   return userData
 }
