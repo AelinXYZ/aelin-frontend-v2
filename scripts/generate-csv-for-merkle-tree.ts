@@ -81,7 +81,7 @@ const main = async () => {
     },
   ]
 
-  const DmytryAddresses = [
+  const DmitryAddresses = [
     {
       address: '0x4F1abd0E5c4506C95a4Fd5259371BD9a877D9488',
       allocation: parseUnits('0.0001', 18).toString(),
@@ -98,7 +98,7 @@ const main = async () => {
   rows.push(...LinusAddresses)
   rows.push(...SaetaAddresses)
   rows.push(...AlexAddresses)
-  rows.push(...DmytryAddresses)
+  rows.push(...DmitryAddresses)
   rows.push(...MattAddresses)
 
   return createCSVFile(rows)
