@@ -81,7 +81,7 @@ export interface CreateUpFrontDealState {
   dealAttributes: DealAttr
   investmentToken?: Token
   redemptionDeadline?: Duration
-  sponsorFee?: BigNumberish
+  sponsorFee: number
   holderAddress?: string
   dealToken?: Token
   exchangeRates?: ExchangeRatesAttr
@@ -543,7 +543,7 @@ const initialState: CreateUpFrontDealState = {
     hours: undefined,
     minutes: undefined,
   },
-  [CreateUpFrontDealSteps.sponsorFee]: undefined,
+  [CreateUpFrontDealSteps.sponsorFee]: 0,
   [CreateUpFrontDealSteps.holderAddress]: undefined,
   [CreateUpFrontDealSteps.dealToken]: undefined,
   [CreateUpFrontDealSteps.exchangeRates]: {

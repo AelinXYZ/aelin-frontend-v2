@@ -71,6 +71,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     useUserAvailableToDeposit(pool)
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
+  const [alreadyDeposited, setAlreadyDeposited] = useState(false)
   const { address, isAppConnected } = useWeb3Connection()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
@@ -93,6 +94,10 @@ function Deposit({ pool, poolHelpers }: Props) {
     investmentTokenBalance,
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
+
+  const isAMerkleTreePool =
+    typeof pool.upfrontDeal?.ipfsHash === 'string' &&
+    typeof pool.upfrontDeal?.merkleRoot === 'string'
 
   const sortedBalances = !isPrivatePool(pool.poolType)
     ? balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
@@ -205,6 +210,7 @@ function Deposit({ pool, poolHelpers }: Props) {
       <ButtonsWrapper>
         <Button
           disabled={
+            alreadyDeposited ||
             !address ||
             !isAppConnected ||
             poolHelpers.capReached ||
@@ -213,7 +219,13 @@ function Deposit({ pool, poolHelpers }: Props) {
             Boolean(inputError) ||
             (pool.hasNftList && !hasStoredSelectedNft)
           }
-          onClick={depositTokens}
+          onClick={() => {
+            depositTokens()
+
+            if (isAMerkleTreePool) {
+              setAlreadyDeposited(true)
+            }
+          }}
         >
           {pool?.upfrontDeal ? 'Accept Deal' : 'Deposit'}
         </Button>

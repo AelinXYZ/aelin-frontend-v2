@@ -86,7 +86,7 @@ const DealCreateStepInput: React.FC<Props> = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const [investmentPerDeal, setInvestmentPerDeal] = useState<string | null>(null)
   const [dealTotal, setDealTotal] = useState<string | null>(null)
-  const [hasFee, setHasFee] = useState<boolean>(true)
+  const [hasFee, setHasFee] = useState<boolean>(false)
 
   useEffect(() => {
     if (inputRef.current) {
