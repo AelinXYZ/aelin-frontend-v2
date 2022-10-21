@@ -339,11 +339,17 @@ export function isPrivatePool(poolType: string) {
 }
 
 export function isMerklePool(pool: ParsedAelinPool) {
-  return pool.upfrontDeal !== null && pool.upfrontDeal !== undefined
+  return pool.upfrontDeal?.merkleRoot !== null && pool.upfrontDeal?.merkleRoot !== undefined
 }
 
-export function getPoolType(poolType: string, hasNftList: boolean) {
+export function getPoolType(
+  poolType: string,
+  hasNftList: boolean,
+  merkleRoot: string | null | undefined,
+) {
   if (hasNftList) return 'NFT'
+
+  if (merkleRoot) return 'Merkle Tree'
 
   switch (poolType.toLowerCase()) {
     case Privacy.PRIVATE: {
