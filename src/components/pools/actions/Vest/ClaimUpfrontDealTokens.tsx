@@ -20,22 +20,41 @@ type Props = {
 }
 
 type PurchaserClaimProps = {
+  refund?: boolean
   upfrontDeal: ParsedAelinPool['upfrontDeal']
   chainId: ChainsValues
 }
 
 type SponsorClaimProps = {
+  refund?: boolean
+  upfrontDeal: ParsedAelinPool['upfrontDeal']
+}
+
+type HolderClaimProps = {
+  refund?: boolean
   upfrontDeal: ParsedAelinPool['upfrontDeal']
 }
 
 const ButtonsWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-  margin-bottom: 35px;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
 `
 
-const PurchaserClaim = ({ chainId, upfrontDeal }: PurchaserClaimProps) => {
+const Container = styled.div`
+  margin-bottom: 0;
+`
+
+const Title = styled.h3`
+  margin: 5px 0;
+`
+
+const InnerContainer = styled.div`
+  margin-bottom: 20px;
+`
+
+const PurchaserClaim = ({ chainId, refund, upfrontDeal }: PurchaserClaimProps) => {
   const { address, isAppConnected } = useWeb3Connection()
   const { estimate, execute: claim } = useAelinPoolUpfrontDealTransaction(
     upfrontDeal?.address || ZERO_ADDRESS,
@@ -58,7 +77,7 @@ const PurchaserClaim = ({ chainId, upfrontDeal }: PurchaserClaimProps) => {
           refetchPoolShares()
         }
       },
-      title: `Claim Deal Tokens as Purchaser`,
+      title: refund ? `Refund Deal Tokens as Purchaser` : `Claim Deal Tokens as Purchaser`,
       estimate: () => estimate([]),
     })
   }
@@ -68,7 +87,7 @@ const PurchaserClaim = ({ chainId, upfrontDeal }: PurchaserClaimProps) => {
       disabled={!address || !isAppConnected || isSubmitting}
       onClick={claimDealTokens}
     >
-      Settle as Purchaser
+      {refund ? 'Refund' : 'Settle'}
     </ButtonGradient>
   )
 }
@@ -96,12 +115,12 @@ const SponsorClaim = ({ upfrontDeal }: SponsorClaimProps) => {
       disabled={!address || !isAppConnected || isSubmitting}
       onClick={claimDealTokens}
     >
-      Settle as Sponsor
+      Settle
     </ButtonGradient>
   )
 }
 
-const HolderClaim = ({ upfrontDeal }: SponsorClaimProps) => {
+const HolderClaim = ({ refund, upfrontDeal }: HolderClaimProps) => {
   const { address, isAppConnected } = useWeb3Connection()
   const { estimate, execute: claim } = useAelinPoolUpfrontDealTransaction(
     upfrontDeal?.address || ZERO_ADDRESS,
@@ -114,7 +133,7 @@ const HolderClaim = ({ upfrontDeal }: SponsorClaimProps) => {
       onConfirm: async (txGasOptions: GasOptions) => {
         await claim([], txGasOptions)
       },
-      title: `Claim Deal Tokens as Holder`,
+      title: refund ? `Refund Deal Tokens as Holder` : `Claim Deal Tokens as Holder`,
       estimate: () => estimate([]),
     })
   }
@@ -124,7 +143,7 @@ const HolderClaim = ({ upfrontDeal }: SponsorClaimProps) => {
       disabled={!address || !isAppConnected || isSubmitting}
       onClick={claimDealTokens}
     >
-      Claim raised funds
+      {refund ? 'Refund' : 'Claim raised funds'}
     </ButtonGradient>
   )
 }
@@ -150,66 +169,118 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
       !userRoles.includes(UserRole.Investor) ||
       (userRoles.includes(UserRole.Sponsor) && !!pool.sponsorFee.raw.gt(ZERO_BN))
     ) {
-      return <>You have not participated in this pool</>
+      return <InnerContainer>You have not participated in this pool</InnerContainer>
     }
-    const content: string[] = []
+
+    const content: JSX.Element[] = []
+
     if (refund) {
       if (
         (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) ||
         (userRoles.includes(UserRole.Holder) && !holderClaim)
       ) {
-        content.push('Some text saying that the raise did not pass so tokens will be refunded')
+        const Component = <></>
+        content.push(Component)
       } else {
-        content.push('All your tokens have been refunded')
+        const Component = (
+          <InnerContainer>
+            <span>All your tokens have been refunded</span>
+          </InnerContainer>
+        )
+        content.push(Component)
       }
 
       if (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) {
-        content.push('Some text saying you can get your purchase tokens used as Purchaser')
+        const Component = (
+          <InnerContainer>
+            <Title>Investor</Title>
+            <span>
+              Withdraw your <b>invesment tokens</b> since the minimum raise has not been reached
+            </span>
+            <ButtonsWrapper>
+              <PurchaserClaim chainId={pool.chainId} refund upfrontDeal={upfrontDeal} />
+            </ButtonsWrapper>
+          </InnerContainer>
+        )
+        content.push(Component)
       }
 
       if (userRoles.includes(UserRole.Holder) && !holderClaim) {
-        content.push('Some text saying you can get your deal tokens deposited as Holder')
+        const Component = (
+          <InnerContainer>
+            <Title>Holder</Title>
+            <span>
+              Withdraw your <b>deal tokens</b> since the minimum raise has not been reached
+            </span>
+            <ButtonsWrapper>
+              <HolderClaim refund upfrontDeal={upfrontDeal} />
+            </ButtonsWrapper>
+          </InnerContainer>
+        )
+        content.push(Component)
       }
     } else {
       if (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) {
-        content.push('Some text saying you can get your accepted deal tokens')
+        const Component = (
+          <InnerContainer>
+            <Title>Investor</Title>
+            <span>Begin the vesting period for your deal tokens</span>
+            <ButtonsWrapper>
+              <PurchaserClaim chainId={pool.chainId} upfrontDeal={upfrontDeal} />
+            </ButtonsWrapper>
+          </InnerContainer>
+        )
+
+        content.push(Component)
       }
 
       if (userRoles.includes(UserRole.Sponsor) && !sponsorClaim && hasSponsorFees) {
-        content.push('Some text saying you can get your fees in deal tokens')
+        const Component = (
+          <InnerContainer>
+            <Title>Sponsor</Title>
+            <span>Collect the sponsor fee from the pool</span>
+            <ButtonsWrapper>
+              <SponsorClaim upfrontDeal={upfrontDeal} />
+            </ButtonsWrapper>
+          </InnerContainer>
+        )
+
+        content.push(Component)
       }
 
       if (userRoles.includes(UserRole.Holder) && !holderClaim) {
-        content.push('Some text saying you can get your raise in purchase tokens')
+        const Component = (
+          <InnerContainer>
+            <Title>Holder</Title>
+            <span>Collect the investment tokens from the pool</span>
+            <ButtonsWrapper>
+              <HolderClaim upfrontDeal={upfrontDeal} />
+            </ButtonsWrapper>
+          </InnerContainer>
+        )
+
+        content.push(Component)
       }
     }
 
-    return content.length ? (
-      content.map((c) => (
-        <>
-          {c}
-          <br />
-        </>
-      ))
-    ) : (
-      <>You've settle all your tokens.</>
-    )
-  }, [pool, refund, userRoles, poolShares, hasSponsorFees, sponsorClaim, holderClaim])
+    if (!content.length) return <span>You've settle all your tokens.</span>
+
+    return content.map((content) => <>{content}</>)
+  }, [
+    userRoles,
+    pool.sponsorFee.raw,
+    pool.chainId,
+    refund,
+    poolShares.raw,
+    holderClaim,
+    sponsorClaim,
+    hasSponsorFees,
+    upfrontDeal,
+  ])
 
   return (
     <Wrapper title={refund ? 'Refund tokens' : 'Settle Allocation'}>
-      <Contents style={{ marginBottom: '18px' }}>{content}</Contents>
-      <ButtonsWrapper>
-        {userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN) && (
-          <PurchaserClaim chainId={pool.chainId} upfrontDeal={upfrontDeal} />
-        )}
-        {userRoles.includes(UserRole.Sponsor) && hasSponsorFees && !sponsorClaim && !refund && (
-          <SponsorClaim upfrontDeal={upfrontDeal} />
-        )}
-        {userRoles.includes(UserRole.Holder) && !holderClaim && (
-          <HolderClaim upfrontDeal={upfrontDeal} />
-        )}
-      </ButtonsWrapper>
+      <Contents>{content}</Contents>
     </Wrapper>
   )
 }

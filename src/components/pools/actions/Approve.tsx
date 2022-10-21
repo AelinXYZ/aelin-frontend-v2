@@ -1,3 +1,5 @@
+import styled from 'styled-components'
+
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { Contents } from '@/src/components/pools/actions/Wrapper'
@@ -7,6 +9,13 @@ import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+`
 
 type Props = {
   tokenAddress: string
@@ -51,12 +60,14 @@ export default function Approve({
   return (
     <>
       <Contents>{description}</Contents>
-      <ButtonGradient
-        disabled={!address || !isAppConnected || isSubmitting || !userBalance?.gt(0)}
-        onClick={approveInvestmentToken}
-      >
-        Approve
-      </ButtonGradient>
+      <ButtonsWrapper>
+        <ButtonGradient
+          disabled={!address || !isAppConnected || isSubmitting || !userBalance?.gt(0)}
+          onClick={approveInvestmentToken}
+        >
+          Approve
+        </ButtonGradient>
+      </ButtonsWrapper>
     </>
   )
 }

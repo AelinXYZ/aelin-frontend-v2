@@ -68,6 +68,8 @@ function VestUpfrontDeal({ pool }: Props) {
     withinInterval,
   )
 
+  const hasClaimedAtLeastOnce = lastClaim !== undefined
+
   const hasRemainingTokens =
     Number(lastClaim) !== 0
       ? isBefore(lastClaim * 1000, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
@@ -119,9 +121,11 @@ function VestUpfrontDeal({ pool }: Props) {
   return (
     <>
       {hasToClaimTokens && (
-        <HasTokensToClaim showLine={!(isVestingCliffEnded && hasToClaimTokens)} />
+        <HasTokensToClaim
+          showLine={isVestingCliffEnded && hasToClaimTokens && hasClaimedAtLeastOnce}
+        />
       )}
-      {!isVestingCliffEnded && (
+      {!hasToClaimTokens && !isVestingCliffEnded && (
         <VestingCliff
           redemptionEnds={pool.upfrontDeal?.vestingPeriod.start}
           vestingCliffEnds={pool.upfrontDeal?.vestingPeriod.cliff.end}
@@ -138,13 +142,16 @@ function VestUpfrontDeal({ pool }: Props) {
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
         />
       )}
-      {isVestingCliffEnded && isVestingPeriodEnded && !hasRemainingTokens && (
-        <VestingCompleted
-          symbol={data?.vestingDeal?.tokenToVestSymbol}
-          totalVested={totalVested}
-          underlyingDealTokenDecimals={underlyingDealTokenDecimals}
-        />
-      )}
+      {isVestingCliffEnded &&
+        isVestingPeriodEnded &&
+        !hasRemainingTokens &&
+        hasClaimedAtLeastOnce && (
+          <VestingCompleted
+            symbol={data?.vestingDeal?.tokenToVestSymbol}
+            totalVested={totalVested}
+            underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+          />
+        )}
       {!hasToClaimTokens && !hasRemainingTokens && isVestingCliffEnded && !isVestingPeriodEnded && (
         <PoolIsSyncing />
       )}
