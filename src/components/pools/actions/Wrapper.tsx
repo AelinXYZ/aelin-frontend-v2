@@ -11,12 +11,11 @@ const Title = styled.h4`
   width: 100%;
 `
 
-export const Contents = styled.p`
+export const Contents = styled.div`
   color: ${({ theme }) => theme.colors.textColorLight};
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.5;
-  margin: 0 0 40px;
   text-align: left;
   text-decoration: none;
   width: 100%;

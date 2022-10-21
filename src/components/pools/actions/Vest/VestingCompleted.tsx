@@ -14,7 +14,7 @@ function VestingCompleted({
   underlyingDealTokenDecimals,
 }: VestingCompletedProps) {
   return (
-    <Wrapper title={'Vesting Schedule'}>
+    <Wrapper title={'Vesting Completed'}>
       <Contents>All your deals tokens have been vested</Contents>
       <Contents>
         Total Vested:{' '}

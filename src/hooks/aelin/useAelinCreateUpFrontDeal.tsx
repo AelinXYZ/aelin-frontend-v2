@@ -427,7 +427,16 @@ const parseValuesToCreateUpFrontDeal = (
     investmentToken.decimals,
   ).mul(wei(exchangeRates.exchangeRates, investmentToken.decimals))
 
-  const purchaseTokenPerDealToken = wei(exchangeRates.exchangeRates, investmentToken.decimals)
+  const exchangeRatesInWei = wei(exchangeRates.exchangeRates, investmentToken.decimals)
+
+  const dealTokenTotalInWei = wei(
+    exchangeRates.investmentTokenToRaise,
+    investmentToken.decimals,
+  ).mul(exchangeRatesInWei)
+
+  const investmentPerDeal = wei(exchangeRates.investmentTokenToRaise, investmentToken.decimals).div(
+    dealTokenTotalInWei,
+  )
 
   const purchaseRaiseMinimum = exchangeRates?.minimumAmount
     ? parseUnits(exchangeRates.minimumAmount.toString(), BASE_DECIMALS)
@@ -517,7 +526,7 @@ const parseValuesToCreateUpFrontDeal = (
     },
     {
       underlyingDealTokenTotal: underlyingDealTokenTotal.toBN(),
-      purchaseTokenPerDealToken: purchaseTokenPerDealToken.toBN(),
+      purchaseTokenPerDealToken: investmentPerDeal.toBN(),
       purchaseRaiseMinimum,
       purchaseDuration: redemptionDeadlineDuration,
       vestingPeriod: vestingPeriodDuration,
@@ -712,6 +721,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
             nftCollectionRules,
             emptyAllowlistData,
           ]),
+
         title: 'Create deal',
         onConfirm: async (txGasOptions: GasOptions) => {
           setShowWarningOnLeave(false)
