@@ -98,7 +98,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         network={chainsConfig[pool.chainId].icon}
         subTitle={
           pool.poolType || pool.hasNftList
-            ? getPoolType(pool.poolType, pool.hasNftList) + ' pool'
+            ? getPoolType(pool.poolType, pool.hasNftList, pool.upfrontDeal?.merkleRoot) + ' pool'
             : ''
         }
         title={pool.nameFormatted}
