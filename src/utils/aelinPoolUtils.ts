@@ -338,6 +338,10 @@ export function isPrivatePool(poolType: string) {
   return poolType.toLowerCase() === Privacy.PRIVATE
 }
 
+export function isMerklePool(pool: ParsedAelinPool) {
+  return pool.upfrontDeal !== null && pool.upfrontDeal !== undefined
+}
+
 export function getPoolType(poolType: string, hasNftList: boolean) {
   if (hasNftList) return 'NFT'
 
