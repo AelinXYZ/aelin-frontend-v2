@@ -53,7 +53,6 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
   }
 
   if (values.sponsorFee < 0) {
-    console.log('values.sponsorFee : ', values.sponsorFee)
     errors.sponsorFee = true
   }
 

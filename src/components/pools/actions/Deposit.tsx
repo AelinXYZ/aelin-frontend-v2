@@ -7,7 +7,7 @@ import { TextPrimary } from '../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
-import { BASE_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
+import { BASE_DECIMALS, MERKLE_TREE_DATA_EMPTY, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinUserMerkleTreeData, {
   UserMerkleData,
 } from '@/src/hooks/aelin/merkle-tree/useAelinUserMerkleTreeData'
@@ -19,7 +19,7 @@ import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAel
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
 
@@ -88,16 +88,14 @@ function Deposit({ pool, poolHelpers }: Props) {
   )
 
   const userMerkle = useAelinUserMerkleTreeData(pool)
-  const userMerkleData = userMerkle?.data || ({} as UserMerkleData)
+  const userMerkleData = userMerkle?.data || (MERKLE_TREE_DATA_EMPTY as UserMerkleData)
 
   const balances = [
     investmentTokenBalance,
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
 
-  const isAMerkleTreePool =
-    typeof pool.upfrontDeal?.ipfsHash === 'string' &&
-    typeof pool.upfrontDeal?.merkleRoot === 'string'
+  const isAMerkleTreePool = isMerklePool(pool)
 
   const sortedBalances = !isPrivatePool(pool.poolType)
     ? balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))

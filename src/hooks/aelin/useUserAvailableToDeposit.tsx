@@ -1,10 +1,12 @@
+import { HashZero } from '@ethersproject/constants'
+
 import useAelinUserMerkleTreeData from './merkle-tree/useAelinUserMerkleTreeData'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 import { DetailedNumber } from '@/types/utils'
 
@@ -52,19 +54,18 @@ export function useUserAvailableToDeposit(pool: ParsedAelinPool): UserPoolBalanc
   )
 
   const userMerkleData = useAelinUserMerkleTreeData(pool)
-  const isMerklePool = !!pool.upfrontDeal?.merkleRoot
 
   const isUserAllowedToInvest = !isPrivatePool(pool.poolType)
     ? true
-    : isMerklePool
+    : isMerklePool(pool)
     ? userMerkleData?.isEligible
     : userPoolBalance.gt(ZERO_BN) || allowListAmount.gt(ZERO_BN)
 
-  const userAlreadyInvested = isMerklePool
+  const userAlreadyInvested = isMerklePool(pool)
     ? userMerkleData?.hasInvested
     : isUserAllowedToInvest && isPrivatePool(pool.poolType) && allowListAmount.eq(ZERO_BN)
 
-  const allowedAmountToDeposit = isMerklePool
+  const allowedAmountToDeposit = isMerklePool(pool)
     ? userMerkleData?.data.amount || ZERO_BN
     : allowListAmount
 

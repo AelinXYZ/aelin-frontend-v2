@@ -39,11 +39,7 @@ const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 15px;
-`
-
-const Container = styled.div`
-  margin-bottom: 0;
+  margin-top: 10px;
 `
 
 const Title = styled.h3`
@@ -143,7 +139,7 @@ const HolderClaim = ({ refund, upfrontDeal }: HolderClaimProps) => {
       disabled={!address || !isAppConnected || isSubmitting}
       onClick={claimDealTokens}
     >
-      {refund ? 'Refund' : 'Claim raised funds'}
+      {refund ? 'Refund' : 'Claim'}
     </ButtonGradient>
   )
 }
@@ -252,7 +248,7 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
         const Component = (
           <InnerContainer>
             <Title>Holder</Title>
-            <span>Collect the investment tokens from the pool</span>
+            <span>Claim the investment tokens from the pool</span>
             <ButtonsWrapper>
               <HolderClaim upfrontDeal={upfrontDeal} />
             </ButtonsWrapper>

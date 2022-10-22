@@ -28,7 +28,7 @@ const Title = styled.h4`
   font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.4;
-  margin: 0;
+  margin: 2px 0;
   white-space: normal;
   word-break: break-word;
 

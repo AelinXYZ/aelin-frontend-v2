@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { HashZero } from '@ethersproject/constants'
 import Wei from '@synthetixio/wei'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
@@ -338,20 +339,20 @@ export function isPrivatePool(poolType: string) {
   return poolType.toLowerCase() === Privacy.PRIVATE
 }
 
-export function isMerklePool(pool: ParsedAelinPool) {
-  return pool.upfrontDeal?.merkleRoot !== null && pool.upfrontDeal?.merkleRoot !== undefined
+export function isMerklePool(pool: ParsedAelinPool | PoolCreated): boolean {
+  return (
+    pool.upfrontDeal?.merkleRoot !== HashZero &&
+    pool.upfrontDeal?.merkleRoot !== undefined &&
+    pool.upfrontDeal?.merkleRoot !== null
+  )
 }
 
-export function getPoolType(
-  poolType: string,
-  hasNftList: boolean,
-  merkleRoot: string | null | undefined,
-) {
-  if (hasNftList) return 'NFT'
+export function getPoolType(pool: ParsedAelinPool) {
+  if (pool.hasNftList) return 'NFT'
 
-  if (merkleRoot) return 'Merkle Tree'
+  if (isMerklePool(pool)) return 'Merkle Tree'
 
-  switch (poolType.toLowerCase()) {
+  switch (pool.poolType.toLowerCase()) {
     case Privacy.PRIVATE: {
       return 'Private'
     }

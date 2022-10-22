@@ -87,6 +87,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   )
 
   const isVerified = useCheckVerifiedPool(pool)
+
   return (
     <>
       <Head>
@@ -96,11 +97,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         href={getExplorerUrl(pool.address || '', pool.chainId)}
         isVerified={isVerified ?? false}
         network={chainsConfig[pool.chainId].icon}
-        subTitle={
-          pool.poolType || pool.hasNftList
-            ? getPoolType(pool.poolType, pool.hasNftList, pool.upfrontDeal?.merkleRoot) + ' pool'
-            : ''
-        }
+        subTitle={pool.poolType || pool.hasNftList ? getPoolType(pool) + ' pool' : ''}
         title={pool.nameFormatted}
       />
       <RightTimelineLayout timelineSteps={timeline}>
@@ -168,11 +165,11 @@ function DealActionTabs({ ...props }: DealActionTabsProps) {
   return props.isUpfrontDeal ? (
     <UpfrontDealActionTabs {...props} />
   ) : (
-    <SponsorDealActionTabs {...props} />
+    <RegularPoolsActionTabs {...props} />
   )
 }
 
-function SponsorDealActionTabs({ activeTab, derivedStatus, funding, pool }: DealActionTabsProps) {
+function RegularPoolsActionTabs({ activeTab, derivedStatus, funding, pool }: DealActionTabsProps) {
   return (
     <>
       {!activeTab && <NoActions pool={pool} status={derivedStatus} />}

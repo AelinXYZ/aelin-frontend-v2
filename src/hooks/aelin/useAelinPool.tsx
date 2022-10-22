@@ -26,6 +26,7 @@ import {
   getVestingDates,
   getVestingEnds,
   getVestingStarts,
+  isMerklePool,
   parseNftCollectionRules,
   parseUpfrontDeal,
 } from '@/src/utils/aelinPoolUtils'
@@ -178,7 +179,7 @@ export const getParsedPool = ({
     name: pool.name,
     symbol: pool.symbol,
     nameFormatted: parsePoolName(pool.name),
-    poolType: pool.hasAllowList || !!pool.upfrontDeal?.merkleRoot ? 'Private' : 'Public',
+    poolType: pool.hasAllowList || isMerklePool(pool) ? 'Private' : 'Public',
     address: poolAddress,
     start: getPoolCreatedDate(pool),
     investmentToken: pool.purchaseToken,

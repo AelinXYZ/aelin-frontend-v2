@@ -21,12 +21,14 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
   const { address } = useWeb3Connection()
   const { handleCloseNftSelectionModal, hasStoredSelectedNft, showNftSelectionModal } =
     useNftSelection()
+
   const [userAllowance, refetchUserAllowance] = useERC20Call(
     pool.chainId,
     pool.investmentToken,
     'allowance',
     [address || ZERO_ADDRESS, pool.address],
   )
+
   const { isUserAllowedToInvest, userAlreadyInvested } = useUserAvailableToDeposit(pool)
 
   return (

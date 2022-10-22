@@ -1,4 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
+import { HashZero } from '@ethersproject/constants'
 
 // ETHERS/BIGNUMBER CONSTANTS
 export const ZERO_BN = BigNumber.from(0)
@@ -27,3 +28,10 @@ export const AELIN_APP_DEV_URL = 'https://testnet.app.aelin.xyz'
 
 export const POOL_NAME_MAX_LENGTH = 30
 export const MAX_PRIVATE_ROWS = 20
+
+export const MERKLE_TREE_DATA_EMPTY = {
+  index: 0,
+  account: ZERO_ADDRESS,
+  amount: ZERO_BN,
+  merkleProof: [HashZero],
+}

@@ -16,6 +16,7 @@ function VestingCompleted({
   return (
     <Wrapper title={'Vesting Completed'}>
       <Contents>All your deals tokens have been vested</Contents>
+      <br />
       <Contents>
         Total Vested:{' '}
         <TextPrimary>{`${formatToken(

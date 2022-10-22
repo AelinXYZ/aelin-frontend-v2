@@ -8,6 +8,7 @@ import { ParsedAelinPool } from '../useAelinPool'
 import useAelinUserRoles from '../useAelinUserRoles'
 import useMerkleTreeData from '../useMerkleTreeData'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { isEmptyObject } from '@/src/utils/isEmptyObject'
 import { UserRole } from '@/types/aelinPool'
 
 export type UserMerkleData = {
@@ -32,10 +33,12 @@ function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData |
   const { data: merkleTreeData } = useMerkleTreeData({ ipfsHash })
 
   const hasInvested = userRoles?.includes(UserRole.Investor)
-  const isEligible = !!userAddress && !!merkleTreeData?.claims?.[userAddress]
+
+  const isEligible =
+    !isEmptyObject(merkleTreeData) && !!userAddress && !!merkleTreeData?.claims?.[userAddress]
 
   useEffect(() => {
-    if (userAddress && merkleTreeData) {
+    if (userAddress && !isEmptyObject(merkleTreeData) && merkleTreeData) {
       setUserData({
         isEligible,
         hasInvested,
