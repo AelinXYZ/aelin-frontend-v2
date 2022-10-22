@@ -14,7 +14,7 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
   background-repeat: no-repeat;
   margin: 0 0 20px;
   padding: 20px 20px 18px;
-  height: 200px;
+  max-height: 200px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     min-height: 180px;
