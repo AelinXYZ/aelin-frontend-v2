@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { getAddress } from '@ethersproject/address'
 import { SWRConfiguration } from 'swr'
 
 import { ParsedAelinPool } from './useAelinPool'
@@ -10,6 +11,7 @@ import { UserRole } from '@/types/aelinPool'
 function useAelinUserRoles(pool: ParsedAelinPool, config?: SWRConfiguration): UserRole[] {
   const { address: userAddress } = useWeb3Connection()
   const { data: userResponse, error: errorUser } = useAelinUser(userAddress, config)
+  console.log('userResponse: ', userResponse)
 
   if (errorUser) {
     throw new Error('Error getting user role')
@@ -18,25 +20,28 @@ function useAelinUserRoles(pool: ParsedAelinPool, config?: SWRConfiguration): Us
   const userRoles = useMemo<UserRole[]>(() => {
     if (userResponse && pool) {
       const roles: UserRole[] = []
-      const isInvestor = !!userResponse.poolsInvested.filter(
-        ({ id }: { id: string }) => id.toLowerCase() === pool.address,
-      ).length
 
-      const isSponsor = !!userResponse.poolsSponsored.filter(
-        ({ id }: { id: string }) => id.toLowerCase() === pool.address,
-      ).length
+      const isInvestor = userResponse.poolsInvested.some(
+        ({ id }: { id: string }) => getAddress(id) === getAddress(pool.address),
+      )
 
-      const isHolder = !!userResponse.poolsAsHolder.filter(
-        ({ id }: { id: string }) => id.toLowerCase() === pool.address,
-      ).length
+      const isSponsor = userResponse.poolsSponsored.some(
+        ({ id }: { id: string }) => getAddress(id) === getAddress(pool.address),
+      )
+
+      const isHolder = userResponse.poolsAsHolder.some(
+        ({ id }: { id: string }) => getAddress(id) === getAddress(pool.address),
+      )
 
       if (isInvestor) roles.push(UserRole.Investor)
       if (isSponsor) roles.push(UserRole.Sponsor)
       if (isHolder) roles.push(UserRole.Holder)
+
       if (!roles.length) roles.push(UserRole.Visitor)
 
       return roles
     }
+
     return [UserRole.Visitor]
   }, [userResponse, pool])
 
