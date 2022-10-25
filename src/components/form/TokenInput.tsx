@@ -9,7 +9,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 
 const Wrapper = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   width: 100%;
 `
 
