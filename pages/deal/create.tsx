@@ -206,10 +206,16 @@ const Create: NextPage = () => {
             type: NftType | string,
           ) => {
             setDealField(whitelist, type)
+            setDealField(true, 'withMerkleTree')
 
+            /*
+            TODO: we need to review the private pool logic to enable this code again.
             if (whitelist.length > MAX_PRIVATE_ROWS) {
               setDealField(true, 'withMerkleTree')
+            } else {
+              setDealField(false, 'withMerkleTree')
             }
+            */
           }}
           poolPrivacy={createDealState.dealPrivacy}
           withMerkleTree={true}

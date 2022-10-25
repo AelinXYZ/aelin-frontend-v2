@@ -684,7 +684,11 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
         address ?? ZERO_ADDRESS,
       )
 
-    if (createDealState.withMerkleTree && createDealState.dealPrivacy === Privacy.PRIVATE) {
+    const isAMerkleTreePool =
+      createDealState.withMerkleTree && createDealState.dealPrivacy === Privacy.PRIVATE
+
+    if (isAMerkleTreePool) {
+      console.info('Merkle tree pool creation')
       // Format data for the merkle tree
       const balances = mergeArrayKeyValuePairs(
         allowListAddresses.allowListAddresses,
@@ -694,7 +698,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
       // Generate the merkle data
       const merkleData = parseBalanceMap(balances)
 
-      // Upload the merkle tree json to ipfs
+      // Upload the merkle tree data json to ipfs
       const ipfsHash = await storeJson(merkleData, createDealState.dealAttributes.symbol)
 
       const upFrontDealDataFull = {
@@ -742,6 +746,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
         },
       })
     } else {
+      console.info('Non merkle tree pool creation')
+
       setConfigAndOpenModal({
         estimate: () =>
           createUpFrontDealEstimate([

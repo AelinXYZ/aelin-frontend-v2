@@ -27,6 +27,7 @@ export const QUIXOTIC_BASE_URL = 'https://qx.app/'
 export const AELIN_APP_DEV_URL = 'https://testnet.app.aelin.xyz'
 
 export const POOL_NAME_MAX_LENGTH = 30
+
 export const MAX_PRIVATE_ROWS = 20
 
 export const MERKLE_TREE_DATA_EMPTY = {

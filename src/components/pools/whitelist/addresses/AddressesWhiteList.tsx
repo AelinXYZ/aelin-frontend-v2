@@ -201,7 +201,7 @@ const AddressesWhiteList = ({
         <TitleGrid>
           <Title>Address</Title> <UploadCSV onUploadCSV={handleUploadCSV} />
         </TitleGrid>
-        <Title>Amount</Title>
+        <Title>Amount (uint256)</Title>
         <div>&nbsp;</div>
         {list.map((listItem: AddressWhitelistProps, rowIndex: number) => (
           <WhiteListRow
