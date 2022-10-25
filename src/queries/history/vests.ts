@@ -26,6 +26,10 @@ export const VESTS = gql`
           underlyingDealTokenSymbol
           underlyingDealTokenDecimals
         }
+        upfrontDeal {
+          underlyingDealTokenDecimals
+          underlyingDealTokenSymbol
+        }
       }
     }
   }

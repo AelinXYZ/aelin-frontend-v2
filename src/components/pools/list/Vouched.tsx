@@ -95,7 +95,7 @@ export const VouchedPools: React.FC = () => {
       investmentToken: 'center',
       network: 'center',
     },
-    widths: '190px 120px 90px 0.8fr 1fr 165px 80px',
+    widths: '220px 120px 90px 0.8fr 1fr 150px 80px',
   }
 
   const tableHeaderCells = [

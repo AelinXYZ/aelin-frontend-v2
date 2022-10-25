@@ -2,12 +2,13 @@ import { lighten, rgba } from 'polished'
 
 const componentBackgroundColor = '#1A212F'
 const componentBorderColor = '#555C65'
+const componentBorderColorSecondary = '#9A40BB'
 const componentBorder = `0.5px solid ${componentBorderColor}`
 const lightGray = '#BABCC1'
 const error = '#FF7777'
 const primary = '#8280FF'
-const secondary = '#E56399'
-const tertiary = '#A6CFD5'
+const secondary = '#5452C3'
+const tertiary = '#E56399'
 const textColor = '#FFF'
 const mainBodyBackground = '#101826'
 const green = '#A2FF00'
@@ -15,8 +16,10 @@ const yellow = '#F1C40F'
 const blue = '#469FFF'
 const gray = '#282E3B'
 const pink = '#FF50B9'
-const gradientStart = '#5452C3'
-const gradientEnd = '#01A0D3'
+const primaryGradientStart = '#5452C3'
+const primaryGradientEnd = '#01A0D3'
+const secondaryGradientStart = '#9A40BB'
+const secondaryGradientEnd = '#B0386F'
 const blueishGray = '#484D58'
 const transparentWhite = 'rgba(255, 255, 255, 0.4)'
 const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
@@ -82,6 +85,14 @@ export const darkTheme = {
     color: primary,
     colorHover: primary,
   },
+  buttonSecondary: {
+    backgroundColor: rgba(secondary, 0.08),
+    backgroundColorHover: rgba(secondary, 0.2),
+    borderColor: secondary,
+    borderColorHover: secondary,
+    color: secondary,
+    colorHover: secondary,
+  },
   buttonPrimaryLight: {
     backgroundColor: 'transparent',
     backgroundColorHover: 'transparent',
@@ -117,10 +128,13 @@ export const darkTheme = {
   colors: {
     blueishGray: blueishGray,
     borderColor: componentBorderColor,
+    borderColorSecondary: componentBorderColorSecondary,
     componentBackgroundColor: componentBackgroundColor,
     error: error,
-    gradientEnd: gradientEnd,
-    gradientStart: gradientStart,
+    gradientEnd: primaryGradientEnd,
+    gradientStart: primaryGradientStart,
+    secondaryGradientStart: secondaryGradientStart,
+    secondaryGradientEnd: secondaryGradientEnd,
     gray: gray,
     lightGray: lightGray,
     mainBodyBackground: mainBodyBackground,

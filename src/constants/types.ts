@@ -2,25 +2,34 @@ export const DEPOSIT_TYPE = 'DEPOSIT_TYPE'
 export const WITHDRAW_TYPE = 'WITHDRAW_TYPE'
 
 export enum PoolTimelineState {
-  'poolCreation' = 0,
-  'investmentDeadline' = 1,
-  'dealCreation' = 2,
-  'dealDeadline' = 3,
-  'proRataRedemption' = 4,
-  'openRedemption' = 5,
-  'vestingCliff' = 6,
-  'vestingPeriod' = 7,
+  PoolCreation,
+  InvestmentDeadline,
+  DealCreation,
+  DealDeadline,
+  Round1,
+  Round2,
+  VestingCliff,
+  VestingPeriod,
+  //UpfrontDeal
+  UpfrontDealCreation,
+  UpfrontDealRedemption,
+  UpfrontDealVestingCliff,
+  UpfrontDealVestingPeriod,
 }
 
 export enum PoolTimelineStateTitles {
-  'Pool Creation',
-  'Investment Deadline',
-  'Deal Creation',
-  'Deal Deadline',
-  'Round 1: Accept Allocation',
-  'Round 2: Accept Remaining',
-  'Vesting Cliff',
-  'Vesting Period',
+  PoolCreation = 'Pool Creation',
+  InvestmentDeadline = 'Investment Deadline',
+  DealCreation = 'Deal Creation',
+  DealDeadline = 'Deal Deadline',
+  Round1 = 'Round 1: Accept Allocation',
+  Round2 = 'Round 2: Accept Remaining',
+  VestingCliff = 'Vesting Cliff',
+  VestingPeriod = 'Vesting Period',
+  UpfrontDealCreation = 'Deal Creation',
+  UpfrontDealRedemption = 'Deal Redemption',
+  UpfrontDealVestingCliff = 'Vesting Cliff',
+  UpfrontDealVestingPeriod = 'Vesting Period',
 }
 
 export enum ThemeType {

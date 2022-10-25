@@ -33,12 +33,16 @@ export async function fetcherDealsFunded(variables: DealFundedsQueryVariables) {
           return res.dealFundeds.map((dealFunded) => {
             const amountFunded = formatToken(
               dealFunded.amountFunded,
-              dealFunded.pool.deal?.underlyingDealTokenDecimals || 0,
+              dealFunded.pool.deal?.underlyingDealTokenDecimals ||
+                dealFunded.pool.upfrontDeal?.underlyingDealTokenDecimals ||
+                0,
+              10,
             )
 
             const amountRaised = formatToken(
               dealFunded.amountRaised,
               dealFunded.pool.purchaseTokenDecimals || 0,
+              10,
             )
 
             return {
@@ -46,7 +50,10 @@ export async function fetcherDealsFunded(variables: DealFundedsQueryVariables) {
               network: chainId,
               poolName: parsePoolName(dealFunded.pool.name),
               timestamp: new Date(dealFunded.timestamp * 1000),
-              amountFunded: `${amountFunded} ${dealFunded.pool.deal?.underlyingDealTokenSymbol}`,
+              amountFunded: `${amountFunded} ${
+                dealFunded.pool.deal?.underlyingDealTokenSymbol ||
+                dealFunded.pool.upfrontDeal?.underlyingDealTokenSymbol
+              }`,
               amountRaised: `${amountRaised} ${dealFunded.pool.purchaseTokenSymbol}`,
             }
           })

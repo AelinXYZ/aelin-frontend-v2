@@ -33,14 +33,16 @@ export default function getDailyValueFromValuePerSecond(vps: BigNumber): BigNumb
   return vps.mul(60).mul(60).mul(24)
 }
 
-export const getFormattedDurationFromDateToNow = (date: Date | number) => {
-  if (isAfter(new Date(date), new Date())) {
+export const getFormattedDurationFromDateToNow = (date: Date | number | null) => {
+  if (date && isAfter(new Date(date), new Date())) {
     const duration = intervalToDuration({
       start: new Date(date),
       end: new Date(),
     })
 
-    return `~${duration.days}d ${duration.hours}h ${duration.minutes}m`
+    return duration.months
+      ? `~${duration.months}m ${duration.days}d ${duration.hours}h`
+      : `~${duration.days}d ${duration.hours}h ${duration.minutes}m`
   }
 
   return ''
@@ -92,6 +94,9 @@ export const sumDurations = (...durations: Duration[]): Duration => {
   }, {})
 }
 
-export const isEmptyDuration = (duration: Duration | undefined, emptyValue?: undefined) => {
+export const isEmptyDuration = (
+  duration: Duration | undefined,
+  emptyValue?: undefined | number,
+) => {
   return !duration ? true : Object.values(duration).every((v) => v === emptyValue)
 }

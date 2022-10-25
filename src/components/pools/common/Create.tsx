@@ -32,7 +32,6 @@ export const Title = styled.h2`
   font-size: 1.8rem;
   font-weight: 600;
   line-height: 1.2;
-  margin: 0 0 18px;
   max-width: 100%;
   padding: 0 20px;
   text-align: center;
@@ -44,9 +43,9 @@ export const Description = styled.p`
   font-size: 1.4rem;
   font-weight: 400;
   line-height: 1.4;
-  margin: 0 0 50px;
+  margin: 0 0 30px;
   max-width: 100%;
-  padding: 0 20px;
+  padding: 0 10px;
   text-align: center;
   width: 690px;
 `

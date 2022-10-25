@@ -1,11 +1,11 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import Wei from '@synthetixio/wei'
 
-import { DEFAULT_DECIMALS } from '@/src/constants/misc'
+import { BASE_DECIMALS, DEFAULT_DECIMALS } from '@/src/constants/misc'
 
 export function formatToken(
   value: BigNumberish,
-  valueScale = 18,
+  valueScale = BASE_DECIMALS,
   decimals = DEFAULT_DECIMALS,
 ): string | undefined {
   if (value === undefined || value === null || Number.isNaN(value)) {

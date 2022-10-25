@@ -1,5 +1,5 @@
 import orderBy from 'lodash/orderBy'
-import useSWR from 'swr'
+import useSWR, { SWRConfiguration } from 'swr'
 
 import { DealAccepted, PoolCreated } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
@@ -12,6 +12,7 @@ export type ParsedUser = {
   poolsAsHolder: PoolCreated[]
   poolsSponsored: PoolCreated[]
   dealsAccepted: DealAccepted[]
+  upfrontDealsAccepted: PoolCreated[]
 }
 
 function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
@@ -35,6 +36,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
               poolsAsHolder: [],
               poolsSponsored: [],
               dealsAccepted: [],
+              upfrontDealsAccepted: [],
             }
           }
 
@@ -43,9 +45,15 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
             user.poolsAsHolder.map((pool) => pool.id),
             user.poolsSponsored.map((pool) => pool.id),
             user.dealsAccepted.map((dealAccepted) => dealAccepted.pool.id),
-          ].reduce((acc, curVal) => {
-            return acc.concat(curVal)
-          }, [])
+            user.upfrontDealsAccepted.map((upfrontDealAccepted) => upfrontDealAccepted.id),
+          ]
+            .reduce((acc, curVal) => {
+              return acc.concat(curVal)
+            }, [])
+            .filter(
+              (poolAddress: string, index: number, arr: string[]) =>
+                arr.indexOf(poolAddress) === index,
+            )
 
           return {
             poolAddresses,
@@ -53,6 +61,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
             poolsAsHolder: user.poolsAsHolder,
             poolsSponsored: user.poolsSponsored,
             dealsAccepted: user.dealsAccepted,
+            upfrontDealsAccepted: user.upfrontDealsAccepted,
           }
         })
         .catch((err) => {
@@ -64,6 +73,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
             poolsAsHolder: [],
             poolsSponsored: [],
             dealsAccepted: [],
+            upfrontDealsAccepted: [],
           }
         }),
     )
@@ -90,6 +100,11 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
             ['desc'],
           ),
           dealsAccepted: [...resultAcc.dealsAccepted, ...value.dealsAccepted],
+          upfrontDealsAccepted: orderBy(
+            [...resultAcc.upfrontDealsAccepted, ...value.upfrontDealsAccepted],
+            ['timestamp'],
+            ['desc'],
+          ),
         }
       },
       {
@@ -98,6 +113,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
         poolsAsHolder: [],
         poolsSponsored: [],
         dealsAccepted: [],
+        upfrontDealsAccepted: [],
       },
     )
 
@@ -107,6 +123,6 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
   }
 }
 
-export default function useAelinUser(userAddress: string | null) {
-  return useSWR(userAddress?.toLocaleLowerCase(), fetcherUser)
+export default function useAelinUser(userAddress: string | null, config?: SWRConfiguration) {
+  return useSWR(userAddress?.toLocaleLowerCase(), fetcherUser, config)
 }

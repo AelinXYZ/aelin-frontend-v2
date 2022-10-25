@@ -32,8 +32,10 @@ import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
+import useAelinAmountToVestUpfrontDeal from '@/src/hooks/aelin/useAelinAmountToVestUpfrontDeal'
 import useAelinVestingDeals, { VestingDealsFilter } from '@/src/hooks/aelin/useAelinVestingDeals'
 import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
+import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -120,16 +122,25 @@ const VestActionButton = ({
   dealAddress,
   disabled,
   refetch,
+  upfrontDealAddress,
   ...restProps
 }: {
   disabled: boolean
-  dealAddress: string
+  dealAddress: string | null
+  upfrontDealAddress: string | null
   refetch: () => void
 }) => {
-  const { execute: vestTokens } = useAelinDealTransaction(dealAddress, 'claim')
+  const { execute: vestTokensSponsorDeal } = useAelinDealTransaction(
+    dealAddress || ZERO_ADDRESS,
+    'claim',
+  )
+  const { execute: vestTokensUpfrontDeal } = useAelinPoolUpfrontDealTransaction(
+    upfrontDealAddress || ZERO_ADDRESS,
+    'claimUnderlying',
+  )
 
   const handleVestTokens = async () => {
-    await vestTokens()
+    upfrontDealAddress ? await vestTokensUpfrontDeal() : await vestTokensSponsorDeal()
     refetch()
   }
 
@@ -157,42 +168,19 @@ type AmountToVestCellProps = {
   underlyingDealTokenDecimals: number
 }
 
+type AmountToVestCellComponentProps = {
+  currentAmountToVest: BigNumber | null
+  amountToVest: BigNumber | null
+  underlyingDealTokenDecimals: number
+  tokenSymbol: string
+}
+
 const Wrapper: React.FC = ({ children, ...restProps }) => (
   <TableCard id="outerWrapper" {...restProps}>
     <Title>Vest Deal Tokens</Title>
     {children}
   </TableCard>
 )
-
-const AmountToVestCell: React.FC<AmountToVestCellProps> = ({
-  amountToVest,
-  chainId,
-  poolAddress,
-  tokenSymbol,
-  underlyingDealTokenDecimals,
-  vestingPeriodEnds,
-  vestingPeriodStarts,
-}) => {
-  const now = new Date()
-  const isVestingCliffEnded = isAfter(now, vestingPeriodStarts)
-  const isVestindPeriodEnded = isAfter(now, vestingPeriodEnds)
-
-  const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
-  const [currentAmountToVest] = useAelinAmountToVest(poolAddress, chainId, withinInterval)
-
-  return (
-    <Cell mobileJustifyContent="center">
-      <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
-      <Value>
-        {formatToken(
-          currentAmountToVest !== null ? currentAmountToVest : (amountToVest as BigNumber),
-          underlyingDealTokenDecimals,
-        )}{' '}
-        {tokenSymbol}
-      </Value>
-    </Cell>
-  )
-}
 
 export const VestDealTokens: React.FC = ({ ...restProps }) => {
   const { address: user } = useWeb3Connection()
@@ -334,6 +322,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
               totalAmount,
               totalVested,
               underlyingDealTokenDecimals,
+              upfrontDealAddress,
               vestingPeriodEnds,
               vestingPeriodStarts,
             } = item
@@ -346,17 +335,16 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                     {formatToken(totalAmount, underlyingDealTokenDecimals)} {tokenSymbol}
                   </Value>
                 </Cell>
-
                 <AmountToVestCell
                   amountToVest={amountToVest}
                   chainId={chainId}
+                  isUpfrontDeal={!!upfrontDealAddress}
                   poolAddress={poolAddress}
                   tokenSymbol={tokenSymbol}
                   underlyingDealTokenDecimals={underlyingDealTokenDecimals}
                   vestingPeriodEnds={vestingPeriodEnds}
                   vestingPeriodStarts={vestingPeriodStarts}
                 />
-
                 <Cell mobileJustifyContent="center">
                   <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
                   <Value>
@@ -384,6 +372,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                       dealAddress={dealAddress}
                       disabled={!canVest}
                       refetch={refetch}
+                      upfrontDealAddress={upfrontDealAddress}
                     />
                   </RequiredConnection>
 
@@ -406,3 +395,112 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
 }
 
 export default genericSuspense(VestDealTokens)
+
+function AmountToVestCell({
+  amountToVest,
+  chainId,
+  isUpfrontDeal,
+  poolAddress,
+  tokenSymbol,
+  underlyingDealTokenDecimals,
+  vestingPeriodEnds,
+  vestingPeriodStarts,
+}: AmountToVestCellProps & { isUpfrontDeal: boolean }) {
+  return isUpfrontDeal ? (
+    <AmountToVestCellUpfrontDeal
+      amountToVest={amountToVest}
+      chainId={chainId}
+      poolAddress={poolAddress}
+      tokenSymbol={tokenSymbol}
+      underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+      vestingPeriodEnds={vestingPeriodEnds}
+      vestingPeriodStarts={vestingPeriodStarts}
+    />
+  ) : (
+    <AmountToVestCellSponsorDeal
+      amountToVest={amountToVest}
+      chainId={chainId}
+      poolAddress={poolAddress}
+      tokenSymbol={tokenSymbol}
+      underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+      vestingPeriodEnds={vestingPeriodEnds}
+      vestingPeriodStarts={vestingPeriodStarts}
+    />
+  )
+}
+
+function AmountToVestCellSponsorDeal({
+  amountToVest,
+  chainId,
+  poolAddress,
+  tokenSymbol,
+  underlyingDealTokenDecimals,
+  vestingPeriodEnds,
+  vestingPeriodStarts,
+}: AmountToVestCellProps) {
+  const now = new Date()
+  const isVestingCliffEnded = isAfter(now, vestingPeriodStarts)
+  const isVestindPeriodEnded = isAfter(now, vestingPeriodEnds)
+
+  const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
+  const [currentAmountToVest] = useAelinAmountToVest(poolAddress, chainId, withinInterval)
+
+  return (
+    <AmountToVestCellComponent
+      amountToVest={amountToVest}
+      currentAmountToVest={currentAmountToVest}
+      tokenSymbol={tokenSymbol}
+      underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+    />
+  )
+}
+
+function AmountToVestCellUpfrontDeal({
+  amountToVest,
+  chainId,
+  poolAddress,
+  tokenSymbol,
+  underlyingDealTokenDecimals,
+  vestingPeriodEnds,
+  vestingPeriodStarts,
+}: AmountToVestCellProps) {
+  const now = new Date()
+  const isVestingCliffEnded = isAfter(now, vestingPeriodStarts)
+  const isVestindPeriodEnded = isAfter(now, vestingPeriodEnds)
+
+  const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
+  const [currentAmountToVest] = useAelinAmountToVestUpfrontDeal(
+    poolAddress,
+    chainId,
+    withinInterval,
+  )
+
+  return (
+    <AmountToVestCellComponent
+      amountToVest={amountToVest}
+      currentAmountToVest={currentAmountToVest}
+      tokenSymbol={tokenSymbol}
+      underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+    />
+  )
+}
+
+function AmountToVestCellComponent({
+  amountToVest,
+  currentAmountToVest,
+  tokenSymbol,
+  underlyingDealTokenDecimals,
+}: AmountToVestCellComponentProps) {
+  return (
+    <Cell mobileJustifyContent="center">
+      <HideOnDesktop>Amount to vest:&nbsp;</HideOnDesktop>
+      <Value>
+        {formatToken(
+          currentAmountToVest !== null ? currentAmountToVest : (amountToVest as BigNumber),
+          underlyingDealTokenDecimals,
+        )}{' '}
+        {tokenSymbol}
+      </Value>
+    </Cell>
+  )
+}

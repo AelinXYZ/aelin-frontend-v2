@@ -31,6 +31,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
+import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {
   CreatePoolSteps,
@@ -107,7 +108,9 @@ const Create: NextPage = () => {
           {Object.values(CreatePoolSteps).map((step, index) => {
             const isStepVisible = createPoolState.currentStep === step
 
-            return !isStepVisible ? null : (
+            if (!isStepVisible) return null
+
+            return (
               <WrapperGrid key={index}>
                 <PrevNextWrapper>
                   {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
@@ -165,7 +168,7 @@ const Create: NextPage = () => {
                     </MobileButtonWrapper>
                   </ButtonWrapper>
                   <Summary data={getCreatePoolSummaryData(createPoolState)} />
-                  {createPoolState.poolPrivacy === 'nft' && !!createPoolState.investmentToken ? (
+                  {createPoolState.poolPrivacy === 'nft' && !!createPoolState.investmentToken && (
                     <NftTableWrapper>
                       <NftCollectionsTable
                         light
@@ -175,8 +178,6 @@ const Create: NextPage = () => {
                         }}
                       />
                     </NftTableWrapper>
-                  ) : (
-                    <></>
                   )}
                 </StepContents>
                 <PrevNextWrapper>
@@ -192,7 +193,7 @@ const Create: NextPage = () => {
       {showWhiteListModal && (
         <WhiteListModal
           currentList={createPoolState.whitelist}
-          investmentTokenDecimals={createPoolState.investmentToken?.decimals ?? 18}
+          investmentTokenDecimals={createPoolState.investmentToken?.decimals ?? BASE_DECIMALS}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={(
             whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
@@ -201,6 +202,7 @@ const Create: NextPage = () => {
             setPoolField(whitelist, type)
           }}
           poolPrivacy={createPoolState.poolPrivacy}
+          withMerkleTree={false}
         />
       )}
     </>

@@ -41,6 +41,11 @@ gql`
     nftCollectionRules {
       ...NftCollectionRuleDetails
     }
+
+    dealType
+    upfrontDeal {
+      ...UpfrontDealDetails
+    }
   }
 `
 
@@ -125,5 +130,35 @@ gql`
     erc1155TokenIds
     erc721Blacklisted
     erc1155TokensAmtEligible
+  }
+`
+
+gql`
+  fragment UpfrontDealDetails on UpfrontDeal {
+    id
+    name
+    symbol
+    underlyingDealToken
+    underlyingDealTokenSymbol
+    underlyingDealTokenDecimals
+    underlyingDealTokenTotalSupply
+    purchaseTokenTotalForDeal
+    underlyingDealTokenTotal
+    vestingPeriod
+    holder
+    maxDealTotalSupply
+    purchaseTokenPerDealToken
+    purchaseRaiseMinimum
+    vestingCliffPeriod
+    allowDeallocation
+    dealStart
+    holderClaim
+    sponsorClaim
+    totalAmountUnredeemed
+    totalUsersAccepted
+    totalRedeemed
+    remainingDealTokens
+    merkleRoot
+    ipfsHash
   }
 `

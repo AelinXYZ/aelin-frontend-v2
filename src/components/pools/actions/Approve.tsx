@@ -1,3 +1,7 @@
+import styled from 'styled-components'
+
+import { BigNumber } from '@ethersproject/bignumber'
+
 import { Contents } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN, ZERO_ADDRESS } from '@/src/constants/misc'
@@ -6,12 +10,20 @@ import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+`
+
 type Props = {
   tokenAddress: string
   spender: string
   title: string
   description: string
   refetchAllowance: () => void
+  approveAmt?: BigNumber
 }
 
 export default function Approve({
@@ -20,6 +32,7 @@ export default function Approve({
   spender,
   title,
   tokenAddress,
+  approveAmt = MAX_BN,
 }: Props) {
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 
@@ -34,25 +47,27 @@ export default function Approve({
   const approveInvestmentToken = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await approve([spender, MAX_BN], txGasOptions)
+        const receipt = await approve([spender, approveAmt], txGasOptions)
         if (receipt) {
           refetchAllowance()
         }
       },
       title: `${title}`,
-      estimate: () => estimate([spender, MAX_BN]),
+      estimate: () => estimate([spender, approveAmt]),
     })
   }
 
   return (
     <>
       <Contents>{description}</Contents>
-      <ButtonGradient
-        disabled={!address || !isAppConnected || isSubmitting || !userBalance?.gt(0)}
-        onClick={approveInvestmentToken}
-      >
-        Approve
-      </ButtonGradient>
+      <ButtonsWrapper>
+        <ButtonGradient
+          disabled={!address || !isAppConnected || isSubmitting || !userBalance?.gt(0)}
+          onClick={approveInvestmentToken}
+        >
+          Approve
+        </ButtonGradient>
+      </ButtonsWrapper>
     </>
   )
 }

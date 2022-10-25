@@ -28,7 +28,7 @@ import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/consta
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
-import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 const Name = styled.span`
@@ -79,7 +79,6 @@ export const List: React.FC<{
   setOrderDirection: (value: OrderDirection) => void
 }> = ({ filters, setOrderBy, setOrderDirection }) => {
   const { data, error, hasMore, nextPage } = useAelinPools(filters.variables, filters.network)
-
   const { notifications } = useNotifications()
 
   if (error) {
@@ -91,7 +90,7 @@ export const List: React.FC<{
       investmentToken: 'center',
       network: 'center',
     },
-    widths: '190px 120px 90px 0.8fr 1fr 165px 80px',
+    widths: '220px 120px 90px 0.8fr 1fr 150px 80px',
   }
 
   const tableHeaderCells = [
@@ -209,9 +208,16 @@ export const List: React.FC<{
                     </Badge>
                   )}
 
-                  {isPrivatePool(pool.poolType) && (
+                  {isPrivatePool(pool.poolType) && !isMerklePool(pool) && (
                     <Label>
                       <span>Private</span>
+                      <Lock />
+                    </Label>
+                  )}
+
+                  {isPrivatePool(pool.poolType) && isMerklePool(pool) && (
+                    <Label>
+                      <span>Merkle Tree</span>
                       <Lock />
                     </Label>
                   )}
@@ -220,6 +226,12 @@ export const List: React.FC<{
                     <Label>
                       <span>NFT</span>
                       <Lock />
+                    </Label>
+                  )}
+
+                  {!!pool.upfrontDeal && (
+                    <Label>
+                      <span>Deal</span>
                     </Label>
                   )}
                   <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>

@@ -7,9 +7,10 @@ import useSWRInfinite from 'swr/infinite'
 
 import { VestingDeal_OrderBy, VestingDealsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
+import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { VESTING_DEALS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { fetchAmountToVest } from '@/src/hooks/aelin/useAelinAmountToVest'
+import { fetchAmountToVest as fetchAmountToVestUpfrontDeal } from '@/src/hooks/aelin/useAelinAmountToVestUpfrontDeal'
 import { VESTING_DEALS_QUERY_NAME } from '@/src/queries/pools/vestingDeals'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isFirstAelinPool } from '@/src/utils/isFirstAelinPool'
@@ -19,7 +20,8 @@ import { parsePoolName } from '@/src/utils/parsePoolName'
 export type ParsedVestingDeal = {
   poolName: string
   poolAddress: string
-  dealAddress: string
+  dealAddress: string | null
+  upfrontDealAddress: string | null
   tokenSymbol: string
   totalAmount: string
   remainingAmountToVest: string
@@ -43,11 +45,20 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
         .then((res) =>
           Promise.all(
             res.vestingDeals.map(async (vestingDeal) => {
-              const amountToVest = await fetchAmountToVest(
-                vestingDeal.pool.dealAddress,
-                chainId,
-                variables.where?.user as string,
-              )
+              let amountToVest: BigNumber
+              if (vestingDeal.pool.upfrontDeal) {
+                amountToVest = await fetchAmountToVestUpfrontDeal(
+                  vestingDeal.pool.upfrontDeal?.id || ZERO_ADDRESS,
+                  chainId,
+                  variables.where?.user as string,
+                )
+              } else {
+                amountToVest = await fetchAmountToVest(
+                  vestingDeal.pool.dealAddress,
+                  chainId,
+                  variables.where?.user as string,
+                )
+              }
 
               const canVest =
                 !isFirstAelinPool(vestingDeal.poolAddress) && Number(vestingDeal.lastClaim) !== 0
@@ -66,6 +77,7 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
                 vestingPeriodStarts: new Date(vestingDeal.vestingPeriodStarts * 1000),
                 poolAddress: vestingDeal.poolAddress,
                 dealAddress: vestingDeal.pool.dealAddress,
+                upfrontDealAddress: vestingDeal.pool.upfrontDeal?.id,
                 underlyingDealTokenDecimals: vestingDeal.underlyingDealTokenDecimals,
                 chainId,
               }
@@ -80,7 +92,6 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
 
   try {
     const vestingDealsByChainResponses = await Promise.allSettled(queryPromises())
-
     let result = vestingDealsByChainResponses
       .filter(isSuccessful)
       .reduce((resultAcc: ParsedVestingDeal[], { value }) => [...resultAcc, ...value], [])
