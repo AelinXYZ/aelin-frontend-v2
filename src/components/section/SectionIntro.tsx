@@ -17,6 +17,7 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     min-height: 180px;
+    max-height: 200px;
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {

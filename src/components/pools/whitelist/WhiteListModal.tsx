@@ -55,18 +55,21 @@ const WhiteListModal = ({
 
   return (
     <Modal onClose={onClose} showCancelButton={false} size="794px" title="Allowlist">
-      <Note>
-        Please input the amount as a <b>uint256</b>. If you are using an investment token with 6
-        decimals then <b>1000000</b> is equivalent to <b>1</b> investment token.
-      </Note>
       {poolPrivacy === Privacy.PRIVATE && (
-        <AddressesWhiteList
-          investmentTokenDecimals={investmentTokenDecimals}
-          list={addressesWhiteList}
-          onClose={onClose}
-          onConfirm={onConfirm}
-          setList={setAddressesWhiteList}
-        />
+        <>
+          <Note>
+            Please input the amount as a <b>uint256</b>. If you are using an investment token with 6
+            decimals then <b>1000000</b> is equivalent to <b>1</b> investment token.
+          </Note>
+
+          <AddressesWhiteList
+            investmentTokenDecimals={investmentTokenDecimals}
+            list={addressesWhiteList}
+            onClose={onClose}
+            onConfirm={onConfirm}
+            setList={setAddressesWhiteList}
+          />
+        </>
       )}
       {poolPrivacy === Privacy.NFT && (
         <NftWhiteList
