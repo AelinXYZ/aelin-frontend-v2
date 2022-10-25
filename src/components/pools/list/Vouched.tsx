@@ -23,7 +23,7 @@ import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinVouchedPools from '@/src/hooks/aelin/useAelinVouchedPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
-import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
 
 const Wrapper = styled.div`
@@ -56,7 +56,7 @@ const Label = styled.span`
   border-radius: 8px;
   color: ${({ theme }) => theme.colors.primary};
   font-weight: 500;
-  font-size: 10px;
+  font-size: 9px;
   line-height: 14px;
 `
 
@@ -83,6 +83,11 @@ const HideOnDesktop = styled(BaseHideOnDesktop)`
   }
 `
 
+const LabelsWrapper = styled.div`
+  display: flex;
+  gap: 5px;
+`
+
 export const VouchedPools: React.FC = () => {
   const { data, error } = useAelinVouchedPools({
     orderBy: PoolCreated_OrderBy.Timestamp,
@@ -95,7 +100,7 @@ export const VouchedPools: React.FC = () => {
       investmentToken: 'center',
       network: 'center',
     },
-    widths: '220px 120px 90px 0.8fr 1fr 150px 80px',
+    widths: '280px 84px 75px 0.8fr 1fr 150px 80px',
   }
 
   const tableHeaderCells = [
@@ -179,21 +184,68 @@ export const VouchedPools: React.FC = () => {
                       {activeNotifications.toString()}
                     </Badge>
                   )}
-                  {isPrivatePool(pool.poolType) && (
-                    <Label>
-                      <span>private</span>
-                      <Lock />
-                    </Label>
-                  )}
+                  <HideOnMobile>
+                    <LabelsWrapper>
+                      {isPrivatePool(pool.poolType) && (
+                        <Label>
+                          <span>Private</span>
+                          <Lock />
+                        </Label>
+                      )}
 
-                  {!!pool.hasNftList && (
-                    <Label>
-                      <span>NFT</span>
-                      <Lock />
-                    </Label>
-                  )}
-                  <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
+                      {isMerklePool(pool) && (
+                        <Label>
+                          <span>Merkle Tree</span>
+                          <Lock />
+                        </Label>
+                      )}
+
+                      {!!pool.hasNftList && (
+                        <Label>
+                          <span>NFT</span>
+                          <Lock />
+                        </Label>
+                      )}
+
+                      {!!pool.upfrontDeal && (
+                        <Label>
+                          <span>Deal</span>
+                        </Label>
+                      )}
+                    </LabelsWrapper>
+                  </HideOnMobile>
                 </NameCell>
+                <HideOnDesktop>
+                  <LabelsWrapper>
+                    {isPrivatePool(pool.poolType) && (
+                      <Label>
+                        <span>Private</span>
+                        <Lock />
+                      </Label>
+                    )}
+
+                    {isMerklePool(pool) && (
+                      <Label>
+                        <span>Merkle Tree</span>
+                        <Lock />
+                      </Label>
+                    )}
+
+                    {!!pool.hasNftList && (
+                      <Label>
+                        <span>NFT</span>
+                        <Lock />
+                      </Label>
+                    )}
+
+                    {!!pool.upfrontDeal && (
+                      <Label>
+                        <span>Deal</span>
+                      </Label>
+                    )}
+                    <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
+                  </LabelsWrapper>
+                </HideOnDesktop>
                 <ENSOrAddress address={sponsor} network={network} />
                 <HideOnMobileCell
                   justifyContent={columns.alignment.network}
