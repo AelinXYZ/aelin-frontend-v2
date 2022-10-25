@@ -149,9 +149,6 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
 
   const userRoles = useAelinUserRoles(pool)
 
-  console.log('userRoles: ', userRoles)
-  console.log('UserRole: ', UserRole)
-
   const [poolShares] = useAelinPoolSharesPerUser(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
     pool.upfrontDeal?.underlyingToken.decimals || BASE_DECIMALS,
@@ -166,9 +163,10 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
 
   const content = useMemo(() => {
     if (
-      !userRoles.includes(UserRole.Investor) &&
-      userRoles.includes(UserRole.Sponsor) &&
-      !hasSponsorFees
+      userRoles.includes(UserRole.Visitor) ||
+      (!userRoles.includes(UserRole.Investor) &&
+        ((userRoles.includes(UserRole.Sponsor) && sponsorClaim) ||
+          (userRoles.includes(UserRole.Holder) && holderClaim)))
     ) {
       return <InnerContainer>You have not participated in this pool</InnerContainer>
     }

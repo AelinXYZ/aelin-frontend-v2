@@ -3,17 +3,18 @@ import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { TextPrimary } from '../../pureStyledComponents/text/Text'
+import { TextPrimary } from '../../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
-import { BASE_DECIMALS, MERKLE_TREE_DATA_EMPTY, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, MERKLE_TREE_DATA_EMPTY, ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinUserMerkleTreeData, {
   UserMerkleData,
 } from '@/src/hooks/aelin/merkle-tree/useAelinUserMerkleTreeData'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
-import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
+import { AmountTypes } from '@/src/hooks/aelin/useUserAvailableToDeposit'
+import { useUserAvailableToDepositDirectDeal } from '@/src/hooks/aelin/useUserAvailableToDepositDirectDeal'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
@@ -29,7 +30,7 @@ type Props = {
 }
 
 const StyledTokenInput = styled(TokenInput)<{ isPrivate?: boolean }>`
-  margin-bottom: ${(props) => (props.isPrivate ? '0px' : '40px')};
+  margin-bottom: ${(props) => (props.isPrivate ? '0px' : '10px')};
 `
 
 export const Contents = styled.p`
@@ -58,7 +59,9 @@ const Allowance = ({ allowance }: { allowance: string }) => (
   </Contents>
 )
 
-function Deposit({ pool, poolHelpers }: Props) {
+function DepositDirectDeal({ pool, poolHelpers }: Props) {
+  const { address, isAppConnected } = useWeb3Connection()
+
   const {
     clearStoredSelectedNfts,
     handleOpenNftSelectionModal,
@@ -66,13 +69,14 @@ function Deposit({ pool, poolHelpers }: Props) {
     storedSelectedNfts,
   } = useNftSelection()
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
+
   const allocation = useNftUserAllocation(pool)
+
   const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
-    useUserAvailableToDeposit(pool)
+    useUserAvailableToDepositDirectDeal(pool)
+
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
-  const [alreadyDeposited, setAlreadyDeposited] = useState(false)
-  const { address, isAppConnected } = useWeb3Connection()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -95,11 +99,10 @@ function Deposit({ pool, poolHelpers }: Props) {
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
 
-  const isAMerkleTreePool = isMerklePool(pool)
-
-  const sortedBalances = !isPrivatePool(pool.poolType)
-    ? balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
-    : balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+  const sortedBalances =
+    isMerklePool(pool) || isPrivatePool(pool.poolType)
+      ? balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+      : balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
   useEffect(() => {
     if (!investmentTokenBalance.raw) {
@@ -166,6 +169,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     if (pool.hasNftList && allocation && !allocation.unlimited) {
       return allocation.raw.toString()
     }
+
     return sortedBalances[0].raw.toString()
   }, [pool.hasNftList, allocation, sortedBalances])
 
@@ -200,7 +204,7 @@ function Deposit({ pool, poolHelpers }: Props) {
         symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
-      {isPrivatePool(pool.poolType) && !!userMaxDepositPrivateAmount?.formatted && (
+      {(isPrivatePool(pool.poolType) || isMerklePool(pool)) && (
         <Allowance
           allowance={`${userMaxDepositPrivateAmount.formatted} ${pool.investmentTokenSymbol}`}
         />
@@ -208,7 +212,6 @@ function Deposit({ pool, poolHelpers }: Props) {
       <ButtonsWrapper>
         <Button
           disabled={
-            alreadyDeposited ||
             !address ||
             !isAppConnected ||
             poolHelpers.capReached ||
@@ -219,10 +222,6 @@ function Deposit({ pool, poolHelpers }: Props) {
           }
           onClick={() => {
             depositTokens()
-
-            if (isAMerkleTreePool) {
-              setAlreadyDeposited(true)
-            }
           }}
         >
           {pool?.upfrontDeal ? 'Accept Deal' : 'Deposit'}
@@ -233,4 +232,4 @@ function Deposit({ pool, poolHelpers }: Props) {
   )
 }
 
-export default genericSuspense(Deposit)
+export default genericSuspense(DepositDirectDeal)

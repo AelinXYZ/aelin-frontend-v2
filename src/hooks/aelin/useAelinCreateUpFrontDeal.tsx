@@ -439,7 +439,7 @@ const parseValuesToCreateUpFrontDeal = (
   )
 
   const purchaseRaiseMinimum = exchangeRates?.minimumAmount
-    ? parseUnits(exchangeRates.minimumAmount.toString(), BASE_DECIMALS)
+    ? parseUnits(exchangeRates.minimumAmount.toString(), investmentToken.decimals)
     : ZERO_BN
 
   const redemptionDeadlineDuration = getDuration(
@@ -474,22 +474,22 @@ const parseValuesToCreateUpFrontDeal = (
     const formattedWhiteList = whitelist.reduce((accum, curr) => {
       const { address, amount } = curr
 
-      if (!address.length) return accum
+      if (!isAddress(address)) return accum
 
       if (withMerkleTree) {
         accum.push({
           address,
-          amount: amount ? amount : 0,
+          amount: amount ? amount : MaxUint256.toNumber(),
         })
       } else {
         accum.push({
           address,
-          amount: amount ? parseUnits(String(amount), investmentToken.decimals) : MaxUint256,
+          amount: amount ? amount : MaxUint256.toNumber(),
         })
       }
 
       return accum
-    }, [] as { address: string; amount: number | BigNumber }[])
+    }, [] as { address: string; amount: BigNumberish }[])
 
     dealAddresses = formattedWhiteList.map(({ address }) => address)
     dealAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)

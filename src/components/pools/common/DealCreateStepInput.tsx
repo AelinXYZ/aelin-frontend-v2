@@ -20,7 +20,7 @@ import {
 import { formatNumber } from '@/src/utils/formatNumber'
 
 const Container = styled.div`
-  padding: 20px 10px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;

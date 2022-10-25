@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 
-import HolderDepositUpfrontDeal from './HolderDepositUpfrontDeal'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import Approve from '@/src/components/pools/actions/Approve'
-import HolderDeposit from '@/src/components/pools/actions/HolderDeposit'
+import HolderDeposit from '@/src/components/pools/actions/HolderDeposit/HolderDeposit'
+import HolderDepositUpfrontDeal from '@/src/components/pools/actions/HolderDeposit/HolderDepositUpfrontDeal'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'

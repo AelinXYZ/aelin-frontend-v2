@@ -78,7 +78,8 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
       if (
         pool.purchaseExpiry &&
         isAfter(now, pool.purchaseExpiry) &&
-        pool.upfrontDeal.purchaseRaiseMinimum.raw.gt(pool.funded.raw)
+        (pool.upfrontDeal.purchaseRaiseMinimum.raw.gt(pool.funded.raw) ||
+          ZERO_BN.eq(pool.funded.raw))
       ) {
         return {
           current: PoolStatus.Refunding,

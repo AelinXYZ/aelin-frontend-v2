@@ -69,6 +69,8 @@ function VestUpfrontDeal({ pool }: Props) {
   )
 
   const hasClaimedAtLeastOnce = lastClaim !== undefined
+  const sponsorClaim = !!pool.upfrontDeal?.sponsorClaim
+  const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
 
   const hasRemainingTokens =
     Number(lastClaim) !== 0
@@ -80,14 +82,11 @@ function VestUpfrontDeal({ pool }: Props) {
   const hasToClaimTokens = useMemo(() => {
     if (!pool.upfrontDeal) return false
 
-    const sponsorClaim = !!pool.upfrontDeal.sponsorClaim
-    const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
-
     if (userRoles.includes(UserRole.Sponsor) && hasSponsorFees && !sponsorClaim) return true
     if (userRoles.includes(UserRole.Investor) && poolShares.raw.gt(ZERO_BN)) return true
 
     return false
-  }, [poolShares, pool, userRoles])
+  }, [pool.upfrontDeal, userRoles, hasSponsorFees, sponsorClaim, poolShares.raw])
 
   const isVestButtonDisabled = useMemo(() => {
     return (
@@ -112,8 +111,11 @@ function VestUpfrontDeal({ pool }: Props) {
   }
 
   if (
-    (data?.vestingDeal === null && !userRoles.includes(UserRole.Investor)) ||
-    (userRoles.includes(UserRole.Sponsor) && !!pool.sponsorFee.raw.gt(ZERO_BN))
+    userRoles.includes(UserRole.Visitor) ||
+    (!userRoles.includes(UserRole.Investor) && userRoles.includes(UserRole.Holder)) ||
+    (!userRoles.includes(UserRole.Investor) &&
+      userRoles.includes(UserRole.Sponsor) &&
+      !hasSponsorFees)
   ) {
     return <NothingToClaim />
   }

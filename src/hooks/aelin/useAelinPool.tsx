@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 
+import useAelinPoolAccess from './useAelinPoolAccess'
 import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -164,6 +165,7 @@ export type ParsedAelinPool = {
 
 export const getParsedPool = ({
   chainId,
+  hasAllowList,
   pool,
   poolAddress,
   purchaseTokenDecimals,
@@ -172,6 +174,7 @@ export const getParsedPool = ({
   pool: PoolCreated
   poolAddress: string
   purchaseTokenDecimals: number
+  hasAllowList?: boolean
 }) => {
   const res: ParsedAelinPool = {
     chainId,
@@ -179,7 +182,7 @@ export const getParsedPool = ({
     name: pool.name,
     symbol: pool.symbol,
     nameFormatted: parsePoolName(pool.name),
-    poolType: pool.hasAllowList || isMerklePool(pool) ? 'Private' : 'Public',
+    poolType: hasAllowList || pool.hasAllowList ? 'Private' : 'Public',
     address: poolAddress,
     start: getPoolCreatedDate(pool),
     investmentToken: pool.purchaseToken,
@@ -290,12 +293,15 @@ export default function useAelinPool(
 ): { refetch: () => void; pool: ParsedAelinPool } {
   const allSDK = getAllGqlSDK()
   const { usePoolById } = allSDK[chainId]
+
   const { data: poolCreatedData, mutate: poolCreatedMutate } = usePoolById(
     {
       poolCreatedId: poolAddress,
     },
     config,
   )
+
+  const [hasAllowList] = useAelinPoolAccess(poolAddress, chainId, false)
 
   const refetch = () => {
     poolCreatedMutate()
@@ -319,10 +325,11 @@ export default function useAelinPool(
       purchaseTokenDecimals,
       poolAddress,
       chainId,
+      hasAllowList,
     })
 
     return poolInfo
-  }, [pool, purchaseTokenDecimals, poolAddress, chainId])
+  }, [pool, purchaseTokenDecimals, poolAddress, chainId, hasAllowList])
 
   return {
     refetch,

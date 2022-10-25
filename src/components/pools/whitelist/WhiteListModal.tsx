@@ -19,6 +19,13 @@ const Modal = styled(BaseModal)`
   }
 `
 
+const Note = styled.p`
+  padding: 20px;
+  background-color: ${({ theme }) => theme.colors.transparentWhite2};
+  border: 1px solid ${({ theme: { colors } }) => colors.borderColor};
+  border-radius: 8px;
+`
+
 type WhiteListType = {
   poolPrivacy: Privacy | undefined
   currentList: AddressWhitelistProps[]
@@ -48,6 +55,10 @@ const WhiteListModal = ({
 
   return (
     <Modal onClose={onClose} showCancelButton={false} size="794px" title="Allowlist">
+      <Note>
+        Please input the amount as a <b>uint256</b>. If you are using an investment token with 6
+        decimals then <b>1000000</b> is equivalent to <b>1</b> investment token.
+      </Note>
       {poolPrivacy === Privacy.PRIVATE && (
         <AddressesWhiteList
           investmentTokenDecimals={investmentTokenDecimals}

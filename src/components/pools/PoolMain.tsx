@@ -18,6 +18,7 @@ import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import FundDeal from '@/src/components/pools/actions/FundDeal'
 import Invest from '@/src/components/pools/actions/Invest/Invest'
+import InvestDirectDeal from '@/src/components/pools/actions/Invest/InvestDirectDeal'
 import ReleaseFunds from '@/src/components/pools/actions/ReleaseFunds'
 import Vest from '@/src/components/pools/actions/Vest/Vest'
 import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
@@ -189,7 +190,9 @@ function UpfrontDealActionTabs({ activeTab, derivedStatus, funding, pool }: Deal
   return (
     <>
       {!activeTab && <NoActions pool={pool} status={derivedStatus} />}
-      {activeTab === PoolAction.DealInvest && <Invest pool={pool} poolHelpers={funding} />}
+      {activeTab === PoolAction.DealInvest && (
+        <InvestDirectDeal pool={pool} poolHelpers={funding} />
+      )}
       {activeTab === PoolAction.AwaitingForDeal && (
         <WaitingForDeal isUpfrontDeal={!!pool.upfrontDeal} />
       )}

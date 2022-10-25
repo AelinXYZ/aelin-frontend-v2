@@ -11,7 +11,6 @@ import { UserRole } from '@/types/aelinPool'
 function useAelinUserRoles(pool: ParsedAelinPool, config?: SWRConfiguration): UserRole[] {
   const { address: userAddress } = useWeb3Connection()
   const { data: userResponse, error: errorUser } = useAelinUser(userAddress, config)
-  console.log('userResponse: ', userResponse)
 
   if (errorUser) {
     throw new Error('Error getting user role')

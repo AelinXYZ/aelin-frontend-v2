@@ -7,6 +7,7 @@ import ms from 'ms'
 import { ParsedAelinPool } from '../useAelinPool'
 import useAelinUserRoles from '../useAelinUserRoles'
 import useMerkleTreeData from '../useMerkleTreeData'
+import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { isEmptyObject } from '@/src/utils/isEmptyObject'
 import { UserRole } from '@/types/aelinPool'
@@ -43,14 +44,18 @@ function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData |
         isEligible,
         hasInvested,
         data: {
-          index: merkleTreeData.claims[userAddress].index,
+          index: merkleTreeData.claims[userAddress] ? merkleTreeData.claims[userAddress].index : 0,
           account: userAddress,
           amount: wei(
-            merkleTreeData.claims[userAddress].amount,
+            merkleTreeData.claims[userAddress]
+              ? merkleTreeData.claims[userAddress].amount
+              : ZERO_BN,
             pool.investmentTokenDecimals,
             true,
           ).toBN(),
-          merkleProof: merkleTreeData.claims[userAddress].proof,
+          merkleProof: merkleTreeData.claims[userAddress]
+            ? merkleTreeData.claims[userAddress].proof
+            : [],
         },
       })
     }

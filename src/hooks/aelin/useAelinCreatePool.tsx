@@ -184,7 +184,7 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
   )
 
   let poolAddresses: string[] = []
-  let poolAddressesAmounts: BigNumber[] = []
+  let poolAddressesAmounts: BigNumberish[] = []
   let nftCollectionRules: NftCollectionRulesProps[] = []
 
   if (
@@ -198,11 +198,11 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
 
       accum.push({
         address,
-        amount: amount ? parseUnits(String(amount), investmentToken.decimals) : MaxUint256,
+        amount: amount ? String(amount) : MaxUint256.toString(),
       })
 
       return accum
-    }, [] as { address: string; amount: BigNumber }[])
+    }, [] as { address: string; amount: BigNumberish }[])
 
     poolAddresses = formattedWhiteList.map(({ address }) => address)
     poolAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
