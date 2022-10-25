@@ -73,7 +73,7 @@ const PurchaserClaim = ({ chainId, refund, upfrontDeal }: PurchaserClaimProps) =
           refetchPoolShares()
         }
       },
-      title: refund ? `Refund Deal Tokens as Purchaser` : `Claim Deal Tokens as Purchaser`,
+      title: refund ? `Refund Deal Tokens as Purchaser` : `Settle Deal Tokens as Purchaser`,
       estimate: () => estimate([]),
     })
   }
@@ -101,7 +101,7 @@ const SponsorClaim = ({ upfrontDeal }: SponsorClaimProps) => {
       onConfirm: async (txGasOptions: GasOptions) => {
         await claim([], txGasOptions)
       },
-      title: `Claim Deal Tokens as Sponsor`,
+      title: `Settle Deal Tokens as Sponsor`,
       estimate: () => estimate([]),
     })
   }
@@ -161,13 +161,14 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
 
   const hasSponsorFees = pool.sponsorFee.raw.gt(ZERO_BN)
 
+  const didNotParticipated =
+    userRoles.includes(UserRole.Visitor) ||
+    (!userRoles.includes(UserRole.Investor) &&
+      ((userRoles.includes(UserRole.Sponsor) && sponsorClaim) ||
+        (userRoles.includes(UserRole.Holder) && holderClaim)))
+
   const content = useMemo(() => {
-    if (
-      userRoles.includes(UserRole.Visitor) ||
-      (!userRoles.includes(UserRole.Investor) &&
-        ((userRoles.includes(UserRole.Sponsor) && sponsorClaim) ||
-          (userRoles.includes(UserRole.Holder) && holderClaim)))
-    ) {
+    if (didNotParticipated) {
       return <InnerContainer>You have not participated in this pool</InnerContainer>
     }
 
@@ -266,18 +267,25 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
 
     return content.map((content) => <>{content}</>)
   }, [
-    userRoles,
-    pool.chainId,
+    didNotParticipated,
     refund,
+    userRoles,
     poolShares.raw,
     holderClaim,
+    pool.chainId,
+    upfrontDeal,
     sponsorClaim,
     hasSponsorFees,
-    upfrontDeal,
   ])
 
+  const title = didNotParticipated
+    ? 'Settle Allocation'
+    : refund
+    ? 'Refund tokens'
+    : 'Settle Allocation'
+
   return (
-    <Wrapper title={refund ? 'Refund tokens' : 'Settle Allocation'}>
+    <Wrapper title={title}>
       <Contents>{content}</Contents>
     </Wrapper>
   )

@@ -81,7 +81,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
 
-  const sortedBalances = isPrivatePool(pool.poolType)
+  const sortedBalances = !isPrivatePool(pool.poolType)
     ? balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
     : balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 

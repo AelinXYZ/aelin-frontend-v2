@@ -160,7 +160,7 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
   [CreateUpFrontDealSteps.dealAttributes]: {
     id: CreateUpFrontDealSteps.dealAttributes,
     order: 1,
-    title: 'Deal Attributes',
+    title: 'Deal Naming',
     text: [
       'The name investors will see for the pool. This can be anything and will be one of the first values investors see.',
       'Symbol that pool tokens will be named, should be similar to the pool name so investors can associate the two together.',
