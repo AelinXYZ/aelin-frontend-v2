@@ -24,6 +24,7 @@ export const USERS = gql`
       poolsAsHolderAmt
       poolsSponsoredAmt
       dealsAcceptedAmt
+      upfrontDealsAcceptedAmt
     }
   }
 `

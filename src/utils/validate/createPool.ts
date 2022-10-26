@@ -45,8 +45,8 @@ const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {
     errors[CreatePoolSteps.poolSymbol] = 'No more than 7 chars'
   }
 
-  if (Number(values.sponsorFee) > 98) {
-    errors.sponsorFee = 'Must be <= 98'
+  if (Number(values.sponsorFee) > 15) {
+    errors.sponsorFee = 'Must be <= 15'
   }
 
   if (

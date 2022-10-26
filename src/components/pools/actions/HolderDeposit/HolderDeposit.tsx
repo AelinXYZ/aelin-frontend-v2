@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import styled from 'styled-components'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -12,6 +13,13 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 type Props = {
   pool: ParsedAelinPool
 }
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+`
 
 function HolderDeposit({ pool }: Props) {
   const { isAppConnected } = useWeb3Connection()
@@ -43,7 +51,7 @@ function HolderDeposit({ pool }: Props) {
   }
 
   return (
-    <>
+    <ButtonsWrapper>
       <ButtonGradient
         disabled={
           !isAppConnected ||
@@ -55,7 +63,7 @@ function HolderDeposit({ pool }: Props) {
       >
         Fund Deal
       </ButtonGradient>
-    </>
+    </ButtonsWrapper>
   )
 }
 

@@ -42,3 +42,6 @@ yarn-error.log*
 
 #IDE files
 /.idea
+
+# CSV generated for testing purposes
+csv-for-merkel-tree.csv

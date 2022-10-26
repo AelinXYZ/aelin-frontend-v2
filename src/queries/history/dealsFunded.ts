@@ -30,6 +30,10 @@ export const DEALS_FUNDED = gql`
           underlyingDealTokenSymbol
           underlyingDealTokenDecimals
         }
+        upfrontDeal {
+          underlyingDealTokenDecimals
+          underlyingDealTokenSymbol
+        }
       }
     }
   }

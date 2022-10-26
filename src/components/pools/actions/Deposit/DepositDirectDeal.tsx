@@ -3,18 +3,24 @@ import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { TextPrimary } from '../../pureStyledComponents/text/Text'
+import { TextPrimary } from '../../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import { BASE_DECIMALS, MERKLE_TREE_DATA_EMPTY, ZERO_ADDRESS } from '@/src/constants/misc'
+import useAelinUserMerkleTreeData, {
+  UserMerkleData,
+} from '@/src/hooks/aelin/merkle-tree/useAelinUserMerkleTreeData'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
-import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
+import { AmountTypes } from '@/src/hooks/aelin/useUserAvailableToDeposit'
+import { useUserAvailableToDepositDirectDeal } from '@/src/hooks/aelin/useUserAvailableToDepositDirectDeal'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
+import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
 
@@ -24,7 +30,7 @@ type Props = {
 }
 
 const StyledTokenInput = styled(TokenInput)<{ isPrivate?: boolean }>`
-  margin-bottom: ${(props) => (props.isPrivate ? '0px' : '40px')};
+  margin-bottom: ${(props) => (props.isPrivate ? '0px' : '10px')};
 `
 
 export const Contents = styled.p`
@@ -47,13 +53,26 @@ const Button = styled(ButtonGradient)`
   width: 110px;
 `
 
+const AllowanceWrapper = styled.div`
+  color: ${({ theme }) => theme.colors.white};
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  text-decoration: none;
+  width: 100%;
+  margin-bottom: 20px;
+`
+
 const Allowance = ({ allowance }: { allowance: string }) => (
-  <Contents>
+  <AllowanceWrapper>
     Allowance: <TextPrimary>{allowance}</TextPrimary>
-  </Contents>
+  </AllowanceWrapper>
 )
 
-function Deposit({ pool, poolHelpers }: Props) {
+function DepositDirectDeal({ pool, poolHelpers }: Props) {
+  const { address, isAppConnected } = useWeb3Connection()
+
   const {
     clearStoredSelectedNfts,
     handleOpenNftSelectionModal,
@@ -61,12 +80,14 @@ function Deposit({ pool, poolHelpers }: Props) {
     storedSelectedNfts,
   } = useNftSelection()
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
+
   const allocation = useNftUserAllocation(pool)
+
   const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
-    useUserAvailableToDeposit(pool)
+    useUserAvailableToDepositDirectDeal(pool)
+
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
-  const { address, isAppConnected } = useWeb3Connection()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -76,14 +97,23 @@ function Deposit({ pool, poolHelpers }: Props) {
   const { estimate: purchasePoolTokensWithNftEstimate, execute: purchasePoolTokensWithNft } =
     useAelinPoolTransaction(pool.address, 'purchasePoolTokensWithNft')
 
+  const { estimate: acceptDealEstimate, execute: acceptDeal } = useAelinPoolUpfrontDealTransaction(
+    pool.upfrontDeal?.address || ZERO_ADDRESS,
+    'acceptDeal',
+  )
+
+  const userMerkle = useAelinUserMerkleTreeData(pool)
+  const userMerkleData = userMerkle?.data || (MERKLE_TREE_DATA_EMPTY as UserMerkleData)
+
   const balances = [
     investmentTokenBalance,
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
 
-  const sortedBalances = !isPrivatePool(pool.poolType)
-    ? balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
-    : balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+  const sortedBalances =
+    isMerklePool(pool) || isPrivatePool(pool.poolType)
+      ? balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+      : balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
   useEffect(() => {
     if (!investmentTokenBalance.raw) {
@@ -122,7 +152,9 @@ function Deposit({ pool, poolHelpers }: Props) {
 
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = pool.hasNftList
+        const receipt = pool.upfrontDeal
+          ? await acceptDeal([storedSelectedNfts, userMerkleData, tokenInputValue], txGasOptions)
+          : pool.hasNftList
           ? await purchasePoolTokensWithNft([storedSelectedNfts, tokenInputValue], txGasOptions)
           : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
@@ -136,7 +168,9 @@ function Deposit({ pool, poolHelpers }: Props) {
       },
       title: `Deposit ${investmentTokenSymbol}`,
       estimate: () =>
-        pool.hasNftList
+        pool.upfrontDeal
+          ? acceptDealEstimate([storedSelectedNfts, userMerkleData, tokenInputValue])
+          : pool.hasNftList
           ? purchasePoolTokensWithNftEstimate([storedSelectedNfts, tokenInputValue])
           : purchasePoolTokensEstimate([tokenInputValue]),
     })
@@ -146,6 +180,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     if (pool.hasNftList && allocation && !allocation.unlimited) {
       return allocation.raw.toString()
     }
+
     return sortedBalances[0].raw.toString()
   }, [pool.hasNftList, allocation, sortedBalances])
 
@@ -153,12 +188,31 @@ function Deposit({ pool, poolHelpers }: Props) {
     if (pool.hasNftList && allocation) {
       return allocation.unlimited
         ? 'Unlimited per NFT'
-        : `${formatToken(allocation.raw, 18, investmentTokenDecimals)} ${investmentTokenSymbol}`
+        : `${formatToken(
+            allocation.raw,
+            BASE_DECIMALS,
+            investmentTokenDecimals,
+          )} ${investmentTokenSymbol}`
     }
   }, [pool.hasNftList, allocation, investmentTokenSymbol, investmentTokenDecimals])
 
   return (
     <>
+      {!!pool?.upfrontDeal && (
+        <Contents>
+          By clicking "accept deal" you are agreeing to the negotiated exchange rate. <br />
+          If there is excess interest in the pool, all investors will be deallocated proportionally
+          {isMerklePool(pool) && (
+            <>
+              <br />
+              <br />
+              You will only be allowed to <b>deposit once</b> for this deal. Any unused allocation
+              will be forfeited.
+            </>
+          )}
+        </Contents>
+      )}
+
       <StyledTokenInput
         decimals={investmentTokenDecimals}
         error={inputError}
@@ -170,7 +224,7 @@ function Deposit({ pool, poolHelpers }: Props) {
         symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
-      {isPrivatePool(pool.poolType) && !!userMaxDepositPrivateAmount?.formatted && (
+      {(isPrivatePool(pool.poolType) || isMerklePool(pool)) && (
         <Allowance
           allowance={`${userMaxDepositPrivateAmount.formatted} ${pool.investmentTokenSymbol}`}
         />
@@ -186,9 +240,11 @@ function Deposit({ pool, poolHelpers }: Props) {
             Boolean(inputError) ||
             (pool.hasNftList && !hasStoredSelectedNft)
           }
-          onClick={depositTokens}
+          onClick={() => {
+            depositTokens()
+          }}
         >
-          Deposit
+          {pool?.upfrontDeal ? 'Accept Deal' : 'Deposit'}
         </Button>
         {pool.hasNftList && <Button onClick={handleOpenNftSelectionModal}>Select NFT</Button>}
       </ButtonsWrapper>
@@ -196,4 +252,4 @@ function Deposit({ pool, poolHelpers }: Props) {
   )
 }
 
-export default genericSuspense(Deposit)
+export default genericSuspense(DepositDirectDeal)

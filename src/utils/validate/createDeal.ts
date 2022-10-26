@@ -1,11 +1,9 @@
 import { isAddress } from '@ethersproject/address'
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
-import { parseUnits } from '@ethersproject/units'
-import Wei, { wei } from '@synthetixio/wei'
+import { BigNumberish } from '@ethersproject/bignumber'
+import { wei } from '@synthetixio/wei'
 import { Duration } from 'date-fns'
 
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS } from '@/src/constants/time'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { convertToSeconds, isEmptyDuration } from '@/src/utils/date'

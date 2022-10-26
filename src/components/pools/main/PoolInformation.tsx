@@ -97,35 +97,39 @@ export const PoolInformation = ({ pool }: Props) => {
         />
       </Column>
       <Column>
-        <InfoCell
-          title="Investment deadline"
-          tooltip="The amount of time investors have to deposit Investment tokens"
-        >
-          <DynamicDeadline
-            deadline={pool.purchaseExpiry}
-            hideWhenDeadlineIsReached={true}
-            start={pool.start}
-            width="180px"
+        {!pool.upfrontDeal && pool.purchaseExpiry && (
+          <InfoCell
+            title="Investment deadline"
+            tooltip="The amount of time investors have to deposit Investment tokens"
           >
-            {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
-          </DynamicDeadline>
-        </InfoCell>
-        <InfoCell
-          title="Deal Creation Deadline"
-          tooltip="The amount of time a sponsor has to create a deal before investors can withdraw their funds. A deal may still be created after the deadline if funds are still in the pool."
-          value={formatDate(pool.dealDeadline, DATE_DETAILED)}
-        >
-          {isAfter(now, pool.purchaseExpiry) && (
             <DynamicDeadline
-              deadline={pool.dealDeadline}
+              deadline={pool.purchaseExpiry}
               hideWhenDeadlineIsReached={true}
-              start={pool.purchaseExpiry}
+              start={pool.start}
               width="180px"
             >
-              {formatDate(pool.dealDeadline, DATE_DETAILED)}
+              {formatDate(pool.purchaseExpiry, DATE_DETAILED)}
             </DynamicDeadline>
-          )}
-        </InfoCell>
+          </InfoCell>
+        )}
+        {pool.dealDeadline && (
+          <InfoCell
+            title="Deal deadline"
+            tooltip="The amount of time a sponsor has to find a deal before investors can withdraw their funds. A deal may still be created after the deadline if funds are still in the pool."
+            value={formatDate(pool.dealDeadline, DATE_DETAILED)}
+          >
+            {pool.purchaseExpiry && isAfter(now, pool.purchaseExpiry) && (
+              <DynamicDeadline
+                deadline={pool.dealDeadline}
+                hideWhenDeadlineIsReached={true}
+                start={pool.purchaseExpiry}
+                width="180px"
+              >
+                {formatDate(pool.dealDeadline, DATE_DETAILED)}
+              </DynamicDeadline>
+            )}
+          </InfoCell>
+        )}
         <InfoCell
           title="Sponsor"
           tooltip="The sponsor will seek a deal on behalf of investors entering this pool"
