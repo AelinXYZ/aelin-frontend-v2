@@ -45,12 +45,11 @@ export const contracts = constantContracts({
     abi: AelinRegularPoolFactoryABI,
   },
   DIRECT_DEALS_FACTORY: {
-    // TODO: Add others addresses
     address: {
-      [Chains.mainnet]: '',
+      [Chains.mainnet]: '0x97efdb29c0d6dacdc0bb334cc227ae03a1a7c01e',
       [Chains.kovan]: '',
       [Chains.goerli]: '0x50c4eea08ae5544b622c96683823cecdc8b0e8ba',
-      [Chains.optimism]: '0x9A332adE39c1E58696045f9c4DB4fA46D3c90988',
+      [Chains.optimism]: '0xe6355E5B217390A2F888c35f73248844847b0ef4',
     },
     abi: AelinDirectDealFactoryABI,
   },
