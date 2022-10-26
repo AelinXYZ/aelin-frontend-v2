@@ -4,7 +4,9 @@ import nullthrows from 'nullthrows'
 import { SdkWithHooks, getSdkWithHooks } from '@/graphql-schema'
 import { Chains, ChainsValues } from '@/src/constants/chains'
 import {
+  GRAPH_URL_ARBITRUM,
   GRAPH_URL_GOERLI,
+  GRAPH_URL_GOERLI_ROLLUP,
   GRAPH_URL_KOVAN,
   GRAPH_URL_MAINNET,
   GRAPH_URL_OPTIMISM,
@@ -18,6 +20,8 @@ export const gqlGqlSdkByNetwork: AllSDK = {
   [Chains.goerli]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_GOERLI)),
   [Chains.kovan]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_KOVAN)),
   [Chains.optimism]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_OPTIMISM)),
+  [Chains.arbitrum]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_ARBITRUM)),
+  [Chains.goerliRollup]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_GOERLI_ROLLUP)),
 }
 
 export function getGqlSdkByNetwork(chainId: ChainsValues): ReturnType<typeof getSdkWithHooks> {

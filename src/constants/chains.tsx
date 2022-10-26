@@ -1,5 +1,6 @@
 import nullthrows from 'nullthrows'
 
+import { Arbitrum } from '@/src/components/assets/Arbitrum'
 import { Mainnet } from '@/src/components/assets/Mainnet'
 import { Optimism } from '@/src/components/assets/Optimism'
 import { NetworkPlaceholder } from '@/src/components/common/NetworkPlaceholder'
@@ -11,6 +12,8 @@ export const Chains = {
   goerli: 5,
   kovan: 42,
   optimism: 10,
+  arbitrum: 42161,
+  goerliRollup: 421613,
 } as const
 
 export type ChainsValues = ObjectValues<typeof Chains>
@@ -105,6 +108,41 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     buyAelinUrl:
       'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism',
     isL2: true,
+  },
+  [Chains.arbitrum]: {
+    id: Chains.arbitrum,
+    name: 'Arbitrum',
+    shortName: 'Arbitrum',
+    chainId: Chains.arbitrum,
+    chainIdHex: '0xa4b1',
+    rpcUrl: `https://arb-mainnet.g.alchemy.com/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
+    blockExplorerUrls: ['https://arbiscan.io/'],
+    iconUrls: [],
+    isProd: true,
+    icon: <Arbitrum />,
+    tokenListUrl: [
+      'https://tokens.1inch.eth.limo',
+      'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
+    ],
+    buyAelinUrl: undefined,
+    isL2: true,
+  },
+  [Chains.goerliRollup]: {
+    id: Chains.goerliRollup,
+    name: 'Görli Rollup',
+    shortName: 'Görli Rollup',
+    chainId: Chains.goerliRollup,
+    chainIdHex: '0x66eed',
+    rpcUrl: `https://goerli-rollup.arbitrum.io/rpc`,
+    blockExplorerUrls: ['https://goerli-rollup-explorer.arbitrum.io/'],
+    iconUrls: [],
+    isProd: false,
+    icon: <NetworkPlaceholder name="GR" />,
+    tokenListUrl: [
+      'https://tokens.1inch.eth.limo',
+      'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
+    ],
+    buyAelinUrl: undefined,
   },
 }
 

@@ -154,4 +154,13 @@ export const TestnetTokens: { [chainId: number]: Token[] } = {
       chainId: Chains.goerli,
     },
   ],
+  [Chains.goerliRollup]: [
+    {
+      name: 'Wrapped Ether',
+      address: '0x007354C7DD2EB9f636204192092d7221c9d988F2',
+      symbol: 'WETH',
+      decimals: 18,
+      chainId: Chains.goerliRollup,
+    },
+  ],
 }

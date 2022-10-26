@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { noop } from 'lodash'
 import cloneDeep from 'lodash/cloneDeep'
 
 import { Chains } from '@/src/constants/chains'
@@ -115,6 +116,16 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
       },
       [Chains.kovan]: () => {
         const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.kovan}`)
+
+        setError(error)
+      },
+      [Chains.arbitrum]: () => {
+        noop()
+      },
+      [Chains.goerliRollup]: () => {
+        const error = new Error(
+          `Staking Rewards isn't available on Network Id = ${Chains.goerliRollup}`,
+        )
 
         setError(error)
       },

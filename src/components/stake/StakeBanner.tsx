@@ -94,12 +94,37 @@ const StakeBanner = ({ ...restProps }) => {
         ),
         title: 'Stake',
       },
+      42161: {
+        backgroundImage: 'bg-stake.svg',
+        title: 'Stake',
+        description: (
+          <>
+            There is currently no staking program on Arbitrum.
+            <br />
+            <br />
+            Still interested in earning rewards? Read more about our new incentive programs for LP's{' '}
+            <a
+              href="https://mirror.xyz/aelinnews.eth/0tttX4Liu0rK_1om-oyS9dnPSjO-p09DVZDpkcR9B2Y"
+              rel="noreferrer"
+              target="_blank"
+            >
+              here
+            </a>
+            .
+          </>
+        ),
+      },
       5: {
         backgroundImage: 'bg-pools.svg',
         title: 'Feature not available',
         description: `Staking is not available on test networks.`,
       },
       42: {
+        backgroundImage: 'bg-pools.svg',
+        title: 'Feature not available',
+        description: `Staking is not available on test networks.`,
+      },
+      421613: {
         backgroundImage: 'bg-pools.svg',
         title: 'Feature not available',
         description: `Staking is not available on test networks.`,
