@@ -367,6 +367,17 @@ function useUserActions(
         actions.push(PoolAction.AwaitingForDeal)
       }
 
+      // If a deal has been presented but hasn't been funded
+      // and holderFundingExpiration has been reached
+      if (
+        userPoolBalance.gt(ZERO_BN) &&
+        pool.deal &&
+        isAfter(now, pool.deal?.holderFundingExpiration as Date) &&
+        !pool.deal?.holderAlreadyDeposited
+      ) {
+        actions.push(PoolAction.Withdraw)
+      }
+
       // Withdraw
       if (
         userPoolBalance.gt(ZERO_BN) &&
