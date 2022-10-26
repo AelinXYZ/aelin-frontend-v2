@@ -53,10 +53,21 @@ const Button = styled(ButtonGradient)`
   width: 110px;
 `
 
+const AllowanceWrapper = styled.div`
+  color: ${({ theme }) => theme.colors.white};
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  text-decoration: none;
+  width: 100%;
+  margin-bottom: 20px;
+`
+
 const Allowance = ({ allowance }: { allowance: string }) => (
-  <Contents>
+  <AllowanceWrapper>
     Allowance: <TextPrimary>{allowance}</TextPrimary>
-  </Contents>
+  </AllowanceWrapper>
 )
 
 function DepositDirectDeal({ pool, poolHelpers }: Props) {
@@ -191,8 +202,17 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
         <Contents>
           By clicking "accept deal" you are agreeing to the negotiated exchange rate. <br />
           If there is excess interest in the pool, all investors will be deallocated proportionally
+          {isMerklePool(pool) && (
+            <>
+              <br />
+              <br />
+              You will only be allowed to <b>deposit once</b> for this deal. Any unused allocation
+              will be forfeited.
+            </>
+          )}
         </Contents>
       )}
+
       <StyledTokenInput
         decimals={investmentTokenDecimals}
         error={inputError}

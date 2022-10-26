@@ -4,7 +4,7 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import Approve from '@/src/components/pools/actions/Approve'
 import Deposit from '@/src/components/pools/actions/Deposit/Deposit'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { ZERO_ADDRESS } from '@/src/constants/misc'
+import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
@@ -27,7 +27,8 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
     'allowance',
     [address || ZERO_ADDRESS, pool.address],
   )
-  const { isUserAllowedToInvest, userAlreadyInvested } = useUserAvailableToDeposit(pool)
+  const { isUserAllowedToInvest, userAlreadyInvested, userMaxDepositPrivateAmount } =
+    useUserAvailableToDeposit(pool)
 
   return (
     <Wrapper title="Deposit tokens" {...restProps}>
@@ -46,6 +47,11 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
         <SelectNft description="Before you deposit, you need to select the NFT(s) you hold in your wallet in order to unlock deposit." />
       ) : (
         <Approve
+          allowance={
+            userMaxDepositPrivateAmount.raw.gt(ZERO_BN)
+              ? userMaxDepositPrivateAmount.formatted
+              : undefined
+          }
           description={`Before you can deposit, the pool needs your permission to transfer your ${pool.investmentTokenSymbol}`}
           refetchAllowance={refetchUserAllowance}
           spender={pool.address}

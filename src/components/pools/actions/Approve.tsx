@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
+import { TextPrimary } from '../../pureStyledComponents/text/Text'
 import { Contents } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { MAX_BN, ZERO_ADDRESS } from '@/src/constants/misc'
@@ -24,7 +25,14 @@ type Props = {
   description: string
   refetchAllowance: () => void
   approveAmt?: BigNumber
+  allowance?: string
 }
+
+const Allowance = ({ allowance }: { allowance: string }) => (
+  <Contents>
+    Allowance: <TextPrimary>{allowance}</TextPrimary>
+  </Contents>
+)
 
 export default function Approve({
   description,
@@ -33,6 +41,7 @@ export default function Approve({
   title,
   tokenAddress,
   approveAmt = MAX_BN,
+  allowance,
 }: Props) {
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 
@@ -59,6 +68,7 @@ export default function Approve({
 
   return (
     <>
+      {allowance && <Allowance allowance={allowance} />}
       <Contents>{description}</Contents>
       <ButtonsWrapper>
         <ButtonGradient
