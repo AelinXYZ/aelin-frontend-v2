@@ -26,6 +26,7 @@ import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { VerifiedPoolsSocials } from '@/src/constants/verifiedPoolsSocials'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
@@ -93,6 +94,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         href={getExplorerUrl(pool.address || '', pool.chainId)}
         isVerified={isVerified ?? false}
         network={chainsConfig[pool.chainId].icon}
+        poolSocials={isVerified ? VerifiedPoolsSocials[pool.address] : undefined}
         subTitle={
           pool.poolType || pool.hasNftList
             ? getPoolType(pool.poolType, pool.hasNftList) + ' pool'
