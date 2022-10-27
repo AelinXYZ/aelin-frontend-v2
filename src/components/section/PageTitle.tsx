@@ -1,8 +1,12 @@
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
+import { Discord } from '@/src/components/assets/Discord'
 import { Link as BaseLink } from '@/src/components/assets/Link'
+import { Mirror } from '@/src/components/assets/Mirror'
+import { Twitter } from '@/src/components/assets/Twitter'
 import { Verified } from '@/src/components/assets/Verified'
+import { PoolSocials } from '@/src/constants/verifiedPoolsSocials'
 
 const Wrapper = styled.div`
   margin: 0 auto 30px;
@@ -80,13 +84,42 @@ const SubTitle = styled.div`
   }
 `
 
+const WebsiteLinkWrapper = styled.div`
+  display: flex;
+  margin-top: 4px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    margin-top: 12px;
+  }
+`
+
+const WebsiteLink = styled.a`
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: ${({ theme }) => theme.colors.gradientEnd};
+  text-decoration: none;
+`
+
+const Socials = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-top: 4px;
+  gap: 12px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    margin-top: 12px;
+  }
+`
+
 export const PageTitle: React.FC<{
   href?: string
   network?: ReactNode
   subTitle?: string
   title: string | React.ReactNode
   isVerified?: boolean
-}> = ({ href, isVerified, network, subTitle, title, ...restProps }) => {
+  poolSocials?: PoolSocials
+}> = ({ href, isVerified, network, poolSocials, subTitle, title, ...restProps }) => {
   const titleLinkProps = href ? { href: href, target: '_blank' } : {}
 
   return (
@@ -106,6 +139,46 @@ export const PageTitle: React.FC<{
         {network && ' - '}
         {network}
       </SubTitle>
+      {poolSocials?.websiteName && (
+        <WebsiteLinkWrapper>
+          <WebsiteLink href={`https://${poolSocials.websiteName}`} rel="noreferrer" target="_blank">
+            {poolSocials.websiteName}
+          </WebsiteLink>
+        </WebsiteLinkWrapper>
+      )}
+      {(poolSocials?.twitterHandle ||
+        poolSocials?.discordServerInvite ||
+        poolSocials?.mirrorHashPost) && (
+        <Socials>
+          {poolSocials?.twitterHandle && (
+            <a
+              href={`https://twitter.com/${poolSocials.twitterHandle}`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <Twitter />
+            </a>
+          )}
+          {poolSocials?.discordServerInvite && (
+            <a
+              href={`https://discord.gg/${poolSocials.discordServerInvite}`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <Discord />
+            </a>
+          )}
+          {poolSocials?.mirrorHashPost && (
+            <a
+              href={`https://dev.mirror.xyz/${poolSocials.mirrorHashPost}`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <Mirror />
+            </a>
+          )}
+        </Socials>
+      )}
     </Wrapper>
   )
 }
