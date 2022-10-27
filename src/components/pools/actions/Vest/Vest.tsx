@@ -91,7 +91,7 @@ function Vest({ pool }: Props) {
     <>
       {!isVestingCliffEnded && (
         <VestingCliff
-          redemtionEnds={pool.deal?.redemption?.end}
+          redemptionEnds={pool.deal?.redemption?.end}
           vestingCliffEnds={pool.deal?.vestingPeriod.cliff.end}
         />
       )}

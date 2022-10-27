@@ -9,12 +9,16 @@ export enum UserRole {
 }
 
 export enum PoolStatus {
+  //SponsorDeal
   Funding = 'Funding',
   SeekingDeal = 'Seeking Deal',
   DealPresented = 'Deal presented',
   WaitingForHolder = 'Waiting For Holder',
   Vesting = 'Vesting',
   Closed = 'Closed',
+  //UpfrontDeal
+  DealFunding = 'Deal Funding',
+  Refunding = 'Refunding',
 }
 
 export enum PoolTab {
@@ -34,12 +38,17 @@ export enum PoolAction {
   Withdraw = 'Withdraw',
   Vest = 'Vest',
   WithdrawUnredeemed = 'Withdraw Unredeemed',
+  //UpfrontDeal
+  DealInvest = 'Purchase Deal Tokens',
+  Refund = 'Refund tokens',
+  Settle = 'Settle',
 }
 
 export interface Funding {
   isCap: boolean
   capReached: boolean
   maxDepositAllowed: DetailedNumber
+  minimumAmount?: DetailedNumber
 }
 
 export interface WaitingForDeal {
@@ -49,7 +58,7 @@ export interface WaitingForDeal {
 }
 
 export type TimelineSteps = {
-  [key in PoolTimelineState as number]?: {
+  [key in PoolTimelineState as string]?: {
     active: boolean
     isDone: boolean
     value?: string

@@ -21,7 +21,7 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { Chains } from '@/src/constants/chains'
-import { OPENSEA_BASE_URL, QUIXOTIC_BASE_URL, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, OPENSEA_BASE_URL, QUIXOTIC_BASE_URL, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftCollectionLists, {
   NFTType,
@@ -103,7 +103,7 @@ const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCaro
         ruleText: 'Limited deposit amount per NFT held',
         ruleAllocation: `${formatToken(
           rules.purchaseAmount.raw,
-          18,
+          BASE_DECIMALS,
           pool.investmentTokenDecimals,
         )} ${pool.investmentTokenSymbol}`,
       }

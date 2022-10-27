@@ -6,7 +6,7 @@ import AelinStakingABI from '@/src/abis/AelinStaking.json'
 import ERC20ABI from '@/src/abis/ERC20.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { ONE_YEAR_IN_SECS } from '@/src/constants/time'
 import contractCall from '@/src/utils/contractCall'
 
@@ -55,11 +55,11 @@ export const getAelinStakingRewards = async ({ address, chainId }: AelinStakingA
     ] = await Promise.all(promises)
 
     const yearProRata = ONE_YEAR_IN_SECS / (duration ?? ZERO_BN).toNumber()
-    const totalStakedBalanceInWei = new Wei(BigNumber.from(totalStakedBalance), 18)
-    const rewardForDurationInWei = new Wei(BigNumber.from(rewardForDuration), 18)
+    const totalStakedBalanceInWei = new Wei(BigNumber.from(totalStakedBalance), BASE_DECIMALS)
+    const rewardForDurationInWei = new Wei(BigNumber.from(rewardForDuration), BASE_DECIMALS)
 
     return {
-      decimals: decimals || 18,
+      decimals: decimals || BASE_DECIMALS,
       symbol: symbol || '',
       userRewards: userRewards || ZERO_BN,
       userStake: userStake || ZERO_BN,

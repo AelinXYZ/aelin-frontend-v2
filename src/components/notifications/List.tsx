@@ -11,7 +11,7 @@ import {
 import { ButtonRemove as BaseButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
-  RowLink as BaseRowLink,
+  Row as BaseRow,
   TableBody as BaseTableBody,
   Cell,
   LinkCell,
@@ -27,7 +27,7 @@ const TableBody = styled(BaseTableBody)`
   grid-template-columns: 1fr;
 `
 
-const RowLink = styled(BaseRowLink)`
+const Row = styled(BaseRow)`
   align-items: flex-start;
   display: flex;
   flex-wrap: wrap;
@@ -130,11 +130,7 @@ export const List: React.FC = () => {
               const { chainId, id, message, poolAddress, triggerStart, type } = item
 
               return (
-                <RowLink
-                  columns={columns.widths}
-                  href={`/pool/${getKeyChainByValue(chainId)}/${poolAddress}?notification=${type}`}
-                  key={index}
-                >
+                <Row columns={columns.widths} key={index}>
                   <Cell className="cellTitle">{formatDate(triggerStart, DATE_DETAILED)}</Cell>
                   <Cell className="cellText" light>
                     {message}
@@ -144,6 +140,7 @@ export const List: React.FC = () => {
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
+                        handleClearSingleNotification(id)
                         router.push(
                           `/pool/${getKeyChainByValue(
                             chainId,
@@ -162,7 +159,7 @@ export const List: React.FC = () => {
                       }}
                     />
                   </LinkCell>
-                </RowLink>
+                </Row>
               )
             })}
           </TableBody>

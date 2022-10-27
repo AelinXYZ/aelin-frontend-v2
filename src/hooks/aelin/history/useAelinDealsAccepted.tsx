@@ -34,11 +34,15 @@ export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariable
             const investmentAmount = formatToken(
               dealAccepted.investmentAmount,
               dealAccepted.pool.purchaseTokenDecimals || 0,
+              10,
             )
 
             const dealTokenAmount = formatToken(
               dealAccepted.dealTokenAmount,
-              dealAccepted.pool.deal?.underlyingDealTokenDecimals || 0,
+              dealAccepted.pool.deal?.underlyingDealTokenDecimals ||
+                dealAccepted.pool.upfrontDeal?.underlyingDealTokenDecimals ||
+                0,
+              10,
             )
 
             return {
@@ -47,7 +51,10 @@ export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariable
               poolName: parsePoolName(dealAccepted.pool.name),
               timestamp: new Date(dealAccepted.timestamp * 1000),
               investmentAmount: `${investmentAmount} ${dealAccepted.pool.purchaseTokenSymbol}`,
-              dealTokenAmount: `${dealTokenAmount} ${dealAccepted.pool.deal?.underlyingDealTokenSymbol}`,
+              dealTokenAmount: `${dealTokenAmount} ${
+                dealAccepted.pool.deal?.underlyingDealTokenSymbol ||
+                dealAccepted.pool.upfrontDeal?.underlyingDealTokenSymbol
+              }`,
             }
           })
         })

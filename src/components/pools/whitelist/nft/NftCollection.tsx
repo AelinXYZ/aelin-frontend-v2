@@ -17,7 +17,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
-import abbreviateNumber from '@/src/utils/abbreviateNumber'
+import { abbreviateNumber } from '@/src/utils/abbreviateNumber'
 
 const Card = styled(BaseCard)<{ isBorder?: boolean }>`
   display: flex;
