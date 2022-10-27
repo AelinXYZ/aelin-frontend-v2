@@ -120,10 +120,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     iconUrls: [],
     isProd: true,
     icon: <Arbitrum />,
-    tokenListUrl: [
-      'https://tokens.1inch.eth.limo',
-      'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
-    ],
+    tokenListUrl: ['https://tokens.uniswap.org/'],
     buyAelinUrl: undefined,
     isL2: true,
   },
