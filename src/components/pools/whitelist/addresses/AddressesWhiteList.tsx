@@ -72,14 +72,12 @@ const Error = styled(BaseError)`
 const WhiteListRow = ({
   address,
   amount,
-  maxDecimals,
   onChangeRow,
   onDeleteRow,
   rowIndex,
 }: {
   address: string
   amount: number | null
-  maxDecimals: number
   onChangeRow: (value: string | number | null, key: string, index: number) => void
   onDeleteRow: (index: number) => void
   rowIndex: number
@@ -98,12 +96,6 @@ const WhiteListRow = ({
           const amount = Number(e.target.value)
 
           if (amount < 0) {
-            return
-          }
-
-          const decimalsCount = amount.toString().split('.')[1]?.length ?? 0
-
-          if (decimalsCount > maxDecimals) {
             return
           }
 
@@ -132,6 +124,7 @@ export const initialAddressesWhitelistValues = [
 enum AddressesWhiteListStatus {
   invalidAddress,
   invalidAmount,
+  invalidDecimals,
   valid,
 }
 
@@ -141,6 +134,8 @@ const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
       return <Error textAlign="center">There are some invalid address in the list</Error>
     case AddressesWhiteListStatus.invalidAmount:
       return <Error textAlign="center">There are some empty amount in the list</Error>
+    case AddressesWhiteListStatus.invalidDecimals:
+      return <Error textAlign="center">There are some amount with decimals in the list</Error>
     case AddressesWhiteListStatus.valid:
       return null
   }
@@ -166,6 +161,10 @@ const AddressesWhiteList = ({
 
     if (list.some((item: AddressWhitelistProps) => item.address && !item.amount)) {
       return AddressesWhiteListStatus.invalidAmount
+    }
+
+    if (list.some((item: AddressWhitelistProps) => item.amount && item.amount % 1 !== 0)) {
+      return AddressesWhiteListStatus.invalidDecimals
     }
 
     return AddressesWhiteListStatus.valid
@@ -202,13 +201,12 @@ const AddressesWhiteList = ({
         <TitleGrid>
           <Title>Address</Title> <UploadCSV onUploadCSV={handleUploadCSV} />
         </TitleGrid>
-        <Title>Amount</Title>
+        <Title>Amount (uint256)</Title>
         <div>&nbsp;</div>
         {list.map((listItem: AddressWhitelistProps, rowIndex: number) => (
           <WhiteListRow
             {...listItem}
             key={rowIndex}
-            maxDecimals={investmentTokenDecimals}
             onChangeRow={onChangeRow}
             onDeleteRow={onDeleteRow}
             rowIndex={rowIndex}

@@ -10,7 +10,7 @@ import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Bu
 import AreaChart from '@/src/components/sidebar/AreaChart'
 import { getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import formatNumber from '@/src/utils/formatNumber'
+import { formatNumber } from '@/src/utils/formatNumber'
 
 const Wrapper = styled.div``
 
@@ -65,6 +65,8 @@ type PriceData = {
 
 type TimeInterval = 'minutely' | 'hourly' | 'daily'
 
+const AELIN_PRICE_DECIMALS = 2
+
 const useAelinUSDPrices = (days: number, interval: TimeInterval) => {
   const { data } = useSWR<PriceData[]>(
     [days, interval],
@@ -94,12 +96,12 @@ const useAelinUSDPrices = (days: number, interval: TimeInterval) => {
 }
 
 const getLastPriceFormatted = (prices: PriceData[]) => {
-  return `$${formatNumber(prices[prices.length - 1].price)}`
+  return `$${formatNumber(prices[prices.length - 1].price, AELIN_PRICE_DECIMALS)}`
 }
 
 const getPriceDifferenceFormatted = (prices: PriceData[]) => {
   const diff = ((prices[prices.length - 1].price - prices[0].price) / prices[0].price) * 100
-  return `${diff > 0 ? '+' : ''}${diff.toFixed(2)}%`
+  return `${diff > 0 ? '+' : ''}${diff.toFixed(AELIN_PRICE_DECIMALS)}%`
 }
 
 const BuyAelin: React.FC = ({ ...restProps }) => {

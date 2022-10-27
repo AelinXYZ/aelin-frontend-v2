@@ -31,6 +31,10 @@ export const DEALS_SPONSORED = gql`
           underlyingDealTokenSymbol
           underlyingDealTokenDecimals
         }
+        upfrontDeal {
+          underlyingDealTokenDecimals
+          underlyingDealTokenSymbol
+        }
       }
     }
   }

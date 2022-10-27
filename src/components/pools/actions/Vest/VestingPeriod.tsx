@@ -1,9 +1,18 @@
+import styled from 'styled-components'
+
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
 import { formatToken } from '@/src/web3/bigNumber'
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+`
 
 type VestingPeriodProps = {
   amountToVest: BigNumber | null
@@ -47,9 +56,11 @@ function VestingPeriod({
           underlyingDealTokenDecimals,
         )} ${symbol}`}</TextPrimary>
       </Contents>
-      <ButtonGradient disabled={isButtonDisabled} onClick={handleVest}>
-        Vest
-      </ButtonGradient>
+      <ButtonsWrapper>
+        <ButtonGradient disabled={isButtonDisabled} onClick={handleVest}>
+          Vest
+        </ButtonGradient>
+      </ButtonsWrapper>
     </Wrapper>
   )
 }

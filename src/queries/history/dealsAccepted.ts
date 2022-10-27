@@ -31,6 +31,10 @@ export const DEALS_ACCEPTED = gql`
           underlyingDealTokenDecimals
           underlyingDealTokenSymbol
         }
+        upfrontDeal {
+          underlyingDealTokenDecimals
+          underlyingDealTokenSymbol
+        }
       }
     }
   }

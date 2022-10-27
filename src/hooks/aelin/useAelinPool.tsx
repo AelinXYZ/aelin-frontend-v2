@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 
+import useAelinPoolAccess from './useAelinPoolAccess'
 import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -26,7 +27,9 @@ import {
   getVestingDates,
   getVestingEnds,
   getVestingStarts,
+  isMerklePool,
   parseNftCollectionRules,
+  parseUpfrontDeal,
 } from '@/src/utils/aelinPoolUtils'
 import { calculateStatus } from '@/src/utils/calculatePoolStatus'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -44,8 +47,8 @@ export type ParsedAelinPool = {
   investmentTokenDecimals: number
   investmentDeadline: Date
   investmentTokenSymbol: string
-  purchaseExpiry: Date
-  dealDeadline: Date
+  purchaseExpiry: Date | null
+  dealDeadline: Date | null
   dealAddress: string | null
   sponsor: string
   sponsorFee: DetailedNumber
@@ -56,13 +59,57 @@ export type ParsedAelinPool = {
   withdrawn: DetailedNumber
   poolStatus: PoolStatus
   poolType: string
-  vestingStarts: Date
-  vestingEnds: Date
+  vestingStarts: Date | null
+  vestingEnds: Date | null
   dealsCreated: number
   stage: PoolStages
   totalUsersInvested: number
   hasNftList: boolean
   nftCollectionRules: ParsedNftCollectionRules[]
+  upfrontDeal?: {
+    address: string
+    name: string
+    symbol: string
+    underlyingToken: {
+      token: string
+      symbol: string
+      decimals: number
+      totalSupply: DetailedNumber
+      dealAmount: DetailedNumber
+      remaining: DetailedNumber
+      totalRedeemed: DetailedNumber
+    }
+    exchangeRates: {
+      investmentPerDeal: DetailedNumber
+      dealPerInvestment: DetailedNumber
+    }
+    vestingPeriod: {
+      cliff: {
+        ms: number
+        formatted: string
+        end: Date | null
+      }
+      vesting: {
+        ms: number
+        formatted: string
+        end: Date | null
+      }
+      end: Date | null
+      start: Date | null
+    }
+    holder: string
+    maxDealTotalSupply: DetailedNumber
+    purchaseTokenPerDealToken: DetailedNumber
+    purchaseRaiseMinimum: DetailedNumber
+    allowDeallocation: boolean
+    unredeemed: DetailedNumber
+    dealStart: Date | null
+    holderClaim: boolean
+    sponsorClaim: boolean
+    totalUsersAccepted: number
+    merkleRoot: string | null
+    ipfsHash: string | null
+  }
   deal?: {
     name: string
     symbol: string
@@ -118,6 +165,7 @@ export type ParsedAelinPool = {
 
 export const getParsedPool = ({
   chainId,
+  hasAllowList,
   pool,
   poolAddress,
   purchaseTokenDecimals,
@@ -126,6 +174,7 @@ export const getParsedPool = ({
   pool: PoolCreated
   poolAddress: string
   purchaseTokenDecimals: number
+  hasAllowList?: boolean
 }) => {
   const res: ParsedAelinPool = {
     chainId,
@@ -133,7 +182,7 @@ export const getParsedPool = ({
     name: pool.name,
     symbol: pool.symbol,
     nameFormatted: parsePoolName(pool.name),
-    poolType: pool.hasAllowList ? 'Private' : 'Public',
+    poolType: hasAllowList || pool.hasAllowList ? 'Private' : 'Public',
     address: poolAddress,
     start: getPoolCreatedDate(pool),
     investmentToken: pool.purchaseToken,
@@ -153,13 +202,15 @@ export const getParsedPool = ({
     vestingStarts: getVestingStarts(pool),
     vestingEnds: getVestingEnds(pool),
     stage: calculateStatus({
+      upfrontDeal: pool.upfrontDeal,
       poolStatus: pool.poolStatus,
-      purchaseExpiry: getPurchaseExpiry(pool).getTime(),
-      vestingStarts: getVestingStarts(pool).getTime(),
-      vestingEnds: getVestingEnds(pool).getTime(),
+      purchaseExpiry: getPurchaseExpiry(pool)?.getTime() || 0, // <remove that 0 should be undefined
+      vestingStarts: getVestingStarts(pool)?.getTime() || 0,
+      vestingEnds: getVestingEnds(pool)?.getTime() || 0,
       dealsCreated: pool.dealsCreated,
     }),
     deal: undefined,
+    upfrontDeal: parseUpfrontDeal(pool),
     dealsCreated: pool.dealsCreated,
     totalUsersInvested: pool.totalUsersInvested,
     hasNftList: pool.hasNftList,
@@ -242,12 +293,15 @@ export default function useAelinPool(
 ): { refetch: () => void; pool: ParsedAelinPool } {
   const allSDK = getAllGqlSDK()
   const { usePoolById } = allSDK[chainId]
+
   const { data: poolCreatedData, mutate: poolCreatedMutate } = usePoolById(
     {
       poolCreatedId: poolAddress,
     },
     config,
   )
+
+  const [hasAllowList] = useAelinPoolAccess(poolAddress, chainId, false)
 
   const refetch = () => {
     poolCreatedMutate()
@@ -271,10 +325,11 @@ export default function useAelinPool(
       purchaseTokenDecimals,
       poolAddress,
       chainId,
+      hasAllowList,
     })
 
     return poolInfo
-  }, [pool, purchaseTokenDecimals, poolAddress, chainId])
+  }, [pool, purchaseTokenDecimals, poolAddress, chainId, hasAllowList])
 
   return {
     refetch,

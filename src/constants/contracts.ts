@@ -1,4 +1,5 @@
-import AelinPoolCreateABI from '@/src/abis/AelinPoolCreate.json'
+import AelinDirectDealFactoryABI from '@/src/abis/AelinDirectDealFactory.json'
+import AelinRegularPoolFactoryABI from '@/src/abis/AelinRegularPoolFactory.json'
 import AelinStakingABI from '@/src/abis/AelinStaking.json'
 import ERC20 from '@/src/abis/ERC20.json'
 import GelatoPoolABI from '@/src/abis/GelatoPool.json'
@@ -36,7 +37,7 @@ export const contracts = constantContracts({
     },
     abi: ERC20,
   },
-  POOL_CREATE: {
+  REGULAR_POOL_FACTORY: {
     address: {
       [Chains.mainnet]: '0x722969A3fdc778a5cC7CbC8DC8Ae3e96a288f853',
       [Chains.kovan]: '0x3347b7C7F491B4cD665656796614A729036Ff220',
@@ -45,7 +46,18 @@ export const contracts = constantContracts({
       [Chains.arbitrum]: '',
       [Chains.goerliRollup]: '0x5016D259772Be7AdDcA5Cc48eAFb910E60d290c9',
     },
-    abi: AelinPoolCreateABI,
+    abi: AelinRegularPoolFactoryABI,
+  },
+  DIRECT_DEALS_FACTORY: {
+    address: {
+      [Chains.mainnet]: '0x97efdb29c0d6dacdc0bb334cc227ae03a1a7c01e',
+      [Chains.kovan]: '',
+      [Chains.goerli]: '0x50c4eea08ae5544b622c96683823cecdc8b0e8ba',
+      [Chains.optimism]: '0xe6355E5B217390A2F888c35f73248844847b0ef4',
+      [Chains.arbitrum]: '',
+      [Chains.goerliRollup]: '0x1D29411889e3B37702E1Fe3BdA61f9C54704d852',
+    },
+    abi: AelinDirectDealFactoryABI,
   },
   STAKING_REWARDS: {
     address: {

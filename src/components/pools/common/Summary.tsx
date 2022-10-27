@@ -6,7 +6,7 @@ const Wrapper = styled.div`
   border-radius: 8px;
   border: 1px solid ${({ theme: { colors } }) => colors.borderColor};
   display: grid;
-  gap: 20px;
+  gap: 25px 0;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   grid-template-rows: auto auto;
   padding: 20px;
@@ -35,6 +35,7 @@ const Value = styled.div`
   font-weight: 400;
   line-height: 1.3;
   margin: 0;
+  flex-direction: column;
 `
 
 export const SummaryItem: React.FC<{
@@ -51,12 +52,10 @@ interface Props {
   data: { title: string; value: string | JSX.Element }[]
 }
 
-export const Summary: React.FC<Props> = ({ data, ...restProps }) => {
-  return (
-    <Wrapper {...restProps}>
-      {data.map((item, index) => {
-        return <SummaryItem key={index} {...item} />
-      })}
-    </Wrapper>
-  )
-}
+export const Summary: React.FC<Props> = ({ data, ...restProps }) => (
+  <Wrapper {...restProps}>
+    {data.map((item, index) => {
+      return <SummaryItem key={index} {...item} />
+    })}
+  </Wrapper>
+)

@@ -69,6 +69,10 @@ const parseOpenseaResponse = async (
 }
 
 const getParsedNFTCollectionData = async (collectionAddress: string, chainId: ChainsValues) => {
+  if (chainId === Chains.goerli) {
+    return Promise.resolve({})
+  }
+
   const url =
     chainId === Chains.optimism || chainId === Chains.arbitrum
       ? `/api/nft/${chainId}/${collectionAddress}`

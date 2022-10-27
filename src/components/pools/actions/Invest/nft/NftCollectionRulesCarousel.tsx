@@ -22,6 +22,7 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { Chains } from '@/src/constants/chains'
 import {
+  BASE_DECIMALS,
   OPENSEA_BASE_URL,
   QUIXOTIC_BASE_URL,
   STRATOS_BASE_URL,
@@ -108,7 +109,7 @@ const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCaro
         ruleText: 'Limited deposit amount per NFT held',
         ruleAllocation: `${formatToken(
           rules.purchaseAmount.raw,
-          18,
+          BASE_DECIMALS,
           pool.investmentTokenDecimals,
         )} ${pool.investmentTokenSymbol}`,
       }
