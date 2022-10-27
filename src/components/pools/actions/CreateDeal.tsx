@@ -11,6 +11,13 @@ const TextColor = styled.span`
   color: ${(props) => props.theme.colors.textColor};
 `
 
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+`
+
 type Props = {
   pool: ParsedAelinPool
 }
@@ -49,7 +56,9 @@ export const CreateDeal: React.FC<Props> = ({ pool, ...restProps }) => {
           href={`/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}/create-deal`}
           passHref
         >
-          <ButtonGradient as="a">Create Deal</ButtonGradient>
+          <ButtonsWrapper>
+            <ButtonGradient as="a">Create Deal</ButtonGradient>
+          </ButtonsWrapper>
         </Link>
       )}
     </Wrapper>

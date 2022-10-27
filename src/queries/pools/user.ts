@@ -18,6 +18,9 @@ export const USER_BY_ID = gql`
       dealsAccepted {
         ...DealAcceptedDetails
       }
+      upfrontDealsAccepted {
+        ...PoolDetails
+      }
     }
   }
 `

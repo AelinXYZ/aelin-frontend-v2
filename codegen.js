@@ -7,8 +7,8 @@ const codeGenOutDir = process.env.CODEGEN_OUTPUT_FILE || 'types/generated/querie
 module.exports = {
   overwrite: true,
   schema: [
-    process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_MAINNET,
-    // process.env.GRAPH_ENDPOINT_OPTIMISM,
+    // process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_MAINNET,
+    process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_OPTIMISM,
     // process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_KOVAN,
     // process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI,
   ],

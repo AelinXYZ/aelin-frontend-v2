@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FC } from 'react'
 
+import { isAddress } from '@ethersproject/address'
 import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
@@ -18,10 +19,12 @@ const UploadCSV: FC<IUploadCSV> = ({ onUploadCSV }) => {
     const whitelist = csv.data.reduce((accum, curr) => {
       const [address, amount] = curr
 
-      accum.push({
-        address,
-        amount: Number(amount),
-      })
+      if (isAddress(address) && amount !== '') {
+        accum.push({
+          address,
+          amount: Number(amount),
+        })
+      }
 
       return accum
     }, [] as AddressWhitelistProps[])
