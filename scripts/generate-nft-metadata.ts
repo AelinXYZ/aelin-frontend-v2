@@ -9,11 +9,13 @@ import puppeteer, { Browser, Page } from 'puppeteer'
 
 import OpenSeaResponse from '../data/open-sea-response.json' assert { type: 'json' }
 import QuixoticResponse from '../data/quixotic-response.json' assert { type: 'json' }
+import StratosResponse from '../data/stratos-response.json' assert { type: 'json' }
 
 detenv.config({ path: '.env.local' })
 
-const MAX_QUIXOTIC_ITEMS = 50
 const MAX_OPENSEA_ITEMS = 100
+const MAX_QUIXOTIC_ITEMS = 50
+const MAX_STRATOS_ITEMS = 50
 
 type OpenSeaCollection = {
   node: {
@@ -32,6 +34,18 @@ type OpenSeaCollection = {
 }
 
 type QuixoticCollection = {
+  name: string
+  slug: string | null
+  image_url: string
+  owners: number
+  supply: number
+  verified: boolean
+  volume: number
+  floor: number | null
+  address: string
+}
+
+type StratosCollection = {
   name: string
   slug: string | null
   image_url: string
@@ -249,7 +263,65 @@ const QuixoticMetadataCollector = async () => {
   )
 }
 
-Promise.all([OpenSeaMetadataCollector(), QuixoticMetadataCollector()])
+const StratosMetadataCollector = async () => {
+  const collections = StratosResponse.results.slice(0, MAX_STRATOS_ITEMS)
+
+  const options = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'X-API-KEY': process.env.STRATOS_API_TOKEN || '',
+    },
+  }
+
+  const metadata = await Promise.all(
+    collections.map(async (collection: StratosCollection, index: number) => {
+      const {
+        address,
+        floor: floorPrice,
+        image_url: imageUrl,
+        name,
+        owners: numOwners,
+        slug,
+        supply: totalSupply,
+        verified: isVerified,
+        volume: totalVolume,
+      } = collection
+
+      const response = await fetch(
+        `https://api.stratosnft.io/api/v1/collection/${address}/`,
+        options,
+      ).then((response) => response.json())
+
+      const { contract_type } = response
+
+      return {
+        id: index,
+        name,
+        slug,
+        imageUrl,
+        address,
+        isVerified,
+        numOwners,
+        totalSupply,
+        floorPrice: floorPrice ? formatGwei(floorPrice) : null,
+        totalVolume: formatGwei(totalVolume),
+        contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
+        paymentSymbol: 'ETH',
+        network: 42161,
+        updatedAt: Date.now(),
+      }
+    }),
+  )
+
+  return fs.writeFile(
+    `${process.cwd()}/public/data/nft-metadata/stratos-metadata.json`,
+    JSON.stringify(metadata, null, 2),
+    'utf8',
+  )
+}
+
+Promise.all([OpenSeaMetadataCollector(), QuixoticMetadataCollector(), StratosMetadataCollector()])
   .then(() => {
     console.log('Metadata has been collected successfully')
     process.exit()

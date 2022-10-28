@@ -23,15 +23,14 @@ const getTokenList = (chainId: ChainsValues) => {
 const useTokenListQuery = (appChainId: ChainsValues) => {
   return useSWR(['token-list', appChainId], async () => {
     const response: TokenListResponse = await getTokenList(appChainId)
-    let tokens: Token[] = response.tokens
 
-    if (appChainId === Chains.optimism) {
-      tokens = response.tokens.filter(
-        ({ chainId }: { chainId: number }) => Number(chainId) === Chains.optimism,
+    if (appChainId === Chains.optimism || appChainId === Chains.arbitrum) {
+      return response.tokens.filter(
+        ({ chainId }: { chainId: number }) => Number(chainId) === appChainId,
       )
     }
 
-    return tokens
+    return response.tokens
   })
 }
 
