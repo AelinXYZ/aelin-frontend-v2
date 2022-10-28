@@ -115,7 +115,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     shortName: 'Arbitrum',
     chainId: Chains.arbitrum,
     chainIdHex: '0xa4b1',
-    rpcUrl: `https://arb-mainnet.g.alchemy.com/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
+    rpcUrl: `https://arb1.arbitrum.io/rpc`,
     blockExplorerUrls: ['https://arbiscan.io/'],
     iconUrls: [],
     isProd: true,
