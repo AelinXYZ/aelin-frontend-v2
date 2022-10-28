@@ -13,7 +13,6 @@ export const Chains = {
   kovan: 42,
   optimism: 10,
   arbitrum: 42161,
-  goerliRollup: 421613,
 } as const
 
 export type ChainsValues = ObjectValues<typeof Chains>
@@ -123,23 +122,6 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     tokenListUrl: ['https://tokens.uniswap.org/'],
     buyAelinUrl: undefined,
     isL2: true,
-  },
-  [Chains.goerliRollup]: {
-    id: Chains.goerliRollup,
-    name: 'Görli Rollup',
-    shortName: 'Görli Rollup',
-    chainId: Chains.goerliRollup,
-    chainIdHex: '0x66eed',
-    rpcUrl: `https://goerli-rollup.arbitrum.io/rpc`,
-    blockExplorerUrls: ['https://goerli-rollup-explorer.arbitrum.io/'],
-    iconUrls: [],
-    isProd: false,
-    icon: <NetworkPlaceholder name="GR" />,
-    tokenListUrl: [
-      'https://tokens.1inch.eth.limo',
-      'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
-    ],
-    buyAelinUrl: undefined,
   },
 }
 

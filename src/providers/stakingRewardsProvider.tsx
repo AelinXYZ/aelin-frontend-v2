@@ -122,13 +122,6 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
       [Chains.arbitrum]: () => {
         noop()
       },
-      [Chains.goerliRollup]: () => {
-        const error = new Error(
-          `Staking Rewards isn't available on Network Id = ${Chains.goerliRollup}`,
-        )
-
-        setError(error)
-      },
     }),
     [address],
   )

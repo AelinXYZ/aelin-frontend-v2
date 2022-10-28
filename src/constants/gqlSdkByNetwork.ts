@@ -21,7 +21,6 @@ export const gqlGqlSdkByNetwork: AllSDK = {
   [Chains.kovan]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_KOVAN)),
   [Chains.optimism]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_OPTIMISM)),
   [Chains.arbitrum]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_ARBITRUM)),
-  [Chains.goerliRollup]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_GOERLI_ROLLUP)),
 }
 
 export function getGqlSdkByNetwork(chainId: ChainsValues): ReturnType<typeof getSdkWithHooks> {
