@@ -9,7 +9,7 @@ import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/commo
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
-import { chainsConfig } from '@/src/constants/chains'
+import { Chains, chainsConfig } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
 import useEthGasPrice, { GAS_SPEEDS, useEthGasPriceLegacy } from '@/src/hooks/useGasPrice'
 import useEthPriceUnitInUSD from '@/src/hooks/useGasPriceUnitInUSD'
@@ -160,8 +160,14 @@ const GasSelector = ({
 
   const transactionFee = useMemo(
     () =>
-      getTransactionPrice(gasPriceL1, gasPrice, isL2Chain, gasLimitEstimate, ethPriceInUSD) ?? 0,
-    [gasPrice, gasPriceL1, gasLimitEstimate, ethPriceInUSD, isL2Chain],
+      getTransactionPrice(
+        gasPriceL1,
+        gasPrice,
+        appChainId === Chains.arbitrum ? false : isL2Chain,
+        gasLimitEstimate,
+        ethPriceInUSD,
+      ) ?? 0,
+    [gasPrice, gasPriceL1, gasLimitEstimate, ethPriceInUSD, isL2Chain, appChainId],
   )
 
   const formattedGasPrice = useMemo(() => {
