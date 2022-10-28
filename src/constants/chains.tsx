@@ -1,5 +1,6 @@
 import nullthrows from 'nullthrows'
 
+import { Arbitrum } from '@/src/components/assets/Arbitrum'
 import { Mainnet } from '@/src/components/assets/Mainnet'
 import { Optimism } from '@/src/components/assets/Optimism'
 import { NetworkPlaceholder } from '@/src/components/common/NetworkPlaceholder'
@@ -11,6 +12,7 @@ export const Chains = {
   goerli: 5,
   kovan: 42,
   optimism: 10,
+  arbitrum: 42161,
 } as const
 
 export type ChainsValues = ObjectValues<typeof Chains>
@@ -104,6 +106,21 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     tokenListUrl: ['https://static.optimism.io/optimism.tokenlist.json'],
     buyAelinUrl:
       'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism',
+    isL2: true,
+  },
+  [Chains.arbitrum]: {
+    id: Chains.arbitrum,
+    name: 'Arbitrum',
+    shortName: 'Arbitrum',
+    chainId: Chains.arbitrum,
+    chainIdHex: '0xa4b1',
+    rpcUrl: `https://arb1.arbitrum.io/rpc`,
+    blockExplorerUrls: ['https://arbiscan.io/'],
+    iconUrls: [],
+    isProd: true,
+    icon: <Arbitrum />,
+    tokenListUrl: ['https://tokens.uniswap.org/'],
+    buyAelinUrl: undefined,
     isL2: true,
   },
 }
