@@ -1,0 +1,18 @@
+[
+  {
+    "id": 0,
+    "name": "ToblinTown",
+    "slug": "toblintown",
+    "imageUrl": "https://fanbase-1.s3.amazonaws.com/nft_image/0x750A7163D06C1cA47c595Ad3FCd0908cC2fDcBb9/2/1658109975/image.png",
+    "address": "0x750A7163D06C1cA47c595Ad3FCd0908cC2fDcBb9",
+    "isVerified": false,
+    "numOwners": 81,
+    "totalSupply": 597,
+    "floorPrice": 0.0001,
+    "totalVolume": 0.006201,
+    "contractType": "erc721",
+    "paymentSymbol": "ETH",
+    "network": 42161,
+    "updatedAt": 1666906149925
+  }
+]

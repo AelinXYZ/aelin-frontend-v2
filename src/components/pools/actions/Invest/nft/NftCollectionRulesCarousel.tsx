@@ -21,7 +21,13 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { Chains } from '@/src/constants/chains'
-import { BASE_DECIMALS, OPENSEA_BASE_URL, QUIXOTIC_BASE_URL, ZERO_BN } from '@/src/constants/misc'
+import {
+  BASE_DECIMALS,
+  OPENSEA_BASE_URL,
+  QUIXOTIC_BASE_URL,
+  STRATOS_BASE_URL,
+  ZERO_BN,
+} from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftCollectionLists, {
   NFTType,
@@ -122,6 +128,10 @@ const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCaro
   const marketplaceUrl = useMemo(() => {
     if (collection.network === Chains.optimism) {
       return QUIXOTIC_BASE_URL + 'collection/' + rules.collectionAddress
+    }
+
+    if (collection.network === Chains.arbitrum) {
+      return STRATOS_BASE_URL + 'collection/' + rules.collectionAddress
     }
 
     return OPENSEA_BASE_URL + 'collection/' + strToKebabCase(name)

@@ -16,6 +16,7 @@ export const DEFAULT_DECIMALS = 6
 export const EXCHANGE_DECIMALS = 4
 export const STAKING_DECIMALS = 4
 export const BASE_DECIMALS = 18
+export const DISPLAY_DECIMALS = 2
 
 export const GWEI_PRECISION = 9
 export const GWEI_UNIT = 1000000000
@@ -24,6 +25,7 @@ export const DEBOUNCED_INPUT_TIME = 600
 
 export const OPENSEA_BASE_URL = 'https://opensea.io/'
 export const QUIXOTIC_BASE_URL = 'https://qx.app/'
+export const STRATOS_BASE_URL = 'https://stratosnft.io/'
 export const AELIN_APP_DEV_URL = 'https://testnet.app.aelin.xyz'
 
 export const POOL_NAME_MAX_LENGTH = 30

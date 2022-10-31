@@ -74,15 +74,31 @@ const parseQuixoticCollectionResponse = async (
   }
 }
 
+const parseStratosCollectionResponse = async (
+  stratosRes: Response,
+): Promise<Omit<NftCollectionData, 'totalSupply'>> => {
+  const data = await stratosRes.json()
+  return {
+    id: 0, // Always return 1 exact collection
+    address: data.address,
+    name: data.name,
+    symbol: data.symbol,
+    description: data.description,
+    imageUrl: data.image_url,
+    contractType: data.contract_type.includes('721') ? NFTType.ERC721 : NFTType.ERC1155,
+    network: Chains.arbitrum,
+  }
+}
+
 export const getNftOwnedByAddress = async (
   chainId: ChainsValues,
   collectionAddress: string,
   walletAddress: string,
 ) => {
-  if (chainId === Chains.mainnet) {
+  if (chainId === Chains.mainnet || chainId === Chains.arbitrum) {
     const settings = {
       apiKey: process.env.NEXT_PUBLIC_TOKEN_PROVIDER,
-      network: Network.ETH_MAINNET,
+      network: chainId === Chains.mainnet ? Network.ETH_MAINNET : Network.ARB_MAINNET,
       maxRetries: 10,
     }
 
@@ -168,7 +184,7 @@ export const getNftOwnedByAddress = async (
 
 export const getNftCollectionData = async (chainId: ChainsValues, collectionAddress: string) => {
   if (chainId === Chains.optimism) {
-    //Optimism => Quixotic marketplace
+    // Optimism => Quixotic marketplace
     const options = {
       method: 'GET',
       headers: {
@@ -188,5 +204,28 @@ export const getNftCollectionData = async (chainId: ChainsValues, collectionAddr
 
     return parseQuixoticCollectionResponse(quixoticRes)
   }
+
+  if (chainId === Chains.arbitrum) {
+    // Arbitrum => Stratos marketplace
+    const options = {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'X-API-KEY': process.env.STRATOS_API_TOKEN as string,
+      },
+    }
+
+    const stratosRes = await fetch(
+      `https://api.stratosnft.io/api/v1/collection/${collectionAddress}/`,
+      options,
+    )
+
+    if (stratosRes.status !== 200) {
+      throw new Error('Stratos request failed.', 400)
+    }
+
+    return parseStratosCollectionResponse(stratosRes)
+  }
+
   throw new Error('Unsupported network.', 400)
 }

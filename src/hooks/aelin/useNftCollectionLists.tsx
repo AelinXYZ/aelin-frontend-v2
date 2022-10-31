@@ -46,8 +46,10 @@ export type NftCollectionData = {
 
 const AELIN_MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/aelin-mainnet-metadata.json'
 const AELIN_OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-optimism-metadata.json'
+const AELIN_ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-arbitrum-metadata.json'
 const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/opensea-metadata.json'
 const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/quixotic-metadata.json'
+const ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/stratos-metadata.json'
 const GOERLI_NFT_COLLECTIONS = '/data/nft-metadata/goerli-metadata.json'
 
 const parseOpenseaResponse = async (
@@ -72,13 +74,13 @@ const getParsedNFTCollectionData = async (collectionAddress: string, chainId: Ch
   }
 
   const url =
-    chainId === Chains.optimism
-      ? `/api/nft/${Chains.optimism}/${collectionAddress}`
+    chainId === Chains.optimism || chainId === Chains.arbitrum
+      ? `/api/nft/${chainId}/${collectionAddress}`
       : `https://api.opensea.io/api/v1/asset_contract/${collectionAddress}?format=json`
 
   return fetch(url).then(async (res) => {
     if (res.status !== 200) return
-    if (chainId === Chains.optimism) return res.json()
+    if (chainId === Chains.optimism || chainId === Chains.arbitrum) return res.json()
     return { data: await parseOpenseaResponse(res) }
   })
 }
@@ -113,9 +115,12 @@ function useNftCollectionLists(
             fetch(AELIN_MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
           appChainId === Chains.optimism &&
             fetch(AELIN_OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.arbitrum &&
+            fetch(AELIN_ARBITRUM_NFT_COLLECTIONS).then((r) => r.json()),
           // NFTs fetched by API
           appChainId === Chains.mainnet && fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
           appChainId === Chains.optimism && fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.arbitrum && fetch(ARBITRUM_NFT_COLLECTIONS).then((r) => r.json()),
           // NFT for testing reasons
           appChainId === Chains.goerli && fetch(GOERLI_NFT_COLLECTIONS).then((r) => r.json()),
         ])
