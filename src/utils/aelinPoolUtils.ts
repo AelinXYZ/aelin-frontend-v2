@@ -7,7 +7,7 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { BASE_DECIMALS, ZERO_BN } from '../constants/misc'
+import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_BN } from '../constants/misc'
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
 import { DealType, PoolCreated } from '@/graphql-schema'
 import {
@@ -98,7 +98,7 @@ export function getAmountInPool<P extends { totalSupply: string; purchaseTokenDe
 ) {
   return {
     raw: BigNumber.from(pool.totalSupply),
-    formatted: formatToken(pool.totalSupply, pool.purchaseTokenDecimals),
+    formatted: formatToken(pool.totalSupply, pool.purchaseTokenDecimals, DISPLAY_DECIMALS),
   }
 }
 
@@ -107,21 +107,21 @@ export function getFunded<P extends { purchaseTokenDecimals: number; contributio
 ) {
   return {
     raw: BigNumber.from(pool.contributions),
-    formatted: formatToken(pool.contributions, pool.purchaseTokenDecimals),
+    formatted: formatToken(pool.contributions, pool.purchaseTokenDecimals, DISPLAY_DECIMALS),
   }
 }
 
 export function getAmountWithdrawn(amount: BigNumber, purchaseTokenDecimals: number) {
   return {
     raw: amount,
-    formatted: formatToken(amount, purchaseTokenDecimals),
+    formatted: formatToken(amount, purchaseTokenDecimals, DISPLAY_DECIMALS),
   }
 }
 
 export function getAmountRedeem(amount: BigNumber, purchaseTokenDecimals: number) {
   return {
     raw: amount,
-    formatted: formatToken(amount, purchaseTokenDecimals),
+    formatted: formatToken(amount, purchaseTokenDecimals, DISPLAY_DECIMALS),
   }
 }
 
