@@ -6,7 +6,6 @@ import { Chains, ChainsValues } from '@/src/constants/chains'
 import {
   GRAPH_URL_ARBITRUM,
   GRAPH_URL_GOERLI,
-  GRAPH_URL_GOERLI_ROLLUP,
   GRAPH_URL_KOVAN,
   GRAPH_URL_MAINNET,
   GRAPH_URL_OPTIMISM,
