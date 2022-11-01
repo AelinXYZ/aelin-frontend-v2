@@ -170,16 +170,18 @@ const Create: NextPage = () => {
                   )}
 
                   <ButtonWrapper>
-                    {isFinalStep && createDealState.dealPrivacy === Privacy.PRIVATE && (
-                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit allowlisted addresses
-                      </ButtonPrimaryLight>
-                    )}
-                    {isFinalStep && createDealState.dealPrivacy === Privacy.NFT && (
-                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit collections
-                      </ButtonPrimaryLight>
-                    )}
+                    {createDealState.currentStep === CreateUpFrontDealSteps.dealPrivacy &&
+                      createDealState.dealPrivacy === Privacy.PRIVATE && (
+                        <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                          Edit allowlisted addresses
+                        </ButtonPrimaryLight>
+                      )}
+                    {createDealState.currentStep === CreateUpFrontDealSteps.dealPrivacy &&
+                      createDealState.dealPrivacy === Privacy.NFT && (
+                        <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                          Edit collections
+                        </ButtonPrimaryLight>
+                      )}
 
                     <MobileButtonWrapper>
                       <BackButton disabled={isFirstStep} onClick={() => moveStep('prev')}>
