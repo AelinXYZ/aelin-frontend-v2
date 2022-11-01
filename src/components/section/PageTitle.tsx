@@ -170,7 +170,7 @@ export const PageTitle: React.FC<{
           )}
           {poolSocials?.mirrorHashPost && (
             <a
-              href={`https://dev.mirror.xyz/${poolSocials.mirrorHashPost}`}
+              href={`https://mirror.xyz/${poolSocials.mirrorHashPost}`}
               rel="noreferrer"
               target="_blank"
             >
