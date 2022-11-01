@@ -142,14 +142,12 @@ const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
 }
 
 const AddressesWhiteList = ({
-  investmentTokenDecimals,
   list,
   onClose,
   onConfirm,
   setList,
 }: {
   list: AddressWhitelistProps[]
-  investmentTokenDecimals: number
   setList: (whitelist: AddressWhitelistProps[]) => void
   onClose: () => void
   onConfirm: (whitelist: AddressWhitelistProps[], type: string) => void

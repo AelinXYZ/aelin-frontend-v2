@@ -45,9 +45,9 @@ export enum CreateUpFrontDealSteps {
   sponsorFee = 'sponsorFee',
   holderAddress = 'holderAddress',
   dealToken = 'dealToken',
+  dealPrivacy = 'dealPrivacy',
   exchangeRates = 'exchangeRates',
   vestingSchedule = 'vestingSchedule',
-  dealPrivacy = 'dealPrivacy',
 }
 
 interface CreateUpFrontDealStepInfo {
@@ -273,9 +273,25 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
       )
     },
   },
+  [CreateUpFrontDealSteps.dealPrivacy]: {
+    id: CreateUpFrontDealSteps.dealPrivacy,
+    order: 7,
+    title: 'Deal access',
+    text: [
+      'If Public, anyone will be able to join the pool. If Private, only allowlisted addresses can join the pool. If NFT, only holder of collections can join the pool',
+    ],
+    placeholder: undefined,
+    getSummaryValue: (currentState: CreateUpFrontDealStateComplete) => {
+      const value = currentState[CreateUpFrontDealSteps.dealPrivacy]
+
+      if (!value) return '--'
+
+      return value.charAt(0).toUpperCase() + value.slice(1)
+    },
+  },
   [CreateUpFrontDealSteps.exchangeRates]: {
     id: CreateUpFrontDealSteps.exchangeRates,
-    order: 7,
+    order: 8,
     title: 'Exchange rates',
     text: ['Decide the rate at which investment tokens will be exchanged for deal tokens'],
     placeholder: [
@@ -327,7 +343,7 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
   },
   [CreateUpFrontDealSteps.vestingSchedule]: {
     id: CreateUpFrontDealSteps.vestingSchedule,
-    order: 8,
+    order: 9,
     title: 'Vesting schedule',
     text: undefined,
     placeholder: undefined,
@@ -371,22 +387,6 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
         )
       }
       return '--'
-    },
-  },
-  [CreateUpFrontDealSteps.dealPrivacy]: {
-    id: CreateUpFrontDealSteps.dealPrivacy,
-    order: 9,
-    title: 'Deal access',
-    text: [
-      'If Public, anyone will be able to join the pool. If Private, only allowlisted addresses can join the pool. If NFT, only holder of collections can join the pool',
-    ],
-    placeholder: undefined,
-    getSummaryValue: (currentState: CreateUpFrontDealStateComplete) => {
-      const value = currentState[CreateUpFrontDealSteps.dealPrivacy]
-
-      if (!value) return '--'
-
-      return value.charAt(0).toUpperCase() + value.slice(1)
     },
   },
 }
@@ -555,6 +555,7 @@ const initialState: CreateUpFrontDealState = {
   [CreateUpFrontDealSteps.sponsorFee]: 0,
   [CreateUpFrontDealSteps.holderAddress]: undefined,
   [CreateUpFrontDealSteps.dealToken]: undefined,
+  [CreateUpFrontDealSteps.dealPrivacy]: undefined,
   [CreateUpFrontDealSteps.exchangeRates]: {
     investmentTokenToRaise: undefined,
     exchangeRates: undefined,
@@ -574,7 +575,6 @@ const initialState: CreateUpFrontDealState = {
       minutes: undefined,
     },
   },
-  [CreateUpFrontDealSteps.dealPrivacy]: undefined,
   currentStep: CreateUpFrontDealSteps.dealAttributes,
   whitelist: [],
   withMerkleTree: false,
