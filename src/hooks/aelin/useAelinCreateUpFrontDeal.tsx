@@ -787,7 +787,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
     [createDealState.currentStep],
   )
 
-  const isFinalStep = createDealState.currentStep === CreateUpFrontDealSteps.dealPrivacy
+  const isFinalStep = createDealState.currentStep === CreateUpFrontDealSteps.vestingSchedule
   const isFirstStep = createDealState.currentStep === CreateUpFrontDealSteps.dealAttributes
 
   useEffect(() => {
