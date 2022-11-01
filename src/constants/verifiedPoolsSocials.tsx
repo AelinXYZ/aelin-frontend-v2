@@ -11,4 +11,9 @@ export const VerifiedPoolsSocials: { [poolAddress: string]: PoolSocials } = {
     twitterHandle: 'aelinprotocol',
     discordServerInvite: 'YHffnV9sUM',
   },
+  ['0x21f4f88a95f656ef4ee1ea107569b3b38cf8daef']: {
+    websiteName: 'kwenta.eth.limo',
+    twitterHandle: 'kwenta_io',
+    mirrorHashPost: 'kwenta.eth/bM-hUzw9fzxTom3k8Is_HbkVJ4My3XzamHthA0Lp7KI',
+  },
 } as const
