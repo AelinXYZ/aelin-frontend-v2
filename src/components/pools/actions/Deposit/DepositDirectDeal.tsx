@@ -178,7 +178,9 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
 
   const maxValue = useMemo(() => {
     if (pool.hasNftList && allocation && !allocation.unlimited) {
-      return allocation.raw.toString()
+      return (
+        allocation.raw.lt(sortedBalances[0].raw) ? allocation.raw : sortedBalances[0].raw
+      ).toString()
     }
 
     return sortedBalances[0].raw.toString()
