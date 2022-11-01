@@ -96,8 +96,8 @@ export const DealInformation: React.FC<{
           title="Exchange rates"
           tooltip="The ratio at which investment tokens deposited in the pool will be exchanged for deal tokens"
         >
-          <Value>{`${deal.exchangeRates.dealPerInvestment.formatted} ${deal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
-          <Value>{`${deal.exchangeRates.investmentPerDeal.formatted} ${pool.investmentTokenSymbol} per ${deal.underlyingToken.symbol}`}</Value>
+          <Value>{`${deal.exchangeRates.investmentPerDeal.formatted} ${deal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
+          <Value>{`${deal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol} per ${deal.underlyingToken.symbol}`}</Value>
         </InfoCell>
         <InfoCell
           title="Deal stage"
