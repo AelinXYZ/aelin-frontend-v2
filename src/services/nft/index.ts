@@ -177,6 +177,29 @@ export const getNftOwnedByAddress = async (
         },
       ]
     }
+
+    // Dmitry dev address
+    if (getAddress('0x4F1abd0E5c4506C95a4Fd5259371BD9a877D9488') === getAddress(walletAddress)) {
+      return [
+        {
+          id: '934080',
+          contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
+          imgUrl:
+            'https://ipfs.io/ipfs/bafkreigcentehhdnbbk57x3mu6exjvtlp4k4fqqhkdpxg4xlfbevywcuvm',
+        },
+        {
+          id: '934079',
+          contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
+          imgUrl:
+            'https://ipfs.io/ipfs/bafkreidwycvpunxiyz4hewq3htynvrj63umkruysshwwud56ko66i4xvsa',
+        },
+        {
+          id: '934078',
+          contractAddress: '0xf5de760f2e916647fd766B4AD9E85ff943cE3A2b',
+          imgUrl: 'https://live---metadata-5covpqijaa-uc.a.run.app/images/1',
+        },
+      ]
+    }
   }
 
   throw new Error('Unsupported network.', 400)
