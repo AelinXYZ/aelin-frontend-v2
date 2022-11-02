@@ -29,7 +29,6 @@ const Note = styled.p`
 type WhiteListType = {
   poolPrivacy: Privacy | undefined
   currentList: AddressWhitelistProps[]
-  investmentTokenDecimals: number
   onClose: () => void
   onConfirm: (
     whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
@@ -38,13 +37,7 @@ type WhiteListType = {
   withMerkleTree: boolean | undefined
 }
 
-const WhiteListModal = ({
-  currentList,
-  investmentTokenDecimals,
-  onClose,
-  onConfirm,
-  poolPrivacy,
-}: WhiteListType) => {
+const WhiteListModal = ({ currentList, onClose, onConfirm, poolPrivacy }: WhiteListType) => {
   const [addressesWhiteList, setAddressesWhiteList] = useState(
     currentList.length ? currentList : initialAddressesWhitelistValues,
   )
@@ -63,7 +56,6 @@ const WhiteListModal = ({
           </Note>
 
           <AddressesWhiteList
-            investmentTokenDecimals={investmentTokenDecimals}
             list={addressesWhiteList}
             onClose={onClose}
             onConfirm={onConfirm}

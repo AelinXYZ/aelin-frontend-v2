@@ -3,6 +3,9 @@ import Head from 'next/head'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatUnits } from '@ethersproject/units'
+
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
 import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout'
 import {
@@ -30,7 +33,7 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
-import { BASE_DECIMALS, MAX_PRIVATE_ROWS } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreateUpFrontDeal, {
   CreateUpFrontDealSteps,
@@ -98,6 +101,41 @@ const Create: NextPage = () => {
     CreateUpFrontDealSteps.dealAttributes,
   ].some((step) => createDealState.currentStep === step)
 
+  const handleConfirm = (
+    whitelist: Array<AddressWhitelistProps | NftCollectionRulesProps>,
+    type: NftType | string,
+  ) => {
+    setDealField(whitelist, type)
+    setDealField(true, 'withMerkleTree')
+
+    /*
+      TODO: we need to review the private pool logic to enable this code again.
+      if (whitelist.length > MAX_PRIVATE_ROWS) {
+        setDealField(true, 'withMerkleTree')
+      } else {
+        setDealField(false, 'withMerkleTree')
+      }
+    */
+
+    if (createDealState.dealPrivacy === Privacy.PRIVATE && whitelist.length) {
+      const investmentTokenToRaise = whitelist.reduce((accum: number, curr: any) => {
+        if (curr.amount) {
+          accum += curr.amount
+        }
+
+        return accum
+      }, 0)
+
+      setDealField(
+        formatUnits(
+          investmentTokenToRaise.toLocaleString('en', { useGrouping: false }),
+          createDealState.investmentToken?.decimals,
+        ),
+        'exchangeRates.investmentTokenToRaise',
+      )
+    }
+  }
+
   return (
     <>
       <Head>
@@ -137,16 +175,18 @@ const Create: NextPage = () => {
                   )}
 
                   <ButtonWrapper>
-                    {isFinalStep && createDealState.dealPrivacy === Privacy.PRIVATE && (
-                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit allowlisted addresses
-                      </ButtonPrimaryLight>
-                    )}
-                    {isFinalStep && createDealState.dealPrivacy === Privacy.NFT && (
-                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
-                        Edit collections
-                      </ButtonPrimaryLight>
-                    )}
+                    {createDealState.currentStep === CreateUpFrontDealSteps.dealPrivacy &&
+                      createDealState.dealPrivacy === Privacy.PRIVATE && (
+                        <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                          Edit allowlisted addresses
+                        </ButtonPrimaryLight>
+                      )}
+                    {createDealState.currentStep === CreateUpFrontDealSteps.dealPrivacy &&
+                      createDealState.dealPrivacy === Privacy.NFT && (
+                        <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                          Edit collections
+                        </ButtonPrimaryLight>
+                      )}
 
                     <MobileButtonWrapper>
                       <BackButton disabled={isFirstStep} onClick={() => moveStep('prev')}>
@@ -199,24 +239,8 @@ const Create: NextPage = () => {
       {showWhiteListModal && (
         <WhiteListModal
           currentList={createDealState.whitelist}
-          investmentTokenDecimals={createDealState.investmentToken?.decimals ?? BASE_DECIMALS}
           onClose={() => setShowWhiteListModal(false)}
-          onConfirm={(
-            whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
-            type: NftType | string,
-          ) => {
-            setDealField(whitelist, type)
-            setDealField(true, 'withMerkleTree')
-
-            /*
-            TODO: we need to review the private pool logic to enable this code again.
-            if (whitelist.length > MAX_PRIVATE_ROWS) {
-              setDealField(true, 'withMerkleTree')
-            } else {
-              setDealField(false, 'withMerkleTree')
-            }
-            */
-          }}
+          onConfirm={handleConfirm}
           poolPrivacy={createDealState.dealPrivacy}
           withMerkleTree={true}
         />
