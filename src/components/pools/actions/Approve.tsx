@@ -22,20 +22,25 @@ type Props = {
   tokenAddress: string
   spender: string
   title: string
+  symbol?: string
   description: string
   refetchAllowance: () => void
   approveAmt?: BigNumber
   allowance?: string
 }
 
-const Allowance = ({ allowance }: { allowance: string }) => (
+const Allowance = ({ allowance, symbol }: { allowance: string; symbol: string }) => (
   <Contents>
-    Allowance: <TextPrimary>{allowance}</TextPrimary>
+    Allowance:{' '}
+    <TextPrimary>
+      {allowance} {symbol}
+    </TextPrimary>
   </Contents>
 )
 
 export default function Approve({
   description,
+  symbol,
   refetchAllowance,
   spender,
   title,
@@ -68,7 +73,7 @@ export default function Approve({
 
   return (
     <>
-      {allowance && <Allowance allowance={allowance} />}
+      {allowance && symbol && <Allowance allowance={allowance} symbol={symbol} />}
       <Contents>{description}</Contents>
       <ButtonsWrapper>
         <ButtonGradient
