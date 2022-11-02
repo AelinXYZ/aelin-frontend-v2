@@ -167,6 +167,9 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
         }
       },
       title: `Deposit ${investmentTokenSymbol}`,
+      alert: isMerklePool(pool)
+        ? 'You will only be allowed to deposit once for this deal. Any unused allocation will be forfeited.'
+        : undefined,
       estimate: () =>
         pool.upfrontDeal
           ? acceptDealEstimate([storedSelectedNfts, userMerkleData, tokenInputValue])
