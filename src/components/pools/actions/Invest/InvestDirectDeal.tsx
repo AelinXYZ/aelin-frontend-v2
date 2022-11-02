@@ -4,7 +4,7 @@ import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import Approve from '@/src/components/pools/actions/Approve'
 import DepositDirectDeal from '@/src/components/pools/actions/Deposit/DepositDirectDeal'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useUserAvailableToDepositDirectDeal } from '@/src/hooks/aelin/useUserAvailableToDepositDirectDeal'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
@@ -58,6 +58,7 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
           description={`Before you can deposit, the pool needs your permission to transfer your ${pool.investmentTokenSymbol}`}
           refetchAllowance={refetchUserAllowance}
           spender={pool.address}
+          symbol={pool.investmentTokenSymbol}
           title="Deposit tokens"
           tokenAddress={pool.investmentToken}
         />

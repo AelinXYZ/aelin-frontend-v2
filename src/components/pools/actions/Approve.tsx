@@ -5,6 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { TextPrimary } from '../../pureStyledComponents/text/Text'
 import { Contents } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
 import { MAX_BN, ZERO_ADDRESS } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
@@ -26,16 +27,21 @@ type Props = {
   refetchAllowance: () => void
   approveAmt?: BigNumber
   allowance?: string
+  symbol?: string
 }
 
-const Allowance = ({ allowance }: { allowance: string }) => (
+const Allowance = ({ allowance, symbol }: { allowance: string; symbol: string }) => (
   <Contents>
-    Allowance: <TextPrimary>{allowance}</TextPrimary>
+    Allowance:{' '}
+    <TextPrimary>
+      {allowance} {symbol}
+    </TextPrimary>
   </Contents>
 )
 
 export default function Approve({
   description,
+  symbol,
   refetchAllowance,
   spender,
   title,
@@ -68,7 +74,7 @@ export default function Approve({
 
   return (
     <>
-      {allowance && <Allowance allowance={allowance} />}
+      {allowance && symbol && <Allowance allowance={allowance} symbol={symbol} />}
       <Contents>{description}</Contents>
       <ButtonsWrapper>
         <ButtonGradient
@@ -78,6 +84,9 @@ export default function Approve({
           Approve
         </ButtonGradient>
       </ButtonsWrapper>
+      {!userBalance?.gt(0) && symbol && (
+        <BaseError textAlign="center">You must have {symbol} in your wallet</BaseError>
+      )}
     </>
   )
 }

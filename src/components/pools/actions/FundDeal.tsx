@@ -66,6 +66,7 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
           }. ${releaseFundNote}`}
           refetchAllowance={refetch}
           spender={pool.dealAddress || pool.upfrontDeal?.address || ZERO_ADDRESS}
+          symbol={pool.upfrontDeal?.underlyingToken.symbol}
           title="Fund deal"
           tokenAddress={
             pool.deal?.underlyingToken.token ||

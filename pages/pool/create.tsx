@@ -31,7 +31,6 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
-import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreatePool, {
   CreatePoolSteps,
@@ -193,7 +192,6 @@ const Create: NextPage = () => {
       {showWhiteListModal && (
         <WhiteListModal
           currentList={createPoolState.whitelist}
-          investmentTokenDecimals={createPoolState.investmentToken?.decimals ?? BASE_DECIMALS}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={(
             whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
