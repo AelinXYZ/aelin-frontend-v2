@@ -23,7 +23,6 @@ type Props = {
   tokenAddress: string
   spender: string
   title: string
-  symbol?: string
   description: string
   refetchAllowance: () => void
   approveAmt?: BigNumber
@@ -49,7 +48,6 @@ export default function Approve({
   tokenAddress,
   approveAmt = MAX_BN,
   allowance,
-  symbol,
 }: Props) {
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 
