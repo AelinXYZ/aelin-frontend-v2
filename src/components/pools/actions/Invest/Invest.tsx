@@ -55,6 +55,7 @@ const Invest: React.FC<Props> = ({ pool, poolHelpers, ...restProps }) => {
           description={`Before you can deposit, the pool needs your permission to transfer your ${pool.investmentTokenSymbol}`}
           refetchAllowance={refetchUserAllowance}
           spender={pool.address}
+          symbol={pool.investmentTokenSymbol}
           title="Deposit tokens"
           tokenAddress={pool.investmentToken}
         />
