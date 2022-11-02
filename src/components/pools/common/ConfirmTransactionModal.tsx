@@ -13,6 +13,11 @@ const Button = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 
+const Alert = styled(ModalText)`
+  margin: 20px auto 0;
+  color: ${({ theme }) => theme.colors.error};
+`
+
 export type ModalTransactionProps = {
   disableButton: boolean
   gasLimitEstimate: GasLimitEstimate
@@ -21,9 +26,11 @@ export type ModalTransactionProps = {
   onClose: () => void
   title: string
   subTitle?: string
+  alert?: string
 }
 
 const ConfirmTransactionModal = ({
+  alert,
   disableButton,
   gasLimitEstimate,
   onClose,
@@ -45,6 +52,7 @@ const ConfirmTransactionModal = ({
         onChange={setGasPrice}
         setLoadingGas={setLoadingGas}
       />
+      {!!alert && <Alert>{alert}</Alert>}
       <Button disabled={disableButton || loadingGas} onClick={onSubmit}>
         Submit
       </Button>
