@@ -5,12 +5,12 @@ import useSWRInfinite from 'swr/infinite'
 
 import { ensResolver } from '../useEnsResolvers'
 import { InputMaybe, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
-import { ChainsValues, ChainsValuesArray, chainsConfig } from '@/src/constants/chains'
+import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
-import { isHiddenPool } from '@/src/utils/isHiddenPool'
+import { isHiddenPool, isTestPool } from '@/src/utils/isHiddenPool'
 import { isSuccessful } from '@/src/utils/isSuccessful'
 
 const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) => {
@@ -61,6 +61,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
             })
           })
           .filter((pool) => !isHiddenPool(pool.address))
+          .filter((pool) => !isTestPool(pool.name))
       } catch (err) {
         console.error(`fetch pools created on chain ${chainId} was failed`, err)
         return []
