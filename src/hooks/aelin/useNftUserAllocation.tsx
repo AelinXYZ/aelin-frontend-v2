@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { ParsedAelinPool } from './useAelinPool'
-import { ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -82,7 +82,7 @@ function useNftUserAllocation(pool: ParsedAelinPool) {
   }, [nfts, pool.nftCollectionRules])
 
   return {
-    formatted: formatToken(allocation, pool.investmentTokenDecimals, 4),
+    formatted: formatToken(allocation, pool.investmentTokenDecimals, DISPLAY_DECIMALS),
     raw: allocation,
     unlimited: isERC721Unlimited || isERC1155Unlimited,
   }
