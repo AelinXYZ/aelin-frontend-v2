@@ -21,10 +21,10 @@ export interface NftPurchaseList {
 
 export type NftSelectionContextType = {
   selectedNfts: SelectedNfts
-  lastSelectedNfts: SelectedNfts
   storedSelectedNfts: NftPurchaseList[]
   setSelectedNfts: Dispatch<SetStateAction<SelectedNfts>>
   handleStoreSelectedNfts: (selectedNfts: SelectedNfts) => void
+  setShowNftSelectionModal: (isOpen: boolean) => void
   hasStoredSelectedNft: boolean
   handleOpenNftSelectionModal: () => void
   handleCloseNftSelectionModal: () => void
@@ -36,27 +36,22 @@ const NftSelectionContext = createContext<NftSelectionContextType>({} as any)
 
 const NftSelectionContextProvider: React.FC = ({ children }) => {
   const [selectedNfts, setSelectedNfts] = useState<SelectedNfts>({})
-  const [lastSelectedNfts, setLastSelectedNfts] = useState<SelectedNfts>({})
   const [storedSelectedNfts, setStoredSelectedNfts] = useState<NftPurchaseList[]>([])
   const [showNftSelectionModal, setShowNftSelectionModal] = useState<boolean>(false)
 
   const handleOpenNftSelectionModal = () => {
-    if (storedSelectedNfts.length) {
-      setSelectedNfts(lastSelectedNfts)
-    }
     setShowNftSelectionModal(true)
   }
 
   const clearStoredSelectedNfts = () => {
     setStoredSelectedNfts([])
-    setLastSelectedNfts({})
     setSelectedNfts({})
   }
 
   const handleCloseNftSelectionModal = () => {
-    if (!storedSelectedNfts.length) {
-      setSelectedNfts({})
-    }
+    setStoredSelectedNfts([])
+    setSelectedNfts({})
+
     setShowNftSelectionModal(false)
   }
 
@@ -71,7 +66,6 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
       .filter((list) => list.tokenIds?.length)
 
     setStoredSelectedNfts([...nftPurchaseList])
-    setLastSelectedNfts(selectedNfts)
   }
 
   const hasStoredSelectedNft = useMemo(() => {
@@ -84,11 +78,11 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
   return (
     <NftSelectionContext.Provider
       value={{
-        lastSelectedNfts,
         selectedNfts,
         setSelectedNfts,
         hasStoredSelectedNft,
         storedSelectedNfts,
+        setShowNftSelectionModal,
         handleStoreSelectedNfts,
         handleOpenNftSelectionModal,
         handleCloseNftSelectionModal,
