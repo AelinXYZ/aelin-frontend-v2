@@ -20,7 +20,7 @@ import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAel
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
-import { isFirstAelinPool } from '@/src/utils/isFirstAelinPool'
+import { isHiddenPool } from '@/src/utils/isHiddenPool'
 import { UserRole } from '@/types/aelinPool'
 
 type Props = {
@@ -94,7 +94,7 @@ function VestUpfrontDeal({ pool }: Props) {
       !isAppConnected ||
       isSubmitting ||
       !hasRemainingTokens ||
-      isFirstAelinPool(pool.address)
+      isHiddenPool(pool.address)
     )
   }, [address, hasRemainingTokens, isAppConnected, isSubmitting, pool.address])
 
