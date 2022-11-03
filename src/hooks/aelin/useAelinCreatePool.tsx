@@ -209,20 +209,11 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
   }
 
   if (poolPrivacy === Privacy.NFT && Object.hasOwn(createPoolState, NftType.erc721)) {
-    nftCollectionRules = createPoolState[NftType.erc721]
+    nftCollectionRules = [...createPoolState[NftType.erc721]]
   }
 
   if (poolPrivacy === Privacy.NFT && Object.hasOwn(createPoolState, NftType.erc1155)) {
-    nftCollectionRules = createPoolState[NftType.erc1155]
-  }
-
-  if (nftCollectionRules.length) {
-    nftCollectionRules.forEach((collection) => {
-      collection.purchaseAmount = parseUnits(
-        collection.purchaseAmount.toString(),
-        investmentToken.decimals,
-      )
-    })
+    nftCollectionRules = [...createPoolState[NftType.erc1155]]
   }
 
   return {
@@ -406,6 +397,14 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       symbol,
     } = await parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
+    const formattedNftCollectionRules = nftCollectionRules.map((collection) => ({
+      ...collection,
+      purchaseAmount: parseUnits(
+        collection.purchaseAmount.toString(),
+        createPoolState.investmentToken?.decimals ?? 18,
+      ),
+    }))
+
     setConfigAndOpenModal({
       estimate: () =>
         createPoolEstimate([
@@ -419,7 +418,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
             purchaseDuration,
             allowListAddresses,
             allowListAmounts,
-            nftCollectionRules,
+            nftCollectionRules: formattedNftCollectionRules,
           },
         ]),
       title: 'Create pool',
@@ -439,7 +438,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
                 purchaseDuration,
                 allowListAddresses,
                 allowListAmounts,
-                nftCollectionRules,
+                nftCollectionRules: formattedNftCollectionRules,
               },
             ],
             txGasOptions,
