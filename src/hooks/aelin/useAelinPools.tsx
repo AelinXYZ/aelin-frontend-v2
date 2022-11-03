@@ -40,6 +40,7 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
   const networks = network ? [network] : chainIds
 
   const _variables = { ...variables }
+
   if (_variables?.where?.filter_contains) {
     _variables.where.filter_contains = await ensResolver(_variables.where.filter_contains)
   }

@@ -7,6 +7,7 @@ import { TextPrimary } from '../../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import { DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
@@ -144,8 +145,11 @@ function Deposit({ pool, poolHelpers }: Props) {
 
   const maxValue = useMemo(() => {
     if (pool.hasNftList && allocation && !allocation.unlimited) {
-      return allocation.raw.toString()
+      return sortedBalances[0].raw.gt(allocation.raw)
+        ? allocation.raw.toString()
+        : sortedBalances[0].raw.toString()
     }
+
     return sortedBalances[0].raw.toString()
   }, [pool.hasNftList, allocation, sortedBalances])
 
@@ -153,7 +157,11 @@ function Deposit({ pool, poolHelpers }: Props) {
     if (pool.hasNftList && allocation) {
       return allocation.unlimited
         ? 'Unlimited per NFT'
-        : `${formatToken(allocation.raw, 18, investmentTokenDecimals)} ${investmentTokenSymbol}`
+        : `${formatToken(
+            allocation.raw,
+            investmentTokenDecimals,
+            DISPLAY_DECIMALS,
+          )} ${investmentTokenSymbol}`
     }
   }, [pool.hasNftList, allocation, investmentTokenSymbol, investmentTokenDecimals])
 

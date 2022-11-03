@@ -7,7 +7,7 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_BN } from '../constants/misc'
+import { BASE_DECIMALS, DISPLAY_DECIMALS, EXCHANGE_DECIMALS, ZERO_BN } from '../constants/misc'
 import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
 import { DealType, PoolCreated } from '@/graphql-schema'
 import {
@@ -164,11 +164,15 @@ export function dealExchangeRates(
   return {
     investmentPerDeal: {
       raw: investmentRate.toBN(),
-      formatted: formatToken(investmentRate.toBN(), dealTokenDecimals, 3),
+      formatted: formatToken(
+        investmentRate.toBN(),
+        dealTokenDecimals > investmentTokenDecimals ? dealTokenDecimals : investmentTokenDecimals,
+        EXCHANGE_DECIMALS,
+      ),
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
-      formatted: formatToken(dealRate.toBN(), BASE_DECIMALS),
+      formatted: formatToken(dealRate.toBN(), dealTokenDecimals, EXCHANGE_DECIMALS),
     },
   }
 }
@@ -184,11 +188,11 @@ export function upfrontDealExchangeRates(
   return {
     investmentPerDeal: {
       raw: investmentRate.toBN(),
-      formatted: formatToken(investmentRate.toBN(), dealTokenDecimals, 3),
+      formatted: formatToken(investmentRate.toBN(), investmentTokenDecimals, EXCHANGE_DECIMALS),
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
-      formatted: formatToken(dealRate.toBN(), BASE_DECIMALS),
+      formatted: formatToken(dealRate.toBN(), dealTokenDecimals, EXCHANGE_DECIMALS),
     },
   }
 }
