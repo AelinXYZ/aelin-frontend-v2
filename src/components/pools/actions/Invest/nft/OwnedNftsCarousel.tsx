@@ -131,9 +131,9 @@ export type NftsPickerModalProps = {
 
 const OwnedNftsCarousel = genericSuspense(
   ({ onClose, pool }: NftsPickerModalProps) => {
-    const [isClear, setIsClear] = useState(false)
     const { error, nfts } = useUserNftsByCollections(pool)
-    const { handleStoreSelectedNfts, selectedNfts, setSelectedNfts } = useNftSelection()
+    const { handleStoreSelectedNfts, selectedNfts, setSelectedNfts, setShowNftSelectionModal } =
+      useNftSelection()
     const allocation = useNftUserAllocation(pool)
     const itemsRef = useRef<HTMLInputElement>(null)
 
@@ -193,7 +193,7 @@ const OwnedNftsCarousel = genericSuspense(
 
     const handleSave = () => {
       handleStoreSelectedNfts(selectedNfts)
-      onClose()
+      setShowNftSelectionModal(false)
     }
 
     const arrowsVisible = useMemo(() => {
@@ -292,7 +292,7 @@ const OwnedNftsCarousel = genericSuspense(
           )}
         </Card>
         <ButtonsWrapper>
-          <CancelButton onClick={onClose}>Cancel</CancelButton>
+          <CancelButton onClick={onClose}>Clear</CancelButton>
           <SaveButton onClick={handleSave}>Save</SaveButton>
         </ButtonsWrapper>
       </CarouselWrapper>

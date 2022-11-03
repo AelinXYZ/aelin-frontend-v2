@@ -2,19 +2,14 @@ import { useMemo } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { ParsedAelinPool } from './useAelinPool'
-import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 
 function useNftUserAllocation(pool: ParsedAelinPool) {
-  const { lastSelectedNfts, selectedNfts } = useNftSelection()
-
-  const nfts = useMemo(() => {
-    if (Object.values(lastSelectedNfts).length) return lastSelectedNfts
-    return selectedNfts
-  }, [lastSelectedNfts, selectedNfts])
+  const { selectedNfts: nfts } = useNftSelection()
 
   const isERC721Unlimited = pool?.nftCollectionRules.some((collectionRule) => {
     const collectionNftsSelected = Object.values(nfts).filter(
@@ -83,7 +78,7 @@ function useNftUserAllocation(pool: ParsedAelinPool) {
   }, [nfts, pool.nftCollectionRules])
 
   return {
-    formatted: formatToken(allocation, BASE_DECIMALS, 4),
+    formatted: formatToken(allocation, pool.investmentTokenDecimals, DISPLAY_DECIMALS),
     raw: allocation,
     unlimited: isERC721Unlimited || isERC1155Unlimited,
   }
