@@ -83,6 +83,7 @@ const WhiteListRow = ({
   rowIndex: number
 }) => {
   const { currentThemeName } = useThemeContext()
+
   return (
     <>
       <Textfield
@@ -104,7 +105,7 @@ const WhiteListRow = ({
         placeholder="Max allocation..."
         status={address && !amount ? TextfieldState.error : undefined}
         type="number"
-        value={amount || ''}
+        value={amount?.toLocaleString('en', { useGrouping: false }) || ''}
       />
       <ButtonsGrid>
         <div>&nbsp;</div>
@@ -142,14 +143,12 @@ const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
 }
 
 const AddressesWhiteList = ({
-  investmentTokenDecimals,
   list,
   onClose,
   onConfirm,
   setList,
 }: {
   list: AddressWhitelistProps[]
-  investmentTokenDecimals: number
   setList: (whitelist: AddressWhitelistProps[]) => void
   onClose: () => void
   onConfirm: (whitelist: AddressWhitelistProps[], type: string) => void
@@ -199,7 +198,8 @@ const AddressesWhiteList = ({
     <>
       <Grid>
         <TitleGrid>
-          <Title>Address</Title> <UploadCSV onUploadCSV={handleUploadCSV} />
+          <Title>Address</Title>
+          <UploadCSV onUploadCSV={handleUploadCSV} />
         </TitleGrid>
         <Title>Amount (uint256)</Title>
         <div>&nbsp;</div>

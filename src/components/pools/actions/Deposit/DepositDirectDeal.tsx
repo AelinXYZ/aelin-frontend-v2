@@ -167,6 +167,9 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
         }
       },
       title: `Deposit ${investmentTokenSymbol}`,
+      alert: isMerklePool(pool)
+        ? 'You will only be allowed to deposit once for this deal. Any unused allocation will be forfeited.'
+        : undefined,
       estimate: () =>
         pool.upfrontDeal
           ? acceptDealEstimate([storedSelectedNfts, userMerkleData, tokenInputValue])
@@ -178,7 +181,9 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
 
   const maxValue = useMemo(() => {
     if (pool.hasNftList && allocation && !allocation.unlimited) {
-      return allocation.raw.toString()
+      return (
+        allocation.raw.lt(sortedBalances[0].raw) ? allocation.raw : sortedBalances[0].raw
+      ).toString()
     }
 
     return sortedBalances[0].raw.toString()

@@ -1,4 +1,4 @@
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinUserMerkleTreeData from '@/src/hooks/aelin/merkle-tree/useAelinUserMerkleTreeData'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinDirectDealCallMultiple } from '@/src/hooks/contracts/useAelinDirectDealsCall'
@@ -71,12 +71,20 @@ export function useUserAvailableToDepositDirectDeal(pool: ParsedAelinPool): User
     isUserAllowedToInvest,
     userMaxDepositPrivateAmount: {
       raw: allowedAmountToDeposit,
-      formatted: formatToken(allowedAmountToDeposit, pool.investmentTokenDecimals),
+      formatted: formatToken(
+        allowedAmountToDeposit,
+        pool.investmentTokenDecimals,
+        DISPLAY_DECIMALS,
+      ),
       type: AmountTypes.maxDepositAllowedPrivate,
     },
     investmentTokenBalance: {
       raw: investmentTokenBalance || ZERO_BN,
-      formatted: formatToken(investmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals),
+      formatted: formatToken(
+        investmentTokenBalance || ZERO_BN,
+        pool.investmentTokenDecimals,
+        DISPLAY_DECIMALS,
+      ),
       type: AmountTypes.investmentTokenBalance,
     },
     userAlreadyInvested,

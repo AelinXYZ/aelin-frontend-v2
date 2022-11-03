@@ -48,6 +48,8 @@ type ModalConfig = {
   title: string
   /** The modal subtitle */
   subTitle?: string
+  /** The modal alert */
+  alert?: string
 }
 
 export default function TransactionModalProvider({ children }: Props) {
@@ -104,17 +106,18 @@ export default function TransactionModalProvider({ children }: Props) {
         setGasPrice,
         title: modalConfig.title,
         subTitle: modalConfig.subTitle,
+        alert: modalConfig.alert,
       },
     [gasLimitEstimate, isSubmitting, txGasOptions, modalConfig],
   )
 
   const setConfigAndOpenModal = useCallback(
-    ({ estimate, onConfirm, subTitle, title }: ModalConfig) => {
+    ({ alert, estimate, onConfirm, subTitle, title }: ModalConfig) => {
       // open modal with loading (need to finish estimate call)
       setIsSubmitting(true)
       setShowModalTransaction(true)
 
-      setModalConfig({ estimate, title, subTitle, onConfirm })
+      setModalConfig({ estimate, title, subTitle, alert, onConfirm })
     },
     [],
   )

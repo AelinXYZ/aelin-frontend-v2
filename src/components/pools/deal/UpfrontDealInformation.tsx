@@ -67,10 +67,11 @@ export const UpfrontDealInformation: React.FC<{
           title="Exchange rates"
           tooltip="The ratio at which investment tokens deposited in the pool will be exchanged for deal tokens"
         >
-          <Value>{`${upfrontDeal.exchangeRates.investmentPerDeal.formatted} ${upfrontDeal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
-          <Value>{`${upfrontDeal.exchangeRates.dealPerInvestment.formatted} ${pool.investmentTokenSymbol} per ${upfrontDeal.underlyingToken.symbol}`}</Value>
+          <Value>{`${upfrontDeal.exchangeRates.dealPerInvestment.formatted} ${upfrontDeal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
+          <Value>{`${upfrontDeal.exchangeRates.investmentPerDeal.formatted} ${pool.investmentTokenSymbol} per ${upfrontDeal.underlyingToken.symbol}`}</Value>
         </InfoCell>
-        <InfoCell title="Deal stats" tooltip="TBD">
+        {/* TODO: Add tooltip */}
+        <InfoCell title="Deal stats">
           <Value>Total redeemed: {pool.upfrontDeal?.underlyingToken.totalRedeemed.formatted}</Value>
           <Value>Total invested: {pool.funded.formatted} </Value>
           <Value>
@@ -82,7 +83,8 @@ export const UpfrontDealInformation: React.FC<{
             </Value>
           )}
         </InfoCell>
-        <InfoCell title="Deal minimum" tooltip="TBD">
+        {/* TODO: Add tooltip */}
+        <InfoCell title="Deal minimum">
           <Value>{`${upfrontDeal.purchaseRaiseMinimum.formatted} ${pool.investmentTokenSymbol}`}</Value>
         </InfoCell>
         <DealParticipantsInfoCell
@@ -104,7 +106,8 @@ export const UpfrontDealInformation: React.FC<{
             />
           }
         />
-        <InfoCell title="Deal tokens total" tooltip="TBD">
+        {/* TODO: Add tooltip */}
+        <InfoCell title="Deal tokens total">
           <Value>{`${upfrontDeal.underlyingToken.dealAmount.formatted} ${upfrontDeal.underlyingToken.symbol}`}</Value>
         </InfoCell>
         <InfoCell
@@ -114,7 +117,8 @@ export const UpfrontDealInformation: React.FC<{
           <Value>{`Cliff: ${upfrontDeal.vestingPeriod.cliff.formatted}`}</Value>
           <Value>{`Linear period: ${upfrontDeal.vestingPeriod.vesting.formatted}`}</Value>
         </InfoCell>
-        <InfoCell title="Deal redemption deadline" tooltip="TBD">
+        {/* TODO: Add tooltip */}
+        <InfoCell title="Deal redemption deadline">
           {upfrontDeal?.dealStart ? (
             <DynamicDeadline
               deadline={upfrontDeal.vestingPeriod.start}
