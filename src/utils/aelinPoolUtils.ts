@@ -184,11 +184,11 @@ export function upfrontDealExchangeRates(
   return {
     investmentPerDeal: {
       raw: investmentRate.toBN(),
-      formatted: formatToken(investmentRate.toBN(), dealTokenDecimals, 3),
+      formatted: formatToken(investmentRate.toBN(), investmentTokenDecimals, DISPLAY_DECIMALS),
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
-      formatted: formatToken(dealRate.toBN(), BASE_DECIMALS),
+      formatted: formatToken(dealRate.toBN(), dealTokenDecimals, DISPLAY_DECIMALS),
     },
   }
 }
