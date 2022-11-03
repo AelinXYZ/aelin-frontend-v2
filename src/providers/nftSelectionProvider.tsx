@@ -25,6 +25,7 @@ export type NftSelectionContextType = {
   storedSelectedNfts: NftPurchaseList[]
   setSelectedNfts: Dispatch<SetStateAction<SelectedNfts>>
   handleStoreSelectedNfts: (selectedNfts: SelectedNfts) => void
+  setShowNftSelectionModal: (isOpen: boolean) => void
   hasStoredSelectedNft: boolean
   handleOpenNftSelectionModal: () => void
   handleCloseNftSelectionModal: () => void
@@ -54,9 +55,10 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
   }
 
   const handleCloseNftSelectionModal = () => {
-    if (!storedSelectedNfts.length) {
-      setSelectedNfts({})
-    }
+    setStoredSelectedNfts([])
+    setLastSelectedNfts({})
+    setSelectedNfts({})
+
     setShowNftSelectionModal(false)
   }
 
@@ -89,6 +91,7 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
         setSelectedNfts,
         hasStoredSelectedNft,
         storedSelectedNfts,
+        setShowNftSelectionModal,
         handleStoreSelectedNfts,
         handleOpenNftSelectionModal,
         handleCloseNftSelectionModal,
