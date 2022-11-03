@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import isEqual from 'lodash/isEqual'
 
 import { ParsedAelinPool } from './useAelinPool'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -9,11 +10,16 @@ import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 import { formatToken } from '@/src/web3/bigNumber'
 
 function useNftUserAllocation(pool: ParsedAelinPool) {
-  const { selectedNfts } = useNftSelection()
+  const { lastSelectedNfts, selectedNfts } = useNftSelection()
 
   const nfts = useMemo(() => {
+    if (
+      (Object.values(lastSelectedNfts).length && isEqual(lastSelectedNfts, selectedNfts)) ||
+      !Object.values(selectedNfts).length
+    )
+      return lastSelectedNfts
     return selectedNfts
-  }, [selectedNfts])
+  }, [lastSelectedNfts, selectedNfts])
 
   const isERC721Unlimited = pool?.nftCollectionRules.some((collectionRule) => {
     const collectionNftsSelected = Object.values(nfts).filter(
