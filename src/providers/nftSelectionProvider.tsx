@@ -62,6 +62,7 @@ const NftSelectionContextProvider: React.FC = ({ children }) => {
 
   const handleStoreSelectedNfts = (selectedNfts: SelectedNfts) => {
     const groupedNfts = groupBy(selectedNfts, 'contractAddress')
+
     const nftPurchaseList = Object.entries(groupedNfts)
       .map(([collectionAddress, nftList]) => ({
         collectionAddress,

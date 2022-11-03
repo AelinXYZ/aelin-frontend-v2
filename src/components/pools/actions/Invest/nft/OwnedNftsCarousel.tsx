@@ -131,7 +131,6 @@ export type NftsPickerModalProps = {
 
 const OwnedNftsCarousel = genericSuspense(
   ({ onClose, pool }: NftsPickerModalProps) => {
-    const [isClear, setIsClear] = useState(false)
     const { error, nfts } = useUserNftsByCollections(pool)
     const { handleStoreSelectedNfts, selectedNfts, setSelectedNfts } = useNftSelection()
     const allocation = useNftUserAllocation(pool)
