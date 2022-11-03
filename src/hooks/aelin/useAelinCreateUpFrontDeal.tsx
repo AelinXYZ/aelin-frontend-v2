@@ -496,20 +496,11 @@ const parseValuesToCreateUpFrontDeal = (
   }
 
   if (dealPrivacy === Privacy.NFT && Object.hasOwn(createDealState, NftType.erc721)) {
-    nftCollectionRules = createDealState[NftType.erc721]
+    nftCollectionRules = [...createDealState[NftType.erc721]]
   }
 
   if (dealPrivacy === Privacy.NFT && Object.hasOwn(createDealState, NftType.erc1155)) {
-    nftCollectionRules = createDealState[NftType.erc1155]
-  }
-
-  if (nftCollectionRules.length) {
-    nftCollectionRules.forEach((collection) => {
-      collection.purchaseAmount = parseUnits(
-        collection.purchaseAmount.toString(),
-        investmentToken.decimals,
-      )
-    })
+    nftCollectionRules = [...createDealState[NftType.erc1155]]
   }
 
   return [
@@ -684,6 +675,14 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
         address ?? ZERO_ADDRESS,
       )
 
+    const formattedNftCollectionRules = nftCollectionRules.map((collection) => ({
+      ...collection,
+      purchaseAmount: parseUnits(
+        collection.purchaseAmount.toString(),
+        createDealState.investmentToken?.decimals ?? 18,
+      ),
+    }))
+
     const isAMerkleTreePool =
       createDealState.withMerkleTree && createDealState.dealPrivacy === Privacy.PRIVATE
 
@@ -722,7 +721,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
           createUpFrontDealEstimate([
             upFrontDealDataFull,
             upFrontDealConfig,
-            nftCollectionRules,
+            formattedNftCollectionRules,
             emptyAllowlistData,
           ]),
 
@@ -753,7 +752,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
           createUpFrontDealEstimate([
             upFrontDealData,
             upFrontDealConfig,
-            nftCollectionRules,
+            formattedNftCollectionRules,
             allowListAddresses,
           ]),
         title: 'Create deal',
