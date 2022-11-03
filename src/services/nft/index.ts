@@ -37,7 +37,7 @@ const parseAlchemyResponse = (ownedNfts: OwnedNft[]): ParsedOwnedNft[] => {
     id: nft.tokenId,
     type: getNftType(nft.tokenType),
     contractAddress: nft.contract.address,
-    imgUrl: nft.media[0].gateway,
+    imgUrl: nft.media.length ? nft.media[0].gateway : '',
   }))
 }
 
