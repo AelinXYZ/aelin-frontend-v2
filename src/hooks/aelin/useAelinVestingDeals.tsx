@@ -13,7 +13,7 @@ import { fetchAmountToVest } from '@/src/hooks/aelin/useAelinAmountToVest'
 import { fetchAmountToVest as fetchAmountToVestUpfrontDeal } from '@/src/hooks/aelin/useAelinAmountToVestUpfrontDeal'
 import { VESTING_DEALS_QUERY_NAME } from '@/src/queries/pools/vestingDeals'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
-import { isFirstAelinPool } from '@/src/utils/isFirstAelinPool'
+import { isHiddenPool } from '@/src/utils/isHiddenPool'
 import { isSuccessful } from '@/src/utils/isSuccessful'
 import { parsePoolName } from '@/src/utils/parsePoolName'
 
@@ -61,7 +61,7 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
               }
 
               const canVest =
-                !isFirstAelinPool(vestingDeal.poolAddress) && Number(vestingDeal.lastClaim) !== 0
+                !isHiddenPool(vestingDeal.poolAddress) && Number(vestingDeal.lastClaim) !== 0
                   ? isBefore(vestingDeal.lastClaim * 1000, vestingDeal.vestingPeriodEnds * 1000)
                   : amountToVest.gt(ZERO_BN)
 
