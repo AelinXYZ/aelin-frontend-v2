@@ -92,13 +92,7 @@ export function getPurchaseTokenCap<
 export function getSponsorFee(pool: PoolCreated) {
   return {
     raw: BigNumber.from(pool.sponsorFee),
-    formatted: `${formatToken(
-      pool.sponsorFee,
-      pool.deal?.underlyingDealTokenDecimals ||
-        pool.upfrontDeal?.underlyingDealTokenDecimals ||
-        BASE_DECIMALS,
-      DISPLAY_DECIMALS,
-    )}%`,
+    formatted: `${formatToken(pool.sponsorFee, BASE_DECIMALS, DISPLAY_DECIMALS)}%`,
   }
 }
 
