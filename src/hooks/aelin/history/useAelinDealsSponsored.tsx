@@ -57,9 +57,8 @@ export async function fetcherDealsSponsored(variables: DealSponsoredsQueryVariab
 
             const sponsorFee = formatToken(
               dealSponsored.pool.sponsorFee,
-              dealSponsored.pool.deal?.underlyingDealTokenDecimals ||
-                dealSponsored.pool.upfrontDeal?.underlyingDealTokenDecimals ||
-                BASE_DECIMALS,
+              // TODO: Revisit why it uses 18 decimals
+              BASE_DECIMALS,
               DISPLAY_DECIMALS,
             )
 
