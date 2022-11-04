@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
 import chunk from 'lodash/chunk'
@@ -13,7 +13,6 @@ import {
   ItemsGroup,
   ItemsWrapper,
   LoadingWrapper,
-  SectionTitle,
 } from './Shared'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
@@ -23,7 +22,6 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { RadioButton } from '@/src/components/pureStyledComponents/form/RadioButton'
-import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { NFTType } from '@/src/hooks/aelin/useNftCollectionLists'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
@@ -67,10 +65,6 @@ const CarouselWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
-
-const AllButton = styled(ButtonPrimaryLight)`
-  min-width: 160px;
 `
 
 const Card = styled(BaseCard)<{ arrowsVisible: boolean }>`
@@ -141,12 +135,6 @@ const OwnedNftsCarousel = genericSuspense(
       (collectionRule) => collectionRule.nftType === 'ERC1155',
     )
 
-    // const showSelectAllButton = useMemo(() => {
-    //   if (isERC1155) return false
-
-    //   return !pool.nftCollectionRules.every((rules) => rules.purchaseAmount.raw.eq(ZERO_BN))
-    // }, [isERC1155, pool.nftCollectionRules])
-
     if (error) {
       throw new Error('Error getting nfts.')
     }
@@ -177,20 +165,6 @@ const OwnedNftsCarousel = genericSuspense(
       }
     }
 
-    // const handleSelectAll = () => {
-    //   if (!nfts) return
-    //   setSelectedNfts(() => {
-    //     return Object.values(nfts).reduce(
-    //       (a, b) => ({
-    //         ...a,
-    //         [b.contractAddress + '-' + b.id]: { ...b, selected: !isClear && !b.blackListed },
-    //       }),
-    //       {},
-    //     )
-    //   })
-    //   setIsClear((prev) => !prev)
-    // }
-
     const handleSave = () => {
       handleStoreSelectedNfts(selectedNfts)
       setShowNftSelectionModal(false)
@@ -202,10 +176,12 @@ const OwnedNftsCarousel = genericSuspense(
 
     const carouselGroup = isMobile ? 1 : NFTS_PER_GROUP
 
+    const hasNfts = !!nfts && Object.keys(nfts).length
+
     return (
       <CarouselWrapper>
         <Card arrowsVisible={arrowsVisible}>
-          {!!nfts && Object.keys(nfts).length ? (
+          {hasNfts ? (
             <>
               <ItemsWrapper>
                 <ButtonPrev
@@ -277,11 +253,6 @@ const OwnedNftsCarousel = genericSuspense(
                     {pool.investmentTokenSymbol}
                   </AllocationValue>
                 </Allocation>
-                {/* {showSelectAllButton && (
-                  <AllButton onClick={handleSelectAll}>
-                    {isClear ? 'Clear all' : 'Select all'}
-                  </AllButton>
-                )} */}
               </AllocationWrapper>
             </>
           ) : (
@@ -291,9 +262,16 @@ const OwnedNftsCarousel = genericSuspense(
             </NoNfts>
           )}
         </Card>
+
         <ButtonsWrapper>
-          <CancelButton onClick={onClose}>Clear</CancelButton>
-          <SaveButton onClick={handleSave}>Save</SaveButton>
+          {!!hasNfts && (
+            <>
+              <CancelButton onClick={onClose}>Clear</CancelButton>
+              <SaveButton onClick={handleSave}>Save</SaveButton>
+            </>
+          )}
+
+          {!hasNfts && <CancelButton onClick={onClose}>Close</CancelButton>}
         </ButtonsWrapper>
       </CarouselWrapper>
     )
