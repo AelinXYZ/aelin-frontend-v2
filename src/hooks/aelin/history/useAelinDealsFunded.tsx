@@ -5,7 +5,7 @@ import useSWRInfinite from 'swr/infinite'
 
 import { DealFunded_OrderBy, DealFundedsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { DISPLAY_DECIMALS } from '@/src/constants/misc'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEALS_FUNDED_QUERY_NAME } from '@/src/queries/history/dealsFunded'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -42,7 +42,7 @@ export async function fetcherDealsFunded(variables: DealFundedsQueryVariables) {
 
             const amountRaised = formatToken(
               dealFunded.amountRaised,
-              dealFunded.pool.purchaseTokenDecimals || 18,
+              dealFunded.pool.purchaseTokenDecimals || BASE_DECIMALS,
               DISPLAY_DECIMALS,
             )
 
