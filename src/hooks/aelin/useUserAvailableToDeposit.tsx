@@ -1,4 +1,4 @@
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
@@ -58,12 +58,16 @@ export function useUserAvailableToDeposit(pool: ParsedAelinPool): UserPoolBalanc
     isUserAllowedToInvest,
     userMaxDepositPrivateAmount: {
       raw: allowListAmount,
-      formatted: formatToken(allowListAmount, pool.investmentTokenDecimals),
+      formatted: formatToken(allowListAmount, pool.investmentTokenDecimals, DISPLAY_DECIMALS),
       type: AmountTypes.maxDepositAllowedPrivate,
     },
     investmentTokenBalance: {
       raw: investmentTokenBalance || ZERO_BN,
-      formatted: formatToken(investmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals),
+      formatted: formatToken(
+        investmentTokenBalance || ZERO_BN,
+        pool.investmentTokenDecimals,
+        DISPLAY_DECIMALS,
+      ),
       type: AmountTypes.investmentTokenBalance,
     },
     userAlreadyInvested:

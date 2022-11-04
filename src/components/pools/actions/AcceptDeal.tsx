@@ -7,7 +7,7 @@ import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents as BaseContents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import useAelinDealUserStats from '@/src/hooks/aelin/useAelinDealUserStats'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
@@ -80,7 +80,8 @@ function AcceptDeal({ pool }: Props) {
   }
 
   const userBalance =
-    formatToken(userProRataAllocation.raw || ZERO_BN, investmentTokenDecimals) || '0'
+    formatToken(userProRataAllocation.raw || ZERO_BN, investmentTokenDecimals, DISPLAY_DECIMALS) ||
+    '0'
 
   return (
     <Wrapper title={`Round ${stage}`}>

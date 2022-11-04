@@ -5,6 +5,7 @@ import useSWRInfinite from 'swr/infinite'
 
 import { DealAccepted_OrderBy, DealAcceptedsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEALS_ACCEPTED_QUERY_NAME } from '@/src/queries/history/dealsAccepted'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -33,16 +34,16 @@ export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariable
           return res.dealAccepteds.map((dealAccepted) => {
             const investmentAmount = formatToken(
               dealAccepted.investmentAmount,
-              dealAccepted.pool.purchaseTokenDecimals || 0,
-              10,
+              dealAccepted.pool.purchaseTokenDecimals || BASE_DECIMALS,
+              DISPLAY_DECIMALS,
             )
 
             const dealTokenAmount = formatToken(
               dealAccepted.dealTokenAmount,
               dealAccepted.pool.deal?.underlyingDealTokenDecimals ||
                 dealAccepted.pool.upfrontDeal?.underlyingDealTokenDecimals ||
-                0,
-              10,
+                BASE_DECIMALS,
+              DISPLAY_DECIMALS,
             )
 
             return {
