@@ -36,7 +36,7 @@ export async function fetcherDealsFunded(variables: DealFundedsQueryVariables) {
               dealFunded.amountFunded,
               dealFunded.pool.deal?.underlyingDealTokenDecimals ||
                 dealFunded.pool.upfrontDeal?.underlyingDealTokenDecimals ||
-                18,
+                BASE_DECIMALS,
               DISPLAY_DECIMALS,
             )
 
