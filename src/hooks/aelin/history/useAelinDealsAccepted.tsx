@@ -3,8 +3,9 @@ import { useCallback } from 'react'
 import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
-import { DealAccepted_OrderBy, DealAcceptedsQueryVariables, PoolCreated } from '@/graphql-schema'
+import { DealAccepted_OrderBy, DealAcceptedsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEALS_ACCEPTED_QUERY_NAME } from '@/src/queries/history/dealsAccepted'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -46,13 +47,17 @@ export const getParsedDealAcceptedsHistory = ({
     network: chainId,
     poolName: parsePoolName(pool.name),
     timestamp: new Date(timestamp * 1000),
-    investmentAmount: `${formatToken(investmentAmount, pool.purchaseTokenDecimals || 0, 10)} ${
-      pool.purchaseTokenSymbol
-    }`,
+    investmentAmount: `${formatToken(
+      investmentAmount,
+      pool.purchaseTokenDecimals || BASE_DECIMALS,
+      DISPLAY_DECIMALS,
+    )} ${pool.purchaseTokenSymbol}`,
     dealTokenAmount: `${formatToken(
       dealTokenAmount,
-      pool.deal?.underlyingDealTokenDecimals || pool.upfrontDeal?.underlyingDealTokenDecimals || 0,
-      10,
+      pool.deal?.underlyingDealTokenDecimals ||
+        pool.upfrontDeal?.underlyingDealTokenDecimals ||
+        BASE_DECIMALS,
+      DISPLAY_DECIMALS,
     )} ${pool.deal?.underlyingDealTokenSymbol || pool.upfrontDeal?.underlyingDealTokenSymbol}`,
   }
 }
