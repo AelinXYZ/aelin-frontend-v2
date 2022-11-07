@@ -23,6 +23,7 @@ import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { Chains } from '@/src/constants/chains'
 import {
   BASE_DECIMALS,
+  DISPLAY_DECIMALS,
   OPENSEA_BASE_URL,
   QUIXOTIC_BASE_URL,
   STRATOS_BASE_URL,
@@ -109,8 +110,8 @@ const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCaro
         ruleText: 'Limited deposit amount per NFT held',
         ruleAllocation: `${formatToken(
           rules.purchaseAmount.raw,
-          BASE_DECIMALS,
           pool.investmentTokenDecimals,
+          DISPLAY_DECIMALS,
         )} ${pool.investmentTokenSymbol}`,
       }
     }

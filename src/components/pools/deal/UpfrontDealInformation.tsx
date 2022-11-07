@@ -53,7 +53,7 @@ export const UpfrontDealInformation: React.FC<{
         />
         <InfoCell
           title="Deal token"
-          tooltip="The token an investor may claim after an optional vesting period if they accept the deal"
+          tooltip="Token distributed in exchange for investment tokens"
           value={
             <TokenIcon
               address={upfrontDeal.underlyingToken.token}
@@ -65,12 +65,11 @@ export const UpfrontDealInformation: React.FC<{
         />
         <InfoCell
           title="Exchange rates"
-          tooltip="The ratio at which investment tokens deposited in the pool will be exchanged for deal tokens"
+          tooltip="Exchange rate between investment tokens and deal tokens"
         >
           <Value>{`${upfrontDeal.exchangeRates.dealPerInvestment.formatted} ${upfrontDeal.underlyingToken.symbol} per ${pool.investmentTokenSymbol}`}</Value>
           <Value>{`${upfrontDeal.exchangeRates.investmentPerDeal.formatted} ${pool.investmentTokenSymbol} per ${upfrontDeal.underlyingToken.symbol}`}</Value>
         </InfoCell>
-        {/* TODO: Add tooltip */}
         <InfoCell title="Deal stats">
           <Value>Total redeemed: {pool.upfrontDeal?.underlyingToken.totalRedeemed.formatted}</Value>
           <Value>Total invested: {pool.funded.formatted} </Value>
@@ -83,20 +82,22 @@ export const UpfrontDealInformation: React.FC<{
             </Value>
           )}
         </InfoCell>
-        {/* TODO: Add tooltip */}
-        <InfoCell title="Deal minimum">
+        <InfoCell
+          title="Deal minimum"
+          tooltip="Minimum number of investment tokens required for the deal to proceed"
+        >
           <Value>{`${upfrontDeal.purchaseRaiseMinimum.formatted} ${pool.investmentTokenSymbol}`}</Value>
         </InfoCell>
         <DealParticipantsInfoCell
           pool={pool}
           title="Deal participants"
-          tooltip="Total amount of users who accepted"
+          tooltip="Total number of deal participants that have accepted or declined"
         />
       </Column>
       <Column>
         <InfoCell
           title="Investment token"
-          tooltip="The currency used to purchase pool tokens"
+          tooltip="Token exchanged for deal tokens"
           value={
             <TokenIcon
               address={pool.investmentToken}
@@ -106,19 +107,17 @@ export const UpfrontDealInformation: React.FC<{
             />
           }
         />
-        {/* TODO: Add tooltip */}
-        <InfoCell title="Deal tokens total">
+        <InfoCell title="Deal tokens total" tooltip="Total number of deal tokens being distributed">
           <Value>{`${upfrontDeal.underlyingToken.dealAmount.formatted} ${upfrontDeal.underlyingToken.symbol}`}</Value>
         </InfoCell>
         <InfoCell
           title="Vesting Data"
-          tooltip="The time investors need to wait before claiming their deal tokens after the deal is complete"
+          tooltip="Once the cliff period ends, users will begin vesting tokens based on the period specified"
         >
           <Value>{`Cliff: ${upfrontDeal.vestingPeriod.cliff.formatted}`}</Value>
           <Value>{`Linear period: ${upfrontDeal.vestingPeriod.vesting.formatted}`}</Value>
         </InfoCell>
-        {/* TODO: Add tooltip */}
-        <InfoCell title="Deal redemption deadline">
+        <InfoCell title="Deal redemption deadline" tooltip="Deadline to redeem">
           {upfrontDeal?.dealStart ? (
             <DynamicDeadline
               deadline={upfrontDeal.vestingPeriod.start}
@@ -136,7 +135,7 @@ export const UpfrontDealInformation: React.FC<{
         </InfoCell>
         <InfoCell
           title="Fees charged on accept"
-          tooltip="A 2% protocol fee in addition to a sponsor fee is only charged on deal acceptance"
+          tooltip="Fees collected and distributed to the Sponsor and Aelin Protocol"
         >
           <Value>Sponsor Fee: {sponsorFee.formatted}</Value>
           <Value>Aelin protocol fee: 2%</Value>
