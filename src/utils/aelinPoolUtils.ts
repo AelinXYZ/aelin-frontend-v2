@@ -88,11 +88,10 @@ export function getPurchaseTokenCap<
   }
 }
 
-// returns the sponsor's fee amount (max is 98%)
+// returns the sponsor's fee amount
 export function getSponsorFee(pool: PoolCreated) {
   return {
     raw: BigNumber.from(pool.sponsorFee),
-    // TODO: Revisit why it uses 18 decimals
     formatted: `${formatToken(pool.sponsorFee, BASE_DECIMALS, DISPLAY_DECIMALS)}%`,
   }
 }
