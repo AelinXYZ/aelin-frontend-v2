@@ -35,7 +35,10 @@ const NftCollectionTableBody = ({ collectionsData, widths }: CollectionRulesProp
     throw new Error('Error getting collections')
   }
 
-  return !!collections && collections.length ? (
+  if (!collections) return null
+  if (!collections.length) return null
+
+  return (
     <TableBody>
       {collectionsData.collectionsRules.map((rules, index) => (
         <CollectionRulesRow
@@ -50,8 +53,6 @@ const NftCollectionTableBody = ({ collectionsData, widths }: CollectionRulesProp
         />
       ))}
     </TableBody>
-  ) : (
-    <></>
   )
 }
 
