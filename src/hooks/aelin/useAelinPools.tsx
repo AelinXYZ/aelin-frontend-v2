@@ -11,6 +11,7 @@ import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isHiddenPool, isTestPool } from '@/src/utils/isHiddenPool'
+import isProd from '@/src/utils/isProd'
 import { isSuccessful } from '@/src/utils/isSuccessful'
 
 const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) => {
@@ -51,17 +52,21 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
       try {
         const { poolCreateds } = await allSDK[chainId][POOLS_CREATED_QUERY_NAME](variables)
 
-        return poolCreateds
-          .map((pool) => {
-            return getParsedPool({
+        return poolCreateds.reduce((accum: ParsedAelinPool[], pool) => {
+          if (isTestPool(pool.name) && isProd) return accum
+          if (isHiddenPool(pool.id)) return accum
+
+          accum.push(
+            getParsedPool({
               chainId,
               pool,
               poolAddress: pool.id,
               purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-            })
-          })
-          .filter((pool) => !isHiddenPool(pool.address))
-          .filter((pool) => !isTestPool(pool.name))
+            }),
+          )
+
+          return accum
+        }, [])
       } catch (err) {
         console.error(`fetch pools created on chain ${chainId} was failed`, err)
         return []
