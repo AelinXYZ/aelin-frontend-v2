@@ -1,5 +1,6 @@
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
+import { DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { formatToken } from '@/src/web3/bigNumber'
 
 type VestingCompletedProps = {
@@ -22,6 +23,7 @@ function VestingCompleted({
         <TextPrimary>{`${formatToken(
           totalVested,
           underlyingDealTokenDecimals,
+          DISPLAY_DECIMALS,
         )} ${symbol}`}</TextPrimary>
       </Contents>
     </Wrapper>

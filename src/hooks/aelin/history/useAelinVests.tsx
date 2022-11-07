@@ -5,6 +5,7 @@ import useSWRInfinite from 'swr/infinite'
 
 import { Vest_OrderBy, VestsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { VESTS_QUERY_NAME } from '@/src/queries/history/vests'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -34,8 +35,8 @@ export async function fetcherVests(variables: VestsQueryVariables) {
               vest.amountVested,
               vest.pool.deal?.underlyingDealTokenDecimals ||
                 vest.pool.upfrontDeal?.underlyingDealTokenDecimals ||
-                0,
-              10,
+                BASE_DECIMALS,
+              DISPLAY_DECIMALS,
             )
 
             return {

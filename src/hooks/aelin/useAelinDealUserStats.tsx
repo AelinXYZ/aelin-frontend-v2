@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { BigNumber } from '@synthetixio/wei/node_modules/ethers'
 
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useUserAllocationStats } from '@/src/hooks/aelin/useUserAllocationStats'
 import { useAelinPoolCallMultiple } from '@/src/hooks/contracts/useAelinPoolCall'
@@ -57,15 +57,17 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
       },
       userTotalWithdrawn: {
         raw: userAmountWithdrawn,
-        formatted: formatToken(userAmountWithdrawn, pool.investmentTokenDecimals) || '0',
+        formatted:
+          formatToken(userAmountWithdrawn, pool.investmentTokenDecimals, DISPLAY_DECIMALS) || '0',
       },
       userMaxAllocation: {
         raw: userMaxAllocation,
-        formatted: formatToken(userMaxAllocation, pool.investmentTokenDecimals) || '0',
+        formatted:
+          formatToken(userMaxAllocation, pool.investmentTokenDecimals, DISPLAY_DECIMALS) || '0',
       },
       userAmountAccepted: {
         raw: userAmountAccepted,
-        formatted: formatToken(userAmountAccepted, pool.investmentTokenDecimals),
+        formatted: formatToken(userAmountAccepted, pool.investmentTokenDecimals, DISPLAY_DECIMALS),
       },
     }
   }, [

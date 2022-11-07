@@ -1,6 +1,6 @@
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLoading'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -21,7 +21,11 @@ function UserInvestmentTokenBalance({ pool }: Props) {
   return (
     <>
       {isWalletConnected
-        ? formatToken(userInvestmentTokenBalance || ZERO_BN, pool.investmentTokenDecimals) || 0
+        ? formatToken(
+            userInvestmentTokenBalance || ZERO_BN,
+            pool.investmentTokenDecimals,
+            DISPLAY_DECIMALS,
+          ) || 0
         : 0}{' '}
       {pool.investmentTokenSymbol}
     </>

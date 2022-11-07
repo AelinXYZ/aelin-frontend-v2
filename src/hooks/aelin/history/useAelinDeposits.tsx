@@ -5,6 +5,7 @@ import useSWRInfinite from 'swr/infinite'
 
 import { Deposit_OrderBy, DepositsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEPOSITS_QUERY_NAME } from '@/src/queries/history/deposits'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -33,8 +34,8 @@ export async function fetcherDeposits(variables: DepositsQueryVariables) {
           return res.deposits.map((deposit) => {
             const amountDeposited = formatToken(
               deposit.amountDeposited,
-              deposit.pool.purchaseTokenDecimals || 0,
-              6,
+              deposit.pool.purchaseTokenDecimals || BASE_DECIMALS,
+              DISPLAY_DECIMALS,
             )
 
             return {

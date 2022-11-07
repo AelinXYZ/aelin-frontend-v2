@@ -214,7 +214,7 @@ export const getParsedPool = ({
     dealsCreated: pool.dealsCreated,
     totalUsersInvested: pool.totalUsersInvested,
     hasNftList: pool.hasNftList,
-    nftCollectionRules: parseNftCollectionRules(pool.nftCollectionRules),
+    nftCollectionRules: parseNftCollectionRules(pool),
   }
 
   const dealDetails = pool.deal
