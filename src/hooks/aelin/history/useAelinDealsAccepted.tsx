@@ -66,15 +66,15 @@ export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariable
     chainIds.map((chainId: ChainsValues) =>
       allSDK[chainId][DEALS_ACCEPTED_QUERY_NAME](variables)
         .then((res) => {
-          return res.dealAccepteds.map(({ dealTokenAmount, investmentAmount, pool, timestamp }) => {
+          return res.dealAccepteds.map(({ dealTokenAmount, investmentAmount, pool, timestamp }) =>
             getParsedDealAcceptedsHistory({
               chainId,
               dealTokenAmount,
               investmentAmount,
               pool,
               timestamp,
-            })
-          })
+            }),
+          )
         })
         .catch((err) => {
           console.error(`fetch deals accepted on chain ${chainId} was failed`, err)
