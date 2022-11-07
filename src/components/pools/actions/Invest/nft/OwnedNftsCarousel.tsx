@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import styled from 'styled-components'
 
 import chunk from 'lodash/chunk'
@@ -13,7 +13,6 @@ import {
   ItemsGroup,
   ItemsWrapper,
   LoadingWrapper,
-  SectionTitle,
 } from './Shared'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
@@ -23,7 +22,6 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { RadioButton } from '@/src/components/pureStyledComponents/form/RadioButton'
-import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { NFTType } from '@/src/hooks/aelin/useNftCollectionLists'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
@@ -67,10 +65,6 @@ const CarouselWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
-
-const AllButton = styled(ButtonPrimaryLight)`
-  min-width: 160px;
 `
 
 const Card = styled(BaseCard)<{ arrowsVisible: boolean }>`

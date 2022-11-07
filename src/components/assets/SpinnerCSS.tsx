@@ -38,7 +38,7 @@ const MainRing = styled.div<SpinnerProps>`
     height: ${({ height }) => height}px;
     margin: ${({ margin }) => margin}px;
     border: ${({ stroke, theme: { colors } }) => `${stroke}px solid ${colors.primary}`};
-    border-color: ${({ stroke, theme: { colors } }) =>
+    border-color: ${({ theme: { colors } }) =>
       `${colors.primary} transparent transparent transparent`};
   }
 `

@@ -1,14 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { PoolCreated } from '@/graphql-schema'
 import CollapsibleBlock from '@/src/components/common/CollapsibleBlock'
 import { TabButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Filters } from '@/src/components/pureStyledComponents/common/Filters'
 import { Pool } from '@/src/components/sidebar/Pool'
-import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
+import { getKeyChainByValue } from '@/src/constants/chains'
 import { ParsedNotification } from '@/src/hooks/aelin/useAelinNotifications'
-import { getParsedPool } from '@/src/hooks/aelin/useAelinPool'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinUser, { ParsedUser } from '@/src/hooks/aelin/useAelinUser'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { MyPoolsFilter, useLayoutStatus } from '@/src/providers/layoutStatusProvider'
@@ -72,7 +71,6 @@ function getVisiblePools(
   notifications: ParsedNotification[],
   filter: MyPoolsFilter,
   isExpanded: boolean,
-  appChainId: ChainsValues,
 ): PoolData[] {
   let visiblePools = getPools(user, isConnected, filter)
 
@@ -80,30 +78,20 @@ function getVisiblePools(
     visiblePools = visiblePools.slice(0, 3)
   }
 
-  return visiblePools
-    .map((pool) =>
-      getParsedPool({
-        chainId: appChainId,
-        pool,
-        poolAddress: pool.id,
-        purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-      }),
-    )
-    .map((pool) => ({
-      stage: pool.stage,
-      href: `/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}`,
-      name: pool.nameFormatted,
-      notifications: notifications.filter(
-        (notification) => notification.poolAddress === pool.address,
-      ).length,
-    }))
+  return visiblePools.map((pool) => ({
+    stage: pool.stage,
+    href: `/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}`,
+    name: pool.nameFormatted,
+    notifications: notifications.filter((notification) => notification.poolAddress === pool.address)
+      .length,
+  }))
 }
 
 function getPools(
   user: ParsedUser | undefined,
   isConnected: boolean,
   filter: MyPoolsFilter,
-): PoolCreated[] {
+): ParsedAelinPool[] {
   if (!user || !isConnected) {
     return []
   }
@@ -130,7 +118,7 @@ function getEmptyPoolsText(filter: MyPoolsFilter): string {
 }
 
 const MyPools: React.FC = ({ ...restProps }) => {
-  const { address: userAddress, appChainId, isWalletConnected } = useWeb3Connection()
+  const { address: userAddress, isWalletConnected } = useWeb3Connection()
   const { data: userResponse, error: errorUser } = useAelinUser(userAddress)
   const {
     sidebar: {
@@ -185,7 +173,6 @@ const MyPools: React.FC = ({ ...restProps }) => {
                 notifications,
                 activeFilter,
                 filtersExpansion[activeFilter],
-                appChainId,
               ).map(({ href, name, notifications, stage }, index) => (
                 <Pool href={href} key={index} notifications={notifications} stage={stage}>
                   <PoolName>{name}</PoolName>
