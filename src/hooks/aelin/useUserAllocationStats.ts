@@ -1,5 +1,5 @@
 import { ChainsValues } from '@/src/constants/chains'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -20,7 +20,11 @@ export function useUserAllocationStats(
     data: {
       raw: data?.userAllocationStat?.poolTokenBalance || ZERO_BN,
       formatted: data
-        ? formatToken(data?.userAllocationStat?.poolTokenBalance, investmentTokenDecimals)
+        ? formatToken(
+            data?.userAllocationStat?.poolTokenBalance,
+            investmentTokenDecimals,
+            DISPLAY_DECIMALS,
+          )
         : '0',
       totalWithdrawn: data?.userAllocationStat?.totalWithdrawn || ZERO_BN,
     },

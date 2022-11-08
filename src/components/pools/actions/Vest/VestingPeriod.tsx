@@ -5,6 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
+import { DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const ButtonsWrapper = styled.div`
@@ -41,12 +42,17 @@ function VestingPeriod({
         <TextPrimary>{`${formatToken(
           totalAmount,
           underlyingDealTokenDecimals,
+          DISPLAY_DECIMALS,
         )} ${symbol}`}</TextPrimary>
         <br />
         Amount to vest:{' '}
         <TextPrimary>{`${
           BigNumber.isBigNumber(amountToVest)
-            ? `${formatToken(amountToVest, underlyingDealTokenDecimals)} ${symbol}`
+            ? `${formatToken(
+                amountToVest,
+                underlyingDealTokenDecimals,
+                DISPLAY_DECIMALS,
+              )} ${symbol}`
             : ''
         }`}</TextPrimary>
         <br />
@@ -54,6 +60,7 @@ function VestingPeriod({
         <TextPrimary>{`${formatToken(
           totalVested,
           underlyingDealTokenDecimals,
+          DISPLAY_DECIMALS,
         )} ${symbol}`}</TextPrimary>
       </Contents>
       <ButtonsWrapper>

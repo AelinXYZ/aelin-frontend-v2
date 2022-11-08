@@ -9,7 +9,7 @@ import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { MAX_BN, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, MAX_BN, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -213,7 +213,7 @@ function useFundingStatus(pool: ParsedAelinPool, derivedStatus: DerivedStatus): 
       capReached: isCap ? false : capAmount.eq(funded),
       maxDepositAllowed: {
         raw: isCap ? MAX_BN : maxDepositAllowed,
-        formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals),
+        formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals, DISPLAY_DECIMALS),
       },
       minimumAmount: pool.upfrontDeal?.purchaseRaiseMinimum,
     }

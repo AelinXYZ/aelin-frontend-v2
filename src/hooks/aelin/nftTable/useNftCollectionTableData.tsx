@@ -6,7 +6,7 @@ import { CollectionRulesData } from '@/src/components/pools/nftTable/NftCollecti
 import { CollectionsData } from '@/src/components/pools/nftTable/NftCollectionsTable'
 import { NftWhiteListState } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues } from '@/src/constants/chains'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { Token } from '@/src/constants/token'
 import { formatNumber } from '@/src/utils/formatNumber'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -100,7 +100,7 @@ const useNftCollectionTableData = (
           : `${formatToken(
               rules.purchaseAmount.raw,
               pool.investmentTokenDecimals,
-              pool.investmentTokenDecimals,
+              DISPLAY_DECIMALS,
             )} ${pool.investmentTokenSymbol}`
       } else {
         collectionsRules.allocationsErc1155 = rules.erc1155TokenIds.map((nftID) => ({

@@ -80,15 +80,19 @@ export function getPurchaseTokenCap<
 >(pool: P) {
   return {
     raw: BigNumber.from(pool.purchaseTokenCap),
-    formatted: formatToken(pool.purchaseTokenCap, pool.purchaseTokenDecimals || 0),
+    formatted: formatToken(
+      pool.purchaseTokenCap,
+      pool.purchaseTokenDecimals || BASE_DECIMALS,
+      DISPLAY_DECIMALS,
+    ),
   }
 }
 
-// returns the sponsor's fee amount (max is 98%)
-export function getSponsorFee<P extends { sponsorFee: string }>(pool: P) {
+// returns the sponsor's fee amount
+export function getSponsorFee(pool: PoolCreated) {
   return {
     raw: BigNumber.from(pool.sponsorFee),
-    formatted: `${formatToken(pool.sponsorFee, BASE_DECIMALS, 2)}%`,
+    formatted: `${formatToken(pool.sponsorFee, BASE_DECIMALS, DISPLAY_DECIMALS)}%`,
   }
 }
 
@@ -394,20 +398,27 @@ export function getInvestmentDealToken(
   const _investmentDealToken = _underlyingDealTokenTotal.mul(_exchangeRate).toBN()
   return {
     raw: _investmentDealToken,
-    formatted: formatToken(_investmentDealToken, underlyingDecimals),
+    formatted: formatToken(_investmentDealToken, underlyingDecimals, DISPLAY_DECIMALS),
   }
 }
 
-export function parseNftCollectionRules(
-  nftCollectionsRules: RawNftCollectionRules[],
-): ParsedNftCollectionRules[] {
-  return nftCollectionsRules.map((collectionRule) => {
-    const purchaseAmountBN = new Wei(collectionRule.purchaseAmount, BASE_DECIMALS, true)
+export function parseNftCollectionRules(pool: PoolCreated): ParsedNftCollectionRules[] {
+  return pool.nftCollectionRules.map((collectionRule) => {
+    const purchaseAmountBN = new Wei(
+      collectionRule.purchaseAmount,
+      pool.purchaseTokenDecimals || BASE_DECIMALS,
+      true,
+    )
+
     return {
       ...collectionRule,
       purchaseAmount: {
         raw: purchaseAmountBN.toBN(),
-        formatted: formatToken(purchaseAmountBN.toBN(), BASE_DECIMALS, 3),
+        formatted: formatToken(
+          collectionRule.purchaseAmount,
+          pool.purchaseTokenDecimals || BASE_DECIMALS,
+          DISPLAY_DECIMALS,
+        ),
       },
     }
   })
