@@ -10,7 +10,6 @@ import { ObjectValues } from '@/types/utils'
 export const Chains = {
   mainnet: 1,
   goerli: 5,
-  kovan: 42,
   optimism: 10,
   arbitrum: 42161,
 } as const
@@ -69,23 +68,6 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Görli Testnet',
     rpcUrl: `https://eth-goerli.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
     shortName: 'Goerli',
-    tokenListUrl: [
-      'https://tokens.1inch.eth.limo',
-      'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
-    ],
-    buyAelinUrl: undefined,
-  },
-  [Chains.kovan]: {
-    blockExplorerUrls: ['https://kovan.etherscan.io/'],
-    chainId: Chains.kovan,
-    chainIdHex: '0x2a',
-    icon: <NetworkPlaceholder name="K" />,
-    iconUrls: [],
-    id: Chains.kovan,
-    isProd: false,
-    name: 'Kovan',
-    rpcUrl: `https://eth-kovan.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
-    shortName: 'Kovan',
     tokenListUrl: [
       'https://tokens.1inch.eth.limo',
       'https://gateway.ipfs.io/ipns/tokens.1inch.eth',

@@ -29,7 +29,6 @@ export const contracts = constantContracts({
   AELIN_TOKEN: {
     address: {
       [Chains.mainnet]: '0xa9C125BF4C8bB26f299c00969532B66732b1F758',
-      [Chains.kovan]: '0x61BAADcF22d2565B0F471b291C475db5555e0b76',
       [Chains.goerli]: '',
       [Chains.optimism]: '0x61BAADcF22d2565B0F471b291C475db5555e0b76',
       [Chains.arbitrum]: '',
@@ -39,7 +38,6 @@ export const contracts = constantContracts({
   REGULAR_POOL_FACTORY: {
     address: {
       [Chains.mainnet]: '0x722969A3fdc778a5cC7CbC8DC8Ae3e96a288f853',
-      [Chains.kovan]: '0x3347b7C7F491B4cD665656796614A729036Ff220',
       [Chains.goerli]: '0xb52736cE26345942134b11083e88A0DD9Ef1be5A',
       [Chains.optimism]: '0x8B35551d6459a3d49B9A5A0D7333c6D7E0cCbBd9',
       [Chains.arbitrum]: '0xbf7c0Fd0D31bC377f861d11d4aAc15296c0405b6',
@@ -49,7 +47,6 @@ export const contracts = constantContracts({
   DIRECT_DEALS_FACTORY: {
     address: {
       [Chains.mainnet]: '0x97efdb29c0d6dacdc0bb334cc227ae03a1a7c01e',
-      [Chains.kovan]: '',
       [Chains.goerli]: '0x50c4eea08ae5544b622c96683823cecdc8b0e8ba',
       [Chains.optimism]: '0xe6355E5B217390A2F888c35f73248844847b0ef4',
       [Chains.arbitrum]: '0x91fCeA33D02d11621b7f90ebd5E44eD393eD7b5e',
@@ -60,7 +57,6 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '',
       [Chains.optimism]: '0xFe757A40F3EdA520845b339c698b321663986a4d',
-      [Chains.kovan]: '',
       [Chains.goerli]: '',
       [Chains.arbitrum]: '',
     },
@@ -70,7 +66,6 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '0x974d51faFc9013E42CbbB9465ea03fE097824bcC',
       [Chains.optimism]: '0x665d8d87ac09bdbc1222b8b9e72ddcb82f76b54a',
-      [Chains.kovan]: '',
       [Chains.goerli]: '',
       [Chains.arbitrum]: '',
     },
@@ -80,7 +75,6 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '0x944cb90082fc1416d4B551A21cFe6D7cc5447C80',
       [Chains.optimism]: '0x4aeC980a0Daef4905520a11b99971C7B9583f4F8',
-      [Chains.kovan]: '',
       [Chains.goerli]: '',
       [Chains.arbitrum]: '',
     },
@@ -90,7 +84,6 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '',
       [Chains.optimism]: '0x665d8D87ac09Bdbc1222B8B9E72Ddcb82f76B54A',
-      [Chains.kovan]: '',
       [Chains.goerli]: '',
       [Chains.arbitrum]: '',
     },
