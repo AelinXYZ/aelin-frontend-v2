@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 
 import { ButtonType } from '../pureStyledComponents/buttons/Button'
 import { SectionIntro } from '@/src/components/section/SectionIntro'
+import { Chains } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 type Banner = {
@@ -28,7 +29,7 @@ const StakeBanner = ({ ...restProps }) => {
 
   const bannerPerChain: Banner = useMemo(
     () => ({
-      1: {
+      [Chains.mainnet]: {
         backgroundImage: 'bg-stake.svg',
         title: 'Stake',
         description: (
@@ -49,7 +50,7 @@ const StakeBanner = ({ ...restProps }) => {
           </>
         ),
       },
-      10: {
+      [Chains.optimism]: {
         backgroundImage: 'bg-stake.svg',
         button: [
           {
@@ -99,7 +100,7 @@ const StakeBanner = ({ ...restProps }) => {
         ),
         title: 'Stake',
       },
-      42161: {
+      [Chains.arbitrum]: {
         backgroundImage: 'bg-stake.svg',
         title: 'Stake',
         description: (
@@ -119,12 +120,7 @@ const StakeBanner = ({ ...restProps }) => {
           </>
         ),
       },
-      5: {
-        backgroundImage: 'bg-pools.svg',
-        title: 'Feature not available',
-        description: `Staking is not available on test networks.`,
-      },
-      42: {
+      [Chains.goerli]: {
         backgroundImage: 'bg-pools.svg',
         title: 'Feature not available',
         description: `Staking is not available on test networks.`,
