@@ -21,15 +21,15 @@ function useAelinUserRoles(pool: ParsedAelinPool, config?: SWRConfiguration): Us
       const roles: UserRole[] = []
 
       const isInvestor = userResponse.poolsInvested.some(
-        ({ id }: { id: string }) => getAddress(id) === getAddress(pool.address),
+        ({ address }: { address: string }) => getAddress(address) === getAddress(pool.address),
       )
 
       const isSponsor = userResponse.poolsSponsored.some(
-        ({ id }: { id: string }) => getAddress(id) === getAddress(pool.address),
+        ({ address }: { address: string }) => getAddress(address) === getAddress(pool.address),
       )
 
       const isHolder = userResponse.poolsAsHolder.some(
-        ({ id }: { id: string }) => getAddress(id) === getAddress(pool.address),
+        ({ address }: { address: string }) => getAddress(address) === getAddress(pool.address),
       )
 
       if (isInvestor) roles.push(UserRole.Investor)

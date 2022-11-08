@@ -158,6 +158,7 @@ function TokenDropdown(props: TokenDropdownProps) {
     const selectedTokenIsInList = tokens.some(
       (token) => token.address === selectedToken?.value.address,
     )
+
     const tokenList = [...tokens]
     if (!selectedTokenIsInList && selectedToken) {
       tokenList.push(selectedToken.value)

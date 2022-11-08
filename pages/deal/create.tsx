@@ -3,7 +3,6 @@ import Head from 'next/head'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 
 import { CardTitle, CardWithTitle } from '@/src/components/common/CardWithTitle'
@@ -33,7 +32,6 @@ import {
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
-import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import useAelinCreateUpFrontDeal, {
   CreateUpFrontDealSteps,

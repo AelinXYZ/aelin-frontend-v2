@@ -11,7 +11,7 @@ import NothingToClaim from '@/src/components/pools/actions/Vest/NothingToClaim'
 import VestingCliff from '@/src/components/pools/actions/Vest/VestingCliff'
 import VestingCompleted from '@/src/components/pools/actions/Vest/VestingCompleted'
 import VestingPeriod from '@/src/components/pools/actions/Vest/VestingPeriod'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinAmountToVestUpfrontDeal from '@/src/hooks/aelin/useAelinAmountToVestUpfrontDeal'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolSharesPerUser from '@/src/hooks/aelin/useAelinPoolSharesPerUser'
@@ -63,7 +63,7 @@ function VestUpfrontDeal({ pool }: Props) {
 
   const [poolShares] = useAelinPoolSharesPerUser(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
-    pool.upfrontDeal?.underlyingToken.decimals || 18,
+    pool.upfrontDeal?.underlyingToken.decimals || BASE_DECIMALS,
     pool.chainId,
     withinInterval,
   )

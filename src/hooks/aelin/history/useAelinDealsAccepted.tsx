@@ -5,6 +5,7 @@ import useSWRInfinite from 'swr/infinite'
 
 import { DealAccepted_OrderBy, DealAcceptedsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { DEALS_ACCEPTED_QUERY_NAME } from '@/src/queries/history/dealsAccepted'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -21,6 +22,46 @@ export type ParsedDealAcceptedsHistory = {
   dealTokenAmount: string
 }
 
+export const getParsedDealAcceptedsHistory = ({
+  chainId,
+  dealTokenAmount,
+  investmentAmount,
+  pool,
+  timestamp,
+}: {
+  chainId: ChainsValues
+  dealTokenAmount: any
+  investmentAmount: any
+  pool: {
+    id: string
+    name: string
+    purchaseTokenDecimals?: number | null
+    purchaseTokenSymbol: string
+    deal?: { underlyingDealTokenDecimals: number; underlyingDealTokenSymbol: string } | null
+    upfrontDeal?: { underlyingDealTokenDecimals: number; underlyingDealTokenSymbol: string } | null
+  }
+  timestamp: any
+}) => {
+  return {
+    id: pool.id,
+    network: chainId,
+    poolName: parsePoolName(pool.name),
+    timestamp: new Date(timestamp * 1000),
+    investmentAmount: `${formatToken(
+      investmentAmount,
+      pool.purchaseTokenDecimals || BASE_DECIMALS,
+      DISPLAY_DECIMALS,
+    )} ${pool.purchaseTokenSymbol}`,
+    dealTokenAmount: `${formatToken(
+      dealTokenAmount,
+      pool.deal?.underlyingDealTokenDecimals ||
+        pool.upfrontDeal?.underlyingDealTokenDecimals ||
+        BASE_DECIMALS,
+      DISPLAY_DECIMALS,
+    )} ${pool.deal?.underlyingDealTokenSymbol || pool.upfrontDeal?.underlyingDealTokenSymbol}`,
+  }
+}
+
 export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariables) {
   const allSDK = getAllGqlSDK()
 
@@ -30,33 +71,15 @@ export async function fetcherDealsAccepted(variables: DealAcceptedsQueryVariable
     chainIds.map((chainId: ChainsValues) =>
       allSDK[chainId][DEALS_ACCEPTED_QUERY_NAME](variables)
         .then((res) => {
-          return res.dealAccepteds.map((dealAccepted) => {
-            const investmentAmount = formatToken(
-              dealAccepted.investmentAmount,
-              dealAccepted.pool.purchaseTokenDecimals || 0,
-              10,
-            )
-
-            const dealTokenAmount = formatToken(
-              dealAccepted.dealTokenAmount,
-              dealAccepted.pool.deal?.underlyingDealTokenDecimals ||
-                dealAccepted.pool.upfrontDeal?.underlyingDealTokenDecimals ||
-                0,
-              10,
-            )
-
-            return {
-              id: dealAccepted.pool.id,
-              network: chainId,
-              poolName: parsePoolName(dealAccepted.pool.name),
-              timestamp: new Date(dealAccepted.timestamp * 1000),
-              investmentAmount: `${investmentAmount} ${dealAccepted.pool.purchaseTokenSymbol}`,
-              dealTokenAmount: `${dealTokenAmount} ${
-                dealAccepted.pool.deal?.underlyingDealTokenSymbol ||
-                dealAccepted.pool.upfrontDeal?.underlyingDealTokenSymbol
-              }`,
-            }
-          })
+          return res.dealAccepteds.map(({ dealTokenAmount, investmentAmount, pool, timestamp }) =>
+            getParsedDealAcceptedsHistory({
+              chainId,
+              dealTokenAmount,
+              investmentAmount,
+              pool,
+              timestamp,
+            }),
+          )
         })
         .catch((err) => {
           console.error(`fetch deals accepted on chain ${chainId} was failed`, err)

@@ -679,7 +679,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
       ...collection,
       purchaseAmount: parseUnits(
         collection.purchaseAmount.toString(),
-        createDealState.investmentToken?.decimals ?? 18,
+        createDealState.investmentToken?.decimals ?? BASE_DECIMALS,
       ),
     }))
 

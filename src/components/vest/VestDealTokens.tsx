@@ -30,7 +30,7 @@ import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { getNetworkConfig } from '@/src/constants/chains'
-import { ZERO_ADDRESS } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import useAelinAmountToVestUpfrontDeal from '@/src/hooks/aelin/useAelinAmountToVestUpfrontDeal'
 import useAelinVestingDeals, { VestingDealsFilter } from '@/src/hooks/aelin/useAelinVestingDeals'
@@ -332,7 +332,8 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                 <Cell mobileJustifyContent="center">
                   <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
                   <Value>
-                    {formatToken(totalAmount, underlyingDealTokenDecimals)} {tokenSymbol}
+                    {formatToken(totalAmount, underlyingDealTokenDecimals, DISPLAY_DECIMALS)}{' '}
+                    {tokenSymbol}
                   </Value>
                 </Cell>
                 <AmountToVestCell
@@ -348,7 +349,8 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
                 <Cell mobileJustifyContent="center">
                   <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
                   <Value>
-                    {formatToken(totalVested, underlyingDealTokenDecimals)} {tokenSymbol}
+                    {formatToken(totalVested, underlyingDealTokenDecimals, DISPLAY_DECIMALS)}{' '}
+                    {tokenSymbol}
                   </Value>
                 </Cell>
                 <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
@@ -498,6 +500,7 @@ function AmountToVestCellComponent({
         {formatToken(
           currentAmountToVest !== null ? currentAmountToVest : (amountToVest as BigNumber),
           underlyingDealTokenDecimals,
+          DISPLAY_DECIMALS,
         )}{' '}
         {tokenSymbol}
       </Value>

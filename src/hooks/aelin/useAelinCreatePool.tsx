@@ -401,7 +401,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       ...collection,
       purchaseAmount: parseUnits(
         collection.purchaseAmount.toString(),
-        createPoolState.investmentToken?.decimals ?? 18,
+        createPoolState.investmentToken?.decimals ?? BASE_DECIMALS,
       ),
     }))
 
