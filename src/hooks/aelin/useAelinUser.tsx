@@ -1,18 +1,22 @@
 import orderBy from 'lodash/orderBy'
 import useSWR, { SWRConfiguration } from 'swr'
 
-import { DealAccepted, PoolCreated } from '@/graphql-schema'
+import {
+  ParsedDealAcceptedsHistory,
+  getParsedDealAcceptedsHistory,
+} from './history/useAelinDealsAccepted'
+import { ParsedAelinPool, getParsedPool } from './useAelinPool'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { USER_BY_ID_QUERY_NAME } from '@/src/queries/pools/user'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
 export type ParsedUser = {
   poolAddresses: string[]
-  poolsInvested: PoolCreated[]
-  poolsAsHolder: PoolCreated[]
-  poolsSponsored: PoolCreated[]
-  dealsAccepted: DealAccepted[]
-  upfrontDealsAccepted: PoolCreated[]
+  poolsInvested: ParsedAelinPool[]
+  poolsAsHolder: ParsedAelinPool[]
+  poolsSponsored: ParsedAelinPool[]
+  dealsAccepted: ParsedDealAcceptedsHistory[]
+  upfrontDealsAccepted: ParsedAelinPool[]
 }
 
 function isSuccessful<T>(response: PromiseSettledResult<T>): response is PromiseFulfilledResult<T> {
@@ -41,11 +45,11 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
           }
 
           const poolAddresses = [
-            user.poolsInvested.map((pool) => pool.id),
-            user.poolsAsHolder.map((pool) => pool.id),
-            user.poolsSponsored.map((pool) => pool.id),
+            user.poolsInvested.map((poolCreated) => poolCreated.id),
+            user.poolsAsHolder.map((poolCreated) => poolCreated.id),
+            user.poolsSponsored.map((poolCreated) => poolCreated.id),
             user.dealsAccepted.map((dealAccepted) => dealAccepted.pool.id),
-            user.upfrontDealsAccepted.map((upfrontDealAccepted) => upfrontDealAccepted.id),
+            user.upfrontDealsAccepted.map((poolCreated) => poolCreated.id),
           ]
             .reduce((acc, curVal) => {
               return acc.concat(curVal)
@@ -57,11 +61,48 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
 
           return {
             poolAddresses,
-            poolsInvested: user.poolsInvested,
-            poolsAsHolder: user.poolsAsHolder,
-            poolsSponsored: user.poolsSponsored,
-            dealsAccepted: user.dealsAccepted,
-            upfrontDealsAccepted: user.upfrontDealsAccepted,
+            poolsInvested: user.poolsInvested.map((pool) =>
+              getParsedPool({
+                chainId,
+                pool,
+                poolAddress: pool.id,
+                purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+              }),
+            ),
+            poolsAsHolder: user.poolsAsHolder.map((pool) =>
+              getParsedPool({
+                chainId,
+                pool,
+                poolAddress: pool.id,
+                purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+              }),
+            ),
+            poolsSponsored: user.poolsSponsored.map((pool) =>
+              getParsedPool({
+                chainId,
+                pool,
+                poolAddress: pool.id,
+                purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+              }),
+            ),
+            dealsAccepted: user.dealsAccepted.map(
+              ({ dealTokenAmount, investmentAmount, pool, timestamp }) =>
+                getParsedDealAcceptedsHistory({
+                  chainId,
+                  dealTokenAmount,
+                  investmentAmount,
+                  pool,
+                  timestamp,
+                }),
+            ),
+            upfrontDealsAccepted: user.upfrontDealsAccepted.map((pool) =>
+              getParsedPool({
+                chainId,
+                pool,
+                poolAddress: pool.id,
+                purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+              }),
+            ),
           }
         })
         .catch((err) => {
@@ -86,23 +127,23 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
           poolAddresses: [...resultAcc.poolAddresses, ...value.poolAddresses],
           poolsInvested: orderBy(
             [...resultAcc.poolsInvested, ...value.poolsInvested],
-            ['timestamp'],
+            ['start'],
             ['desc'],
           ),
           poolsSponsored: orderBy(
             [...resultAcc.poolsSponsored, ...value.poolsSponsored],
-            ['timestamp'],
+            ['start'],
             ['desc'],
           ),
           poolsAsHolder: orderBy(
             [...resultAcc.poolsAsHolder, ...value.poolsAsHolder],
-            ['timestamp'],
+            ['start'],
             ['desc'],
           ),
           dealsAccepted: [...resultAcc.dealsAccepted, ...value.dealsAccepted],
           upfrontDealsAccepted: orderBy(
             [...resultAcc.upfrontDealsAccepted, ...value.upfrontDealsAccepted],
-            ['timestamp'],
+            ['start'],
             ['desc'],
           ),
         }
@@ -124,5 +165,9 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
 }
 
 export default function useAelinUser(userAddress: string | null, config?: SWRConfiguration) {
-  return useSWR(userAddress?.toLocaleLowerCase(), fetcherUser, config)
+  return useSWR(userAddress?.toLocaleLowerCase(), fetcherUser, {
+    ...config,
+    // NOTE: Seems like SWR have some bug in default stable-hash comparison for complex objects causing extra rerendering.
+    compare: (a, b) => JSON.stringify(a) === JSON.stringify(b),
+  })
 }

@@ -27,7 +27,6 @@ import {
   getVestingDates,
   getVestingEnds,
   getVestingStarts,
-  isMerklePool,
   parseNftCollectionRules,
   parseUpfrontDeal,
 } from '@/src/utils/aelinPoolUtils'
