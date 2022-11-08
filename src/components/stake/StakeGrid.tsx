@@ -71,7 +71,6 @@ const StakeGrid = ({ ...restProps }) => {
         />,
       ],
       [Chains.goerli]: [],
-      [Chains.kovan]: [],
       [Chains.arbitrum]: [],
     }),
     [appChainId],
