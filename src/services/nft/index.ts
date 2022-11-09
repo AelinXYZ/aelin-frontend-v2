@@ -98,10 +98,7 @@ export const getNftOwnedByAddress = async (
 ) => {
   if (chainId === Chains.mainnet || chainId === Chains.arbitrum) {
     const settings = {
-      apiKey:
-        chainId === Chains.mainnet
-          ? getTokenProvider(Chains.mainnet)
-          : getTokenProvider(Chains.arbitrum),
+      apiKey: getTokenProvider(chainId),
       network: chainId === Chains.mainnet ? Network.ETH_MAINNET : Network.ARB_MAINNET,
       maxRetries: 10,
     }
