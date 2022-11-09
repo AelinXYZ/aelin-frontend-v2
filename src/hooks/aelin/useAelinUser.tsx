@@ -167,6 +167,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
 export default function useAelinUser(userAddress: string | null, config?: SWRConfiguration) {
   return useSWR(userAddress?.toLocaleLowerCase(), fetcherUser, {
     ...config,
+
     // NOTE: Seems like SWR have some bug in default stable-hash comparison for complex objects causing extra rerendering.
     compare: (a, b) => JSON.stringify(a) === JSON.stringify(b),
   })
