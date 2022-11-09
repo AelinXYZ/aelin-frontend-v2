@@ -5,6 +5,7 @@ import Head from 'next/head'
 import { SWRConfig } from 'swr'
 
 import 'sanitize.css'
+import '../styles/override.css'
 import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
 import { MobileMenu } from '@/src/components/navigation/MobileMenu'

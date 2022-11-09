@@ -8,7 +8,7 @@ import { Docs } from '@/src/components/assets/Docs'
 import { Ellipsis } from '@/src/components/assets/Ellipsis'
 import { Eth } from '@/src/components/assets/Eth'
 import { LightMode } from '@/src/components/assets/LightMode'
-import { BootNodeLogo } from '@/src/components/assets/Logo'
+import { AelinLogo } from '@/src/components/assets/Logo'
 import { Metamask } from '@/src/components/assets/Metamask'
 import { Optimism } from '@/src/components/assets/Optimism'
 import ChangeWalletMenu from '@/src/components/common/ChangeWalletMenu'
@@ -73,7 +73,7 @@ const HomeLink = styled.a`
   }
 `
 
-const Logo = styled(BootNodeLogo)`
+const Logo = styled(AelinLogo)`
   cursor: pointer;
   max-height: calc(var(--header-height) - 20px);
 `
