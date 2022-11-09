@@ -1,5 +1,6 @@
 import nullthrows from 'nullthrows'
 
+import { BASE_DECIMALS } from './misc'
 import { Arbitrum } from '@/src/components/assets/Arbitrum'
 import { Mainnet } from '@/src/components/assets/Mainnet'
 import { Optimism } from '@/src/components/assets/Optimism'
@@ -68,7 +69,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
-      decimals: 18,
+      decimals: BASE_DECIMALS,
     },
     buyAelinUrl:
       'https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=mainnet',
@@ -92,7 +93,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     nativeCurrency: {
       name: 'Goerli ETH',
       symbol: 'GoerliETH',
-      decimals: 18,
+      decimals: BASE_DECIMALS,
     },
     buyAelinUrl: undefined,
   },
@@ -112,7 +113,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
-      decimals: 18,
+      decimals: BASE_DECIMALS,
     },
     buyAelinUrl:
       'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism',
@@ -132,7 +133,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
-      decimals: 18,
+      decimals: BASE_DECIMALS,
     },
     icon: <Arbitrum />,
     tokenListUrl: ['https://tokens.uniswap.org/'],
