@@ -12,7 +12,11 @@ const Notifications: NextPage = () => {
         <title>Aelin - Notifications</title>
       </Head>
       <LeftSidebarLayout>
-        <SectionIntro backgroundImage="/resources/svg/bg-notifications.svg" title="Notifications">
+        <SectionIntro
+          backgroundImage="/resources/svg/bg-notifications.svg"
+          backgroundPosition="100% 120px"
+          title="Notifications"
+        >
           Investors will receive notifications about investment pool stages, required actions,
           vesting periods, and other important information. Check back often to stay up to date on
           your investments.
