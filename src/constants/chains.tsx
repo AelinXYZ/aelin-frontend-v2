@@ -1,5 +1,6 @@
 import nullthrows from 'nullthrows'
 
+import { BASE_DECIMALS } from './misc'
 import { Arbitrum } from '@/src/components/assets/Arbitrum'
 import { Mainnet } from '@/src/components/assets/Mainnet'
 import { Optimism } from '@/src/components/assets/Optimism'
@@ -22,17 +23,27 @@ export function getKeyChainByValue(chainId: ChainsValues) {
   return Object.keys(Chains).find((key) => Chains[key as ChainsKeys] === chainId)
 }
 
+const toHex = (chainId: number) => {
+  return '0x' + chainId.toString(16)
+}
+
 export type ChainConfig = {
   blockExplorerUrls: string[]
   chainId: ChainsValues
   chainIdHex: string
   icon?: React.ReactNode
+  nativeCurrency: {
+    name: string
+    symbol: string
+    decimals: number
+  }
   isL2?: boolean
   iconUrls: string[]
   id: ChainsValues
   isProd: boolean
   name: string
   rpcUrl: string
+  defaultRpcUrl: string
   shortName: string
   tokenListUrl: string[]
   buyAelinUrl: string | undefined
@@ -42,64 +53,88 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
   [Chains.mainnet]: {
     blockExplorerUrls: ['https://etherscan.io/'],
     chainId: Chains.mainnet,
-    chainIdHex: '0x1',
+    chainIdHex: toHex(Chains.mainnet),
     icon: <Mainnet />,
     iconUrls: [],
     id: Chains.mainnet,
     isProd: true,
-    name: 'Mainnet',
-    rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
+    name: 'Ethereum Mainnet',
+    rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_MAINNET_TOKEN_PROVIDER}`,
+    defaultRpcUrl: 'https://rpc.ankr.com/eth',
     shortName: 'Mainnet',
     tokenListUrl: [
       'https://tokens.1inch.eth.limo',
       'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
     ],
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: BASE_DECIMALS,
+    },
     buyAelinUrl:
       'https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=mainnet',
   },
   [Chains.goerli]: {
     blockExplorerUrls: ['https://goerli.etherscan.io/'],
     chainId: Chains.goerli,
-    chainIdHex: '0x5',
+    chainIdHex: toHex(Chains.goerli),
     icon: <NetworkPlaceholder name="G" />,
     iconUrls: [],
     id: Chains.goerli,
     isProd: false,
     name: 'Görli Testnet',
-    rpcUrl: `https://eth-goerli.alchemyapi.io/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
+    rpcUrl: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
+    defaultRpcUrl: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
     shortName: 'Goerli',
     tokenListUrl: [
       'https://tokens.1inch.eth.limo',
       'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
     ],
+    nativeCurrency: {
+      name: 'Goerli ETH',
+      symbol: 'GoerliETH',
+      decimals: BASE_DECIMALS,
+    },
     buyAelinUrl: undefined,
   },
   [Chains.optimism]: {
     id: Chains.optimism,
-    name: 'Optimism',
+    name: 'Optimism Ethereum',
     shortName: 'Optimism',
     chainId: Chains.optimism,
-    chainIdHex: '0xa',
-    rpcUrl: `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_TOKEN_PROVIDER}`,
+    chainIdHex: toHex(Chains.optimism),
+    rpcUrl: `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_OPTIMISM_TOKEN_PROVIDER}`,
+    defaultRpcUrl: 'https://mainnet.optimism.io',
     blockExplorerUrls: ['https://optimistic.etherscan.io/'],
     iconUrls: [],
     isProd: true,
     icon: <Optimism />,
     tokenListUrl: ['https://static.optimism.io/optimism.tokenlist.json'],
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: BASE_DECIMALS,
+    },
     buyAelinUrl:
       'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism',
     isL2: true,
   },
   [Chains.arbitrum]: {
     id: Chains.arbitrum,
-    name: 'Arbitrum',
+    name: 'Arbitrum One',
     shortName: 'Arbitrum',
     chainId: Chains.arbitrum,
-    chainIdHex: '0xa4b1',
-    rpcUrl: `https://arb1.arbitrum.io/rpc`,
+    chainIdHex: toHex(Chains.arbitrum),
+    rpcUrl: `https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ARBITRUM_TOKEN_PROVIDER}`,
+    defaultRpcUrl: 'https://arb1.arbitrum.io/rpc',
     blockExplorerUrls: ['https://arbiscan.io/'],
     iconUrls: [],
     isProd: true,
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: BASE_DECIMALS,
+    },
     icon: <Arbitrum />,
     tokenListUrl: ['https://tokens.uniswap.org/'],
     buyAelinUrl: undefined,
