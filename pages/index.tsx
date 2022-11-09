@@ -31,7 +31,8 @@ const Home: NextPage = () => {
       <LeftSidebarLayout>
         <Container>
           <SectionIntro
-            backgroundImage="/resources/svg/bg-pools.svg"
+            backgroundImage="/resources/svg/bg-deals.svg"
+            backgroundPosition="100% 110%"
             button={[
               {
                 title: 'Create deal',
@@ -47,6 +48,7 @@ const Home: NextPage = () => {
           </SectionIntro>
           <SectionIntro
             backgroundImage="/resources/svg/bg-pools.svg"
+            backgroundPosition="100% 120px"
             button={[
               {
                 title: 'Create pool',
