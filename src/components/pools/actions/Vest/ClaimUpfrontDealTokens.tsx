@@ -161,11 +161,7 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
 
   const hasSponsorFees = pool.sponsorFee.raw.gt(ZERO_BN)
 
-  const didNotParticipated =
-    userRoles.includes(UserRole.Visitor) ||
-    (!userRoles.includes(UserRole.Investor) &&
-      ((userRoles.includes(UserRole.Sponsor) && sponsorClaim) ||
-        (userRoles.includes(UserRole.Holder) && holderClaim)))
+  const didNotParticipated = userRoles.includes(UserRole.Visitor)
 
   const content = useMemo(() => {
     if (didNotParticipated) {
