@@ -668,6 +668,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
     return dispatch({ type: 'updateStep', payload: value })
   }
+
   const handleCreateUpFrontDeal = async () => {
     const [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses] =
       await parseValuesToCreateUpFrontDeal(
@@ -731,7 +732,12 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
           try {
             const receipt = await execute(
-              [upFrontDealDataFull, upFrontDealConfig, nftCollectionRules, emptyAllowlistData],
+              [
+                upFrontDealDataFull,
+                upFrontDealConfig,
+                formattedNftCollectionRules,
+                emptyAllowlistData,
+              ],
               txGasOptions,
             )
 
@@ -761,7 +767,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
           try {
             const receipt = await execute(
-              [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses],
+              [upFrontDealData, upFrontDealConfig, formattedNftCollectionRules, allowListAddresses],
               txGasOptions,
             )
 
