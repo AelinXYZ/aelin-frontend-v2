@@ -43,13 +43,13 @@ function isSuccessful<T>(response: PromiseSettledResult<T>): response is Promise
 function isUserTarget(user: ParsedUser, notification: ParsedNotification): boolean {
   const { poolAddress, target } = notification
   if (target === NotificationTarget.PoolInvestor) {
-    return !!user.poolsInvested.find((poolInvested) => poolInvested.id === poolAddress)
+    return !!user.poolsInvested.find((poolInvested) => poolInvested.address === poolAddress)
   } else if (target === NotificationTarget.DealInvestor) {
-    return !!user.dealsAccepted.find((dealAccepted) => dealAccepted.pool.id === poolAddress)
+    return !!user.dealsAccepted.find((dealAccepted) => dealAccepted.id === poolAddress)
   } else if (target === NotificationTarget.Sponsor) {
-    return !!user.poolsSponsored.find((poolSponsored) => poolSponsored.id === poolAddress)
+    return !!user.poolsSponsored.find((poolSponsored) => poolSponsored.address === poolAddress)
   } else if (target === NotificationTarget.Holder) {
-    return !!user.poolsAsHolder.find((poolAsHolder) => poolAsHolder.id === poolAddress)
+    return !!user.poolsAsHolder.find((poolAsHolder) => poolAsHolder.address === poolAddress)
   }
   return false
 }

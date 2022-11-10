@@ -114,11 +114,6 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
 
         setError(error)
       },
-      [Chains.kovan]: () => {
-        const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.kovan}`)
-
-        setError(error)
-      },
       [Chains.arbitrum]: () => {
         noop()
       },

@@ -128,7 +128,7 @@ const List: React.FC = () => {
                     mobileJustifyContent="center"
                     network={network as ChainsValues}
                   />
-                  <HideOnMobileCell title={getNetworkConfig(network).name}>
+                  <HideOnMobileCell title={getNetworkConfig(network).shortName}>
                     {getNetworkConfig(network).icon}
                   </HideOnMobileCell>
                   <Cell mobileJustifyContent="center">

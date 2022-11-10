@@ -8,7 +8,7 @@ import { DEPOSIT_TYPE, WITHDRAW_TYPE } from '../../constants/types'
 import { TokenInput as BaseTokenInput } from '@/src/components/form/TokenInput'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { TabContent } from '@/src/components/tabs/Tabs'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import useERC20Transaction from '@/src/hooks/contracts/useERC20Transaction'
 import useStakingRewardsTransaction from '@/src/hooks/contracts/useStakingRewardsTransaction'
@@ -162,7 +162,7 @@ const StakeTabContent: FC<StakeTabContentProps> = ({
         decimals={decimals}
         error={inputError}
         maxValue={totalBalance.toString()}
-        maxValueFormatted={formatToken(totalBalance, decimals) || ''}
+        maxValueFormatted={formatToken(totalBalance, decimals, DISPLAY_DECIMALS) || ''}
         setValue={(value) => {
           setTokenInputValue(value.length ? BigNumber.from(value) : ZERO_BN)
         }}

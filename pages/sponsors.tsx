@@ -12,7 +12,11 @@ const Sponsors: NextPage = () => {
         <title>Aelin - Sponsors</title>
       </Head>
       <LeftSidebarLayout>
-        <SectionIntro backgroundImage="/resources/svg/bg-sponsors.svg" title="Sponsors">
+        <SectionIntro
+          backgroundImage="/resources/svg/bg-sponsors.svg"
+          backgroundPosition="100% 100px"
+          title="Sponsors"
+        >
           Learn more about the sponsors presenting deals on Aelin by viewing all of their past
           pools. Sponsors may have real-world experience / other experience that isn't reflected in
           the information below.

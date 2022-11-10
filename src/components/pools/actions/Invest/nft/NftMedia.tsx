@@ -74,17 +74,30 @@ const NftMedia = ({
         .then((contentType) =>
           contentType?.includes('video') ? setIsVideo(true) : setIsVideo(false),
         )
-        .catch(() => {
-          return
-        })
+        .catch(console.error)
     }
   }, [src])
 
+  if (!src)
+    return (
+      <MediaWrapper height={height} width={width}>
+        <MediaPlaceHolder height={height} width={width} />
+      </MediaWrapper>
+    )
+
   return (
     <MediaWrapper height={height} width={width}>
-      {!src ? (
-        <MediaPlaceHolder height={height} isDisabled={isDisabled} onClick={onClick} width={width} />
-      ) : isVideo ? (
+      {isLoading && (
+        <>
+          <MediaPlaceHolder height={height} width={width} />
+          {spinner && (
+            <LoadingWrapper>
+              <SpinnerCSS height={height * 0.5} margin={2} stroke={1} width={width * 0.5} />
+            </LoadingWrapper>
+          )}
+        </>
+      )}
+      {isVideo && (
         <Video
           {...rest}
           autoPlay
@@ -96,7 +109,8 @@ const NftMedia = ({
           src={src}
           width={width}
         />
-      ) : (
+      )}
+      {!isVideo && (
         <Image
           {...rest}
           alt=""
@@ -107,16 +121,6 @@ const NftMedia = ({
           src={src}
           width={width}
         />
-      )}
-      {isLoading && (
-        <>
-          <MediaPlaceHolder height={height} width={width} />
-          {spinner && (
-            <LoadingWrapper>
-              <SpinnerCSS height={height * 0.5} margin={2} stroke={1} width={width * 0.5} />
-            </LoadingWrapper>
-          )}
-        </>
       )}
     </MediaWrapper>
   )

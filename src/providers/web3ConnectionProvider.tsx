@@ -306,7 +306,8 @@ export default function Web3ConnectionProvider({ children }: Props) {
       const config = {
         chainId: networkConfig.chainIdHex,
         chainName: networkConfig.name,
-        rpcUrls: [networkConfig.rpcUrl],
+        rpcUrls: [networkConfig.defaultRpcUrl],
+        nativeCurrency: networkConfig.nativeCurrency,
         blockExplorerUrls: networkConfig.blockExplorerUrls,
         iconUrls: networkConfig.iconUrls,
       }

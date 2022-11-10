@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 
 import debounce from 'lodash/debounce'
 
-import { PoolCreated, PoolStatus } from '@/graphql-schema'
+import { PoolStatus } from '@/graphql-schema'
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/common/Dropdown'
 import { SafeSuspense, genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { List } from '@/src/components/pools/list/List'
@@ -13,6 +13,7 @@ import { ButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Bu
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME, ZERO_ADDRESS } from '@/src/constants/misc'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolsFilters from '@/src/hooks/aelin/useAelinPoolsFilters'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
@@ -84,7 +85,11 @@ const FiltersDropdowns = styled.div`
 
 const myPools = ['All pools', 'Sponsored', 'Funded', 'Invested']
 
-export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: PoolCreated[] }) => {
+export const ListWithFilters = ({
+  userPoolsInvested,
+}: {
+  userPoolsInvested?: ParsedAelinPool[]
+}) => {
   const {
     query: { filter },
   } = useRouter()
@@ -128,7 +133,7 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
     }
   }, [debouncedChangeHandler, searchString])
 
-  const networks = [{ id: undefined, name: 'All networks' }, ...getChainsByEnvironmentArray()]
+  const networks = [{ id: undefined, shortName: 'All networks' }, ...getChainsByEnvironmentArray()]
 
   // - Open
   // - Awaiting deal
@@ -249,7 +254,9 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
         return setWhere({
           holder_in: null,
           sponsor_in: null,
-          id_in: userPoolsInvested?.length ? userPoolsInvested.map(({ id }) => id) : [ZERO_ADDRESS],
+          id_in: userPoolsInvested?.length
+            ? userPoolsInvested.map(({ address }) => address)
+            : [ZERO_ADDRESS],
         })
       }
     }
@@ -291,12 +298,14 @@ export const ListWithFilters = ({ userPoolsInvested }: { userPoolsInvested?: Poo
             currentItem={!network ? 0 : networks.findIndex(({ id }) => id === network)}
             dropdownButtonContent={
               <ButtonDropdown>
-                {network ? networks.find(({ id }) => id === network)?.name : networks[0].name}
+                {network
+                  ? networks.find(({ id }) => id === network)?.shortName
+                  : networks[0].shortName}
               </ButtonDropdown>
             }
-            items={networks.map(({ id, name }, key) => (
+            items={networks.map(({ id, shortName }, key) => (
               <DropdownItem key={key} onClick={() => setNetwork(Number(id) as ChainsValues)}>
-                {name}
+                {shortName}
               </DropdownItem>
             ))}
           />

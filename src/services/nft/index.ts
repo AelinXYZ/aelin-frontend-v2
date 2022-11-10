@@ -5,6 +5,7 @@ import { Chains, ChainsValues } from '@/src/constants/chains'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
 import { CustomError as Error } from '@/src/utils/error'
 import getNftType from '@/src/utils/getNftType'
+import { getTokenProvider } from '@/src/utils/getTokenProvider'
 
 export interface ParsedOwnedNft {
   id: string
@@ -97,7 +98,7 @@ export const getNftOwnedByAddress = async (
 ) => {
   if (chainId === Chains.mainnet || chainId === Chains.arbitrum) {
     const settings = {
-      apiKey: process.env.NEXT_PUBLIC_TOKEN_PROVIDER,
+      apiKey: getTokenProvider(chainId),
       network: chainId === Chains.mainnet ? Network.ETH_MAINNET : Network.ARB_MAINNET,
       maxRetries: 10,
     }

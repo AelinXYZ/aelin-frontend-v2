@@ -223,7 +223,7 @@ export const Header: React.FC = (props) => {
       }}
     >
       {getNetworkConfig(item.chainId).icon}
-      {item.name}
+      {item.shortName}
     </DropdownItem>
   ))
 
@@ -261,7 +261,7 @@ export const Header: React.FC = (props) => {
                   ) : (
                     <>
                       {currentChain.icon}
-                      {currentChain.name}
+                      {currentChain.shortName}
                     </>
                   )}
                   <ChevronDown />
@@ -364,7 +364,7 @@ export const Header: React.FC = (props) => {
                 ) : (
                   <>
                     {currentChain.icon}
-                    {currentChain.name}
+                    {currentChain.shortName}
                   </>
                 )}
               </ButtonDropdown>

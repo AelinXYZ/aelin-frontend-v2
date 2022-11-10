@@ -94,7 +94,7 @@ const RequiredConnection: React.FC<RequiredConnectionProps> = ({
           <ButtonGradientSm onClick={() => pushNetwork(networkToCheck)}> Switch</ButtonGradientSm>
         ) : (
           <ButtonGradient onClick={() => pushNetwork(networkToCheck)}>
-            Switch to {chainsConfig[networkToCheck].name}
+            Switch to {chainsConfig[networkToCheck].shortName}
           </ButtonGradient>
         )}
       </Wrapper>

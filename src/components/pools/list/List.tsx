@@ -279,7 +279,7 @@ export const List: React.FC<{
                 <ENSOrAddress address={sponsor} network={network} />
                 <HideOnMobileCell
                   justifyContent={columns.alignment.network}
-                  title={getNetworkConfig(network).name}
+                  title={getNetworkConfig(network).shortName}
                 >
                   {getNetworkConfig(network).icon}
                 </HideOnMobileCell>

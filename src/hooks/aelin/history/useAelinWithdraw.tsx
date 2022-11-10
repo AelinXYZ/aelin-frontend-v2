@@ -5,6 +5,7 @@ import useSWRInfinite from 'swr/infinite'
 
 import { Withdraw_OrderBy, WithdrawsQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { HISTORY_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { WITHDRAWS_QUERY_NAME } from '@/src/queries/history/withdraws'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -32,7 +33,8 @@ export async function fetcherWithdraws(variables: WithdrawsQueryVariables) {
           return res.withdraws.map((withdraw) => {
             const amountWithdrawn = formatToken(
               withdraw.amountWithdrawn,
-              withdraw.pool.purchaseTokenDecimals || 0,
+              withdraw.pool.purchaseTokenDecimals || BASE_DECIMALS,
+              DISPLAY_DECIMALS,
             )
 
             return {

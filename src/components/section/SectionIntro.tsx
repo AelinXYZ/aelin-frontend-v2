@@ -9,7 +9,7 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
-const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
+const Wrapper = styled(BaseCard)<{ backgroundImage?: string; backgroundPosition?: string }>`
   background-color: ${({ theme: { card } }) => card.backgroundColor};
   background-repeat: no-repeat;
   margin: 0 0 20px;
@@ -17,13 +17,14 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string }>`
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     min-height: 180px;
-    max-height: 200px;
+    max-height: 220px;
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-image: ${({ backgroundImage }) =>
       backgroundImage ? `url(${backgroundImage})` : 'none'};
-    background-position: ${({ backgroundImage }) => (backgroundImage ? `100% 115px` : 'initial')};
+    background-position: ${({ backgroundPosition }) =>
+      backgroundPosition ? backgroundPosition : 'initial'};
     background-size: auto auto;
   }
 `
@@ -86,6 +87,7 @@ const ButtonWrapper = styled.div`
 
 export const SectionIntro: React.FC<{
   backgroundImage?: string
+  backgroundPosition?: string
   button?: Array<{
     onClick: () => void
     title: string
@@ -96,9 +98,21 @@ export const SectionIntro: React.FC<{
     title: string
   }
   title: string
-}> = ({ backgroundImage, button, children, secondaryButton, title, ...restProps }) => {
+}> = ({
+  backgroundImage,
+  backgroundPosition,
+  button,
+  children,
+  secondaryButton,
+  title,
+  ...restProps
+}) => {
   return (
-    <Wrapper backgroundImage={backgroundImage} {...restProps}>
+    <Wrapper
+      backgroundImage={backgroundImage}
+      backgroundPosition={backgroundPosition}
+      {...restProps}
+    >
       <Title>{title}</Title>
       <Description>{children}</Description>
       {(!!button || !!secondaryButton) && (

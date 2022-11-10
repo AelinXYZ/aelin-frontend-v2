@@ -7,12 +7,7 @@ import { TextPrimary } from '../../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
-import {
-  BASE_DECIMALS,
-  DISPLAY_DECIMALS,
-  MERKLE_TREE_DATA_EMPTY,
-  ZERO_ADDRESS,
-} from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, MERKLE_TREE_DATA_EMPTY, ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinUserMerkleTreeData, {
   UserMerkleData,
 } from '@/src/hooks/aelin/merkle-tree/useAelinUserMerkleTreeData'
