@@ -10,6 +10,9 @@ import {
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
 const Wrapper = styled(BaseCard)<{ backgroundImage?: string; backgroundPosition?: string }>`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: ${({ theme: { card } }) => card.backgroundColor};
   background-repeat: no-repeat;
   margin: 0 0 20px;
@@ -17,7 +20,7 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string; backgroundPosition?
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     min-height: 180px;
-    max-height: 220px;
+    max-height: 240px;
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
