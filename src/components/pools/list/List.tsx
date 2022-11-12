@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 import ReactTooltip from 'react-tooltip'
@@ -7,22 +7,22 @@ import ReactTooltip from 'react-tooltip'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
-import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
+import { DynamicDeadline as BaseDynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   HideOnDesktop as BaseHideOnDesktop,
+  RowLink as BaseRowLink,
+  TableHead as BaseTableHead,
   Cell,
   HideOnMobile,
   HideOnMobileCell,
   LoadingTableRow,
-  RowLink,
   TableBody,
-  TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { NameCell } from '@/src/components/table/NameCell'
-import { SortableTH } from '@/src/components/table/SortableTH'
+import { SortableTH as BaseSortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
@@ -30,6 +30,17 @@ import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+
+const columns = {
+  alignment: {
+    investmentToken: 'center',
+    network: 'center',
+  },
+  widths: '275px 84px 75px 0.8fr 1fr 150px 80px',
+  compactWidths: '260px 84px 70px 1fr 80px',
+}
+
+const fullSizeRowStart = '1400px'
 
 const Name = styled.span`
   overflow: hidden;
@@ -73,6 +84,44 @@ const LabelsWrapper = styled.div`
   gap: 5px;
 `
 
+const TableHead = styled(BaseTableHead)`
+  @media (min-width: ${({ theme }) =>
+    theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+    grid-template-columns: ${columns.compactWidths};
+  }}
+`
+
+const SortableTH = styled(BaseSortableTH)<{ isSecondary?: boolean }>`
+  ${({ isSecondary }) =>
+    isSecondary &&
+    css`
+      @media (min-width: ${({ theme }) =>
+          theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+        display: none;
+      }
+    `}
+`
+
+const RowLink = styled(BaseRowLink)`
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+    grid-template-columns: ${columns.compactWidths};
+  }
+`
+
+const DynamicDeadline = styled(BaseDynamicDeadline)`
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+    display: none;
+  }
+`
+
+const InvestmentToken = styled(Cell)`
+  @media (max-width: ${fullSizeRowStart}) {
+    display: none;
+  }
+`
+
 interface FiltersProps {
   network: ChainsValues | null
   variables: PoolsCreatedQueryVariables
@@ -88,14 +137,6 @@ export const List: React.FC<{
 
   if (error) {
     throw error
-  }
-
-  const columns = {
-    alignment: {
-      investmentToken: 'center',
-      network: 'center',
-    },
-    widths: '275px 84px 75px 0.8fr 1fr 150px 80px',
   }
 
   const tableHeaderCells = [
@@ -118,10 +159,12 @@ export const List: React.FC<{
     {
       title: 'Investment deadline',
       sortKey: PoolCreated_OrderBy.PurchaseExpiry,
+      isSecondary: true,
     },
     {
       title: 'Investment token',
       justifyContent: columns.alignment.investmentToken,
+      isSecondary: true,
       // sortKey: PoolCreated_OrderBy.PurchaseToken,
     },
     {
@@ -163,9 +206,10 @@ export const List: React.FC<{
       next={nextPage}
     >
       <TableHead columns={columns.widths}>
-        {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
+        {tableHeaderCells.map(({ isSecondary, justifyContent, sortKey, title }, index) => (
           <SortableTH
             isActive={sortBy === sortKey}
+            isSecondary={isSecondary}
             justifyContent={justifyContent}
             key={index}
             onClick={getSortableHandler(sortKey)}
@@ -275,7 +319,6 @@ export const List: React.FC<{
                     <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                   </LabelsWrapper>
                 </HideOnDesktop>
-
                 <ENSOrAddress address={sponsor} network={network} />
                 <HideOnMobileCell
                   justifyContent={columns.alignment.network}
@@ -305,14 +348,14 @@ export const List: React.FC<{
                 >
                   {getFormattedDurationFromDateToNow(purchaseExpiry)}
                 </DynamicDeadline>
-                <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
+                <InvestmentToken justifyContent={columns.alignment.investmentToken}>
                   <TokenIcon
                     address={investmentToken}
                     network={network}
                     symbol={investmentTokenSymbol}
                     type="column"
                   />
-                </HideOnMobileCell>
+                </InvestmentToken>
                 <Stage stage={stage}> {poolStagesText[stage]}</Stage>
               </RowLink>
             )

@@ -1,23 +1,23 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { PoolCreated_OrderBy } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
 import { Verified } from '@/src/components/assets/Verified'
-import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
+import { DynamicDeadline as BaseDynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import {
   HideOnDesktop as BaseHideOnDesktop,
+  RowLink as BaseRowLink,
+  TableHead as BaseTableHead,
   Cell,
   HideOnMobile,
   HideOnMobileCell,
-  RowLink,
   TableBody,
-  TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { NameCell } from '@/src/components/table/NameCell'
-import { SortableTH } from '@/src/components/table/SortableTH'
+import { SortableTH as BaseSortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
@@ -25,6 +25,17 @@ import useAelinVouchedPools from '@/src/hooks/aelin/useAelinVouchedPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+
+const columns = {
+  alignment: {
+    investmentToken: 'center',
+    network: 'center',
+  },
+  widths: '280px 84px 75px 0.8fr 1fr 150px 80px',
+  compactWidths: '260px 84px 70px 1fr 80px',
+}
+
+const fullSizeRowStart = '1400px'
 
 const Wrapper = styled.div`
   margin: 20px 0 30px 0px;
@@ -88,20 +99,50 @@ const LabelsWrapper = styled.div`
   gap: 5px;
 `
 
+const TableHead = styled(BaseTableHead)`
+  @media (min-width: ${({ theme }) =>
+    theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+    grid-template-columns: ${columns.compactWidths};
+  }}
+`
+
+const SortableTH = styled(BaseSortableTH)<{ isSecondary?: boolean }>`
+  ${({ isSecondary }) =>
+    isSecondary &&
+    css`
+      @media (min-width: ${({ theme }) =>
+          theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+        display: none;
+      }
+    `}
+`
+
+const RowLink = styled(BaseRowLink)`
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+    grid-template-columns: ${columns.compactWidths};
+  }
+`
+
+const DynamicDeadline = styled(BaseDynamicDeadline)`
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+    display: none;
+  }
+`
+
+const InvestmentToken = styled(Cell)`
+  @media (max-width: ${fullSizeRowStart}) {
+    display: none;
+  }
+`
+
 export const VouchedPools: React.FC = () => {
   const { data, error } = useAelinVouchedPools({
     orderBy: PoolCreated_OrderBy.Timestamp,
   })
 
   const { notifications } = useNotifications()
-
-  const columns = {
-    alignment: {
-      investmentToken: 'center',
-      network: 'center',
-    },
-    widths: '280px 84px 75px 0.8fr 1fr 150px 80px',
-  }
 
   const tableHeaderCells = [
     {
@@ -118,10 +159,12 @@ export const VouchedPools: React.FC = () => {
     },
     {
       title: 'Investment deadline',
+      isSecondary: true,
     },
     {
       title: 'Investment token',
       justifyContent: columns.alignment.investmentToken,
+      isSecondary: true,
     },
     {
       title: 'Stage',
@@ -142,8 +185,8 @@ export const VouchedPools: React.FC = () => {
       </Title>
       <Wrapper>
         <TableHead columns={columns.widths}>
-          {tableHeaderCells.map(({ justifyContent, title }, index) => (
-            <SortableTH justifyContent={justifyContent} key={index}>
+          {tableHeaderCells.map(({ isSecondary, justifyContent, title }, index) => (
+            <SortableTH isSecondary={isSecondary} justifyContent={justifyContent} key={index}>
               {title}
             </SortableTH>
           ))}
@@ -275,14 +318,14 @@ export const VouchedPools: React.FC = () => {
                 >
                   {getFormattedDurationFromDateToNow(purchaseExpiry)}
                 </DynamicDeadline>
-                <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
+                <InvestmentToken justifyContent={columns.alignment.investmentToken}>
                   <TokenIcon
                     address={investmentToken}
                     network={network}
                     symbol={investmentTokenSymbol}
                     type="column"
                   />
-                </HideOnMobileCell>
+                </InvestmentToken>
                 <Stage stage={stage}> {poolStagesText[stage]}</Stage>
               </RowLink>
             )
