@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import styled from 'styled-components'
 
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -59,10 +58,6 @@ export const DealInformation: React.FC<{
   poolHelpers: Funding
 }> = ({ pool, poolHelpers }) => {
   const { chainId, deal, sponsorFee } = pool
-
-  useEffect(() => {
-    console.log(pool, 'erwuro')
-  }, [pool])
 
   if (!deal) return <div>No Deal presented yet.</div>
 
