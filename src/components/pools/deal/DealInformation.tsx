@@ -64,15 +64,14 @@ export const DealInformation: React.FC<{
   return (
     <>
       <Column>
-        <InfoCell
-          title="Name"
-          value={
+        <InfoCell title="Name">
+          {pool.dealAddress && (
             <ExternalLink
-              href={getExplorerUrl(pool.dealAddress || '', chainId)}
+              href={getExplorerUrl(pool.dealAddress, chainId)}
               label={parseDealName(deal.name)}
             />
-          }
-        />
+          )}
+        </InfoCell>
         <InfoCell
           title="Token totals"
           tooltip="The total amount of investment and deal tokens for the deal"
