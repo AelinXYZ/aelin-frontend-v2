@@ -46,7 +46,7 @@ export const UpfrontDealInformation: React.FC<{
           title="Name"
           value={
             <ExternalLink
-              href={getExplorerUrl(pool.dealAddress || pool.address, chainId)}
+              href={getExplorerUrl(pool.address, chainId)}
               label={parseDealName(upfrontDeal.name)}
             />
           }
