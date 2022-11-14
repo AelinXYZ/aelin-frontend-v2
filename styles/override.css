@@ -1,14 +1,34 @@
 /* Override root variables to style the Onboard modal */
 :root {
-  --onboard-connect-header-background: #34353b;
+  --onboard-white: #232a37;
+  --onboard-wallet-button-color: white;
+  --onboard-wallet-button-color: white;
+  --onboard-wallet-button-border-color: #555c65;
+
+  --onboard-connect-header-background: #1a212f;
   --onboard-connect-header-color: #e0f3ff;
   --onboard-connect-sidebar-color: #e0f3ff;
-  --onboard-connect-sidebar-background: #2d2e33;
-  --onboard-modal-background: #34353b;
+  --onboard-connect-sidebar-background: #232a37;
+  --onboard-modal-background: #1a212f;
   --onboard-wallet-button-background: var(--color-primary);
   --onboard-wallet-app-icon-border-color: none;
-  --onboard-main-scroll-container-background: #34353b;
+  --onboard-main-scroll-container-background: #1a212f;
   --onboard-close-button-color: #2d2e33;
   --onboard-close-button-background: var(--color-primary);
-  --onboard-font-family-normal: 'Barlow';
+  --onboard-font-family-normal: 'Hind Madurai';
+
+  /* Fonts */
+  --onboard-font-size-1: 3rem;
+  --onboard-font-size-2: 2.25rem;
+  --onboard-font-size-3: 2.5rem;
+  --onboard-font-size-4: 1.25rem;
+  --onboard-font-size-5: 1.5rem;
+  --onboard-font-size-6: 1.25rem;
+  --onboard-font-size-7: 1.125rem;
+
+  /* Spacing */
+  --onboard-spacing-1: 3rem;
+  --onboard-spacing-3: 2.5rem;
+  --onboard-spacing-4: 1.5rem;
+  --onboard-spacing-5: 1.5rem;
 }

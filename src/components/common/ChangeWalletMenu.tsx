@@ -62,7 +62,7 @@ const Button = styled(ButtonPrimaryLight)`
 `
 
 const ChangeWalletMenu = () => {
-  const { address = '', appChainId, disconnectWallet } = useWeb3Connection()
+  const { address = '', appChainId, changeWallet, disconnectWallet } = useWeb3Connection()
   const currentChain = getNetworkConfig(appChainId)
 
   return (
@@ -82,7 +82,7 @@ const ChangeWalletMenu = () => {
           </ExternalLink>
         </Row>
       )}
-      <Button>Change wallet</Button>
+      <Button onClick={changeWallet}>Change wallet</Button>
       <Button onClick={disconnectWallet}>Disconnect</Button>
     </Wrapper>
   )
