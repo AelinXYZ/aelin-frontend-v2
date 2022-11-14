@@ -83,7 +83,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
   )
 
   useEffect(() => {
-    if (wallet?.accounts) {
+    if (wallet?.accounts?.[0]?.address) {
       window.localStorage.setItem(STORAGE_CONNECTED_WALLET, wallet.label || '')
       setAddress(wallet.accounts[0].address)
     } else {
