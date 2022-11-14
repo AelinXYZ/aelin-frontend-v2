@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import styled from 'styled-components'
 
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -59,19 +60,24 @@ export const DealInformation: React.FC<{
 }> = ({ pool, poolHelpers }) => {
   const { chainId, deal, sponsorFee } = pool
 
+  useEffect(() => {
+    console.log(pool, 'erwuro')
+  }, [pool])
+
   if (!deal) return <div>No Deal presented yet.</div>
 
   return (
     <>
       <Column>
-        <InfoCell title="Name">
-          {pool.dealAddress && (
+        <InfoCell
+          title="Name"
+          value={
             <ExternalLink
-              href={getExplorerUrl(pool.dealAddress, chainId)}
+              href={getExplorerUrl(pool.dealAddress || pool.address, chainId)}
               label={parseDealName(deal.name)}
             />
-          )}
-        </InfoCell>
+          }
+        />
         <InfoCell
           title="Token totals"
           tooltip="The total amount of investment and deal tokens for the deal"
