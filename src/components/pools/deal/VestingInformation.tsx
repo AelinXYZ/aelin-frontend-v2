@@ -116,7 +116,7 @@ function UpfrontDealVestingInfo({ pool }: { pool: ParsedAelinPool }) {
           title="Name"
           value={
             <ExternalLink
-              href={getExplorerUrl(pool.dealAddress || '', pool.chainId)}
+              href={getExplorerUrl(pool.address || '', pool.chainId)}
               label={parseDealName(upfrontDeal.name)}
             />
           }
