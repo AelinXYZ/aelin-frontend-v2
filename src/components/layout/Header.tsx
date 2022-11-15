@@ -59,6 +59,10 @@ const InnerContainer = styled(BaseInnerContainer)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     ${BaseCardCSS}
     justify-content: space-between;
+    padding: 12px 15px 12px 15px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     padding: 12px 20px 12px 30px;
   }
 `
@@ -76,6 +80,14 @@ const HomeLink = styled.a`
 const Logo = styled(BootNodeLogo)`
   cursor: pointer;
   max-height: calc(var(--header-height) - 20px);
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    max-height: calc(var(--header-height) - 45px);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    max-height: calc(var(--header-height) - 20px);
+  }
 `
 
 const StartWrapper = styled.div`
@@ -113,7 +125,7 @@ const WalletDropdown = styled(HeaderDropdown)`
 const EndWrapper = styled.div`
   align-items: center;
   display: flex;
-  gap: 20px;
+  gap: 12px;
   height: 100%;
   justify-content: space-between;
   left: 0;
@@ -129,11 +141,19 @@ const EndWrapper = styled.div`
     top: auto;
     width: auto;
   }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    gap: 20px;
+  }
 `
 
 const TopMenu = styled(BaseTopMenu)`
   margin-left: auto;
-  margin-right: 30px;
+  margin-right: 10px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopWideStart}) {
+    margin-right: 30px;
+  }
 `
 
 const Item = styled.div`
@@ -176,6 +196,14 @@ const NetworkError = styled.p`
 const ButtonDropdown = styled(BaseButtonDropdown)`
   max-width: 100%;
   width: 250px;
+`
+
+export const CurrentChainShortName = styled.span`
+  display: none;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopWideStart}) {
+    display: block;
+  }
 `
 
 const EllipsisButton = styled.button`
@@ -261,7 +289,7 @@ export const Header: React.FC = (props) => {
                   ) : (
                     <>
                       {currentChain.icon}
-                      {currentChain.shortName}
+                      <CurrentChainShortName>{currentChain.shortName}</CurrentChainShortName>
                     </>
                   )}
                   <ChevronDown />
