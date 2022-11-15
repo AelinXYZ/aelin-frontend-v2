@@ -35,7 +35,7 @@ const columns = {
   compactWidths: '260px 84px 70px 1fr 80px',
 }
 
-const fullSizeRowStart = '1400px'
+const compactRowEnd = '1400px'
 
 const Wrapper = styled.div`
   margin: 20px 0 30px 0px;
@@ -101,7 +101,7 @@ const LabelsWrapper = styled.div`
 
 const TableHead = styled(BaseTableHead)`
   @media (min-width: ${({ theme }) =>
-    theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+    theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${compactRowEnd}) {
     grid-template-columns: ${columns.compactWidths};
   }}
 `
@@ -111,7 +111,7 @@ const SortableTH = styled(BaseSortableTH)<{ isSecondary?: boolean }>`
     isSecondary &&
     css`
       @media (min-width: ${({ theme }) =>
-          theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+          theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${compactRowEnd}) {
         display: none;
       }
     `}
@@ -119,20 +119,20 @@ const SortableTH = styled(BaseSortableTH)<{ isSecondary?: boolean }>`
 
 const RowLink = styled(BaseRowLink)`
   @media (min-width: ${({ theme }) =>
-      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${compactRowEnd}) {
     grid-template-columns: ${columns.compactWidths};
   }
 `
 
 const DynamicDeadline = styled(BaseDynamicDeadline)`
   @media (min-width: ${({ theme }) =>
-      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${fullSizeRowStart}) {
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${compactRowEnd}) {
     display: none;
   }
 `
 
 const InvestmentToken = styled(Cell)`
-  @media (max-width: ${fullSizeRowStart}) {
+  @media (max-width: ${compactRowEnd}) {
     display: none;
   }
 `
