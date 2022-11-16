@@ -1,23 +1,23 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { PoolCreated_OrderBy } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
 import { Verified } from '@/src/components/assets/Verified'
-import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
+import { DynamicDeadline as BaseDynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import {
   HideOnDesktop as BaseHideOnDesktop,
+  RowLink as BaseRowLink,
+  TableHead as BaseTableHead,
   Cell,
   HideOnMobile,
   HideOnMobileCell,
-  RowLink,
   TableBody,
-  TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { NameCell } from '@/src/components/table/NameCell'
-import { SortableTH } from '@/src/components/table/SortableTH'
+import { SortableTH as BaseSortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
@@ -25,6 +25,26 @@ import useAelinVouchedPools from '@/src/hooks/aelin/useAelinVouchedPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+
+const columns = {
+  alignment: {
+    investmentToken: 'center',
+    network: 'center',
+  },
+  largeWidths: '280px 84px 75px 0.8fr 1fr 150px 80px',
+  mediumWidths: '360px 84px 75px 0.8fr 1fr 80px',
+  smallWidths: '360px 84px 70px 1fr 80px',
+}
+
+const firstMediumRowStart = 900
+const secondMediumRowStart = 1200
+const largeRowStart = 1400
+
+enum CellPriority {
+  First,
+  Second,
+  Third,
+}
 
 const Wrapper = styled.div`
   margin: 20px 0 30px 0px;
@@ -88,6 +108,98 @@ const LabelsWrapper = styled.div`
   gap: 5px;
 `
 
+const TableHead = styled(BaseTableHead)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${firstMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${secondMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${largeRowStart}px) {
+    grid-template-columns: ${columns.largeWidths};
+  }
+`
+
+const SortableTH = styled(BaseSortableTH)<{ priority: CellPriority }>`
+  ${({ priority }) => {
+    switch (priority) {
+      case CellPriority.First:
+        return null
+      case CellPriority.Second:
+        return css`
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${firstMediumRowStart -
+            1}px) {
+            display: none;
+          }
+
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.desktopStart}) and (max-width: ${secondMediumRowStart - 1}px) {
+            display: none;
+          }
+        `
+      case CellPriority.Third:
+        return css`
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${largeRowStart -
+            1}px) {
+            display: none;
+          }
+        `
+    }
+  }}
+`
+
+const RowLink = styled(BaseRowLink)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${firstMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${secondMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${largeRowStart}px) {
+    grid-template-columns: ${columns.largeWidths};
+  }
+`
+
+const DynamicDeadline = styled(BaseDynamicDeadline)`
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${largeRowStart - 1}px) {
+    display: none;
+  }
+`
+
+const InvestmentToken = styled(Cell)`
+  @media (max-width: ${firstMediumRowStart - 1}px) {
+    display: none;
+  }
+
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.desktopStart}) and (max-width: ${secondMediumRowStart - 1}px) {
+    display: none;
+  }
+`
+
 export const VouchedPools: React.FC = () => {
   const { data, error } = useAelinVouchedPools({
     orderBy: PoolCreated_OrderBy.Timestamp,
@@ -95,36 +207,35 @@ export const VouchedPools: React.FC = () => {
 
   const { notifications } = useNotifications()
 
-  const columns = {
-    alignment: {
-      investmentToken: 'center',
-      network: 'center',
-    },
-    widths: '280px 84px 75px 0.8fr 1fr 150px 80px',
-  }
-
   const tableHeaderCells = [
     {
       title: 'Name',
+      priority: CellPriority.First,
     },
     {
       title: 'Sponsor',
+      priority: CellPriority.First,
     },
     {
       title: 'Network',
+      priority: CellPriority.First,
     },
     {
       title: 'Total deposited',
+      priority: CellPriority.First,
     },
     {
       title: 'Investment deadline',
+      priority: CellPriority.Third,
     },
     {
       title: 'Investment token',
       justifyContent: columns.alignment.investmentToken,
+      priority: CellPriority.Second,
     },
     {
       title: 'Stage',
+      priority: CellPriority.First,
     },
   ]
 
@@ -141,9 +252,9 @@ export const VouchedPools: React.FC = () => {
         <Verified />
       </Title>
       <Wrapper>
-        <TableHead columns={columns.widths}>
-          {tableHeaderCells.map(({ justifyContent, title }, index) => (
-            <SortableTH justifyContent={justifyContent} key={index}>
+        <TableHead columns={columns.largeWidths}>
+          {tableHeaderCells.map(({ justifyContent, priority, title }, index) => (
+            <SortableTH justifyContent={justifyContent} key={index} priority={priority}>
               {title}
             </SortableTH>
           ))}
@@ -166,7 +277,7 @@ export const VouchedPools: React.FC = () => {
 
             return (
               <RowLink
-                columns={columns.widths}
+                columns={columns.largeWidths}
                 href={`/pool/${getKeyChainByValue(network)}/${id}`}
                 key={id}
                 withGradient
@@ -275,14 +386,14 @@ export const VouchedPools: React.FC = () => {
                 >
                   {getFormattedDurationFromDateToNow(purchaseExpiry)}
                 </DynamicDeadline>
-                <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
+                <InvestmentToken justifyContent={columns.alignment.investmentToken}>
                   <TokenIcon
                     address={investmentToken}
                     network={network}
                     symbol={investmentTokenSymbol}
                     type="column"
                   />
-                </HideOnMobileCell>
+                </InvestmentToken>
                 <Stage stage={stage}> {poolStagesText[stage]}</Stage>
               </RowLink>
             )

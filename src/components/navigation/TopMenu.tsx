@@ -10,11 +10,10 @@ const Wrapper = styled.div`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     align-items: center;
     display: flex;
-    gap: 5px;
     justify-content: space-between;
   }
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopWideStart}) {
     gap: 10px;
   }
 `
@@ -23,7 +22,7 @@ const Item = styled(NavLink)`
   ${ButtonCSS}
   border-color: transparent;
   color: ${({ theme: { colors } }) => colors.textColor};
-  padding: 0 12px;
+  padding: 0 6px;
 
   &.active,
   &:hover {
@@ -34,6 +33,14 @@ const Item = styled(NavLink)`
     .fill {
       fill: ${({ theme }) => theme.buttonPrimary.borderColor};
     }
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    padding: 0 10px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopWideStart}) {
+    padding: 0 12px;
   }
 `
 

@@ -7,7 +7,7 @@ import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { ListWithFilters } from '@/src/components/pools/list/ListWithFilters'
 import { VouchedPools } from '@/src/components/pools/list/Vouched'
 import { ButtonType } from '@/src/components/pureStyledComponents/buttons/Button'
-import { SectionIntro } from '@/src/components/section/SectionIntro'
+import { SectionIntro as BaseSectionIntro } from '@/src/components/section/SectionIntro'
 import useAelinUser from '@/src/hooks/aelin/useAelinUser'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
@@ -16,6 +16,17 @@ const Container = styled.div`
   flex-direction: row;
   width: 100%;
   gap: 1.5rem;
+`
+
+const SectionIntro = styled(BaseSectionIntro)`
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0px;
+  justify-content: space-between;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    max-height: 260px;
+  }
 `
 
 const Home: NextPage = () => {

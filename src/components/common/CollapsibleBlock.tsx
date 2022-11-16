@@ -1,7 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
-
-import { isMobile } from 'react-device-detect'
 
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
 import { ArrowUp } from '@/src/components/assets/ArrowUp'
@@ -86,24 +84,46 @@ const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
   title,
   ...restProps
 }) => {
+  const [isCompact, setIsCompact] = useState(false)
   const [persistentState, setPersistentState] = useLocalStorage(
     `persistent-state_${name}`,
-    isMobile ? CollapsibleBlockStates.collapsed : CollapsibleBlockStates.expanded,
+    CollapsibleBlockStates.expanded,
   )
-  const [state, setState] = useState(
-    persistentState ? persistentState : CollapsibleBlockStates.expanded,
+  const [persistentStateCompact, setPersistentStateCompact] = useLocalStorage(
+    `persistent-state-compact_${name}`,
+    CollapsibleBlockStates.collapsed,
   )
-  const isCollapsed = useMemo(() => state === CollapsibleBlockStates.collapsed, [state])
+  const state = useMemo(
+    () => (isCompact ? persistentStateCompact : persistentState),
+    [isCompact, persistentState, persistentStateCompact],
+  )
+
   const isExpanded = useMemo(() => state === CollapsibleBlockStates.expanded, [state])
 
   const toggleCollapse = useCallback(() => {
-    const toggledState = isCollapsed
-      ? CollapsibleBlockStates.expanded
-      : CollapsibleBlockStates.collapsed
+    const toggledState = isExpanded
+      ? CollapsibleBlockStates.collapsed
+      : CollapsibleBlockStates.expanded
 
-    setState(toggledState)
-    setPersistentState(toggledState)
-  }, [isCollapsed, setPersistentState])
+    isCompact ? setPersistentStateCompact(toggledState) : setPersistentState(toggledState)
+  }, [isExpanded, isCompact, setPersistentState, setPersistentStateCompact])
+
+  useEffect(() => {
+    const onWindowResize = () => {
+      if (window.innerWidth < 1025) {
+        setIsCompact(true)
+      } else {
+        setIsCompact(false)
+      }
+    }
+
+    onWindowResize()
+    window.addEventListener('resize', onWindowResize)
+
+    return () => {
+      window.removeEventListener('resize', onWindowResize)
+    }
+  }, [])
 
   return (
     <Wrapper state={state} {...restProps}>

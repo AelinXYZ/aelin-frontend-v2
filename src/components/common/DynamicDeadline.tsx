@@ -20,6 +20,7 @@ export const DynamicDeadline: React.FC<DynamicDeadlineProps> = ({
   hideWhenDeadlineIsReached,
   start,
   width,
+  ...restProps
 }) => {
   const now = new Date()
 
@@ -50,7 +51,7 @@ export const DynamicDeadline: React.FC<DynamicDeadlineProps> = ({
   if (isEnded && hideWhenDeadlineIsReached) return <Value>Ended {children}</Value>
 
   return (
-    <Deadline progress={progress} width={width}>
+    <Deadline progress={progress} width={width} {...restProps}>
       <Value>{deadline ? (!isEnded ? `Ends ${children}` : 'Ended') : 'Not started yet'}</Value>
     </Deadline>
   )
