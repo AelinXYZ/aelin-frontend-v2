@@ -27,25 +27,25 @@ init({
   wallets: [injected, coinbase, walletConnect, gnosis, trezor, ledger],
   chains: [
     {
-      id: chainsConfig[Chains.mainnet].id,
+      id: chainsConfig[Chains.mainnet].chainIdHex,
       token: chainsConfig[Chains.mainnet].nativeCurrency.name,
       label: chainsConfig[Chains.mainnet].name,
       rpcUrl: chainsConfig[Chains.mainnet].rpcUrl,
     },
     {
-      id: chainsConfig[Chains.optimism].id,
+      id: chainsConfig[Chains.optimism].chainIdHex,
       token: chainsConfig[Chains.optimism].nativeCurrency.name,
       label: chainsConfig[Chains.optimism].name,
       rpcUrl: chainsConfig[Chains.optimism].rpcUrl,
     },
     {
-      id: chainsConfig[Chains.arbitrum].id,
+      id: chainsConfig[Chains.arbitrum].chainIdHex,
       token: chainsConfig[Chains.arbitrum].nativeCurrency.name,
       label: chainsConfig[Chains.arbitrum].name,
       rpcUrl: chainsConfig[Chains.arbitrum].rpcUrl,
     },
     {
-      id: chainsConfig[Chains.goerli].id,
+      id: chainsConfig[Chains.goerli].chainIdHex,
       token: chainsConfig[Chains.goerli].nativeCurrency.name,
       label: chainsConfig[Chains.goerli].name,
       rpcUrl: chainsConfig[Chains.goerli].rpcUrl,
