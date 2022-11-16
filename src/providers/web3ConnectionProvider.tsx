@@ -10,32 +10,24 @@ import {
   useState,
 } from 'react'
 
-import { getAddress } from '@ethersproject/address'
 import { JsonRpcProvider } from '@ethersproject/providers'
-import Onboard from 'bnc-onboard'
-import { API, Wallet } from 'bnc-onboard/dist/src/interfaces'
-import { Subscriptions } from 'bnc-onboard/dist/src/interfaces'
+import { ConnectOptions, WalletState } from '@web3-onboard/core'
+import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import nullthrows from 'nullthrows'
-import { toast } from 'react-hot-toast'
 
 import {
   Chains,
   ChainsValues,
-  chainsConfig,
   getChainsByEnvironmentArray,
   getNetworkConfig,
 } from '@/src/constants/chains'
 import { Provider, useWeb3Provider } from '@/src/hooks/useWeb3Provider'
-import { getDefaultNetwork, isSupportedNetworkId } from '@/src/utils/getDefaultNetwork'
+import { isSupportedNetworkId } from '@/src/utils/getDefaultNetwork'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { RequiredNonNull } from '@/types/utils'
+import '@/src/web3/onboard'
 
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
-
-// give onboard a window to update its internal state after certain actions
-const ONBOARD_STATE_DELAY = 100
-
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME
 
 // Default chain id from env var
 const INITIAL_APP_CHAIN_ID = Number(
@@ -47,86 +39,10 @@ nullthrows(
   'No default chain ID is defined or is not supported',
 )
 
-// @TODO: Default VALUES to connect to multiple wallets
-const APP_URL = 'Your app url here'
-const CONTACT_EMAIL = 'Your contact email here'
-
-export enum WalletType {
-  MetaMask = 'metamask',
-  Ledger = 'ledger',
-  //Portis = 'portis',
-  Trezor = 'trezor',
-  //Coinbase = 'coinbase',
-  Gnosis = 'gnosis',
-  WalletConnect = 'walletConnect',
-}
-
-// Instantiate WalletConnect
-let onboard: API | null = null
-function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
-  if (onboard !== null) {
-    return
-  }
-
-  const networkConfig = getNetworkConfig(appChainId)
-
-  window.onboard = Onboard({
-    networkId: appChainId,
-    networkName: networkConfig.name,
-    hideBranding: true,
-    darkMode: true, // @TODO: it is a default value
-    walletSelect: {
-      heading: 'Select a Wallet',
-      description: `Pick a wallet to connect to ${APP_NAME}`,
-      wallets: [
-        {
-          walletName: WalletType.MetaMask,
-          preferred: true,
-        },
-        {
-          walletName: WalletType.Ledger,
-          rpcUrl: networkConfig.rpcUrl,
-          preferred: true,
-        },
-        {
-          walletName: WalletType.Trezor,
-          appUrl: APP_URL,
-          email: CONTACT_EMAIL,
-          rpcUrl: networkConfig.rpcUrl,
-          preferred: true,
-        },
-        {
-          walletName: WalletType.Gnosis,
-          preferred: true,
-        },
-        {
-          walletName: WalletType.WalletConnect,
-          preferred: true,
-          rpc: Object.values(chainsConfig).reduce(
-            (rpc, val) => ({
-              ...rpc,
-              [val.chainId]: val.rpcUrl,
-            }),
-            {},
-          ),
-        },
-      ],
-    },
-    subscriptions: subscriptions,
-    walletCheck: [
-      { checkName: 'derivationPath' },
-      { checkName: 'accounts' },
-      { checkName: 'connect' },
-    ],
-  })
-
-  onboard = window.onboard
-}
-
 export type Web3Context = {
   address: string | null
   appChainId: ChainsValues
-  connectWallet: () => Promise<void>
+  connectWallet: () => void
   disconnectWallet: () => void
   isAppConnected: boolean
   isWalletConnected: boolean
@@ -134,7 +50,7 @@ export type Web3Context = {
   pushNetwork: (chainId?: ChainsValues) => Promise<void>
   readOnlyAppProvider: JsonRpcProvider
   setAppChainId: Dispatch<SetStateAction<ChainsValues>>
-  wallet: Wallet | null
+  wallet: WalletState | null
   walletChainId: number | null
   web3Provider: Provider | null
   getExplorerUrl: (hash: string) => string
@@ -148,19 +64,17 @@ type Props = {
 }
 
 export default function Web3ConnectionProvider({ children }: Props) {
+  const [{ wallet }, connect, disconnect] = useConnectWallet()
+  const [, setChain] = useSetChain()
   const [address, setAddress] = useState<string | null>(null)
   const [walletChainId, setWalletChainId] = useState<ChainsValues | null>(null)
-  const [tmpWallet, setTmpWallet] = useState<Wallet | null>(null)
-  const [wallet, setWallet] = useState<Wallet | null>(null)
   const [appChainId, setAppChainId] = useState<ChainsValues>(INITIAL_APP_CHAIN_ID)
   const supportedChainIds = getChainsByEnvironmentArray().map(({ chainId }) => chainId)
 
   const web3Provider = useWeb3Provider(wallet, walletChainId)
 
   const isWalletConnected = web3Provider != null && address != null
-
   const isAppConnected = walletChainId === appChainId && address !== null && web3Provider !== null
-
   const isWalletNetworkSupported = supportedChainIds.includes(walletChainId as any)
 
   const readOnlyAppProvider = useMemo(
@@ -168,21 +82,41 @@ export default function Web3ConnectionProvider({ children }: Props) {
     [appChainId],
   )
 
-  const _reconnectWallet = async (): Promise<void> => {
-    if (!onboard) {
-      console.warn('Unable to connect, onboard is not defined')
-      return
+  useEffect(() => {
+    if (wallet?.accounts?.[0]?.address) {
+      window.localStorage.setItem(STORAGE_CONNECTED_WALLET, wallet.label || '')
+      setAddress(wallet.accounts[0].address)
+    } else {
+      setAddress(null)
     }
-
-    const previouslySelectedWallet = window.localStorage.getItem(STORAGE_CONNECTED_WALLET)
-
-    if (previouslySelectedWallet) {
-      await onboard.walletSelect(previouslySelectedWallet)
+    if (wallet?.chains) {
+      const chainId = Number(wallet.chains[0].id)
+      if (isSupportedNetworkId(chainId as ChainsValues)) {
+        setWalletChainId(chainId as ChainsValues)
+        setAppChainId(chainId as ChainsValues)
+      } else {
+        setWalletChainId(chainId as ChainsValues)
+        console.error('Unsupported Network.')
+      }
     }
-  }
+  }, [wallet, setChain])
+
+  useEffect(() => {
+    let options: ConnectOptions = {}
+    const previousConnection = window.localStorage.getItem(STORAGE_CONNECTED_WALLET)
+    if (previousConnection) {
+      options = {
+        autoSelect: {
+          label: previousConnection,
+          disableModals: true,
+        },
+      }
+    }
+    connect(options)
+  }, [connect])
 
   const changeWallet = async (): Promise<void> => {
-    if (!onboard || !wallet || wallet.name !== 'MetaMask') {
+    if (!wallet || wallet.label !== 'MetaMask') {
       console.warn('Unable to change wallet')
       return
     }
@@ -202,93 +136,19 @@ export default function Web3ConnectionProvider({ children }: Props) {
     }
   }
 
-  useEffect(() => {
-    const init = async () => {
-      const chainId = await getDefaultNetwork(isWalletConnected)
-      setAppChainId(chainId)
+  const connectWallet = useCallback(() => {
+    return connect()
+  }, [connect])
+
+  const disconnectWallet = useCallback(() => {
+    if (wallet && disconnect) {
+      window.localStorage.removeItem(STORAGE_CONNECTED_WALLET)
+      disconnect(wallet)
     }
-
-    init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Instantiate Onboard
-  useEffect(() => {
-    initOnboard(appChainId, {
-      network: (network: number) => {
-        if (!isSupportedNetworkId(network as ChainsValues)) return null
-        setWalletChainId(network as ChainsValues)
-        setAppChainId(network as ChainsValues)
-      },
-      address: async (address: string | undefined) => {
-        toast.dismiss()
-        if (address) setAddress(getAddress(address))
-      },
-      wallet: async (wallet: Wallet) => {
-        if (wallet.name === undefined) {
-          setWallet(null)
-          setTmpWallet(null)
-        } else {
-          setTmpWallet(wallet)
-        }
-      },
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // recover previous connection
-  useEffect(() => {
-    setTimeout(async () => {
-      await _reconnectWallet()
-    }, ONBOARD_STATE_DELAY)
-  }, [])
-
-  // efectively connect wallet
-  useEffect(() => {
-    if (!address || !tmpWallet) {
-      return
-    }
-
-    const connectWallet = async () => {
-      const appIsReady = await onboard?.walletCheck()
-
-      const connectedWallet = tmpWallet
-      if (appIsReady && connectedWallet) {
-        window.localStorage.setItem(STORAGE_CONNECTED_WALLET, connectedWallet.name || '')
-        setWallet(connectedWallet)
-        setTmpWallet(null)
-      }
-    }
-
-    connectWallet()
-  }, [tmpWallet, address])
-
-  const disconnectWallet = () => {
-    if (!onboard) {
-      console.warn('Unable to connect, onboard is not defined')
-      return
-    }
-    setAddress(null)
-    onboard.walletReset()
-    window.localStorage.removeItem(STORAGE_CONNECTED_WALLET)
-  }
-
-  const connectWallet = async (): Promise<void> => {
-    if (!onboard) {
-      console.warn('Unable to connect, onboard is not defined')
-      return
-    }
-    if (await onboard.walletSelect()) {
-      const isWalletCheck = await onboard.walletCheck()
-      if (isWalletCheck) {
-        const { address } = onboard.getState()
-        setAddress(getAddress(address))
-      }
-    }
-  }
+  }, [wallet, disconnect])
 
   const pushNetwork = async (chainId?: ChainsValues): Promise<void> => {
-    if (!onboard || !wallet || wallet.name !== 'MetaMask') {
+    if (!wallet || wallet.label !== 'MetaMask') {
       chainId && setAppChainId(chainId)
       console.warn('Unable to push network')
       return

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 import ReactTooltip from 'react-tooltip'
@@ -7,22 +7,22 @@ import ReactTooltip from 'react-tooltip'
 import { OrderDirection, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
-import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
+import { DynamicDeadline as BaseDynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   HideOnDesktop as BaseHideOnDesktop,
+  RowLink as BaseRowLink,
+  TableHead as BaseTableHead,
   Cell,
   HideOnMobile,
   HideOnMobileCell,
   LoadingTableRow,
-  RowLink,
   TableBody,
-  TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
 import { NameCell } from '@/src/components/table/NameCell'
-import { SortableTH } from '@/src/components/table/SortableTH'
+import { SortableTH as BaseSortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { ChainsValues, getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
@@ -30,6 +30,26 @@ import useAelinPools from '@/src/hooks/aelin/useAelinPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+
+const columns = {
+  alignment: {
+    investmentToken: 'center',
+    network: 'center',
+  },
+  largeWidths: '275px 84px 75px 0.8fr 1fr 150px 80px',
+  mediumWidths: '360px 84px 75px 0.8fr 1fr 80px',
+  smallWidths: '360px 84px 70px 1fr 80px',
+}
+
+const firstMediumRowStart = 900
+const secondMediumRowStart = 1200
+const largeRowStart = 1400
+
+enum CellPriority {
+  First,
+  Second,
+  Third,
+}
 
 const Name = styled.span`
   overflow: hidden;
@@ -73,6 +93,98 @@ const LabelsWrapper = styled.div`
   gap: 5px;
 `
 
+const TableHead = styled(BaseTableHead)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${firstMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${secondMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${largeRowStart}px) {
+    grid-template-columns: ${columns.largeWidths};
+  }
+`
+
+const SortableTH = styled(BaseSortableTH)<{ priority: CellPriority }>`
+  ${({ priority }) => {
+    switch (priority) {
+      case CellPriority.First:
+        return null
+      case CellPriority.Second:
+        return css`
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${firstMediumRowStart -
+            1}px) {
+            display: none;
+          }
+
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.desktopStart}) and (max-width: ${secondMediumRowStart - 1}px) {
+            display: none;
+          }
+        `
+      case CellPriority.Third:
+        return css`
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${largeRowStart -
+            1}px) {
+            display: none;
+          }
+        `
+    }
+  }}
+`
+
+const RowLink = styled(BaseRowLink)`
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${firstMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${secondMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${largeRowStart}px) {
+    grid-template-columns: ${columns.largeWidths};
+  }
+`
+
+const DynamicDeadline = styled(BaseDynamicDeadline)`
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${largeRowStart - 1}px) {
+    display: none;
+  }
+`
+
+const InvestmentToken = styled(Cell)`
+  @media (max-width: ${firstMediumRowStart - 1}px) {
+    display: none;
+  }
+
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.desktopStart}) and (max-width: ${secondMediumRowStart - 1}px) {
+    display: none;
+  }
+`
+
 interface FiltersProps {
   network: ChainsValues | null
   variables: PoolsCreatedQueryVariables
@@ -90,42 +202,41 @@ export const List: React.FC<{
     throw error
   }
 
-  const columns = {
-    alignment: {
-      investmentToken: 'center',
-      network: 'center',
-    },
-    widths: '275px 84px 75px 0.8fr 1fr 150px 80px',
-  }
-
   const tableHeaderCells = [
     {
       title: 'Name',
       sortKey: PoolCreated_OrderBy.Name,
+      priority: CellPriority.First,
     },
     {
       title: 'Sponsor',
+      priority: CellPriority.First,
       // sortKey: PoolCreated_OrderBy.Sponsor,
     },
     {
       title: 'Network',
+      priority: CellPriority.First,
       // justifyContent: columns.alignment.network,
     },
     {
       title: 'Total deposited',
+      priority: CellPriority.First,
       // sortKey: PoolCreated_OrderBy.TotalAmountFunded,
     },
     {
       title: 'Investment deadline',
       sortKey: PoolCreated_OrderBy.PurchaseExpiry,
+      priority: CellPriority.Third,
     },
     {
       title: 'Investment token',
       justifyContent: columns.alignment.investmentToken,
+      priority: CellPriority.Second,
       // sortKey: PoolCreated_OrderBy.PurchaseToken,
     },
     {
       title: 'Stage',
+      priority: CellPriority.First,
       // sortKey: PoolCreated_OrderBy.PoolStatus,
     },
   ]
@@ -162,13 +273,14 @@ export const List: React.FC<{
       loader={<LoadingTableRow />}
       next={nextPage}
     >
-      <TableHead columns={columns.widths}>
-        {tableHeaderCells.map(({ justifyContent, sortKey, title }, index) => (
+      <TableHead columns={columns.largeWidths}>
+        {tableHeaderCells.map(({ justifyContent, priority, sortKey, title }, index) => (
           <SortableTH
             isActive={sortBy === sortKey}
             justifyContent={justifyContent}
             key={index}
             onClick={getSortableHandler(sortKey)}
+            priority={priority}
           >
             {title}
           </SortableTH>
@@ -195,7 +307,7 @@ export const List: React.FC<{
 
             return (
               <RowLink
-                columns={columns.widths}
+                columns={columns.largeWidths}
                 href={`/pool/${getKeyChainByValue(network)}/${id}`}
                 key={id}
               >
@@ -275,7 +387,6 @@ export const List: React.FC<{
                     <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
                   </LabelsWrapper>
                 </HideOnDesktop>
-
                 <ENSOrAddress address={sponsor} network={network} />
                 <HideOnMobileCell
                   justifyContent={columns.alignment.network}
@@ -305,14 +416,14 @@ export const List: React.FC<{
                 >
                   {getFormattedDurationFromDateToNow(purchaseExpiry)}
                 </DynamicDeadline>
-                <HideOnMobileCell justifyContent={columns.alignment.investmentToken}>
+                <InvestmentToken justifyContent={columns.alignment.investmentToken}>
                   <TokenIcon
                     address={investmentToken}
                     network={network}
                     symbol={investmentTokenSymbol}
                     type="column"
                   />
-                </HideOnMobileCell>
+                </InvestmentToken>
                 <Stage stage={stage}> {poolStagesText[stage]}</Stage>
               </RowLink>
             )
