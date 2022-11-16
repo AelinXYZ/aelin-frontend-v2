@@ -22,7 +22,6 @@ import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { Chains } from '@/src/constants/chains'
 import {
-  BASE_DECIMALS,
   DISPLAY_DECIMALS,
   OPENSEA_BASE_URL,
   QUIXOTIC_BASE_URL,
