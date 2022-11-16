@@ -31,11 +31,20 @@ const columns = {
     investmentToken: 'center',
     network: 'center',
   },
-  widths: '280px 84px 75px 0.8fr 1fr 150px 80px',
-  compactWidths: '260px 84px 70px 1fr 80px',
+  largeWidths: '280px 84px 75px 0.8fr 1fr 150px 80px',
+  mediumWidths: '280px 84px 75px 0.8fr 1fr 80px',
+  smallWidths: '260px 84px 70px 1fr 80px',
 }
 
-const compactRowEnd = '1400px'
+const firstMediumRowStart = 900
+const secondMediumRowStart = 1200
+const largeRowStart = 1400
+
+enum CellPriority {
+  First,
+  Second,
+  Third,
+}
 
 const Wrapper = styled.div`
   margin: 20px 0 30px 0px;
@@ -100,39 +109,93 @@ const LabelsWrapper = styled.div`
 `
 
 const TableHead = styled(BaseTableHead)`
-  @media (min-width: ${({ theme }) =>
-    theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${compactRowEnd}) {
-    grid-template-columns: ${columns.compactWidths};
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${firstMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${secondMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${largeRowStart}px) {
+    grid-template-columns: ${columns.largeWidths};
+  }
+`
+
+const SortableTH = styled(BaseSortableTH)<{ priority: CellPriority }>`
+  ${({ priority }) => {
+    switch (priority) {
+      case CellPriority.First:
+        return null
+      case CellPriority.Second:
+        return css`
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${firstMediumRowStart -
+            1}px) {
+            display: none;
+          }
+
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.desktopStart}) and (max-width: ${secondMediumRowStart - 1}px) {
+            display: none;
+          }
+        `
+      case CellPriority.Third:
+        return css`
+          @media (min-width: ${({ theme }) =>
+              theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${largeRowStart -
+            1}px) {
+            display: none;
+          }
+        `
+    }
   }}
 `
 
-const SortableTH = styled(BaseSortableTH)<{ isSecondary?: boolean }>`
-  ${({ isSecondary }) =>
-    isSecondary &&
-    css`
-      @media (min-width: ${({ theme }) =>
-          theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${compactRowEnd}) {
-        display: none;
-      }
-    `}
-`
-
 const RowLink = styled(BaseRowLink)`
-  @media (min-width: ${({ theme }) =>
-      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${compactRowEnd}) {
-    grid-template-columns: ${columns.compactWidths};
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${firstMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    grid-template-columns: ${columns.smallWidths};
+  }
+
+  @media (min-width: ${secondMediumRowStart}px) {
+    grid-template-columns: ${columns.mediumWidths};
+  }
+
+  @media (min-width: ${largeRowStart}px) {
+    grid-template-columns: ${columns.largeWidths};
   }
 `
 
 const DynamicDeadline = styled(BaseDynamicDeadline)`
   @media (min-width: ${({ theme }) =>
-      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${compactRowEnd}) {
+      theme.themeBreakPoints.tabletLandscapeStart}) and (max-width: ${largeRowStart - 1}px) {
     display: none;
   }
 `
 
 const InvestmentToken = styled(Cell)`
-  @media (max-width: ${compactRowEnd}) {
+  @media (max-width: ${firstMediumRowStart - 1}px) {
+    display: none;
+  }
+
+  @media (min-width: ${({ theme }) =>
+      theme.themeBreakPoints.desktopStart}) and (max-width: ${secondMediumRowStart - 1}px) {
     display: none;
   }
 `
@@ -147,27 +210,32 @@ export const VouchedPools: React.FC = () => {
   const tableHeaderCells = [
     {
       title: 'Name',
+      priority: CellPriority.First,
     },
     {
       title: 'Sponsor',
+      priority: CellPriority.First,
     },
     {
       title: 'Network',
+      priority: CellPriority.First,
     },
     {
       title: 'Total deposited',
+      priority: CellPriority.First,
     },
     {
       title: 'Investment deadline',
-      isSecondary: true,
+      priority: CellPriority.Third,
     },
     {
       title: 'Investment token',
       justifyContent: columns.alignment.investmentToken,
-      isSecondary: true,
+      priority: CellPriority.Second,
     },
     {
       title: 'Stage',
+      priority: CellPriority.First,
     },
   ]
 
@@ -184,9 +252,9 @@ export const VouchedPools: React.FC = () => {
         <Verified />
       </Title>
       <Wrapper>
-        <TableHead columns={columns.widths}>
-          {tableHeaderCells.map(({ isSecondary, justifyContent, title }, index) => (
-            <SortableTH isSecondary={isSecondary} justifyContent={justifyContent} key={index}>
+        <TableHead columns={columns.largeWidths}>
+          {tableHeaderCells.map(({ justifyContent, priority, title }, index) => (
+            <SortableTH justifyContent={justifyContent} key={index} priority={priority}>
               {title}
             </SortableTH>
           ))}
@@ -209,7 +277,7 @@ export const VouchedPools: React.FC = () => {
 
             return (
               <RowLink
-                columns={columns.widths}
+                columns={columns.largeWidths}
                 href={`/pool/${getKeyChainByValue(network)}/${id}`}
                 key={id}
                 withGradient
