@@ -36,7 +36,7 @@ const columns = {
     investmentToken: 'center',
     network: 'center',
   },
-  largeWidths: '280px 84px 75px 0.8fr 1fr 150px 80px',
+  largeWidths: '275px 84px 75px 0.8fr 1fr 150px 80px',
   mediumWidths: '360px 84px 75px 0.8fr 1fr 80px',
   smallWidths: '360px 84px 70px 1fr 80px',
 }
