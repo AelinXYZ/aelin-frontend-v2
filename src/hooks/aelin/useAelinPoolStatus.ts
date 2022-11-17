@@ -721,7 +721,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool, _isUpfrontDeal?: boole
             ? isAfter(now, pool.purchaseExpiry) && !pool.dealAddress
             : false,
         isDone: pool ? !!pool.dealAddress : false,
-        value: pool?.deal ? formatDate(pool.deal.createdAt, DATE_DETAILED) : '--',
+        value: pool?.deal ? formatDate(pool.deal.createdAt, DATE_DETAILED) : 'Not created yet',
       },
       [PoolTimelineState.DealDeadline]: {
         isDefined: !isUpfrontDeal,
