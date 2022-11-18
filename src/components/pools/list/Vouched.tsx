@@ -27,6 +27,7 @@ import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
+import usePrevious from '@/src/hooks/common/usePrevious'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -249,12 +250,15 @@ const tableHeaderCells = [
   },
 ]
 
+const aelinVoucherENS = process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string
+
 export const VouchedPools: React.FC = () => {
   const { data, error } = useAelinVouchedPools()
   const { notifications } = useNotifications()
   const router = useRouter()
   const [voucherAddress, setVoucherAddress] = useState<string>()
   const searchRef = useRef<HTMLInputElement | null>(null)
+  const prevVoucherAddress = usePrevious(voucherAddress)
 
   const {
     query: { voucher },
@@ -266,23 +270,24 @@ export const VouchedPools: React.FC = () => {
   )
 
   const handleChangeVoucher = (e: ChangeEvent<HTMLInputElement>) => {
-    debouncedChangeHandler(
-      e.target.value || (process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string),
-    )
+    if (e.target.value) {
+      debouncedChangeHandler(e.target.value)
+    }
   }
 
   const handleSearchOnBlur = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.value) {
       const input = searchRef.current as HTMLInputElement
-      input.value = voucher as string
+      input.value = aelinVoucherENS
+      router.push(`/?voucher=${aelinVoucherENS}`, undefined, { shallow: true })
     }
   }
 
   useEffect(() => {
-    if (voucherAddress) {
+    if (voucherAddress && voucherAddress !== prevVoucherAddress) {
       router.push(`/?voucher=${voucherAddress}`, undefined, { shallow: true })
     }
-  }, [voucherAddress, router])
+  }, [voucherAddress, prevVoucherAddress, router])
 
   useEffect(() => {
     if (!!voucher && searchRef.current) {
@@ -294,7 +299,7 @@ export const VouchedPools: React.FC = () => {
   useEffect(() => {
     if (searchRef.current && !(searchRef.current as HTMLInputElement).value) {
       const input = searchRef.current as HTMLInputElement
-      input.value = process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string
+      input.value = aelinVoucherENS
     }
   }, [searchRef])
 
