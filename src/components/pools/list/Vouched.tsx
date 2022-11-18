@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components'
 
-import { PoolCreated_OrderBy } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
 import { Verified } from '@/src/components/assets/Verified'
@@ -21,7 +20,7 @@ import { SortableTH as BaseSortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
 import { poolStagesText } from '@/src/constants/pool'
-import useAelinVouchedPools from '@/src/hooks/aelin/useAelinVouchedPools'
+import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -201,9 +200,7 @@ const InvestmentToken = styled(Cell)`
 `
 
 export const VouchedPools: React.FC = () => {
-  const { data, error } = useAelinVouchedPools({
-    orderBy: PoolCreated_OrderBy.Timestamp,
-  })
+  const { data, error } = useAelinVouchedPools()
 
   const { notifications } = useNotifications()
 

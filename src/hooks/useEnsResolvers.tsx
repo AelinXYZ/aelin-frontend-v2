@@ -29,7 +29,7 @@ export const useEnsLookUpAddress = (address: string) => {
   }
 }
 
-const isValidENSName = (str: string) => str.length > 3 && str.includes('.')
+export const isValidENSName = (str: string) => str.length > 3 && str.includes('.')
 
 // get address by ens name
 export const ensResolver = async (name: string) => {
