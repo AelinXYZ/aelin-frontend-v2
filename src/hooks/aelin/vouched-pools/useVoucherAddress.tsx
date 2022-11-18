@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { isValidAddress } from 'ethereumjs-util'
 
 import { ensResolver, isValidENSName } from '../../useEnsResolvers'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
 
 export default function useVoucherAddress() {
   const {
@@ -21,7 +22,7 @@ export default function useVoucherAddress() {
     } else if (isValidENSName(voucher)) {
       ensResolver(voucher).then(setVoucherAddress)
     } else {
-      setVoucherAddress(aelinVouchAddress)
+      setVoucherAddress(ZERO_ADDRESS)
     }
   }, [voucher, voucherAddress, aelinVouchAddress])
 

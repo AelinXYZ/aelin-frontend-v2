@@ -280,6 +280,7 @@ export const VouchedPools: React.FC = () => {
       const input = searchRef.current as HTMLInputElement
       input.value = aelinVoucherENS
       router.push(`/?voucher=${aelinVoucherENS}`, undefined, { shallow: true })
+      setVoucherAddress(aelinVoucherENS)
     }
   }
 
