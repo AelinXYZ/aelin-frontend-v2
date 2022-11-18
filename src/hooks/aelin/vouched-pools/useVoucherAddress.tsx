@@ -11,18 +11,29 @@ export default function useVoucherAddress() {
   } = useRouter()
 
   const [voucherAddress, setVoucherAddress] = useState<string | null>(null)
+  const aelinVouchAddress = useAelinVouchAddress()
 
   useEffect(() => {
     if (!voucher || typeof voucher !== 'string') {
-      setVoucherAddress(process.env.NEXT_PUBLIC_AELIN_VOUCHER_ADDRESS as string)
+      setVoucherAddress(aelinVouchAddress)
     } else if (isValidAddress(voucher)) {
       setVoucherAddress(voucher)
     } else if (isValidENSName(voucher)) {
       ensResolver(voucher).then(setVoucherAddress)
     } else {
-      setVoucherAddress(process.env.NEXT_PUBLIC_AELIN_VOUCHER_ADDRESS as string)
+      setVoucherAddress(aelinVouchAddress)
     }
-  }, [voucher, voucherAddress])
+  }, [voucher, voucherAddress, aelinVouchAddress])
+
+  return voucherAddress
+}
+
+export function useAelinVouchAddress() {
+  const [voucherAddress, setVoucherAddress] = useState<string | null>(null)
+
+  useEffect(() => {
+    ensResolver(process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string).then(setVoucherAddress)
+  }, [])
 
   return voucherAddress
 }
