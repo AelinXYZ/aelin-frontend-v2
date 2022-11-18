@@ -1,11 +1,16 @@
 import useAelinUser from '../useAelinUser'
-import useVoucherAddress from './useVoucherAddress'
+import useVoucherAddress, { useAelinVouchAddress } from './useVoucherAddress'
 import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
 import useHardCodedVouchedPools from '@/src/hooks/aelin/useAelinHardCodedVouchedPools'
 
 export default function useAelinVouchedPools() {
   const voucherAddress = useVoucherAddress()
   const { data: user, error, isValidating } = useAelinUser(voucherAddress)
+  const aelinVouchAddress = useAelinVouchAddress()
+
+  const isAelinVouchAddress =
+    !voucherAddress ||
+    (!!voucherAddress && !!aelinVouchAddress && voucherAddress === aelinVouchAddress)
 
   const {
     data: hardCodedVouchedPools,
@@ -19,7 +24,7 @@ export default function useAelinVouchedPools() {
   const vouchedPools = user?.poolsVouched ?? []
 
   return {
-    data: [...(hardCodedVouchedPools || []), ...vouchedPools],
+    data: [...(isAelinVouchAddress ? hardCodedVouchedPools ?? [] : []), ...vouchedPools],
     error: error || hdError,
     isValidating: isValidating || isHdValidating,
   }
