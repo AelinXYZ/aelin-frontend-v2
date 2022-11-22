@@ -21,7 +21,6 @@ const Content = styled.div`
 interface Props extends CellProps {
   address: string
   network?: ChainsValues
-  isCompact?: boolean
 }
 
 const ENSOrAddress: React.FC<Props> = ({ address, network }) => {
