@@ -1,3 +1,5 @@
+import styled from 'styled-components'
+
 import { isAddress } from '@ethersproject/address'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
@@ -10,9 +12,16 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { shortenAddress } from '@/src/utils/string'
 
+const Content = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
 interface Props extends CellProps {
   address: string
   network?: ChainsValues
+  isCompact?: boolean
 }
 
 const ENSOrAddress: React.FC<Props> = ({ address, network }) => {
@@ -21,7 +30,7 @@ const ENSOrAddress: React.FC<Props> = ({ address, network }) => {
 
   return data ? (
     <Wrapper href={getExplorerUrl(address, network ?? appChainId)}>
-      {isAddress(data) ? shortenAddress(data) : data}
+      <Content>{isAddress(data) ? shortenAddress(data) : data}</Content>
     </Wrapper>
   ) : null
 }
