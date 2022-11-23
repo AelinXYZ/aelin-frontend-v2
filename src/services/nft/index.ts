@@ -91,6 +91,19 @@ const parseStratosCollectionResponse = async (
   }
 }
 
+const getAlchemyNetworkId = (chainId: ChainsValues): Network => {
+  switch (chainId) {
+    case Chains.mainnet:
+      return Network.ETH_MAINNET
+    case Chains.arbitrum:
+      return Network.ARB_MAINNET
+    case Chains.polygon:
+      return Network.MATIC_MAINNET
+    default:
+      throw new Error('Unsupported network.', 400)
+  }
+}
+
 export const getNftOwnedByAddress = async (
   chainId: ChainsValues,
   collectionAddress: string,
@@ -99,12 +112,7 @@ export const getNftOwnedByAddress = async (
   if (chainId === Chains.mainnet || chainId === Chains.arbitrum || chainId === Chains.polygon) {
     const settings = {
       apiKey: getTokenProvider(chainId),
-      network:
-        chainId === Chains.mainnet
-          ? Network.ETH_MAINNET
-          : chainId === Chains.arbitrum
-          ? Network.ARB_MAINNET
-          : Network.MATIC_MAINNET,
+      network: getAlchemyNetworkId(chainId),
       maxRetries: 10,
     }
 

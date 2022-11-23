@@ -10,6 +10,7 @@ import OpenSeaMainnetResponse from '../data/open-sea-mainnet-response.json' asse
 import OpenSeaPolygonResponse from '../data/open-sea-polygon-response.json' assert { type: 'json' }
 import QuixoticResponse from '../data/quixotic-response.json' assert { type: 'json' }
 import StratosResponse from '../data/stratos-response.json' assert { type: 'json' }
+import { Chains } from '@/src/constants/chains'
 
 detenv.config({ path: '.env.local' })
 
@@ -23,7 +24,6 @@ type OpenSeaMainnetCollection = {
     isVerified: boolean
     logo: string
     name: string
-    nativePaymentAsset: { symbol: string }
     slug: string
     statsV2: {
       floorPrice: { eth: string } | null
@@ -84,7 +84,6 @@ type NFTCollections = {
   totalSupply: number
   floorPrice: number | null
   totalVolume: number | null
-  paymentSymbol: string | null
   network: number
 }
 
@@ -143,7 +142,6 @@ const OpenSeaMainnetMetadataCollector = async () => {
           isVerified,
           logo: imageUrl,
           name,
-          nativePaymentAsset,
           slug,
           statsV2: { floorPrice, numOwners, totalSupply, totalVolume },
         } = collection.node
@@ -178,8 +176,7 @@ const OpenSeaMainnetMetadataCollector = async () => {
             contractType,
             floorPrice: floorPrice !== null ? Number(floorPrice.eth) : null,
             totalVolume: totalVolume !== null ? Number(totalVolume.unit) : null,
-            paymentSymbol: nativePaymentAsset !== null ? nativePaymentAsset.symbol : null,
-            network: 1,
+            network: Chains.mainnet,
             updatedAt: Date.now(),
           }
         })
@@ -248,8 +245,7 @@ const OpenSeaPolygonMetadataCollector = async () => {
             contractType,
             floorPrice: floorPrice !== null ? Number(floorPrice.eth) : null,
             totalVolume: volume !== null ? Number(volume.unit) : null,
-            paymentSymbol: 'MATIC',
-            network: 137,
+            network: Chains.polygon,
             updatedAt: Date.now(),
           }
         })
@@ -316,7 +312,7 @@ const QuixoticMetadataCollector = async () => {
         totalVolume: formatGwei(totalVolume),
         contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
         paymentSymbol: 'ETH',
-        network: 10,
+        network: Chains.optimism,
         updatedAt: Date.now(),
       }
     }),
@@ -374,7 +370,7 @@ const StratosMetadataCollector = async () => {
         totalVolume: formatGwei(totalVolume),
         contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
         paymentSymbol: 'ETH',
-        network: 42161,
+        network: Chains.arbitrum,
         updatedAt: Date.now(),
       }
     }),
