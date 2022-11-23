@@ -1,0 +1,18 @@
+[
+  {
+    "id": 0,
+    "address": "0xc74ef9bd97e2606f138ead09091e488665caec2e",
+    "name": "Secret Society Pixel Whales",
+    "slug": "secret-society-pixel-whales",
+    "imageUrl": "https://i.seadn.io/gcs/files/fa8cb69c20310fa5a1561eb04f6e68d7.png?w=500&auto=format",
+    "isVerified": false,
+    "numOwners": 775,
+    "totalSupply": 10000,
+    "contractType": "erc721",
+    "floorPrice": 0.004,
+    "totalVolume": 2.484209999999997,
+    "paymentSymbol": "MATIC",
+    "network": 137,
+    "updatedAt": 1669234571787
+  }
+]

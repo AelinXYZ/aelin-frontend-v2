@@ -24,7 +24,11 @@ const useTokenListQuery = (appChainId: ChainsValues) => {
   return useSWR(['token-list', appChainId], async () => {
     const response: TokenListResponse = await getTokenList(appChainId)
 
-    if (appChainId === Chains.optimism || appChainId === Chains.arbitrum) {
+    if (
+      appChainId === Chains.optimism ||
+      appChainId === Chains.arbitrum ||
+      appChainId === Chains.polygon
+    ) {
       return response.tokens.filter(
         ({ chainId }: { chainId: number }) => Number(chainId) === appChainId,
       )

@@ -11,7 +11,7 @@ import NftMedia from '../actions/Invest/nft/NftMedia'
 import { Value } from '../common/InfoCell'
 import { AllocationErc1155 } from './NftCollectionsTable'
 import { Chains } from '@/src/constants/chains'
-import { OPENSEA_BASE_URL, QUIXOTIC_BASE_URL, STRATOS_BASE_URL } from '@/src/constants/misc'
+import { OPEN_SEA_BASE_URL, QUIXOTIC_BASE_URL, STRATOS_BASE_URL } from '@/src/constants/misc'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
 import { strToKebabCase } from '@/src/utils/string'
 
@@ -83,7 +83,7 @@ const CollectionRulesRow = ({
       return STRATOS_BASE_URL + 'collection/' + collectionAddress
     }
 
-    return OPENSEA_BASE_URL + 'collection/' + strToKebabCase(name)
+    return OPEN_SEA_BASE_URL + 'collection/' + strToKebabCase(name)
   }
 
   const values = useMemo(() => {
