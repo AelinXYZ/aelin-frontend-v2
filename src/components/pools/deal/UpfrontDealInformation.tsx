@@ -36,7 +36,7 @@ export const UpfrontDealInformation: React.FC<{
   poolHelpers: Funding
 }> = ({ pool, poolHelpers }) => {
   const { chainId, sponsorFee, upfrontDeal } = pool
-  console.log('pool: ', pool)
+
   if (!upfrontDeal) {
     throw new Error('UpfrontDeal not found.')
   }
@@ -142,10 +142,11 @@ export const UpfrontDealInformation: React.FC<{
           <Value>Sponsor Fee: {sponsorFee.formatted}</Value>
           <Value>Aelin protocol fee: 2%</Value>
         </InfoCell>
-        {!!pool.purchaseMinimumAmount && (
-          <InfoCell title="Purchase Minimum Amount" tooltip="?">
+        {!!pool.minimumPurchaseAmount && (
+          // TODO: Add tooltip text here
+          <InfoCell title="Minimum Purchase Amount" tooltip="?">
             <Value>
-              {pool.purchaseMinimumAmount.formatted} {pool.investmentTokenSymbol}
+              {pool.minimumPurchaseAmount.formatted} {pool.investmentTokenSymbol}
             </Value>
           </InfoCell>
         )}

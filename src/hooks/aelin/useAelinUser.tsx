@@ -6,9 +6,8 @@ import {
   getParsedDealAcceptedsHistory,
 } from './history/useAelinDealsAccepted'
 import { ParsedAelinPool, getParsedPool } from './useAelinPool'
-import { getPurchaseMinimumAmount } from './useGetPurchaseMinimumAmount'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
+import { fetchMinimumPurchaseAmount } from '@/src/hooks/aelin/useGetMinimumPurchaseAmount'
 import { USER_BY_ID_QUERY_NAME } from '@/src/queries/pools/user'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 
@@ -30,7 +29,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
 
   const chainIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
 
-  const purchaseMinimumAmounts = await getPurchaseMinimumAmount()
+  const minimumPurchaseAmounts = await fetchMinimumPurchaseAmount()
 
   const queryPromises = (): Promise<any>[] =>
     chainIds.map((chainId: ChainsValues) =>
@@ -71,7 +70,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                purchaseMinimumAmount: purchaseMinimumAmounts[chainId][pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts[chainId][pool.id],
               }),
             ),
             poolsAsHolder: user.poolsAsHolder.map((pool) =>
@@ -80,7 +79,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                purchaseMinimumAmount: purchaseMinimumAmounts[chainId][pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts[chainId][pool.id],
               }),
             ),
             poolsSponsored: user.poolsSponsored.map((pool) =>
@@ -89,7 +88,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                purchaseMinimumAmount: purchaseMinimumAmounts[chainId][pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts[chainId][pool.id],
               }),
             ),
             dealsAccepted: user.dealsAccepted.map(
@@ -108,7 +107,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                purchaseMinimumAmount: purchaseMinimumAmounts[chainId][pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts[chainId][pool.id],
               }),
             ),
           }

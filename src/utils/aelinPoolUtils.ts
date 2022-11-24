@@ -470,13 +470,12 @@ export const getParsedNftCollectionRules = (
   return nftCollectionRules
 }
 
-export const getPurchaseMinimumAmount = (
-  purchaseMinimumAmount: BigNumberish,
-
+export const getMinimumPurchaseAmount = (
+  minimumPurchaseAmount: BigNumberish,
   purchaseTokenDecimals: number,
 ) => {
   const purchaseMinimumInWei = new Wei(
-    purchaseMinimumAmount.toString(),
+    minimumPurchaseAmount.toString(),
     purchaseTokenDecimals,
     true,
   )
@@ -484,7 +483,7 @@ export const getPurchaseMinimumAmount = (
   return {
     raw: purchaseMinimumInWei.toBN(),
     formatted: formatToken(
-      purchaseMinimumAmount.toString(),
+      minimumPurchaseAmount.toString(),
       purchaseTokenDecimals,
       DISPLAY_DECIMALS,
     ),
