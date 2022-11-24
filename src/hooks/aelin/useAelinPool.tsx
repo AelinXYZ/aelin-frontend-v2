@@ -1,9 +1,11 @@
 import { useMemo } from 'react'
 
+import { BigNumberish } from '@ethersproject/bignumber'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
 
 import useAelinPoolAccess from './useAelinPoolAccess'
+import useGetPurchaseMinimumAmount from './useGetPurchaseMinimumAmount'
 import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -21,6 +23,7 @@ import {
   getPoolCreatedDate,
   getProRataRedemptionDates,
   getPurchaseExpiry,
+  getPurchaseMinimumAmount,
   getPurchaseTokenCap,
   getSponsorFee,
   getTokensSold,
@@ -65,6 +68,7 @@ export type ParsedAelinPool = {
   totalUsersInvested: number
   hasNftList: boolean
   nftCollectionRules: ParsedNftCollectionRules[]
+  purchaseMinimumAmount?: DetailedNumber
   upfrontDeal?: {
     address: string
     name: string
@@ -167,6 +171,7 @@ export const getParsedPool = ({
   hasAllowList,
   pool,
   poolAddress,
+  purchaseMinimumAmount,
   purchaseTokenDecimals,
 }: {
   chainId: ChainsValues
@@ -174,6 +179,7 @@ export const getParsedPool = ({
   poolAddress: string
   purchaseTokenDecimals: number
   hasAllowList?: boolean
+  purchaseMinimumAmount?: BigNumberish
 }) => {
   const res: ParsedAelinPool = {
     chainId,
@@ -214,6 +220,9 @@ export const getParsedPool = ({
     totalUsersInvested: pool.totalUsersInvested,
     hasNftList: pool.hasNftList,
     nftCollectionRules: parseNftCollectionRules(pool),
+    purchaseMinimumAmount: purchaseMinimumAmount
+      ? getPurchaseMinimumAmount(purchaseMinimumAmount, purchaseTokenDecimals)
+      : undefined,
   }
 
   const dealDetails = pool.deal
@@ -301,6 +310,7 @@ export default function useAelinPool(
   )
 
   const [hasAllowList] = useAelinPoolAccess(poolAddress, chainId, false)
+  const { data: purchaseMinimumAmounts } = useGetPurchaseMinimumAmount()
 
   const refetch = () => {
     poolCreatedMutate()
@@ -312,6 +322,7 @@ export default function useAelinPool(
 
   const pool = poolCreatedData.poolCreated as PoolCreated
   const purchaseTokenDecimals = pool.purchaseTokenDecimals
+  const purchaseMinimumAmount = purchaseMinimumAmounts[chainId][pool.id]
 
   // prevent TS error
   if (!purchaseTokenDecimals) {
@@ -325,10 +336,11 @@ export default function useAelinPool(
       poolAddress,
       chainId,
       hasAllowList,
+      purchaseMinimumAmount,
     })
 
     return poolInfo
-  }, [pool, purchaseTokenDecimals, poolAddress, chainId, hasAllowList])
+  }, [pool, purchaseTokenDecimals, poolAddress, chainId, hasAllowList, purchaseMinimumAmount])
 
   return {
     refetch,

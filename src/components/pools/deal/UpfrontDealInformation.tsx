@@ -6,6 +6,7 @@ import { TokenIcon } from '../common/TokenIcon'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import ExternalLink from '@/src/components/common/ExternalLink'
 import { InfoCell, Value } from '@/src/components/pools/common/InfoCell'
+import { ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { DATE_DETAILED, formatDate } from '@/src/utils/date'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
@@ -35,6 +36,7 @@ export const UpfrontDealInformation: React.FC<{
   poolHelpers: Funding
 }> = ({ pool, poolHelpers }) => {
   const { chainId, sponsorFee, upfrontDeal } = pool
+  console.log('pool: ', pool)
   if (!upfrontDeal) {
     throw new Error('UpfrontDeal not found.')
   }
@@ -140,6 +142,13 @@ export const UpfrontDealInformation: React.FC<{
           <Value>Sponsor Fee: {sponsorFee.formatted}</Value>
           <Value>Aelin protocol fee: 2%</Value>
         </InfoCell>
+        {!!pool.purchaseMinimumAmount && (
+          <InfoCell title="Purchase Minimum Amount" tooltip="?">
+            <Value>
+              {pool.purchaseMinimumAmount.formatted} {pool.investmentTokenSymbol}
+            </Value>
+          </InfoCell>
+        )}
       </Column>
     </>
   )

@@ -2,8 +2,10 @@ import { orderBy } from 'lodash'
 import useSWR from 'swr'
 
 import { ParsedAelinPool, getParsedPool } from '../aelin/useAelinPool'
+import { getPurchaseMinimumAmount } from './useGetPurchaseMinimumAmount'
 import { InputMaybe, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { ZERO_BN } from '@/src/constants/misc'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
@@ -41,6 +43,8 @@ const useAelinVouchedPools = (variables: Props) => {
       const response = await fetch(VOUCHED_POOLS_ENDPOINT)
       const vouchedPools = await response.json()
 
+      const purchaseMinimumAmounts = await getPurchaseMinimumAmount()
+
       const queryPromises = (): Promise<any>[] =>
         chainIds.map(async (chainId: ChainsValues) => {
           try {
@@ -54,11 +58,14 @@ const useAelinVouchedPools = (variables: Props) => {
             })
 
             return poolCreateds.map((pool) => {
+              const purchaseMinimumAmount = purchaseMinimumAmounts[chainId][pool.id] ?? ZERO_BN
+
               return getParsedPool({
                 chainId,
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+                purchaseMinimumAmount,
               })
             })
           } catch (err) {

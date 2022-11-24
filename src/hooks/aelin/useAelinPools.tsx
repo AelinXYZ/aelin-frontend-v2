@@ -4,8 +4,10 @@ import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
 import { ensResolver } from '../useEnsResolvers'
+import { getPurchaseMinimumAmount } from './useGetPurchaseMinimumAmount'
 import { InputMaybe, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { ZERO_BN } from '@/src/constants/misc'
 import { POOLS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
@@ -46,6 +48,8 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
     _variables.where.filter_contains = await ensResolver(_variables.where.filter_contains)
   }
 
+  const purchaseMinimumAmounts = await getPurchaseMinimumAmount()
+
   // Inject chainId in each pool when promise resolve
   const queryPromises = (): Promise<any>[] =>
     networks.map(async (chainId: ChainsValues) => {
@@ -56,12 +60,15 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
           if (isTestPool(pool.name) && isProd) return accum
           if (isHiddenPool(pool.id)) return accum
 
+          const purchaseMinimumAmount = purchaseMinimumAmounts[chainId][pool.id]
+
           accum.push(
             getParsedPool({
               chainId,
               pool,
               poolAddress: pool.id,
               purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+              purchaseMinimumAmount,
             }),
           )
 
