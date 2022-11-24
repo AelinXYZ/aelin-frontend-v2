@@ -1,7 +1,7 @@
 import { History } from '@/src/components/assets/History'
 import { Pools } from '@/src/components/assets/Pools'
-import { Sponsors } from '@/src/components/assets/Sponsors'
 import { Stake } from '@/src/components/assets/Stake'
+import { Stats } from '@/src/components/assets/Stats'
 import { Vest } from '@/src/components/assets/Vest'
 
 export const sections = [
@@ -11,9 +11,9 @@ export const sections = [
     title: 'Pools List',
   },
   {
-    href: '/sponsors',
-    icon: <Sponsors />,
-    title: 'Sponsors',
+    href: '/stats',
+    icon: <Stats />,
+    title: 'Stats',
   },
   {
     href: '/stake',
