@@ -322,7 +322,7 @@ export default function useAelinPool(
 
   const pool = poolCreatedData.poolCreated as PoolCreated
   const purchaseTokenDecimals = pool.purchaseTokenDecimals
-  const minimumPurchaseAmount = minimumPurchaseAmounts[chainId][pool.id]
+  const minimumPurchaseAmount = minimumPurchaseAmounts[chainId]?.[pool.id]
 
   // prevent TS error
   if (!purchaseTokenDecimals) {

@@ -70,7 +70,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                minimumPurchaseAmount: minimumPurchaseAmounts[chainId][pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
               }),
             ),
             poolsAsHolder: user.poolsAsHolder.map((pool) =>
@@ -79,7 +79,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                minimumPurchaseAmount: minimumPurchaseAmounts[chainId][pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
               }),
             ),
             poolsSponsored: user.poolsSponsored.map((pool) =>
@@ -88,7 +88,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                minimumPurchaseAmount: minimumPurchaseAmounts[chainId][pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
               }),
             ),
             dealsAccepted: user.dealsAccepted.map(
@@ -107,7 +107,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                minimumPurchaseAmount: minimumPurchaseAmounts[chainId][pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
               }),
             ),
           }

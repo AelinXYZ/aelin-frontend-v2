@@ -57,7 +57,7 @@ const useAelinVouchedPools = (variables: Props) => {
             })
 
             return poolCreateds.map((pool) => {
-              const minimumPurchaseAmount = purchaseMinimumAmounts[chainId][pool.id]
+              const minimumPurchaseAmount = purchaseMinimumAmounts[chainId]?.[pool.id]
 
               return getParsedPool({
                 chainId,
