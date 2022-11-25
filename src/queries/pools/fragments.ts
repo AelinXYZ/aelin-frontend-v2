@@ -24,6 +24,8 @@ gql`
     holder
     filter
 
+    totalVouchers
+
     totalAmountEarnedBySponsor
     totalAmountAccepted
     totalAmountWithdrawn
