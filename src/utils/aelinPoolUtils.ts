@@ -187,7 +187,7 @@ export function upfrontDealExchangeRates(
   dealTokenDecimals: number,
 ) {
   const investmentRate = new Wei(purchaseTokenPerDealToken, investmentTokenDecimals, true)
-  const dealRate = new Wei(1).div(investmentRate)
+  const dealRate = new Wei(1, dealTokenDecimals).div(investmentRate)
 
   return {
     investmentPerDeal: {
