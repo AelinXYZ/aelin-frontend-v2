@@ -424,8 +424,8 @@ const parseValuesToCreateUpFrontDeal = (
 
   const underlyingDealTokenTotal = wei(
     exchangeRates?.investmentTokenToRaise,
-    investmentToken.decimals,
-  ).mul(wei(exchangeRates.exchangeRates, investmentToken.decimals))
+    dealToken.decimals,
+  ).mul(wei(exchangeRates.exchangeRates, dealToken.decimals))
 
   const exchangeRatesInWei = wei(exchangeRates.exchangeRates, investmentToken.decimals)
 
