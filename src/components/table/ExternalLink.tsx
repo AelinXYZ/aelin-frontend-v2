@@ -18,6 +18,7 @@ const Link = styled(BaseLink)`
   height: 10px;
   margin-top: -3px;
   width: 10px;
+  flex-shrink: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     height: auto;
