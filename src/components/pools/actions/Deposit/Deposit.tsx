@@ -50,6 +50,15 @@ const Button = styled(ButtonGradient)`
   width: 110px;
 `
 
+const MinimumInvestment = styled.span`
+  width: 100%;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 1.2rem;
+  text-align: left;
+  margin-bottom: 5px;
+`
+
 const Allowance = ({ allowance }: { allowance: string }) => (
   <Contents>
     Allowance: <TextPrimary>{allowance}</TextPrimary>
@@ -197,6 +206,12 @@ function Deposit({ pool, poolHelpers }: Props) {
         symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
+      {pool.minimumPurchaseAmount && (
+        <MinimumInvestment>
+          Minimum investment: {pool.minimumPurchaseAmount.formatted} {pool.investmentTokenSymbol}
+        </MinimumInvestment>
+      )}
+
       {isPrivatePool(pool.poolType) && !!userMaxDepositPrivateAmount?.formatted && (
         <Allowance
           allowance={`${userMaxDepositPrivateAmount.formatted} ${pool.investmentTokenSymbol}`}
