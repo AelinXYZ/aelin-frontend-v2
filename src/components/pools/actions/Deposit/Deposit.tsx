@@ -113,15 +113,15 @@ function Deposit({ pool, poolHelpers }: Props) {
       setInputError('')
     } else {
       minimumPurchaseAmountNotEnough
-        ? setInputError(`Purchase amount should be greater than the minimum amount`)
+        ? setInputError(
+            `Purchase amount should be greater than the minimum amount of ${pool.minimumPurchaseAmount?.formatted} ${pool.investmentTokenSymbol}`,
+          )
         : sortedBalances[0].type === AmountTypes.maxDepositAllowedPrivate
         ? setInputError(`Max allowed to invest is ${sortedBalances[0].formatted}`)
         : sortedBalances[0].type === AmountTypes.maxDepositAllowed
         ? setInputError(`Max cap allowance ${sortedBalances[0].formatted}`)
         : nftAllocationExceeded
         ? setInputError(`Purchase amount should be less the max allocation`)
-        : minimumPurchaseAmountNotEnough
-        ? setInputError(`Purchase amount should be greater than the minimum amount`)
         : setInputError(`Insufficient balance`)
     }
   }, [
@@ -132,6 +132,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     pool.hasNftList,
     pool.minimumPurchaseAmount?.raw,
     pool.minimumPurchaseAmount,
+    pool.investmentTokenSymbol,
   ])
 
   const depositTokens = async () => {
