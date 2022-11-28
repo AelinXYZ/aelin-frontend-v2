@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { HashZero } from '@ethersproject/constants'
 import Wei from '@synthetixio/wei'
 import addMilliseconds from 'date-fns/addMilliseconds'
@@ -468,6 +468,26 @@ export const getParsedNftCollectionRules = (
   })
 
   return nftCollectionRules
+}
+
+export const getMinimumPurchaseAmount = (
+  minimumPurchaseAmount: BigNumberish,
+  purchaseTokenDecimals: number,
+) => {
+  const purchaseMinimumInWei = new Wei(
+    minimumPurchaseAmount.toString(),
+    purchaseTokenDecimals,
+    true,
+  )
+
+  return {
+    raw: purchaseMinimumInWei.toBN(),
+    formatted: formatToken(
+      minimumPurchaseAmount.toString(),
+      purchaseTokenDecimals,
+      DISPLAY_DECIMALS,
+    ),
+  }
 }
 
 export function parseUpfrontDeal(pool: PoolCreated) {
