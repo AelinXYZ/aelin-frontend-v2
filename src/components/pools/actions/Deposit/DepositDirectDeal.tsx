@@ -149,6 +149,8 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
         ? setInputError(`Max cap allowance ${sortedBalances[0].formatted}`)
         : nftAllocationExceeded
         ? setInputError(`Purchase amount should be less the max allocation`)
+        : minimumPurchaseAmountNotEnough
+        ? setInputError(`Purchase amount should be greater than the minimum amount`)
         : setInputError(`Insufficient balance`)
     }
   }, [
@@ -158,7 +160,6 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
     allocation,
     pool.hasNftList,
     pool.minimumPurchaseAmount?.raw,
-    pool,
   ])
 
   const depositTokens = async () => {
