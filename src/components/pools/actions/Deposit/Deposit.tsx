@@ -7,7 +7,7 @@ import { TextPrimary } from '../../../pureStyledComponents/text/Text'
 import { TokenInput } from '@/src/components/form/TokenInput'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
-import { DISPLAY_DECIMALS } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import { AmountTypes, useUserAvailableToDeposit } from '@/src/hooks/aelin/useUserAvailableToDeposit'
@@ -94,9 +94,8 @@ function Deposit({ pool, poolHelpers }: Props) {
       return
     }
 
-    const minimumPurchaseAmountNotEnough = pool.minimumPurchaseAmount?.raw.gt(
-      BigNumber.from(tokenInputValue),
-    )
+    const minimumPurchaseAmountNotEnough =
+      tokenInputValue && pool.minimumPurchaseAmount?.raw.gt(BigNumber.from(tokenInputValue))
 
     const nftAllocationExceeded =
       pool.hasNftList &&
@@ -130,6 +129,7 @@ function Deposit({ pool, poolHelpers }: Props) {
     allocation,
     pool.hasNftList,
     pool.minimumPurchaseAmount?.raw,
+    pool.minimumPurchaseAmount,
   ])
 
   const depositTokens = async () => {
