@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react'
 
+import { getAddress } from '@ethersproject/address'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { ConnectOptions, WalletState } from '@web3-onboard/core'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
@@ -25,6 +26,7 @@ import { Provider, useWeb3Provider } from '@/src/hooks/useWeb3Provider'
 import { isSupportedNetworkId } from '@/src/utils/getDefaultNetwork'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { RequiredNonNull } from '@/types/utils'
+
 import '@/src/web3/onboard'
 
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
@@ -85,7 +87,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
   useEffect(() => {
     if (wallet?.accounts?.[0]?.address) {
       window.localStorage.setItem(STORAGE_CONNECTED_WALLET, wallet.label || '')
-      setAddress(wallet.accounts[0].address)
+      setAddress(getAddress(wallet.accounts[0].address))
     } else {
       setAddress(null)
     }
