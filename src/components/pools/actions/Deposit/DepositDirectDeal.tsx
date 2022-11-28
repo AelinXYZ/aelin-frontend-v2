@@ -55,6 +55,15 @@ const Button = styled(ButtonGradient)`
   width: 110px;
 `
 
+const MinimumInvestment = styled.span`
+  width: 100%;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 1.2rem;
+  text-align: left;
+  margin-bottom: 5px;
+`
+
 const AllowanceWrapper = styled.div`
   color: ${({ theme }) => theme.colors.white};
   font-size: 1.2rem;
@@ -142,15 +151,15 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
       setInputError('')
     } else {
       minimumPurchaseAmountNotEnough
-        ? setInputError(`Purchase amount should be greater than the minimum amount`)
+        ? setInputError(
+            `Purchase amount should be greater than the minimum amount of ${pool.minimumPurchaseAmount?.formatted} ${pool.investmentTokenSymbol}`,
+          )
         : sortedBalances[0].type === AmountTypes.maxDepositAllowedPrivate
         ? setInputError(`Max allowed to invest is ${sortedBalances[0].formatted}`)
         : sortedBalances[0].type === AmountTypes.maxDepositAllowed
         ? setInputError(`Max cap allowance ${sortedBalances[0].formatted}`)
         : nftAllocationExceeded
         ? setInputError(`Purchase amount should be less the max allocation`)
-        : minimumPurchaseAmountNotEnough
-        ? setInputError(`Purchase amount should be greater than the minimum amount`)
         : setInputError(`Insufficient balance`)
     }
   }, [
@@ -160,6 +169,8 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
     allocation,
     pool.hasNftList,
     pool.minimumPurchaseAmount?.raw,
+    pool.minimumPurchaseAmount?.formatted,
+    pool.investmentTokenSymbol,
   ])
 
   const depositTokens = async () => {
@@ -246,11 +257,18 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
         symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
+      {pool.minimumPurchaseAmount && (
+        <MinimumInvestment>
+          Minimum investment: {pool.minimumPurchaseAmount.formatted} {pool.investmentTokenSymbol}
+        </MinimumInvestment>
+      )}
+
       {(isPrivatePool(pool.poolType) || isMerklePool(pool)) && (
         <Allowance
           allowance={`${userMaxDepositPrivateAmount.formatted} ${pool.investmentTokenSymbol}`}
         />
       )}
+
       <ButtonsWrapper>
         <Button
           disabled={
