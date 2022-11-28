@@ -146,8 +146,10 @@ export const PoolInformation = ({ pool }: Props) => {
           tooltip="Total amount of users who invested in the pool"
         />
         {!!pool.minimumPurchaseAmount && (
-          // TODO: Add tooltip text here
-          <InfoCell title="Minimum Purchase Amount" tooltip="?">
+          <InfoCell
+            title="Minimum investment"
+            tooltip={`The minimum amount of ${pool.investmentTokenSymbol} you may invest in this pool`}
+          >
             <Value>
               {pool.minimumPurchaseAmount.formatted} {pool.investmentTokenSymbol}
             </Value>

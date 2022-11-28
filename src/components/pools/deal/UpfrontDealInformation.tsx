@@ -143,8 +143,10 @@ export const UpfrontDealInformation: React.FC<{
           <Value>Aelin protocol fee: 2%</Value>
         </InfoCell>
         {!!pool.minimumPurchaseAmount && (
-          // TODO: Add tooltip text here
-          <InfoCell title="Minimum Purchase Amount" tooltip="?">
+          <InfoCell
+            title="Minimum investment"
+            tooltip={`The minimum amount of ${pool.investmentTokenSymbol} you may invest in this pool`}
+          >
             <Value>
               {pool.minimumPurchaseAmount.formatted} {pool.investmentTokenSymbol}
             </Value>
