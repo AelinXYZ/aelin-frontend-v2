@@ -112,14 +112,14 @@ function Deposit({ pool, poolHelpers }: Props) {
     if (!isInputError) {
       setInputError('')
     } else {
-      sortedBalances[0].type === AmountTypes.maxDepositAllowedPrivate
+      minimumPurchaseAmountNotEnough
+        ? setInputError(`Purchase amount should be greater than the minimum amount`)
+        : sortedBalances[0].type === AmountTypes.maxDepositAllowedPrivate
         ? setInputError(`Max allowed to invest is ${sortedBalances[0].formatted}`)
         : sortedBalances[0].type === AmountTypes.maxDepositAllowed
         ? setInputError(`Max cap allowance ${sortedBalances[0].formatted}`)
         : nftAllocationExceeded
         ? setInputError(`Purchase amount should be less the max allocation`)
-        : minimumPurchaseAmountNotEnough
-        ? setInputError(`Purchase amount should be greater than the minimum amount`)
         : setInputError(`Insufficient balance`)
     }
   }, [
