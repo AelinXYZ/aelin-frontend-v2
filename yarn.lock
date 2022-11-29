@@ -3748,10 +3748,10 @@
     svelte "^3.49.0"
     svelte-i18n "^3.3.13"
 
-"@web3-onboard/gnosis@^2.1.4":
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/@web3-onboard/gnosis/-/gnosis-2.1.4.tgz#8f0bfa50bf662084091c61cc7c9248bb44e0ea6d"
-  integrity sha512-lTAnfc3FEy6zmc/SIOI9dW0oVH23WM+Nqo8pAfjKOUrGq+ChyyA7ghhP1dUoKfJgAtblUC5MKHzPLdL+K+PYNw==
+"@web3-onboard/gnosis@^2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@web3-onboard/gnosis/-/gnosis-2.1.5.tgz#c49b1734fca7042543029312581fc0e29bc4cb66"
+  integrity sha512-u5kL7kazROlotXEckjOn3Bm5FdHT1tgnOiYqjL7g/ypn+VzlpVpGQrpaW9SOa4DD8FGYCm8XkCsQZXlNUcvp/A==
   dependencies:
     "@gnosis.pm/safe-apps-provider" "^0.9.2"
     "@gnosis.pm/safe-apps-sdk" "^6.1.1"
