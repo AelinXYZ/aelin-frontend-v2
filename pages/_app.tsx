@@ -6,6 +6,7 @@ import { SWRConfig } from 'swr'
 
 import 'sanitize.css'
 import '../styles/override.css'
+import Maintenance from './maintenance'
 import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
 import { MobileMenu } from '@/src/components/navigation/MobileMenu'
@@ -37,6 +38,7 @@ function App({ Component, pageProps }: AppProps) {
   const title = 'Aelin'
   const description = 'Aelin'
   const twitterHandle = '@'
+  const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
 
   return (
     <>
@@ -52,36 +54,40 @@ function App({ Component, pageProps }: AppProps) {
         <meta content={title} property="og:title" />
         <meta content={twitterHandle} name="twitter:creator" />
       </Head>
-      <Web3ConnectionProvider>
-        <LayoutStatusProvider>
-          <ThemeProvider>
-            <SWRConfig
-              value={{
-                suspense: true,
-                revalidateOnFocus: false,
-              }}
-            >
-              <StakingRewardsProvider>
-                <TransactionModalProvider>
-                  <NotificationsProvider>
-                    <NftCreationContextProvider>
-                      <SafeSuspense>
-                        <TokenIconsProvider>
-                          <Header />
-                          <Component {...pageProps} />
-                          <Toast />
-                        </TokenIconsProvider>
-                      </SafeSuspense>
-                      <TooltipConfig />
-                      <MobileMenu />
-                    </NftCreationContextProvider>
-                  </NotificationsProvider>
-                </TransactionModalProvider>
-              </StakingRewardsProvider>
-            </SWRConfig>
-          </ThemeProvider>
-        </LayoutStatusProvider>
-      </Web3ConnectionProvider>
+      {isMaintenanceMode ? (
+        <Maintenance {...pageProps} />
+      ) : (
+        <Web3ConnectionProvider>
+          <LayoutStatusProvider>
+            <ThemeProvider>
+              <SWRConfig
+                value={{
+                  suspense: true,
+                  revalidateOnFocus: false,
+                }}
+              >
+                <StakingRewardsProvider>
+                  <TransactionModalProvider>
+                    <NotificationsProvider>
+                      <NftCreationContextProvider>
+                        <SafeSuspense>
+                          <TokenIconsProvider>
+                            <Header />
+                            <Component {...pageProps} />
+                            <Toast />
+                          </TokenIconsProvider>
+                        </SafeSuspense>
+                        <TooltipConfig />
+                        <MobileMenu />
+                      </NftCreationContextProvider>
+                    </NotificationsProvider>
+                  </TransactionModalProvider>
+                </StakingRewardsProvider>
+              </SWRConfig>
+            </ThemeProvider>
+          </LayoutStatusProvider>
+        </Web3ConnectionProvider>
+      )}
     </>
   )
 }
