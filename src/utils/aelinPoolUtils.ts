@@ -398,12 +398,18 @@ export function getTokensSold(
   investmentTokenDecimals: number,
   dealTokenDecimals: number,
 ) {
-  const _redeemed = new Wei(redeemed.raw, investmentTokenDecimals, true)
-  const _rate = new Wei(rate.raw, dealTokenDecimals, true)
+  const bigDecimal =
+    investmentTokenDecimals > dealTokenDecimals ? investmentTokenDecimals : dealTokenDecimals
+
+  const _redeemed = toDecimals(new Wei(redeemed.raw, investmentTokenDecimals, true), bigDecimal)
+
+  const _rate = toDecimals(new Wei(rate.raw, dealTokenDecimals, true), bigDecimal)
+
   const tokensSold = _redeemed.div(_rate).toBN()
+
   return {
     raw: tokensSold,
-    formatted: formatToken(tokensSold, investmentTokenDecimals),
+    formatted: formatToken(tokensSold, bigDecimal, DISPLAY_DECIMALS),
   }
 }
 
