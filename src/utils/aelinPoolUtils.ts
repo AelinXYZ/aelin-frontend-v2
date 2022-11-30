@@ -1,5 +1,6 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { HashZero } from '@ethersproject/constants'
+import { parseUnits } from '@ethersproject/units'
 import Wei from '@synthetixio/wei'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
@@ -153,14 +154,28 @@ export function getDetailedNumber(amount: string, decimals: number) {
   }
 }
 
+function toDecimals(value: Wei, to: number) {
+  const bg = value.toString()
+
+  const valueInDecimals = parseUnits(bg, to)
+
+  return new Wei(valueInDecimals, to, true)
+}
+
 export function dealExchangeRates(
   investmentTokenAmount: string,
   investmentTokenDecimals: number,
   dealTokenAmount: string,
   dealTokenDecimals: number,
 ) {
-  const investmentToken = new Wei(investmentTokenAmount, investmentTokenDecimals, true)
-  const dealToken = new Wei(dealTokenAmount, dealTokenDecimals, true)
+  const bigDecimal =
+    investmentTokenDecimals > dealTokenDecimals ? investmentTokenDecimals : dealTokenDecimals
+
+  const investmentToken = toDecimals(
+    new Wei(investmentTokenAmount, investmentTokenDecimals, true),
+    bigDecimal,
+  )
+  const dealToken = toDecimals(new Wei(dealTokenAmount, dealTokenDecimals, true), bigDecimal)
 
   const investmentRate = dealToken.div(investmentToken)
   const dealRate = new Wei(1, dealTokenDecimals).div(investmentRate)
@@ -168,11 +183,7 @@ export function dealExchangeRates(
   return {
     investmentPerDeal: {
       raw: investmentRate.toBN(),
-      formatted: formatToken(
-        investmentRate.toBN(),
-        dealTokenDecimals > investmentTokenDecimals ? dealTokenDecimals : investmentTokenDecimals,
-        EXCHANGE_DECIMALS,
-      ),
+      formatted: formatToken(investmentRate.toBN(), dealTokenDecimals, EXCHANGE_DECIMALS),
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
