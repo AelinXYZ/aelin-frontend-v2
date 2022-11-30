@@ -154,12 +154,12 @@ export function getDetailedNumber(amount: string, decimals: number) {
   }
 }
 
-function toDecimals(value: Wei, to: number) {
-  const bg = value.toString()
+export function toDecimals(value: Wei, decimals: number): Wei {
+  const valueInStr = value.toString()
 
-  const valueInDecimals = parseUnits(bg, to)
+  const valueInDecimals = parseUnits(valueInStr, decimals)
 
-  return new Wei(valueInDecimals, to, true)
+  return new Wei(valueInDecimals, decimals, true)
 }
 
 export function dealExchangeRates(
@@ -199,17 +199,23 @@ export function upfrontDealExchangeRates(
   investmentTokenDecimals: number,
   dealTokenDecimals: number,
 ) {
-  const investmentRate = new Wei(purchaseTokenPerDealToken, investmentTokenDecimals, true)
-  const dealRate = new Wei(1, dealTokenDecimals).div(investmentRate)
+  const bigDecimal =
+    investmentTokenDecimals > dealTokenDecimals ? investmentTokenDecimals : dealTokenDecimals
+
+  const investmentRate = toDecimals(
+    new Wei(purchaseTokenPerDealToken, investmentTokenDecimals, true),
+    bigDecimal,
+  )
+  const dealRate = toDecimals(new Wei(1, dealTokenDecimals), bigDecimal).div(investmentRate)
 
   return {
     investmentPerDeal: {
       raw: investmentRate.toBN(),
-      formatted: formatToken(investmentRate.toBN(), investmentTokenDecimals, EXCHANGE_DECIMALS),
+      formatted: formatToken(investmentRate.toBN(), bigDecimal, EXCHANGE_DECIMALS),
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
-      formatted: formatToken(dealRate.toBN(), dealTokenDecimals, EXCHANGE_DECIMALS),
+      formatted: formatToken(dealRate.toBN(), bigDecimal, EXCHANGE_DECIMALS),
     },
   }
 }
