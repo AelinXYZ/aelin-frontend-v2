@@ -1,7 +1,11 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import Wei from '@synthetixio/wei'
 
-import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
+import {
+  BASE_DECIMALS,
+  DISPLAY_DECIMALS,
+  SMALL_NUMBER_DISPLAY_DECIMALS,
+} from '@/src/constants/misc'
 
 export function formatToken(
   value: BigNumberish,
@@ -12,9 +16,13 @@ export function formatToken(
     return undefined
   }
 
-  const numberInWei = new Wei(BigNumber.from(value), valueScale)
+  const valueInWei = new Wei(BigNumber.from(value), valueScale)
+  const valueAsNumber = valueInWei.toNumber()
 
   return Intl.NumberFormat('en', {
-    maximumFractionDigits: decimals,
-  }).format(numberInWei.toNumber())
+    maximumFractionDigits:
+      valueAsNumber < 1 && decimals < SMALL_NUMBER_DISPLAY_DECIMALS
+        ? SMALL_NUMBER_DISPLAY_DECIMALS
+        : decimals,
+  }).format(valueAsNumber)
 }

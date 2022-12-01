@@ -20,6 +20,7 @@ export const EXCHANGE_DECIMALS = 4
 export const STAKING_DECIMALS = 4
 export const BASE_DECIMALS = 18
 export const DISPLAY_DECIMALS = 2
+export const SMALL_NUMBER_DISPLAY_DECIMALS = 4
 
 export const GWEI_PRECISION = 9
 export const GWEI_UNIT = 1000000000
