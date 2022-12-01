@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import styled from 'styled-components'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
@@ -13,6 +14,13 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 type Props = {
   pool: ParsedAelinPool
 }
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+`
 
 function WithdrawUnredeemed({ pool }: Props) {
   const { deal, dealAddress } = pool
@@ -56,9 +64,11 @@ function WithdrawUnredeemed({ pool }: Props) {
           {unredeemed} {pool.deal?.underlyingToken.symbol || ''}
         </TextPrimary>
       </Contents>
-      <ButtonGradient disabled={disableButton} onClick={withdrawUnredeemed}>
-        Withdraw
-      </ButtonGradient>
+      <ButtonsWrapper>
+        <ButtonGradient disabled={disableButton} onClick={withdrawUnredeemed}>
+          Withdraw
+        </ButtonGradient>
+      </ButtonsWrapper>
     </Wrapper>
   )
 }
