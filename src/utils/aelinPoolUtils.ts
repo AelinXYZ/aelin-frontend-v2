@@ -130,23 +130,6 @@ export function getAmountRedeem(amount: BigNumber, purchaseTokenDecimals: number
   }
 }
 
-export function getAmountUnRedeemed(
-  funded: string,
-  redeemed: string,
-  decimals: number,
-): DetailedNumber {
-  const fundedBg = BigNumber.from(funded)
-  const redeemedBg = BigNumber.from(redeemed)
-  return {
-    raw: fundedBg.sub(redeemedBg),
-    formatted: formatToken(fundedBg.sub(redeemedBg), decimals),
-  }
-}
-
-export function getStatusText<P extends { poolStatus: PoolStages }>(pool: P) {
-  return pool.poolStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
-}
-
 export function getDetailedNumber(amount: string, decimals: number) {
   return {
     raw: BigNumber.from(amount),
