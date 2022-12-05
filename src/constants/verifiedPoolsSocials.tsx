@@ -17,7 +17,7 @@ export const VerifiedPoolsSocials: { [poolAddress: string]: PoolSocials } = {
     twitterHandle: 'kwenta_io',
     mirrorHashPost: 'kwenta.eth/bM-hUzw9fzxTom3k8Is_HbkVJ4My3XzamHthA0Lp7KI',
   },
-  ['0x9c913f2c7239624f3735669ddd80fb114e04f0b3']: {
+  ['0xd5541dad40ee8e9357606e409d9d3530c0696ede']: {
     websiteName: 'hallsofolympia.io',
     twitterHandle: 'HallsofOlympia',
     discordServerInvite: 'mQW7UVV6zt',
