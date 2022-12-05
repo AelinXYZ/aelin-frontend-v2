@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { Discord } from '@/src/components/assets/Discord'
 import { Link as BaseLink } from '@/src/components/assets/Link'
+import { Medium } from '@/src/components/assets/Medium'
 import { Mirror } from '@/src/components/assets/Mirror'
 import { Twitter } from '@/src/components/assets/Twitter'
 import { Verified } from '@/src/components/assets/Verified'
@@ -148,7 +149,8 @@ export const PageTitle: React.FC<{
       )}
       {(poolSocials?.twitterHandle ||
         poolSocials?.discordServerInvite ||
-        poolSocials?.mirrorHashPost) && (
+        poolSocials?.mirrorHashPost ||
+        poolSocials?.mediumPost) && (
         <Socials>
           {poolSocials?.twitterHandle && (
             <a
@@ -175,6 +177,15 @@ export const PageTitle: React.FC<{
               target="_blank"
             >
               <Mirror />
+            </a>
+          )}
+          {poolSocials?.mediumPost && (
+            <a
+              href={`https://medium.com/${poolSocials.mediumPost}`}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <Medium />
             </a>
           )}
         </Socials>
