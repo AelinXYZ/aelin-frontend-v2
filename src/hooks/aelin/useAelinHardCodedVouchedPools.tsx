@@ -31,7 +31,7 @@ const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) =
 
 type Props = Omit<PoolsCreatedQueryVariables, 'where'>
 
-const useAelinVouchedPools = (variables: Props) => {
+const useAelinHardCodedVouchedPools = (variables: Props) => {
   return useSWR<ParsedAelinPool[], Error>(
     'vouched-pools',
     async () => {
@@ -93,4 +93,4 @@ const useAelinVouchedPools = (variables: Props) => {
   )
 }
 
-export default useAelinVouchedPools
+export default useAelinHardCodedVouchedPools

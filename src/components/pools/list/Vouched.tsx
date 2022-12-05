@@ -1,9 +1,11 @@
+import { useRouter } from 'next/router'
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { PoolCreated_OrderBy } from '@/graphql-schema'
+import { debounce } from 'lodash'
+
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
-import { Verified } from '@/src/components/assets/Verified'
 import { DynamicDeadline as BaseDynamicDeadline } from '@/src/components/common/DynamicDeadline'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
@@ -14,17 +16,30 @@ import {
   Cell,
   HideOnMobile,
   HideOnMobileCell,
+  Row,
   TableBody,
 } from '@/src/components/pureStyledComponents/common/Table'
+import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { NameCell } from '@/src/components/table/NameCell'
 import { SortableTH as BaseSortableTH } from '@/src/components/table/SortableTH'
 import { Stage } from '@/src/components/table/Stage'
 import { getKeyChainByValue, getNetworkConfig } from '@/src/constants/chains'
+import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 import { poolStagesText } from '@/src/constants/pool'
-import useAelinVouchedPools from '@/src/hooks/aelin/useAelinVouchedPools'
+import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
+import usePrevious from '@/src/hooks/common/usePrevious'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+
+const Search = styled(BaseSearch)`
+  position: relative;
+  width: 200px;
+  z-index: 1;
+  background-image: none;
+  padding-left: 15px;
+  color: ${({ theme }) => theme.colors.primary};
+`
 
 const columns = {
   alignment: {
@@ -88,9 +103,8 @@ const Title = styled.h3`
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 1.2;
-  margin: 10px 0;
+  margin: 25px 0 0 0;
   padding: 0;
-
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     font-size: 1.8rem;
   }
@@ -101,6 +115,10 @@ const HideOnDesktop = styled(BaseHideOnDesktop)`
     height: 14px;
     width: 14px;
   }
+`
+
+const NoPoolsWrapper = styled(Row)`
+  text-align: center;
 `
 
 const LabelsWrapper = styled.div`
@@ -200,56 +218,101 @@ const InvestmentToken = styled(Cell)`
   }
 `
 
+const tableHeaderCells = [
+  {
+    title: 'Name',
+    priority: CellPriority.First,
+  },
+  {
+    title: 'Sponsor',
+    priority: CellPriority.First,
+  },
+  {
+    title: 'Network',
+    priority: CellPriority.First,
+  },
+  {
+    title: 'Total deposited',
+    priority: CellPriority.First,
+  },
+  {
+    title: 'Investment deadline',
+    priority: CellPriority.Third,
+  },
+  {
+    title: 'Investment token',
+    justifyContent: columns.alignment.investmentToken,
+    priority: CellPriority.Second,
+  },
+  {
+    title: 'Stage',
+    priority: CellPriority.First,
+  },
+]
+
+const aelinVoucherENS = process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string
+
 export const VouchedPools: React.FC = () => {
-  const { data, error } = useAelinVouchedPools({
-    orderBy: PoolCreated_OrderBy.Timestamp,
-  })
-
+  const { data, error } = useAelinVouchedPools()
   const { notifications } = useNotifications()
+  const router = useRouter()
+  const [voucherAddress, setVoucherAddress] = useState<string>()
+  const searchRef = useRef<HTMLInputElement | null>(null)
+  const prevVoucherAddress = usePrevious(voucherAddress)
 
-  const tableHeaderCells = [
-    {
-      title: 'Name',
-      priority: CellPriority.First,
-    },
-    {
-      title: 'Sponsor',
-      priority: CellPriority.First,
-    },
-    {
-      title: 'Network',
-      priority: CellPriority.First,
-    },
-    {
-      title: 'Total deposited',
-      priority: CellPriority.First,
-    },
-    {
-      title: 'Investment deadline',
-      priority: CellPriority.Third,
-    },
-    {
-      title: 'Investment token',
-      justifyContent: columns.alignment.investmentToken,
-      priority: CellPriority.Second,
-    },
-    {
-      title: 'Stage',
-      priority: CellPriority.First,
-    },
-  ]
+  const {
+    query: { voucher },
+  } = router
+
+  const debouncedChangeHandler = useMemo(
+    () => debounce(setVoucherAddress, DEBOUNCED_INPUT_TIME),
+    [setVoucherAddress],
+  )
+
+  const handleChangeVoucher = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      debouncedChangeHandler(e.target.value)
+    }
+  }
+
+  const handleSearchOnBlur = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.value) {
+      const input = searchRef.current as HTMLInputElement
+      input.value = aelinVoucherENS
+      router.push(`/?voucher=${aelinVoucherENS}`, undefined, { shallow: true })
+      setVoucherAddress(aelinVoucherENS)
+    }
+  }
+
+  useEffect(() => {
+    if (voucherAddress && voucherAddress !== prevVoucherAddress) {
+      router.push(`/?voucher=${voucherAddress}`, undefined, { shallow: true })
+    }
+  }, [voucherAddress, prevVoucherAddress, router])
+
+  useEffect(() => {
+    if (!!voucher && searchRef.current) {
+      const input = searchRef.current as HTMLInputElement
+      input.value = voucher as string
+    }
+  }, [voucher, searchRef])
+
+  useEffect(() => {
+    if (searchRef.current && !(searchRef.current as HTMLInputElement).value) {
+      const input = searchRef.current as HTMLInputElement
+      input.value = aelinVoucherENS
+    }
+  }, [searchRef])
 
   if (error) {
     throw error
   }
 
-  if (!data || !data.length) return null
-
   return (
     <>
       <Title>
-        Verified Pools &nbsp;
-        <Verified />
+        Pools vouched by &nbsp;
+        <Search onBlur={handleSearchOnBlur} onChange={handleChangeVoucher} ref={searchRef} />
       </Title>
       <Wrapper>
         <TableHead columns={columns.largeWidths}>
@@ -260,6 +323,7 @@ export const VouchedPools: React.FC = () => {
           ))}
         </TableHead>
         <TableBody>
+          {!data.length && <NoPoolsWrapper>No vouched pools found. </NoPoolsWrapper>}
           {data.map((pool) => {
             const {
               address: id,
