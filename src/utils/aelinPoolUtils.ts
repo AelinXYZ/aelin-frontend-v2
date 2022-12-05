@@ -15,7 +15,7 @@ import {
   NftType,
   NftWhiteListState,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
+} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { PoolStages, Privacy } from '@/src/constants/pool'
 import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -421,7 +421,7 @@ export function getInvestmentDealToken(
 }
 
 export function parseNftCollectionRules(pool: PoolCreated): ParsedNftCollectionRules[] {
-  return pool.nftCollectionRules.map((collectionRule) => {
+  return pool.nftCollectionRules.map((collectionRule: any) => {
     const purchaseAmountBN = new Wei(
       collectionRule.purchaseAmount,
       pool.purchaseTokenDecimals || BASE_DECIMALS,

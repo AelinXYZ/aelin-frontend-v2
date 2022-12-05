@@ -21,7 +21,7 @@
     "paths": {
       "@/graphql-schema": [
         "types/generated/queries.ts"
-      ], // Should be the same as CODEGEN_OUTPUT_FILE env var.
+      ],
       "@/*": [
         "*"
       ]
