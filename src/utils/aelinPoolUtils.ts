@@ -386,7 +386,7 @@ export function getTokensSold(
 
   const _redeemed = toDecimals(new Wei(redeemed.raw, investmentTokenDecimals, true), bigDecimal)
 
-  const _rate = toDecimals(new Wei(rate.raw, dealTokenDecimals, true), bigDecimal)
+  const _rate = new Wei(rate.raw, bigDecimal, true)
 
   const tokensSold = _redeemed.div(_rate).toBN()
 
