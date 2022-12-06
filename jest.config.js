@@ -7,11 +7,11 @@ const { compilerOptions } = require('./tsconfig.json')
 module.exports = {
   // Use the TypeScript compiler to transpile TypeScript code
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.(tsx|ts)?$': 'ts-jest',
   },
 
   // Specify the file patterns for test files
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(tsx|ts)?$',
 
   // Specify the file patterns for code files
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
