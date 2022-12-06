@@ -26,5 +26,6 @@ export const VerifiedPoolsSocials: { [poolAddress: string]: PoolSocials } = {
     websiteName: 'thalon.io',
     twitterHandle: 'thalondao',
     discordServerInvite: 'BfntecmA',
+    mediumPost: '@thalondao/28995c707e23',
   },
 } as const
