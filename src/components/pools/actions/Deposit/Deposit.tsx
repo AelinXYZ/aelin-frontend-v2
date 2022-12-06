@@ -16,6 +16,7 @@ import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { isHiddenPool } from '@/src/utils/isHiddenPool'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
 
@@ -226,7 +227,8 @@ function Deposit({ pool, poolHelpers }: Props) {
             isSubmitting ||
             !tokenInputValue ||
             Boolean(inputError) ||
-            (pool.hasNftList && !hasStoredSelectedNft)
+            (pool.hasNftList && !hasStoredSelectedNft) ||
+            isHiddenPool(pool.address)
           }
           onClick={depositTokens}
         >
