@@ -1,6 +1,12 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import { parseUnits } from '@ethersproject/units'
 
-import { dealExchangeRates } from '../aelinPoolUtils'
+import {
+  dealExchangeRates,
+  getAmountRedeem,
+  getInvestmentDealToken,
+  getTokensSold,
+  upfrontDealExchangeRates,
+} from '../aelinPoolUtils'
 
 describe('dealExchangeRates', () => {
   it('should handle the case where investmentTokenDecimals and dealTokenDecimals are equal', () => {
@@ -16,49 +22,22 @@ describe('dealExchangeRates', () => {
       dealTokenDecimals,
     )
 
-    console.log('result: ', result)
-
     expect(result).toEqual({
       investmentPerDeal: {
-        raw: BigNumber.from('0.5'),
+        raw: parseUnits('0.5', dealTokenDecimals),
         formatted: '0.5',
       },
       dealPerInvestment: {
-        raw: BigNumber.from('2'),
+        raw: parseUnits('2', dealTokenDecimals),
         formatted: '2',
       },
     })
   })
 
-  it.skip('should handle the case where investmentTokenDecimals is greater than dealTokenDecimals', () => {
-    const investmentTokenAmount = '123456789000000' // 1.23456789 with decimals of 6
-    const investmentTokenDecimals = 6
-    const dealTokenAmount = '456789000000' // 4.56789 with decimals of 2
-    const dealTokenDecimals = 2
-
-    const result = dealExchangeRates(
-      investmentTokenAmount,
-      investmentTokenDecimals,
-      dealTokenAmount,
-      dealTokenDecimals,
-    )
-
-    expect(result).toEqual({
-      investmentPerDeal: {
-        raw: '0.27115969',
-        formatted: '0.27115969',
-      },
-      dealPerInvestment: {
-        raw: '3.67756732',
-        formatted: '3.67756732',
-      },
-    })
-  })
-
-  it.skip('should handle the case where investmentTokenDecimals is less than dealTokenDecimals', () => {
-    const investmentTokenAmount = '123400' // 1.2345 with decimals of 2
-    const investmentTokenDecimals = 2
-    const dealTokenAmount = '456789012000000' // 4.56789012 with decimals of 6
+  it('should handle the case where investmentTokenDecimals is greater than dealTokenDecimals', () => {
+    const investmentTokenAmount = '10000000000000000000' // 10 with 18 decimals
+    const investmentTokenDecimals = 18
+    const dealTokenAmount = '5000000' // 5 with 6 decimals
     const dealTokenDecimals = 6
 
     const result = dealExchangeRates(
@@ -70,13 +49,250 @@ describe('dealExchangeRates', () => {
 
     expect(result).toEqual({
       investmentPerDeal: {
-        raw: '0.27115969',
-        formatted: '0.27115969',
+        raw: parseUnits('0.5', investmentTokenDecimals),
+        formatted: '0.5',
       },
       dealPerInvestment: {
-        raw: '3.67756732',
-        formatted: '3.67756732',
+        raw: parseUnits('2', investmentTokenDecimals),
+        formatted: '2',
       },
+    })
+  })
+
+  it('should handle the case where investmentTokenDecimals is less than dealTokenDecimals', () => {
+    const investmentTokenAmount = '10000000' // 10 with 6 decimals
+    const investmentTokenDecimals = 6
+    const dealTokenAmount = '5000000000000000000' // 5 with 18 decimals
+    const dealTokenDecimals = 18
+
+    const result = dealExchangeRates(
+      investmentTokenAmount,
+      investmentTokenDecimals,
+      dealTokenAmount,
+      dealTokenDecimals,
+    )
+
+    expect(result).toEqual({
+      investmentPerDeal: {
+        raw: parseUnits('0.5', dealTokenDecimals),
+        formatted: '0.5',
+      },
+      dealPerInvestment: {
+        raw: parseUnits('2', dealTokenDecimals),
+        formatted: '2',
+      },
+    })
+  })
+})
+
+describe('upfrontDealExchangeRates', () => {
+  it('should handle the case where investmentTokenDecimals and dealTokenDecimals are equal', () => {
+    const purchaseTokenPerDealToken = '10000000' // 10 with 6 decimals
+    const investmentTokenDecimals = 6
+    const dealTokenDecimals = 6
+
+    const result = upfrontDealExchangeRates(
+      purchaseTokenPerDealToken,
+      investmentTokenDecimals,
+      dealTokenDecimals,
+    )
+
+    console.log('result: ', result)
+
+    expect(result).toEqual({
+      investmentPerDeal: {
+        raw: parseUnits('10', investmentTokenDecimals),
+        formatted: '10',
+      },
+      dealPerInvestment: {
+        raw: parseUnits('0.1', investmentTokenDecimals),
+        formatted: '0.1',
+      },
+    })
+  })
+
+  it('should handle the case where investmentTokenDecimals is greater than dealTokenDecimals', () => {
+    const purchaseTokenPerDealToken = '10000000000000000000' // 10 with 18 decimals
+    const investmentTokenDecimals = 18
+    const dealTokenDecimals = 6
+
+    const result = upfrontDealExchangeRates(
+      purchaseTokenPerDealToken,
+      investmentTokenDecimals,
+      dealTokenDecimals,
+    )
+
+    expect(result).toEqual({
+      investmentPerDeal: {
+        raw: parseUnits('10', investmentTokenDecimals),
+        formatted: '10',
+      },
+      dealPerInvestment: {
+        raw: parseUnits('0.1', investmentTokenDecimals),
+        formatted: '0.1',
+      },
+    })
+  })
+
+  it('should handle the case where investmentTokenDecimals is less than dealTokenDecimals', () => {
+    const purchaseTokenPerDealToken = '10000000' // 10 with 6 decimals
+    const investmentTokenDecimals = 6
+    const dealTokenDecimals = 18
+
+    const result = upfrontDealExchangeRates(
+      purchaseTokenPerDealToken,
+      investmentTokenDecimals,
+      dealTokenDecimals,
+    )
+
+    expect(result).toEqual({
+      investmentPerDeal: {
+        raw: parseUnits('10', dealTokenDecimals),
+        formatted: '10',
+      },
+      dealPerInvestment: {
+        raw: parseUnits('0.1', dealTokenDecimals),
+        formatted: '0.1',
+      },
+    })
+  })
+})
+
+describe('getTokensSold', () => {
+  it('should handle the case where investmentTokenDecimals and dealTokenDecimals are equal', () => {
+    const investmentTokenDecimals = 6
+    const dealTokenDecimals = 6
+
+    const redeemed = getAmountRedeem(
+      parseUnits('10', investmentTokenDecimals),
+      investmentTokenDecimals,
+    )
+
+    const rate = {
+      raw: parseUnits('0.1', dealTokenDecimals),
+      formatted: '0.1',
+    }
+
+    const result = getTokensSold(redeemed, rate, investmentTokenDecimals, dealTokenDecimals)
+
+    expect(result).toEqual({
+      raw: parseUnits('100', dealTokenDecimals),
+      formatted: '100',
+    })
+  })
+
+  it('should handle the case where investmentTokenDecimals is greater than dealTokenDecimals', () => {
+    const investmentTokenDecimals = 18
+    const dealTokenDecimals = 6
+
+    const redeemed = getAmountRedeem(
+      parseUnits('10', investmentTokenDecimals),
+      investmentTokenDecimals,
+    )
+
+    const rate = {
+      raw: parseUnits('0.1', dealTokenDecimals),
+      formatted: '0.1',
+    }
+
+    const result = getTokensSold(redeemed, rate, investmentTokenDecimals, dealTokenDecimals)
+
+    expect(result).toEqual({
+      raw: parseUnits('100', investmentTokenDecimals),
+      formatted: '100',
+    })
+  })
+
+  it('should handle the case where investmentTokenDecimals is less than dealTokenDecimals', () => {
+    const investmentTokenDecimals = 6
+    const dealTokenDecimals = 18
+
+    const redeemed = getAmountRedeem(
+      parseUnits('10', investmentTokenDecimals),
+      investmentTokenDecimals,
+    )
+
+    const rate = {
+      raw: parseUnits('0.1', dealTokenDecimals),
+      formatted: '0.1',
+    }
+
+    const result = getTokensSold(redeemed, rate, investmentTokenDecimals, dealTokenDecimals)
+
+    expect(result).toEqual({
+      raw: parseUnits('100', dealTokenDecimals),
+      formatted: '100',
+    })
+  })
+})
+
+describe('getInvestmentDealToken', () => {
+  it('should handle the case where investmentTokenDecimals and dealTokenDecimals are equal', () => {
+    const underlyingDealTokenTotal = '10000000' // 10 with 6 decimals
+    const dealTokenDecimals = 6
+    const investmentTokenDecimals = 6
+
+    const exchangeRate = {
+      raw: parseUnits('0.1', dealTokenDecimals),
+      formatted: '0.1',
+    }
+
+    const result = getInvestmentDealToken(
+      underlyingDealTokenTotal,
+      dealTokenDecimals,
+      investmentTokenDecimals,
+      exchangeRate,
+    )
+
+    expect(result).toEqual({
+      raw: parseUnits('1', dealTokenDecimals),
+      formatted: '1',
+    })
+  })
+
+  it('should handle the case where investmentTokenDecimals is greater than dealTokenDecimals', () => {
+    const underlyingDealTokenTotal = '10000000' // 10 with 6 decimals
+    const dealTokenDecimals = 6
+    const investmentTokenDecimals = 18
+
+    const exchangeRate = {
+      raw: parseUnits('0.1', investmentTokenDecimals),
+      formatted: '0.1',
+    }
+
+    const result = getInvestmentDealToken(
+      underlyingDealTokenTotal,
+      dealTokenDecimals,
+      investmentTokenDecimals,
+      exchangeRate,
+    )
+
+    expect(result).toEqual({
+      raw: parseUnits('1', investmentTokenDecimals),
+      formatted: '1',
+    })
+  })
+
+  it('should handle the case where investmentTokenDecimals is less than dealTokenDecimals', () => {
+    const underlyingDealTokenTotal = '10000000000000000000' // 10 with 18 decimals
+    const dealTokenDecimals = 18
+    const investmentTokenDecimals = 6
+
+    const exchangeRate = {
+      raw: parseUnits('0.1', dealTokenDecimals),
+      formatted: '0.1',
+    }
+
+    const result = getInvestmentDealToken(
+      underlyingDealTokenTotal,
+      dealTokenDecimals,
+      investmentTokenDecimals,
+      exchangeRate,
+    )
+
+    expect(result).toEqual({
+      raw: parseUnits('1', dealTokenDecimals),
+      formatted: '1',
     })
   })
 })
