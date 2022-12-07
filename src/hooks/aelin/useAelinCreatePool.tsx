@@ -3,7 +3,6 @@ import { useCallback, useEffect, useReducer, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
-import { parseUnits } from '@ethersproject/units'
 
 import usePrevious from '../common/usePrevious'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
@@ -11,7 +10,6 @@ import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresse
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
 import {
@@ -20,9 +18,9 @@ import {
 } from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import { parseValuesToCreatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromNowToDuration, sumDurations } from '@/src/utils/date'
 import { isDuration } from '@/src/utils/isDuration'
+import { parseValuesToCreatePool } from '@/src/utils/parseValuesToCreatePool'
 import validateCreatePool, { poolErrors } from '@/src/utils/validate/createPool'
 
 export enum CreatePoolSteps {
