@@ -540,27 +540,10 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
   const handleCreateUpFrontDeal = async () => {
     const [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses] =
-      await parseValuesToCreateUpFrontDeal(
+      parseValuesToCreateUpFrontDeal(
         createDealState as CreateUpFrontDealStateComplete,
         address ?? ZERO_ADDRESS,
       )
-
-    console.log('createDealState: ', createDealState)
-
-    const x = await parseValuesToCreateUpFrontDeal(
-      createDealState as CreateUpFrontDealStateComplete,
-      address ?? ZERO_ADDRESS,
-    )
-
-    console.log('x: ', x)
-
-    const formattedNftCollectionRules = nftCollectionRules.map((collection) => ({
-      ...collection,
-      purchaseAmount: parseUnits(
-        collection.purchaseAmount.toString(),
-        createDealState.investmentToken?.decimals ?? BASE_DECIMALS,
-      ),
-    }))
 
     const isAMerkleTreePool =
       createDealState.withMerkleTree && createDealState.dealPrivacy === Privacy.PRIVATE
@@ -600,7 +583,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
           createUpFrontDealEstimate([
             upFrontDealDataFull,
             upFrontDealConfig,
-            formattedNftCollectionRules,
+            nftCollectionRules,
             emptyAllowlistData,
           ]),
 
@@ -610,12 +593,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
           try {
             const receipt = await execute(
-              [
-                upFrontDealDataFull,
-                upFrontDealConfig,
-                formattedNftCollectionRules,
-                emptyAllowlistData,
-              ],
+              [upFrontDealDataFull, upFrontDealConfig, nftCollectionRules, emptyAllowlistData],
               txGasOptions,
             )
 
@@ -636,7 +614,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
           createUpFrontDealEstimate([
             upFrontDealData,
             upFrontDealConfig,
-            formattedNftCollectionRules,
+            nftCollectionRules,
             allowListAddresses,
           ]),
         title: 'Create deal',
@@ -645,7 +623,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
           try {
             const receipt = await execute(
-              [upFrontDealData, upFrontDealConfig, formattedNftCollectionRules, allowListAddresses],
+              [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses],
               txGasOptions,
             )
 

@@ -328,15 +328,7 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
       symbol,
     } = parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
 
-    console.log('createPoolState: ', createPoolState)
-
-    const x = parseValuesToCreatePool(createPoolState as CreatePoolStateComplete)
-
-    console.log('x: ', x)
-
-    return
-
-    const formattedNftCollectionRules = setConfigAndOpenModal({
+    setConfigAndOpenModal({
       estimate: () =>
         createPoolEstimate([
           {
