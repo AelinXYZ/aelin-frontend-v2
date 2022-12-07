@@ -19,8 +19,8 @@ jobs:
           node-version: '16'
 
       - name: Set environment variables
-      env:
-        NEXT_PUBLIC_GRAPH_ENDPOINT_OPTIMISM: "https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-optimism"
+        env:
+          NEXT_PUBLIC_GRAPH_ENDPOINT_OPTIMISM: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-optimism'
 
       - name: Install yarn
         run: npm install -g yarn
