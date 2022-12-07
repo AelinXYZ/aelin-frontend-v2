@@ -18,11 +18,14 @@ jobs:
         with:
           node-version: '16'
 
+      - name: Install yarn
+        run: npm install -g yarn
+
       - name: Installing dependencies
-        run: npm ci
+        run: yarn --prefer-offline
 
       - name: Running Linters
-        run: npm run lint
+        run: yarn lint
 
       - name: Running Tests
-        run: npm run test
+        run: yarn test
