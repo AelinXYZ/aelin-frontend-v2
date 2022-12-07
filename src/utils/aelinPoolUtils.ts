@@ -1,23 +1,30 @@
+import { isAddress } from '@ethersproject/address'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
-import { HashZero } from '@ethersproject/constants'
+import { HashZero, MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
-import Wei from '@synthetixio/wei'
+import Wei, { wei } from '@synthetixio/wei'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { BASE_DECIMALS, DISPLAY_DECIMALS, EXCHANGE_DECIMALS, ZERO_BN } from '../constants/misc'
-import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
 import { DealType, PoolCreated } from '@/graphql-schema'
 import {
   NftType,
   NftWhiteListState,
   NftWhitelistProcess,
 } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
+import { BASE_DECIMALS, DISPLAY_DECIMALS, EXCHANGE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { PoolStages, Privacy } from '@/src/constants/pool'
 import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
+import { CreatePoolStateComplete, CreatePoolValues } from '@/src/hooks/aelin/useAelinCreatePool'
+import {
+  CreateUpFrontDealStateComplete,
+  CreateUpFrontDealValues,
+} from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { getDuration } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 import { DetailedNumber } from '@/types/utils'
 
@@ -421,7 +428,7 @@ export function getInvestmentDealToken(
 }
 
 export function parseNftCollectionRules(pool: PoolCreated): ParsedNftCollectionRules[] {
-  return pool.nftCollectionRules.map((collectionRule: any) => {
+  return pool.nftCollectionRules.map((collectionRule) => {
     const purchaseAmountBN = new Wei(
       collectionRule.purchaseAmount,
       pool.purchaseTokenDecimals || BASE_DECIMALS,
@@ -594,4 +601,233 @@ export function parseUpfrontDeal(pool: PoolCreated) {
     merkleRoot: upfrontDeal.merkleRoot || null,
     ipfsHash: upfrontDeal.ipfsHash || null,
   }
+}
+
+export const parseValuesToCreatePool = (
+  createPoolState: CreatePoolStateComplete,
+): CreatePoolValues => {
+  const {
+    dealDeadline,
+    investmentDeadLine,
+    investmentToken,
+    poolCap,
+    poolName,
+    poolPrivacy,
+    poolSymbol,
+    sponsorFee,
+    whitelist,
+  } = createPoolState
+  const now = new Date()
+  const investmentDeadLineDuration = getDuration(
+    now,
+    investmentDeadLine.days,
+    investmentDeadLine.hours,
+    investmentDeadLine.minutes,
+  )
+
+  const dealDeadLineDuration = getDuration(
+    now,
+    dealDeadline.days,
+    dealDeadline.hours,
+    dealDeadline.minutes,
+  )
+
+  let poolAddresses: string[] = []
+  let poolAddressesAmounts: BigNumberish[] = []
+  let nftCollectionRules: NftCollectionRulesProps[] = []
+
+  if (
+    poolPrivacy === Privacy.PRIVATE &&
+    !createPoolState[NftType.erc1155] &&
+    !createPoolState[NftType.erc721]
+  ) {
+    const formattedWhiteList = whitelist.reduce((accum, curr) => {
+      const { address, amount } = curr
+
+      if (!address.length) return accum
+
+      accum.push({
+        address,
+        amount: amount ? String(amount) : MaxUint256.toString(),
+      })
+
+      return accum
+    }, [] as { address: string; amount: BigNumberish }[])
+
+    poolAddresses = formattedWhiteList.map(({ address }) => address)
+    poolAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
+  }
+
+  if (poolPrivacy === Privacy.NFT && createPoolState[NftType.erc721]) {
+    nftCollectionRules = [...(createPoolState[NftType.erc721] as NftCollectionRulesProps[])]
+  }
+
+  if (poolPrivacy === Privacy.NFT && createPoolState[NftType.erc1155]) {
+    nftCollectionRules = [...(createPoolState[NftType.erc1155] as NftCollectionRulesProps[])]
+  }
+
+  if (nftCollectionRules.length) {
+    nftCollectionRules = nftCollectionRules.map((collection) => ({
+      ...collection,
+      purchaseAmount: parseUnits(
+        collection.purchaseAmount.toString(),
+        createPoolState.investmentToken?.decimals ?? BASE_DECIMALS,
+      ),
+    }))
+  }
+
+  return {
+    name: poolName,
+    symbol: poolSymbol,
+    purchaseTokenCap: poolCap ? parseUnits(poolCap.toString(), investmentToken?.decimals) : ZERO_BN,
+    purchaseToken: investmentToken.address,
+    sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_DECIMALS) : ZERO_BN,
+    purchaseDuration: investmentDeadLineDuration,
+    duration: dealDeadLineDuration,
+    allowListAddresses: poolAddresses,
+    allowListAmounts: poolAddressesAmounts,
+    nftCollectionRules: nftCollectionRules,
+  }
+}
+
+export const parseValuesToCreateUpFrontDeal = (
+  createDealState: CreateUpFrontDealStateComplete,
+  sponsor: string,
+  merkleRoot?: string,
+  ipfsHash?: string,
+): CreateUpFrontDealValues => {
+  const {
+    dealAttributes,
+    dealPrivacy,
+    dealToken,
+    exchangeRates,
+    holderAddress,
+    investmentToken,
+    redemptionDeadline,
+    sponsorFee,
+    vestingSchedule,
+    whitelist,
+    withMerkleTree,
+  } = createDealState
+  const now = new Date()
+
+  const underlyingDealTokenTotal = wei(
+    exchangeRates?.investmentTokenToRaise,
+    dealToken.decimals,
+  ).mul(wei(exchangeRates.exchangeRates, dealToken.decimals))
+
+  const exchangeRatesInWei = wei(exchangeRates.exchangeRates, investmentToken.decimals)
+
+  const dealTokenTotalInWei = wei(
+    exchangeRates.investmentTokenToRaise,
+    investmentToken.decimals,
+  ).mul(exchangeRatesInWei)
+
+  const investmentPerDeal = wei(exchangeRates.investmentTokenToRaise, investmentToken.decimals).div(
+    dealTokenTotalInWei,
+  )
+
+  const purchaseRaiseMinimum = exchangeRates?.minimumAmount
+    ? parseUnits(exchangeRates.minimumAmount.toString(), investmentToken.decimals)
+    : ZERO_BN
+
+  const redemptionDeadlineDuration = getDuration(
+    now,
+    redemptionDeadline.days,
+    redemptionDeadline.hours,
+    redemptionDeadline.minutes,
+  )
+
+  const vestingCliffDuration = getDuration(
+    now,
+    vestingSchedule.vestingCliff?.days as number,
+    vestingSchedule.vestingCliff?.hours as number,
+    vestingSchedule.vestingCliff?.minutes as number,
+  )
+
+  const vestingPeriodDuration = getDuration(
+    now,
+    vestingSchedule.vestingPeriod?.days as number,
+    vestingSchedule.vestingPeriod?.hours as number,
+    vestingSchedule.vestingPeriod?.minutes as number,
+  )
+
+  let dealAddresses: string[] = []
+  let dealAddressesAmounts: BigNumberish[] = []
+  let nftCollectionRules: NftCollectionRulesProps[] = []
+
+  if (
+    dealPrivacy === Privacy.PRIVATE &&
+    !createDealState[NftType.erc1155] &&
+    !createDealState[NftType.erc721]
+  ) {
+    const formattedWhiteList = whitelist.reduce((accum, curr) => {
+      const { address, amount } = curr
+
+      if (!isAddress(address)) return accum
+
+      if (withMerkleTree) {
+        accum.push({
+          address,
+          amount: amount ? amount : MaxUint256.toNumber(),
+        })
+      } else {
+        accum.push({
+          address,
+          amount: amount ? amount : MaxUint256.toNumber(),
+        })
+      }
+
+      return accum
+    }, [] as { address: string; amount: BigNumberish }[])
+
+    dealAddresses = formattedWhiteList.map(({ address }) => address)
+    dealAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
+  }
+
+  if (dealPrivacy === Privacy.NFT && createDealState[NftType.erc721]) {
+    nftCollectionRules = [...(createDealState[NftType.erc721] as NftCollectionRulesProps[])]
+  }
+
+  if (dealPrivacy === Privacy.NFT && createDealState[NftType.erc1155]) {
+    nftCollectionRules = [...(createDealState[NftType.erc1155] as NftCollectionRulesProps[])]
+  }
+
+  if (nftCollectionRules.length) {
+    nftCollectionRules = nftCollectionRules.map((collection) => ({
+      ...collection,
+      purchaseAmount: parseUnits(
+        collection.purchaseAmount.toString(),
+        createDealState.investmentToken?.decimals ?? BASE_DECIMALS,
+      ),
+    }))
+  }
+
+  return [
+    {
+      name: dealAttributes.name,
+      symbol: dealAttributes.symbol,
+      purchaseToken: investmentToken.address,
+      underlyingDealToken: dealToken.address,
+      holder: holderAddress,
+      sponsor,
+      sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_DECIMALS) : ZERO_BN,
+      merkleRoot: merkleRoot ?? HashZero,
+      ipfsHash: ipfsHash ?? HashZero,
+    },
+    {
+      underlyingDealTokenTotal: underlyingDealTokenTotal.toBN(),
+      purchaseTokenPerDealToken: investmentPerDeal.toBN(),
+      purchaseRaiseMinimum,
+      purchaseDuration: redemptionDeadlineDuration,
+      vestingPeriod: vestingPeriodDuration,
+      vestingCliffPeriod: vestingCliffDuration,
+      allowDeallocation: !exchangeRates.isCapped,
+    },
+    nftCollectionRules,
+    {
+      allowListAddresses: dealAddresses,
+      allowListAmounts: dealAddressesAmounts,
+    },
+  ]
 }
