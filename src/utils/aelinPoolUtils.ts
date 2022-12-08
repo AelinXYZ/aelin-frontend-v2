@@ -1,5 +1,6 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import { HashZero } from '@ethersproject/constants'
+import { parseUnits } from '@ethersproject/units'
 import Wei from '@synthetixio/wei'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
@@ -129,28 +130,19 @@ export function getAmountRedeem(amount: BigNumber, purchaseTokenDecimals: number
   }
 }
 
-export function getAmountUnRedeemed(
-  funded: string,
-  redeemed: string,
-  decimals: number,
-): DetailedNumber {
-  const fundedBg = BigNumber.from(funded)
-  const redeemedBg = BigNumber.from(redeemed)
-  return {
-    raw: fundedBg.sub(redeemedBg),
-    formatted: formatToken(fundedBg.sub(redeemedBg), decimals),
-  }
-}
-
-export function getStatusText<P extends { poolStatus: PoolStages }>(pool: P) {
-  return pool.poolStatus.replace(/([a-z])([A-Z])/g, '$1 $2')
-}
-
 export function getDetailedNumber(amount: string, decimals: number) {
   return {
     raw: BigNumber.from(amount),
     formatted: formatToken(amount, decimals),
   }
+}
+
+export function toDecimals(value: Wei, decimals: number): Wei {
+  const valueInStr = value.toString()
+
+  const valueInDecimals = parseUnits(valueInStr, decimals)
+
+  return new Wei(valueInDecimals, decimals, true)
 }
 
 export function dealExchangeRates(
@@ -159,24 +151,28 @@ export function dealExchangeRates(
   dealTokenAmount: string,
   dealTokenDecimals: number,
 ) {
-  const investmentToken = new Wei(investmentTokenAmount, investmentTokenDecimals, true)
-  const dealToken = new Wei(dealTokenAmount, dealTokenDecimals, true)
+  const bigDecimal =
+    investmentTokenDecimals > dealTokenDecimals ? investmentTokenDecimals : dealTokenDecimals
+
+  const investmentToken = toDecimals(
+    new Wei(investmentTokenAmount, investmentTokenDecimals, true),
+    bigDecimal,
+  )
+
+  const dealToken = toDecimals(new Wei(dealTokenAmount, dealTokenDecimals, true), bigDecimal)
 
   const investmentRate = dealToken.div(investmentToken)
-  const dealRate = new Wei(1, dealTokenDecimals).div(investmentRate)
+
+  const dealRate = toDecimals(new Wei(1, dealTokenDecimals), bigDecimal).div(investmentRate)
 
   return {
     investmentPerDeal: {
       raw: investmentRate.toBN(),
-      formatted: formatToken(
-        investmentRate.toBN(),
-        dealTokenDecimals > investmentTokenDecimals ? dealTokenDecimals : investmentTokenDecimals,
-        EXCHANGE_DECIMALS,
-      ),
+      formatted: formatToken(investmentRate.toBN(), bigDecimal, EXCHANGE_DECIMALS),
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
-      formatted: formatToken(dealRate.toBN(), dealTokenDecimals, EXCHANGE_DECIMALS),
+      formatted: formatToken(dealRate.toBN(), bigDecimal, EXCHANGE_DECIMALS),
     },
   }
 }
@@ -186,17 +182,23 @@ export function upfrontDealExchangeRates(
   investmentTokenDecimals: number,
   dealTokenDecimals: number,
 ) {
-  const investmentRate = new Wei(purchaseTokenPerDealToken, investmentTokenDecimals, true)
-  const dealRate = new Wei(1, dealTokenDecimals).div(investmentRate)
+  const bigDecimal =
+    investmentTokenDecimals > dealTokenDecimals ? investmentTokenDecimals : dealTokenDecimals
+
+  const investmentRate = toDecimals(
+    new Wei(purchaseTokenPerDealToken, investmentTokenDecimals, true),
+    bigDecimal,
+  )
+  const dealRate = toDecimals(new Wei(1, dealTokenDecimals), bigDecimal).div(investmentRate)
 
   return {
     investmentPerDeal: {
       raw: investmentRate.toBN(),
-      formatted: formatToken(investmentRate.toBN(), investmentTokenDecimals, EXCHANGE_DECIMALS),
+      formatted: formatToken(investmentRate.toBN(), bigDecimal, EXCHANGE_DECIMALS),
     },
     dealPerInvestment: {
       raw: dealRate.toBN(),
-      formatted: formatToken(dealRate.toBN(), dealTokenDecimals, EXCHANGE_DECIMALS),
+      formatted: formatToken(dealRate.toBN(), bigDecimal, EXCHANGE_DECIMALS),
     },
   }
 }
@@ -379,26 +381,42 @@ export function getTokensSold(
   investmentTokenDecimals: number,
   dealTokenDecimals: number,
 ) {
-  const _redeemed = new Wei(redeemed.raw, investmentTokenDecimals, true)
-  const _rate = new Wei(rate.raw, dealTokenDecimals, true)
+  const bigDecimal =
+    investmentTokenDecimals > dealTokenDecimals ? investmentTokenDecimals : dealTokenDecimals
+
+  const _redeemed = toDecimals(new Wei(redeemed.raw, investmentTokenDecimals, true), bigDecimal)
+
+  const _rate = toDecimals(new Wei(rate.raw, dealTokenDecimals, true), bigDecimal)
+
   const tokensSold = _redeemed.div(_rate).toBN()
+
   return {
     raw: tokensSold,
-    formatted: formatToken(tokensSold, investmentTokenDecimals),
+    formatted: formatToken(tokensSold, bigDecimal, DISPLAY_DECIMALS),
   }
 }
 
 export function getInvestmentDealToken(
   underlyingDealTokenTotal: string,
   underlyingDecimals: number,
+  purchaseTokenDecimals: number,
   exchangeRate: DetailedNumber,
 ) {
-  const _underlyingDealTokenTotal = new Wei(underlyingDealTokenTotal, underlyingDecimals, true)
-  const _exchangeRate = new Wei(exchangeRate.raw, underlyingDecimals, true)
+  const bigDecimal =
+    purchaseTokenDecimals > underlyingDecimals ? purchaseTokenDecimals : underlyingDecimals
+
+  const _underlyingDealTokenTotal = toDecimals(
+    new Wei(underlyingDealTokenTotal, underlyingDecimals, true),
+    bigDecimal,
+  )
+
+  const _exchangeRate = new Wei(exchangeRate.raw, bigDecimal, true)
+
   const _investmentDealToken = _underlyingDealTokenTotal.mul(_exchangeRate).toBN()
+
   return {
     raw: _investmentDealToken,
-    formatted: formatToken(_investmentDealToken, underlyingDecimals, DISPLAY_DECIMALS),
+    formatted: formatToken(_investmentDealToken, bigDecimal, DISPLAY_DECIMALS),
   }
 }
 

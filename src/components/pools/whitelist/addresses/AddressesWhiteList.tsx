@@ -124,6 +124,7 @@ export const initialAddressesWhitelistValues = [
 
 enum AddressesWhiteListStatus {
   invalidAddress,
+  duplicatedAddresses,
   invalidAmount,
   invalidDecimals,
   valid,
@@ -132,11 +133,13 @@ enum AddressesWhiteListStatus {
 const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
   switch (status) {
     case AddressesWhiteListStatus.invalidAddress:
-      return <Error textAlign="center">There are some invalid address in the list</Error>
+      return <Error textAlign="center">There is some invalid address in the list</Error>
+    case AddressesWhiteListStatus.duplicatedAddresses:
+      return <Error textAlign="center">There are duplicated addresses in the list</Error>
     case AddressesWhiteListStatus.invalidAmount:
-      return <Error textAlign="center">There are some empty amount in the list</Error>
+      return <Error textAlign="center">There is some empty amount in the list</Error>
     case AddressesWhiteListStatus.invalidDecimals:
-      return <Error textAlign="center">There are some amount with decimals in the list</Error>
+      return <Error textAlign="center">There is some amount with decimals in the list</Error>
     case AddressesWhiteListStatus.valid:
       return null
   }
@@ -156,6 +159,18 @@ const AddressesWhiteList = ({
   const status = useMemo(() => {
     if (list.some((item: AddressWhitelistProps) => item.address && !isAddress(item.address))) {
       return AddressesWhiteListStatus.invalidAddress
+    }
+
+    const validAddresses = list.reduce((result, item) => {
+      if (item.address) {
+        result.push(item.address)
+      }
+
+      return result
+    }, [] as Array<string>)
+
+    if (new Set(validAddresses).size != validAddresses.length) {
+      return AddressesWhiteListStatus.duplicatedAddresses
     }
 
     if (list.some((item: AddressWhitelistProps) => item.address && !item.amount)) {

@@ -19,8 +19,11 @@ const Modal = styled(BaseModal)`
   }
 `
 
-const Note = styled.p`
-  padding: 20px;
+const Note = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 20px 20px 40px;
   background-color: ${({ theme }) => theme.colors.transparentWhite2};
   border: 1px solid ${({ theme: { colors } }) => colors.borderColor};
   border-radius: 8px;
@@ -51,8 +54,11 @@ const WhiteListModal = ({ currentList, onClose, onConfirm, poolPrivacy }: WhiteL
       {poolPrivacy === Privacy.PRIVATE && (
         <>
           <Note>
-            Please input the amount as a <b>uint256</b>. If you are using an investment token with 6
-            decimals then <b>1000000</b> is equivalent to <b>1</b> investment token.
+            <li>
+              Please input the amount as a <b>uint256</b>. If you are using an investment token with
+              6 decimals then <b>1000000</b> is equivalent to <b>1</b> investment token.
+            </li>
+            <li>Avoid duplicated addresses in the CSV file.</li>
           </Note>
 
           <AddressesWhiteList
