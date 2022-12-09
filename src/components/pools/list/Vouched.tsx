@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { debounce } from 'lodash'
 
+import { genericSuspense } from '../../helpers/SafeSuspense'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
 import { DynamicDeadline as BaseDynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -119,6 +120,10 @@ const HideOnDesktop = styled(BaseHideOnDesktop)`
 
 const NoPoolsWrapper = styled(Row)`
   text-align: center;
+`
+
+const LoadingWrapper = styled(NoPoolsWrapper)`
+  font-style: italic;
 `
 
 const LabelsWrapper = styled.div`
@@ -252,25 +257,185 @@ const tableHeaderCells = [
 
 const aelinVoucherENS = process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string
 
+const Loading = () => <LoadingWrapper> loading... </LoadingWrapper>
+
+const TableData: React.FC<{ isTyping: boolean }> = genericSuspense(
+  ({ isTyping }) => {
+    const { data, error } = useAelinVouchedPools()
+    const { notifications } = useNotifications()
+
+    if (error) {
+      throw error
+    }
+    return (
+      <TableBody>
+        {!data.length && isTyping && <Loading />}
+        {!data.length && !isTyping && <NoPoolsWrapper>No vouched pools found. </NoPoolsWrapper>}
+        {data.map((pool) => {
+          const {
+            address: id,
+            chainId: network,
+            funded,
+            investmentToken,
+            investmentTokenSymbol,
+            nameFormatted,
+            purchaseExpiry,
+            sponsor,
+            stage,
+            start,
+          } = pool
+          const activeNotifications = notifications.filter((n) => n.poolAddress === id).length
+
+          return (
+            <RowLink
+              columns={columns.largeWidths}
+              href={`/pool/${getKeyChainByValue(network)}/${id}`}
+              key={id}
+              withGradient
+            >
+              <NameCell>
+                <Name>{nameFormatted}</Name>
+                {!!activeNotifications && (
+                  <Badge
+                    data-html={true}
+                    data-multiline={true}
+                    data-tip={`You have ${
+                      activeNotifications > 1 ? 'notifications' : 'one notification'
+                    } for this pool.`}
+                  >
+                    {activeNotifications.toString()}
+                  </Badge>
+                )}
+                <HideOnMobile>
+                  <LabelsWrapper>
+                    {isPrivatePool(pool.poolType) && (
+                      <Label>
+                        <span>Private</span>
+                        <Lock />
+                      </Label>
+                    )}
+
+                    {isMerklePool(pool) && (
+                      <Label>
+                        <span>Merkle Tree</span>
+                        <Lock />
+                      </Label>
+                    )}
+
+                    {!!pool.hasNftList && (
+                      <Label>
+                        <span>NFT</span>
+                        <Lock />
+                      </Label>
+                    )}
+
+                    {!!pool.upfrontDeal && (
+                      <Label>
+                        <span>Deal</span>
+                      </Label>
+                    )}
+                  </LabelsWrapper>
+                </HideOnMobile>
+              </NameCell>
+              <HideOnDesktop>
+                <LabelsWrapper>
+                  {isPrivatePool(pool.poolType) && (
+                    <Label>
+                      <span>Private</span>
+                      <Lock />
+                    </Label>
+                  )}
+
+                  {isMerklePool(pool) && (
+                    <Label>
+                      <span>Merkle Tree</span>
+                      <Lock />
+                    </Label>
+                  )}
+
+                  {!!pool.hasNftList && (
+                    <Label>
+                      <span>NFT</span>
+                      <Lock />
+                    </Label>
+                  )}
+
+                  {!!pool.upfrontDeal && (
+                    <Label>
+                      <span>Deal</span>
+                    </Label>
+                  )}
+                  <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
+                </LabelsWrapper>
+              </HideOnDesktop>
+              <ENSOrAddress address={sponsor} network={network} />
+              <HideOnMobileCell
+                justifyContent={columns.alignment.network}
+                title={getNetworkConfig(network).shortName}
+              >
+                {getNetworkConfig(network).icon}
+              </HideOnMobileCell>
+              <Cell>
+                {funded.formatted}
+                &nbsp;
+                <HideOnMobile>{investmentTokenSymbol}</HideOnMobile>
+                <HideOnDesktop>
+                  <TokenIconSmall
+                    address={investmentToken}
+                    iconHeight={12}
+                    iconWidth={12}
+                    network={network}
+                    symbol={investmentTokenSymbol}
+                    type="row"
+                  />
+                </HideOnDesktop>
+              </Cell>
+              <DynamicDeadline
+                deadline={purchaseExpiry}
+                hideWhenDeadlineIsReached={false}
+                start={start}
+              >
+                {getFormattedDurationFromDateToNow(purchaseExpiry)}
+              </DynamicDeadline>
+              <InvestmentToken justifyContent={columns.alignment.investmentToken}>
+                <TokenIcon
+                  address={investmentToken}
+                  network={network}
+                  symbol={investmentTokenSymbol}
+                  type="column"
+                />
+              </InvestmentToken>
+              <Stage stage={stage}> {poolStagesText[stage]}</Stage>
+            </RowLink>
+          )
+        })}
+      </TableBody>
+    )
+  },
+  () => <Loading />,
+)
+
 export const VouchedPools: React.FC = () => {
-  const { data, error } = useAelinVouchedPools()
-  const { notifications } = useNotifications()
   const router = useRouter()
   const [voucherAddress, setVoucherAddress] = useState<string>()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const prevVoucherAddress = usePrevious(voucherAddress)
+  const [isTyping, setIsTyping] = useState<boolean>(false)
 
   const {
     query: { voucher },
   } = router
 
-  const debouncedChangeHandler = useMemo(
-    () => debounce(setVoucherAddress, DEBOUNCED_INPUT_TIME),
-    [setVoucherAddress],
-  )
+  const debouncedChangeHandler = useMemo(() => {
+    return debounce((address: string) => {
+      setVoucherAddress(address)
+      setIsTyping(false)
+    }, DEBOUNCED_INPUT_TIME)
+  }, [setVoucherAddress, setIsTyping])
 
   const handleChangeVoucher = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value) {
+      setIsTyping(true)
       debouncedChangeHandler(e.target.value)
     }
   }
@@ -304,10 +469,6 @@ export const VouchedPools: React.FC = () => {
     }
   }, [searchRef])
 
-  if (error) {
-    throw error
-  }
-
   return (
     <>
       <Title>
@@ -322,147 +483,7 @@ export const VouchedPools: React.FC = () => {
             </SortableTH>
           ))}
         </TableHead>
-        <TableBody>
-          {!data.length && <NoPoolsWrapper>No vouched pools found. </NoPoolsWrapper>}
-          {data.map((pool) => {
-            const {
-              address: id,
-              chainId: network,
-              funded,
-              investmentToken,
-              investmentTokenSymbol,
-              nameFormatted,
-              purchaseExpiry,
-              sponsor,
-              stage,
-              start,
-            } = pool
-            const activeNotifications = notifications.filter((n) => n.poolAddress === id).length
-
-            return (
-              <RowLink
-                columns={columns.largeWidths}
-                href={`/pool/${getKeyChainByValue(network)}/${id}`}
-                key={id}
-                withGradient
-              >
-                <NameCell>
-                  <Name>{nameFormatted}</Name>
-                  {!!activeNotifications && (
-                    <Badge
-                      data-html={true}
-                      data-multiline={true}
-                      data-tip={`You have ${
-                        activeNotifications > 1 ? 'notifications' : 'one notification'
-                      } for this pool.`}
-                    >
-                      {activeNotifications.toString()}
-                    </Badge>
-                  )}
-                  <HideOnMobile>
-                    <LabelsWrapper>
-                      {isPrivatePool(pool.poolType) && (
-                        <Label>
-                          <span>Private</span>
-                          <Lock />
-                        </Label>
-                      )}
-
-                      {isMerklePool(pool) && (
-                        <Label>
-                          <span>Merkle Tree</span>
-                          <Lock />
-                        </Label>
-                      )}
-
-                      {!!pool.hasNftList && (
-                        <Label>
-                          <span>NFT</span>
-                          <Lock />
-                        </Label>
-                      )}
-
-                      {!!pool.upfrontDeal && (
-                        <Label>
-                          <span>Deal</span>
-                        </Label>
-                      )}
-                    </LabelsWrapper>
-                  </HideOnMobile>
-                </NameCell>
-                <HideOnDesktop>
-                  <LabelsWrapper>
-                    {isPrivatePool(pool.poolType) && (
-                      <Label>
-                        <span>Private</span>
-                        <Lock />
-                      </Label>
-                    )}
-
-                    {isMerklePool(pool) && (
-                      <Label>
-                        <span>Merkle Tree</span>
-                        <Lock />
-                      </Label>
-                    )}
-
-                    {!!pool.hasNftList && (
-                      <Label>
-                        <span>NFT</span>
-                        <Lock />
-                      </Label>
-                    )}
-
-                    {!!pool.upfrontDeal && (
-                      <Label>
-                        <span>Deal</span>
-                      </Label>
-                    )}
-                    <HideOnDesktop>{getNetworkConfig(network).icon}</HideOnDesktop>
-                  </LabelsWrapper>
-                </HideOnDesktop>
-                <ENSOrAddress address={sponsor} network={network} />
-                <HideOnMobileCell
-                  justifyContent={columns.alignment.network}
-                  title={getNetworkConfig(network).shortName}
-                >
-                  {getNetworkConfig(network).icon}
-                </HideOnMobileCell>
-                <Cell>
-                  {funded.formatted}
-                  &nbsp;
-                  <HideOnMobile>{investmentTokenSymbol}</HideOnMobile>
-                  <HideOnDesktop>
-                    <TokenIconSmall
-                      address={investmentToken}
-                      iconHeight={12}
-                      iconWidth={12}
-                      network={network}
-                      symbol={investmentTokenSymbol}
-                      type="row"
-                    />
-                  </HideOnDesktop>
-                </Cell>
-                <DynamicDeadline
-                  deadline={purchaseExpiry}
-                  hideWhenDeadlineIsReached={false}
-                  start={start}
-                >
-                  {getFormattedDurationFromDateToNow(purchaseExpiry)}
-                </DynamicDeadline>
-                <InvestmentToken justifyContent={columns.alignment.investmentToken}>
-                  <TokenIcon
-                    address={investmentToken}
-                    network={network}
-                    symbol={investmentTokenSymbol}
-                    type="column"
-                  />
-                </InvestmentToken>
-                <Stage stage={stage}> {poolStagesText[stage]}</Stage>
-              </RowLink>
-            )
-          })}
-        </TableBody>
+        <TableData isTyping={isTyping} />
       </Wrapper>
     </>
   )
