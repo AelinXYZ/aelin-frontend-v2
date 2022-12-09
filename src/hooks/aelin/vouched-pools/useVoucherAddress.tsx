@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { isValidAddress } from 'ethereumjs-util'
 
-import { ensResolver, isValidENSName } from '../../useEnsResolvers'
+import { isValidENSName, useEnsResolver } from '../../useEnsResolvers'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 
 export default function useVoucherAddress() {
@@ -12,29 +12,22 @@ export default function useVoucherAddress() {
   } = useRouter()
 
   const [voucherAddress, setVoucherAddress] = useState<string | null>(null)
-  const aelinVouchAddress = useAelinVouchAddress()
+  const { data: aelinVouchAddress } = useEnsResolver(
+    process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string,
+  )
+  const { data: ensAddress } = useEnsResolver(voucher as string)
 
   useEffect(() => {
     if (!voucher || typeof voucher !== 'string') {
-      setVoucherAddress(aelinVouchAddress)
+      setVoucherAddress(aelinVouchAddress ?? null)
     } else if (isValidAddress(voucher)) {
       setVoucherAddress(voucher)
-    } else if (isValidENSName(voucher)) {
-      ensResolver(voucher).then(setVoucherAddress)
+    } else if (isValidENSName(voucher) && ensAddress) {
+      setVoucherAddress(ensAddress)
     } else {
       setVoucherAddress(ZERO_ADDRESS)
     }
-  }, [voucher, voucherAddress, aelinVouchAddress])
-
-  return voucherAddress
-}
-
-export function useAelinVouchAddress() {
-  const [voucherAddress, setVoucherAddress] = useState<string | null>(null)
-
-  useEffect(() => {
-    ensResolver(process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string).then(setVoucherAddress)
-  }, [])
+  }, [voucher, voucherAddress, aelinVouchAddress, ensAddress])
 
   return voucherAddress
 }

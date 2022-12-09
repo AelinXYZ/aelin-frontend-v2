@@ -1,12 +1,16 @@
+import { useEnsResolver } from '../../useEnsResolvers'
 import useAelinUser from '../useAelinUser'
-import useVoucherAddress, { useAelinVouchAddress } from './useVoucherAddress'
+import useVoucherAddress from './useVoucherAddress'
 import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
+import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useHardCodedVouchedPools from '@/src/hooks/aelin/useAelinHardCodedVouchedPools'
 
 export default function useAelinVouchedPools() {
   const voucherAddress = useVoucherAddress()
-  const { data: user, error, isValidating } = useAelinUser(voucherAddress)
-  const aelinVouchAddress = useAelinVouchAddress()
+  const { data: user, error, isValidating } = useAelinUser(voucherAddress || ZERO_ADDRESS)
+  const { data: aelinVouchAddress } = useEnsResolver(
+    process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string,
+  )
 
   const isAelinVouchAddress =
     !voucherAddress ||
