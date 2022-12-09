@@ -38,10 +38,15 @@ const useMerkleTreeData = (variables: Props) => {
 
         // Fallback to link fetching
         if (!variables.ipfsHash) return {}
-        const response = await fetch(getMerkleTreeIpfsGatewayUrl(variables.ipfsHash))
-        const merkleTreeDataJson = await response.json()
 
-        return merkleTreeDataJson
+        try {
+          const response = await fetch(getMerkleTreeIpfsGatewayUrl(variables.ipfsHash))
+          const merkleTreeDataJson = await response.json()
+          return merkleTreeDataJson
+        } catch (err) {
+          console.log(err)
+          return {}
+        }
       }
     },
     {
