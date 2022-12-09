@@ -8,6 +8,9 @@ type Props = {
   ipfsHash: string | null
 }
 
+const getMerkleTreeIpfsGatewayUrl = (ipfsHash: string) =>
+  `${process.env.NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL}/${ipfsHash}`
+
 const useMerkleTreeData = (variables: Props) => {
   return useSWR<MerkleDistributorInfo, Error>(
     'merkle-tree-data',
@@ -32,7 +35,13 @@ const useMerkleTreeData = (variables: Props) => {
         return merkleTreeDataJson
       } catch (err) {
         console.error(err)
-        return {}
+
+        // Fallback to link fetching
+        if (!variables.ipfsHash) return {}
+        const response = await fetch(getMerkleTreeIpfsGatewayUrl(variables.ipfsHash))
+        const merkleTreeDataJson = await response.json()
+
+        return merkleTreeDataJson
       }
     },
     {
