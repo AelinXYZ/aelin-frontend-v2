@@ -93,15 +93,15 @@ export interface CreateUpFrontDealState {
 }
 
 export interface CreateUpFrontDealStateComplete {
-  [NftType.erc1155]: NftCollectionRulesProps[]
-  [NftType.erc721]: NftCollectionRulesProps[]
+  [NftType.erc1155]: NftCollectionRulesProps[] | undefined
+  [NftType.erc721]: NftCollectionRulesProps[] | undefined
   dealAttributes: DealAttr
   investmentToken: Token
-  redemptionDeadline: { days: number; hours: number; minutes: number }
+  redemptionDeadline: { days?: number; hours?: number; minutes?: number }
   sponsorFee?: BigNumberish
   vestingSchedule: {
-    vestingCliff: { days: number; hours: number; minutes: number }
-    vestingPeriod?: { days: number; hours: number; minutes: number }
+    vestingCliff: { days?: number; hours?: number; minutes?: number }
+    vestingPeriod?: { days?: number; hours?: number; minutes?: number }
   }
   dealPrivacy: Privacy
   dealToken: Token
