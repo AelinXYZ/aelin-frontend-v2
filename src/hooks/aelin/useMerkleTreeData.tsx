@@ -18,7 +18,7 @@ const useMerkleTreeData = (variables: Props) => {
       try {
         if (!variables.ipfsHash) return {}
 
-        if (!isIPFS.cid(variables.ipfsHash)) throw new Error('Invalid ipfs hash')
+        if (!isIPFS.cid(variables.ipfsHash)) return {}
 
         const client = new Web3Storage({
           token: process.env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN_KEY as string,
