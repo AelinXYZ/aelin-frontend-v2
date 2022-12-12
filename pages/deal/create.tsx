@@ -19,7 +19,10 @@ import DealCreateStepInput from '@/src/components/pools/common/DealCreateStepInp
 import { Summary } from '@/src/components/pools/common/Summary'
 import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
+  AddressWhitelistProps,
+  AddressesWhiteListAmountFormat,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,
@@ -102,6 +105,7 @@ const Create: NextPage = () => {
   const handleConfirm = (
     whitelist: Array<AddressWhitelistProps | NftCollectionRulesProps>,
     type: NftType | string,
+    amountFormat?: AddressesWhiteListAmountFormat,
   ) => {
     setDealField(whitelist, type)
     setDealField(true, 'withMerkleTree')
@@ -125,12 +129,18 @@ const Create: NextPage = () => {
       }, 0)
 
       setDealField(
-        formatUnits(
-          investmentTokenToRaise.toLocaleString('en', { useGrouping: false }),
-          createDealState.investmentToken?.decimals,
-        ),
+        amountFormat === AddressesWhiteListAmountFormat.decimal
+          ? investmentTokenToRaise.toLocaleString('en', { useGrouping: false })
+          : formatUnits(
+              investmentTokenToRaise.toLocaleString('en', { useGrouping: false }),
+              createDealState.investmentToken?.decimals,
+            ),
         'exchangeRates.investmentTokenToRaise',
       )
+    }
+
+    if (amountFormat) {
+      setDealField(amountFormat, 'whiteListAmountFormat')
     }
   }
 
@@ -236,6 +246,7 @@ const Create: NextPage = () => {
       </RightTimelineLayout>
       {showWhiteListModal && (
         <WhiteListModal
+          currentAmountFormat={createDealState.whiteListAmountFormat}
           currentList={createDealState.whitelist}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={handleConfirm}

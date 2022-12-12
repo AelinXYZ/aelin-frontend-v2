@@ -12,7 +12,10 @@ import { wei } from '@synthetixio/wei'
 import usePrevious from '../common/usePrevious'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
+  AddressWhitelistProps,
+  AddressesWhiteListAmountFormat,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
@@ -89,6 +92,7 @@ export interface CreateUpFrontDealState {
   dealPrivacy?: Privacy
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
+  whiteListAmountFormat: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
@@ -110,6 +114,7 @@ export interface CreateUpFrontDealStateComplete {
   exchangeRates: ExchangeRatesAttr
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
+  whiteListAmountFormat: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
@@ -401,6 +406,19 @@ export const getCreateDealSummaryData = (
     value: step.getSummaryValue(createDealState),
   }))
 
+const getWhiteListAmount = (
+  amount: number,
+  whiteListAmountFormat: AddressesWhiteListAmountFormat,
+  investmentTokenDecimals: number,
+): BigNumberish => {
+  switch (whiteListAmountFormat) {
+    case AddressesWhiteListAmountFormat.decimal:
+      return parseUnits(amount.toString(), investmentTokenDecimals).toString()
+    case AddressesWhiteListAmountFormat.uint256:
+      return amount
+  }
+}
+
 const parseValuesToCreateUpFrontDeal = (
   createDealState: CreateUpFrontDealStateComplete,
   sponsor: string,
@@ -417,8 +435,8 @@ const parseValuesToCreateUpFrontDeal = (
     redemptionDeadline,
     sponsorFee,
     vestingSchedule,
+    whiteListAmountFormat,
     whitelist,
-    withMerkleTree,
   } = createDealState
   const now = new Date()
 
@@ -476,17 +494,12 @@ const parseValuesToCreateUpFrontDeal = (
 
       if (!isAddress(address)) return accum
 
-      if (withMerkleTree) {
-        accum.push({
-          address,
-          amount: amount ? amount : MaxUint256.toNumber(),
-        })
-      } else {
-        accum.push({
-          address,
-          amount: amount ? amount : MaxUint256.toNumber(),
-        })
-      }
+      accum.push({
+        address,
+        amount: amount
+          ? getWhiteListAmount(amount, whiteListAmountFormat, investmentToken.decimals)
+          : MaxUint256.toNumber(),
+      })
 
       return accum
     }, [] as { address: string; amount: BigNumberish }[])
@@ -568,6 +581,7 @@ const initialState: CreateUpFrontDealState = {
   },
   currentStep: CreateUpFrontDealSteps.dealAttributes,
   whitelist: [],
+  whiteListAmountFormat: AddressesWhiteListAmountFormat.decimal,
   withMerkleTree: false,
   nftCollectionRules: [],
 }

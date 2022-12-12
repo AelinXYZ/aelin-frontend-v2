@@ -8,7 +8,10 @@ import { parseUnits } from '@ethersproject/units'
 
 import usePrevious from '../common/usePrevious'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
+  AddressWhitelistProps,
+  AddressesWhiteListAmountFormat,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
@@ -55,6 +58,7 @@ export interface CreatePoolState {
   poolPrivacy?: Privacy
   currentStep: CreatePoolSteps
   whitelist: AddressWhitelistProps[]
+  whiteListAmountFormat: AddressesWhiteListAmountFormat
   nftCollectionRules: NftCollectionRulesProps[]
 }
 
@@ -71,6 +75,7 @@ export interface CreatePoolStateComplete {
   poolPrivacy: Privacy
   currentStep: CreatePoolSteps
   whitelist: AddressWhitelistProps[]
+  whiteListAmountFormat: AddressesWhiteListAmountFormat
   nftCollectionRules: NftCollectionRulesProps[]
 }
 
@@ -156,6 +161,19 @@ export const createPoolConfig: Record<CreatePoolSteps, CreatePoolStepInfo> = {
 
 export const createPoolConfigArr = Object.values(createPoolConfig)
 
+const getWhiteListAmount = (
+  amount: number,
+  whiteListAmountFormat: AddressesWhiteListAmountFormat,
+  investmentTokenDecimals: number,
+): BigNumberish => {
+  switch (whiteListAmountFormat) {
+    case AddressesWhiteListAmountFormat.decimal:
+      return parseUnits(amount.toString(), investmentTokenDecimals).toString()
+    case AddressesWhiteListAmountFormat.uint256:
+      return amount
+  }
+}
+
 const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): CreatePoolValues => {
   const {
     dealDeadline,
@@ -166,6 +184,7 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
     poolPrivacy,
     poolSymbol,
     sponsorFee,
+    whiteListAmountFormat,
     whitelist,
   } = createPoolState
   const now = new Date()
@@ -198,7 +217,9 @@ const parseValuesToCreatePool = (createPoolState: CreatePoolStateComplete): Crea
 
       accum.push({
         address,
-        amount: amount ? String(amount) : MaxUint256.toString(),
+        amount: amount
+          ? getWhiteListAmount(amount, whiteListAmountFormat, investmentToken.decimals)
+          : MaxUint256.toString(),
       })
 
       return accum
@@ -241,6 +262,7 @@ const initialState: CreatePoolState = {
   [CreatePoolSteps.poolPrivacy]: undefined,
   currentStep: CreatePoolSteps.poolName,
   whitelist: [],
+  whiteListAmountFormat: AddressesWhiteListAmountFormat.decimal,
   nftCollectionRules: [],
 }
 
