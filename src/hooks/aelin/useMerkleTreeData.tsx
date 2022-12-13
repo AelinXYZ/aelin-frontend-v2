@@ -1,3 +1,4 @@
+import { HashZero } from '@ethersproject/constants'
 import * as isIPFS from 'is-ipfs'
 import useSWR from 'swr'
 import { Web3Storage } from 'web3.storage'
@@ -15,9 +16,9 @@ const useMerkleTreeData = (variables: Props) => {
   return useSWR<MerkleDistributorInfo, Error>(
     'merkle-tree-data',
     async () => {
-      try {
-        if (!variables.ipfsHash) return {}
+      if (!variables.ipfsHash || variables.ipfsHash === HashZero) return {}
 
+      try {
         if (!isIPFS.cid(variables.ipfsHash)) throw new Error('Invalid ipfs hash')
 
         const client = new Web3Storage({
@@ -35,9 +36,6 @@ const useMerkleTreeData = (variables: Props) => {
         return merkleTreeDataJson
       } catch (err) {
         console.error(err)
-
-        // Fallback to link fetching
-        if (!variables.ipfsHash) return {}
 
         try {
           const response = await fetch(getMerkleTreeIpfsGatewayUrl(variables.ipfsHash))
