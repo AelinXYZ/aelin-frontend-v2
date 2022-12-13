@@ -65,6 +65,8 @@ export type ParsedAelinPool = {
   totalUsersInvested: number
   hasNftList: boolean
   nftCollectionRules: ParsedNftCollectionRules[]
+  totalVouchers: number
+  vouchers: string[]
   upfrontDeal?: {
     address: string
     name: string
@@ -214,6 +216,8 @@ export const getParsedPool = ({
     totalUsersInvested: pool.totalUsersInvested,
     hasNftList: pool.hasNftList,
     nftCollectionRules: parseNftCollectionRules(pool),
+    totalVouchers: pool.totalVouchers,
+    vouchers: pool.vouchers,
   }
 
   const dealDetails = pool.deal

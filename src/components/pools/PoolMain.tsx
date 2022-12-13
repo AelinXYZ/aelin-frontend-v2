@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import NoActions from './actions/NoActions'
 import ClaimUpfrontDealTokens from './actions/Vest/ClaimUpfrontDealTokens'
 import VestUpfrontDeal from './actions/Vest/VestUpfrontDeal'
-import { Vouch } from './actions/Vouch'
+import Vouch from './actions/Vouch'
 import UpfrontDealInformation from './deal/UpfrontDealInformation'
 import NftCollectionsTable from './nftTable/NftCollectionsTable'
 import { NotificationType } from '@/graphql-schema'
@@ -158,7 +158,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 </RequiredConnection>
               </NftSelectionProvider>
             </ActionTabs>
-            <Vouch />
+            <Vouch pool={pool} />
           </ActionsWrapper>
           {pool.hasNftList && <NftCollectionsTable pool={pool} />}
         </MainGrid>
