@@ -1,5 +1,4 @@
 import { parseUnits } from '@ethersproject/units'
-import { noop } from 'lodash'
 
 import {
   dealExchangeRates,
@@ -335,11 +334,5 @@ describe('getInvestmentDealToken', () => {
       raw: parseUnits('1', dealTokenDecimals),
       formatted: '1',
     })
-  })
-})
-
-describe('parseValuesToCreateUpFrontDeal', () => {
-  it.skip('it should return the correct values to create an upfront deal', () => {
-    noop()
   })
 })

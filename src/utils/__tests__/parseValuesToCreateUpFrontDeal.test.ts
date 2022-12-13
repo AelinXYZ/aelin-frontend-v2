@@ -1,6 +1,5 @@
 import { HashZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
-import { noop } from 'lodash'
 
 import { parseValuesToCreateUpFrontDeal } from '../parseValuesToCreateUpFrontDeal'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
