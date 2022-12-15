@@ -1,6 +1,9 @@
 import { Dispatch, ReactElement } from 'react'
 import styled from 'styled-components'
 
+import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
+import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
+import NftWhiteListProcessSection from '@/src/components/pools/whitelist/nft/NftWhiteListProcessSection'
 import {
   NftType,
   NftWhiteListAction,
@@ -8,10 +11,7 @@ import {
   NftWhiteListState,
   NftWhiteListStep,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
-import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
-import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
-import NftWhiteListProcessSection from '@/src/components/pools/whitelist/nft/NftWhiteListProcessSection'
+} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,
   ButtonPrimaryLight,

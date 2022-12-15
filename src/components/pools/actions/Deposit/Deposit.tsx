@@ -16,6 +16,7 @@ import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { isPrivatePool } from '@/src/utils/aelinPoolUtils'
+import { isHiddenPool } from '@/src/utils/isHiddenPool'
 import { formatToken } from '@/src/web3/bigNumber'
 import { Funding } from '@/types/aelinPool'
 
@@ -25,6 +26,8 @@ type Props = {
 }
 
 const StyledTokenInput = styled(TokenInput)<{ isPrivate?: boolean }>`
+  margin: 0;
+  margin-top: 5px;
   margin-bottom: ${(props) => (props.isPrivate ? '0px' : '40px')};
 `
 
@@ -46,6 +49,15 @@ const ButtonsWrapper = styled.div`
 
 const Button = styled(ButtonGradient)`
   width: 110px;
+`
+
+const MinimumInvestment = styled.span`
+  width: 100%;
+  font-weight: 400;
+  line-height: 1.5;
+  font-size: 1.2rem;
+  text-align: left;
+  margin-bottom: 5px;
 `
 
 const Allowance = ({ allowance }: { allowance: string }) => (
@@ -92,6 +104,9 @@ function Deposit({ pool, poolHelpers }: Props) {
       return
     }
 
+    const minimumPurchaseAmountNotEnough =
+      tokenInputValue && pool.minimumPurchaseAmount?.raw.gt(BigNumber.from(tokenInputValue))
+
     const nftAllocationExceeded =
       pool.hasNftList &&
       tokenInputValue &&
@@ -101,12 +116,17 @@ function Deposit({ pool, poolHelpers }: Props) {
 
     const isInputError =
       (tokenInputValue && BigNumber.from(tokenInputValue).gt(sortedBalances[0].raw)) ||
-      nftAllocationExceeded
+      nftAllocationExceeded ||
+      minimumPurchaseAmountNotEnough
 
     if (!isInputError) {
       setInputError('')
     } else {
-      sortedBalances[0].type === AmountTypes.maxDepositAllowedPrivate
+      minimumPurchaseAmountNotEnough
+        ? setInputError(
+            `Purchase amount should be greater than the minimum amount of ${pool.minimumPurchaseAmount?.formatted} ${pool.investmentTokenSymbol}`,
+          )
+        : sortedBalances[0].type === AmountTypes.maxDepositAllowedPrivate
         ? setInputError(`Max allowed to invest is ${sortedBalances[0].formatted}`)
         : sortedBalances[0].type === AmountTypes.maxDepositAllowed
         ? setInputError(`Max cap allowance ${sortedBalances[0].formatted}`)
@@ -114,7 +134,16 @@ function Deposit({ pool, poolHelpers }: Props) {
         ? setInputError(`Purchase amount should be less the max allocation`)
         : setInputError(`Insufficient balance`)
     }
-  }, [investmentTokenBalance.raw, sortedBalances, tokenInputValue, allocation, pool.hasNftList])
+  }, [
+    investmentTokenBalance.raw,
+    sortedBalances,
+    tokenInputValue,
+    allocation,
+    pool.hasNftList,
+    pool.minimumPurchaseAmount?.raw,
+    pool.minimumPurchaseAmount,
+    pool.investmentTokenSymbol,
+  ])
 
   const depositTokens = async () => {
     if (inputError) {
@@ -178,6 +207,12 @@ function Deposit({ pool, poolHelpers }: Props) {
         symbol={investmentTokenSymbol}
         value={tokenInputValue}
       />
+      {pool.minimumPurchaseAmount && (
+        <MinimumInvestment>
+          Minimum investment: {pool.minimumPurchaseAmount.formatted} {pool.investmentTokenSymbol}
+        </MinimumInvestment>
+      )}
+
       {isPrivatePool(pool.poolType) && !!userMaxDepositPrivateAmount?.formatted && (
         <Allowance
           allowance={`${userMaxDepositPrivateAmount.formatted} ${pool.investmentTokenSymbol}`}
@@ -192,7 +227,8 @@ function Deposit({ pool, poolHelpers }: Props) {
             isSubmitting ||
             !tokenInputValue ||
             Boolean(inputError) ||
-            (pool.hasNftList && !hasStoredSelectedNft)
+            (pool.hasNftList && !hasStoredSelectedNft) ||
+            isHiddenPool(pool.address)
           }
           onClick={depositTokens}
         >

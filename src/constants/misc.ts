@@ -10,6 +10,7 @@ export const MAX_BN = BigNumber.from(2).pow(256).sub(1)
 export const HIDDEN_POOLS = [
   '0x97fc4e0ce415ef922b08f4725a0fa197d7fdbec3',
   '0x1beb0c0af60c037aa5b7e48b2e5cd952fe512390',
+  '0x9c913f2c7239624f3735669ddd80fb114e04f0b3',
 ]
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -20,6 +21,7 @@ export const EXCHANGE_DECIMALS = 4
 export const STAKING_DECIMALS = 4
 export const BASE_DECIMALS = 18
 export const DISPLAY_DECIMALS = 2
+export const SMALL_NUMBER_DISPLAY_DECIMALS = 4
 
 export const GWEI_PRECISION = 9
 export const GWEI_UNIT = 1000000000

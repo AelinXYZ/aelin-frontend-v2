@@ -60,7 +60,7 @@ export const convertToSeconds = ({
 
 export const emptyDuration = { days: undefined, hours: undefined, minutes: undefined }
 
-export const getDuration = (startDate: Date, days: number, hours: number, minutes: number) => {
+export const getDuration = (startDate: Date, days?: number, hours?: number, minutes?: number) => {
   const startTimestamp = startDate.getTime()
   const endTimestamp = add(startDate, {
     days,
