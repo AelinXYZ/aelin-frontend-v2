@@ -410,10 +410,10 @@ const getWhiteListAmount = (
   amount: number,
   whiteListAmountFormat: AddressesWhiteListAmountFormat,
   investmentTokenDecimals: number,
-): BigNumberish => {
+): number => {
   switch (whiteListAmountFormat) {
     case AddressesWhiteListAmountFormat.decimal:
-      return parseUnits(amount.toString(), investmentTokenDecimals).toString()
+      return parseUnits(amount.toString(), investmentTokenDecimals).toNumber()
     case AddressesWhiteListAmountFormat.uint256:
       return amount
   }
