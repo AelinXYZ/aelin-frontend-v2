@@ -9,10 +9,10 @@ import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/commo
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
-import { Chains, chainsConfig } from '@/src/constants/chains'
+import { chainsConfig } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
 import useEthGasPrice, { GAS_SPEEDS, useEthGasPriceLegacy } from '@/src/hooks/useGasPrice'
-import useEthPriceUnitInUSD from '@/src/hooks/useGasPriceUnitInUSD'
+import useGasPriceUnitInUSD, { GasPriceUnit } from '@/src/hooks/useGasPriceUnitInUSD'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getTransactionPrice } from '@/src/utils/gasUtils'
 import { Eip1559GasPrice, GasLimitEstimate, GasSpeed } from '@/types/utils'
@@ -102,7 +102,8 @@ const GasSelector = ({
 }) => {
   const { data: ethGasPriceData, isValidating } = useEthGasPrice()
   const { data: ethGasPriceDataLegacy, isValidating: isValidatingLegacy } = useEthGasPriceLegacy()
-  const { data: ethPriceInUSD } = useEthPriceUnitInUSD()
+  const { data: ethPriceInUSD } = useGasPriceUnitInUSD(GasPriceUnit.eth)
+  const { data: maticPriceInUSD } = useGasPriceUnitInUSD(GasPriceUnit.matic)
 
   const { appChainId } = useWeb3Connection()
 
@@ -163,11 +164,13 @@ const GasSelector = ({
       getTransactionPrice(
         gasPriceL1,
         gasPrice,
-        appChainId === Chains.arbitrum ? false : isL2Chain,
+        appChainId,
+        isL2Chain,
         gasLimitEstimate,
         ethPriceInUSD,
+        maticPriceInUSD,
       ) ?? 0,
-    [gasPrice, gasPriceL1, gasLimitEstimate, ethPriceInUSD, isL2Chain, appChainId],
+    [gasPrice, gasPriceL1, gasLimitEstimate, ethPriceInUSD, maticPriceInUSD, isL2Chain, appChainId],
   )
 
   const formattedGasPrice = useMemo(() => {
