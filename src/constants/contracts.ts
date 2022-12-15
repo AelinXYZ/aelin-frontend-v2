@@ -42,8 +42,7 @@ export const contracts = constantContracts({
       [Chains.goerli]: '0xb52736cE26345942134b11083e88A0DD9Ef1be5A',
       [Chains.optimism]: '0x8B35551d6459a3d49B9A5A0D7333c6D7E0cCbBd9',
       [Chains.arbitrum]: '0xbf7c0Fd0D31bC377f861d11d4aAc15296c0405b6',
-      // TODO: Add contract address after deployment
-      [Chains.polygon]: '',
+      [Chains.polygon]: '0xbf7c0fd0d31bc377f861d11d4aac15296c0405b6',
     },
     abi: AelinRegularPoolFactoryABI,
   },
@@ -53,8 +52,7 @@ export const contracts = constantContracts({
       [Chains.goerli]: '0x50c4eea08ae5544b622c96683823cecdc8b0e8ba',
       [Chains.optimism]: '0xe6355E5B217390A2F888c35f73248844847b0ef4',
       [Chains.arbitrum]: '0x91fCeA33D02d11621b7f90ebd5E44eD393eD7b5e',
-      // TODO: Add contract address after deployment
-      [Chains.polygon]: '',
+      [Chains.polygon]: '0x82eaa001029d4686b343b53ce6e7f1823725e736',
     },
     abi: AelinDirectDealFactoryABI,
   },
