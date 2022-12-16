@@ -32,7 +32,7 @@ import {
   ButtonNext,
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
-import { Error } from '@/src/components/pureStyledComponents/text/Error'
+import { Error as ErrorComponent } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { Privacy } from '@/src/constants/pool'
@@ -54,7 +54,7 @@ const BackButton = styled(ButtonPrimaryLight)`
   }
 `
 
-const StyledError = styled(Error)`
+const StyledError = styled(ErrorComponent)`
   margin-bottom: 0;
 `
 
@@ -62,6 +62,22 @@ const NftTableWrapper = styled.div`
   width: 100%;
   padding-top: 20px;
 `
+
+const getFormattedInvestmentTokenToRaise = (
+  investmentTokenToRaise: number,
+  whiteListAmountFormat: AddressesWhiteListAmountFormat,
+  investmentTokenDecimals?: number,
+): string => {
+  switch (whiteListAmountFormat) {
+    case AddressesWhiteListAmountFormat.decimal:
+      return investmentTokenToRaise.toLocaleString('en', { useGrouping: false })
+    case AddressesWhiteListAmountFormat.uint256:
+      return formatUnits(
+        investmentTokenToRaise.toLocaleString('en', { useGrouping: false }),
+        investmentTokenDecimals,
+      )
+  }
+}
 
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
@@ -120,6 +136,10 @@ const Create: NextPage = () => {
     */
 
     if (createDealState.dealPrivacy === Privacy.PRIVATE && whitelist.length) {
+      if (!amountFormat) {
+        throw new Error('Format should be defined for a whitelist.')
+      }
+
       const investmentTokenToRaise = whitelist.reduce((accum: number, curr: any) => {
         if (curr.amount) {
           accum += curr.amount
@@ -129,12 +149,11 @@ const Create: NextPage = () => {
       }, 0)
 
       setDealField(
-        amountFormat === AddressesWhiteListAmountFormat.decimal
-          ? investmentTokenToRaise.toLocaleString('en', { useGrouping: false })
-          : formatUnits(
-              investmentTokenToRaise.toLocaleString('en', { useGrouping: false }),
-              createDealState.investmentToken?.decimals,
-            ),
+        getFormattedInvestmentTokenToRaise(
+          investmentTokenToRaise,
+          amountFormat,
+          createDealState.investmentToken?.decimals,
+        ),
         'exchangeRates.investmentTokenToRaise',
       )
     }

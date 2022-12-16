@@ -1,23 +1,30 @@
+import { isAddress } from '@ethersproject/address'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
-import { HashZero } from '@ethersproject/constants'
+import { HashZero, MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
-import Wei from '@synthetixio/wei'
+import Wei, { wei } from '@synthetixio/wei'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { BASE_DECIMALS, DISPLAY_DECIMALS, EXCHANGE_DECIMALS, ZERO_BN } from '../constants/misc'
-import { ParsedAelinPool } from '../hooks/aelin/useAelinPool'
 import { DealType, PoolCreated } from '@/graphql-schema'
 import {
   NftType,
   NftWhiteListState,
   NftWhitelistProcess,
-} from '@/src/components/pools/whitelist/nft//nftWhiteListReducer'
+} from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
+import { BASE_DECIMALS, DISPLAY_DECIMALS, EXCHANGE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { PoolStages, Privacy } from '@/src/constants/pool'
 import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
+import { CreatePoolStateComplete, CreatePoolValues } from '@/src/hooks/aelin/useAelinCreatePool'
+import {
+  CreateUpFrontDealStateComplete,
+  CreateUpFrontDealValues,
+} from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { getDuration } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 import { DetailedNumber } from '@/types/utils'
 
@@ -386,7 +393,7 @@ export function getTokensSold(
 
   const _redeemed = toDecimals(new Wei(redeemed.raw, investmentTokenDecimals, true), bigDecimal)
 
-  const _rate = toDecimals(new Wei(rate.raw, dealTokenDecimals, true), bigDecimal)
+  const _rate = new Wei(rate.raw, bigDecimal, true)
 
   const tokensSold = _redeemed.div(_rate).toBN()
 

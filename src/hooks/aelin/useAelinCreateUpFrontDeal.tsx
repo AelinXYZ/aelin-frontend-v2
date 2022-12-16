@@ -5,8 +5,6 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
-import { HashZero, MaxUint256 } from '@ethersproject/constants'
-import { parseUnits } from '@ethersproject/units'
 import { wei } from '@synthetixio/wei'
 
 import usePrevious from '../common/usePrevious'
@@ -19,7 +17,7 @@ import {
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { BASE_DECIMALS, EXCHANGE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { EXCHANGE_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token } from '@/src/constants/token'
 import {
@@ -32,6 +30,7 @@ import { getDuration, isEmptyDuration, secondsToDhm } from '@/src/utils/date'
 import { formatNumber } from '@/src/utils/formatNumber'
 import { mergeArrayKeyValuePairs } from '@/src/utils/mergeArrayKeyValuePairs'
 import { parseBalanceMap } from '@/src/utils/merkle-tree/parse-balance-map'
+import { parseValuesToCreateUpFrontDeal } from '@/src/utils/parseValuesToCreateUpFrontDeal'
 import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
 import { storeJson } from '@/src/utils/web3storage'
 
@@ -92,21 +91,21 @@ export interface CreateUpFrontDealState {
   dealPrivacy?: Privacy
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
-  whiteListAmountFormat: AddressesWhiteListAmountFormat
+  whiteListAmountFormat?: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
 
 export interface CreateUpFrontDealStateComplete {
-  [NftType.erc1155]: NftCollectionRulesProps[]
-  [NftType.erc721]: NftCollectionRulesProps[]
+  [NftType.erc1155]: NftCollectionRulesProps[] | undefined
+  [NftType.erc721]: NftCollectionRulesProps[] | undefined
   dealAttributes: DealAttr
   investmentToken: Token
-  redemptionDeadline: { days: number; hours: number; minutes: number }
+  redemptionDeadline: { days?: number; hours?: number; minutes?: number }
   sponsorFee?: BigNumberish
   vestingSchedule: {
-    vestingCliff: { days: number; hours: number; minutes: number }
-    vestingPeriod?: { days: number; hours: number; minutes: number }
+    vestingCliff: { days?: number; hours?: number; minutes?: number }
+    vestingPeriod?: { days?: number; hours?: number; minutes?: number }
   }
   dealPrivacy: Privacy
   dealToken: Token
@@ -114,7 +113,7 @@ export interface CreateUpFrontDealStateComplete {
   exchangeRates: ExchangeRatesAttr
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
-  whiteListAmountFormat: AddressesWhiteListAmountFormat
+  whiteListAmountFormat?: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
@@ -406,145 +405,6 @@ export const getCreateDealSummaryData = (
     value: step.getSummaryValue(createDealState),
   }))
 
-const getWhiteListAmount = (
-  amount: number,
-  whiteListAmountFormat: AddressesWhiteListAmountFormat,
-  investmentTokenDecimals: number,
-): number => {
-  switch (whiteListAmountFormat) {
-    case AddressesWhiteListAmountFormat.decimal:
-      return parseUnits(amount.toString(), investmentTokenDecimals).toNumber()
-    case AddressesWhiteListAmountFormat.uint256:
-      return amount
-  }
-}
-
-const parseValuesToCreateUpFrontDeal = (
-  createDealState: CreateUpFrontDealStateComplete,
-  sponsor: string,
-  merkleRoot?: string,
-  ipfsHash?: string,
-): CreateUpFrontDealValues => {
-  const {
-    dealAttributes,
-    dealPrivacy,
-    dealToken,
-    exchangeRates,
-    holderAddress,
-    investmentToken,
-    redemptionDeadline,
-    sponsorFee,
-    vestingSchedule,
-    whiteListAmountFormat,
-    whitelist,
-  } = createDealState
-  const now = new Date()
-
-  const underlyingDealTokenTotal = wei(
-    exchangeRates?.investmentTokenToRaise,
-    dealToken.decimals,
-  ).mul(wei(exchangeRates.exchangeRates, dealToken.decimals))
-
-  const exchangeRatesInWei = wei(exchangeRates.exchangeRates, investmentToken.decimals)
-
-  const dealTokenTotalInWei = wei(
-    exchangeRates.investmentTokenToRaise,
-    investmentToken.decimals,
-  ).mul(exchangeRatesInWei)
-
-  const investmentPerDeal = wei(exchangeRates.investmentTokenToRaise, investmentToken.decimals).div(
-    dealTokenTotalInWei,
-  )
-
-  const purchaseRaiseMinimum = exchangeRates?.minimumAmount
-    ? parseUnits(exchangeRates.minimumAmount.toString(), investmentToken.decimals)
-    : ZERO_BN
-
-  const redemptionDeadlineDuration = getDuration(
-    now,
-    redemptionDeadline.days,
-    redemptionDeadline.hours,
-    redemptionDeadline.minutes,
-  )
-
-  const vestingCliffDuration = getDuration(
-    now,
-    vestingSchedule.vestingCliff?.days as number,
-    vestingSchedule.vestingCliff?.hours as number,
-    vestingSchedule.vestingCliff?.minutes as number,
-  )
-
-  const vestingPeriodDuration = getDuration(
-    now,
-    vestingSchedule.vestingPeriod?.days as number,
-    vestingSchedule.vestingPeriod?.hours as number,
-    vestingSchedule.vestingPeriod?.minutes as number,
-  )
-
-  let dealAddresses: string[] = []
-  let dealAddressesAmounts: BigNumberish[] = []
-  let nftCollectionRules: NftCollectionRulesProps[] = []
-
-  if (
-    dealPrivacy === Privacy.PRIVATE &&
-    [NftType.erc1155, NftType.erc721].some((type) => !Object.hasOwn(createDealState, type))
-  ) {
-    const formattedWhiteList = whitelist.reduce((accum, curr) => {
-      const { address, amount } = curr
-
-      if (!isAddress(address)) return accum
-
-      accum.push({
-        address,
-        amount: amount
-          ? getWhiteListAmount(amount, whiteListAmountFormat, investmentToken.decimals)
-          : MaxUint256.toNumber(),
-      })
-
-      return accum
-    }, [] as { address: string; amount: BigNumberish }[])
-
-    dealAddresses = formattedWhiteList.map(({ address }) => address)
-    dealAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
-  }
-
-  if (dealPrivacy === Privacy.NFT && Object.hasOwn(createDealState, NftType.erc721)) {
-    nftCollectionRules = [...createDealState[NftType.erc721]]
-  }
-
-  if (dealPrivacy === Privacy.NFT && Object.hasOwn(createDealState, NftType.erc1155)) {
-    nftCollectionRules = [...createDealState[NftType.erc1155]]
-  }
-
-  return [
-    {
-      name: dealAttributes.name,
-      symbol: dealAttributes.symbol,
-      purchaseToken: investmentToken.address,
-      underlyingDealToken: dealToken.address,
-      holder: holderAddress,
-      sponsor,
-      sponsorFee: sponsorFee ? parseUnits(sponsorFee?.toString(), BASE_DECIMALS) : ZERO_BN,
-      merkleRoot: merkleRoot ?? HashZero,
-      ipfsHash: ipfsHash ?? HashZero,
-    },
-    {
-      underlyingDealTokenTotal: underlyingDealTokenTotal.toBN(),
-      purchaseTokenPerDealToken: investmentPerDeal.toBN(),
-      purchaseRaiseMinimum,
-      purchaseDuration: redemptionDeadlineDuration,
-      vestingPeriod: vestingPeriodDuration,
-      vestingCliffPeriod: vestingCliffDuration,
-      allowDeallocation: !exchangeRates.isCapped,
-    },
-    nftCollectionRules,
-    {
-      allowListAddresses: dealAddresses,
-      allowListAmounts: dealAddressesAmounts,
-    },
-  ]
-}
-
 const initialState: CreateUpFrontDealState = {
   [CreateUpFrontDealSteps.dealAttributes]: {
     name: '',
@@ -581,7 +441,7 @@ const initialState: CreateUpFrontDealState = {
   },
   currentStep: CreateUpFrontDealSteps.dealAttributes,
   whitelist: [],
-  whiteListAmountFormat: AddressesWhiteListAmountFormat.decimal,
+  whiteListAmountFormat: undefined,
   withMerkleTree: false,
   nftCollectionRules: [],
 }
@@ -685,18 +545,10 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
   const handleCreateUpFrontDeal = async () => {
     const [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses] =
-      await parseValuesToCreateUpFrontDeal(
+      parseValuesToCreateUpFrontDeal(
         createDealState as CreateUpFrontDealStateComplete,
         address ?? ZERO_ADDRESS,
       )
-
-    const formattedNftCollectionRules = nftCollectionRules.map((collection) => ({
-      ...collection,
-      purchaseAmount: parseUnits(
-        collection.purchaseAmount.toString(),
-        createDealState.investmentToken?.decimals ?? BASE_DECIMALS,
-      ),
-    }))
 
     const isAMerkleTreePool =
       createDealState.withMerkleTree && createDealState.dealPrivacy === Privacy.PRIVATE
@@ -736,7 +588,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
           createUpFrontDealEstimate([
             upFrontDealDataFull,
             upFrontDealConfig,
-            formattedNftCollectionRules,
+            nftCollectionRules,
             emptyAllowlistData,
           ]),
 
@@ -746,12 +598,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
           try {
             const receipt = await execute(
-              [
-                upFrontDealDataFull,
-                upFrontDealConfig,
-                formattedNftCollectionRules,
-                emptyAllowlistData,
-              ],
+              [upFrontDealDataFull, upFrontDealConfig, nftCollectionRules, emptyAllowlistData],
               txGasOptions,
             )
 
@@ -772,7 +619,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
           createUpFrontDealEstimate([
             upFrontDealData,
             upFrontDealConfig,
-            formattedNftCollectionRules,
+            nftCollectionRules,
             allowListAddresses,
           ]),
         title: 'Create deal',
@@ -781,7 +628,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
           try {
             const receipt = await execute(
-              [upFrontDealData, upFrontDealConfig, formattedNftCollectionRules, allowListAddresses],
+              [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses],
               txGasOptions,
             )
 

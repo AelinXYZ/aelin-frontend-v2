@@ -24,7 +24,7 @@ const Modal = styled(BaseModal)`
 type WhiteListType = {
   poolPrivacy: Privacy | undefined
   currentList: AddressWhitelistProps[]
-  currentAmountFormat: AddressesWhiteListAmountFormat
+  currentAmountFormat?: AddressesWhiteListAmountFormat
   onClose: () => void
   onConfirm: (
     whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
@@ -45,7 +45,7 @@ const WhiteListModal = ({
     currentList.length ? currentList : initialAddressesWhitelistValues,
   )
   const [addressesWhiteListStep, setAddressesWhiteListStep] = useState(
-    currentList.length ? AddressesWhiteListStep.addresses : AddressesWhiteListStep.format,
+    currentAmountFormat ? AddressesWhiteListStep.addresses : AddressesWhiteListStep.format,
   )
   const [addressesWhiteListAmountFormat, setAddressesWhiteListAmountFormat] = useState(
     currentAmountFormat ?? AddressesWhiteListAmountFormat.decimal,
