@@ -21,4 +21,12 @@ module.exports = {
 
   // Config re-map imports
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
+
+  globals: {
+    'ts-jest': {
+      tsConfig: {
+        jsx: 'react-jsx',
+      },
+    },
+  },
 }
