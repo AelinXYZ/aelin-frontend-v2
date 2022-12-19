@@ -14,7 +14,7 @@ const getMerkleTreeIpfsGatewayUrl = (ipfsHash: string) =>
 
 const useMerkleTreeData = (variables: Props) => {
   return useSWR<MerkleDistributorInfo, Error>(
-    'merkle-tree-data',
+    ['merkle-tree-data', variables],
     async () => {
       if (!variables.ipfsHash || variables.ipfsHash === HashZero) return {}
 
