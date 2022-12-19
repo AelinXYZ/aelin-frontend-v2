@@ -29,6 +29,7 @@ import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
 import usePrevious from '@/src/hooks/common/usePrevious'
+import { useEnsLookUpAddress, useEnsResolver } from '@/src/hooks/useEnsResolvers'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -426,6 +427,8 @@ export const VouchedPools: React.FC = () => {
     query: { voucher },
   } = router
 
+  const { data: ensVoucher } = useEnsLookUpAddress(voucher as string)
+
   const debouncedChangeHandler = useMemo(() => {
     return debounce((address: string) => {
       setVoucherAddress(address)
@@ -456,11 +459,12 @@ export const VouchedPools: React.FC = () => {
   }, [voucherAddress, prevVoucherAddress, router])
 
   useEffect(() => {
-    if (!!voucher && searchRef.current) {
+    const voucherAddress = ensVoucher || voucher
+    if (!!voucherAddress && searchRef.current) {
       const input = searchRef.current as HTMLInputElement
-      input.value = voucher as string
+      input.value = voucherAddress as string
     }
-  }, [voucher, searchRef])
+  }, [voucher, ensVoucher, searchRef])
 
   useEffect(() => {
     if (searchRef.current && !(searchRef.current as HTMLInputElement).value) {
