@@ -1,10 +1,12 @@
+import { useState } from 'react'
 import styled from 'styled-components'
 
-import { genericSuspense } from '../../helpers/SafeSuspense'
-import { ButtonGradient } from '../../pureStyledComponents/buttons/Button'
-import { BaseCard } from '../../pureStyledComponents/common/BaseCard'
-import { Tooltip } from '../../tooltip/Tooltip'
-import { Contents as BaseContents, Title as BaseTitle } from './Wrapper'
+import { genericSuspense } from '../../../helpers/SafeSuspense'
+import { ButtonGradient } from '../../../pureStyledComponents/buttons/Button'
+import { BaseCard } from '../../../pureStyledComponents/common/BaseCard'
+import { Tooltip } from '../../../tooltip/Tooltip'
+import { Contents as BaseContents, Title as BaseTitle } from '../Wrapper'
+import VouchersModal from './VouchersModal'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
@@ -42,11 +44,11 @@ const VouchButton = styled(ButtonGradient)`
 `
 
 const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) => {
+  const [showVouchersModal, setShowVouchersModal] = useState<boolean>(false)
   const { address: userAddress } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
   const isUpfrontDeal = !!pool.upfrontDeal
 
-  // const hasVouched = !!pool.vouchers?.find((v: { id: string }) => v.id === userAddress)
   const hasVouched = !!pool.vouchers?.includes(userAddress || '')
 
   const { estimate: vouchPoolEstimate, execute: vouchPool } = useAelinPoolTransaction(
@@ -89,6 +91,9 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
     })
   }
 
+  const handleCloseVouchersModal = () => setShowVouchersModal(false)
+  const handleOpenVouchersModal = () => setShowVouchersModal(true)
+
   return (
     <Container>
       <TitleWrapper>
@@ -101,6 +106,8 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
       <VouchButton disabled={!userAddress || isSubmitting} onClick={handleVouchClick}>
         {hasVouched ? 'Disavow' : 'Vouch'}
       </VouchButton>
+      <VouchButton onClick={handleOpenVouchersModal}>See all vouchers</VouchButton>
+      {showVouchersModal && <VouchersModal onClose={handleCloseVouchersModal} pool={pool} />}
     </Container>
   )
 })
