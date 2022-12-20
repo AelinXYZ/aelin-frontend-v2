@@ -28,4 +28,10 @@ export const VerifiedPoolsSocials: { [poolAddress: string]: PoolSocials } = {
     discordServerInvite: 'BfntecmA',
     mediumPost: '@thalondao/28995c707e23',
   },
+  ['0x89ff4fbec2081079fa9fa5064ce1c39203165821']: {
+    websiteName: 'thalon.io',
+    twitterHandle: 'thalondao',
+    discordServerInvite: 'BfntecmA',
+    mediumPost: '@thalondao/28995c707e23',
+  },
 } as const
