@@ -300,7 +300,7 @@ export const getNftCollectionData = async (chainId: ChainsValues, collectionAddr
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'X-API-KEY': process.env.NEXT_PUBLIC_SIMPLEHASH_API_KEY as string,
+        'X-API-KEY': process.env.SIMPLEHASH_API_KEY as string,
       },
     }
 
