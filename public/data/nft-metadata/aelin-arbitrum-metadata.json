@@ -11,7 +11,6 @@
     "floorPrice": 0.0001,
     "totalVolume": 0.006201,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 42161,
     "updatedAt": 1666906149925
   }

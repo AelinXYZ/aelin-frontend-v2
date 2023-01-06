@@ -10,7 +10,6 @@ import OpenSeaMainnetResponse from '../data/open-sea-mainnet-response.json' asse
 import OpenSeaPolygonResponse from '../data/open-sea-polygon-response.json' assert { type: 'json' }
 import QuixoticResponse from '../data/quixotic-response.json' assert { type: 'json' }
 import StratosResponse from '../data/stratos-response.json' assert { type: 'json' }
-import { Chains } from '@/src/constants/chains'
 
 detenv.config({ path: '.env.local' })
 
@@ -176,7 +175,7 @@ const OpenSeaMainnetMetadataCollector = async () => {
             contractType,
             floorPrice: floorPrice !== null ? Number(floorPrice.eth) : null,
             totalVolume: totalVolume !== null ? Number(totalVolume.unit) : null,
-            network: Chains.mainnet,
+            network: 1,
             updatedAt: Date.now(),
           }
         })
@@ -245,7 +244,7 @@ const OpenSeaPolygonMetadataCollector = async () => {
             contractType,
             floorPrice: floorPrice !== null ? Number(floorPrice.eth) : null,
             totalVolume: volume !== null ? Number(volume.unit) : null,
-            network: Chains.polygon,
+            network: 137,
             updatedAt: Date.now(),
           }
         })
@@ -260,9 +259,42 @@ const OpenSeaPolygonMetadataCollector = async () => {
     },
   )
 
+  const polygonAddresses = new Set(
+    await Promise.all(
+      metadataFiltered.map(async (collection: { address: string }, index) => {
+        // To avoid "429 Too Many Requests" response
+        await new Promise((r) => setTimeout(r, 1000 * index))
+
+        const options = {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'X-API-KEY': process.env.NEXT_PUBLIC_SIMPLEHASH_API_KEY as string,
+          },
+        }
+
+        const simpleHashRes = await fetch(
+          `https://api.simplehash.com/api/v0/nfts/collections/polygon/${collection.address}?limit=50`,
+          options,
+        )
+        const data = await simpleHashRes.json()
+
+        return data?.collections?.length > 0 ? collection.address : undefined
+      }),
+    ),
+  )
+
+  const result = (metadataFiltered as unknown as NFTCollections[])
+    .filter((collection: { address: string }) => {
+      return polygonAddresses.has(collection.address)
+    })
+    .map((collection: any, index: number) => {
+      return { ...collection, id: index }
+    })
+
   return fs.writeFile(
     `${process.cwd()}/public/data/nft-metadata/open-sea-polygon-metadata.json`,
-    JSON.stringify(metadataFiltered, null, 2),
+    JSON.stringify(result, null, 2),
     'utf8',
   )
 }
@@ -311,8 +343,7 @@ const QuixoticMetadataCollector = async () => {
         floorPrice: floorPrice ? formatGwei(floorPrice) : null,
         totalVolume: formatGwei(totalVolume),
         contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
-        paymentSymbol: 'ETH',
-        network: Chains.optimism,
+        network: 10,
         updatedAt: Date.now(),
       }
     }),
@@ -369,8 +400,7 @@ const StratosMetadataCollector = async () => {
         floorPrice: floorPrice ? formatGwei(floorPrice) : null,
         totalVolume: formatGwei(totalVolume),
         contractType: contract_type ? contract_type.toLowerCase().replace('-', '') : '',
-        paymentSymbol: 'ETH',
-        network: Chains.arbitrum,
+        network: 42161,
         updatedAt: Date.now(),
       }
     }),

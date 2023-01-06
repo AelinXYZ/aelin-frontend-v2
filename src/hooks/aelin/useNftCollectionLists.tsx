@@ -11,6 +11,7 @@ import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'
 import getNftType from '@/src/utils/getNftType'
+import getTokenType from '@/src/utils/getTokenType'
 import { shortenAddress } from '@/src/utils/string'
 
 export enum NFTType {
@@ -40,7 +41,6 @@ export type NftCollectionData = {
   numOwners?: number
   floorPrice?: number
   totalVolume?: number
-  paymentSymbol?: string
   updatedAt?: string
 }
 
@@ -63,6 +63,7 @@ const parseOpenSeaResponse = async (
     id: 0,
     address: data.address,
     name: data.name,
+    slug: data.collection?.slug,
     symbol: data.symbol,
     description: data.description,
     imageUrl: data.image_url,
@@ -77,13 +78,14 @@ const getParsedNFTCollectionData = async (collectionAddress: string, chainId: Ch
   }
 
   const url =
-    chainId === Chains.optimism || chainId === Chains.arbitrum
+    chainId === Chains.optimism || chainId === Chains.arbitrum || chainId === Chains.polygon
       ? `/api/nft/${chainId}/${collectionAddress}`
       : `https://api.opensea.io/api/v1/asset_contract/${collectionAddress}?format=json`
 
   return fetch(url).then(async (res) => {
     if (res.status !== 200) return
-    if (chainId === Chains.optimism || chainId === Chains.arbitrum) return res.json()
+    if (chainId === Chains.optimism || chainId === Chains.arbitrum || chainId === Chains.polygon)
+      return res.json()
     return { data: await parseOpenSeaResponse(res, chainId) }
   })
 }
@@ -143,24 +145,6 @@ function useNftCollectionLists(
       setCollections([])
     }
   }, [appChainId])
-
-  const getTokenType = async (address: string, provider: JsonRpcProvider): Promise<NFTType> => {
-    const isERC721 = await contractCall(address, erc721, provider, 'supportsInterface', [
-      ERCInterface.ERC721,
-    ])
-    if (isERC721) {
-      return NFTType.ERC721
-    }
-    const isERC1155 = await contractCall(address, erc1155, provider, 'supportsInterface', [
-      ERCInterface.ERC1155,
-    ])
-
-    if (isERC1155) {
-      return NFTType.ERC1155
-    }
-
-    throw new Error('Unsupported token type')
-  }
 
   const fetchData = async (collectionData: CollectionInfo) => {
     if (

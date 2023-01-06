@@ -11,7 +11,6 @@
     "contractType": "erc721",
     "floorPrice": 0.004,
     "totalVolume": 2.484209999999997,
-    "paymentSymbol": "MATIC",
     "network": 137,
     "updatedAt": 1669234571787
   }
