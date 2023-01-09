@@ -93,17 +93,54 @@ export const getGasPriceFromProvider = async (provider: JsonRpcProvider) => {
   }
 }
 
-export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber) => ({
-  low: {
-    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)),
-    maxPriorityFeePerGas: wei(1, 9),
-  },
-  market: {
-    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.5)),
-    maxPriorityFeePerGas: wei(1.5, 9),
-  },
-  aggressive: {
-    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)),
-    maxPriorityFeePerGas: wei(2, 9),
-  },
-})
+export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber, appChainId: ChainsValues) => {
+  switch (appChainId) {
+    case Chains.mainnet:
+      return {
+        low: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)),
+          maxPriorityFeePerGas: wei(1, 9),
+        },
+        market: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.5)),
+          maxPriorityFeePerGas: wei(1.5, 9),
+        },
+        aggressive: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)),
+          maxPriorityFeePerGas: wei(2, 9),
+        },
+      }
+    case Chains.polygon:
+      return {
+        low: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)),
+          maxPriorityFeePerGas: wei(30, 9),
+        },
+        market: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(3)),
+          maxPriorityFeePerGas: wei(31, 9),
+        },
+        aggressive: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(4)),
+          maxPriorityFeePerGas: wei(32, 9),
+        },
+      }
+    case Chains.arbitrum:
+      return {
+        low: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)),
+          maxPriorityFeePerGas: wei(0, 9),
+        },
+        market: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.35)),
+          maxPriorityFeePerGas: wei(0, 9),
+        },
+        aggressive: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.7)),
+          maxPriorityFeePerGas: wei(0, 9),
+        },
+      }
+    default:
+      throw new Error('Unsupported network.')
+  }
+}

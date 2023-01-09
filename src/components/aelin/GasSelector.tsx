@@ -155,7 +155,15 @@ const GasSelector = ({
     } catch (_) {
       if (!ethGasPriceDataL2 || !isL2Chain) return gasPriceL1
 
-      return wei(ethGasPriceDataL2[gasSpeed], GWEI_PRECISION)
+      const getL2gasPrice = () => {
+        try {
+          return wei(ethGasPriceDataL2[gasSpeed], GWEI_PRECISION)
+        } catch (_) {
+          return ethGasPriceDataL2[gasSpeed] as Eip1559GasPrice
+        }
+      }
+
+      return getL2gasPrice()
     }
   }, [customGasPrice, gasPriceL1, ethGasPriceDataL2, gasSpeed, isL2Chain])
 
@@ -178,7 +186,7 @@ const GasSelector = ({
 
     if (!gasPrices?.[gasSpeed]) {
       nGasPrice = 0
-    } else if (isL2Chain || typeof gasPrices[gasSpeed] === 'number') {
+    } else if (typeof gasPrices[gasSpeed] === 'number') {
       nGasPrice = gasPrices[gasSpeed] as number
     } else {
       const gasPrice = gasPrices[gasSpeed] as Eip1559GasPrice
@@ -194,7 +202,7 @@ const GasSelector = ({
 
     if (!Number.isInteger(nCustomGasPrice)) return nCustomGasPrice.toFixed(3)
     return nCustomGasPrice
-  }, [customGasPrice, gasPrices, gasSpeed, isL2Chain])
+  }, [customGasPrice, gasPrices, gasSpeed])
 
   const debouncedChangeHandler = debounce(onChange, DEBOUNCED_INPUT_TIME)
 
