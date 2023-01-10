@@ -146,7 +146,7 @@ const GasSelector = ({
       return (gasPrice as number).toFixed(3)
     }
 
-    return Number(gasPrice.maxFeePerGas.add(gasPrice.maxPriorityFeePerGas)).toFixed(3)
+    return Number(gasPrice.maxFeePerGas).toFixed(3)
   }
 
   const gasPrice: Eip1559GasPrice | Wei | null = useMemo(() => {
@@ -190,7 +190,7 @@ const GasSelector = ({
       nGasPrice = gasPrices[gasSpeed] as number
     } else {
       const gasPrice = gasPrices[gasSpeed] as Eip1559GasPrice
-      nGasPrice = Number(gasPrice.maxFeePerGas.add(gasPrice.maxPriorityFeePerGas))
+      nGasPrice = Number(gasPrice.maxFeePerGas)
     }
 
     const nCustomGasPrice = Number(customGasPrice)
