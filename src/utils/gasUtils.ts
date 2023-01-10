@@ -99,15 +99,15 @@ export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber, appChainId: ChainsV
     case Chains.goerli:
       return {
         low: {
-          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)),
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)).add(wei(1, 9)),
           maxPriorityFeePerGas: wei(1, 9),
         },
         market: {
-          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.5)),
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.5).add(wei(1.5, 9))),
           maxPriorityFeePerGas: wei(1.5, 9),
         },
         aggressive: {
-          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)),
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2).add(wei(2, 9))),
           maxPriorityFeePerGas: wei(2, 9),
         },
       }
