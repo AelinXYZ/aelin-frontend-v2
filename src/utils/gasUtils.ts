@@ -114,15 +114,15 @@ export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber, appChainId: ChainsV
     case Chains.polygon:
       return {
         low: {
-          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)),
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)).add(wei(30, 9)),
           maxPriorityFeePerGas: wei(30, 9),
         },
         market: {
-          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(3)),
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)).add(wei(31, 9)),
           maxPriorityFeePerGas: wei(31, 9),
         },
         aggressive: {
-          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(4)),
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)).add(wei(32, 9)),
           maxPriorityFeePerGas: wei(32, 9),
         },
       }

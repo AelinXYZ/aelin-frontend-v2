@@ -230,7 +230,7 @@ const GasSelector = ({
   return (
     <Wrapper {...restProps}>
       <div>
-        <Text>Gas Price:</Text>&nbsp;
+        <Text>Gas Price (GWEI):</Text>&nbsp;
         <GasInput
           onBlur={() => {
             setIsEditing(false)
