@@ -96,6 +96,7 @@ export const getGasPriceFromProvider = async (provider: JsonRpcProvider) => {
 export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber, appChainId: ChainsValues) => {
   switch (appChainId) {
     case Chains.mainnet:
+    case Chains.goerli:
       return {
         low: {
           maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)),
