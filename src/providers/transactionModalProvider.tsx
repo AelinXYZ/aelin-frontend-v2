@@ -71,12 +71,36 @@ export default function TransactionModalProvider({ children }: Props) {
   }
 
   const txGasOptions: GasOptions = useMemo(() => {
+    console.log('TransactionModalProvider gasPrice', gasPrice)
+
     if (gasPrice && gasPrice instanceof Wei) {
+      console.log(
+        'TransactionModalProvider txGasOptions gasPrice',
+        (gasPrice?.gt(wei(0)) ? gasPrice.toBN() : undefined)?.toString(),
+      )
+      console.log(
+        'TransactionModalProvider txGasOptions gasLimit',
+        getGasEstimateWithBuffer(gasLimitEstimate)?.toString(),
+      )
+
       return {
         gasPrice: gasPrice?.gt(wei(0)) ? gasPrice.toBN() : undefined,
         gasLimit: getGasEstimateWithBuffer(gasLimitEstimate),
       }
     }
+
+    console.log(
+      'TransactionModalProvider txGasOptions maxFeePerGas',
+      (gasPrice?.maxFeePerGas.gt(wei(0)) ? gasPrice.maxFeePerGas.toBN() : undefined)?.toString(),
+    )
+    console.log(
+      'TransactionModalProvider txGasOptions maxPriorityFeePerGas',
+      gasPrice?.maxPriorityFeePerGas.toBN()?.toString(),
+    )
+    console.log(
+      'TransactionModalProvider txGasOptions gasLimit',
+      getGasEstimateWithBuffer(gasLimitEstimate)?.toString(),
+    )
     return {
       maxFeePerGas: gasPrice?.maxFeePerGas.gt(wei(0)) ? gasPrice.maxFeePerGas.toBN() : undefined,
       maxPriorityFeePerGas: gasPrice?.maxPriorityFeePerGas.toBN(),

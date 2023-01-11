@@ -101,7 +101,9 @@ const GasSelector = ({
   setLoadingGas: (value: boolean) => void
 }) => {
   const { data: ethGasPriceData, isValidating } = useEthGasPrice()
+  console.log('GasSelector ethGasPriceData', ethGasPriceData)
   const { data: ethGasPriceDataLegacy, isValidating: isValidatingLegacy } = useEthGasPriceLegacy()
+  console.log('GasSelector ethGasPriceDataLegacy', ethGasPriceDataLegacy)
   const { data: ethPriceInUSD } = useGasPriceUnitInUSD(GasPriceUnit.eth)
   const { data: maticPriceInUSD } = useGasPriceUnitInUSD(GasPriceUnit.matic)
 
@@ -123,6 +125,8 @@ const GasSelector = ({
     [ethGasPriceDataL1, ethGasPriceDataL2, isL2Chain],
   )
 
+  console.log('GasSelector gasPrices', gasPrices)
+
   const gasPriceL1: Eip1559GasPrice | Wei | null = useMemo(() => {
     if (!ethGasPriceDataL1 || !ethGasPriceDataLegacy) return null
 
@@ -136,6 +140,8 @@ const GasSelector = ({
 
     return isL2Chain ? wei(ethGasPriceDataLegacy[gasSpeed], GWEI_PRECISION) : getL1gasPrice()
   }, [ethGasPriceDataL1, ethGasPriceDataLegacy, gasSpeed, isL2Chain])
+
+  console.log('GasSelector gasPriceL1', gasPriceL1)
 
   const renderGasPrices = (gasPrice?: number | Eip1559GasPrice) => {
     if (!gasPrice) {
@@ -166,6 +172,8 @@ const GasSelector = ({
       return getL2gasPrice()
     }
   }, [customGasPrice, gasPriceL1, ethGasPriceDataL2, gasSpeed, isL2Chain])
+
+  console.log('GasSelector gasPrice', gasPrice)
 
   const transactionFee = useMemo(
     () =>
