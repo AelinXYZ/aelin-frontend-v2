@@ -65,6 +65,9 @@ export const getGasEstimateWithBuffer = (gasEstimate: GasLimitEstimate) => {
   if (!gasEstimate) return undefined
 
   const { l1: gasEstimateL1, l2: gasEstimateL2 } = gasEstimate
+  console.log('getGasEstimateWithBuffer gasEstimateL1', gasEstimateL1.toString())
+  console.log('getGasEstimateWithBuffer gasEstimateL2', gasEstimateL2?.toString())
+
   const estimateWithBufferL1 = gasEstimateL1.add(
     gasEstimateL1.mul(wei(GAS_LIMIT_BUFFER_MULTIPLIER, 0)).div(100),
   )
@@ -79,6 +82,9 @@ export const getGasEstimateWithBuffer = (gasEstimate: GasLimitEstimate) => {
   const gasEstimateL2Buffer = estimateWithBufferL2?.gt(MIN_GAS_ESTIMATE)
     ? estimateWithBufferL2.toBN()
     : undefined
+
+  console.log('getGasEstimateWithBuffer gasEstimateL1Buffer', gasEstimateL1Buffer?.toString())
+  console.log('getGasEstimateWithBuffer gasEstimateL2Buffer', gasEstimateL2Buffer?.toString())
 
   return gasEstimateL1Buffer ? gasEstimateL1Buffer.add(gasEstimateL2Buffer ?? ZERO_BN) : undefined
 }
