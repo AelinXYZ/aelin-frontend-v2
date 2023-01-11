@@ -10,7 +10,10 @@ import { wei } from '@synthetixio/wei'
 import usePrevious from '../common/usePrevious'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
+  AddressWhitelistProps,
+  AddressesWhiteListAmountFormat,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
@@ -88,6 +91,7 @@ export interface CreateUpFrontDealState {
   dealPrivacy?: Privacy
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
+  whiteListAmountFormat?: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
@@ -109,6 +113,7 @@ export interface CreateUpFrontDealStateComplete {
   exchangeRates: ExchangeRatesAttr
   currentStep: CreateUpFrontDealSteps
   whitelist: AddressWhitelistProps[]
+  whiteListAmountFormat?: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
@@ -436,6 +441,7 @@ const initialState: CreateUpFrontDealState = {
   },
   currentStep: CreateUpFrontDealSteps.dealAttributes,
   whitelist: [],
+  whiteListAmountFormat: undefined,
   withMerkleTree: false,
   nftCollectionRules: [],
 }

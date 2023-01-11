@@ -4,6 +4,7 @@ import { HashZero, MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { wei } from '@synthetixio/wei'
 
+import { AddressesWhiteListAmountFormat } from '../components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '../components/pools/whitelist/nft/nftWhiteListReducer'
 import { NftCollectionRulesProps } from '../hooks/aelin/useAelinCreatePool'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -14,6 +15,19 @@ import {
   CreateUpFrontDealValues,
 } from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
 import { getDuration } from '@/src/utils/date'
+
+const getWhiteListAmount = (
+  amount: number,
+  whiteListAmountFormat: AddressesWhiteListAmountFormat,
+  investmentTokenDecimals: number,
+): number => {
+  switch (whiteListAmountFormat) {
+    case AddressesWhiteListAmountFormat.decimal:
+      return parseUnits(amount.toString(), investmentTokenDecimals).toNumber()
+    case AddressesWhiteListAmountFormat.uint256:
+      return amount
+  }
+}
 
 export const parseValuesToCreateUpFrontDeal = (
   createDealState: CreateUpFrontDealStateComplete,
@@ -31,8 +45,8 @@ export const parseValuesToCreateUpFrontDeal = (
     redemptionDeadline,
     sponsorFee,
     vestingSchedule,
+    whiteListAmountFormat,
     whitelist,
-    withMerkleTree,
   } = createDealState
   const now = new Date()
 
@@ -86,22 +100,21 @@ export const parseValuesToCreateUpFrontDeal = (
     !createDealState[NftType.erc1155] &&
     !createDealState[NftType.erc721]
   ) {
+    if (!whiteListAmountFormat) {
+      throw new Error('Format should be defined for a whitelist.')
+    }
+
     const formattedWhiteList = whitelist.reduce((accum, curr) => {
       const { address, amount } = curr
 
       if (!isAddress(address)) return accum
 
-      if (withMerkleTree) {
-        accum.push({
-          address,
-          amount: amount ? amount : MaxUint256.toNumber(),
-        })
-      } else {
-        accum.push({
-          address,
-          amount: amount ? amount : MaxUint256.toNumber(),
-        })
-      }
+      accum.push({
+        address,
+        amount: amount
+          ? getWhiteListAmount(amount, whiteListAmountFormat, investmentToken.decimals)
+          : MaxUint256.toNumber(),
+      })
 
       return accum
     }, [] as { address: string; amount: BigNumberish }[])
