@@ -119,10 +119,8 @@ export default function useTransaction<
           const l1Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateL1Gas(
             tx,
           )
-          console.log('useTransaction l1Gas', l1Gas.toString())
 
           const l2Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateGas(tx)
-          console.log('useTransaction l2Gas', l2Gas.toString())
 
           return { l1Gas, l2Gas }
         }
