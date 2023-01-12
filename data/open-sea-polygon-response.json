@@ -1,0 +1,2909 @@
+{
+  "data": {
+    "rankings": {
+      "edges": [
+        {
+          "node": {
+            "createdDate": "2019-12-04T10:58:29.069907",
+            "name": "The Sandbox",
+            "slug": "sandbox",
+            "logo": "https://i.seadn.io/gae/SXH8tW1siikB80rwCRnjm1a5xM_MwTg9Xl9Db6mioIk9HIlDM09pVoSR7GKJgS6ulSUpgW9BDtMk_ePX_NKgO9A?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NTYwNA==",
+            "imageUrl": "https://i.seadn.io/gae/SXH8tW1siikB80rwCRnjm1a5xM_MwTg9Xl9Db6mioIk9HIlDM09pVoSR7GKJgS6ulSUpgW9BDtMk_ePX_NKgO9A?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "113108" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.88", "eth": "0.88", "symbol": "ETH" },
+              "numOwners": 22952,
+              "totalSupply": 113108.0,
+              "totalListed": 1353,
+              "numOfSales": "90040.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "154998.242055339447688311",
+                "unit": "154998.242055339447688311",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NTYwNA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjA="
+        },
+        {
+          "node": {
+            "createdDate": "2021-03-03T01:21:00.501733",
+            "name": "ZED RUN Legacy",
+            "slug": "zed-run-legacy",
+            "logo": "https://i.seadn.io/gae/tgpgbT3OwxX4REASLdyafzCWQ5EhOtgSiIlhI3am3aZ_mYPS0WbM9Z4F6hOhb0D-AKqhHlFg6BNBquchQy-_bwY?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NjExNzM=",
+            "imageUrl": "https://i.seadn.io/gae/tgpgbT3OwxX4REASLdyafzCWQ5EhOtgSiIlhI3am3aZ_mYPS0WbM9Z4F6hOhb0D-AKqhHlFg6BNBquchQy-_bwY?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "217773" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0094", "eth": "0.0094", "symbol": "ETH" },
+              "numOwners": 31495,
+              "totalSupply": 217773.0,
+              "totalListed": 288,
+              "numOfSales": "252791.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "46811.039569236876559444",
+                "unit": "46811.039569236876559444",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NjExNzM=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE="
+        },
+        {
+          "node": {
+            "createdDate": "2021-08-15T19:00:24.764394",
+            "name": "CyberKongz VX",
+            "slug": "cyberkongz-vx",
+            "logo": "https://i.seadn.io/gcs/files/011e37ba0f1aa703aa27704162e597e8.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6OTU3MDI1",
+            "imageUrl": "https://i.seadn.io/gcs/files/011e37ba0f1aa703aa27704162e597e8.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "14892" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.59", "eth": "0.59", "symbol": "ETH" },
+              "numOwners": 4120,
+              "totalSupply": 14892.0,
+              "totalListed": 240,
+              "numOfSales": "22842.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "34114.855871378036681563",
+                "unit": "34114.855871378036681563",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6OTU3MDI1",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI="
+        },
+        {
+          "node": {
+            "createdDate": "2018-09-21T00:02:48",
+            "name": "MyCryptoHeroes",
+            "slug": "mycryptoheroes",
+            "logo": "https://i.seadn.io/gae/EjR3eM1lBxgVk6F3PdOU1xaF-aVQfK3aTj29kKsbkDYFJrMC1tBf0k5lYjVfd6FYIPAr-rC3e79WPZmqEkrSv10o?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjU4Nw==",
+            "imageUrl": "https://i.seadn.io/gae/EjR3eM1lBxgVk6F3PdOU1xaF-aVQfK3aTj29kKsbkDYFJrMC1tBf0k5lYjVfd6FYIPAr-rC3e79WPZmqEkrSv10o?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "87625" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "1", "eth": "0.000224561180432", "symbol": "MATIC" },
+              "numOwners": 6541,
+              "totalSupply": 87625.0,
+              "totalListed": 319,
+              "numOfSales": "56795.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "27283.852945859962346731",
+                "unit": "27283.852945859962346731",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjU4Nw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjM="
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-14T17:12:28.739800",
+            "name": "Decentral Games ICE Poker All Access Wearables",
+            "slug": "decentral-games-ice",
+            "logo": "https://i.seadn.io/gae/vqpagZzkUkiTlLR1DHyw58wc6uxfEegI8NbeFo45mubN2O3m8WTGTG59xXPQCflsAXLs_EcmR3tIiic_1Alet6E0z2YcXtIMxWfVWw?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTU5NDA1Mg==",
+            "imageUrl": "https://i.seadn.io/gae/vqpagZzkUkiTlLR1DHyw58wc6uxfEegI8NbeFo45mubN2O3m8WTGTG59xXPQCflsAXLs_EcmR3tIiic_1Alet6E0z2YcXtIMxWfVWw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "15386" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.131", "eth": "0.131", "symbol": "ETH" },
+              "numOwners": 3708,
+              "totalSupply": 15386.0,
+              "totalListed": 406,
+              "numOfSales": "12955.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "13809.480983575604113867",
+                "unit": "13809.480983575604113867",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTU5NDA1Mg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQ="
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-16T02:36:28.095813",
+            "name": "Crypto Unicorns Market",
+            "slug": "crypto-unicorns-market",
+            "logo": "https://i.seadn.io/gae/jLi7QyLxZLXAeAqtKuecs5ebhGpDwWG6iI_EsfeXanpCCjCnDtqW9Db4b2ZAO0poqfIgBuGdYmyJCFL-c9wVJFIjJUZ2Lmna13kTDg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjgxODE4NQ==",
+            "imageUrl": "https://i.seadn.io/gae/jLi7QyLxZLXAeAqtKuecs5ebhGpDwWG6iI_EsfeXanpCCjCnDtqW9Db4b2ZAO0poqfIgBuGdYmyJCFL-c9wVJFIjJUZ2Lmna13kTDg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "98807" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.01249", "eth": "0.01249", "symbol": "ETH" },
+              "numOwners": 3715,
+              "totalSupply": 98807.0,
+              "totalListed": 643,
+              "numOfSales": "24091.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "11016.922381355379911838",
+                "unit": "11016.922381355379911838",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjgxODE4NQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjU="
+        },
+        {
+          "node": {
+            "createdDate": "2022-12-15T12:59:09.120225",
+            "name": "Trump Digital Trading Cards",
+            "slug": "trump-digital-trading-cards",
+            "logo": "https://i.seadn.io/gcs/files/f980181df268011a4491137fc71afdb5.jpg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjI1NzI2MDE=",
+            "imageUrl": "https://i.seadn.io/gcs/files/f980181df268011a4491137fc71afdb5.jpg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "45000" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.156", "eth": "0.156", "symbol": "ETH" },
+              "numOwners": 14963,
+              "totalSupply": 45000.0,
+              "totalListed": 3700,
+              "numOfSales": "28846.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "7951.665346468209463637",
+                "unit": "7951.665346468209463637",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjI1NzI2MDE=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjY="
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-03T16:56:24.208893",
+            "name": "Crypto Unicorns Land Market",
+            "slug": "crypto-unicorns-land-market",
+            "logo": "https://i.seadn.io/gae/jLi7QyLxZLXAeAqtKuecs5ebhGpDwWG6iI_EsfeXanpCCjCnDtqW9Db4b2ZAO0poqfIgBuGdYmyJCFL-c9wVJFIjJUZ2Lmna13kTDg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NDM3MTA2MA==",
+            "imageUrl": "https://i.seadn.io/gae/jLi7QyLxZLXAeAqtKuecs5ebhGpDwWG6iI_EsfeXanpCCjCnDtqW9Db4b2ZAO0poqfIgBuGdYmyJCFL-c9wVJFIjJUZ2Lmna13kTDg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "33650" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0397", "eth": "0.0397", "symbol": "ETH" },
+              "numOwners": 5026,
+              "totalSupply": 33650.0,
+              "totalListed": 200,
+              "numOfSales": "32209.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "5504.240522787988084019",
+                "unit": "5504.240522787988084019",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NDM3MTA2MA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjc="
+        },
+        {
+          "node": {
+            "createdDate": "2021-07-16T17:00:35.719996",
+            "name": "Chicken Derby",
+            "slug": "chicken-derby",
+            "logo": "https://i.seadn.io/gae/z0605wLEPoraBKL4y4b3Be_yF9uKA_dO8Z24mNGhpXht_H0quGAFuzsBAOinZc8GQhI2NDQUfcpCfGQagttD-O2FogcKCsAy3pwFcd4?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NzkzNTcw",
+            "imageUrl": "https://i.seadn.io/gae/z0605wLEPoraBKL4y4b3Be_yF9uKA_dO8Z24mNGhpXht_H0quGAFuzsBAOinZc8GQhI2NDQUfcpCfGQagttD-O2FogcKCsAy3pwFcd4?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "33270" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0098", "eth": "0.0098", "symbol": "ETH" },
+              "numOwners": 6024,
+              "totalSupply": 33270.0,
+              "totalListed": 570,
+              "numOfSales": "29598.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "4241.872223195345213753",
+                "unit": "4241.872223195345213753",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NzkzNTcw",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjg="
+        },
+        {
+          "node": {
+            "createdDate": "2020-10-31T13:05:53.321580",
+            "name": "BCCG",
+            "slug": "bccg",
+            "logo": "https://i.seadn.io/gae/lcpoI_5KaLJO8LA6Y0dx42FyTOvZne-tW4EKtoD9UdL6Vdk2UANPwo531EWSslwySarGdu3C9shBAJQsyhoasCa1?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTI5MzU=",
+            "imageUrl": "https://i.seadn.io/gae/lcpoI_5KaLJO8LA6Y0dx42FyTOvZne-tW4EKtoD9UdL6Vdk2UANPwo531EWSslwySarGdu3C9shBAJQsyhoasCa1?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "15729" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0045", "eth": "0.0045", "symbol": "ETH" },
+              "numOwners": 5453,
+              "totalSupply": 58.0,
+              "totalListed": 33,
+              "numOfSales": "4918.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "4033.867008247987996583",
+                "unit": "4033.867008247987996583",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTI5MzU=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjk="
+        },
+        {
+          "node": {
+            "createdDate": "2021-10-05T11:07:12.763435",
+            "name": "DeRace Horses",
+            "slug": "derace-horses",
+            "logo": "https://i.seadn.io/gae/NX0IVtz5ANW7omJmZ782nxA8FHNriqfa764AuOdlRZpO7YLr0yImGggqysOs78dYsmO3lAMpAhwDhtjUbcyrUqUeUCQF_iDX7_20eQ?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjAxMTYxMA==",
+            "imageUrl": "https://i.seadn.io/gae/NX0IVtz5ANW7omJmZ782nxA8FHNriqfa764AuOdlRZpO7YLr0yImGggqysOs78dYsmO3lAMpAhwDhtjUbcyrUqUeUCQF_iDX7_20eQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "7077" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0498", "eth": "0.0498", "symbol": "ETH" },
+              "numOwners": 1606,
+              "totalSupply": 7077.0,
+              "totalListed": 222,
+              "numOfSales": "4974.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "3745.876617806560716417",
+                "unit": "3745.876617806560716417",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjAxMTYxMA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjEw"
+        },
+        {
+          "node": {
+            "createdDate": "2021-01-27T02:36:31.308470",
+            "name": "PolkaPets TCG",
+            "slug": "polkapets",
+            "logo": "https://i.seadn.io/gae/q-Khdw7ZQ6Af4fubvBUDC2BzNmOAEadokiup4l8vO9MOyufreAqKrhtP55vm5Xc8HviK2SGll1DzFXdnOXOE1a4zNw9YVIvmKsX4dQ?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjExNzE=",
+            "imageUrl": "https://i.seadn.io/gae/q-Khdw7ZQ6Af4fubvBUDC2BzNmOAEadokiup4l8vO9MOyufreAqKrhtP55vm5Xc8HviK2SGll1DzFXdnOXOE1a4zNw9YVIvmKsX4dQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "40937" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0189", "eth": "0.0189", "symbol": "ETH" },
+              "numOwners": 4645,
+              "totalSupply": 42.0,
+              "totalListed": 35,
+              "numOfSales": "13403.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "3511.891937559247708123",
+                "unit": "3511.891937559247708123",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjExNzE=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjEx"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-15T10:00:13.061674",
+            "name": "Chumbi Valley Official",
+            "slug": "chumbivalleyofficial",
+            "logo": "https://i.seadn.io/gae/BMA1U68bhqomAbrdKTske865bLFr5NiJpwb8EVlSiHqkOGRZkZWIerLUMemJgqBtIKulbDp2hQ8c321W5sxvs6-KJD-qXia28gn2hQ?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzY3NDA5MQ==",
+            "imageUrl": "https://i.seadn.io/gae/BMA1U68bhqomAbrdKTske865bLFr5NiJpwb8EVlSiHqkOGRZkZWIerLUMemJgqBtIKulbDp2hQ8c321W5sxvs6-KJD-qXia28gn2hQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "4096" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.1419", "eth": "0.1419", "symbol": "ETH" },
+              "numOwners": 1732,
+              "totalSupply": 4096.0,
+              "totalListed": 110,
+              "numOfSales": "4512.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "3222.419011708010202710",
+                "unit": "3222.41901170801020271",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzY3NDA5MQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjEy"
+        },
+        {
+          "node": {
+            "createdDate": "2021-05-25T16:51:25.426643",
+            "name": "Ember Sword Land",
+            "slug": "embersword-land",
+            "logo": "https://i.seadn.io/gcs/files/f2f5fa430c611a7c8afe340dc959cb1a.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NjUzNzA1",
+            "imageUrl": "https://i.seadn.io/gcs/files/f2f5fa430c611a7c8afe340dc959cb1a.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "10475" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.069", "eth": "0.069", "symbol": "ETH" },
+              "numOwners": 3228,
+              "totalSupply": 10471.0,
+              "totalListed": 65,
+              "numOfSales": "10720.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "3171.872470029982196138",
+                "unit": "3171.872470029982196138",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NjUzNzA1",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjEz"
+        },
+        {
+          "node": {
+            "createdDate": "2021-07-27T20:17:27.309363",
+            "name": "Crypto Raiders Characters",
+            "slug": "crypto-raiders-characters",
+            "logo": "https://i.seadn.io/gae/44XZseVPcTMuIseriL_HWueJ1pVaTp7p5JbMlAyQccPRCE3IsbOohEZ9WzKH0zOlmXIUsEH8NIULCA5PunKfNhTAi2yhXyVim745OA?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6ODMwODgx",
+            "imageUrl": "https://i.seadn.io/gae/44XZseVPcTMuIseriL_HWueJ1pVaTp7p5JbMlAyQccPRCE3IsbOohEZ9WzKH0zOlmXIUsEH8NIULCA5PunKfNhTAi2yhXyVim745OA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "68845" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0054", "eth": "0.0054", "symbol": "ETH" },
+              "numOwners": 4929,
+              "totalSupply": 68845.0,
+              "totalListed": 366,
+              "numOfSales": "20435.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "2321.944404881705850130",
+                "unit": "2321.94440488170585013",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6ODMwODgx",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE0"
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-20T21:09:12.847517",
+            "name": "The Red Village Champions",
+            "slug": "theredvillagechampions",
+            "logo": "https://i.seadn.io/gcs/files/38b28f9654303dd3d6bc1fed5b964d37.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjkzNDYwNQ==",
+            "imageUrl": "https://i.seadn.io/gcs/files/38b28f9654303dd3d6bc1fed5b964d37.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "10997" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.03", "eth": "0.03", "symbol": "ETH" },
+              "numOwners": 1951,
+              "totalSupply": 10997.0,
+              "totalListed": 200,
+              "numOfSales": "6716.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "2304.137574297569699411",
+                "unit": "2304.137574297569699411",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjkzNDYwNQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE1"
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-28T21:27:47.784259",
+            "name": "Crypto Unicorns: Items Marketplace",
+            "slug": "crypto-unicorns-items-marketplace",
+            "logo": "https://i.seadn.io/gcs/files/e0856d90c3d6afbfb3c5437b7bd4febb.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NjMyMTc2Mg==",
+            "imageUrl": "https://i.seadn.io/gcs/files/e0856d90c3d6afbfb3c5437b7bd4febb.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "84516" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.7", "eth": "0.000436653", "symbol": "MATIC" },
+              "numOwners": 17836,
+              "totalSupply": 72.0,
+              "totalListed": 48,
+              "numOfSales": "30785.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "2255.230673471567570232",
+                "unit": "2255.230673471567570232",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NjMyMTc2Mg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE2"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-19T18:38:05.756093",
+            "name": "Genesis Curry Flow",
+            "slug": "genesis-curry-flow",
+            "logo": "https://i.seadn.io/gae/qhwm6gQ8c5XnG1a0Qwd0AIXV5UvdzX5YAXQ4IO7qto5b2QrzM3oh_DoskIeGuv-E352Ci0ZbgYEeRTJwBHrDLGlcIC_ROa8RSf-Obzg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzgyODk3MA==",
+            "imageUrl": "https://i.seadn.io/gae/qhwm6gQ8c5XnG1a0Qwd0AIXV5UvdzX5YAXQ4IO7qto5b2QrzM3oh_DoskIeGuv-E352Ci0ZbgYEeRTJwBHrDLGlcIC_ROa8RSf-Obzg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "2974" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0119", "eth": "0.0119", "symbol": "ETH" },
+              "numOwners": 2171,
+              "totalSupply": 5.0,
+              "totalListed": 5,
+              "numOfSales": "3941.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "2203.137313389699556865",
+                "unit": "2203.137313389699556865",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzgyODk3MA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE3"
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-24T03:28:41.954219",
+            "name": "The Martians: Metaverse",
+            "slug": "the-mars-martians",
+            "logo": "https://i.seadn.io/gcs/files/15d6077e3c50023969b63dc8d009d1f7.jpg?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NTkxMTE1NA==",
+            "imageUrl": "https://i.seadn.io/gcs/files/15d6077e3c50023969b63dc8d009d1f7.jpg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "5000" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.1166", "eth": "0.1166", "symbol": "ETH" },
+              "numOwners": 1068,
+              "totalSupply": 5000.0,
+              "totalListed": 56,
+              "numOfSales": "3016.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "2093.277588000006289803",
+                "unit": "2093.277588000006289803",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NTkxMTE1NA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE4"
+        },
+        {
+          "node": {
+            "createdDate": "2020-01-17T08:53:54.660191",
+            "name": "Brave Frontier Heroes",
+            "slug": "brave-frontier-heroes",
+            "logo": "https://i.seadn.io/gae/Kh5NpTBiX68DE1pQyvqUGQqmDl3Iw0Duv7LKia4uzd2wRLifYr3pbFZQkHmJvvfGs3I1fre27tR1Q0uEzSYGehjL?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NjI3OA==",
+            "imageUrl": "https://i.seadn.io/gae/Kh5NpTBiX68DE1pQyvqUGQqmDl3Iw0Duv7LKia4uzd2wRLifYr3pbFZQkHmJvvfGs3I1fre27tR1Q0uEzSYGehjL?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "22239" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.67", "eth": "0.00015045599088944", "symbol": "MATIC" },
+              "numOwners": 2490,
+              "totalSupply": 22238.0,
+              "totalListed": 246,
+              "numOfSales": "12571.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "2018.532693528860818333",
+                "unit": "2018.532693528860818333",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NjI3OA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjE5"
+        },
+        {
+          "node": {
+            "createdDate": "2019-07-07T12:27:27.779881",
+            "name": "ChainGuardians",
+            "slug": "chainguardians",
+            "logo": "https://i.seadn.io/gae/aSW4aRbh6eDU6XZ02Ekom5rbpxlJ5iJf_lXWTjzVbW_5Dm8UzbL4O8aPAD2tzGQxAT1EBbB-Q74TWAAAZ1CG8gjC?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6Mzc3NA==",
+            "imageUrl": "https://i.seadn.io/gae/aSW4aRbh6eDU6XZ02Ekom5rbpxlJ5iJf_lXWTjzVbW_5Dm8UzbL4O8aPAD2tzGQxAT1EBbB-Q74TWAAAZ1CG8gjC?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "2814" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.05", "eth": "0.05", "symbol": "ETH" },
+              "numOwners": 902,
+              "totalSupply": 2814.0,
+              "totalListed": 86,
+              "numOfSales": "3418.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1963.778533783968214266",
+                "unit": "1963.778533783968214266",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6Mzc3NA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjIw"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-02T08:56:56.798497",
+            "name": "Phantom Galaxies Origin Collection",
+            "slug": "phantom-galaxies-origin-collection",
+            "logo": "https://i.seadn.io/gae/NZ0WI9Fxr69mfjNye3t2Ct_Uk-JnPTqWoA7TF4RK18wslgZkR2I1WJ1Uw6PzLK9oj-r02r5r30VR7TVNYqidtg4b75rBqD5p7E1S9g?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzIzMzUxMg==",
+            "imageUrl": "https://i.seadn.io/gae/NZ0WI9Fxr69mfjNye3t2Ct_Uk-JnPTqWoA7TF4RK18wslgZkR2I1WJ1Uw6PzLK9oj-r02r5r30VR7TVNYqidtg4b75rBqD5p7E1S9g?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "589398" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "2.35", "eth": "0.0014659065", "symbol": "MATIC" },
+              "numOwners": 517359,
+              "totalSupply": 13.0,
+              "totalListed": 13,
+              "numOfSales": "67197.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1867.247792328474361057",
+                "unit": "1867.247792328474361057",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzIzMzUxMg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjIx"
+        },
+        {
+          "node": {
+            "createdDate": "2021-10-14T14:34:20.851841",
+            "name": "Ember Sword Badge",
+            "slug": "embersword-badge",
+            "logo": "https://i.seadn.io/gcs/files/f2f5fa430c611a7c8afe340dc959cb1a.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjE3MjU2Mw==",
+            "imageUrl": "https://i.seadn.io/gcs/files/f2f5fa430c611a7c8afe340dc959cb1a.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "2906" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.09699", "eth": "0.09699", "symbol": "ETH" },
+              "numOwners": 2172,
+              "totalSupply": 4.0,
+              "totalListed": 4,
+              "numOfSales": "4066.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1776.638131346539012156",
+                "unit": "1776.638131346539012156",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjE3MjU2Mw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjIy"
+        },
+        {
+          "node": {
+            "createdDate": "2022-02-11T17:41:34.108822",
+            "name": "FancyBirds",
+            "slug": "fancybirds-genesis",
+            "logo": "https://i.seadn.io/gae/wrElaEBwneqKR669amNlLLxXC7rKuXoc50Et36hnwqYQcs2oa2cBtuKN1ogPnSJN8okccSoeqvpRTvdYwPFwPVyu8-4p33p6RCuwL_g?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NzIzNjgzOA==",
+            "imageUrl": "https://i.seadn.io/gae/wrElaEBwneqKR669amNlLLxXC7rKuXoc50Et36hnwqYQcs2oa2cBtuKN1ogPnSJN8okccSoeqvpRTvdYwPFwPVyu8-4p33p6RCuwL_g?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "8888" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.015", "eth": "0.015", "symbol": "ETH" },
+              "numOwners": 1132,
+              "totalSupply": 8888.0,
+              "totalListed": 45,
+              "numOfSales": "5625.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1675.713024420657802693",
+                "unit": "1675.713024420657802693",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NzIzNjgzOA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjIz"
+        },
+        {
+          "node": {
+            "createdDate": "2022-02-22T21:08:32.689118",
+            "name": "ZED RUN",
+            "slug": "zed-run-official",
+            "logo": "https://i.seadn.io/gae/tgpgbT3OwxX4REASLdyafzCWQ5EhOtgSiIlhI3am3aZ_mYPS0WbM9Z4F6hOhb0D-AKqhHlFg6BNBquchQy-_bwY?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NzgwNDg4Mw==",
+            "imageUrl": "https://i.seadn.io/gae/tgpgbT3OwxX4REASLdyafzCWQ5EhOtgSiIlhI3am3aZ_mYPS0WbM9Z4F6hOhb0D-AKqhHlFg6BNBquchQy-_bwY?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "301295" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "2.38", "eth": "0.0014846202", "symbol": "MATIC" },
+              "numOwners": 36855,
+              "totalSupply": 301295.0,
+              "totalListed": 5606,
+              "numOfSales": "44501.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1402.241668690072401660",
+                "unit": "1402.24166869007240166",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NzgwNDg4Mw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI0"
+        },
+        {
+          "node": {
+            "createdDate": "2022-03-26T02:47:42.493799",
+            "name": "DEFY Genesis Masks",
+            "slug": "defy-genesis-masks",
+            "logo": "https://i.seadn.io/gae/kpL17BBtghTN8nISMkwQNFgPzkvnQXOsEbNJD8pnMAlMa9V9qYtG5Afgg0ufRemoVnchZEQZs-bcAdwJe-9oCCuTKEXmzNbv5aqjq74?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6ODc1MTQyMA==",
+            "imageUrl": "https://i.seadn.io/gae/kpL17BBtghTN8nISMkwQNFgPzkvnQXOsEbNJD8pnMAlMa9V9qYtG5Afgg0ufRemoVnchZEQZs-bcAdwJe-9oCCuTKEXmzNbv5aqjq74?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "8727" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.022", "eth": "0.022", "symbol": "ETH" },
+              "numOwners": 4618,
+              "totalSupply": 8727.0,
+              "totalListed": 92,
+              "numOfSales": "6543.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1400.906811631835807930",
+                "unit": "1400.90681163183580793",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6ODc1MTQyMA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI1"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-03T19:42:03.089822",
+            "name": "ENCODE Graphics",
+            "slug": "encode-graphics",
+            "logo": "https://i.seadn.io/gcs/files/a89ef9ad00a1ba0f8aa74bf2a1a4b11d.jpg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTMzOTY3Ng==",
+            "imageUrl": "https://i.seadn.io/gcs/files/a89ef9ad00a1ba0f8aa74bf2a1a4b11d.jpg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1955" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.024", "eth": "0.024", "symbol": "ETH" },
+              "numOwners": 426,
+              "totalSupply": 1955.0,
+              "totalListed": 26,
+              "numOfSales": "2036.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1398.029269996999801151",
+                "unit": "1398.029269996999801151",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTMzOTY3Ng==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI2"
+        },
+        {
+          "node": {
+            "createdDate": "2021-01-15T21:47:17.176104",
+            "name": "Cometh Spaceships",
+            "slug": "cometh-spaceships",
+            "logo": "https://i.seadn.io/gae/pBHo_M2eyjYKCQ38spToVmtPBIjXSjOPnESF__O_NQju7WGGR6mG2hUBfZPEJCGbkZOq_kIBqi6FTvlCyNHaHA_ZPVD4CG_P-gWIMg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTg0OTQ=",
+            "imageUrl": "https://i.seadn.io/gae/pBHo_M2eyjYKCQ38spToVmtPBIjXSjOPnESF__O_NQju7WGGR6mG2hUBfZPEJCGbkZOq_kIBqi6FTvlCyNHaHA_ZPVD4CG_P-gWIMg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "12254" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.065", "eth": "0.065", "symbol": "ETH" },
+              "numOwners": 883,
+              "totalSupply": 12253.0,
+              "totalListed": 32,
+              "numOfSales": "3349.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1338.634712284971328700",
+                "unit": "1338.6347122849713287",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTg0OTQ=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI3"
+        },
+        {
+          "node": {
+            "createdDate": "2022-10-20T18:51:42.573032",
+            "name": "Spooky Season: poieeeyee x Reddit Collectible Avatars",
+            "slug": "spooky-season-poieeeyee-x-reddit-collectible-avata",
+            "logo": "https://i.seadn.io/gae/IzJdgYk3CRT4dcm8vI1kpYXg5OQPOaTA8R0caoDgJJrDF1CYApgGz8fKao1YS6ytRTXagogpH3DCX2SMgXEX8Kd7IIYL7HQQILW4?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMTk=",
+            "imageUrl": "https://i.seadn.io/gae/IzJdgYk3CRT4dcm8vI1kpYXg5OQPOaTA8R0caoDgJJrDF1CYApgGz8fKao1YS6ytRTXagogpH3DCX2SMgXEX8Kd7IIYL7HQQILW4?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1814" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.02837", "eth": "0.02837", "symbol": "ETH" },
+              "numOwners": 1322,
+              "totalSupply": 1814.0,
+              "totalListed": 116,
+              "numOfSales": "2051.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1195.670752108797614710",
+                "unit": "1195.67075210879761471",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMTk=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI4"
+        },
+        {
+          "node": {
+            "createdDate": "2021-05-21T17:50:35.314008",
+            "name": "HOK Main",
+            "slug": "hok-main",
+            "logo": "https://i.seadn.io/gcs/files/71352a0379907fbd9055eedac357a602.jpg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NjQxODQ0",
+            "imageUrl": "https://i.seadn.io/gcs/files/71352a0379907fbd9055eedac357a602.jpg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "14999" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.006", "eth": "0.006", "symbol": "ETH" },
+              "numOwners": 1410,
+              "totalSupply": 9726.0,
+              "totalListed": 48,
+              "numOfSales": "2479.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1152.227591199888365736",
+                "unit": "1152.227591199888365736",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NjQxODQ0",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjI5"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-20T03:47:54.071574",
+            "name": "Crypto Raiders MOBS",
+            "slug": "mobskeys",
+            "logo": "https://i.seadn.io/gae/44XZseVPcTMuIseriL_HWueJ1pVaTp7p5JbMlAyQccPRCE3IsbOohEZ9WzKH0zOlmXIUsEH8NIULCA5PunKfNhTAi2yhXyVim745OA?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTcxOTE0Mw==",
+            "imageUrl": "https://i.seadn.io/gae/44XZseVPcTMuIseriL_HWueJ1pVaTp7p5JbMlAyQccPRCE3IsbOohEZ9WzKH0zOlmXIUsEH8NIULCA5PunKfNhTAi2yhXyVim745OA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "12562" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.015", "eth": "0.015", "symbol": "ETH" },
+              "numOwners": 1592,
+              "totalSupply": 12562.0,
+              "totalListed": 65,
+              "numOfSales": "3256.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1087.409663846561670653",
+                "unit": "1087.409663846561670653",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTcxOTE0Mw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjMw"
+        },
+        {
+          "node": {
+            "createdDate": "2021-05-31T23:43:16.988876",
+            "name": "Riot Racers Cars",
+            "slug": "riot-racers-cars",
+            "logo": "https://i.seadn.io/gae/dyiqgz4_Fm6XY7B4xSZB5E4q9iuul46DSzLnBexZFyPB6r6tHMunAg7M7hjBPoJYMp9lFhglxzd_PhDAFc6sKOhOwwpzE7HFE0l5tA?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6Njc1NDA0",
+            "imageUrl": "https://i.seadn.io/gae/dyiqgz4_Fm6XY7B4xSZB5E4q9iuul46DSzLnBexZFyPB6r6tHMunAg7M7hjBPoJYMp9lFhglxzd_PhDAFc6sKOhOwwpzE7HFE0l5tA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "12719" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.007", "eth": "0.007", "symbol": "ETH" },
+              "numOwners": 1450,
+              "totalSupply": 12719.0,
+              "totalListed": 213,
+              "numOfSales": "4650.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1066.265982906901172100",
+                "unit": "1066.2659829069011721",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6Njc1NDA0",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjMx"
+        },
+        {
+          "node": {
+            "createdDate": "2022-02-28T18:16:24.410055",
+            "name": "Sunflower Land Collectibles",
+            "slug": "sunflower-land-collectibles",
+            "logo": "https://i.seadn.io/gae/rpnk-Yq7k8ueMvjkVAkHr5cRAhIuAoVzJ_C9wYFDvbwOMcQHM3EGSJU1Ex5M9wzO6tU_PIp_aki37tCfQgrOqS6MYkSibIpI7kRVIw?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6ODAxODU3MA==",
+            "imageUrl": "https://i.seadn.io/gae/rpnk-Yq7k8ueMvjkVAkHr5cRAhIuAoVzJ_C9wYFDvbwOMcQHM3EGSJU1Ex5M9wzO6tU_PIp_aki37tCfQgrOqS6MYkSibIpI7kRVIw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "109764866166319934053345546" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "1E-22", "eth": "6.2379E-26", "symbol": "MATIC" },
+              "numOwners": 173300,
+              "totalSupply": 221.0,
+              "totalListed": 80,
+              "numOfSales": "7253835.031651107594370842",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1061.154803724733937997",
+                "unit": "1061.154803724733937997",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6ODAxODU3MA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjMy"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-26T15:45:34.360153",
+            "name": "DeRace Jockey Club",
+            "slug": "derace-jockey-club",
+            "logo": "https://i.seadn.io/gae/POAr0Pm7QhOhStClcrx4MYSYHWmkszSjj3nhqhkVZa_hTyvYumMKSPgef4B0qE0BnhbzuqT8l8CwdfzIOl9RtEe7Dt6E3nQSHij-fw?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTg1OTEzNw==",
+            "imageUrl": "https://i.seadn.io/gae/POAr0Pm7QhOhStClcrx4MYSYHWmkszSjj3nhqhkVZa_hTyvYumMKSPgef4B0qE0BnhbzuqT8l8CwdfzIOl9RtEe7Dt6E3nQSHij-fw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "5000" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.099", "eth": "0.099", "symbol": "ETH" },
+              "numOwners": 1578,
+              "totalSupply": 5000.0,
+              "totalListed": 59,
+              "numOfSales": "4994.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "1016.234230279980693012",
+                "unit": "1016.234230279980693012",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTg1OTEzNw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjMz"
+        },
+        {
+          "node": {
+            "createdDate": "2021-03-02T19:42:07.422779",
+            "name": "Ethernity's Master Collection",
+            "slug": "ethernity-master",
+            "logo": "https://i.seadn.io/gae/GId53RudYB4l7e6Irj3_5JGyC3bwybdotwXAEgGaq4KCqjtfQChbolTQSJRYzb1bYrHM_G9xH4Il9vh_CM3ZPtMTwSgtkU5Wu7RVVQ?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NTk3OTM=",
+            "imageUrl": "https://i.seadn.io/gae/GId53RudYB4l7e6Irj3_5JGyC3bwybdotwXAEgGaq4KCqjtfQChbolTQSJRYzb1bYrHM_G9xH4Il9vh_CM3ZPtMTwSgtkU5Wu7RVVQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "18590" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.01", "eth": "0.01", "symbol": "ETH" },
+              "numOwners": 5342,
+              "totalSupply": 16421.0,
+              "totalListed": 308,
+              "numOfSales": "3264.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "967.066783204128682883",
+                "unit": "967.066783204128682883",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NTk3OTM=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjM0"
+        },
+        {
+          "node": {
+            "createdDate": "2022-07-07T00:26:25.583691",
+            "name": "The Senses x Reddit Collectible Avatars",
+            "slug": "the-senses-x-reddit-collectible-avatars",
+            "logo": "https://i.seadn.io/gcs/files/46170d2e2bf2ea9d2662f6554a4a37b0.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc3MDYwNjg=",
+            "imageUrl": "https://i.seadn.io/gcs/files/46170d2e2bf2ea9d2662f6554a4a37b0.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1302" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.569", "eth": "0.569", "symbol": "ETH" },
+              "numOwners": 1137,
+              "totalSupply": 1302.0,
+              "totalListed": 61,
+              "numOfSales": "639.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "925.438405353265807207",
+                "unit": "925.438405353265807207",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc3MDYwNjg=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjM1"
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-06T16:00:29.116606",
+            "name": "Galxe",
+            "slug": "galxe",
+            "logo": "https://i.seadn.io/gcs/files/6eb1737aff49f0024d14623d9e5e4814.png?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NDUxMzUyNg==",
+            "imageUrl": "https://i.seadn.io/gcs/files/6eb1737aff49f0024d14623d9e5e4814.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "248590" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.000026786445", "eth": "0.000026786445", "symbol": "ETH" },
+              "numOwners": 52139,
+              "totalSupply": 248590.0,
+              "totalListed": 779,
+              "numOfSales": "19734.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "923.972670051472277919",
+                "unit": "923.972670051472277919",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NDUxMzUyNg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjM2"
+        },
+        {
+          "node": {
+            "createdDate": "2022-04-15T14:31:48.290435",
+            "name": "Cross The Ages - Arkhante Premium Pack",
+            "slug": "cross-the-ages-arkhante-booster-premium-pack-1",
+            "logo": "https://i.seadn.io/gae/lGAlcp-c2s8d7B75pzFje_uLUv77k78IrR8YpUsxtmhqq6XqrQWczpmt2QftKs_aHmT848dPvDF1kUC3Rmh0rOT_bnNFhGM4wYJM?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTMzNTE3NzA=",
+            "imageUrl": "https://i.seadn.io/gae/lGAlcp-c2s8d7B75pzFje_uLUv77k78IrR8YpUsxtmhqq6XqrQWczpmt2QftKs_aHmT848dPvDF1kUC3Rmh0rOT_bnNFhGM4wYJM?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "10185" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.181", "eth": "0.181", "symbol": "ETH" },
+              "numOwners": 8574,
+              "totalSupply": 10185.0,
+              "totalListed": 135,
+              "numOfSales": "3747.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "905.377425068888896931",
+                "unit": "905.377425068888896931",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTMzNTE3NzA=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjM3"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-08T18:33:14.523070",
+            "name": "GFC Weapon Collection",
+            "slug": "gfc-weapon-collection",
+            "logo": "https://i.seadn.io/gae/AG-bMrIZAa8Gby3GSuacvR7KWfD3AIvFD1H7r9-3z_iIm1GI9n6NBt573G_xeQq-RggWtmJkU27wLX9sE_ZJViL-wFpd88y8ewjT6g?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzQ0MDI1Mg==",
+            "imageUrl": "https://i.seadn.io/gae/AG-bMrIZAa8Gby3GSuacvR7KWfD3AIvFD1H7r9-3z_iIm1GI9n6NBt573G_xeQq-RggWtmJkU27wLX9sE_ZJViL-wFpd88y8ewjT6g?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "8015" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0044", "eth": "0.0044", "symbol": "ETH" },
+              "numOwners": 2133,
+              "totalSupply": 79.0,
+              "totalListed": 68,
+              "numOfSales": "5551.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "860.104242614831036917",
+                "unit": "860.104242614831036917",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzQ0MDI1Mg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjM4"
+        },
+        {
+          "node": {
+            "createdDate": "2022-07-07T00:41:55.641533",
+            "name": "Foustlings x Reddit Collectible Avatars",
+            "slug": "foustlings-x-reddit-collectible-avatars",
+            "logo": "https://i.seadn.io/gcs/files/d97ac3f36797c3459e34afed7723be52.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc3MDYyNDI=",
+            "imageUrl": "https://i.seadn.io/gcs/files/d97ac3f36797c3459e34afed7723be52.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1752" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.34", "eth": "0.34", "symbol": "ETH" },
+              "numOwners": 1495,
+              "totalSupply": 1752.0,
+              "totalListed": 63,
+              "numOfSales": "926.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "779.675423445442447701",
+                "unit": "779.675423445442447701",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc3MDYyNDI=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjM5"
+        },
+        {
+          "node": {
+            "createdDate": "2022-03-11T20:38:17.346196",
+            "name": "Mr. Crypto by Racksmafia",
+            "slug": "mrcrypto-by-racksmafia",
+            "logo": "https://i.seadn.io/gae/DLlX5UmkbyVEC0f0woGSrOJUc3yCK7TMI96bTuSdZO8DVHsLVzZdyfftQJOzMSUdz0mce1spA0wtZ67TIMdV1GDzESBdiCaQRaqcQA?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6ODM1MTc5MA==",
+            "imageUrl": "https://i.seadn.io/gae/DLlX5UmkbyVEC0f0woGSrOJUc3yCK7TMI96bTuSdZO8DVHsLVzZdyfftQJOzMSUdz0mce1spA0wtZ67TIMdV1GDzESBdiCaQRaqcQA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "10000" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0679", "eth": "0.0679", "symbol": "ETH" },
+              "numOwners": 2949,
+              "totalSupply": 10000.0,
+              "totalListed": 201,
+              "numOfSales": "4349.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "775.580521038545157353",
+                "unit": "775.580521038545157353",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6ODM1MTc5MA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQw"
+        },
+        {
+          "node": {
+            "createdDate": "2021-04-14T14:01:40.099989",
+            "name": "Artvatars",
+            "slug": "artvatars",
+            "logo": "https://i.seadn.io/gae/5obdKIWuvuh2dHdYUIg-tPZDNNBLBbKRt1gTzrlg11liG-Kzv9OLu-OXkcudgLS8ryoonU1SIu6J6D_QWYx3YON_7fHJZzZNsJ0suQ?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NDQzMzI0",
+            "imageUrl": "https://i.seadn.io/gae/5obdKIWuvuh2dHdYUIg-tPZDNNBLBbKRt1gTzrlg11liG-Kzv9OLu-OXkcudgLS8ryoonU1SIu6J6D_QWYx3YON_7fHJZzZNsJ0suQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "6710" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0575", "eth": "0.0575", "symbol": "ETH" },
+              "numOwners": 1596,
+              "totalSupply": 6710.0,
+              "totalListed": 118,
+              "numOfSales": "3753.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "733.493988999000748663",
+                "unit": "733.493988999000748663",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NDQzMzI0",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQx"
+        },
+        {
+          "node": {
+            "createdDate": "2022-05-16T11:01:44.505722",
+            "name": "Lens Protocol Profiles",
+            "slug": "lens-protocol-profiles",
+            "logo": "https://i.seadn.io/gae/S67RadRtlIbTNk0UojZM-TEl4pybcblKyg3HxQHl0-JmxYZ2deLX-pK2Z89khCWHGeaXeYfE8Vxqj06YCUcqk0q1KWD9T997lGnGHw?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTQ5MDg4MzQ=",
+            "imageUrl": "https://i.seadn.io/gae/S67RadRtlIbTNk0UojZM-TEl4pybcblKyg3HxQHl0-JmxYZ2deLX-pK2Z89khCWHGeaXeYfE8Vxqj06YCUcqk0q1KWD9T997lGnGHw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "107816" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "37.3", "eth": "0.029825453", "symbol": "USDC" },
+              "numOwners": 99144,
+              "totalSupply": 107816.0,
+              "totalListed": 4502,
+              "numOfSales": "34477.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "719.079093190475077790",
+                "unit": "719.07909319047507779",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTQ5MDg4MzQ=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQy"
+        },
+        {
+          "node": {
+            "createdDate": "2022-04-11T14:11:51.259296",
+            "name": "Apeiron Planets",
+            "slug": "apeironplanet",
+            "logo": "https://i.seadn.io/gae/NM3qxp3rBvvwEInfFHQUXIBy_mOl0sFP0DYUNGsxeICm0NA7x_mucx0PV1pyMLSc8-x-gkFbIFpFqAeRQdX2ckthQaIrGtVoTO9sYA?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTMwNjI0NTE=",
+            "imageUrl": "https://i.seadn.io/gae/NM3qxp3rBvvwEInfFHQUXIBy_mOl0sFP0DYUNGsxeICm0NA7x_mucx0PV1pyMLSc8-x-gkFbIFpFqAeRQdX2ckthQaIrGtVoTO9sYA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "5747" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.1266", "eth": "0.1266", "symbol": "ETH" },
+              "numOwners": 1173,
+              "totalSupply": 5747.0,
+              "totalListed": 70,
+              "numOfSales": "1533.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "683.022092556165944188",
+                "unit": "683.022092556165944188",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTMwNjI0NTE=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQz"
+        },
+        {
+          "node": {
+            "createdDate": "2021-10-05T23:08:48.068507",
+            "name": "Billionaire Zombies Club",
+            "slug": "billionairezombiesclub",
+            "logo": "https://i.seadn.io/gae/UORt4tkxYbzkj5MK52UzXNN6sijKaZaCzLkwf8bJdUgE8cuAhZqDDXdVU2Hz5j5da7BZ4vKLzK_R93GAixIO5Sne3QjDx7-j55Qo8G4?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjAyMDgyNQ==",
+            "imageUrl": "https://i.seadn.io/gae/UORt4tkxYbzkj5MK52UzXNN6sijKaZaCzLkwf8bJdUgE8cuAhZqDDXdVU2Hz5j5da7BZ4vKLzK_R93GAixIO5Sne3QjDx7-j55Qo8G4?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "10000" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.028", "eth": "0.028", "symbol": "ETH" },
+              "numOwners": 3451,
+              "totalSupply": 10000.0,
+              "totalListed": 211,
+              "numOfSales": "12655.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "682.988984726282524207",
+                "unit": "682.988984726282524207",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjAyMDgyNQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQ0"
+        },
+        {
+          "node": {
+            "createdDate": "2022-10-20T18:51:50.912462",
+            "name": "Spooky Season: Rojom x Reddit Collectible Avatars",
+            "slug": "spooky-season-rojom-x-reddit-collectible-avatars",
+            "logo": "https://i.seadn.io/gae/DlSC15eTVfOkWcgmEB8xQkpnxT9dcrL7UJqHs--4LbvAXZFkliOG2Tho3P8AGqoAfacuTtj1z-x1c9etazNM3at8p47yNsdrXaEhQw?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMjc=",
+            "imageUrl": "https://i.seadn.io/gae/DlSC15eTVfOkWcgmEB8xQkpnxT9dcrL7UJqHs--4LbvAXZFkliOG2Tho3P8AGqoAfacuTtj1z-x1c9etazNM3at8p47yNsdrXaEhQw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "2019" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.112", "eth": "0.112", "symbol": "ETH" },
+              "numOwners": 1250,
+              "totalSupply": 2019.0,
+              "totalListed": 156,
+              "numOfSales": "1536.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "655.083850999900732859",
+                "unit": "655.083850999900732859",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMjc=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQ1"
+        },
+        {
+          "node": {
+            "createdDate": "2022-03-11T11:33:23.668629",
+            "name": "CyberKongz: Play & Kollect",
+            "slug": "playandkollect",
+            "logo": "https://i.seadn.io/gae/aYX7rRADXGa0VrYYVPu4qBUKdfivh6w7iBoJtFWbTrByBF5tNMeMpLqAoIqeeML3Y21sMBgQ0kO3JQzPxs4X1Ovh3ZmyGrSgext2rg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6ODMzODQ2Mg==",
+            "imageUrl": "https://i.seadn.io/gae/aYX7rRADXGa0VrYYVPu4qBUKdfivh6w7iBoJtFWbTrByBF5tNMeMpLqAoIqeeML3Y21sMBgQ0kO3JQzPxs4X1Ovh3ZmyGrSgext2rg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "80425" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.00272", "eth": "0.00272", "symbol": "ETH" },
+              "numOwners": 1676,
+              "totalSupply": 112.0,
+              "totalListed": 95,
+              "numOfSales": "11228.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "640.319977463519762750",
+                "unit": "640.31997746351976275",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6ODMzODQ2Mg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQ2"
+        },
+        {
+          "node": {
+            "createdDate": "2022-02-12T02:34:49.388873",
+            "name": "Space Game - Marines & Aliens",
+            "slug": "sgmarinesandaliens",
+            "logo": "https://i.seadn.io/gae/OE7EAlp8t48ctvD-Vwcplc93Xt-JunS55oaWK2rXfs1JBmQJE4xpU2_2xIV4qninTMvru5Bxizl33m7rmjalo9nMAQ9dJxkd7Wn5Jg?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NzI1NDk2Mg==",
+            "imageUrl": "https://i.seadn.io/gae/OE7EAlp8t48ctvD-Vwcplc93Xt-JunS55oaWK2rXfs1JBmQJE4xpU2_2xIV4qninTMvru5Bxizl33m7rmjalo9nMAQ9dJxkd7Wn5Jg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "2188" },
+            "windowCollectionStats": {
+              "floorPrice": null,
+              "numOwners": 208,
+              "totalSupply": 2188.0,
+              "totalListed": 0,
+              "numOfSales": "7971.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "637.582152566307399866",
+                "unit": "637.582152566307399866",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NzI1NDk2Mg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQ3"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-15T17:18:40.305172",
+            "name": "GensoKishiOnline",
+            "slug": "gensokishionline",
+            "logo": "https://i.seadn.io/gae/esOsbPZWNl70jvwJFMG0jrldAuzmBpN3fNRvvm65RNE1UX46PBu0itSZkBcNXtzwztUwUqoetuVZ_y5Y0yo_G0IuveckvYX9HJn1mQ?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzY4NjkwNQ==",
+            "imageUrl": "https://i.seadn.io/gae/esOsbPZWNl70jvwJFMG0jrldAuzmBpN3fNRvvm65RNE1UX46PBu0itSZkBcNXtzwztUwUqoetuVZ_y5Y0yo_G0IuveckvYX9HJn1mQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "124212" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.007", "eth": "0.007", "symbol": "ETH" },
+              "numOwners": 13953,
+              "totalSupply": 124212.0,
+              "totalListed": 617,
+              "numOfSales": "10768.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "632.413225193236598898",
+                "unit": "632.413225193236598898",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzY4NjkwNQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQ4"
+        },
+        {
+          "node": {
+            "createdDate": "2019-01-19T16:27:27",
+            "name": "MarbleCards",
+            "slug": "marblecards",
+            "logo": "https://i.seadn.io/gae/JHs53JRA6f3VcBqqORnoL4_q4kLDeZkDgZkmbY3iziyQQ14IRtP3mQglePCmHpXE_fit88FH8cAFMUA3j54mivAA?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6Mjg4OA==",
+            "imageUrl": "https://i.seadn.io/gae/JHs53JRA6f3VcBqqORnoL4_q4kLDeZkDgZkmbY3iziyQQ14IRtP3mQglePCmHpXE_fit88FH8cAFMUA3j54mivAA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "260450" },
+            "windowCollectionStats": {
+              "floorPrice": null,
+              "numOwners": 10225,
+              "totalSupply": 260445.0,
+              "totalListed": 4098,
+              "numOfSales": "23995.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "619.947272965650540755",
+                "unit": "619.947272965650540755",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6Mjg4OA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjQ5"
+        },
+        {
+          "node": {
+            "createdDate": "2022-03-08T05:11:14.012207",
+            "name": "Hero Galaxy: Artifacts",
+            "slug": "hero-galaxy-artifacts",
+            "logo": "https://i.seadn.io/gae/Xb_gdjUXS0rgX3PycMj2GVUI44XOMp5MJf4LpHGxnlc4CUJVAi_ynEdmuMFXWGNU8xm1mOgteNDu1UD3pNF6qtWBPNWtdC8wVR6X9Xc?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6ODI0NjkzOA==",
+            "imageUrl": "https://i.seadn.io/gae/Xb_gdjUXS0rgX3PycMj2GVUI44XOMp5MJf4LpHGxnlc4CUJVAi_ynEdmuMFXWGNU8xm1mOgteNDu1UD3pNF6qtWBPNWtdC8wVR6X9Xc?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "30606" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0019", "eth": "0.0019", "symbol": "ETH" },
+              "numOwners": 2647,
+              "totalSupply": 30606.0,
+              "totalListed": 172,
+              "numOfSales": "7038.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "605.283577113753949561",
+                "unit": "605.283577113753949561",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6ODI0NjkzOA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjUw"
+        },
+        {
+          "node": {
+            "createdDate": "2021-05-28T10:02:23.240203",
+            "name": "Ethlings",
+            "slug": "ethlings",
+            "logo": "https://i.seadn.io/gae/nqw2lwCx4JA0ktOuJtR0nBpHz3ZteDNMtFfRoD_nJMxQKpEiDek2gWWop-Q-lkreQfrBdpy_dGeqHuusQbMexdx8ep_Ay_rlf0V-q0w?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NjYzMzUy",
+            "imageUrl": "https://i.seadn.io/gae/nqw2lwCx4JA0ktOuJtR0nBpHz3ZteDNMtFfRoD_nJMxQKpEiDek2gWWop-Q-lkreQfrBdpy_dGeqHuusQbMexdx8ep_Ay_rlf0V-q0w?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "7897" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.014844", "eth": "0.014844", "symbol": "ETH" },
+              "numOwners": 1092,
+              "totalSupply": 7897.0,
+              "totalListed": 20,
+              "numOfSales": "3813.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "596.202414701111820250",
+                "unit": "596.20241470111182025",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NjYzMzUy",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjUx"
+        },
+        {
+          "node": {
+            "createdDate": "2021-01-06T05:00:09.666764",
+            "name": "Emblem Vault [Polygon]",
+            "slug": "emblem-vault-matic",
+            "logo": "https://i.seadn.io/gae/5jiXQr_4WlVkfWIasX5QwCnU5JAbdFhpp4J44mAH1-C9of4sSHmfF1KJwmjJZaFNlbiRuJvA-eJTfWP9cVIXi7_XNTky2jMWvM0A9IY?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTY0MDk=",
+            "imageUrl": "https://i.seadn.io/gae/5jiXQr_4WlVkfWIasX5QwCnU5JAbdFhpp4J44mAH1-C9of4sSHmfF1KJwmjJZaFNlbiRuJvA-eJTfWP9cVIXi7_XNTky2jMWvM0A9IY?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "6530" },
+            "windowCollectionStats": {
+              "floorPrice": null,
+              "numOwners": 1887,
+              "totalSupply": 6530.0,
+              "totalListed": 481,
+              "numOfSales": "2379.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "523.632845370806990104",
+                "unit": "523.632845370806990104",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTY0MDk=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjUy"
+        },
+        {
+          "node": {
+            "createdDate": "2021-10-21T09:56:37.652989",
+            "name": "Firestarter Metaverse Champion",
+            "slug": "firestartermetaversechampion",
+            "logo": "https://i.seadn.io/gae/GVN1BmN20p7qF3vi5sbUsCVimD8IPGxk-yfja1Ld2rKV565ZFAEdZF8F73uRKbDIvk8w6x_7tJfcgYt6-UyEqSpnbYQb8EQzNIsQKQ?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjI5NjUxMw==",
+            "imageUrl": "https://i.seadn.io/gae/GVN1BmN20p7qF3vi5sbUsCVimD8IPGxk-yfja1Ld2rKV565ZFAEdZF8F73uRKbDIvk8w6x_7tJfcgYt6-UyEqSpnbYQb8EQzNIsQKQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "220" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.83", "eth": "0.83", "symbol": "ETH" },
+              "numOwners": 191,
+              "totalSupply": 220.0,
+              "totalListed": 7,
+              "numOfSales": "192.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "518.932972937999920759",
+                "unit": "518.932972937999920759",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjI5NjUxMw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjUz"
+        },
+        {
+          "node": {
+            "createdDate": "2021-08-23T00:04:57.416043",
+            "name": "The Visitors",
+            "slug": "thevisitors",
+            "logo": "https://i.seadn.io/gae/rj9UOPjE50WAH3QXvHSO5BD3jyR_kdEkU86E71fMrhYSxDBMl4SPOg6_zuCckKNDVTubl1CfDxjplKpPlNgBPTeuNQxSQecUS3BeYA?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTAyOTM1OQ==",
+            "imageUrl": "https://i.seadn.io/gae/rj9UOPjE50WAH3QXvHSO5BD3jyR_kdEkU86E71fMrhYSxDBMl4SPOg6_zuCckKNDVTubl1CfDxjplKpPlNgBPTeuNQxSQecUS3BeYA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "8985" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.054", "eth": "0.054", "symbol": "ETH" },
+              "numOwners": 2163,
+              "totalSupply": 8985.0,
+              "totalListed": 314,
+              "numOfSales": "5061.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "491.066166662292175715",
+                "unit": "491.066166662292175715",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTAyOTM1OQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjU0"
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-27T23:14:11.958541",
+            "name": "adidas for Prada re-source",
+            "slug": "adidas-for-prada-re-source",
+            "logo": "https://i.seadn.io/gae/nMPxX6zMqJTQ4bovChfFylRSqEkdGuS-bvWPiJ5_TkFR_ghUVUdbUQB1mYz08JymVhFsQXj_PyedYGlLBHqU3vLVG15P778OM143GA?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NjI0OTQzNw==",
+            "imageUrl": "https://i.seadn.io/gae/nMPxX6zMqJTQ4bovChfFylRSqEkdGuS-bvWPiJ5_TkFR_ghUVUdbUQB1mYz08JymVhFsQXj_PyedYGlLBHqU3vLVG15P778OM143GA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "3030" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0259", "eth": "0.0259", "symbol": "ETH" },
+              "numOwners": 2737,
+              "totalSupply": 3030.0,
+              "totalListed": 52,
+              "numOfSales": "1478.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "477.250199604988381452",
+                "unit": "477.250199604988381452",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NjI0OTQzNw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjU1"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-15T21:49:27.723789",
+            "name": "EtherOrcs Items",
+            "slug": "etherorcs-items",
+            "logo": "https://openseauserdata.com/files/c11429c7afc0015c888647062e2e65e4.svg",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzY5NjUxMA==",
+            "imageUrl": "https://openseauserdata.com/files/c11429c7afc0015c888647062e2e65e4.svg",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "968850" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.056", "eth": "0.00003493224", "symbol": "MATIC" },
+              "numOwners": 1330,
+              "totalSupply": 6.0,
+              "totalListed": 5,
+              "numOfSales": "76256.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "465.233244694903305572",
+                "unit": "465.233244694903305572",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzY5NjUxMA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjU2"
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-11T14:23:03.765355",
+            "name": "Chinese Zodiac Metaverse by YassartLabs",
+            "slug": "chinese-zodiac-metaverse-by-yassartlabs",
+            "logo": "https://i.seadn.io/gae/vtoktsTnJVkDl_ZZPXVHPrLN37Dfs-b4U9q70Wgj9d_NpftTCJwdgyjUWTf5zrJE7kLkVWcq_Z_m2Pg1x0v45UEMgNY1OM044XnlLrI?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjcxNjYyOA==",
+            "imageUrl": "https://i.seadn.io/gae/vtoktsTnJVkDl_ZZPXVHPrLN37Dfs-b4U9q70Wgj9d_NpftTCJwdgyjUWTf5zrJE7kLkVWcq_Z_m2Pg1x0v45UEMgNY1OM044XnlLrI?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "0" },
+            "windowCollectionStats": {
+              "floorPrice": null,
+              "numOwners": 143,
+              "totalSupply": 1020.0,
+              "totalListed": 0,
+              "numOfSales": "739.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "452.299999999999727152",
+                "unit": "452.299999999999727152",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjcxNjYyOA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjU3"
+        },
+        {
+          "node": {
+            "createdDate": "2022-09-08T09:25:31.069170",
+            "name": "TRACER OFFICIAL NFT",
+            "slug": "tracerofficial",
+            "logo": "https://i.seadn.io/gcs/files/148bfb18fa3b899f44640ea2ec51f9f1.png?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjAwNTI4NzI=",
+            "imageUrl": "https://i.seadn.io/gcs/files/148bfb18fa3b899f44640ea2ec51f9f1.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "10067" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "74.999", "eth": "0.04678362621", "symbol": "MATIC" },
+              "numOwners": 259,
+              "totalSupply": 10067.0,
+              "totalListed": 59,
+              "numOfSales": "4442.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "442.645812741866166107",
+                "unit": "442.645812741866166107",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjAwNTI4NzI=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjU4"
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-27T10:50:34.776647",
+            "name": "Dvision Land - London & Tokyo",
+            "slug": "dvi-land-2nd",
+            "logo": "https://i.seadn.io/gae/ogUNGS0MNgZFUw8yILa_Oq_mKf9aelh7jJtRJc8arpZqmnMpZsOa87JWjGQ0ZMFqCb-PWxsNXDX4c3Wa16BtdAmoGR6kR9Mbf7sNoA?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NjE5ODc0NA==",
+            "imageUrl": "https://i.seadn.io/gae/ogUNGS0MNgZFUw8yILa_Oq_mKf9aelh7jJtRJc8arpZqmnMpZsOa87JWjGQ0ZMFqCb-PWxsNXDX4c3Wa16BtdAmoGR6kR9Mbf7sNoA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "4735" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.01899999", "eth": "0.01899999", "symbol": "ETH" },
+              "numOwners": 886,
+              "totalSupply": 4735.0,
+              "totalListed": 49,
+              "numOfSales": "4783.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "436.430398179995336250",
+                "unit": "436.43039817999533625",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NjE5ODc0NA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjU5"
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-12T04:53:29.274224",
+            "name": "GFC Genesis Key",
+            "slug": "gfcgenesiskey",
+            "logo": "https://i.seadn.io/gae/JOa9smy9JZOirYABdh02I6qFJD_uPQqSK6r125Ahr19c43TK_xj_LR6sPr4pRSc_yyfwVMI9dsBUH6DTDOcnyUgQED33Xjxdi_XMAw?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjczMDI2OA==",
+            "imageUrl": "https://i.seadn.io/gae/JOa9smy9JZOirYABdh02I6qFJD_uPQqSK6r125Ahr19c43TK_xj_LR6sPr4pRSc_yyfwVMI9dsBUH6DTDOcnyUgQED33Xjxdi_XMAw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1623" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.124", "eth": "0.124", "symbol": "ETH" },
+              "numOwners": 348,
+              "totalSupply": 3.0,
+              "totalListed": 3,
+              "numOfSales": "2100.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "409.159699173000035444",
+                "unit": "409.159699173000035444",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjczMDI2OA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjYw"
+        },
+        {
+          "node": {
+            "createdDate": "2022-07-05T13:00:23.902199",
+            "name": "NEXUS World - Gen Zero Buddies",
+            "slug": "nexus-world-gen-zero-buddies",
+            "logo": "https://i.seadn.io/gae/1i20Pd4NzW_lu_yH9_DEBYSO8s2onSt9Ij_lHmlgdZfBt3h9ZO6kCTxA80IoWqEJiv_Kbcrzk7IMphYGsCdwgrxNWu-CAFXYsBML?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc2MzA4Mzk=",
+            "imageUrl": "https://i.seadn.io/gae/1i20Pd4NzW_lu_yH9_DEBYSO8s2onSt9Ij_lHmlgdZfBt3h9ZO6kCTxA80IoWqEJiv_Kbcrzk7IMphYGsCdwgrxNWu-CAFXYsBML?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "400" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "3.15", "eth": "3.15", "symbol": "ETH" },
+              "numOwners": 298,
+              "totalSupply": 400.0,
+              "totalListed": 25,
+              "numOfSales": "124.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "394.867999999999881311",
+                "unit": "394.867999999999881311",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc2MzA4Mzk=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjYx"
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-19T21:52:43.678644",
+            "name": "Cryptoys Classics",
+            "slug": "cryptoys-classics",
+            "logo": "https://i.seadn.io/gae/8LfTGwMvwMkyoNaBKrwih8iF3sx2gWZ4d9K1YqkxVf0P-_7VaDhTLPFjv14FPkAClq8fqNSDahH0BW32ceotlfAYNcWVqk3HMUnHbw?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjkxMTY4Nw==",
+            "imageUrl": "https://i.seadn.io/gae/8LfTGwMvwMkyoNaBKrwih8iF3sx2gWZ4d9K1YqkxVf0P-_7VaDhTLPFjv14FPkAClq8fqNSDahH0BW32ceotlfAYNcWVqk3HMUnHbw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "3860" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.145", "eth": "0.145", "symbol": "ETH" },
+              "numOwners": 2587,
+              "totalSupply": 3860.0,
+              "totalListed": 34,
+              "numOfSales": "2491.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "392.384888932399178429",
+                "unit": "392.384888932399178429",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjkxMTY4Nw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjYy"
+        },
+        {
+          "node": {
+            "createdDate": "2021-07-01T15:53:55.435703",
+            "name": "PolygonPunks - Official Collection",
+            "slug": "polygonpunks",
+            "logo": "https://i.seadn.io/gae/gR7I-QRV0LxH5uM0XR7CP3tCDlim9GLeIZctSal4hAcwhXVv2O2sr5Vjopg1Jo4ceDeip301CUrMsKCiPKVUNBcFNykOBNSIBlloUu4?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NzU3NTY0",
+            "imageUrl": "https://i.seadn.io/gae/gR7I-QRV0LxH5uM0XR7CP3tCDlim9GLeIZctSal4hAcwhXVv2O2sr5Vjopg1Jo4ceDeip301CUrMsKCiPKVUNBcFNykOBNSIBlloUu4?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "9995" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0655", "eth": "0.0655", "symbol": "ETH" },
+              "numOwners": 2566,
+              "totalSupply": 9995.0,
+              "totalListed": 281,
+              "numOfSales": "5148.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "392.278971449639357161",
+                "unit": "392.278971449639357161",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NzU3NTY0",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjYz"
+        },
+        {
+          "node": {
+            "createdDate": "2022-07-07T17:33:05.984037",
+            "name": "Imagination Station x Reddit Collectible Avatars",
+            "slug": "imagination-station-x-reddit-collectible-avatars",
+            "logo": "https://i.seadn.io/gae/TQ9WwFj1_PheVMoO11IRl-BxmTAUJ8c3s-tqDH24TwJ7jMrWPscV7-ckHUV5LMrFeMK46iG12_Z-bRtEYXDpy9UIVmDvjsF_SiAM?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc3MjU5NzA=",
+            "imageUrl": "https://i.seadn.io/gae/TQ9WwFj1_PheVMoO11IRl-BxmTAUJ8c3s-tqDH24TwJ7jMrWPscV7-ckHUV5LMrFeMK46iG12_Z-bRtEYXDpy9UIVmDvjsF_SiAM?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1773" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.04999", "eth": "0.04999", "symbol": "ETH" },
+              "numOwners": 1118,
+              "totalSupply": 1773.0,
+              "totalListed": 217,
+              "numOfSales": "1817.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "385.972999598909495944",
+                "unit": "385.972999598909495944",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc3MjU5NzA=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjY0"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-21T10:59:29.899402",
+            "name": "Unstoppable Domains - (Polygon)",
+            "slug": "unstoppable-domains-polygon",
+            "logo": "https://i.seadn.io/gcs/files/83e8c013560e191c2cc6e3fa794741ca.jpg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc0NDg1NQ==",
+            "imageUrl": "https://i.seadn.io/gcs/files/83e8c013560e191c2cc6e3fa794741ca.jpg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "2625854" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.027", "eth": "0.00001684233", "symbol": "MATIC" },
+              "numOwners": 662463,
+              "totalSupply": 2625854.0,
+              "totalListed": 64871,
+              "numOfSales": "45255.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "373.704675131609519667",
+                "unit": "373.704675131609519667",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc0NDg1NQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjY1"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-21T14:41:55.284639",
+            "name": "Decentraland Wearables (Polygon)",
+            "slug": "decentraland-polygon-wearables",
+            "logo": "https://i.seadn.io/gae/5KIxEGmnAiL5psnMCSLPlfSxDxfRSk4sTQRSyhPdgnu70nGb2YsuVxTmO2iKEkOZOfq476Bl1hAu6aJIKjs1myY?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc0ODE2Ng==",
+            "imageUrl": "https://i.seadn.io/gae/5KIxEGmnAiL5psnMCSLPlfSxDxfRSk4sTQRSyhPdgnu70nGb2YsuVxTmO2iKEkOZOfq476Bl1hAu6aJIKjs1myY?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "768983" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.1", "eth": "0.000062379", "symbol": "MATIC" },
+              "numOwners": 184453,
+              "totalSupply": 768980.0,
+              "totalListed": 3471,
+              "numOfSales": "17037.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "359.028479984596003760",
+                "unit": "359.02847998459600376",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc0ODE2Ng==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjY2"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-29T05:28:11.027622",
+            "name": "Voxie Tactics Items",
+            "slug": "voxie-tactics-items",
+            "logo": "https://i.seadn.io/gcs/files/0f93b1972cc8fd149799920dd14cc746.jpg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NDE2MjQ2NA==",
+            "imageUrl": "https://i.seadn.io/gcs/files/0f93b1972cc8fd149799920dd14cc746.jpg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "70357" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0072", "eth": "0.0072", "symbol": "ETH" },
+              "numOwners": 8093,
+              "totalSupply": 70357.0,
+              "totalListed": 429,
+              "numOfSales": "11232.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "345.800139057173964829",
+                "unit": "345.800139057173964829",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NDE2MjQ2NA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjY3"
+        },
+        {
+          "node": {
+            "createdDate": "2021-10-22T14:00:09.964759",
+            "name": "FREAKS OF FAME",
+            "slug": "freaks-of-fame-by-trosley",
+            "logo": "https://i.seadn.io/gae/lgneMVcv6TDHG9hY7F5NCY5P2I90cWZY-qFdu49HlZ2UbpV4-cI-Q87mBB31tl2L4zRilHo_cB4KraGbpqMKkWW0E3TSqKw2FEa2mw?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjMxODU5NA==",
+            "imageUrl": "https://i.seadn.io/gae/lgneMVcv6TDHG9hY7F5NCY5P2I90cWZY-qFdu49HlZ2UbpV4-cI-Q87mBB31tl2L4zRilHo_cB4KraGbpqMKkWW0E3TSqKw2FEa2mw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "11621" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0015", "eth": "0.0015", "symbol": "ETH" },
+              "numOwners": 6117,
+              "totalSupply": 12.0,
+              "totalListed": 9,
+              "numOfSales": "2136.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "344.760721956389033949",
+                "unit": "344.760721956389033949",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjMxODU5NA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjY4"
+        },
+        {
+          "node": {
+            "createdDate": "2021-10-30T09:04:19.350362",
+            "name": "G-Bots by GAMEE",
+            "slug": "gbots-gamee",
+            "logo": "https://i.seadn.io/gcs/files/edb755aac118743b412ff0c8a7884f56.jpg?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjQ2MTMyMA==",
+            "imageUrl": "https://i.seadn.io/gcs/files/edb755aac118743b412ff0c8a7884f56.jpg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "6550" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "29.99", "eth": "0.0187074621", "symbol": "MATIC" },
+              "numOwners": 2758,
+              "totalSupply": 5795.0,
+              "totalListed": 202,
+              "numOfSales": "4671.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "344.523647665568034881",
+                "unit": "344.523647665568034881",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjQ2MTMyMA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjY5"
+        },
+        {
+          "node": {
+            "createdDate": "2021-06-29T11:49:00.854828",
+            "name": "REVV Racing",
+            "slug": "revv-motorsport-inventory",
+            "logo": "https://i.seadn.io/gae/W9ZPuD7gMwLFSXqTLB85mBZr1cI3Kio_k75HlUIMm6n7TMjcP-MPamwidyt1uEWglkr_RCY7Ox1FmHYVkXFv9c25aXgIyzZ5dbBN3A?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NzUxODgw",
+            "imageUrl": "https://i.seadn.io/gae/W9ZPuD7gMwLFSXqTLB85mBZr1cI3Kio_k75HlUIMm6n7TMjcP-MPamwidyt1uEWglkr_RCY7Ox1FmHYVkXFv9c25aXgIyzZ5dbBN3A?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "174667" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0006", "eth": "0.0006", "symbol": "ETH" },
+              "numOwners": 58219,
+              "totalSupply": 174036.0,
+              "totalListed": 1961,
+              "numOfSales": "54290.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "341.174420999012681932",
+                "unit": "341.174420999012681932",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NzUxODgw",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjcw"
+        },
+        {
+          "node": {
+            "createdDate": "2022-06-04T07:28:51.612562",
+            "name": "Loy City",
+            "slug": "loy-city",
+            "logo": "https://i.seadn.io/gae/Roc4rk88IPZaB5gNq68Ki-nmMdinxeyh2oleiVRVbPEtY2hRghZ2o1-LppXuQ5T6gfnygdmsMU2-cCx3lEsVQlAU-f240Nhi_YOrDg?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTYwMjkyMjQ=",
+            "imageUrl": "https://i.seadn.io/gae/Roc4rk88IPZaB5gNq68Ki-nmMdinxeyh2oleiVRVbPEtY2hRghZ2o1-LppXuQ5T6gfnygdmsMU2-cCx3lEsVQlAU-f240Nhi_YOrDg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "90000000" },
+            "windowCollectionStats": {
+              "floorPrice": null,
+              "numOwners": 14,
+              "totalSupply": 1.0,
+              "totalListed": 0,
+              "numOfSales": "103273.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "336.088686417199994594",
+                "unit": "336.088686417199994594",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTYwMjkyMjQ=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjcx"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-10T17:54:51.479947",
+            "name": "Evaverse Hoverboards",
+            "slug": "eva-hoverboard",
+            "logo": "https://i.seadn.io/gae/qcQqdAW8G7vS7kjpFrkUfgp-SJnmkV75ONNdSlH-wLzW7EoXFsMuu2kC3UxidNgRTDm0bEnrVhptffYIVog6f8HiA_4ZMfvwK4ky?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzUwMzk4MQ==",
+            "imageUrl": "https://i.seadn.io/gae/qcQqdAW8G7vS7kjpFrkUfgp-SJnmkV75ONNdSlH-wLzW7EoXFsMuu2kC3UxidNgRTDm0bEnrVhptffYIVog6f8HiA_4ZMfvwK4ky?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "10017" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0165", "eth": "0.0165", "symbol": "ETH" },
+              "numOwners": 3109,
+              "totalSupply": 10017.0,
+              "totalListed": 88,
+              "numOfSales": "2846.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "329.213859829349019037",
+                "unit": "329.213859829349019037",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzUwMzk4MQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjcy"
+        },
+        {
+          "node": {
+            "createdDate": "2022-05-11T11:17:25.732736",
+            "name": "Wolfer Finance Wolfpack",
+            "slug": "wfwolfpack",
+            "logo": "https://i.seadn.io/gae/PUAlA8TwsrrCZv8RP0gM7XJpTxW75h9lFjMF55enFfuebkfGGMnWYpkD9XbWFCei0R1PCKe45zRgKrkQeyiWw43PsiwxtMoQuhNmtA?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTQ3MTY2MzM=",
+            "imageUrl": "https://i.seadn.io/gae/PUAlA8TwsrrCZv8RP0gM7XJpTxW75h9lFjMF55enFfuebkfGGMnWYpkD9XbWFCei0R1PCKe45zRgKrkQeyiWw43PsiwxtMoQuhNmtA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "5000" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.37896", "eth": "0.37896", "symbol": "ETH" },
+              "numOwners": 1115,
+              "totalSupply": 5000.0,
+              "totalListed": 72,
+              "numOfSales": "622.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "328.557943621025970060",
+                "unit": "328.55794362102597006",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTQ3MTY2MzM=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjcz"
+        },
+        {
+          "node": {
+            "createdDate": "2022-04-05T22:03:08.676677",
+            "name": "Cross The Ages - Arkhante Legacy Pack",
+            "slug": "arkhante-booster-premium-pack",
+            "logo": "https://i.seadn.io/gae/lGAlcp-c2s8d7B75pzFje_uLUv77k78IrR8YpUsxtmhqq6XqrQWczpmt2QftKs_aHmT848dPvDF1kUC3Rmh0rOT_bnNFhGM4wYJM?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTI4MDY0MDA=",
+            "imageUrl": "https://i.seadn.io/gae/lGAlcp-c2s8d7B75pzFje_uLUv77k78IrR8YpUsxtmhqq6XqrQWczpmt2QftKs_aHmT848dPvDF1kUC3Rmh0rOT_bnNFhGM4wYJM?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "345" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "1.617", "eth": "1.617", "symbol": "ETH" },
+              "numOwners": 273,
+              "totalSupply": 345.0,
+              "totalListed": 23,
+              "numOfSales": "565.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "327.335070000000087020",
+                "unit": "327.33507000000008702",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTI4MDY0MDA=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjc0"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-08T20:04:15.704862",
+            "name": "PolyFarm Official",
+            "slug": "polyfarm",
+            "logo": "https://i.seadn.io/gae/S08_BnOf9FWz9fvc2_3p3GmztfVFBl-drQ9Fs0KFLsHNA7CGBLhyGqcdigvtM59UHHsU7Y4wBW9hHd6ccgKpRMudeK_GaHj_Hn7ERQ?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzQ0MzM0MQ==",
+            "imageUrl": "https://i.seadn.io/gae/S08_BnOf9FWz9fvc2_3p3GmztfVFBl-drQ9Fs0KFLsHNA7CGBLhyGqcdigvtM59UHHsU7Y4wBW9hHd6ccgKpRMudeK_GaHj_Hn7ERQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "10008" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0035", "eth": "0.0035", "symbol": "ETH" },
+              "numOwners": 501,
+              "totalSupply": 10008.0,
+              "totalListed": 31,
+              "numOfSales": "7084.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "321.032239742729757381",
+                "unit": "321.032239742729757381",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzQ0MzM0MQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjc1"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-23T20:39:51.643636",
+            "name": "Creature Playground",
+            "slug": "the-creature-playground",
+            "logo": "https://i.seadn.io/gae/Y6APJCSL9DtyfnaizA-tR7JnUVTsjtGkGqXTYaKDAD5F0irxZXCwKtVroWr9Ob1r7n4gV0Y_ntPrbuAVHfYNpwSvnA0SbGiCPaoJ?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc5ODYwNw==",
+            "imageUrl": "https://i.seadn.io/gae/Y6APJCSL9DtyfnaizA-tR7JnUVTsjtGkGqXTYaKDAD5F0irxZXCwKtVroWr9Ob1r7n4gV0Y_ntPrbuAVHfYNpwSvnA0SbGiCPaoJ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "8498" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0038", "eth": "0.0038", "symbol": "ETH" },
+              "numOwners": 4244,
+              "totalSupply": 8.0,
+              "totalListed": 5,
+              "numOfSales": "1785.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "314.302715939969800729",
+                "unit": "314.302715939969800729",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc5ODYwNw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjc2"
+        },
+        {
+          "node": {
+            "createdDate": "2022-05-19T12:34:28.636927",
+            "name": "Phantom Galaxies Planet Genesis Series",
+            "slug": "phantom-galaxies-planet-genesis-series",
+            "logo": "https://i.seadn.io/gae/NZ0WI9Fxr69mfjNye3t2Ct_Uk-JnPTqWoA7TF4RK18wslgZkR2I1WJ1Uw6PzLK9oj-r02r5r30VR7TVNYqidtg4b75rBqD5p7E1S9g?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTUxMTg1MjA=",
+            "imageUrl": "https://i.seadn.io/gae/NZ0WI9Fxr69mfjNye3t2Ct_Uk-JnPTqWoA7TF4RK18wslgZkR2I1WJ1Uw6PzLK9oj-r02r5r30VR7TVNYqidtg4b75rBqD5p7E1S9g?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "15301" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.018", "eth": "0.018", "symbol": "ETH" },
+              "numOwners": 3807,
+              "totalSupply": 7.0,
+              "totalListed": 7,
+              "numOfSales": "1660.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "308.447589631466712490",
+                "unit": "308.44758963146671249",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTUxMTg1MjA=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjc3"
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-06T23:13:55.541192",
+            "name": "Riot Racers Drivers",
+            "slug": "riot-racers-drivers",
+            "logo": "https://i.seadn.io/gae/zv-r2X1DouiaCsT0C-8KeY2j_d8VR9pMTq0nIhPFda__IPc1OVqivwKPMik_tits30MwdRWKuYFaceHP9AMzpPeuJsio8-dgjr9AxQ?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjYxMzAxMQ==",
+            "imageUrl": "https://i.seadn.io/gae/zv-r2X1DouiaCsT0C-8KeY2j_d8VR9pMTq0nIhPFda__IPc1OVqivwKPMik_tits30MwdRWKuYFaceHP9AMzpPeuJsio8-dgjr9AxQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "11699" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0079", "eth": "0.0079", "symbol": "ETH" },
+              "numOwners": 1614,
+              "totalSupply": 11699.0,
+              "totalListed": 141,
+              "numOfSales": "3019.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "307.893569333244101927",
+                "unit": "307.893569333244101927",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjYxMzAxMQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjc4"
+        },
+        {
+          "node": {
+            "createdDate": "2022-10-20T18:51:46.058069",
+            "name": "Spooky Season: tfoust10 x Reddit Collectible Avatars",
+            "slug": "spooky-season-tfoust10-x-reddit-collectible-avatar",
+            "logo": "https://i.seadn.io/gae/WfqUgsx9M0A_8XIdOF0brbiO_cdUdDKj4PULa7hvh2jcbwMpaQpgg1vkRsSloCMpIKAHP9NIBPhMwtaRwp6RlM_D3Mz-7jIx2Q01-tU?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMjU=",
+            "imageUrl": "https://i.seadn.io/gae/WfqUgsx9M0A_8XIdOF0brbiO_cdUdDKj4PULa7hvh2jcbwMpaQpgg1vkRsSloCMpIKAHP9NIBPhMwtaRwp6RlM_D3Mz-7jIx2Q01-tU?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1571" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.092", "eth": "0.092", "symbol": "ETH" },
+              "numOwners": 1142,
+              "totalSupply": 1571.0,
+              "totalListed": 136,
+              "numOfSales": "1233.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "305.288388598877759250",
+                "unit": "305.28838859887775925",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMjU=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjc5"
+        },
+        {
+          "node": {
+            "createdDate": "2022-07-07T15:46:16.243042",
+            "name": "Wearing Your Emotions x Reddit Collectible Avatars",
+            "slug": "wearing-your-emotions-x-reddit-collectible-avatars",
+            "logo": "https://i.seadn.io/gcs/files/5ab43ac01bde1680f35e695fa745de38.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc3MjI5Mzg=",
+            "imageUrl": "https://i.seadn.io/gcs/files/5ab43ac01bde1680f35e695fa745de38.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1603" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.155", "eth": "0.155", "symbol": "ETH" },
+              "numOwners": 1363,
+              "totalSupply": 1603.0,
+              "totalListed": 66,
+              "numOfSales": "651.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "305.102641670235016136",
+                "unit": "305.102641670235016136",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc3MjI5Mzg=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjgw"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-09T20:13:34.896468",
+            "name": "Crypto Cannabis Club NFTokins",
+            "slug": "nftokins",
+            "logo": "https://i.seadn.io/gae/KbcsxsxBMQcrDMdz0cx234KEI3183wmsZ9fJCh3y_4B8PLhXP28QLuLTXxgy71gGdETh2gCU7A6VGcr-UqkL-fZ6AVQfWd9RoMEbkw?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTQ4NTkwMg==",
+            "imageUrl": "https://i.seadn.io/gae/KbcsxsxBMQcrDMdz0cx234KEI3183wmsZ9fJCh3y_4B8PLhXP28QLuLTXxgy71gGdETh2gCU7A6VGcr-UqkL-fZ6AVQfWd9RoMEbkw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "12997" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0035", "eth": "0.0035", "symbol": "ETH" },
+              "numOwners": 3732,
+              "totalSupply": 12997.0,
+              "totalListed": 104,
+              "numOfSales": "2934.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "299.916544250861193177",
+                "unit": "299.916544250861193177",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTQ4NTkwMg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjgx"
+        },
+        {
+          "node": {
+            "createdDate": "2021-10-21T10:58:35.708796",
+            "name": "PolkaFantasy",
+            "slug": "polkafantasy",
+            "logo": "https://i.seadn.io/gae/biPCgmo_WO_YjEpeeOXlLHKOp1H4bRVjHhjuT6gYE5kRwFCe7uiDnij7DpFpP66VUAfQV17G_M36a3aoqXbU3m1hgPJlk_Hqew_9Fr8?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjI5NzMwMg==",
+            "imageUrl": "https://i.seadn.io/gae/biPCgmo_WO_YjEpeeOXlLHKOp1H4bRVjHhjuT6gYE5kRwFCe7uiDnij7DpFpP66VUAfQV17G_M36a3aoqXbU3m1hgPJlk_Hqew_9Fr8?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "6668" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.015", "eth": "0.015", "symbol": "ETH" },
+              "numOwners": 1337,
+              "totalSupply": 6668.0,
+              "totalListed": 81,
+              "numOfSales": "1365.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "280.601982723213438931",
+                "unit": "280.601982723213438931",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjI5NzMwMg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjgy"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-30T17:21:18.649790",
+            "name": "Blokpax Razz",
+            "slug": "razz",
+            "logo": "https://i.seadn.io/gcs/files/b8919fbc04af1ebc8c3b530de97d69e6.jpg?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTkzNTEzMg==",
+            "imageUrl": "https://i.seadn.io/gcs/files/b8919fbc04af1ebc8c3b530de97d69e6.jpg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "6537" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.05", "eth": "0.05", "symbol": "ETH" },
+              "numOwners": 33,
+              "totalSupply": 57.0,
+              "totalListed": 4,
+              "numOfSales": "44904.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "280.129929002707285690",
+                "unit": "280.12992900270728569",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTkzNTEzMg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjgz"
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-01T09:28:21.502647",
+            "name": "Crypto Raiders Mounts",
+            "slug": "crypto-raiders-mounts",
+            "logo": "https://i.seadn.io/gae/44XZseVPcTMuIseriL_HWueJ1pVaTp7p5JbMlAyQccPRCE3IsbOohEZ9WzKH0zOlmXIUsEH8NIULCA5PunKfNhTAi2yhXyVim745OA?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NDI3NDQxOQ==",
+            "imageUrl": "https://i.seadn.io/gae/44XZseVPcTMuIseriL_HWueJ1pVaTp7p5JbMlAyQccPRCE3IsbOohEZ9WzKH0zOlmXIUsEH8NIULCA5PunKfNhTAi2yhXyVim745OA?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "3654" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.027", "eth": "0.027", "symbol": "ETH" },
+              "numOwners": 531,
+              "totalSupply": 3654.0,
+              "totalListed": 28,
+              "numOfSales": "1060.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "279.202387104166803056",
+                "unit": "279.202387104166803056",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NDI3NDQxOQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjg0"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-20T15:43:12.085203",
+            "name": "Bezogis",
+            "slug": "bezogis",
+            "logo": "https://i.seadn.io/gae/OoBwIRxUH0xLmORbqJfd_LcEh5coO9co_m4Q7EDtZeZZ5vQZTQEn7nRKv_LCt4V1RSwPCImkMetA7Bp_mdzYaTOhrv6EG6njAsQS?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTcyOTU3Nw==",
+            "imageUrl": "https://i.seadn.io/gae/OoBwIRxUH0xLmORbqJfd_LcEh5coO9co_m4Q7EDtZeZZ5vQZTQEn7nRKv_LCt4V1RSwPCImkMetA7Bp_mdzYaTOhrv6EG6njAsQS?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "4096" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.1", "eth": "0.1", "symbol": "ETH" },
+              "numOwners": 751,
+              "totalSupply": 4096.0,
+              "totalListed": 54,
+              "numOfSales": "1023.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "275.061774700000000848",
+                "unit": "275.061774700000000848",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTcyOTU3Nw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjg1"
+        },
+        {
+          "node": {
+            "createdDate": "2022-02-17T20:34:54.396354",
+            "name": "Sunflower Land Accounts",
+            "slug": "sunflower-land",
+            "logo": "https://i.seadn.io/gae/rpnk-Yq7k8ueMvjkVAkHr5cRAhIuAoVzJ_C9wYFDvbwOMcQHM3EGSJU1Ex5M9wzO6tU_PIp_aki37tCfQgrOqS6MYkSibIpI7kRVIw?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NzU3NzQ2Mg==",
+            "imageUrl": "https://i.seadn.io/gae/rpnk-Yq7k8ueMvjkVAkHr5cRAhIuAoVzJ_C9wYFDvbwOMcQHM3EGSJU1Ex5M9wzO6tU_PIp_aki37tCfQgrOqS6MYkSibIpI7kRVIw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "154472" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.2", "eth": "0.000124758", "symbol": "MATIC" },
+              "numOwners": 145541,
+              "totalSupply": 154472.0,
+              "totalListed": 1642,
+              "numOfSales": "42840.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "266.889234192443211668",
+                "unit": "266.889234192443211668",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NzU3NzQ2Mg==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjg2"
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-07T07:36:45.461121",
+            "name": "Redemption Tokens for Brendan Murphy Physical Art",
+            "slug": "redemption-tokens-for-brendan-murphy-physical-art",
+            "logo": "https://i.seadn.io/gae/M5eV3dgE01GIJbt7VZ-Vx4B2Xo42RaFXGT3R-ynrwmrqDEAoq1MacTZlRgYuSPHk6jD73X1l18H5CIg0ZPy7xUSA-p_1GsSWQT9cLuQ?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjYxODU1NA==",
+            "imageUrl": "https://i.seadn.io/gae/M5eV3dgE01GIJbt7VZ-Vx4B2Xo42RaFXGT3R-ynrwmrqDEAoq1MacTZlRgYuSPHk6jD73X1l18H5CIg0ZPy7xUSA-p_1GsSWQT9cLuQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1529" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.069999", "eth": "0.069999", "symbol": "ETH" },
+              "numOwners": 963,
+              "totalSupply": 5.0,
+              "totalListed": 3,
+              "numOfSales": "525.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "264.800875999989671072",
+                "unit": "264.800875999989671072",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjYxODU1NA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjg3"
+        },
+        {
+          "node": {
+            "createdDate": "2022-10-20T18:51:40.879553",
+            "name": "Spooky Season: EarthToPlanet x Reddit Collectible Avatars",
+            "slug": "spooky-season-earthtoplanet-x-reddit-collectible-a",
+            "logo": "https://i.seadn.io/gae/NLo15vgwfqHBYmSY3feTfHLJgUmmGSXLuXBaVKEQG_VRHNnT0QhaOQxmIMc2_LoNorepQ748sxUCxUzNQGHANYrqCZwpJ_V3PIYanQ?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMTU=",
+            "imageUrl": "https://i.seadn.io/gae/NLo15vgwfqHBYmSY3feTfHLJgUmmGSXLuXBaVKEQG_VRHNnT0QhaOQxmIMc2_LoNorepQ748sxUCxUzNQGHANYrqCZwpJ_V3PIYanQ?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1499" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.04798", "eth": "0.04798", "symbol": "ETH" },
+              "numOwners": 1020,
+              "totalSupply": 1499.0,
+              "totalListed": 107,
+              "numOfSales": "1146.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "258.155447017789754227",
+                "unit": "258.155447017789754227",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMTU=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjg4"
+        },
+        {
+          "node": {
+            "createdDate": "2022-06-15T10:40:48.893494",
+            "name": "Planet IX - Assets",
+            "slug": "planet-ix-assets",
+            "logo": "https://i.seadn.io/gcs/files/2f986a0fc7c0f30fbe04f85c6831d5df.png?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTY3MDczMzM=",
+            "imageUrl": "https://i.seadn.io/gcs/files/2f986a0fc7c0f30fbe04f85c6831d5df.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "67505066" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0033", "eth": "0.000002058507", "symbol": "MATIC" },
+              "numOwners": 133714,
+              "totalSupply": 26.0,
+              "totalListed": 26,
+              "numOfSales": "3805087.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "254.403135595621222365",
+                "unit": "254.403135595621222365",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTY3MDczMzM=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjg5"
+        },
+        {
+          "node": {
+            "createdDate": "2021-03-16T13:37:31.703819",
+            "name": "Doki Doki Finance Polygon",
+            "slug": "doki-doki-matic",
+            "logo": "https://i.seadn.io/gae/yFTDEMDwL77TXFVVLKlnwOHW5Xfcb9k1ZtIig28E14lzw1y-OfMDo0Wn7-yPk-VZvwnbP-ue7H7RtYpCRPlcXN1sIJ-k_26NdfKViw?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc4MTM0",
+            "imageUrl": "https://i.seadn.io/gae/yFTDEMDwL77TXFVVLKlnwOHW5Xfcb9k1ZtIig28E14lzw1y-OfMDo0Wn7-yPk-VZvwnbP-ue7H7RtYpCRPlcXN1sIJ-k_26NdfKViw?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "2178011" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.001", "eth": "0.001", "symbol": "ETH" },
+              "numOwners": 3912,
+              "totalSupply": 565.0,
+              "totalListed": 122,
+              "numOfSales": "13070.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "241.780476330590602174",
+                "unit": "241.780476330590602174",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc4MTM0",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjkw"
+        },
+        {
+          "node": {
+            "createdDate": "2021-12-07T05:30:38.094159",
+            "name": "Bored Punks of Society",
+            "slug": "boredpunksociety",
+            "logo": "https://i.seadn.io/gae/SpA7eYqISuQykp2ChT_RH_m-Ef2oYxHs_5eb9USs7Wfo2RBV2j-v1AHEAvmuXpTxxWRpozZLas6t0g-TASJ25o9x0b3zDTDU6Iig8hc?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MzM3OTgxNA==",
+            "imageUrl": "https://i.seadn.io/gae/SpA7eYqISuQykp2ChT_RH_m-Ef2oYxHs_5eb9USs7Wfo2RBV2j-v1AHEAvmuXpTxxWRpozZLas6t0g-TASJ25o9x0b3zDTDU6Iig8hc?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "7638" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.008", "eth": "0.008", "symbol": "ETH" },
+              "numOwners": 2641,
+              "totalSupply": 7638.0,
+              "totalListed": 132,
+              "numOfSales": "3786.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "234.316790980464901395",
+                "unit": "234.316790980464901395",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MzM3OTgxNA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjkx"
+        },
+        {
+          "node": {
+            "createdDate": "2021-09-10T11:44:54.267082",
+            "name": "Chumbi Valley Founders Collection",
+            "slug": "chumbi-valley-founders-collection",
+            "logo": "https://i.seadn.io/gae/7faAXnC0wUv-cz9EocVpLZIK_xj_rRISV0e12YE8h4GFHos_UgT-_h5Oqmdi4crsR0Eg_ahZ9tqNa30iFvGkzLnmvMPb5LQo1nn4?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTQ5OTU4OA==",
+            "imageUrl": "https://i.seadn.io/gae/7faAXnC0wUv-cz9EocVpLZIK_xj_rRISV0e12YE8h4GFHos_UgT-_h5Oqmdi4crsR0Eg_ahZ9tqNa30iFvGkzLnmvMPb5LQo1nn4?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "20362" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "8", "eth": "0.00639688", "symbol": "USDC" },
+              "numOwners": 2385,
+              "totalSupply": 17.0,
+              "totalListed": 14,
+              "numOfSales": "1713.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "232.041086344891084536",
+                "unit": "232.041086344891084536",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTQ5OTU4OA==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjky"
+        },
+        {
+          "node": {
+            "createdDate": "2022-07-07T15:32:53.426245",
+            "name": "Baked Goods & Evils x Reddit Collectible Avatars",
+            "slug": "baked-goods-evils-x-reddit-collectible-avatars",
+            "logo": "https://i.seadn.io/gcs/files/319776270997a46887822c5786484ed8.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTc3MjI1MjA=",
+            "imageUrl": "https://i.seadn.io/gcs/files/319776270997a46887822c5786484ed8.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "1347" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.06", "eth": "0.06", "symbol": "ETH" },
+              "numOwners": 1143,
+              "totalSupply": 1347.0,
+              "totalListed": 72,
+              "numOfSales": "655.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "222.812429234344278939",
+                "unit": "222.812429234344278939",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTc3MjI1MjA=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjkz"
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-14T15:24:57.241888",
+            "name": "Troll Game Lost Souls",
+            "slug": "troll-game-lost-souls",
+            "logo": "https://i.seadn.io/gae/E0C_KeJ2tF2RToVgezwe2brp6iSWfPkLS0VTEHFPAk2yMRJQduQV1T9n628cjnvVgwn7dt1M6T0_KZe5uRsmRVy_LC5Ux0eHKeICtg?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NTAxMDM5Ng==",
+            "imageUrl": "https://i.seadn.io/gae/E0C_KeJ2tF2RToVgezwe2brp6iSWfPkLS0VTEHFPAk2yMRJQduQV1T9n628cjnvVgwn7dt1M6T0_KZe5uRsmRVy_LC5Ux0eHKeICtg?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "25000" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.002", "eth": "0.002", "symbol": "ETH" },
+              "numOwners": 786,
+              "totalSupply": 25000.0,
+              "totalListed": 8,
+              "numOfSales": "13588.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "222.291741311613463949",
+                "unit": "222.291741311613463949",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NTAxMDM5Ng==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjk0"
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-07T08:01:02.830096",
+            "name": "PegaxyPega",
+            "slug": "pegaxypega-polygon",
+            "logo": "https://i.seadn.io/gae/1ZpEpjz6jhUzYnJKyVNFoRZ1LjT6JFfBzBmGQUbyJfMSLZy6jQu9-SSAvGcQr8XwWMzZCVR0W-qi1l1SX1EAbf4AVJ5xzpEqRt53dGY?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjYxODg4NQ==",
+            "imageUrl": "https://i.seadn.io/gae/1ZpEpjz6jhUzYnJKyVNFoRZ1LjT6JFfBzBmGQUbyJfMSLZy6jQu9-SSAvGcQr8XwWMzZCVR0W-qi1l1SX1EAbf4AVJ5xzpEqRt53dGY?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "541218" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.75", "eth": "0.0004678425", "symbol": "MATIC" },
+              "numOwners": 18534,
+              "totalSupply": 541218.0,
+              "totalListed": 71,
+              "numOfSales": "741.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "221.025349564856981033",
+                "unit": "221.025349564856981033",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjYxODg4NQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjk1"
+        },
+        {
+          "node": {
+            "createdDate": "2022-01-19T20:47:24.879085",
+            "name": "MetaSoccer  Youth Scouts",
+            "slug": "metasoccer-youth-scouts",
+            "logo": "https://i.seadn.io/gae/JZTuy0tsGfGUy_oazi1H571fE48IlK8vbv_cHKHSc9llPtcoYjIm-_0OisDq6gdRWOqfHtulkkhY5zL1lIi7OnP_hnuVNXBErTux?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6NTU1NDA3Nw==",
+            "imageUrl": "https://i.seadn.io/gae/JZTuy0tsGfGUy_oazi1H571fE48IlK8vbv_cHKHSc9llPtcoYjIm-_0OisDq6gdRWOqfHtulkkhY5zL1lIi7OnP_hnuVNXBErTux?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "9429" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.0189", "eth": "0.0189", "symbol": "ETH" },
+              "numOwners": 1514,
+              "totalSupply": 9429.0,
+              "totalListed": 48,
+              "numOfSales": "1032.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "220.718972180000150729",
+                "unit": "220.718972180000150729",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6NTU1NDA3Nw==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjk2"
+        },
+        {
+          "node": {
+            "createdDate": "2021-11-19T17:37:58.034269",
+            "name": "MetaSoccer Youth Scout Tickets",
+            "slug": "metasoccer-youth-scout-tickets",
+            "logo": "https://i.seadn.io/gae/oNGJrRHCcMbjxVaMA4OO_ERS4Kh7ZW6Atjzn-pysahO9LV56h-e2QVdsabUtl2mZ84w7OH55pwqhoxhtIBkuM_plop0YPwJ27tmcr38?w=500&auto=format",
+            "isVerified": false,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjkwNzAzNQ==",
+            "imageUrl": "https://i.seadn.io/gae/oNGJrRHCcMbjxVaMA4OO_ERS4Kh7ZW6Atjzn-pysahO9LV56h-e2QVdsabUtl2mZ84w7OH55pwqhoxhtIBkuM_plop0YPwJ27tmcr38?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "3987" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.15", "eth": "0.15", "symbol": "ETH" },
+              "numOwners": 840,
+              "totalSupply": 3987.0,
+              "totalListed": 14,
+              "numOfSales": "1222.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "217.559979000000026872",
+                "unit": "217.559979000000026872",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjkwNzAzNQ==",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjk3"
+        },
+        {
+          "node": {
+            "createdDate": "2020-09-28T09:28:46.561629",
+            "name": "CryptoAvatars",
+            "slug": "cryptoavatars",
+            "logo": "https://i.seadn.io/gcs/files/6a00f77599a7a948eb4fb38aca0cae45.png?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MTE3Mjk=",
+            "imageUrl": "https://i.seadn.io/gcs/files/6a00f77599a7a948eb4fb38aca0cae45.png?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "567" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.1", "eth": "0.1", "symbol": "ETH" },
+              "numOwners": 214,
+              "totalSupply": 567.0,
+              "totalListed": 28,
+              "numOfSales": "480.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "216.724861012504931068",
+                "unit": "216.724861012504931068",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MTE3Mjk=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjk4"
+        },
+        {
+          "node": {
+            "createdDate": "2022-10-20T18:51:45.893286",
+            "name": "Spooky Season: Sys32Template x Reddit Collectible Avatars",
+            "slug": "spooky-season-sys32template-x-reddit-collectible-a",
+            "logo": "https://i.seadn.io/gae/bNK7rmg2gjeJLms3gfk61X7hdaM2E_73FvscgbGmgs31ez2uWo7Rjr6QTiSXJX7Kye6vzGXbMA9HkIK0uhfxBkJmB3SQHwX0pUHz?w=500&auto=format",
+            "isVerified": true,
+            "relayId": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMjM=",
+            "imageUrl": "https://i.seadn.io/gae/bNK7rmg2gjeJLms3gfk61X7hdaM2E_73FvscgbGmgs31ez2uWo7Rjr6QTiSXJX7Kye6vzGXbMA9HkIK0uhfxBkJmB3SQHwX0pUHz?w=500&auto=format",
+            "isCategory": false,
+            "statsV2": { "totalQuantity": "210" },
+            "windowCollectionStats": {
+              "floorPrice": { "unit": "0.79", "eth": "0.79", "symbol": "ETH" },
+              "numOwners": 182,
+              "totalSupply": 210.0,
+              "totalListed": 25,
+              "numOfSales": "156.000000000000000000",
+              "volumeChange": 0.0,
+              "volume": {
+                "eth": "205.793918899999908945",
+                "unit": "205.793918899999908945",
+                "symbol": "ETH"
+              }
+            },
+            "id": "Q29sbGVjdGlvblR5cGU6MjE3NjMwMjM=",
+            "__typename": "CollectionType"
+          },
+          "cursor": "YXJyYXljb25uZWN0aW9uOjk5"
+        }
+      ],
+      "pageInfo": { "endCursor": "YXJyYXljb25uZWN0aW9uOjk5", "hasNextPage": true }
+    }
+  }
+}

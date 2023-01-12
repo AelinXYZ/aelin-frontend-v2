@@ -4,6 +4,7 @@ import { BASE_DECIMALS } from './misc'
 import { Arbitrum } from '@/src/components/assets/Arbitrum'
 import { Mainnet } from '@/src/components/assets/Mainnet'
 import { Optimism } from '@/src/components/assets/Optimism'
+import { Polygon } from '@/src/components/assets/Polygon'
 import { NetworkPlaceholder } from '@/src/components/common/NetworkPlaceholder'
 import isDev from '@/src/utils/isDev'
 import { ObjectValues } from '@/types/utils'
@@ -12,6 +13,7 @@ export const Chains = {
   mainnet: 1,
   goerli: 5,
   optimism: 10,
+  polygon: 137,
   arbitrum: 42161,
 } as const
 
@@ -39,7 +41,6 @@ export type ChainConfig = {
   }
   isL2?: boolean
   iconUrls: string[]
-  id: ChainsValues
   isProd: boolean
   name: string
   rpcUrl: string
@@ -56,7 +57,6 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     chainIdHex: toHex(Chains.mainnet),
     icon: <Mainnet />,
     iconUrls: [],
-    id: Chains.mainnet,
     isProd: true,
     name: 'Ethereum Mainnet',
     rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_MAINNET_TOKEN_PROVIDER}`,
@@ -80,7 +80,6 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     chainIdHex: toHex(Chains.goerli),
     icon: <NetworkPlaceholder name="G" />,
     iconUrls: [],
-    id: Chains.goerli,
     isProd: false,
     name: 'Görli Testnet',
     rpcUrl: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
@@ -98,7 +97,6 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     buyAelinUrl: undefined,
   },
   [Chains.optimism]: {
-    id: Chains.optimism,
     name: 'Optimism Ethereum',
     shortName: 'Optimism',
     chainId: Chains.optimism,
@@ -120,7 +118,6 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     isL2: true,
   },
   [Chains.arbitrum]: {
-    id: Chains.arbitrum,
     name: 'Arbitrum One',
     shortName: 'Arbitrum',
     chainId: Chains.arbitrum,
@@ -136,6 +133,26 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
       decimals: BASE_DECIMALS,
     },
     icon: <Arbitrum />,
+    tokenListUrl: ['https://tokens.uniswap.org/'],
+    buyAelinUrl: undefined,
+    isL2: true,
+  },
+  [Chains.polygon]: {
+    name: 'Polygon Mainnet',
+    shortName: 'Polygon',
+    chainId: Chains.polygon,
+    chainIdHex: toHex(Chains.polygon),
+    rpcUrl: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_POLYGON_TOKEN_PROVIDER}`,
+    defaultRpcUrl: 'https://polygon-rpc.com/',
+    blockExplorerUrls: ['https://polygonscan.com/'],
+    iconUrls: [],
+    isProd: true,
+    nativeCurrency: {
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: BASE_DECIMALS,
+    },
+    icon: <Polygon />,
     tokenListUrl: ['https://tokens.uniswap.org/'],
     buyAelinUrl: undefined,
     isL2: true,

@@ -3,6 +3,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { CurrencyKey } from '@synthetixio/contracts-interface'
 import Wei, { wei } from '@synthetixio/wei'
 
+import { Chains, ChainsValues } from '../constants/chains'
 import formatGwei from './formatGwei'
 import { BASE_DECIMALS, GWEI_UNIT, ZERO_BN } from '@/src/constants/misc'
 import { Eip1559GasPrice, GasLimitEstimate, Rates } from '@/types/utils'
@@ -22,13 +23,15 @@ const GAS_LIMIT_BUFFER_MULTIPLIER = 20
 export const getTransactionPrice = (
   gasPriceL1: Eip1559GasPrice | Wei | null,
   gasPrice: Eip1559GasPrice | Wei | null,
+  appChainId: ChainsValues,
   isL2Chain: boolean | undefined,
   gasLimit: GasLimitEstimate,
   ethPrice: Wei | undefined,
+  maticPrice: Wei | undefined,
 ) => {
-  if (!gasPrice || !gasLimit || !ethPrice || !gasPriceL1) return null
+  if (!gasPrice || !gasLimit || !ethPrice || !maticPrice || !gasPriceL1) return null
 
-  if (isL2Chain) {
+  if (isL2Chain && appChainId !== Chains.arbitrum && appChainId !== Chains.polygon) {
     return (gasPrice as Wei)
       .mul(ethPrice)
       .mul(gasLimit.l2)
@@ -39,12 +42,17 @@ export const getTransactionPrice = (
   }
 
   if (gasPrice instanceof Wei) {
-    return gasPrice.mul(ethPrice).mul(gasLimit.l1).div(GWEI_UNIT).toNumber().toFixed(4)
+    return gasPrice
+      .mul(appChainId === Chains.polygon ? maticPrice : ethPrice)
+      .mul(gasLimit.l1)
+      .div(GWEI_UNIT)
+      .toNumber()
+      .toFixed(4)
   }
 
   return gasPrice.maxFeePerGas
     .add(gasPrice.maxPriorityFeePerGas)
-    .mul(ethPrice)
+    .mul(appChainId === Chains.polygon ? maticPrice : ethPrice)
     .mul(gasLimit.l1)
     .div(GWEI_UNIT)
     .toNumber()
@@ -85,17 +93,55 @@ export const getGasPriceFromProvider = async (provider: JsonRpcProvider) => {
   }
 }
 
-export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber) => ({
-  low: {
-    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)),
-    maxPriorityFeePerGas: wei(1, 9),
-  },
-  market: {
-    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.5)),
-    maxPriorityFeePerGas: wei(1.5, 9),
-  },
-  aggressive: {
-    maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)),
-    maxPriorityFeePerGas: wei(2, 9),
-  },
-})
+export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber, appChainId: ChainsValues) => {
+  switch (appChainId) {
+    case Chains.mainnet:
+    case Chains.goerli:
+      return {
+        low: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)).add(wei(1, 9)),
+          maxPriorityFeePerGas: wei(1, 9),
+        },
+        market: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.5).add(wei(1.5, 9))),
+          maxPriorityFeePerGas: wei(1.5, 9),
+        },
+        aggressive: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2).add(wei(2, 9))),
+          maxPriorityFeePerGas: wei(2, 9),
+        },
+      }
+    case Chains.polygon:
+      return {
+        low: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)).add(wei(30, 9)),
+          maxPriorityFeePerGas: wei(30, 9),
+        },
+        market: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)).add(wei(31, 9)),
+          maxPriorityFeePerGas: wei(31, 9),
+        },
+        aggressive: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(2)).add(wei(32, 9)),
+          maxPriorityFeePerGas: wei(32, 9),
+        },
+      }
+    case Chains.arbitrum:
+      return {
+        low: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)),
+          maxPriorityFeePerGas: wei(0, 9),
+        },
+        market: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.35)),
+          maxPriorityFeePerGas: wei(0, 9),
+        },
+        aggressive: {
+          maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1.7)),
+          maxPriorityFeePerGas: wei(0, 9),
+        },
+      }
+    default:
+      throw new Error('Unsupported network.')
+  }
+}

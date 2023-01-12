@@ -3,9 +3,11 @@ import useSWR from 'swr'
 
 import { Chains, getNetworkConfig } from '../constants/chains'
 
-const { rpcUrl } = getNetworkConfig(Chains.mainnet)
+const { rpcUrl: mainnetRpcUrl } = getNetworkConfig(Chains.mainnet)
+export const mainnetRpcProvider = new JsonRpcProvider(mainnetRpcUrl)
 
-export const mainnetRpcProvider = new JsonRpcProvider(rpcUrl)
+const { rpcUrl: optimismRpcUrl } = getNetworkConfig(Chains.optimism)
+export const optimismRpcProvider = new JsonRpcProvider(optimismRpcUrl)
 
 // Get ens name by address
 export const useEnsLookUpAddress = (address: string) => {

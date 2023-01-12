@@ -9,10 +9,10 @@ import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/commo
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
-import { Chains, chainsConfig } from '@/src/constants/chains'
+import { chainsConfig } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
 import useEthGasPrice, { GAS_SPEEDS, useEthGasPriceLegacy } from '@/src/hooks/useGasPrice'
-import useEthPriceUnitInUSD from '@/src/hooks/useGasPriceUnitInUSD'
+import useGasPriceUnitInUSD, { GasPriceUnit } from '@/src/hooks/useGasPriceUnitInUSD'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getTransactionPrice } from '@/src/utils/gasUtils'
 import { Eip1559GasPrice, GasLimitEstimate, GasSpeed } from '@/types/utils'
@@ -102,7 +102,8 @@ const GasSelector = ({
 }) => {
   const { data: ethGasPriceData, isValidating } = useEthGasPrice()
   const { data: ethGasPriceDataLegacy, isValidating: isValidatingLegacy } = useEthGasPriceLegacy()
-  const { data: ethPriceInUSD } = useEthPriceUnitInUSD()
+  const { data: ethPriceInUSD } = useGasPriceUnitInUSD(GasPriceUnit.eth)
+  const { data: maticPriceInUSD } = useGasPriceUnitInUSD(GasPriceUnit.matic)
 
   const { appChainId } = useWeb3Connection()
 
@@ -145,7 +146,7 @@ const GasSelector = ({
       return (gasPrice as number).toFixed(3)
     }
 
-    return Number(gasPrice.maxFeePerGas.add(gasPrice.maxPriorityFeePerGas)).toFixed(3)
+    return Number(gasPrice.maxFeePerGas).toFixed(3)
   }
 
   const gasPrice: Eip1559GasPrice | Wei | null = useMemo(() => {
@@ -154,7 +155,15 @@ const GasSelector = ({
     } catch (_) {
       if (!ethGasPriceDataL2 || !isL2Chain) return gasPriceL1
 
-      return wei(ethGasPriceDataL2[gasSpeed], GWEI_PRECISION)
+      const getL2gasPrice = () => {
+        try {
+          return wei(ethGasPriceDataL2[gasSpeed], GWEI_PRECISION)
+        } catch (_) {
+          return ethGasPriceDataL2[gasSpeed] as Eip1559GasPrice
+        }
+      }
+
+      return getL2gasPrice()
     }
   }, [customGasPrice, gasPriceL1, ethGasPriceDataL2, gasSpeed, isL2Chain])
 
@@ -163,11 +172,13 @@ const GasSelector = ({
       getTransactionPrice(
         gasPriceL1,
         gasPrice,
-        appChainId === Chains.arbitrum ? false : isL2Chain,
+        appChainId,
+        isL2Chain,
         gasLimitEstimate,
         ethPriceInUSD,
+        maticPriceInUSD,
       ) ?? 0,
-    [gasPrice, gasPriceL1, gasLimitEstimate, ethPriceInUSD, isL2Chain, appChainId],
+    [gasPrice, gasPriceL1, gasLimitEstimate, ethPriceInUSD, maticPriceInUSD, isL2Chain, appChainId],
   )
 
   const formattedGasPrice = useMemo(() => {
@@ -175,11 +186,11 @@ const GasSelector = ({
 
     if (!gasPrices?.[gasSpeed]) {
       nGasPrice = 0
-    } else if (isL2Chain || typeof gasPrices[gasSpeed] === 'number') {
+    } else if (typeof gasPrices[gasSpeed] === 'number') {
       nGasPrice = gasPrices[gasSpeed] as number
     } else {
       const gasPrice = gasPrices[gasSpeed] as Eip1559GasPrice
-      nGasPrice = Number(gasPrice.maxFeePerGas.add(gasPrice.maxPriorityFeePerGas))
+      nGasPrice = Number(gasPrice.maxFeePerGas)
     }
 
     const nCustomGasPrice = Number(customGasPrice)
@@ -191,7 +202,7 @@ const GasSelector = ({
 
     if (!Number.isInteger(nCustomGasPrice)) return nCustomGasPrice.toFixed(3)
     return nCustomGasPrice
-  }, [customGasPrice, gasPrices, gasSpeed, isL2Chain])
+  }, [customGasPrice, gasPrices, gasSpeed])
 
   const debouncedChangeHandler = debounce(onChange, DEBOUNCED_INPUT_TIME)
 
@@ -219,7 +230,7 @@ const GasSelector = ({
   return (
     <Wrapper {...restProps}>
       <div>
-        <Text>Gas Price:</Text>&nbsp;
+        <Text>Gas Price (GWEI):</Text>&nbsp;
         <GasInput
           onBlur={() => {
             setIsEditing(false)
