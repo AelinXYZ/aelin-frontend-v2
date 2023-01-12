@@ -38,7 +38,7 @@ export const contracts = constantContracts({
   REGULAR_POOL_FACTORY: {
     address: {
       [Chains.mainnet]: '0x722969A3fdc778a5cC7CbC8DC8Ae3e96a288f853',
-      [Chains.goerli]: '0xb52736cE26345942134b11083e88A0DD9Ef1be5A',
+      [Chains.goerli]: '0x3068a70D28429BdE8A9D3F2ebb4dA710d6b56F39',
       [Chains.optimism]: '0x8B35551d6459a3d49B9A5A0D7333c6D7E0cCbBd9',
       [Chains.arbitrum]: '0xbf7c0Fd0D31bC377f861d11d4aAc15296c0405b6',
     },
@@ -47,7 +47,7 @@ export const contracts = constantContracts({
   DIRECT_DEALS_FACTORY: {
     address: {
       [Chains.mainnet]: '0x97efdb29c0d6dacdc0bb334cc227ae03a1a7c01e',
-      [Chains.goerli]: '0x50c4eea08ae5544b622c96683823cecdc8b0e8ba',
+      [Chains.goerli]: '0xBE00D2c1e154bcdd243dcba5C6363d06155212CD',
       [Chains.optimism]: '0xe6355E5B217390A2F888c35f73248844847b0ef4',
       [Chains.arbitrum]: '0x91fCeA33D02d11621b7f90ebd5E44eD393eD7b5e',
     },

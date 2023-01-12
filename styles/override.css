@@ -30,3 +30,8 @@
   --onboard-spacing-4: 1.5rem;
   --onboard-spacing-5: 1.5rem;
 }
+
+/* Override infinite scroll outer container */
+.infinite-scroll-component__outerdiv {
+  width: 100%;
+}

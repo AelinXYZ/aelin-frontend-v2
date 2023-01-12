@@ -49,7 +49,7 @@ export const parseValuesToCreatePool = (
     !createPoolState[NftType.erc721]
   ) {
     const formattedWhiteList = whitelist.reduce((accum, curr) => {
-      const { address, amount } = curr
+      const [_, address, amount] = curr
 
       if (!address.length) return accum
 

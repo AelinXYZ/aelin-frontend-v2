@@ -1,6 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { CSVParseType } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { POOL_NAME_MAX_LENGTH } from '@/src/constants/misc'
@@ -19,7 +19,7 @@ export type poolErrors = {
   poolCap?: number
   sponsorFee?: number
   poolPrivacy?: Privacy
-  whitelist?: AddressWhitelistProps[]
+  whitelist?: CSVParseType[]
 }
 
 const validateCreatePool = (values: poolErrors, chainId: ChainsValues) => {

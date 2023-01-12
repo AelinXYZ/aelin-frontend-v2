@@ -24,15 +24,12 @@ gql`
     holder
     filter
 
-    totalVouchers
-
     totalAmountEarnedBySponsor
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
     totalUsersInvested
     totalAddressesInvested
-    totalVouchers
 
     vestingEnds
     vestingStarts

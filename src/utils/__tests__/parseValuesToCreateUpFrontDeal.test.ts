@@ -2,6 +2,7 @@ import { HashZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 
 import { parseValuesToCreateUpFrontDeal } from '../parseValuesToCreateUpFrontDeal'
+import { CSVParseTypeArray } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ZERO_BN } from '@/src/constants/misc'
 import { CreateUpFrontDealStateComplete } from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
@@ -90,6 +91,16 @@ describe('parseValuesToCreateUpFrontDeal', () => {
   })
 
   it('should return the correct values to create a merkle tree upfront deal', () => {
+    const whitelist: CSVParseTypeArray = [
+      [0, '0xEade2f82c66eBda112987edd95E26cd3088f33DD', '50000000'],
+      [1, '0xF25128854443E18290FFD61200E051d94B8e4069', '50000000'],
+      [2, '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8', '50000000'],
+      [3, '0x051C7C18E63FE9Ec71BB4B5D2fCE2807F764dB5e', '50000000'],
+      [4, '0x6144DAf8e2e583cD30C3567861C8E1D95cfA51B5', '100000000'],
+      [5, '0x4F1abd0E5c4506C95a4Fd5259371BD9a877D9488', '50000000'],
+      [6, '0x4b3337f7f0f95c21b91f4e9be5f90d4992129c58', '50000000'],
+    ]
+
     const variables = {
       [NftType.erc1155]: undefined,
       [NftType.erc721]: undefined,
@@ -132,36 +143,7 @@ describe('parseValuesToCreateUpFrontDeal', () => {
         },
       },
       currentStep: 'vestingSchedule',
-      whitelist: [
-        {
-          address: '0xEade2f82c66eBda112987edd95E26cd3088f33DD',
-          amount: 50000000,
-        },
-        {
-          address: '0xF25128854443E18290FFD61200E051d94B8e4069',
-          amount: 50000000,
-        },
-        {
-          address: '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8',
-          amount: 50000000,
-        },
-        {
-          address: '0x051C7C18E63FE9Ec71BB4B5D2fCE2807F764dB5e',
-          amount: 50000000,
-        },
-        {
-          address: '0x6144DAf8e2e583cD30C3567861C8E1D95cfA51B5',
-          amount: 100000000,
-        },
-        {
-          address: '0x4F1abd0E5c4506C95a4Fd5259371BD9a877D9488',
-          amount: 50000000,
-        },
-        {
-          address: '0x4b3337f7f0f95c21b91f4e9be5f90d4992129c58',
-          amount: 50000000,
-        },
-      ],
+      whitelist,
       withMerkleTree: true,
       nftCollectionRules: [],
     }
@@ -203,7 +185,15 @@ describe('parseValuesToCreateUpFrontDeal', () => {
           '0x4F1abd0E5c4506C95a4Fd5259371BD9a877D9488',
           '0x4b3337f7f0f95c21b91f4e9be5f90d4992129c58',
         ],
-        allowListAmounts: [50000000, 50000000, 50000000, 50000000, 100000000, 50000000, 50000000],
+        allowListAmounts: [
+          '50000000',
+          '50000000',
+          '50000000',
+          '50000000',
+          '100000000',
+          '50000000',
+          '50000000',
+        ],
       },
     ])
   })

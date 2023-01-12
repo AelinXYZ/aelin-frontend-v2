@@ -18,7 +18,7 @@ import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInp
 import { Summary } from '@/src/components/pools/common/Summary'
 import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { CSVParseType } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,
@@ -194,7 +194,7 @@ const Create: NextPage = () => {
           currentList={createPoolState.whitelist}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={(
-            whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
+            whitelist: CSVParseType[] | NftCollectionRulesProps[],
             type: NftType | string,
           ) => {
             setPoolField(whitelist, type)

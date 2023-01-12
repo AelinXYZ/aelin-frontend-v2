@@ -87,7 +87,7 @@ export const parseValuesToCreateUpFrontDeal = (
     !createDealState[NftType.erc721]
   ) {
     const formattedWhiteList = whitelist.reduce((accum, curr) => {
-      const { address, amount } = curr
+      const [_, address, amount] = curr
 
       if (!isAddress(address)) return accum
 

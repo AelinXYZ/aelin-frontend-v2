@@ -19,7 +19,7 @@ import DealCreateStepInput from '@/src/components/pools/common/DealCreateStepInp
 import { Summary } from '@/src/components/pools/common/Summary'
 import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { CSVParseType } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,
@@ -100,7 +100,7 @@ const Create: NextPage = () => {
   ].some((step) => createDealState.currentStep === step)
 
   const handleConfirm = (
-    whitelist: Array<AddressWhitelistProps | NftCollectionRulesProps>,
+    whitelist: Array<CSVParseType | NftCollectionRulesProps>,
     type: NftType | string,
   ) => {
     setDealField(whitelist, type)
@@ -117,8 +117,8 @@ const Create: NextPage = () => {
 
     if (createDealState.dealPrivacy === Privacy.PRIVATE && whitelist.length) {
       const investmentTokenToRaise = whitelist.reduce((accum: number, curr: any) => {
-        if (curr.amount) {
-          accum += curr.amount
+        if (curr[2]) {
+          accum += Number(curr[2])
         }
 
         return accum

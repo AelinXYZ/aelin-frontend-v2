@@ -55,7 +55,7 @@ export function useUserAvailableToDepositDirectDeal(pool: ParsedAelinPool): User
 
   const isUserAllowedToInvest = !isPrivatePool(pool.poolType)
     ? isMerklePool(pool)
-      ? userMerkleData?.isEligible
+      ? userMerkleData?.isElegible
       : true
     : userPoolBalance.gt(ZERO_BN) || allowlistAddresses.some((add: string) => add === address)
 

@@ -1,7 +1,10 @@
-import { ReactElement, useMemo } from 'react'
+import { ReactElement, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
+import { debounce } from 'lodash'
+import ms from 'ms'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { ModalButtonCSS } from '@/src/components/common/Modal'
 import UploadCSV from '@/src/components/pools/whitelist/addresses/UploadWhiteListCsv'
@@ -16,10 +19,8 @@ import { Error as BaseError } from '@/src/components/pureStyledComponents/text/E
 import { PrivacyType } from '@/src/constants/pool'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
 
-export interface AddressWhitelistProps {
-  address: string
-  amount: number | null
-}
+export type CSVParseType = [number, string, string]
+export type CSVParseTypeArray = Array<CSVParseType>
 
 const Grid = styled.div`
   align-items: center;
@@ -69,6 +70,8 @@ const Error = styled(BaseError)`
   margin-bottom: -28px;
 `
 
+const NUMBER_ROWS = 100
+
 const WhiteListRow = ({
   address,
   amount,
@@ -77,8 +80,8 @@ const WhiteListRow = ({
   rowIndex,
 }: {
   address: string
-  amount: number | null
-  onChangeRow: (value: string | number | null, key: string, index: number) => void
+  amount: string
+  onChangeRow: (value: string, key: string, index: number) => void
   onDeleteRow: (index: number) => void
   rowIndex: number
 }) => {
@@ -100,12 +103,12 @@ const WhiteListRow = ({
             return
           }
 
-          onChangeRow(amount, 'amount', rowIndex)
+          onChangeRow(e.target.value, 'amount', rowIndex)
         }}
         placeholder="Max allocation..."
         status={address && !amount ? TextfieldState.error : undefined}
         type="number"
-        value={amount?.toLocaleString('en', { useGrouping: false }) || ''}
+        value={amount ? Number(amount).toLocaleString('en', { useGrouping: false }) : ''}
       />
       <ButtonsGrid>
         <div>&nbsp;</div>
@@ -115,12 +118,12 @@ const WhiteListRow = ({
   )
 }
 
-export const initialAddressesWhitelistValues = [
-  ...new Array(5).fill({
-    address: '',
-    amount: null,
-  } as AddressWhitelistProps),
-]
+const initialAddressesWhitelistValues = (existingArray: CSVParseType[] = []): CSVParseType[] => {
+  const startIndex = existingArray.length ? existingArray.length + 1 : 0
+  const defaultValues: CSVParseType[] = Array.from(Array(5), (_, i) => [i + startIndex, '', ''])
+
+  return [...existingArray, ...defaultValues]
+}
 
 enum AddressesWhiteListStatus {
   invalidAddress,
@@ -146,53 +149,95 @@ const AddressesWhiteList = ({
   list,
   onClose,
   onConfirm,
-  setList,
 }: {
-  list: AddressWhitelistProps[]
-  setList: (whitelist: AddressWhitelistProps[]) => void
+  list: CSVParseType[]
   onClose: () => void
-  onConfirm: (whitelist: AddressWhitelistProps[], type: string) => void
+  onConfirm: (whitelist: CSVParseType[], type: string) => void
 }) => {
+  const [innerList, setInnerList] = useState(list)
+
+  const [infiniteRows, setInfiniteRows] = useState(() =>
+    innerList.length ? innerList.slice(0, NUMBER_ROWS) : initialAddressesWhitelistValues(),
+  )
+
   const status = useMemo(() => {
-    if (list.some((item: AddressWhitelistProps) => item.address && !isAddress(item.address))) {
+    if (innerList.some((item: CSVParseType) => item[0] && !isAddress(item[1]))) {
       return AddressesWhiteListStatus.invalidAddress
     }
 
-    if (list.some((item: AddressWhitelistProps) => item.address && !item.amount)) {
+    if (innerList.some((item: CSVParseType) => item[0] && !item[2])) {
       return AddressesWhiteListStatus.invalidAmount
     }
 
-    if (list.some((item: AddressWhitelistProps) => item.amount && item.amount % 1 !== 0)) {
+    if (innerList.some((item: CSVParseType) => item[2] && Number(item[2]) % 1 !== 0)) {
       return AddressesWhiteListStatus.invalidDecimals
     }
 
     return AddressesWhiteListStatus.valid
-  }, [list])
+  }, [innerList])
 
-  const handleUploadCSV = (whitelist: AddressWhitelistProps[]): void => {
-    setList(whitelist)
+  const handleUploadCSV = (whitelist: CSVParseType[]): void => {
+    setInnerList(whitelist)
+    setInfiniteRows(whitelist.slice(0, NUMBER_ROWS))
   }
 
-  const onChangeRow = (value: string | number | null, key: string, index: number) => {
-    const addresses = [...list]
+  const getChunk = () => {
+    const start = infiniteRows.length
+    const end = start + NUMBER_ROWS
+    return [start, end]
+  }
 
-    addresses[index] = {
-      ...addresses[index],
-      [key]: value,
+  const onChangeRow = (value: string, key: string, index: number) => {
+    const list = [...innerList]
+
+    const row = list.findIndex(([i]) => i === index)
+
+    if (row !== -1) {
+      if (key === 'address') {
+        list[row][1] = value
+      }
+
+      if (key === 'amount') {
+        list[row][2] = value
+      }
+
+      setInnerList(list)
+
+      const [start, end] = getChunk()
+      setInfiniteRows(list.slice(start, end))
     }
-    setList(addresses)
   }
 
   const onDeleteRow = (rowIndex: number) => {
-    setList([...list].filter((_, index) => index !== rowIndex))
+    const list = [...innerList].filter((val) => val[0] !== rowIndex)
+    setInnerList(list)
+
+    const [start, end] = getChunk()
+    setInfiniteRows(list.slice(start, end))
   }
 
   const handleSave = () => {
-    // Remove empty rows.
-    const filterRows = [...list.filter((row: AddressWhitelistProps) => row.address)]
+    // Filter incomplete or wrong rows
+    const filterRows = innerList.reduce((accum, curr, index) => {
+      const [_, address, amount] = curr
+
+      if (isAddress(address) && amount !== '') {
+        accum.push([index, address, amount])
+      }
+
+      return accum
+    }, [] as CSVParseType[])
+
     onConfirm(filterRows, PrivacyType.WHITELIST)
     onClose()
   }
+
+  const addMore = () => {
+    const [start, end] = getChunk()
+    setInfiniteRows([...infiniteRows, ...innerList.slice(start, end)])
+  }
+
+  const debouncedAddMore = debounce(addMore, ms('1s'))
 
   return (
     <>
@@ -203,17 +248,30 @@ const AddressesWhiteList = ({
         </TitleGrid>
         <Title>Amount (uint256)</Title>
         <div>&nbsp;</div>
-        {list.map((listItem: AddressWhitelistProps, rowIndex: number) => (
-          <WhiteListRow
-            {...listItem}
-            key={rowIndex}
-            onChangeRow={onChangeRow}
-            onDeleteRow={onDeleteRow}
-            rowIndex={rowIndex}
-          />
-        ))}
       </Grid>
-      <ButtonPrimaryLightSm onClick={() => setList(list.concat(initialAddressesWhitelistValues))}>
+      <InfiniteScroll
+        dataLength={infiniteRows.length}
+        hasMore={true}
+        loader={<></>}
+        next={debouncedAddMore}
+      >
+        <Grid>
+          {infiniteRows.map(([index, address, amount]: CSVParseType) => (
+            <WhiteListRow
+              address={address}
+              amount={amount}
+              key={index}
+              onChangeRow={onChangeRow}
+              onDeleteRow={onDeleteRow}
+              rowIndex={index}
+            />
+          ))}
+        </Grid>
+      </InfiniteScroll>
+
+      <ButtonPrimaryLightSm
+        onClick={() => setInnerList(initialAddressesWhitelistValues(innerList))}
+      >
         Add more rows
       </ButtonPrimaryLightSm>
       {getError(status)}

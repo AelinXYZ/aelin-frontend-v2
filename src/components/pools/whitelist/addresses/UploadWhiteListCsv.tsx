@@ -5,39 +5,33 @@ import { isAddress } from '@ethersproject/address'
 import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { CSVParseType } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 
 export interface IUploadCSV {
-  onUploadCSV: (data: AddressWhitelistProps[]) => void
+  onUploadCSV: (data: CSVParseType[]) => void
 }
 
 const UploadCSV: FC<IUploadCSV> = ({ onUploadCSV }) => {
   const { CSVReader } = useCSVReader()
 
   const handleOnDrop = (csv: ParseResult<string[]>) => {
-    const whitelist = csv.data.reduce((accum, curr) => {
+    // Filter incomplete or wrong rows
+    const whitelist = csv.data.reduce((accum, curr, index) => {
       const [address, amount] = curr
 
       if (isAddress(address) && amount !== '') {
-        accum.push({
-          address,
-          amount: Number(amount),
-        })
+        // add index
+        accum.push([index, address, amount])
       }
 
       return accum
-    }, [] as AddressWhitelistProps[])
+    }, [] as CSVParseType[])
 
     onUploadCSV(whitelist)
   }
   return (
-    <CSVReader
-      noDrag
-      onUploadAccepted={(results: any) => {
-        handleOnDrop(results)
-      }}
-    >
+    <CSVReader noDrag onUploadAccepted={handleOnDrop}>
       {({ getRootProps }: any) => (
         <ButtonPrimaryLightSm type="button" {...getRootProps()}>
           Upload CSV

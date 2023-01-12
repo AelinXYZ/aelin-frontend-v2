@@ -1,10 +1,8 @@
-import { useState } from 'react'
 import styled from 'styled-components'
 
 import { Modal as BaseModal } from '@/src/components/common/Modal'
 import AddressesWhiteList, {
-  AddressWhitelistProps,
-  initialAddressesWhitelistValues,
+  CSVParseType,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -28,20 +26,13 @@ const Note = styled.p`
 
 type WhiteListType = {
   poolPrivacy: Privacy | undefined
-  currentList: AddressWhitelistProps[]
+  currentList: CSVParseType[]
   onClose: () => void
-  onConfirm: (
-    whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
-    type: NftType | string,
-  ) => void
+  onConfirm: (whitelist: CSVParseType[] | NftCollectionRulesProps[], type: NftType | string) => void
   withMerkleTree: boolean | undefined
 }
 
 const WhiteListModal = ({ currentList, onClose, onConfirm, poolPrivacy }: WhiteListType) => {
-  const [addressesWhiteList, setAddressesWhiteList] = useState(
-    currentList.length ? currentList : initialAddressesWhitelistValues,
-  )
-
   const { dispatch, nftWhiteListState } = useNftCreationState()
 
   if (!poolPrivacy) return null
@@ -55,12 +46,7 @@ const WhiteListModal = ({ currentList, onClose, onConfirm, poolPrivacy }: WhiteL
             decimals then <b>1000000</b> is equivalent to <b>1</b> investment token.
           </Note>
 
-          <AddressesWhiteList
-            list={addressesWhiteList}
-            onClose={onClose}
-            onConfirm={onConfirm}
-            setList={setAddressesWhiteList}
-          />
+          <AddressesWhiteList list={currentList} onClose={onClose} onConfirm={onConfirm} />
         </>
       )}
       {poolPrivacy === Privacy.NFT && (

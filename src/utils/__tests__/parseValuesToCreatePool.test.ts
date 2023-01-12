@@ -1,5 +1,6 @@
 import { parseUnits } from '@ethersproject/units'
 
+import { CSVParseTypeArray } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ZERO_BN } from '@/src/constants/misc'
 import { CreatePoolStateComplete } from '@/src/hooks/aelin/useAelinCreatePool'
@@ -50,6 +51,10 @@ describe('parseValuesToCreatePool', () => {
   })
 
   it('should return the correct values to create private a pool', async () => {
+    const whitelist: CSVParseTypeArray = [
+      [0, '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8', '1000000000000000000'],
+    ]
+
     const variables = {
       [NftType.erc1155]: undefined,
       [NftType.erc721]: undefined,
@@ -72,12 +77,7 @@ describe('parseValuesToCreatePool', () => {
       sponsorFee: 2,
       poolPrivacy: 'private',
       currentStep: 'poolPrivacy',
-      whitelist: [
-        {
-          address: '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8',
-          amount: 1000000000000000000,
-        },
-      ],
+      whitelist,
       nftCollectionRules: [],
     }
 
