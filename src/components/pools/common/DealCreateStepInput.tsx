@@ -51,6 +51,11 @@ const PrivacyGrid = styled.div`
   max-width: fit-content;
 `
 
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 const ExchangeRateSummary = styled.div`
   display: flex;
   justify-content: space-between;
@@ -59,16 +64,26 @@ const ExchangeRateSummary = styled.div`
 
 const ExchangeRateSpan = styled.span`
   font-size: 1.2rem;
-  text-align: right;
 `
 
-const ContainerCheckbox = styled.div`
+const ExchangeRatesDescription = styled.div`
   display: flex;
-  flex-direction: row;
+  margin: 0 auto;
 `
 
-const StyledLabelCheckbox = styled(LabeledCheckbox)`
-  margin: 0 5px 0 0;
+const ExchangeRatesLabel = styled.div`
+  color: ${({ theme }) => theme.colors.textColor};
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 1px 5px 0 0;
+  transition: color 0.15s linear;
+`
+
+const ExchangeRatesGrid = styled.div`
+  display: flex;
+  gap: 40px;
+  margin: 20px auto;
 `
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
@@ -237,13 +252,12 @@ const DealCreateStepInput: React.FC<Props> = ({
       ) : step === CreateUpFrontDealSteps.exchangeRates ? (
         <Container>
           <StyledDescription>{createDealConfig[step].text?.[0]}</StyledDescription>
-          <div>
+          <Column>
             <p>
               {`How much ${
                 currentState[CreateUpFrontDealSteps.investmentToken]?.symbol
               } would you like to raise?`}
             </p>
-
             <Textfield
               maxLength={42}
               min="0"
@@ -265,7 +279,6 @@ const DealCreateStepInput: React.FC<Props> = ({
               type="number"
               value={currentState[step]?.exchangeRates}
             />
-            <br />
             <ExchangeRateSummary>
               <>
                 {dealTotal && (
@@ -284,29 +297,44 @@ const DealCreateStepInput: React.FC<Props> = ({
                 )}
               </>
             </ExchangeRateSummary>
-            <ContainerCheckbox>
-              <StyledLabelCheckbox
-                checked={currentState[step]?.isCapped}
-                label="Do you want the deal to be capped?"
-                onClick={() => setDealField(!currentState[step]?.isCapped, `${step}.isCapped`)}
-              />
+            <br />
+            <ExchangeRatesDescription>
+              <ExchangeRatesLabel>Do you want the deal to be capped?</ExchangeRatesLabel>
               <Tooltip
                 text={`Capping the deal means that once the investment total has been reached no further deposits are allowed. By keeping the deal uncapped you may take in more investment tokens than the total and every investor will be deallocated proportionally`}
               />
-            </ContainerCheckbox>
-            <br />
-            <ContainerCheckbox>
-              <StyledLabelCheckbox
-                checked={currentState[step]?.hasDealMinimum}
-                label="Do you want to set a deal minimum?"
-                onClick={() =>
-                  setDealField(!currentState[step]?.hasDealMinimum, `${step}.hasDealMinimum`)
-                }
+            </ExchangeRatesDescription>
+            <ExchangeRatesGrid>
+              <LabeledRadioButton
+                checked={currentState[step]?.isCapped}
+                label={'Yes'}
+                onClick={() => setDealField(true, `${step}.isCapped`)}
               />
+              <LabeledRadioButton
+                checked={!currentState[step]?.isCapped}
+                label={'No'}
+                onClick={() => setDealField(false, `${step}.isCapped`)}
+              />
+            </ExchangeRatesGrid>
+            <br />
+            <ExchangeRatesDescription>
+              <ExchangeRatesLabel>Do you want to set a deal minimum?</ExchangeRatesLabel>
               <Tooltip
                 text={`The deal will be cancelled if the minimum is not reached by the end of the deal acceptance window. Investors will be able to retrieve their investment tokens. Protocols may choose this option if they are unable to achieve their goals with an amount smaller than the minimum`}
               />
-            </ContainerCheckbox>
+            </ExchangeRatesDescription>
+            <ExchangeRatesGrid>
+              <LabeledRadioButton
+                checked={currentState[step]?.hasDealMinimum}
+                label={'Yes'}
+                onClick={() => setDealField(true, `${step}.hasDealMinimum`)}
+              />
+              <LabeledRadioButton
+                checked={!currentState[step]?.hasDealMinimum}
+                label={'No'}
+                onClick={() => setDealField(false, `${step}.hasDealMinimum`)}
+              />
+            </ExchangeRatesGrid>
             {currentState[step]?.hasDealMinimum && (
               <>
                 <br />
@@ -324,7 +352,7 @@ const DealCreateStepInput: React.FC<Props> = ({
                 />
               </>
             )}
-          </div>
+          </Column>
         </Container>
       ) : step === CreateUpFrontDealSteps.vestingSchedule ? (
         <>
