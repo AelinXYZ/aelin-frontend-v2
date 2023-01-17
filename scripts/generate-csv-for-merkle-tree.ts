@@ -6,7 +6,7 @@ import fs from 'fs/promises'
 import json2csv from 'json-2-csv'
 import path from 'path'
 
-const MAX_WALLETS = 1000
+const MAX_WALLETS = 100000
 const MAX_ALLOCATION = 100
 const MIN_ALLOCATION = 1
 const DEFAULT_ALLOCATION_IN_DECIMALS = '10'
