@@ -560,7 +560,12 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
         new URL('@/src/utils/merkle-tree/createMerkleTree.ts', import.meta.url),
       )
 
-      worker.postMessage({ action: 'start', whitelist: createDealState.whitelist })
+      worker.postMessage({
+        action: 'start',
+        whitelist: createDealState.whitelist,
+        investmentTokenDeciamal: createDealState.investmentToken?.decimals,
+        whiteListAmountFormat: createDealState.whiteListAmountFormat,
+      })
 
       const merkleData = await promisifyWorker(worker)
 
