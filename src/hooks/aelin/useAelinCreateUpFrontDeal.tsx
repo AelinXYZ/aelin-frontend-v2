@@ -564,8 +564,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
       const merkleData = await promisifyWorker(worker)
 
-      return
-
       // Upload the merkle tree data json to ipfs
       const ipfsHash = await storeFile(
         merkleData.compressedTree,

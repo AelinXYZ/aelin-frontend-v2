@@ -14,8 +14,6 @@ addEventListener(
         obj.amount,
       ])
 
-      console.log('formattedWhitelist: ', formattedWhitelist)
-
       // Create tree
       const tree = StandardMerkleTree.of(formattedWhitelist, ['uint256', 'address', 'uint256'])
 
