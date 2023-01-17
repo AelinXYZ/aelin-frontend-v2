@@ -5,13 +5,15 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { BigNumberish } from '@ethersproject/bignumber'
-import { StandardMerkleTree } from '@openzeppelin/merkle-tree'
 import { wei } from '@synthetixio/wei'
 
 import usePrevious from '../common/usePrevious'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
-import { CSVParseType } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
+  AddressWhiteListProps,
+  AddressesWhiteListAmountFormat,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
@@ -92,7 +94,8 @@ export interface CreateUpFrontDealState {
   vestingSchedule?: VestingScheduleAttr
   dealPrivacy?: Privacy
   currentStep: CreateUpFrontDealSteps
-  whitelist: CSVParseType[]
+  whitelist: AddressWhiteListProps[]
+  whiteListAmountFormat?: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
@@ -113,7 +116,8 @@ export interface CreateUpFrontDealStateComplete {
   holderAddress: string
   exchangeRates: ExchangeRatesAttr
   currentStep: CreateUpFrontDealSteps
-  whitelist: CSVParseType[]
+  whitelist: AddressWhiteListProps[]
+  whiteListAmountFormat?: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
 }
@@ -436,6 +440,7 @@ const initialState: CreateUpFrontDealState = {
   },
   currentStep: CreateUpFrontDealSteps.dealAttributes,
   whitelist: [],
+  whiteListAmountFormat: undefined,
   withMerkleTree: false,
   nftCollectionRules: [],
 }
@@ -540,8 +545,6 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
   const handleCreateUpFrontDeal = async () => {
     const [upFrontDealData, upFrontDealConfig, nftCollectionRules, allowListAddresses] =
       parseValuesToCreateUpFrontDeal(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         createDealState as CreateUpFrontDealStateComplete,
         address ?? ZERO_ADDRESS,
       )
@@ -560,6 +563,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
       worker.postMessage({ action: 'start', whitelist: createDealState.whitelist })
 
       const merkleData = await promisifyWorker(worker)
+
+      return
 
       // Upload the merkle tree data json to ipfs
       const ipfsHash = await storeFile(

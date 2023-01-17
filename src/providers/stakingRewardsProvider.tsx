@@ -117,6 +117,9 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
       [Chains.arbitrum]: () => {
         noop()
       },
+      [Chains.polygon]: () => {
+        noop()
+      },
     }),
     [address],
   )

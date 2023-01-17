@@ -19,7 +19,10 @@ import DealCreateStepInput from '@/src/components/pools/common/DealCreateStepInp
 import { Summary } from '@/src/components/pools/common/Summary'
 import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
-import { CSVParseType } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
+  AddressWhiteListProps,
+  AddressesWhiteListAmountFormat,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,
@@ -29,7 +32,7 @@ import {
   ButtonNext,
   ButtonPrev,
 } from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
-import { Error } from '@/src/components/pureStyledComponents/text/Error'
+import { Error as ErrorComponent } from '@/src/components/pureStyledComponents/text/Error'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { Privacy } from '@/src/constants/pool'
@@ -51,7 +54,7 @@ const BackButton = styled(ButtonPrimaryLight)`
   }
 `
 
-const StyledError = styled(Error)`
+const StyledError = styled(ErrorComponent)`
   margin-bottom: 0;
 `
 
@@ -59,6 +62,24 @@ const NftTableWrapper = styled.div`
   width: 100%;
   padding-top: 20px;
 `
+
+const getFormattedInvestmentTokenToRaise = (
+  investmentTokenToRaise: number,
+  whiteListAmountFormat: AddressesWhiteListAmountFormat,
+  investmentTokenDecimals?: number,
+): string => {
+  switch (whiteListAmountFormat) {
+    case AddressesWhiteListAmountFormat.decimal:
+      return investmentTokenToRaise.toLocaleString('en', { useGrouping: false })
+    case AddressesWhiteListAmountFormat.uint256:
+      return formatUnits(
+        investmentTokenToRaise.toLocaleString('en', { useGrouping: false }),
+        investmentTokenDecimals,
+      )
+  }
+
+  return ''
+}
 
 const Create: NextPage = () => {
   const { appChainId } = useWeb3Connection()
@@ -100,10 +121,12 @@ const Create: NextPage = () => {
   ].some((step) => createDealState.currentStep === step)
 
   const handleConfirm = (
-    whitelist: Array<CSVParseType | NftCollectionRulesProps>,
+    whitelist: AddressWhiteListProps[] | NftCollectionRulesProps[],
     type: NftType | string,
+    amountFormat?: AddressesWhiteListAmountFormat | undefined,
   ) => {
     setDealField(whitelist, type)
+
     setDealField(true, 'withMerkleTree')
 
     /*
@@ -116,21 +139,33 @@ const Create: NextPage = () => {
     */
 
     if (createDealState.dealPrivacy === Privacy.PRIVATE && whitelist.length) {
-      const investmentTokenToRaise = whitelist.reduce((accum: number, curr: any) => {
-        if (curr[2]) {
-          accum += Number(curr[2])
-        }
+      if (!amountFormat) {
+        throw new Error('Format should be defined for a whitelist.')
+      }
 
-        return accum
-      }, 0)
+      const investmentTokenToRaise = (whitelist as AddressWhiteListProps[]).reduce(
+        (accum: number, curr: AddressWhiteListProps) => {
+          if (curr.amount) {
+            accum += Number(curr.amount)
+          }
+
+          return accum
+        },
+        0,
+      )
 
       setDealField(
-        formatUnits(
-          investmentTokenToRaise.toLocaleString('en', { useGrouping: false }),
+        getFormattedInvestmentTokenToRaise(
+          investmentTokenToRaise,
+          amountFormat,
           createDealState.investmentToken?.decimals,
         ),
         'exchangeRates.investmentTokenToRaise',
       )
+    }
+
+    if (amountFormat) {
+      setDealField(amountFormat, 'whiteListAmountFormat')
     }
   }
 
@@ -236,6 +271,7 @@ const Create: NextPage = () => {
       </RightTimelineLayout>
       {showWhiteListModal && (
         <WhiteListModal
+          currentAmountFormat={createDealState.whiteListAmountFormat}
           currentList={createDealState.whitelist}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={handleConfirm}

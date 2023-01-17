@@ -133,7 +133,10 @@ export const ListWithFilters = ({
     }
   }, [debouncedChangeHandler, searchString])
 
-  const networks = [{ id: undefined, shortName: 'All networks' }, ...getChainsByEnvironmentArray()]
+  const networks = [
+    { chainId: undefined, shortName: 'All networks' },
+    ...getChainsByEnvironmentArray(),
+  ]
 
   // - Open
   // - Awaiting deal
@@ -295,16 +298,16 @@ export const ListWithFilters = ({
             ))}
           />
           <Dropdown
-            currentItem={!network ? 0 : networks.findIndex(({ id }) => id === network)}
+            currentItem={!network ? 0 : networks.findIndex(({ chainId }) => chainId === network)}
             dropdownButtonContent={
               <ButtonDropdown>
                 {network
-                  ? networks.find(({ id }) => id === network)?.shortName
+                  ? networks.find(({ chainId }) => chainId === network)?.shortName
                   : networks[0].shortName}
               </ButtonDropdown>
             }
-            items={networks.map(({ id, shortName }, key) => (
-              <DropdownItem key={key} onClick={() => setNetwork(Number(id) as ChainsValues)}>
+            items={networks.map(({ chainId, shortName }, key) => (
+              <DropdownItem key={key} onClick={() => setNetwork(Number(chainId) as ChainsValues)}>
                 {shortName}
               </DropdownItem>
             ))}

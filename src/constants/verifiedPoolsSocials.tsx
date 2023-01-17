@@ -22,4 +22,16 @@ export const VerifiedPoolsSocials: { [poolAddress: string]: PoolSocials } = {
     discordServerInvite: 'mQW7UVV6zt',
     mediumPost: '@HallsofOlympia/were-going-aelin-13b5eca35eef',
   },
+  ['0xc4b35b8bb40368996add8bfc954e3f16579ae82b']: {
+    websiteName: 'thalon.io',
+    twitterHandle: 'thalondao',
+    discordServerInvite: 'BfntecmA',
+    mediumPost: '@thalondao/28995c707e23',
+  },
+  ['0x89ff4fbec2081079fa9fa5064ce1c39203165821']: {
+    websiteName: 'thalon.io',
+    twitterHandle: 'thalondao',
+    discordServerInvite: 'BfntecmA',
+    mediumPost: '@thalondao/28995c707e23',
+  },
 } as const

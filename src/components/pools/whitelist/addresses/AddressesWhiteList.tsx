@@ -1,26 +1,22 @@
-import { ReactElement, useMemo, useState } from 'react'
+import { Dispatch, ReactElement, SetStateAction, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
-import { debounce } from 'lodash'
-import ms from 'ms'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import AddressesWhiteListWrapper from './AddressesWhiteListWrapper'
+import { DecimalWarning, DuplicatedAddressesWarning, Uint256Warning } from './Warnings'
+import WhiteListRow from './WhiteListRow'
 import { ModalButtonCSS } from '@/src/components/common/Modal'
+import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import UploadCSV from '@/src/components/pools/whitelist/addresses/UploadWhiteListCsv'
 import {
   ButtonGradient,
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
-import { Textfield, TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
 import { PrivacyType } from '@/src/constants/pool'
-import { useThemeContext } from '@/src/providers/themeContextProvider'
-
-export type CSVParseType = [number, string, string]
-export type CSVParseTypeArray = Array<CSVParseType>
 
 const Grid = styled.div`
   align-items: center;
@@ -51,14 +47,7 @@ const Title = styled.h4`
   margin: 0;
 `
 
-const ButtonsGrid = styled.div`
-  align-items: center;
-  column-gap: 10px;
-  display: grid;
-  grid-template-columns: 32px 32px;
-`
-
-const SaveButton = styled(ButtonGradient)`
+const MainButton = styled(ButtonGradient)`
   ${ModalButtonCSS}
 `
 
@@ -70,63 +59,74 @@ const Error = styled(BaseError)`
   margin-bottom: -28px;
 `
 
-const NUMBER_ROWS = 100
+const AmountFormatDescription = styled.p`
+  color: ${({ theme }) => theme.colors.textColor};
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.4;
+  margin: 30px 0 10px;
+  max-width: 100%;
+  text-align: center;
+`
 
-const WhiteListRow = ({
-  address,
-  amount,
-  onChangeRow,
-  onDeleteRow,
-  rowIndex,
-}: {
-  address: string
-  amount: string
-  onChangeRow: (value: string, key: string, index: number) => void
-  onDeleteRow: (index: number) => void
-  rowIndex: number
-}) => {
-  const { currentThemeName } = useThemeContext()
+const AmountFormatsWrapper = styled.div`
+  display: flex;
+  gap: 40px;
+  margin: 0;
+  max-width: fit-content;
+`
 
-  return (
-    <>
-      <Textfield
-        onChange={(e) => onChangeRow(e.target.value, 'address', rowIndex)}
-        placeholder="Add address..."
-        status={address && !isAddress(address) ? TextfieldState.error : undefined}
-        value={address}
-      />
-      <Textfield
-        onChange={(e) => {
-          const amount = Number(e.target.value)
-
-          if (amount < 0) {
-            return
-          }
-
-          onChangeRow(e.target.value, 'amount', rowIndex)
-        }}
-        placeholder="Max allocation..."
-        status={address && !amount ? TextfieldState.error : undefined}
-        type="number"
-        value={amount ? Number(amount).toLocaleString('en', { useGrouping: false }) : ''}
-      />
-      <ButtonsGrid>
-        <div>&nbsp;</div>
-        <ButtonRemove currentThemeName={currentThemeName} onClick={() => onDeleteRow(rowIndex)} />
-      </ButtonsGrid>
-    </>
-  )
+export enum AddressesWhiteListStep {
+  format = 'format',
+  addresses = 'addresses',
 }
 
-const initialAddressesWhitelistValues = (existingArray: CSVParseType[] = []): CSVParseType[] => {
-  const startIndex = existingArray.length ? existingArray.length + 1 : 0
-  const defaultValues: CSVParseType[] = Array.from(Array(5), (_, i) => [i + startIndex, '', ''])
+interface AddressesWhiteListStepInfo {
+  order: number
+  title: string
+  id: AddressesWhiteListStep
+}
 
-  return [...existingArray, ...defaultValues]
+export const addressesWhiteListStepsConfig: Record<
+  AddressesWhiteListStep,
+  AddressesWhiteListStepInfo
+> = {
+  [AddressesWhiteListStep.format]: {
+    id: AddressesWhiteListStep.format,
+    order: 1,
+    title: 'Format',
+  },
+  [AddressesWhiteListStep.addresses]: {
+    id: AddressesWhiteListStep.addresses,
+    order: 2,
+    title: 'Addresses',
+  },
+}
+
+export enum AddressesWhiteListAmountFormat {
+  decimal = 'Decimal',
+  uint256 = 'uint256',
+}
+
+export interface AddressWhiteListProps {
+  index: number
+  address: string
+  amount: string | null
+}
+
+export const addInitialAddressesWhiteListValues = (list: AddressWhiteListProps[] = []) => {
+  let index = list.length
+
+  return new Array(5).fill({ address: '', amount: null }).map((item) => {
+    const newList = { index, ...item }
+    index++
+    return newList
+  })
 }
 
 enum AddressesWhiteListStatus {
   invalidAddress,
+  duplicatedAddresses,
   invalidAmount,
   invalidDecimals,
   valid,
@@ -135,151 +135,225 @@ enum AddressesWhiteListStatus {
 const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
   switch (status) {
     case AddressesWhiteListStatus.invalidAddress:
-      return <Error textAlign="center">There are some invalid address in the list</Error>
+      return <Error textAlign="center">There is some invalid address in the list</Error>
+    case AddressesWhiteListStatus.duplicatedAddresses:
+      return <Error textAlign="center">There are duplicated addresses in the list</Error>
     case AddressesWhiteListStatus.invalidAmount:
-      return <Error textAlign="center">There are some empty amount in the list</Error>
+      return <Error textAlign="center">There is some empty amount in the list</Error>
     case AddressesWhiteListStatus.invalidDecimals:
-      return <Error textAlign="center">There are some amount with decimals in the list</Error>
+      return <Error textAlign="center">There is some amount with decimals in the list</Error>
     case AddressesWhiteListStatus.valid:
       return null
   }
 }
 
+const PAGE_SIZE = 100
+
 const AddressesWhiteList = ({
+  amountFormat,
+  currentStep,
   list,
   onClose,
   onConfirm,
+  setAmountFormat,
+  setCurrentStep,
 }: {
-  list: CSVParseType[]
+  list: AddressWhiteListProps[]
   onClose: () => void
-  onConfirm: (whitelist: CSVParseType[], type: string) => void
+  onConfirm: (
+    whitelist: AddressWhiteListProps[],
+    type: string,
+    amountFormat: AddressesWhiteListAmountFormat,
+  ) => void
+  currentStep: AddressesWhiteListStep
+  setCurrentStep: Dispatch<SetStateAction<AddressesWhiteListStep>>
+  amountFormat: AddressesWhiteListAmountFormat
+  setAmountFormat: Dispatch<SetStateAction<AddressesWhiteListAmountFormat>>
 }) => {
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
   const [innerList, setInnerList] = useState(list)
-
-  const [infiniteRows, setInfiniteRows] = useState(() =>
-    innerList.length ? innerList.slice(0, NUMBER_ROWS) : initialAddressesWhitelistValues(),
-  )
+  const [displayList, setDisplayList] = useState(list.slice(0, PAGE_SIZE))
 
   const status = useMemo(() => {
-    if (innerList.some((item: CSVParseType) => item[0] && !isAddress(item[1]))) {
+    if (innerList.some((item: AddressWhiteListProps) => item.address && !isAddress(item.address))) {
       return AddressesWhiteListStatus.invalidAddress
     }
 
-    if (innerList.some((item: CSVParseType) => item[0] && !item[2])) {
+    if (
+      innerList.some(
+        (item: AddressWhiteListProps) => item.amount && !item.amount && Number(item.amount) > 0,
+      )
+    ) {
       return AddressesWhiteListStatus.invalidAmount
     }
 
-    if (innerList.some((item: CSVParseType) => item[2] && Number(item[2]) % 1 !== 0)) {
+    const addressesInSet = new Set()
+
+    if (
+      innerList.some((item: AddressWhiteListProps) => {
+        // Returning true means that there is at least one duplicated address
+        if (addressesInSet.has(item.address)) {
+          return true
+        }
+
+        // Add the address to the set only if it is a valid address
+        if (isAddress(item.address)) {
+          addressesInSet.add(item.address)
+        }
+
+        // Returning false means that there are no duplicated addresses.
+        return false
+      })
+    ) {
+      return AddressesWhiteListStatus.duplicatedAddresses
+    }
+
+    if (
+      amountFormat === AddressesWhiteListAmountFormat.uint256 &&
+      innerList.some((item: AddressWhiteListProps) => item.amount && Number(item.amount) % 1 !== 0)
+    ) {
       return AddressesWhiteListStatus.invalidDecimals
     }
 
     return AddressesWhiteListStatus.valid
-  }, [innerList])
+  }, [amountFormat, innerList])
 
-  const handleUploadCSV = (whitelist: CSVParseType[]): void => {
+  const handleUploadCSV = (whitelist: AddressWhiteListProps[]): void => {
     setInnerList(whitelist)
-    setInfiniteRows(whitelist.slice(0, NUMBER_ROWS))
+    setDisplayList(whitelist.slice(0, PAGE_SIZE))
   }
 
-  const getChunk = () => {
-    const start = infiniteRows.length
-    const end = start + NUMBER_ROWS
-    return [start, end]
-  }
+  const onChangeRow = (value: string | number | null, key: string, index: number) => {
+    const innerListCopy = [...innerList]
+    const displayListCopy = [...displayList]
 
-  const onChangeRow = (value: string, key: string, index: number) => {
-    const list = [...innerList]
-
-    const row = list.findIndex(([i]) => i === index)
-
-    if (row !== -1) {
-      if (key === 'address') {
-        list[row][1] = value
-      }
-
-      if (key === 'amount') {
-        list[row][2] = value
-      }
-
-      setInnerList(list)
-
-      const [start, end] = getChunk()
-      setInfiniteRows(list.slice(start, end))
+    innerListCopy[index] = {
+      ...innerListCopy[index],
+      [key]: value,
     }
+
+    displayListCopy[index] = {
+      ...displayList[index],
+      [key]: value,
+    }
+
+    setInnerList(innerListCopy)
+    setDisplayList(displayListCopy)
   }
 
   const onDeleteRow = (rowIndex: number) => {
-    const list = [...innerList].filter((val) => val[0] !== rowIndex)
-    setInnerList(list)
+    setInnerList(() => [...innerList].filter((_, index) => index !== rowIndex))
+    setDisplayList(() => [...displayList].filter((_, index) => index !== rowIndex))
+  }
 
-    const [start, end] = getChunk()
-    setInfiniteRows(list.slice(start, end))
+  const handleNext = () => {
+    setCurrentStep(AddressesWhiteListStep.addresses)
   }
 
   const handleSave = () => {
     // Filter incomplete or wrong rows
-    const filterRows = innerList.reduce((accum, curr, index) => {
-      const [_, address, amount] = curr
+    const filterRows = [
+      ...innerList.filter((row: AddressWhiteListProps) => {
+        return isAddress(row.address) && row.amount !== null && Number(row.amount) > 0
+      }),
+    ]
 
-      if (isAddress(address) && amount !== '') {
-        accum.push([index, address, amount])
-      }
-
-      return accum
-    }, [] as CSVParseType[])
-
-    onConfirm(filterRows, PrivacyType.WHITELIST)
+    onConfirm(filterRows, PrivacyType.WHITELIST, amountFormat)
     onClose()
   }
 
-  const addMore = () => {
-    const [start, end] = getChunk()
-    setInfiniteRows([...infiniteRows, ...innerList.slice(start, end)])
+  const loadMoreRows = () => {
+    const start = page * PAGE_SIZE
+    const end = start + PAGE_SIZE
+
+    // Set hasMore to false at the end of the list
+    if (end > innerList.length) {
+      setHasMore(false)
+      return
+    }
+
+    const chunk = innerList.slice(start, end)
+
+    setPage(page + 1)
+    setDisplayList([...displayList, ...chunk])
   }
 
-  const debouncedAddMore = debounce(addMore, ms('1s'))
-
   return (
-    <>
-      <Grid>
-        <TitleGrid>
-          <Title>Address</Title>
-          <UploadCSV onUploadCSV={handleUploadCSV} />
-        </TitleGrid>
-        <Title>Amount (uint256)</Title>
-        <div>&nbsp;</div>
-      </Grid>
-      <InfiniteScroll
-        dataLength={infiniteRows.length}
-        hasMore={true}
-        loader={<></>}
-        next={debouncedAddMore}
-      >
-        <Grid>
-          {infiniteRows.map(([index, address, amount]: CSVParseType) => (
-            <WhiteListRow
-              address={address}
-              amount={amount}
-              key={index}
-              onChangeRow={onChangeRow}
-              onDeleteRow={onDeleteRow}
-              rowIndex={index}
-            />
-          ))}
-        </Grid>
-      </InfiniteScroll>
+    <AddressesWhiteListWrapper currentStep={currentStep} setCurrentStep={setCurrentStep}>
+      <>
+        {currentStep === AddressesWhiteListStep.format && (
+          <>
+            {amountFormat === AddressesWhiteListAmountFormat.decimal && <DecimalWarning />}
+            {amountFormat === AddressesWhiteListAmountFormat.uint256 && <Uint256Warning />}
+            <AmountFormatDescription>Select the format you want to use :</AmountFormatDescription>
+            <AmountFormatsWrapper>
+              {Object.entries(AddressesWhiteListAmountFormat).map(([key, value]) => (
+                <LabeledRadioButton
+                  checked={amountFormat === value}
+                  key={key}
+                  label={value}
+                  onClick={() => {
+                    setAmountFormat(value)
+                  }}
+                />
+              ))}
+            </AmountFormatsWrapper>
+            <MainButton onClick={handleNext}>Next</MainButton>
+          </>
+        )}
+        {currentStep === AddressesWhiteListStep.addresses && (
+          <>
+            <DuplicatedAddressesWarning />
 
-      <ButtonPrimaryLightSm
-        onClick={() => setInnerList(initialAddressesWhitelistValues(innerList))}
-      >
-        Add more rows
-      </ButtonPrimaryLightSm>
-      {getError(status)}
-      <SaveButton disabled={status !== AddressesWhiteListStatus.valid} onClick={handleSave}>
-        Save
-      </SaveButton>
-      <CancelButton onClick={onClose}>Cancel</CancelButton>
-    </>
+            <Grid>
+              <TitleGrid>
+                <Title>Address</Title>
+                <UploadCSV onUploadCSV={handleUploadCSV} />
+              </TitleGrid>
+              <Title>{`Amount (${amountFormat})`}</Title>
+              <div>&nbsp;</div>
+            </Grid>
+
+            <InfiniteScroll
+              dataLength={displayList.length}
+              hasMore={hasMore}
+              loader={<></>}
+              next={loadMoreRows}
+            >
+              <Grid>
+                {displayList.map(({ address, amount, index }: AddressWhiteListProps) => (
+                  <WhiteListRow
+                    address={address}
+                    amount={amount}
+                    key={index}
+                    onChangeRow={onChangeRow}
+                    onDeleteRow={onDeleteRow}
+                    rowIndex={index}
+                  />
+                ))}
+              </Grid>
+            </InfiniteScroll>
+
+            <ButtonPrimaryLightSm
+              onClick={() => {
+                setInnerList([...innerList, ...addInitialAddressesWhiteListValues(innerList)])
+                setDisplayList([...displayList, ...addInitialAddressesWhiteListValues(displayList)])
+              }}
+            >
+              Add more rows
+            </ButtonPrimaryLightSm>
+
+            {getError(status)}
+
+            <MainButton disabled={status !== AddressesWhiteListStatus.valid} onClick={handleSave}>
+              Save
+            </MainButton>
+          </>
+        )}
+        <CancelButton onClick={onClose}>Cancel</CancelButton>
+      </>
+    </AddressesWhiteListWrapper>
   )
 }
 

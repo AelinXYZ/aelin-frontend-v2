@@ -1,13 +1,13 @@
 import { parseUnits } from '@ethersproject/units'
 
-import { CSVParseTypeArray } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ZERO_BN } from '@/src/constants/misc'
 import { CreatePoolStateComplete } from '@/src/hooks/aelin/useAelinCreatePool'
 import { parseValuesToCreatePool } from '@/src/utils/parseValuesToCreatePool'
 
 describe('parseValuesToCreatePool', () => {
-  it('should return the correct values to create public a pool', async () => {
+  it('should return the correct values to create a public pool', async () => {
     const variables = {
       [NftType.erc1155]: undefined,
       [NftType.erc721]: undefined,
@@ -50,11 +50,7 @@ describe('parseValuesToCreatePool', () => {
     })
   })
 
-  it('should return the correct values to create private a pool', async () => {
-    const whitelist: CSVParseTypeArray = [
-      [0, '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8', '1000000000000000000'],
-    ]
-
+  it('should return the correct values to create a private pool with uint256 amount format', async () => {
     const variables = {
       [NftType.erc1155]: undefined,
       [NftType.erc721]: undefined,
@@ -77,7 +73,65 @@ describe('parseValuesToCreatePool', () => {
       sponsorFee: 2,
       poolPrivacy: 'private',
       currentStep: 'poolPrivacy',
-      whitelist,
+      whitelist: [
+        {
+          index: 0,
+          address: '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8',
+          amount: '1000000000000000000',
+        },
+      ],
+      whiteListAmountFormat: AddressesWhiteListAmountFormat.uint256,
+      nftCollectionRules: [],
+    }
+
+    const expectedVariables = parseValuesToCreatePool(variables as CreatePoolStateComplete)
+
+    expect(expectedVariables).toEqual({
+      name: 'TEST',
+      symbol: 'TEST',
+      purchaseTokenCap: ZERO_BN,
+      purchaseToken: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
+      // Sponsor fee use 18 decimals
+      sponsorFee: parseUnits('2', 18),
+      purchaseDuration: 1800,
+      duration: 1800,
+      allowListAddresses: ['0xa834e550B45B4a469a05B846fb637bfcB12e3Df8'],
+      allowListAmounts: ['1000000000000000000'],
+      nftCollectionRules: [],
+    })
+  })
+
+  it('should return the correct values to create a private pool with decimal amount format', async () => {
+    const variables = {
+      [NftType.erc1155]: undefined,
+      [NftType.erc721]: undefined,
+      poolName: 'TEST',
+      poolSymbol: 'TEST',
+      investmentToken: {
+        name: 'Wrapped Ether',
+        address: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
+        symbol: 'WETH',
+        decimals: 18,
+        chainId: 5,
+      },
+      investmentDeadLine: {
+        minutes: 30,
+      },
+      dealDeadline: {
+        minutes: 30,
+      },
+      poolCap: 0,
+      sponsorFee: 2,
+      poolPrivacy: 'private',
+      currentStep: 'poolPrivacy',
+      whitelist: [
+        {
+          index: 0,
+          address: '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8',
+          amount: '1',
+        },
+      ],
+      whiteListAmountFormat: AddressesWhiteListAmountFormat.decimal,
       nftCollectionRules: [],
     }
 

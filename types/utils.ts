@@ -23,7 +23,7 @@ export type GasLimitEstimate = {
 
 export type GasPrices = {
   l1: GasPrice<Eip1559GasPrice | number>
-  l2?: GasPrice<number>
+  l2?: GasPrice<Eip1559GasPrice | number>
 }
 
 export type GasPrice<T> = {

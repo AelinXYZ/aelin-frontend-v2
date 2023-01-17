@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import { Modal as BaseModal } from '@/src/components/common/Modal'
 import AddressesWhiteList, {
-  CSVParseType,
+  AddressWhiteListProps,
+  AddressesWhiteListAmountFormat,
+  AddressesWhiteListStep,
+  addInitialAddressesWhiteListValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -17,22 +21,36 @@ const Modal = styled(BaseModal)`
   }
 `
 
-const Note = styled.p`
-  padding: 20px;
-  background-color: ${({ theme }) => theme.colors.transparentWhite2};
-  border: 1px solid ${({ theme: { colors } }) => colors.borderColor};
-  border-radius: 8px;
-`
-
 type WhiteListType = {
+  currentAmountFormat: AddressesWhiteListAmountFormat | undefined
   poolPrivacy: Privacy | undefined
-  currentList: CSVParseType[]
+  currentList: AddressWhiteListProps[]
   onClose: () => void
-  onConfirm: (whitelist: CSVParseType[] | NftCollectionRulesProps[], type: NftType | string) => void
+  onConfirm: (
+    whitelist: AddressWhiteListProps[] | NftCollectionRulesProps[],
+    type: NftType | string,
+    amountFormat?: AddressesWhiteListAmountFormat,
+  ) => void
   withMerkleTree: boolean | undefined
 }
 
-const WhiteListModal = ({ currentList, onClose, onConfirm, poolPrivacy }: WhiteListType) => {
+const WhiteListModal = ({
+  currentAmountFormat,
+  currentList,
+  onClose,
+  onConfirm,
+  poolPrivacy,
+}: WhiteListType) => {
+  const [addressesWhiteList] = useState(
+    currentList.length ? currentList : addInitialAddressesWhiteListValues(),
+  )
+  const [addressesWhiteListStep, setAddressesWhiteListStep] = useState(
+    currentAmountFormat ? AddressesWhiteListStep.addresses : AddressesWhiteListStep.format,
+  )
+  const [addressesWhiteListAmountFormat, setAddressesWhiteListAmountFormat] = useState(
+    currentAmountFormat ?? AddressesWhiteListAmountFormat.decimal,
+  )
+
   const { dispatch, nftWhiteListState } = useNftCreationState()
 
   if (!poolPrivacy) return null
@@ -40,14 +58,15 @@ const WhiteListModal = ({ currentList, onClose, onConfirm, poolPrivacy }: WhiteL
   return (
     <Modal onClose={onClose} showCancelButton={false} size="794px" title="Allowlist">
       {poolPrivacy === Privacy.PRIVATE && (
-        <>
-          <Note>
-            Please input the amount as a <b>uint256</b>. If you are using an investment token with 6
-            decimals then <b>1000000</b> is equivalent to <b>1</b> investment token.
-          </Note>
-
-          <AddressesWhiteList list={currentList} onClose={onClose} onConfirm={onConfirm} />
-        </>
+        <AddressesWhiteList
+          amountFormat={addressesWhiteListAmountFormat}
+          currentStep={addressesWhiteListStep}
+          list={addressesWhiteList}
+          onClose={onClose}
+          onConfirm={onConfirm}
+          setAmountFormat={setAddressesWhiteListAmountFormat}
+          setCurrentStep={setAddressesWhiteListStep}
+        />
       )}
       {poolPrivacy === Privacy.NFT && (
         <NftWhiteList

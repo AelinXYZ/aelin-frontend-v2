@@ -9,10 +9,13 @@ type Props = {
   userAddress: string | null
 }
 
-const fetcher = async (variables: Props) => {
-  try {
-    if (!variables.ipfsHash) return {}
+const getMerkleTreeIpfsGatewayUrl = (ipfsHash: string) =>
+  `${process.env.NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL}/${ipfsHash}`
 
+const fetcher = async (variables: Props) => {
+  if (!variables.ipfsHash) return {}
+
+  try {
     if (!isIPFS.cid(variables.ipfsHash)) throw new Error('Invalid ipfs hash')
 
     const client = new Web3Storage({
@@ -41,7 +44,32 @@ const fetcher = async (variables: Props) => {
     return merkleTreeDataJson
   } catch (err) {
     console.error(err)
-    return {}
+
+    try {
+      if (!isIPFS.cid(variables.ipfsHash)) throw new Error('Invalid ipfs hash')
+
+      const response = await fetch(getMerkleTreeIpfsGatewayUrl(variables.ipfsHash))
+
+      if (!response?.ok) throw new Error('Unexpected fetch response')
+
+      // Load and parse the tree thru Web Worker
+      const worker = new Worker(
+        new URL('@/src/utils/merkle-tree/loadAndParseTree.ts', import.meta.url),
+      )
+
+      worker.postMessage({
+        action: 'start',
+        tree: await response.arrayBuffer(),
+        userAddress: variables.userAddress,
+      })
+
+      const merkleTreeDataJson = await promisifyWorker(worker)
+
+      return merkleTreeDataJson
+    } catch (err) {
+      console.log(err)
+      return {}
+    }
   }
 }
 

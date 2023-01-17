@@ -23,14 +23,23 @@ const getTokenList = (chainId: ChainsValues) => {
 const useTokenListQuery = (appChainId: ChainsValues) => {
   return useSWR(['token-list', appChainId], async () => {
     const response: TokenListResponse = await getTokenList(appChainId)
+    let tokens: Token[] = response.tokens
 
-    if (appChainId === Chains.optimism || appChainId === Chains.arbitrum) {
-      return response.tokens.filter(
-        ({ chainId }: { chainId: number }) => Number(chainId) === appChainId,
-      )
+    if (
+      appChainId === Chains.optimism ||
+      appChainId === Chains.arbitrum ||
+      appChainId === Chains.polygon
+    ) {
+      tokens = tokens.filter(({ chainId }: { chainId: number }) => Number(chainId) === appChainId)
     }
 
-    return response.tokens
+    if (appChainId === Chains.polygon) {
+      tokens = tokens.filter(({ symbol }) => symbol.toLowerCase() !== 'matic')
+    } else {
+      tokens = tokens.filter(({ symbol }) => symbol.toLowerCase() !== 'eth')
+    }
+
+    return tokens
   })
 }
 

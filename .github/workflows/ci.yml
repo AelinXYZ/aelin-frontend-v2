@@ -7,6 +7,10 @@ env:
   NEXT_PUBLIC_GRAPH_ENDPOINT_OPTIMISM: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-optimism'
   NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-goerli'
   NEXT_PUBLIC_GRAPH_ENDPOINT_ARBITRUM: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-arbitrum'
+<<<<<<< HEAD
+=======
+  NEXT_PUBLIC_GRAPH_ENDPOINT_POLYGON: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-polygon'
+>>>>>>> staging
 
 jobs:
   build:

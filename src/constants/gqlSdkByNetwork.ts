@@ -8,6 +8,7 @@ import {
   GRAPH_URL_GOERLI,
   GRAPH_URL_MAINNET,
   GRAPH_URL_OPTIMISM,
+  GRAPH_URL_POLYGON,
 } from '@/src/constants/endpoints'
 
 export type AllSDK = Record<ChainsValues, SdkWithHooks>
@@ -18,6 +19,7 @@ export const gqlGqlSdkByNetwork: AllSDK = {
   [Chains.goerli]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_GOERLI)),
   [Chains.optimism]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_OPTIMISM)),
   [Chains.arbitrum]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_ARBITRUM)),
+  [Chains.polygon]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_POLYGON)),
 }
 
 export function getGqlSdkByNetwork(chainId: ChainsValues): ReturnType<typeof getSdkWithHooks> {

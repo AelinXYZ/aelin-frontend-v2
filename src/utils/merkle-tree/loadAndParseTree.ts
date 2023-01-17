@@ -31,6 +31,12 @@ addEventListener(
 
       const proof = tree.getProof(index)
 
+      console.log('result ', {
+        index,
+        proof,
+        amount,
+      })
+
       postMessage({
         index,
         proof,

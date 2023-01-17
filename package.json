@@ -18,6 +18,7 @@
     "sdk": "graphql-codegen --config codegen.js",
     "postinstall": "yarn typechain && yarn sdk",
     "create:csv": "node --experimental-json-modules --loader ts-node/esm scripts/generate-csv-for-merkle-tree.ts",
+    "create:csv:decimals": "node --experimental-json-modules --loader ts-node/esm scripts/generate-csv-for-merkle-tree.ts --decimals",
     "create:nft:metadata": "node --experimental-json-modules --loader ts-node/esm scripts/generate-nft-metadata.ts"
   },
   "dependencies": {

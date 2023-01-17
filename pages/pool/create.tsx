@@ -18,7 +18,10 @@ import PoolCreateStepInput from '@/src/components/pools/common/PoolCreateStepInp
 import { Summary } from '@/src/components/pools/common/Summary'
 import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
-import { CSVParseType } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
+  AddressWhiteListProps,
+  AddressesWhiteListAmountFormat,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,
@@ -191,13 +194,19 @@ const Create: NextPage = () => {
       </RightTimelineLayout>
       {showWhiteListModal && (
         <WhiteListModal
+          currentAmountFormat={createPoolState.whiteListAmountFormat}
           currentList={createPoolState.whitelist}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={(
-            whitelist: CSVParseType[] | NftCollectionRulesProps[],
+            whitelist: AddressWhiteListProps[] | NftCollectionRulesProps[],
             type: NftType | string,
+            amountFormat?: AddressesWhiteListAmountFormat,
           ) => {
             setPoolField(whitelist, type)
+
+            if (amountFormat) {
+              setPoolField(amountFormat, 'whiteListAmountFormat')
+            }
           }}
           poolPrivacy={createPoolState.poolPrivacy}
           withMerkleTree={false}
