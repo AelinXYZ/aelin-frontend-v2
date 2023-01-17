@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import { Modal as BaseModal } from '@/src/components/common/Modal'
 import AddressesWhiteList, {
   AddressWhitelistProps,
+  AddressesWhiteListAmountFormat,
+  AddressesWhiteListStep,
   initialAddressesWhitelistValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
@@ -19,30 +21,34 @@ const Modal = styled(BaseModal)`
   }
 `
 
-const Note = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 20px 20px 20px 40px;
-  background-color: ${({ theme }) => theme.colors.transparentWhite2};
-  border: 1px solid ${({ theme: { colors } }) => colors.borderColor};
-  border-radius: 8px;
-`
-
 type WhiteListType = {
   poolPrivacy: Privacy | undefined
   currentList: AddressWhitelistProps[]
+  currentAmountFormat?: AddressesWhiteListAmountFormat
   onClose: () => void
   onConfirm: (
     whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
     type: NftType | string,
+    amountFormat?: AddressesWhiteListAmountFormat,
   ) => void
   withMerkleTree: boolean | undefined
 }
 
-const WhiteListModal = ({ currentList, onClose, onConfirm, poolPrivacy }: WhiteListType) => {
+const WhiteListModal = ({
+  currentAmountFormat,
+  currentList,
+  onClose,
+  onConfirm,
+  poolPrivacy,
+}: WhiteListType) => {
   const [addressesWhiteList, setAddressesWhiteList] = useState(
     currentList.length ? currentList : initialAddressesWhitelistValues,
+  )
+  const [addressesWhiteListStep, setAddressesWhiteListStep] = useState(
+    currentAmountFormat ? AddressesWhiteListStep.addresses : AddressesWhiteListStep.format,
+  )
+  const [addressesWhiteListAmountFormat, setAddressesWhiteListAmountFormat] = useState(
+    currentAmountFormat ?? AddressesWhiteListAmountFormat.decimal,
   )
 
   const { dispatch, nftWhiteListState } = useNftCreationState()
@@ -52,22 +58,16 @@ const WhiteListModal = ({ currentList, onClose, onConfirm, poolPrivacy }: WhiteL
   return (
     <Modal onClose={onClose} showCancelButton={false} size="794px" title="Allowlist">
       {poolPrivacy === Privacy.PRIVATE && (
-        <>
-          <Note>
-            <li>
-              Please input the amount as a <b>uint256</b>. If you are using an investment token with
-              6 decimals then <b>1000000</b> is equivalent to <b>1</b> investment token.
-            </li>
-            <li>Avoid duplicated addresses in the CSV file.</li>
-          </Note>
-
-          <AddressesWhiteList
-            list={addressesWhiteList}
-            onClose={onClose}
-            onConfirm={onConfirm}
-            setList={setAddressesWhiteList}
-          />
-        </>
+        <AddressesWhiteList
+          amountFormat={addressesWhiteListAmountFormat}
+          currentStep={addressesWhiteListStep}
+          list={addressesWhiteList}
+          onClose={onClose}
+          onConfirm={onConfirm}
+          setAmountFormat={setAddressesWhiteListAmountFormat}
+          setCurrentStep={setAddressesWhiteListStep}
+          setList={setAddressesWhiteList}
+        />
       )}
       {poolPrivacy === Privacy.NFT && (
         <NftWhiteList

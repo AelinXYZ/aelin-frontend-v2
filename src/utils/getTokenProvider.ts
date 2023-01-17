@@ -5,6 +5,7 @@ export const getTokenProvider = (chainId: ChainsValues) => {
     [Chains.mainnet]: process.env.NEXT_PUBLIC_MAINNET_TOKEN_PROVIDER,
     [Chains.optimism]: process.env.NEXT_PUBLIC_OPTIMISM_TOKEN_PROVIDER,
     [Chains.arbitrum]: process.env.NEXT_PUBLIC_ARBITRUM_TOKEN_PROVIDER,
+    [Chains.polygon]: process.env.NEXT_PUBLIC_POLYGON_TOKEN_PROVIDER,
     [Chains.goerli]: process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER,
   }
 

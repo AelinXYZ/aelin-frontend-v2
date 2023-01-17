@@ -6,25 +6,30 @@ import Wei, { wei } from '@synthetixio/wei'
 import ms from 'ms'
 import useSWR from 'swr'
 
-import { mainnetRpcProvider } from './useEnsResolvers'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { mainnetRpcProvider, optimismRpcProvider } from './useEnsResolvers'
 import { getExchangeRatesForCurrencies, iStandardSynth, synthToAsset } from '@/src/utils/gasUtils'
 
 type Rates = Record<string, Wei>
 type CurrencyRate = BigNumberish
 type SynthRatesTuple = [string[], CurrencyRate[]]
 
-const useEthPriceUnitInUSD = () => {
-  const { appChainId } = useWeb3Connection()
+export enum GasPriceUnit {
+  eth,
+  matic,
+}
 
-  const snxjs = synthetix({ network: 'mainnet', provider: mainnetRpcProvider })
+const useGasPriceUnitInUSD = (gasPriceUnit: GasPriceUnit) => {
+  const snxjs = synthetix({
+    network: gasPriceUnit === GasPriceUnit.eth ? 'mainnet' : 'mainnet-ovm',
+    provider: gasPriceUnit === GasPriceUnit.eth ? mainnetRpcProvider : optimismRpcProvider,
+  })
 
   return useSWR<Wei>(
-    ['rates', 'exchangeRates', appChainId],
+    ['rates', 'exchangeRates', gasPriceUnit],
     async () => {
       const exchangeRates: Rates = {}
 
-      //  @TODO issue #255
+      // @TODO issue #255
       const synthsRates: SynthRatesTuple = await snxjs.contracts.SynthUtil.synthsRates()
 
       const synths = [...synthsRates[0]] as CurrencyKey[]
@@ -41,7 +46,11 @@ const useEthPriceUnitInUSD = () => {
         }
       })
 
-      return getExchangeRatesForCurrencies(exchangeRates, 'sETH', 'sUSD')
+      return getExchangeRatesForCurrencies(
+        exchangeRates,
+        gasPriceUnit === GasPriceUnit.eth ? 'sETH' : 'sMATIC',
+        'sUSD',
+      )
     },
     {
       refreshInterval: ms('2m'),
@@ -50,4 +59,4 @@ const useEthPriceUnitInUSD = () => {
   )
 }
 
-export default useEthPriceUnitInUSD
+export default useGasPriceUnitInUSD

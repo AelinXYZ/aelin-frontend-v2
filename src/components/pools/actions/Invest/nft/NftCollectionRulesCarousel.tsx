@@ -23,7 +23,7 @@ import { ExternalLink } from '@/src/components/table/ExternalLink'
 import { Chains } from '@/src/constants/chains'
 import {
   DISPLAY_DECIMALS,
-  OPENSEA_BASE_URL,
+  OPEN_SEA_BASE_URL,
   QUIXOTIC_BASE_URL,
   STRATOS_BASE_URL,
   ZERO_BN,
@@ -134,7 +134,7 @@ const NftCollectionRulesCarousel = ({ collection, pool }: NftCollectionRulesCaro
       return STRATOS_BASE_URL + 'collection/' + rules.collectionAddress
     }
 
-    return OPENSEA_BASE_URL + 'collection/' + strToKebabCase(name)
+    return OPEN_SEA_BASE_URL + 'collection/' + strToKebabCase(name)
   }, [rules.collectionAddress, name, collection.network])
 
   return (

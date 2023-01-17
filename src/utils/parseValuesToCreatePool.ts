@@ -2,6 +2,7 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 
+import { AddressesWhiteListAmountFormat } from '../components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '../components/pools/whitelist/nft/nftWhiteListReducer'
 import { NftCollectionRulesProps } from '../hooks/aelin/useAelinCreatePool'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -9,6 +10,19 @@ import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { CreatePoolStateComplete, CreatePoolValues } from '@/src/hooks/aelin/useAelinCreatePool'
 import { getDuration } from '@/src/utils/date'
+
+const getWhiteListAmount = (
+  amount: number,
+  whiteListAmountFormat: AddressesWhiteListAmountFormat,
+  investmentTokenDecimals: number,
+): string => {
+  switch (whiteListAmountFormat) {
+    case AddressesWhiteListAmountFormat.decimal:
+      return parseUnits(amount.toString(), investmentTokenDecimals).toString()
+    case AddressesWhiteListAmountFormat.uint256:
+      return String(amount)
+  }
+}
 
 export const parseValuesToCreatePool = (
   createPoolState: CreatePoolStateComplete,
@@ -22,6 +36,7 @@ export const parseValuesToCreatePool = (
     poolPrivacy,
     poolSymbol,
     sponsorFee,
+    whiteListAmountFormat,
     whitelist,
   } = createPoolState
   const now = new Date()
@@ -48,6 +63,10 @@ export const parseValuesToCreatePool = (
     !createPoolState[NftType.erc1155] &&
     !createPoolState[NftType.erc721]
   ) {
+    if (!whiteListAmountFormat) {
+      throw new Error('Format should be defined for a whitelist.')
+    }
+
     const formattedWhiteList = whitelist.reduce((accum, curr) => {
       const { address, amount } = curr
 
@@ -55,7 +74,9 @@ export const parseValuesToCreatePool = (
 
       accum.push({
         address,
-        amount: amount ? String(amount) : MaxUint256.toString(),
+        amount: amount
+          ? getWhiteListAmount(amount, whiteListAmountFormat, investmentToken.decimals)
+          : MaxUint256.toString(),
       })
 
       return accum

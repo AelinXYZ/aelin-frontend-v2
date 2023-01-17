@@ -11,6 +11,7 @@ import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'
 import getNftType from '@/src/utils/getNftType'
+import getTokenType from '@/src/utils/getTokenType'
 import { shortenAddress } from '@/src/utils/string'
 
 export enum NFTType {
@@ -40,31 +41,34 @@ export type NftCollectionData = {
   numOwners?: number
   floorPrice?: number
   totalVolume?: number
-  paymentSymbol?: string
   updatedAt?: string
 }
 
 const AELIN_MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/aelin-mainnet-metadata.json'
 const AELIN_OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-optimism-metadata.json'
 const AELIN_ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-arbitrum-metadata.json'
-const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/opensea-metadata.json'
+const AELIN_POLYGON_NFT_COLLECTIONS = '/data/nft-metadata/aelin-polygon-metadata.json'
+const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/open-sea-mainnet-metadata.json'
 const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/quixotic-metadata.json'
 const ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/stratos-metadata.json'
+const POLYGON_NFT_COLLECTIONS = '/data/nft-metadata/open-sea-polygon-metadata.json'
 const GOERLI_NFT_COLLECTIONS = '/data/nft-metadata/goerli-metadata.json'
 
-const parseOpenseaResponse = async (
+const parseOpenSeaResponse = async (
   openSeaRes: Response,
+  chainId: ChainsValues,
 ): Promise<Omit<NftCollectionData, 'totalSupply'>> => {
   const data = await openSeaRes.json()
   return {
     id: 0,
     address: data.address,
     name: data.name,
+    slug: data.collection?.slug,
     symbol: data.symbol,
     description: data.description,
     imageUrl: data.image_url,
     contractType: getNftType(data.schema_name),
-    network: Chains.mainnet,
+    network: chainId,
   }
 }
 
@@ -74,14 +78,15 @@ const getParsedNFTCollectionData = async (collectionAddress: string, chainId: Ch
   }
 
   const url =
-    chainId === Chains.optimism || chainId === Chains.arbitrum
+    chainId === Chains.optimism || chainId === Chains.arbitrum || chainId === Chains.polygon
       ? `/api/nft/${chainId}/${collectionAddress}`
       : `https://api.opensea.io/api/v1/asset_contract/${collectionAddress}?format=json`
 
   return fetch(url).then(async (res) => {
     if (res.status !== 200) return
-    if (chainId === Chains.optimism || chainId === Chains.arbitrum) return res.json()
-    return { data: await parseOpenseaResponse(res) }
+    if (chainId === Chains.optimism || chainId === Chains.arbitrum || chainId === Chains.polygon)
+      return res.json()
+    return { data: await parseOpenSeaResponse(res, chainId) }
   })
 }
 
@@ -117,10 +122,13 @@ function useNftCollectionLists(
             fetch(AELIN_OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
           appChainId === Chains.arbitrum &&
             fetch(AELIN_ARBITRUM_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.polygon &&
+            fetch(AELIN_POLYGON_NFT_COLLECTIONS).then((r) => r.json()),
           // NFTs fetched by API
           appChainId === Chains.mainnet && fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
           appChainId === Chains.optimism && fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
           appChainId === Chains.arbitrum && fetch(ARBITRUM_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.polygon && fetch(POLYGON_NFT_COLLECTIONS).then((r) => r.json()),
           // NFT for testing reasons
           appChainId === Chains.goerli && fetch(GOERLI_NFT_COLLECTIONS).then((r) => r.json()),
         ])
@@ -137,24 +145,6 @@ function useNftCollectionLists(
       setCollections([])
     }
   }, [appChainId])
-
-  const getTokenType = async (address: string, provider: JsonRpcProvider): Promise<NFTType> => {
-    const isERC721 = await contractCall(address, erc721, provider, 'supportsInterface', [
-      ERCInterface.ERC721,
-    ])
-    if (isERC721) {
-      return NFTType.ERC721
-    }
-    const isERC1155 = await contractCall(address, erc1155, provider, 'supportsInterface', [
-      ERCInterface.ERC1155,
-    ])
-
-    if (isERC1155) {
-      return NFTType.ERC1155
-    }
-
-    throw new Error('Unsupported token type')
-  }
 
   const fetchData = async (collectionData: CollectionInfo) => {
     if (

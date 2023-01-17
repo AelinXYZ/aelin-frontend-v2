@@ -11,7 +11,6 @@
     "floorPrice": 0.061,
     "totalVolume": 480.46738954,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -27,7 +26,6 @@
     "floorPrice": 0.08,
     "totalVolume": 184.781261838,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -43,7 +41,6 @@
     "floorPrice": 0.00019692300000000003,
     "totalVolume": 90.942346451,
     "contractType": "erc1155",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -59,7 +56,6 @@
     "floorPrice": 0.018,
     "totalVolume": 59.125851284,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -75,7 +71,6 @@
     "floorPrice": 0.015,
     "totalVolume": 55.474912855,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -91,7 +86,6 @@
     "floorPrice": 0.0423,
     "totalVolume": 43.96448789,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -107,7 +101,6 @@
     "floorPrice": 0.0155,
     "totalVolume": 40.876890813,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -123,7 +116,6 @@
     "floorPrice": 0.187,
     "totalVolume": 34.908249999999995,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -139,7 +131,6 @@
     "floorPrice": 0.009,
     "totalVolume": 29.129514623,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -155,7 +146,6 @@
     "floorPrice": 0.00043,
     "totalVolume": 28.596595922,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -171,7 +161,6 @@
     "floorPrice": 0.024,
     "totalVolume": 24.480938956,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -187,7 +176,6 @@
     "floorPrice": 0.034499999999999996,
     "totalVolume": 22.316029,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -203,7 +191,6 @@
     "floorPrice": 0.10300000000000001,
     "totalVolume": 18.720236437,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -219,7 +206,6 @@
     "floorPrice": 0.0029000000000000002,
     "totalVolume": 15.854764573,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -235,7 +221,6 @@
     "floorPrice": 0.0049,
     "totalVolume": 13.475305104,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -251,7 +236,6 @@
     "floorPrice": 0.01,
     "totalVolume": 13.465689000000001,
     "contractType": "erc1155",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -267,7 +251,6 @@
     "floorPrice": 0.005,
     "totalVolume": 11.533639867,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -283,7 +266,6 @@
     "floorPrice": 0.0036999999999999997,
     "totalVolume": 11.159001,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -299,7 +281,6 @@
     "floorPrice": 0.196,
     "totalVolume": 11.1348,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -315,7 +296,6 @@
     "floorPrice": 0.00010989999999999999,
     "totalVolume": 10.69042993,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -331,7 +311,6 @@
     "floorPrice": 0.027000000000000003,
     "totalVolume": 10.580149999,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -347,7 +326,6 @@
     "floorPrice": 0.004,
     "totalVolume": 7.21760398,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -363,7 +341,6 @@
     "floorPrice": 0.01,
     "totalVolume": 5.56005923,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -379,7 +356,6 @@
     "floorPrice": 0.034499999999999996,
     "totalVolume": 5.5527999999999995,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -395,7 +371,6 @@
     "floorPrice": 0.0034000000000000002,
     "totalVolume": 5.467989249,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -411,7 +386,6 @@
     "floorPrice": 1.69,
     "totalVolume": 5.11,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -427,7 +401,6 @@
     "floorPrice": 0.000144,
     "totalVolume": 4.906807954,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -443,7 +416,6 @@
     "floorPrice": 0.0021999999999999997,
     "totalVolume": 4.34666905,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -459,7 +431,6 @@
     "floorPrice": 0.01,
     "totalVolume": 4.24526,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   },
@@ -475,7 +446,6 @@
     "floorPrice": 0.0125,
     "totalVolume": 4.14165999,
     "contractType": "erc721",
-    "paymentSymbol": "ETH",
     "network": 10,
     "updatedAt": 1661195800884
   }

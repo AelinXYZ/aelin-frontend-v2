@@ -1,11 +1,16 @@
 import { Network, OwnedNft, getNftsForOwner, initializeAlchemy } from '@alch/alchemy-sdk'
 import { getAddress } from '@ethersproject/address'
+import { JsonRpcProvider } from '@ethersproject/providers'
 
-import { Chains, ChainsValues } from '@/src/constants/chains'
+import erc1155 from '@/src/abis/ERC1155.json'
+import erc721 from '@/src/abis/ERC721.json'
+import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
+import contractCall from '@/src/utils/contractCall'
 import { CustomError as Error } from '@/src/utils/error'
 import getNftType from '@/src/utils/getNftType'
 import { getTokenProvider } from '@/src/utils/getTokenProvider'
+import getTokenType from '@/src/utils/getTokenType'
 
 export interface ParsedOwnedNft {
   id: string
@@ -91,15 +96,54 @@ const parseStratosCollectionResponse = async (
   }
 }
 
+const parseSimpleHashCollectionResponse = async (
+  simpleHashRes: Response,
+  collectionAddress: string,
+): Promise<Omit<NftCollectionData, 'totalSupply'>> => {
+  const data = await simpleHashRes.json()
+  const collection = data.collections[0]
+  const provider = new JsonRpcProvider(getNetworkConfig(Chains.polygon).rpcUrl)
+  const contractType = await getTokenType(collectionAddress, provider)
+  const nftAbi = contractType === NFTType.ERC721 ? erc721 : erc1155
+  const symbol = await contractCall(collectionAddress, nftAbi, provider, 'symbol', [])
+
+  return {
+    id: 0, // Always return 1 exact collection
+    address: collectionAddress,
+    name: collection?.name,
+    slug: collection?.marketplace_pages.find(
+      (marketplace: { marketplace_id: string }) => marketplace.marketplace_id === 'opensea',
+    )?.marketplace_collection_id,
+    symbol: symbol,
+    description: collection?.description,
+    imageUrl: collection?.image_url,
+    contractType: contractType,
+    network: Chains.polygon,
+  }
+}
+
+const getAlchemyNetworkId = (chainId: ChainsValues): Network => {
+  switch (chainId) {
+    case Chains.mainnet:
+      return Network.ETH_MAINNET
+    case Chains.arbitrum:
+      return Network.ARB_MAINNET
+    case Chains.polygon:
+      return Network.MATIC_MAINNET
+    default:
+      throw new Error('Unsupported network.', 400)
+  }
+}
+
 export const getNftOwnedByAddress = async (
   chainId: ChainsValues,
   collectionAddress: string,
   walletAddress: string,
 ) => {
-  if (chainId === Chains.mainnet || chainId === Chains.arbitrum) {
+  if (chainId === Chains.mainnet || chainId === Chains.arbitrum || chainId === Chains.polygon) {
     const settings = {
       apiKey: getTokenProvider(chainId),
-      network: chainId === Chains.mainnet ? Network.ETH_MAINNET : Network.ARB_MAINNET,
+      network: getAlchemyNetworkId(chainId),
       maxRetries: 10,
     }
 
@@ -249,6 +293,27 @@ export const getNftCollectionData = async (chainId: ChainsValues, collectionAddr
     }
 
     return parseStratosCollectionResponse(stratosRes)
+  }
+
+  if (chainId === Chains.polygon) {
+    const options = {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'X-API-KEY': process.env.SIMPLEHASH_API_KEY as string,
+      },
+    }
+
+    const simpleHashRes = await fetch(
+      `https://api.simplehash.com/api/v0/nfts/collections/polygon/${collectionAddress}?limit=50`,
+      options,
+    )
+
+    if (simpleHashRes.status !== 200) {
+      throw new Error('SimpleHash request failed.', 400)
+    }
+
+    return parseSimpleHashCollectionResponse(simpleHashRes, collectionAddress)
   }
 
   throw new Error('Unsupported network.', 400)

@@ -6,7 +6,10 @@ import { BigNumberish } from '@ethersproject/bignumber'
 
 import usePrevious from '../common/usePrevious'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
+  AddressWhitelistProps,
+  AddressesWhiteListAmountFormat,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
@@ -55,6 +58,7 @@ export interface CreatePoolState {
   poolPrivacy?: Privacy
   currentStep: CreatePoolSteps
   whitelist: AddressWhitelistProps[]
+  whiteListAmountFormat?: AddressesWhiteListAmountFormat
   nftCollectionRules: NftCollectionRulesProps[]
 }
 
@@ -71,6 +75,7 @@ export interface CreatePoolStateComplete {
   poolPrivacy: Privacy
   currentStep: CreatePoolSteps
   whitelist: AddressWhitelistProps[]
+  whiteListAmountFormat?: AddressesWhiteListAmountFormat
   nftCollectionRules: NftCollectionRulesProps[] | undefined
 }
 
@@ -167,6 +172,7 @@ const initialState: CreatePoolState = {
   [CreatePoolSteps.poolPrivacy]: undefined,
   currentStep: CreatePoolSteps.poolName,
   whitelist: [],
+  whiteListAmountFormat: undefined,
   nftCollectionRules: [],
   [NftType.erc1155]: undefined,
   [NftType.erc721]: undefined,

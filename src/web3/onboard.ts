@@ -45,6 +45,12 @@ init({
       rpcUrl: chainsConfig[Chains.arbitrum].rpcUrl,
     },
     {
+      id: chainsConfig[Chains.polygon].chainIdHex,
+      token: chainsConfig[Chains.polygon].nativeCurrency.name,
+      label: chainsConfig[Chains.polygon].name,
+      rpcUrl: chainsConfig[Chains.polygon].rpcUrl,
+    },
+    {
       id: chainsConfig[Chains.goerli].chainIdHex,
       token: chainsConfig[Chains.goerli].nativeCurrency.name,
       label: chainsConfig[Chains.goerli].name,
