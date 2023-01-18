@@ -1,14 +1,14 @@
 import styled from 'styled-components'
 
 import ParentSize from '@visx/responsive/lib/components/ParentSize'
-import ms from 'ms'
-import useSWR from 'swr'
 
 import { Uniswap } from '@/src/components/assets/Uniswap'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import AreaChart from '@/src/components/sidebar/AreaChart'
 import { getNetworkConfig } from '@/src/constants/chains'
+import { DISPLAY_DECIMALS } from '@/src/constants/misc'
+import useAelinUSDPrice, { PriceData, TimeInterval } from '@/src/hooks/aelin/useAelinUSDPrice'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatNumber } from '@/src/utils/formatNumber'
 
@@ -58,58 +58,28 @@ const ButtonContainer = styled.div`
   justify-content: center;
 `
 
-type PriceData = {
-  date: Date
-  price: number
-}
-
-type TimeInterval = 'minutely' | 'hourly' | 'daily'
-
-const AELIN_PRICE_DECIMALS = 2
-
-const useAelinUSDPrices = (days: number, interval: TimeInterval) => {
-  const { data } = useSWR<PriceData[]>(
-    [days, interval],
-    async function (days: number, interval: TimeInterval) {
-      const response = await fetch(
-        `https://api.coingecko.com/api/v3/coins/aelin/market_chart?vs_currency=usd&days=${days}&interval=${interval}`,
-      )
-      const json = await response.json()
-      const data = json.prices.map((value: number[]) => ({
-        date: new Date(value[0]),
-        price: value[1],
-      }))
-
-      return data
-    },
-    {
-      refreshWhenHidden: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-      refreshWhenOffline: false,
-      refreshInterval: ms('1m'),
-    },
-  )
-
-  return data
-}
-
 const getLastPriceFormatted = (prices: PriceData[]) => {
-  return `$${formatNumber(prices[prices.length - 1].price, AELIN_PRICE_DECIMALS)}`
+  return `$${formatNumber(prices[prices.length - 1].price, DISPLAY_DECIMALS)}`
 }
 
 const getPriceDifferenceFormatted = (prices: PriceData[]) => {
   const diff = ((prices[prices.length - 1].price - prices[0].price) / prices[0].price) * 100
-  return `${diff > 0 ? '+' : ''}${diff.toFixed(AELIN_PRICE_DECIMALS)}%`
+  return `${diff > 0 ? '+' : ''}${diff.toFixed(DISPLAY_DECIMALS)}%`
 }
 
-const BuyAelin: React.FC = ({ ...restProps }) => {
-  const prices = useAelinUSDPrices(1, 'hourly')
+const BuyAelin = ({ ...restProps }) => {
+  const days = 1
+
+  const [prices, error] = useAelinUSDPrice(days, TimeInterval.hourly)
 
   const { appChainId } = useWeb3Connection()
 
   const currentChainConfig = getNetworkConfig(appChainId)
+
+  if (error) {
+    console.error(error)
+    throw new Error(`Cannot fetch Aelin's price`)
+  }
 
   return (
     <Wrapper {...restProps}>
