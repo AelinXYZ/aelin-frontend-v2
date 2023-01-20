@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolDealTransaction } from '@/src/hooks/contracts/useAelinPoolDealTransaction'
@@ -19,6 +20,10 @@ const ButtonsWrapper = styled.div`
   justify-content: center;
   width: 100%;
   margin-top: 15px;
+`
+
+const ErrorText = styled(Error)`
+  text-align: center;
 `
 
 function HolderDeposit({ pool }: Props) {
@@ -50,20 +55,25 @@ function HolderDeposit({ pool }: Props) {
     })
   }
 
+  const noEnoughBalance = (holderBalance || ZERO_BN).lt(underlyingAmount)
+
   return (
-    <ButtonsWrapper>
-      <ButtonGradient
-        disabled={
-          !isAppConnected ||
-          isSubmitting ||
-          disabledAfterDeposit ||
-          (holderBalance || ZERO_BN).lt(underlyingAmount)
-        }
-        onClick={depositTokens}
-      >
-        Fund Deal
-      </ButtonGradient>
-    </ButtonsWrapper>
+    <>
+      <ButtonsWrapper>
+        <ButtonGradient
+          disabled={
+            !isAppConnected ||
+            isSubmitting ||
+            disabledAfterDeposit ||
+            (holderBalance || ZERO_BN).lt(underlyingAmount)
+          }
+          onClick={depositTokens}
+        >
+          Fund Deal
+        </ButtonGradient>
+      </ButtonsWrapper>
+      {noEnoughBalance && <ErrorText>Insufficient balance</ErrorText>}
+    </>
   )
 }
 
