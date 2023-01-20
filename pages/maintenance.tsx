@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styled from 'styled-components'
 
+import env from '@/config/env'
 import ThemeProvider from '@/src/providers/themeContextProvider'
 
 const Container = styled.div`
@@ -45,8 +46,8 @@ const SubTitle = styled.h3`
   line-height: 1.2;
 `
 
-const MAINTENANCE_MESSAGE_TITLE = process.env.NEXT_PUBLIC_MAINTENANCE_MESSAGE_TITLE
-const MAINTENANCE_MESSAGE_SUBTITLE = process.env.NEXT_PUBLIC_MAINTENANCE_MESSAGE_SUBTITLE
+const MAINTENANCE_MESSAGE_TITLE = env.NEXT_PUBLIC_MAINTENANCE_MESSAGE_TITLE
+const MAINTENANCE_MESSAGE_SUBTITLE = env.NEXT_PUBLIC_MAINTENANCE_MESSAGE_SUBTITLE
 
 const Maintenance: NextPage = () => {
   return (
