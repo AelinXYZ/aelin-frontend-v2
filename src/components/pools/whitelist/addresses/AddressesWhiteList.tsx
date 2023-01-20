@@ -76,6 +76,41 @@ const AmountFormatsWrapper = styled.div`
   max-width: fit-content;
 `
 
+const RelativeRow = styled.div`
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+`
+
+const TotalAddressesWrapper = styled.div`
+  display: flex;
+  gap: 4px;
+  position: absolute;
+  top: 0;
+  left: 0;
+`
+
+const TotalAddressesLabel = styled.div`
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.colors.lightGray};
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 2;
+  letter-spacing: 0.35px;
+`
+
+const TotalAddressesValue = styled.div`
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 2;
+  letter-spacing: 0.35px;
+`
+
 export enum AddressesWhiteListStep {
   format = 'format',
   addresses = 'addresses',
@@ -335,14 +370,25 @@ const AddressesWhiteList = ({
               </Grid>
             </InfiniteScroll>
 
-            <ButtonPrimaryLightSm
-              onClick={() => {
-                setInnerList([...innerList, ...addInitialAddressesWhiteListValues(innerList)])
-                setDisplayList([...displayList, ...addInitialAddressesWhiteListValues(displayList)])
-              }}
-            >
-              Add more rows
-            </ButtonPrimaryLightSm>
+            <RelativeRow>
+              <TotalAddressesWrapper>
+                <TotalAddressesLabel>Total addresses:</TotalAddressesLabel>
+                <TotalAddressesValue>
+                  {innerList.filter((item) => item.address).length}
+                </TotalAddressesValue>
+              </TotalAddressesWrapper>
+              <ButtonPrimaryLightSm
+                onClick={() => {
+                  setInnerList([...innerList, ...addInitialAddressesWhiteListValues(innerList)])
+                  setDisplayList([
+                    ...displayList,
+                    ...addInitialAddressesWhiteListValues(displayList),
+                  ])
+                }}
+              >
+                Add more rows
+              </ButtonPrimaryLightSm>
+            </RelativeRow>
 
             {getError(status)}
 

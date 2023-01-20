@@ -1,6 +1,7 @@
 import nullthrows from 'nullthrows'
 
 import { BASE_DECIMALS } from './misc'
+import env from '@/config/env'
 import { Arbitrum } from '@/src/components/assets/Arbitrum'
 import { Mainnet } from '@/src/components/assets/Mainnet'
 import { Optimism } from '@/src/components/assets/Optimism'
@@ -59,7 +60,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     iconUrls: [],
     isProd: true,
     name: 'Ethereum Mainnet',
-    rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_MAINNET_TOKEN_PROVIDER}`,
+    rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_MAINNET_TOKEN_PROVIDER}`,
     defaultRpcUrl: 'https://rpc.ankr.com/eth',
     shortName: 'Mainnet',
     tokenListUrl: [
@@ -82,8 +83,8 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     iconUrls: [],
     isProd: false,
     name: 'Görli Testnet',
-    rpcUrl: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
-    defaultRpcUrl: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
+    rpcUrl: `https://eth-goerli.g.alchemy.com/v2/${env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
+    defaultRpcUrl: `https://eth-goerli.g.alchemy.com/v2/${env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
     shortName: 'Goerli',
     tokenListUrl: [
       'https://tokens.1inch.eth.limo',
@@ -101,7 +102,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     shortName: 'Optimism',
     chainId: Chains.optimism,
     chainIdHex: toHex(Chains.optimism),
-    rpcUrl: `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_OPTIMISM_TOKEN_PROVIDER}`,
+    rpcUrl: `https://opt-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_OPTIMISM_TOKEN_PROVIDER}`,
     defaultRpcUrl: 'https://mainnet.optimism.io',
     blockExplorerUrls: ['https://optimistic.etherscan.io/'],
     iconUrls: [],
@@ -122,7 +123,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     shortName: 'Arbitrum',
     chainId: Chains.arbitrum,
     chainIdHex: toHex(Chains.arbitrum),
-    rpcUrl: `https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ARBITRUM_TOKEN_PROVIDER}`,
+    rpcUrl: `https://arb-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_ARBITRUM_TOKEN_PROVIDER}`,
     defaultRpcUrl: 'https://arb1.arbitrum.io/rpc',
     blockExplorerUrls: ['https://arbiscan.io/'],
     iconUrls: [],
@@ -142,7 +143,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     shortName: 'Polygon',
     chainId: Chains.polygon,
     chainIdHex: toHex(Chains.polygon),
-    rpcUrl: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_POLYGON_TOKEN_PROVIDER}`,
+    rpcUrl: `https://polygon-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_POLYGON_TOKEN_PROVIDER}`,
     defaultRpcUrl: 'https://polygon-rpc.com/',
     blockExplorerUrls: ['https://polygonscan.com/'],
     iconUrls: [],

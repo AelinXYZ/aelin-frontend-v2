@@ -1,3 +1,4 @@
+import { HashZero } from '@ethersproject/constants'
 import * as isIPFS from 'is-ipfs'
 import useSWR from 'swr'
 import { Web3Storage } from 'web3.storage'
@@ -13,7 +14,7 @@ const getMerkleTreeIpfsGatewayUrl = (ipfsHash: string) =>
   `${process.env.NEXT_PUBLIC_IPFS_GATEWAY_BASE_URL}/${ipfsHash}`
 
 const fetcher = async (variables: Props) => {
-  if (!variables.ipfsHash) return {}
+  if (!variables.ipfsHash || variables.ipfsHash === HashZero) return {}
 
   try {
     if (!isIPFS.cid(variables.ipfsHash)) throw new Error('Invalid ipfs hash')

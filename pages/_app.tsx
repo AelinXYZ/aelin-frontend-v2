@@ -7,6 +7,7 @@ import { SWRConfig } from 'swr'
 import 'sanitize.css'
 import '../styles/override.css'
 import Maintenance from './maintenance'
+import env from '@/config/env'
 import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
 import { MobileMenu } from '@/src/components/navigation/MobileMenu'
@@ -38,7 +39,8 @@ function App({ Component, pageProps }: AppProps) {
   const title = 'Aelin'
   const description = 'Aelin'
   const twitterHandle = '@'
-  const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
+
+  const isMaintenanceMode = env.NEXT_PUBLIC_MAINTENANCE_MODE
 
   return (
     <>

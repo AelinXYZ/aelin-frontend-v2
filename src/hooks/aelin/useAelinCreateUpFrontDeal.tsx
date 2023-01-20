@@ -422,7 +422,7 @@ const initialState: CreateUpFrontDealState = {
   [CreateUpFrontDealSteps.exchangeRates]: {
     investmentTokenToRaise: undefined,
     exchangeRates: undefined,
-    isCapped: false,
+    isCapped: true,
     hasDealMinimum: false,
     minimumAmount: undefined,
   },
