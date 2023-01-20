@@ -2,6 +2,7 @@ import { Network, OwnedNft, getNftsForOwner, initializeAlchemy } from '@alch/alc
 import { getAddress } from '@ethersproject/address'
 import { JsonRpcProvider } from '@ethersproject/providers'
 
+import env from '@/config/env'
 import erc1155 from '@/src/abis/ERC1155.json'
 import erc721 from '@/src/abis/ERC721.json'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
@@ -164,7 +165,7 @@ export const getNftOwnedByAddress = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'X-API-KEY': process.env.QUIXOTIC_API_TOKEN as string,
+        'X-API-KEY': env.QUIXOTIC_API_TOKEN as string,
       },
     }
     const quixoticRes = await fetch(
@@ -257,7 +258,7 @@ export const getNftCollectionData = async (chainId: ChainsValues, collectionAddr
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'X-API-KEY': process.env.QUIXOTIC_API_TOKEN as string,
+        'X-API-KEY': env.QUIXOTIC_API_TOKEN as string,
       },
     }
 
@@ -279,7 +280,7 @@ export const getNftCollectionData = async (chainId: ChainsValues, collectionAddr
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'X-API-KEY': process.env.STRATOS_API_TOKEN as string,
+        'X-API-KEY': env.STRATOS_API_TOKEN as string,
       },
     }
 
@@ -300,7 +301,7 @@ export const getNftCollectionData = async (chainId: ChainsValues, collectionAddr
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'X-API-KEY': process.env.SIMPLEHASH_API_KEY as string,
+        'X-API-KEY': env.SIMPLEHASH_API_KEY as string,
       },
     }
 

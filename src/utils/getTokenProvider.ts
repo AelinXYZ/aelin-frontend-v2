@@ -1,12 +1,13 @@
+import env from '@/config/env'
 import { Chains, ChainsValues } from '@/src/constants/chains'
 
 export const getTokenProvider = (chainId: ChainsValues) => {
   const tokenProvider = {
-    [Chains.mainnet]: process.env.NEXT_PUBLIC_MAINNET_TOKEN_PROVIDER,
-    [Chains.optimism]: process.env.NEXT_PUBLIC_OPTIMISM_TOKEN_PROVIDER,
-    [Chains.arbitrum]: process.env.NEXT_PUBLIC_ARBITRUM_TOKEN_PROVIDER,
-    [Chains.polygon]: process.env.NEXT_PUBLIC_POLYGON_TOKEN_PROVIDER,
-    [Chains.goerli]: process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER,
+    [Chains.mainnet]: env.NEXT_PUBLIC_MAINNET_TOKEN_PROVIDER as string,
+    [Chains.optimism]: env.NEXT_PUBLIC_OPTIMISM_TOKEN_PROVIDER as string,
+    [Chains.arbitrum]: env.NEXT_PUBLIC_ARBITRUM_TOKEN_PROVIDER as string,
+    [Chains.polygon]: env.NEXT_PUBLIC_POLYGON_TOKEN_PROVIDER as string,
+    [Chains.goerli]: env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER as string,
   }
 
   if (!tokenProvider[chainId]) throw new Error('Token provider is missing')

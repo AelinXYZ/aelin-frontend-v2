@@ -16,6 +16,7 @@ import { ConnectOptions, WalletState } from '@web3-onboard/core'
 import { useConnectWallet, useSetChain } from '@web3-onboard/react'
 import nullthrows from 'nullthrows'
 
+import env from '@/config/env'
 import {
   Chains,
   ChainsValues,
@@ -32,9 +33,7 @@ import '@/src/web3/onboard'
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
 
 // Default chain id from env var
-const INITIAL_APP_CHAIN_ID = Number(
-  process.env.NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID || 4,
-) as ChainsValues
+const INITIAL_APP_CHAIN_ID = Number(env.NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID || 4) as ChainsValues
 
 nullthrows(
   Object.values(Chains).includes(INITIAL_APP_CHAIN_ID) ? INITIAL_APP_CHAIN_ID : null,
