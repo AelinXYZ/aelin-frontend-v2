@@ -94,6 +94,14 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
     errors.dealToken = true
   } else if (!isAddress(values.dealToken.address as string)) {
     errors.dealToken = 'Invalid ethereum address'
+  } else if (values.dealToken.address === values.investmentToken?.address) {
+    errors.dealToken = 'The deal and investment token cannot be the same'
+  } else if (
+    values.investmentToken &&
+    values.dealToken.decimals < values.investmentToken.decimals
+  ) {
+    errors.dealToken =
+      'The number of decimals in the deal token must be equal or higher to the number of decimals in the investment token'
   }
 
   if (!values.dealPrivacy) {
@@ -143,6 +151,28 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
         }
       }
     }
+  }
+
+  if (
+    convertToSeconds({
+      days: values.vestingSchedule?.vestingCliff?.days ?? 0,
+      hours: values.vestingSchedule?.vestingCliff?.hours ?? 0,
+      minutes: values.vestingSchedule?.vestingCliff?.minutes ?? 0,
+    }) >
+    1825 * ONE_DAY_IN_SECS
+  ) {
+    errors.vestingSchedule = 'The vesting cliff max is 5 years or 1825 days'
+  }
+
+  if (
+    convertToSeconds({
+      days: values.vestingSchedule?.vestingPeriod?.days ?? 0,
+      hours: values.vestingSchedule?.vestingPeriod?.hours ?? 0,
+      minutes: values.vestingSchedule?.vestingPeriod?.minutes ?? 0,
+    }) >
+    1825 * ONE_DAY_IN_SECS
+  ) {
+    errors.vestingSchedule = 'The vesting period max is 5 years or 1825 days'
   }
 
   return errors
