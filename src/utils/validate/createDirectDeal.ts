@@ -1,10 +1,10 @@
 import { isAddress } from '@ethersproject/address'
-import { BigNumberish } from '@ethersproject/bignumber'
+import { wei } from '@synthetixio/wei'
 
 import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import { POOL_NAME_MAX_LENGTH } from '@/src/constants/misc'
+import { POOL_NAME_MAX_LENGTH, ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS } from '@/src/constants/time'
 import { Token } from '@/src/constants/token'
@@ -119,24 +119,41 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
     if (!values.exchangeRates?.investmentTokenToRaise) {
       errors.exchangeRates = 'Set how much you want to raise'
     } else {
-      if (values.exchangeRates?.investmentTokenToRaise <= 0) {
-        errors.exchangeRates = 'The investment has to be greater than zero'
+      if (!values.exchangeRates?.exchangeRates) {
+        errors.exchangeRates = 'Set an exchange rate'
       } else {
-        if (!values.exchangeRates?.exchangeRates) {
-          errors.exchangeRates = 'Set an exchange rate'
+        const exchangeRatesInWei = wei(
+          values.exchangeRates?.exchangeRates,
+          values.investmentToken?.decimals,
+        )
+        if (!exchangeRatesInWei.gt(ZERO_BN)) {
+          errors.exchangeRates = 'The exchange rate has to be greater than zero'
         } else {
-          if (Number(values.exchangeRates?.exchangeRates) <= 0) {
-            errors.exchangeRates = 'The exchange rate has to be greater than zero'
+          const underlyingDealTokenTotal = wei(
+            values.exchangeRates?.investmentTokenToRaise,
+            values.dealToken?.decimals,
+          ).mul(wei(values.exchangeRates?.exchangeRates, values.dealToken?.decimals))
+          if (!underlyingDealTokenTotal.gt(ZERO_BN)) {
+            errors.exchangeRates =
+              'The deal total has to be greater than zero, please increase amount to raise or the exchange rate'
           } else {
-            if (values.exchangeRates?.hasDealMinimum) {
-              if (!values.exchangeRates?.minimumAmount) {
-                errors.exchangeRates = 'Invalid minimum amount'
-              } else if (
-                Number(values.exchangeRates?.minimumAmount) >
-                Number(values.exchangeRates?.investmentTokenToRaise)
-              ) {
-                errors.exchangeRates =
-                  'The deal minimum has to be equal or less than the amount you would like to raise'
+            const investmentPerDeal = wei(1, values.investmentToken?.decimals).div(
+              exchangeRatesInWei,
+            )
+            if (!investmentPerDeal.gt(ZERO_BN)) {
+              errors.exchangeRates =
+                'Deal token price has to be greater than zero, please decrease the exchange rate'
+            } else {
+              if (values.exchangeRates?.hasDealMinimum) {
+                if (!values.exchangeRates?.minimumAmount) {
+                  errors.exchangeRates = 'Invalid minimum amount'
+                } else if (
+                  Number(values.exchangeRates?.minimumAmount) >
+                  Number(values.exchangeRates?.investmentTokenToRaise)
+                ) {
+                  errors.exchangeRates =
+                    'The deal minimum has to be equal or less than the amount you would like to raise'
+                }
               }
             }
           }
