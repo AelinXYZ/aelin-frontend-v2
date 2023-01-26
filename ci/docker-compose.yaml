@@ -1,0 +1,87 @@
+version: '3'
+services:
+  anvil:
+    image: linuzeth/aelin-anvil
+    command: ["anvil --gas-limit 18446744073709551615 --host 0.0.0.0 --allow-origin '*' --chain-id 5"]
+    environment:
+      - ANVIL_IP_ADDR=0.0.0.0
+    ports:
+      - '8545:8545'
+
+  graph-node:
+    image: graphprotocol/graph-node
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8020:8020'
+      - '8030:8030'
+      - '8040:8040'
+    depends_on:
+      - ipfs
+      - postgres
+      - anvil 
+    environment:
+      postgres_host: postgres
+      postgres_user: graph-node
+      postgres_pass: let-me-in
+      postgres_db: graph-node
+      ipfs: 'ipfs:5001'
+      ethereum: 'mainnet:http://anvil:8545'
+      GRAPH_LOG: info
+
+  ipfs:
+    image: ipfs/go-ipfs:v0.10.0
+    ports:
+      - '5001:5001'
+
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
+    command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
+    environment:
+      POSTGRES_USER: graph-node
+      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_DB: graph-node
+      PGDATA: '/var/lib/postgresql/data'
+      POSTGRES_INITDB_ARGS: '-E UTF8 --locale=C'
+
+  contracts-deployer:
+    image: linuzeth/aelin-contracts-deployer
+    command: [". ./deploy-ci.sh"]
+    depends_on:
+      - anvil
+
+  subgraph-deployer:
+    image: linuzeth/aelin-subgraph-deployer
+    command: ["npm run create-local && npm run deploy-local"]
+    depends_on:
+      contracts-deployer:
+        condition: service_completed_successfully
+
+  aelin-ui:
+    build:
+      context: ..
+      dockerfile: ./ci/Dockerfile
+    environment:
+      - NEXT_PUBLIC_APP_NAME=Aelin
+      - NEXT_PUBLIC_APP_ENV=development
+      - NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID=5
+      - NEXT_PUBLIC_APP_URL=app.aelin.xyz
+      - NEXT_PUBLIC_APP_NAME=aelin
+      - NEXT_PUBLIC_EMAIL_CONTACT=eaae@aza.com
+      - NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI=http://0.0.0.0:8000/subgraphs/name/0xlinus/boot-node-goerli
+      - NEXT_PUBLIC_ETH_GAS_STATION_API_URL=https://ethgasstation.info/json/ethgasAPI.json
+      - NEXT_PUBLIC_GAS_NOW_API_URL=https://etherchain.org/api/gasnow
+      - NEXT_PUBLIC_AELIN_POOL_FACTORY=0x8A791620dd6260079BF849Dc5567aDC3F2FdC318
+      - NEXT_PUBLIC_AELIN_DEAL_FACTORY=0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6
+      - NEXT_PUBLIC_UNI=0x610178dA211FEF7D417bC0e6FeD39F05609AD788
+      - NEXT_PUBLIC_USDC=0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e
+      - NEXT_PUBLIC_ANVIL=http://0.0.0.0:8545
+      - CODEGEN_OUTPUT_FILE=types/generated/queries.ts
+    ports:
+      - '3000:3000'
+    depends_on:
+      subgraph-deployer:
+        condition: service_completed_successfully 
+
