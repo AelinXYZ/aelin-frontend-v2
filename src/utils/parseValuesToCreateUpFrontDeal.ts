@@ -55,15 +55,8 @@ export const parseValuesToCreateUpFrontDeal = (
     dealToken.decimals,
   ).mul(wei(exchangeRates.exchangeRates, dealToken.decimals))
 
-  const exchangeRatesInWei = wei(exchangeRates.exchangeRates, investmentToken.decimals)
-
-  const dealTokenTotalInWei = wei(
-    exchangeRates.investmentTokenToRaise,
-    investmentToken.decimals,
-  ).mul(exchangeRatesInWei)
-
-  const investmentPerDeal = wei(exchangeRates.investmentTokenToRaise, investmentToken.decimals).div(
-    dealTokenTotalInWei,
+  const investmentPerDeal = wei(1, investmentToken.decimals).div(
+    wei(exchangeRates.exchangeRates, investmentToken.decimals),
   )
 
   const purchaseRaiseMinimum = exchangeRates?.minimumAmount
