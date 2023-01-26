@@ -275,10 +275,13 @@ export function calculateDeadlineProgress(deadline: Date, start: Date) {
   }
 
   if (isAfter(now, deadline)) {
-    return '0'
+    return '100'
   }
 
-  const completed = deadline.getTime() - now.getTime()
+  // Formula: (now - start) / (end - start) * 100
+
+  const completed = now.getTime() - start.getTime()
+
   const target = deadline.getTime() - start.getTime()
 
   return Math.ceil((completed / target) * 100).toString()

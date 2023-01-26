@@ -17,7 +17,7 @@ import {
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
-import { EXCHANGE_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
+import { EXCHANGE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { Token } from '@/src/constants/token'
 import {
@@ -315,17 +315,12 @@ export const createDealConfig: Record<CreateUpFrontDealSteps, CreateUpFrontDealS
         value.investmentTokenToRaise > 0 &&
         Number(value.exchangeRates) > 0
       ) {
-        const exchangeRatesInWei = wei(value.exchangeRates, investmentDecimals)
-
-        const dealTokenTotalInWei = wei(value.investmentTokenToRaise, investmentDecimals).mul(
-          exchangeRatesInWei,
-        )
-
-        const investmentPerDeal = wei(value.investmentTokenToRaise, investmentDecimals)
-          .div(dealTokenTotalInWei)
-          .toNumber()
-
         if (!dealTokenSymbol) return '--'
+
+        const exchangeRatesInWei = wei(value.exchangeRates, investmentDecimals)
+        if (!exchangeRatesInWei.gt(ZERO_BN)) return '--'
+
+        const investmentPerDeal = wei(1, investmentDecimals).div(exchangeRatesInWei).toNumber()
 
         return (
           <>

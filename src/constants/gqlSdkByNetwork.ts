@@ -1,25 +1,29 @@
 import { GraphQLClient } from 'graphql-request'
 import nullthrows from 'nullthrows'
 
+import env from '@/config/env'
 import { SdkWithHooks, getSdkWithHooks } from '@/graphql-schema'
 import { Chains, ChainsValues } from '@/src/constants/chains'
-import {
-  GRAPH_URL_ARBITRUM,
-  GRAPH_URL_GOERLI,
-  GRAPH_URL_MAINNET,
-  GRAPH_URL_OPTIMISM,
-  GRAPH_URL_POLYGON,
-} from '@/src/constants/endpoints'
 
 export type AllSDK = Record<ChainsValues, SdkWithHooks>
 
 // Set the queries SDK by chain id.
 export const gqlGqlSdkByNetwork: AllSDK = {
-  [Chains.mainnet]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_MAINNET)),
-  [Chains.goerli]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_GOERLI)),
-  [Chains.optimism]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_OPTIMISM)),
-  [Chains.arbitrum]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_ARBITRUM)),
-  [Chains.polygon]: getSdkWithHooks(new GraphQLClient(GRAPH_URL_POLYGON)),
+  [Chains.mainnet]: getSdkWithHooks(
+    new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_MAINNET as string),
+  ),
+  [Chains.goerli]: getSdkWithHooks(
+    new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI as string),
+  ),
+  [Chains.optimism]: getSdkWithHooks(
+    new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_OPTIMISM as string),
+  ),
+  [Chains.arbitrum]: getSdkWithHooks(
+    new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_ARBITRUM as string),
+  ),
+  [Chains.polygon]: getSdkWithHooks(
+    new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_POLYGON as string),
+  ),
 }
 
 export function getGqlSdkByNetwork(chainId: ChainsValues): ReturnType<typeof getSdkWithHooks> {

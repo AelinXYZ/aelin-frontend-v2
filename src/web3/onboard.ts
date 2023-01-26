@@ -7,11 +7,12 @@ import trezorModule from '@web3-onboard/trezor'
 import walletConnectModule from '@web3-onboard/walletconnect'
 
 import { AelinIconString, AelinLogoString } from '../components/assets/Logo'
+import env from '@/config/env'
 import { Chains, chainsConfig } from '@/src/constants/chains'
 
-const EMAIL_CONTACT = process.env.NEXT_PUBLIC_EMAIL_CONTACT as string
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL as string
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME as string
+const EMAIL_CONTACT = env.NEXT_PUBLIC_EMAIL_CONTACT as string
+const APP_URL = env.NEXT_PUBLIC_APP_URL as string
+const APP_NAME = env.NEXT_PUBLIC_APP_NAME as string
 
 const injected = injectedModule()
 const gnosis = gnosisModule()

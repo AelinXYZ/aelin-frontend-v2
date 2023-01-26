@@ -1,10 +1,9 @@
 import detectEthereumProvider from '@metamask/detect-provider'
 
+import env from '@/config/env'
 import { ChainsValues, getChainsByEnvironmentArray } from '@/src/constants/chains'
 
-const INITIAL_APP_CHAIN_ID = Number(
-  process.env.NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID || 4,
-) as ChainsValues
+const INITIAL_APP_CHAIN_ID = Number(env.NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID || 4) as ChainsValues
 
 type EthereumProvider = {
   isMetaMask: boolean
