@@ -81,12 +81,10 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
 
     if (redemptionDeadLineSeconds > ONE_DAY_IN_SECS * 30) {
       errors.redemptionDeadline = 'Max redemption deadline is 30 days'
-    } else if (
-      !currentNetwork.isProd
-        ? redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS
-        : redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS * 30
-    ) {
-      errors.investmentDeadLine = 'Min redemption deadline is 30 mins'
+    } else if (currentNetwork.isProd && redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS * 30) {
+      errors.redemptionDeadline = 'Min redemption deadline is 30 mins'
+    } else if (redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS) {
+      errors.redemptionDeadline = 'Min redemption deadline is 1 min'
     }
   }
 
