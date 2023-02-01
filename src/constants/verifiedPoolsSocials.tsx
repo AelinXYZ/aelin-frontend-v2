@@ -34,4 +34,10 @@ export const VerifiedPoolsSocials: { [poolAddress: string]: PoolSocials } = {
     discordServerInvite: 'BfntecmA',
     mediumPost: '@thalondao/28995c707e23',
   },
+  ['0x946a90c103336b7d06ee1d1764c7c89aacaecb1a']: {
+    websiteName: 'realmseternum.com',
+    twitterHandle: 'LootRealms',
+    discordServerInvite: 'yF6vNegMZd',
+    mediumPost: '@bibliothecaDAO/bibliothecadao-community-raise-41450b2fdcde',
+  },
 } as const
