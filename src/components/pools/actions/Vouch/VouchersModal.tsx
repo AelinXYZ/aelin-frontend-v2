@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { OrderDirection, User_OrderBy } from '@/graphql-schema'
+import { OrderDirection, PoolCreated_OrderBy, User_OrderBy } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Spinner } from '@/src/components/assets/Spinner'
 import {
@@ -30,7 +30,8 @@ import {
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues } from '@/src/constants/chains'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useAelinUsers from '@/src/hooks/aelin/useAelinUsers'
+import usePoolVouchers from '@/src/hooks/aelin/vouched-pools/usePoolVouchers'
+import { useEnsLookUpAddress } from '@/src/hooks/useEnsResolvers'
 
 type VouchersModalProps = {
   pool: ParsedAelinPool
@@ -139,17 +140,29 @@ const Loading = () => {
   )
 }
 
+const VoucherLinkButton = ({ id }: { id: string }) => {
+  const router = useRouter()
+  const { data: voucherEnsAddress, isValidating } = useEnsLookUpAddress(id)
+
+  return (
+    <ButtonPrimaryLightSm
+      disabled={isValidating}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        router.push(`/?voucher=${voucherEnsAddress}`)
+      }}
+    >
+      See more
+    </ButtonPrimaryLightSm>
+  )
+}
+
 const VouchersTable = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
     const router = useRouter()
     const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
-    const { data, error, hasMore, nextPage } = useAelinUsers({
-      orderBy: User_OrderBy.PoolsVouchedAmt,
-      orderDirection,
-      where: {
-        poolsVouched_contains: [pool.address],
-      },
-    })
+    const { data, hasMore, nextPage } = usePoolVouchers(pool)
 
     const handleSort = () => {
       if (orderDirection === OrderDirection.Desc) return setOrderDirection(OrderDirection.Asc)
@@ -193,12 +206,11 @@ const VouchersTable = genericSuspense(
             ))}
           </TableHead>
           {!data?.length ? (
-            <BaseCard>No vouchers.</BaseCard>
+            <Row>No vouchers.</Row>
           ) : (
             <TableBody>
               {data.map((item, index) => {
                 const { chainId: network, id, poolsVouchedAmt } = item
-
                 return (
                   <Row columns={columns.widths} key={index}>
                     <Cell mobileJustifyContent="center">
@@ -217,15 +229,7 @@ const VouchersTable = genericSuspense(
                       justifyContent={columns.alignment.seeMore}
                       mobileJustifyContent="center"
                     >
-                      <ButtonPrimaryLightSm
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          router.push(`/?voucher=${id}`)
-                        }}
-                      >
-                        See more
-                      </ButtonPrimaryLightSm>
+                      <VoucherLinkButton id={id} />
                     </LinkCell>
                   </Row>
                 )

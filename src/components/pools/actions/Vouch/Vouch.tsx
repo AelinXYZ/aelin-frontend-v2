@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { genericSuspense } from '../../../helpers/SafeSuspense'
@@ -8,6 +8,7 @@ import { Tooltip } from '../../../tooltip/Tooltip'
 import { Contents as BaseContents, Title as BaseTitle } from '../Wrapper'
 import VouchersModal from './VouchersModal'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
@@ -42,6 +43,27 @@ const TitleWrapper = styled.div`
 const VouchButton = styled(ButtonGradient)`
   width: 100%;
 `
+
+const TotalVouchers = genericSuspense(
+  ({ pool }: { pool: ParsedAelinPool }) => {
+    const [totalVouchers, setTotalVouchers] = useState<number>()
+    const { data: aelinVouchedPools } = useAelinVouchedPools()
+
+    useEffect(() => {
+      if (
+        pool &&
+        aelinVouchedPools?.length &&
+        aelinVouchedPools.find(({ address }) => address === pool.address)
+      ) {
+        setTotalVouchers(pool.totalVouchers + 1)
+      } else if (pool) {
+        setTotalVouchers(pool.totalVouchers)
+      } else setTotalVouchers(0)
+    }, [pool, aelinVouchedPools])
+    return <Vouchers>{totalVouchers}</Vouchers>
+  },
+  () => <i>...</i>,
+)
 
 const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) => {
   const [showVouchersModal, setShowVouchersModal] = useState<boolean>(false)
@@ -101,7 +123,7 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
         <Tooltip text="something" />
       </TitleWrapper>
       <Contents>
-        Total vouchers : <Vouchers>{pool.totalVouchers}</Vouchers>{' '}
+        Total vouchers: <TotalVouchers pool={pool} />
       </Contents>
       <VouchButton disabled={!userAddress || isSubmitting} onClick={handleVouchClick}>
         {hasVouched ? 'Disavow' : 'Vouch'}

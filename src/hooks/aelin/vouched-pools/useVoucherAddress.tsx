@@ -16,6 +16,7 @@ export default function useVoucherAddress() {
     process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string,
   )
   const { data: ensAddress } = useEnsResolver(voucher as string)
+  const { data: ensDotEthAddress } = useEnsResolver(voucher + '.eth')
 
   useEffect(() => {
     if (!voucher || typeof voucher !== 'string') {
@@ -24,10 +25,12 @@ export default function useVoucherAddress() {
       setVoucherAddress(voucher)
     } else if (isValidENSName(voucher) && ensAddress) {
       setVoucherAddress(ensAddress)
+    } else if (isValidENSName(voucher + '.eth') && ensDotEthAddress) {
+      setVoucherAddress(ensDotEthAddress)
     } else {
       setVoucherAddress(ZERO_ADDRESS)
     }
-  }, [voucher, voucherAddress, aelinVouchAddress, ensAddress])
+  }, [voucher, voucherAddress, aelinVouchAddress, ensAddress, ensDotEthAddress])
 
   return voucherAddress
 }
