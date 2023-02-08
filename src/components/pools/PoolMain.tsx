@@ -35,6 +35,7 @@ import { VerifiedPoolsSocials } from '@/src/constants/verifiedPoolsSocials'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
+import { usePoolSupportsMethod } from '@/src/hooks/aelin/usePoolSupportsMethod'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
 import { getPoolType } from '@/src/utils/aelinPoolUtils'
@@ -97,6 +98,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
 
   const isVerified = useCheckVerifiedPool(pool)
 
+  const supportsVouch = usePoolSupportsMethod(pool, 'vouch')
+
   return (
     <>
       <Head>
@@ -158,7 +161,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 </RequiredConnection>
               </NftSelectionProvider>
             </ActionTabs>
-            <Vouch pool={pool} />
+            {supportsVouch && <Vouch pool={pool} />}
           </ActionsWrapper>
           {pool.hasNftList && <NftCollectionsTable pool={pool} />}
         </MainGrid>
