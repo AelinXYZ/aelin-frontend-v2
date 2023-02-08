@@ -48,7 +48,7 @@ export const ensResolver = async (name: string) => {
   return name
 }
 
-// Get ens name by address
+// Get address by ens name
 export const useEnsResolver = (name: string | undefined) => {
   const { data, isValidating } = useSWR<string | null>(
     mainnetRpcProvider && name ? ['ensResolver', name] : null,
