@@ -97,7 +97,7 @@ const VoucherLinkButton = ({ id }: { id: string }) => {
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
-        router.push(`/?voucher=${voucherEnsAddress}`)
+        router.push(`/?voucher=${voucherEnsAddress}`, undefined, { shallow: true })
       }}
     >
       See more
