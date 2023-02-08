@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const Title = styled.h4`
+export const Title = styled.h4`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
   font-size: 1.8rem;

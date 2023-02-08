@@ -21,7 +21,7 @@ import {
   HideOnMobileCell,
   LinkCell,
   LoadingTableRow,
-  RowLink,
+  Row,
   TableBody,
   TableHead,
 } from '@/src/components/pureStyledComponents/common/Table'
@@ -29,6 +29,7 @@ import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import useAelinUsers from '@/src/hooks/aelin/useAelinUsers'
+import { useEnsLookUpAddress } from '@/src/hooks/useEnsResolvers'
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -84,6 +85,24 @@ enum SectionFilter {
   SPONSORS = 'poolsSponsored_not',
   VOUCHERS = 'poolsVouched_not',
   INVESTORS = 'poolsInvested_not',
+}
+
+const VoucherLinkButton = ({ id }: { id: string }) => {
+  const router = useRouter()
+  const { data: voucherEnsAddress, isValidating } = useEnsLookUpAddress(id)
+
+  return (
+    <ButtonPrimaryLightSm
+      disabled={isValidating}
+      onClick={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        router.push(`/?voucher=${voucherEnsAddress}`)
+      }}
+    >
+      See more
+    </ButtonPrimaryLightSm>
+  )
 }
 
 const List: React.FC = () => {
@@ -265,17 +284,7 @@ const List: React.FC = () => {
               } = item
 
               return (
-                <RowLink
-                  columns={columns.widths}
-                  href={
-                    activeTab === Section.SPONSORS
-                      ? `/?filter=${id}`
-                      : Section.VOUCHERS
-                      ? `/?voucher=${id}`
-                      : '#'
-                  }
-                  key={index}
-                >
+                <Row columns={columns.widths} key={index}>
                   <Cell mobileJustifyContent="center">
                     <ENSOrAddress
                       address={id}
@@ -300,24 +309,22 @@ const List: React.FC = () => {
                       justifyContent={columns.alignment.seeMore}
                       mobileJustifyContent="center"
                     >
-                      <ButtonPrimaryLightSm
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          router.push(
-                            activeTab === Section.SPONSORS
-                              ? `/?filter=${id}`
-                              : Section.VOUCHERS
-                              ? `/?voucher=${id}`
-                              : '#',
-                          )
-                        }}
-                      >
-                        See more
-                      </ButtonPrimaryLightSm>
+                      {activeTab === Section.VOUCHERS ? (
+                        <VoucherLinkButton id={id} />
+                      ) : (
+                        <ButtonPrimaryLightSm
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            router.push(activeTab === Section.SPONSORS ? `/?filter=${id}` : '#')
+                          }}
+                        >
+                          See more
+                        </ButtonPrimaryLightSm>
+                      )}
                     </LinkCell>
                   )}
-                </RowLink>
+                </Row>
               )
             })}
           </TableBody>

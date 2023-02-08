@@ -24,8 +24,6 @@ gql`
     holder
     filter
 
-    totalVouchers
-
     totalAmountEarnedBySponsor
     totalAmountAccepted
     totalAmountWithdrawn
@@ -33,6 +31,7 @@ gql`
     totalUsersInvested
     totalAddressesInvested
     totalVouchers
+    vouchers
 
     vestingEnds
     vestingStarts
