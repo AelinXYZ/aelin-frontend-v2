@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { Contents as BaseContents, Title as BaseTitle } from '../Wrapper'
 import VouchersModal from './VouchersModal'
+import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
   ButtonGradient,
@@ -11,6 +12,7 @@ import {
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { Tooltip } from '@/src/components/tooltip/Tooltip'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import { useAelinPoolSupportsMethod } from '@/src/hooks/aelin/useAelinSupportsMethod'
 import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
 import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
@@ -21,7 +23,7 @@ const Container = styled(BaseCard)`
   align-items: center;
   display: flex;
   flex-direction: column;
-  height: fit-content;
+  height: 215px;
   justify-content: center;
   padding: 30px 55px;
   gap: 10px;
@@ -74,9 +76,13 @@ const TotalVouchers = genericSuspense(
 
 const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) => {
   const [showVouchersModal, setShowVouchersModal] = useState<boolean>(false)
-  const { address: userAddress } = useWeb3Connection()
+  const { address: userAddress, appChainId } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
   const isUpfrontDeal = !!pool.upfrontDeal
+
+  const supportsVouch = useAelinPoolSupportsMethod(pool, 'vouch')
+
+  const wrongNetwork = pool.chainId !== appChainId
 
   const hasVouched = !!pool.vouchers?.includes(userAddress || '')
 
@@ -125,18 +131,35 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
 
   return (
     <Container>
-      <TitleWrapper>
-        <Title>Vouch for this pool</Title>
-        <Tooltip text="Vouching for a pool indicates that you trust the protocol raising funds. It is recommended to vouch from ens accounts" />
-      </TitleWrapper>
-      <Contents>
-        Total vouchers: <TotalVouchers pool={pool} />
-      </Contents>
-      <VouchButton disabled={!userAddress || isSubmitting} onClick={handleVouchClick}>
-        {hasVouched ? 'Disavow' : 'Vouch'}
-      </VouchButton>
-      <SeeAllButton onClick={handleOpenVouchersModal}>See all vouchers</SeeAllButton>
-      {showVouchersModal && <VouchersModal onClose={handleCloseVouchersModal} pool={pool} />}
+      {supportsVouch !== undefined ? (
+        <>
+          <TitleWrapper>
+            <Title>Vouch for this pool</Title>
+            <Tooltip text="Vouching for a pool indicates that you trust the protocol raising funds. It is recommended to vouch from ens accounts" />
+          </TitleWrapper>
+          <Contents>
+            {supportsVouch ? (
+              <>
+                Total vouchers: <TotalVouchers pool={pool} />
+              </>
+            ) : (
+              <>Vouching not supported</>
+            )}
+          </Contents>
+          <VouchButton
+            disabled={!userAddress || isSubmitting || !supportsVouch || wrongNetwork}
+            onClick={handleVouchClick}
+          >
+            {hasVouched ? 'Disavow' : 'Vouch'}
+          </VouchButton>
+          <SeeAllButton disabled={!supportsVouch} onClick={handleOpenVouchersModal}>
+            See all vouchers
+          </SeeAllButton>
+          {showVouchersModal && <VouchersModal onClose={handleCloseVouchersModal} pool={pool} />}
+        </>
+      ) : (
+        <Loading />
+      )}
     </Container>
   )
 })
