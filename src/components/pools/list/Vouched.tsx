@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { debounce } from 'lodash'
 
 import { genericSuspense } from '../../helpers/SafeSuspense'
+import env from '@/config/env'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Lock } from '@/src/components/assets/Lock'
 import { DynamicDeadline as BaseDynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -29,7 +30,7 @@ import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 import { poolStagesText } from '@/src/constants/pool'
 import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
 import usePrevious from '@/src/hooks/common/usePrevious'
-import { useEnsLookUpAddress, useEnsResolver } from '@/src/hooks/useEnsResolvers'
+import { useEnsLookUpAddress } from '@/src/hooks/useEnsResolvers'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 import { isMerklePool, isPrivatePool } from '@/src/utils/aelinPoolUtils'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
@@ -256,7 +257,7 @@ const tableHeaderCells = [
   },
 ]
 
-const aelinVoucherENS = process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string
+const aelinVoucherENS = env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string
 
 const Loading = () => <LoadingWrapper> loading... </LoadingWrapper>
 
