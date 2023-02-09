@@ -32,6 +32,7 @@ const envVars = {
   NEXT_PUBLIC_MAINTENANCE_MODE: process.env.NEXT_PUBLIC_MAINTENANCE_MODE,
   NEXT_PUBLIC_MAINTENANCE_MESSAGE_TITLE: process.env.NEXT_PUBLIC_MAINTENANCE_MESSAGE_TITLE,
   NEXT_PUBLIC_MAINTENANCE_MESSAGE_SUBTITLE: process.env.NEXT_PUBLIC_MAINTENANCE_MESSAGE_SUBTITLE,
+  NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS: process.env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS,
 }
 
 const envConfig: Record<EnvKey, ValidatorSpec<string | number | boolean>> = {
@@ -59,6 +60,7 @@ const envConfig: Record<EnvKey, ValidatorSpec<string | number | boolean>> = {
   NEXT_PUBLIC_MAINTENANCE_MODE: bool(),
   NEXT_PUBLIC_MAINTENANCE_MESSAGE_TITLE: str(),
   NEXT_PUBLIC_MAINTENANCE_MESSAGE_SUBTITLE: str(),
+  NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS: str(),
 }
 
 const env = cleanEnv(envVars, envConfig)
