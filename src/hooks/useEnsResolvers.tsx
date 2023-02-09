@@ -53,7 +53,7 @@ export const useEnsResolver = (name: string | undefined) => {
   const { data, isValidating } = useSWR<string | null>(
     mainnetRpcProvider && name ? ['ensResolver', name] : null,
     async () => {
-      if (!name || !isValidENSName) return null
+      if (!name || !isValidENSName(name)) return null
 
       try {
         const ens = await mainnetRpcProvider.resolveName(name)
