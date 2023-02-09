@@ -16,6 +16,7 @@ export type ParsedUser = {
   poolsInvested: ParsedAelinPool[]
   poolsAsHolder: ParsedAelinPool[]
   poolsSponsored: ParsedAelinPool[]
+  poolsVouched: ParsedAelinPool[]
   dealsAccepted: ParsedDealAcceptedsHistory[]
   upfrontDealsAccepted: ParsedAelinPool[]
 }
@@ -42,15 +43,16 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
               poolsInvested: [],
               poolsAsHolder: [],
               poolsSponsored: [],
+              poolsVouched: [],
               dealsAccepted: [],
               upfrontDealsAccepted: [],
             }
           }
-
           const poolAddresses = [
             user.poolsInvested.map((poolCreated) => poolCreated.id),
             user.poolsAsHolder.map((poolCreated) => poolCreated.id),
             user.poolsSponsored.map((poolCreated) => poolCreated.id),
+            user.poolsVouched.map((poolCreated) => poolCreated.id),
             user.dealsAccepted.map((dealAccepted) => dealAccepted.pool.id),
             user.upfrontDealsAccepted.map((poolCreated) => poolCreated.id),
           ]
@@ -91,6 +93,14 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
               }),
             ),
+            poolsVouched: user.poolsVouched.map((pool) =>
+              getParsedPool({
+                chainId,
+                pool,
+                poolAddress: pool.id,
+                purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
+              }),
+            ),
             dealsAccepted: user.dealsAccepted.map(
               ({ dealTokenAmount, investmentAmount, pool, timestamp }) =>
                 getParsedDealAcceptedsHistory({
@@ -120,6 +130,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
             poolsInvested: [],
             poolsAsHolder: [],
             poolsSponsored: [],
+            poolsVouched: [],
             dealsAccepted: [],
             upfrontDealsAccepted: [],
           }
@@ -142,6 +153,11 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
             ['start'],
             ['desc'],
           ),
+          poolsVouched: orderBy(
+            [...resultAcc.poolsVouched, ...value.poolsVouched],
+            ['start'],
+            ['desc'],
+          ),
           poolsAsHolder: orderBy(
             [...resultAcc.poolsAsHolder, ...value.poolsAsHolder],
             ['start'],
@@ -160,6 +176,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
         poolsInvested: [],
         poolsAsHolder: [],
         poolsSponsored: [],
+        poolsVouched: [],
         dealsAccepted: [],
         upfrontDealsAccepted: [],
       },
@@ -172,7 +189,7 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
 }
 
 export default function useAelinUser(userAddress: string | null, config?: SWRConfiguration) {
-  return useSWR(userAddress?.toLocaleLowerCase(), fetcherUser, {
+  return useSWR<ParsedUser | undefined, Error>(userAddress?.toLocaleLowerCase(), fetcherUser, {
     ...config,
 
     // NOTE: Seems like SWR have some bug in default stable-hash comparison for complex objects causing extra rerendering.

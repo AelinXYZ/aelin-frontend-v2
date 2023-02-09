@@ -14,6 +14,7 @@ export interface ParsedUserAmt {
   id: string
   chainId: ChainsValues
   poolsInvestedAmt: number
+  poolsVouchedAmt: number
   poolsAsHolderAmt: number
   poolsSponsoredAmt: number
   dealsAcceptedAmt: number
@@ -33,6 +34,7 @@ export async function fetcherUsers(variables: UsersQueryVariables) {
               id: user.id,
               chainId,
               poolsInvestedAmt: user.poolsInvestedAmt,
+              poolsVouchedAmt: user.poolsVouchedAmt,
               poolsAsHolderAmt: user.poolsAsHolderAmt,
               poolsSponsoredAmt: user.poolsSponsoredAmt,
               dealsAcceptedAmt: user.dealsAcceptedAmt,

@@ -69,6 +69,8 @@ export type ParsedAelinPool = {
   hasNftList: boolean
   nftCollectionRules: ParsedNftCollectionRules[]
   minimumPurchaseAmount?: DetailedNumber
+  totalVouchers: number
+  vouchers: string[]
   upfrontDeal?: {
     address: string
     name: string
@@ -223,6 +225,8 @@ export const getParsedPool = ({
     minimumPurchaseAmount: minimumPurchaseAmount
       ? getMinimumPurchaseAmount(minimumPurchaseAmount, purchaseTokenDecimals)
       : undefined,
+    totalVouchers: pool.totalVouchers,
+    vouchers: pool.vouchers,
   }
 
   const dealDetails = pool.deal

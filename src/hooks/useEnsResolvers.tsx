@@ -31,7 +31,7 @@ export const useEnsLookUpAddress = (address: string) => {
   }
 }
 
-const isValidENSName = (str: string) => str.length > 3 && str.includes('.')
+export const isValidENSName = (str: string) => str.length > 3 && str.includes('.')
 
 // get address by ens name
 export const ensResolver = async (name: string) => {
@@ -46,4 +46,27 @@ export const ensResolver = async (name: string) => {
     }
   }
   return name
+}
+
+// Get address by ens name
+export const useEnsResolver = (name: string | undefined) => {
+  const { data, isValidating } = useSWR<string | null>(
+    mainnetRpcProvider && name ? ['ensResolver', name] : null,
+    async () => {
+      if (!name || !isValidENSName(name)) return null
+
+      try {
+        const ens = await mainnetRpcProvider.resolveName(name)
+        if (!ens) throw new Error(`No address for this ens name`)
+        return ens
+      } catch (err) {
+        return null
+      }
+    },
+  )
+
+  return {
+    data,
+    isValidating,
+  }
 }
