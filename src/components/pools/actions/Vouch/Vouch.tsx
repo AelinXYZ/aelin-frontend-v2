@@ -4,7 +4,10 @@ import styled from 'styled-components'
 import { Contents as BaseContents, Title as BaseTitle } from '../Wrapper'
 import VouchersModal from './VouchersModal'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonGradient,
+  ButtonPrimaryLight,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { Tooltip } from '@/src/components/tooltip/Tooltip'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -41,6 +44,10 @@ const TitleWrapper = styled.div`
 `
 
 const VouchButton = styled(ButtonGradient)`
+  width: 100%;
+`
+
+const SeeAllButton = styled(ButtonPrimaryLight)`
   width: 100%;
 `
 
@@ -120,7 +127,7 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
     <Container>
       <TitleWrapper>
         <Title>Vouch for this pool</Title>
-        <Tooltip text="something" />
+        <Tooltip text="Vouching for a pool indicates that you trust the protocol raising funds. It is recommended to vouch from ens accounts" />
       </TitleWrapper>
       <Contents>
         Total vouchers: <TotalVouchers pool={pool} />
@@ -128,7 +135,7 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
       <VouchButton disabled={!userAddress || isSubmitting} onClick={handleVouchClick}>
         {hasVouched ? 'Disavow' : 'Vouch'}
       </VouchButton>
-      <VouchButton onClick={handleOpenVouchersModal}>See all vouchers</VouchButton>
+      <SeeAllButton onClick={handleOpenVouchersModal}>See all vouchers</SeeAllButton>
       {showVouchersModal && <VouchersModal onClose={handleCloseVouchersModal} pool={pool} />}
     </Container>
   )

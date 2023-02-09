@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { getAddress } from '@ethersproject/address'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
@@ -226,7 +227,7 @@ export const getParsedPool = ({
       ? getMinimumPurchaseAmount(minimumPurchaseAmount, purchaseTokenDecimals)
       : undefined,
     totalVouchers: pool.totalVouchers,
-    vouchers: pool.vouchers,
+    vouchers: pool.vouchers.map((addr) => getAddress(addr)),
   }
 
   const dealDetails = pool.deal
