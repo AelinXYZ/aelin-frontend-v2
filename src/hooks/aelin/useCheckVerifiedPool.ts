@@ -1,8 +1,8 @@
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useAelinVouchedPools from '@/src/hooks/aelin/useAelinVouchedPools'
+import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
 
 export const useCheckVerifiedPool = (pool: ParsedAelinPool) => {
-  const { data, error } = useAelinVouchedPools({})
+  const { data, error } = useAelinVouchedPools()
 
   if (error) {
     return false

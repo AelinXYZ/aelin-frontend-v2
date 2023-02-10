@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { getAddress } from '@ethersproject/address'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { ClientError } from 'graphql-request'
 import { SWRConfiguration } from 'swr'
@@ -69,6 +70,8 @@ export type ParsedAelinPool = {
   hasNftList: boolean
   nftCollectionRules: ParsedNftCollectionRules[]
   minimumPurchaseAmount?: DetailedNumber
+  totalVouchers: number
+  vouchers: string[]
   upfrontDeal?: {
     address: string
     name: string
@@ -223,6 +226,8 @@ export const getParsedPool = ({
     minimumPurchaseAmount: minimumPurchaseAmount
       ? getMinimumPurchaseAmount(minimumPurchaseAmount, purchaseTokenDecimals)
       : undefined,
+    totalVouchers: pool.totalVouchers,
+    vouchers: pool.vouchers.map((addr) => getAddress(addr)),
   }
 
   const dealDetails = pool.deal
