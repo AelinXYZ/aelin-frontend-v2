@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
 import useSWR from 'swr'
 
-import { Chains, getNetworkConfig } from '../constants/chains'
+import { Chains, getNetworkConfig } from '@/src/constants/chains'
 
 const { rpcUrl: mainnetRpcUrl } = getNetworkConfig(Chains.mainnet)
 export const mainnetRpcProvider = new JsonRpcProvider(mainnetRpcUrl)
@@ -17,7 +17,9 @@ export const useEnsLookUpAddress = (address: string) => {
     async () => {
       try {
         const ens = await mainnetRpcProvider.lookupAddress(address)
+
         if (!ens) throw new Error(`No ens name for this address`)
+
         return ens
       } catch (err) {
         return address
@@ -38,7 +40,9 @@ export const ensResolver = async (name: string) => {
   if (isValidENSName(name)) {
     try {
       const ens = await mainnetRpcProvider.resolveName(name)
+
       if (!ens) throw new Error(`No address for this ens name`)
+
       return ens.toLowerCase()
     } catch (err) {
       console.log(err)

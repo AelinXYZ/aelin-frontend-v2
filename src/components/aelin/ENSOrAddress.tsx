@@ -7,7 +7,7 @@ import InlineLoading from '@/src/components/pureStyledComponents/common/InlineLo
 import { CellProps } from '@/src/components/pureStyledComponents/common/Table'
 import { ExternalLink as Wrapper } from '@/src/components/table/ExternalLink'
 import { ChainsValues } from '@/src/constants/chains'
-import { useEnsLookUpAddress } from '@/src/hooks/useEnsResolvers'
+import { isValidENSName, useEnsLookUpAddress, useEnsResolver } from '@/src/hooks/useEnsResolvers'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { shortenAddress } from '@/src/utils/string'
@@ -23,15 +23,38 @@ interface Props extends CellProps {
   network?: ChainsValues
 }
 
-const ENSOrAddress: React.FC<Props> = ({ address, network }) => {
-  const { data } = useEnsLookUpAddress(address)
+const AddressToENS = ({ address, network }: Props) => {
   const { appChainId } = useWeb3Connection()
+  const { data } = useEnsLookUpAddress(address)
 
-  return data ? (
+  if (!data) return null
+
+  return (
     <Wrapper href={getExplorerUrl(address, network ?? appChainId)}>
       <Content>{isAddress(data) ? shortenAddress(data) : data}</Content>
     </Wrapper>
-  ) : null
+  )
+}
+
+const ENStoAddress = ({ address, network }: Props) => {
+  const { appChainId } = useWeb3Connection()
+  const { data } = useEnsResolver(address)
+
+  if (!data) return null
+
+  return (
+    <Wrapper href={getExplorerUrl(data, network ?? appChainId)}>
+      <Content>{address}</Content>
+    </Wrapper>
+  )
+}
+
+const ENSOrAddress = ({ address, network }: Props) => {
+  if (isValidENSName(address)) {
+    return <ENStoAddress address={address} network={network} />
+  }
+
+  return <AddressToENS address={address} network={network} />
 }
 
 export default genericSuspense(ENSOrAddress, () => <InlineLoading />)
