@@ -10,6 +10,7 @@ export const USERS = gql`
     $orderDirection: OrderDirection
     $where: User_filter
     $block: Block_height
+    $whereDeposits: Deposit_filter
   ) {
     users(
       skip: $skip
@@ -26,6 +27,16 @@ export const USERS = gql`
       poolsSponsoredAmt
       dealsAcceptedAmt
       upfrontDealsAcceptedAmt
+      history {
+        deposits(where: $whereDeposits) {
+          amountDeposited
+          pool {
+            id
+            purchaseTokenDecimals
+            purchaseTokenSymbol
+          }
+        }
+      }
     }
   }
 `

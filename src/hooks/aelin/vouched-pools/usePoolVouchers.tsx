@@ -7,7 +7,7 @@ import { OrderDirection, User_OrderBy } from '@/graphql-schema'
 
 type ParsedCouncilAmt = Omit<
   ParsedUserAmt,
-  'poolsInvestedAmt' | 'poolsAsHolderAmt' | 'poolsSponsoredAmt' | 'dealsAcceptedAmt'
+  'poolsInvestedAmt' | 'poolsAsHolderAmt' | 'poolsSponsoredAmt' | 'dealsAcceptedAmt' | 'history'
 >
 
 export default function usePoolVouchers(pool: ParsedAelinPool) {

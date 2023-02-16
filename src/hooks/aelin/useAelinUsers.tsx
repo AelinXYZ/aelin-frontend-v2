@@ -1,14 +1,36 @@
 import { useCallback } from 'react'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
-import { User_OrderBy, UsersQueryVariables } from '@/graphql-schema'
+import { Deposit, User_OrderBy, UsersQueryVariables } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { SPONSORS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { USERS_QUERY_NAME } from '@/src/queries/pools/users'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
+import { formatToken } from '@/src/web3/bigNumber'
+
+export interface RawDeposit {
+  amountDeposited: string
+  pool: {
+    id: string
+    purchaseTokenDecimals?: number | null
+    purchaseTokenSymbol: string
+  }
+}
+
+export interface Deposits {
+  [poolAddress: string]: {
+    deposits: {
+      raw: BigNumber
+      formatted: string | undefined
+    }[]
+    purchaseTokenSymbol: string
+  }
+}
 
 export interface ParsedUserAmt {
   id: string
@@ -18,6 +40,33 @@ export interface ParsedUserAmt {
   poolsAsHolderAmt: number
   poolsSponsoredAmt: number
   dealsAcceptedAmt: number
+  history: {
+    deposits: Deposits
+  }
+}
+
+const formatDeposits = (deposits: RawDeposit[]): Deposits => {
+  return deposits.reduce((parsedDeposits: Deposits, rawDeposit: RawDeposit) => {
+    const formattedDeposit = {
+      raw: BigNumber.from(rawDeposit.amountDeposited),
+      formatted: formatToken(
+        rawDeposit.amountDeposited,
+        rawDeposit.pool.purchaseTokenDecimals || BASE_DECIMALS,
+        DISPLAY_DECIMALS,
+      ),
+    }
+
+    const poolDeposits = parsedDeposits[rawDeposit.pool.id]?.deposits || []
+    const deposit = {
+      deposits: [...poolDeposits, formattedDeposit],
+      purchaseTokenSymbol: rawDeposit.pool.purchaseTokenSymbol,
+    }
+
+    return {
+      ...parsedDeposits,
+      [rawDeposit.pool.id]: deposit,
+    }
+  }, {})
 }
 
 export async function fetcherUsers(variables: UsersQueryVariables) {
@@ -38,6 +87,9 @@ export async function fetcherUsers(variables: UsersQueryVariables) {
               poolsAsHolderAmt: user.poolsAsHolderAmt,
               poolsSponsoredAmt: user.poolsSponsoredAmt,
               dealsAcceptedAmt: user.dealsAcceptedAmt,
+              history: {
+                deposits: formatDeposits(user.history?.deposits || []),
+              },
             }
           }),
         )
@@ -87,7 +139,7 @@ export enum UserType {
   Holder = 'Holder',
 }
 
-export default function useAelinUsers(variables: UsersQueryVariables) {
+export default function useAelinUsers(variables: UsersQueryVariables, suspense = true) {
   const {
     data = [],
     error,
@@ -99,6 +151,7 @@ export default function useAelinUsers(variables: UsersQueryVariables) {
     revalidateFirstPage: true,
     revalidateOnMount: true,
     revalidateOnFocus: true,
+    suspense,
   })
 
   const hasMore = !error && data[data.length - 1]?.length !== 0
