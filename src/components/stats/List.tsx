@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import { isValidAddress } from 'ethereumjs-util'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, User_OrderBy } from '@/graphql-schema'
@@ -89,6 +90,7 @@ enum SectionFilter {
 
 const VoucherLinkButton = ({ id }: { id: string }) => {
   const router = useRouter()
+
   const { data: voucherEnsAddress, isValidating } = useEnsLookUpAddress(id)
 
   return (
@@ -107,6 +109,7 @@ const VoucherLinkButton = ({ id }: { id: string }) => {
 
 const List: React.FC = () => {
   const router = useRouter()
+  const searchRef = useRef<HTMLInputElement>(null)
   const [sortBy, setSortBy] = useState<User_OrderBy | undefined>()
   const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
   const [searchString, setSearchString] = useState<string>()
@@ -114,7 +117,7 @@ const List: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Section>(Section.SPONSORS)
 
   const {
-    query: { section },
+    query: { id, section },
   } = router
 
   const { data, error, hasMore, nextPage } = useAelinUsers({
@@ -221,6 +224,13 @@ const List: React.FC = () => {
     }
   }, [section, setSectionFilter])
 
+  useEffect(() => {
+    if (searchRef.current && id && typeof id === 'string' && section === Section.INVESTORS) {
+      searchRef.current.value = id
+      setSearchString(id)
+    }
+  }, [searchRef, id, section])
+
   return (
     <>
       <HeaderWrapper>
@@ -244,6 +254,7 @@ const List: React.FC = () => {
               setSearchString(evt.target.value)
             }}
             placeholder={`Enter ${activeTab.slice(0, -1)} address...`}
+            ref={searchRef}
           />
         </SearchWrapper>
       </HeaderWrapper>

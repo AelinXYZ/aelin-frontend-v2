@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { OrderDirection, User_OrderBy } from '@/graphql-schema'
+import { Investor_OrderBy, OrderDirection } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Spinner } from '@/src/components/assets/Spinner'
 import {
@@ -29,11 +29,12 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues } from '@/src/constants/chains'
+import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import useAelinInvestors from '@/src/hooks/aelin/useAelinInvestors'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import usePoolVouchers from '@/src/hooks/aelin/vouched-pools/usePoolVouchers'
-import { useEnsLookUpAddress } from '@/src/hooks/useEnsResolvers'
+import { formatToken } from '@/src/web3/bigNumber'
 
-type VouchersModalProps = {
+type InvestorsModalProps = {
   pool: ParsedAelinPool
   onClose: () => void
 }
@@ -134,35 +135,23 @@ const columns = {
 const Loading = () => {
   return (
     <LoadingWrapper>
-      <Spinner />
-      <br />
       <i>Loading</i>
+      <Spinner />
     </LoadingWrapper>
   )
 }
 
-const VoucherLinkButton = ({ id }: { id: string }) => {
-  const router = useRouter()
-  const { data: voucherEnsAddress, isValidating } = useEnsLookUpAddress(id)
-
-  return (
-    <ButtonPrimaryLightSm
-      disabled={isValidating}
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        router.push(`/?voucher=${voucherEnsAddress}`, undefined, { shallow: true })
-      }}
-    >
-      See more
-    </ButtonPrimaryLightSm>
-  )
-}
-
-const VouchersTable = genericSuspense(
+const InvestorsTable = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
+    const router = useRouter()
     const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
-    const { data, hasMore, nextPage } = usePoolVouchers(pool)
+
+    const { data, hasMore, nextPage } = useAelinInvestors({
+      orderDirection: OrderDirection.Desc,
+      where: {
+        poolAddress: pool.address,
+      },
+    })
 
     const handleSort = () => {
       if (orderDirection === OrderDirection.Desc) return setOrderDirection(OrderDirection.Asc)
@@ -171,11 +160,11 @@ const VouchersTable = genericSuspense(
 
     const tableHeaderCells = [
       {
-        title: 'Address',
+        title: 'Address or ens',
       },
       {
-        title: 'Pools Vouched',
-        sortKey: User_OrderBy.PoolsVouchedAmt,
+        title: 'Amount invested',
+        sortKey: Investor_OrderBy.AmountInvested,
       },
     ]
 
@@ -204,30 +193,43 @@ const VouchersTable = genericSuspense(
             ))}
           </TableHead>
           {!data?.length ? (
-            <Row>No vouchers.</Row>
+            <Row>No investors.</Row>
           ) : (
             <TableBody>
-              {data.map((item, index) => {
-                const { chainId: network, id, poolsVouchedAmt } = item
+              {data.map(({ amountInvested: amountInvestedRaw, userAddress }, index) => {
+                const amountInvestedFormatted = formatToken(
+                  amountInvestedRaw,
+                  pool.investmentTokenDecimals || BASE_DECIMALS,
+                  DISPLAY_DECIMALS,
+                )
+
                 return (
                   <Row columns={columns.widths} key={index}>
                     <Cell mobileJustifyContent="center">
                       <ENSOrAddress
-                        address={id}
+                        address={userAddress}
                         light
                         mobileJustifyContent="center"
-                        network={network as ChainsValues}
+                        network={pool.chainId as ChainsValues}
                       />
                     </Cell>
                     <Cell mobileJustifyContent="center">
-                      <HideOnDesktop>Pools Vouched:&nbsp;</HideOnDesktop>
-                      {poolsVouchedAmt}
+                      <HideOnDesktop>Amount invested:&nbsp;</HideOnDesktop>
+                      {amountInvestedFormatted} {pool.investmentTokenSymbol}
                     </Cell>
                     <LinkCell
                       justifyContent={columns.alignment.seeMore}
                       mobileJustifyContent="center"
                     >
-                      <VoucherLinkButton id={id} />
+                      <ButtonPrimaryLightSm
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          router.push(`/stats?section=investors&id=${userAddress}`)
+                        }}
+                      >
+                        See more
+                      </ButtonPrimaryLightSm>
                     </LinkCell>
                   </Row>
                 )
@@ -241,13 +243,13 @@ const VouchersTable = genericSuspense(
   () => <Loading />,
 )
 
-const VouchersModal: React.FC<VouchersModalProps> = ({ onClose, pool }) => {
+const InvestorsModal: React.FC<InvestorsModalProps> = ({ onClose, pool }) => {
   return (
-    <Modal onClose={onClose} showCancelButton={false} size="700px" title="Vouchers">
-      <VouchersTable pool={pool} />
+    <Modal onClose={onClose} showCancelButton={false} size="700px" title="Investors">
+      <InvestorsTable pool={pool} />
       <CloseButton onClick={onClose}>Close</CloseButton>
     </Modal>
   )
 }
 
-export default VouchersModal
+export default InvestorsModal
