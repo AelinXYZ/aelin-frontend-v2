@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { OrderDirection, PoolCreated_OrderBy, User_OrderBy } from '@/graphql-schema'
+import { OrderDirection, User_OrderBy } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Spinner } from '@/src/components/assets/Spinner'
 import {
@@ -134,8 +134,9 @@ const columns = {
 const Loading = () => {
   return (
     <LoadingWrapper>
-      <i>Loading</i>
       <Spinner />
+      <br />
+      <i>Loading</i>
     </LoadingWrapper>
   )
 }
@@ -160,7 +161,6 @@ const VoucherLinkButton = ({ id }: { id: string }) => {
 
 const VouchersTable = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
-    const router = useRouter()
     const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
     const { data, hasMore, nextPage } = usePoolVouchers(pool)
 
@@ -193,13 +193,11 @@ const VouchersTable = genericSuspense(
               <SortableTH
                 isActive={!!sortKey}
                 key={index}
-                onClick={
-                  sortKey
-                    ? () => {
-                        handleSort()
-                      }
-                    : undefined
-                }
+                onClick={() => {
+                  if (sortKey) {
+                    handleSort()
+                  }
+                }}
               >
                 {title}
               </SortableTH>
