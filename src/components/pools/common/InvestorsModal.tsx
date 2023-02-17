@@ -2,10 +2,9 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { BigNumber } from '@ethersproject/bignumber'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { OrderDirection, PoolCreated_OrderBy, User_OrderBy } from '@/graphql-schema'
+import { Investor_OrderBy, OrderDirection } from '@/graphql-schema'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { Spinner } from '@/src/components/assets/Spinner'
 import {
@@ -30,11 +29,9 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues } from '@/src/constants/chains'
-import { DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import useAelinInvestors from '@/src/hooks/aelin/useAelinInvestors'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import useAelinUsers from '@/src/hooks/aelin/useAelinUsers'
-import usePoolVouchers from '@/src/hooks/aelin/vouched-pools/usePoolVouchers'
-import { useEnsLookUpAddress } from '@/src/hooks/useEnsResolvers'
 import { formatToken } from '@/src/web3/bigNumber'
 
 type InvestorsModalProps = {
@@ -148,14 +145,11 @@ const InvestorsTable = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
     const router = useRouter()
     const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
-    const { data, hasMore, nextPage } = useAelinUsers({
-      orderBy: User_OrderBy.PoolsVouchedAmt,
+
+    const { data, hasMore, nextPage } = useAelinInvestors({
       orderDirection: OrderDirection.Desc,
       where: {
-        poolsInvested_contains: [pool.address],
-      },
-      whereDeposits: {
-        pool: pool.address,
+        poolAddress: pool.address,
       },
     })
 
@@ -170,7 +164,7 @@ const InvestorsTable = genericSuspense(
       },
       {
         title: 'Amount invested',
-        sortKey: User_OrderBy.PoolsInvestedAmt,
+        sortKey: Investor_OrderBy.AmountInvested,
       },
     ]
 
@@ -188,13 +182,11 @@ const InvestorsTable = genericSuspense(
               <SortableTH
                 isActive={!!sortKey}
                 key={index}
-                onClick={
-                  sortKey
-                    ? () => {
-                        handleSort()
-                      }
-                    : undefined
-                }
+                onClick={() => {
+                  if (sortKey) {
+                    handleSort()
+                  }
+                }}
               >
                 {title}
               </SortableTH>
@@ -204,38 +196,26 @@ const InvestorsTable = genericSuspense(
             <Row>No investors.</Row>
           ) : (
             <TableBody>
-              {data.map((item, index) => {
-                const {
-                  chainId: network,
-                  history: { deposits },
-                  id,
-                } = item
-                const totalDepositsBN = deposits[pool.address].deposits.reduce(
-                  (result: BigNumber, { raw }) => {
-                    return result.add(raw)
-                  },
-                  ZERO_BN,
-                )
-                const totalDeposits = formatToken(
-                  totalDepositsBN,
-                  pool.investmentTokenDecimals,
+              {data.map(({ amountInvested: amountInvestedRaw, userAddress }, index) => {
+                const amountInvestedFormatted = formatToken(
+                  amountInvestedRaw,
+                  pool.investmentTokenDecimals || BASE_DECIMALS,
                   DISPLAY_DECIMALS,
                 )
-                const symbol = deposits[pool.address].purchaseTokenSymbol
 
                 return (
                   <Row columns={columns.widths} key={index}>
                     <Cell mobileJustifyContent="center">
                       <ENSOrAddress
-                        address={id}
+                        address={userAddress}
                         light
                         mobileJustifyContent="center"
-                        network={network as ChainsValues}
+                        network={pool.chainId as ChainsValues}
                       />
                     </Cell>
                     <Cell mobileJustifyContent="center">
                       <HideOnDesktop>Amount invested:&nbsp;</HideOnDesktop>
-                      {totalDeposits} {symbol}
+                      {amountInvestedFormatted} {pool.investmentTokenSymbol}
                     </Cell>
                     <LinkCell
                       justifyContent={columns.alignment.seeMore}
@@ -245,7 +225,7 @@ const InvestorsTable = genericSuspense(
                         onClick={(e) => {
                           e.preventDefault()
                           e.stopPropagation()
-                          router.push(`/stats?section=investors&id=${id}`)
+                          router.push(`/stats?section=investors&id=${userAddress}`)
                         }}
                       >
                         See more

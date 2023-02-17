@@ -138,7 +138,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                 <DealInformation pool={pool} poolHelpers={funding} />
               )}
               {tabs.active === PoolTab.DealInformation && !!pool.upfrontDeal && (
-                <UpfrontDealInformation pool={pool} poolHelpers={funding} />
+                <UpfrontDealInformation
+                  pool={pool}
+                  poolHelpers={funding}
+                  showInvestorsModal={handleOpenInvestorsModal}
+                />
               )}
               {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
