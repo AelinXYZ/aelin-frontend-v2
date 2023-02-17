@@ -1,11 +1,13 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import NoActions from './actions/NoActions'
 import ClaimUpfrontDealTokens from './actions/Vest/ClaimUpfrontDealTokens'
 import VestUpfrontDeal from './actions/Vest/VestUpfrontDeal'
 import Vouch from './actions/Vouch/Vouch'
+import InvestorsModal from './common/InvestorsModal'
 import UpfrontDealInformation from './deal/UpfrontDealInformation'
 import NftCollectionsTable from './nftTable/NftCollectionsTable'
 import { NotificationType } from '@/graphql-schema'
@@ -87,6 +89,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     query: { notification },
   } = useRouter()
 
+  const [showInvestorsModal, setShowInvestorsModal] = useState<boolean>(false)
+
   const { derivedStatus, funding, pool, tabs, timeline } = useAelinPoolStatus(
     chainId,
     poolAddress as string,
@@ -96,6 +100,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   )
 
   const isVerified = useCheckVerifiedPool(pool)
+
+  const handleCloseInvestorsModal = () => setShowInvestorsModal(false)
+  const handleOpenInvestorsModal = () => setShowInvestorsModal(true)
 
   return (
     <>
@@ -124,12 +131,18 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             ))}
           >
             <ContentGrid>
-              {tabs.active === PoolTab.PoolInformation && <PoolInformation pool={pool} />}
+              {tabs.active === PoolTab.PoolInformation && (
+                <PoolInformation pool={pool} showInvestorsModal={handleOpenInvestorsModal} />
+              )}
               {tabs.active === PoolTab.DealInformation && !!pool.deal && (
                 <DealInformation pool={pool} poolHelpers={funding} />
               )}
               {tabs.active === PoolTab.DealInformation && !!pool.upfrontDeal && (
-                <UpfrontDealInformation pool={pool} poolHelpers={funding} />
+                <UpfrontDealInformation
+                  pool={pool}
+                  poolHelpers={funding}
+                  showInvestorsModal={handleOpenInvestorsModal}
+                />
               )}
               {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
@@ -162,6 +175,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
           </ActionsWrapper>
           {pool.hasNftList && <NftCollectionsTable pool={pool} />}
         </MainGrid>
+        {showInvestorsModal && <InvestorsModal onClose={handleCloseInvestorsModal} pool={pool} />}
       </RightTimelineLayout>
     </>
   )
