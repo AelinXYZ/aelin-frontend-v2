@@ -22,11 +22,11 @@ export default function usePoolVouchers(pool: ParsedAelinPool) {
 
   const { data: aelinVouchedPools } = useAelinVouchedPools()
 
+  const hasCouncilVouched =
+    aelinVouchedPools?.length && aelinVouchedPools.find(({ address }) => address === pool.address)
+
   useEffect(() => {
-    if (
-      aelinVouchedPools?.length &&
-      aelinVouchedPools.find(({ address }) => address === pool.address)
-    ) {
+    if (hasCouncilVouched) {
       const aelinCouncilVouch = {
         id: 'aelincouncil.eth',
         chainId: pool.chainId,
@@ -34,7 +34,7 @@ export default function usePoolVouchers(pool: ParsedAelinPool) {
       }
       setDataWithCouncil([aelinCouncilVouch])
     }
-  }, [aelinVouchedPools, pool.address, pool.chainId])
+  }, [aelinVouchedPools.length, hasCouncilVouched, pool.address, pool.chainId])
 
   return {
     data: (data as ParsedCouncilAmt[]).concat(dataWithCouncil),
