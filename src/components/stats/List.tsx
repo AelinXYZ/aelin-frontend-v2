@@ -91,7 +91,6 @@ enum SectionFilter {
 const VoucherLinkButton = ({ id }: { id: string }) => {
   const router = useRouter()
 
-  console.log
   const { data: voucherEnsAddress, isValidating } = useEnsLookUpAddress(id)
 
   return (
