@@ -5,6 +5,7 @@ export const BaseCardCSS = css`
   border-radius: 8px;
   border: ${({ theme: { card } }) => card.borderColor};
   padding: 20px;
+  backdrop-filter: ${({ theme: { card } }) => card.backdropFilter};
 `
 
 export const BaseCard = styled.div`

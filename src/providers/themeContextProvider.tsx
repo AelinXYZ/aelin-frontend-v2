@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 
@@ -5,6 +6,7 @@ import { ThemeType } from '@/src/constants/types'
 import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 import { commonTheme } from '@/src/theme/commonTheme'
 import { darkTheme } from '@/src/theme/darkTheme'
+import { ethlizardsTheme } from '@/src/theme/ethlizardsTheme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 import { lightTheme } from '@/src/theme/lightTheme'
 
@@ -12,6 +14,8 @@ import { lightTheme } from '@/src/theme/lightTheme'
 const ThemeContext = createContext({} as any)
 
 const ThemeContextProvider: React.FC = ({ children }) => {
+  const router = useRouter()
+
   const [persistentState, setPersistentState] = useLocalStorage(
     `persistent-state_theme`,
     ThemeType.dark,
@@ -30,11 +34,16 @@ const ThemeContextProvider: React.FC = ({ children }) => {
   }, [isLightTheme])
 
   useEffect(() => {
+    if (router.query.voucher === 'ethlizards.eth') {
+      setPersistentState(ThemeType.ethlizards)
+      setCurrentThemeJSON({ ...commonTheme, ...ethlizardsTheme })
+      return
+    }
     setPersistentState(currentThemeName)
     setCurrentThemeJSON(
       isLightTheme ? { ...commonTheme, ...lightTheme } : { ...commonTheme, ...darkTheme },
     )
-  }, [currentThemeName, isLightTheme, setPersistentState])
+  }, [currentThemeName, isLightTheme, setPersistentState, router.query])
 
   const values = {
     switchTheme,

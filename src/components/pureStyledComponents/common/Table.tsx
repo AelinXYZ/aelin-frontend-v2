@@ -26,6 +26,7 @@ export const TableBody = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   row-gap: 20px;
+  backdrop-filter: ${({ theme: { card } }) => card.backdropFilter};
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     grid-template-columns: repeat(4, 1fr);
