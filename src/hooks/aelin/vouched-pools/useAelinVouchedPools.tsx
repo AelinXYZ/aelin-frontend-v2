@@ -8,7 +8,9 @@ import useHardCodedVouchedPools from '@/src/hooks/aelin/useAelinHardCodedVouched
 
 export default function useAelinVouchedPools() {
   const voucherAddress = useVoucherAddress()
+
   const { data: user, error, isValidating } = useAelinUser(voucherAddress || ZERO_ADDRESS)
+
   const { data: aelinVouchAddress } = useEnsResolver(
     env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string,
   )
