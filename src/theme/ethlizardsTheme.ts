@@ -10,7 +10,7 @@ const primary = '#93DD7D'
 const secondary = '#5452C3'
 const tertiary = '#E56399'
 const textColor = '#FFF'
-const mainBodyBackground = '#101826'
+const mainBodyBackground = '#000c0e'
 const green = '#A2FF00'
 const yellow = '#F1C40F'
 const blue = '#469FFF'
@@ -26,6 +26,7 @@ const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
 export const ethlizardsTheme = {
+  ethliz: {},
   modal: {
     overlayBackgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
