@@ -13,7 +13,6 @@ export const optimismRpcProvider = new JsonRpcProvider(optimismRpcUrl)
 export const useEnsLookUpAddress = (address: string) => {
   const { data, isValidating } = useSWR(
     mainnetRpcProvider && address ? ['ensLookUpAddress', address] : null,
-
     async () => {
       try {
         const ens = await mainnetRpcProvider.lookupAddress(address)
@@ -56,6 +55,7 @@ export const ensResolver = async (name: string) => {
       return name
     }
   }
+
   return name
 }
 

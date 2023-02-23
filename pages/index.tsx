@@ -74,7 +74,6 @@ const Home: NextPage = () => {
             and sponsors using Aelin to source a future deal. Aelin Pools are most similar to SPACs.
           </SectionIntro>
         </Container>
-
         <VouchedPools />
         <ListWithFilters userPoolsInvested={userResponse?.poolsInvested} />
       </LeftSidebarLayout>

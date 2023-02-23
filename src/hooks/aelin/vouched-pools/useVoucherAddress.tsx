@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 
-import { isValidENSName, useEnsResolver } from '../../useEnsResolvers'
 import env from '@/config/env'
+import { isValidENSName, useEnsResolver } from '@/src/hooks/useEnsResolvers'
 
 export default function useVoucherAddress() {
   const [voucherAddress, setVoucherAddress] = useState<string | null>(null)

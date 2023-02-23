@@ -8,7 +8,6 @@ import 'sanitize.css'
 import '../styles/override.css'
 import Maintenance from './maintenance'
 import env from '@/config/env'
-import { SafeSuspense } from '@/src/components/helpers/SafeSuspense'
 import { Header } from '@/src/components/layout/Header'
 import { MobileMenu } from '@/src/components/navigation/MobileMenu'
 import Toast from '@/src/components/toast/Toast'
@@ -18,6 +17,7 @@ import NftCreationContextProvider from '@/src/providers/nftCreationState'
 import StakingRewardsProvider from '@/src/providers/stakingRewardsProvider'
 import ThemeProvider from '@/src/providers/themeContextProvider'
 import TransactionModalProvider from '@/src/providers/transactionModalProvider'
+import VouchedPoolsProvider from '@/src/providers/vouchedPoolsProvider'
 import Web3ConnectionProvider from '@/src/providers/web3ConnectionProvider'
 
 // Should be rendered on client side only!
@@ -72,13 +72,13 @@ function App({ Component, pageProps }: AppProps) {
                   <TransactionModalProvider>
                     <NotificationsProvider>
                       <NftCreationContextProvider>
-                        <SafeSuspense>
+                        <VouchedPoolsProvider>
                           <TokenIconsProvider>
                             <Header />
                             <Component {...pageProps} />
                             <Toast />
                           </TokenIconsProvider>
-                        </SafeSuspense>
+                        </VouchedPoolsProvider>
                         <TooltipConfig />
                         <MobileMenu />
                       </NftCreationContextProvider>
