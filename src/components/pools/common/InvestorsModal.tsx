@@ -145,22 +145,35 @@ const InvestorsTable = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
     const router = useRouter()
     const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
+    const [sortBy, setSortBy] = useState<Investor_OrderBy | undefined>(
+      Investor_OrderBy.AmountInvested,
+    )
 
     const { data, hasMore, nextPage } = useAelinInvestors({
-      orderDirection: OrderDirection.Desc,
+      orderBy: sortBy,
+      orderDirection: orderDirection,
       where: {
         poolAddress: pool.address,
       },
     })
 
-    const handleSort = () => {
-      if (orderDirection === OrderDirection.Desc) return setOrderDirection(OrderDirection.Asc)
-      setOrderDirection(OrderDirection.Desc)
+    const handleSort = (orderBy: Investor_OrderBy | undefined) => {
+      if (sortBy === orderBy) {
+        if (orderDirection === OrderDirection.Desc) {
+          setOrderDirection(OrderDirection.Asc)
+        } else {
+          setOrderDirection(OrderDirection.Desc)
+        }
+      } else {
+        setSortBy(orderBy)
+        setOrderDirection(OrderDirection.Desc)
+      }
     }
 
     const tableHeaderCells = [
       {
         title: 'Address or ens',
+        sortKey: Investor_OrderBy.UserAddress,
       },
       {
         title: 'Amount invested',
@@ -184,7 +197,7 @@ const InvestorsTable = genericSuspense(
                 key={index}
                 onClick={() => {
                   if (sortKey) {
-                    handleSort()
+                    handleSort(sortKey)
                   }
                 }}
               >
