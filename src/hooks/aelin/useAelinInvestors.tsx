@@ -33,15 +33,9 @@ export async function fetcherUsers(variables: QueryInvestorsArgs) {
   try {
     const investorResponses = await Promise.allSettled(queryPromises())
 
-    let result = investorResponses
+    const result = investorResponses
       .filter(isSuccessful)
       .reduce((resultAcc: Investor[], { value }) => [...resultAcc, ...value], [])
-
-    result = orderBy(
-      result,
-      variables.orderBy as Investor_OrderBy,
-      variables.orderDirection ? [variables.orderDirection] : ['desc'],
-    )
 
     return result
   } catch (err) {
