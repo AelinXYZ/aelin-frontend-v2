@@ -1,6 +1,9 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - main
 
 env:
   NEXT_PUBLIC_GRAPH_ENDPOINT_MAINNET: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-mainnet'
@@ -8,6 +11,9 @@ env:
   NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-goerli'
   NEXT_PUBLIC_GRAPH_ENDPOINT_ARBITRUM: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-arbitrum'
   NEXT_PUBLIC_GRAPH_ENDPOINT_POLYGON: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-polygon'
+  NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID: 1
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
   build:
@@ -15,6 +21,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set yarn cache directory
+        run: yarn config set cache-folder .yarn-cache
+        continue-on-error: true
 
       - name: Use Node.js 16
         uses: actions/setup-node@v2
@@ -24,6 +34,16 @@ jobs:
       - name: Install yarn
         run: npm install -g yarn
 
+      - uses: actions/cache@v2
+        with:
+          path: |
+            .yarn-cache
+            node_modules
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-v1-
+        continue-on-error: true
+
       - name: Installing dependencies
         run: yarn --prefer-offline
 
@@ -32,3 +52,50 @@ jobs:
 
       - name: Running Tests
         run: yarn test
+
+  e2e:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Chown workspace
+        run: chown -R $(whoami) .
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Run e2e tests
+        run: |
+          docker-compose -f ./ci/docker-compose.ci.yaml up --build --exit-code-from aelin-ui
+        env:
+          COMPOSE_DOCKER_CLI_BUILD: 1
+          DOCKER_BUILDKIT: 1
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
+          NGROK_AUTH: ${{ secrets.NGROK_AUTH }}
+
+  Deploy-Production:
+    needs: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
