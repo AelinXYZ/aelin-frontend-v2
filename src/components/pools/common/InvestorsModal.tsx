@@ -157,15 +157,15 @@ const InvestorsTable = genericSuspense(
       },
     })
 
-    const handleSort = (orderBy: Investor_OrderBy | undefined) => {
-      if (sortBy === orderBy) {
+    const handleSort = (newSortBy: Investor_OrderBy | undefined) => {
+      if (sortBy === newSortBy) {
         if (orderDirection === OrderDirection.Desc) {
           setOrderDirection(OrderDirection.Asc)
         } else {
           setOrderDirection(OrderDirection.Desc)
         }
       } else {
-        setSortBy(orderBy)
+        setSortBy(newSortBy)
         setOrderDirection(OrderDirection.Desc)
       }
     }
