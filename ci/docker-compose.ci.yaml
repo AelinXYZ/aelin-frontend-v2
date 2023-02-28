@@ -1,0 +1,139 @@
+version: '3'
+services:
+  anvil:
+    image: linuzeth/aelin-anvil
+    command:
+      ["anvil --gas-limit 18446744073709551615 --host 0.0.0.0 --allow-origin '*' --chain-id 5"]
+    environment:
+      - ANVIL_IP_ADDR=0.0.0.0
+    ports:
+      - '8545:8545'
+    networks:
+      - x11
+
+  graph-node:
+    image: graphprotocol/graph-node
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8020:8020'
+      - '8030:8030'
+      - '8040:8040'
+    depends_on:
+      - ipfs
+      - postgres
+      - anvil
+    environment:
+      postgres_host: postgres
+      postgres_user: graph-node
+      postgres_pass: let-me-in
+      postgres_db: graph-node
+      ipfs: 'ipfs:5001'
+      ethereum: 'mainnet:http://anvil:8545'
+      GRAPH_LOG: info
+    networks:
+      - x11
+
+  ipfs:
+    image: ipfs/go-ipfs:v0.10.0
+    ports:
+      - '5001:5001'
+    networks:
+      - x11
+
+  postgres:
+    image: postgres
+    ports:
+      - '5432:5432'
+    command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
+    environment:
+      POSTGRES_USER: graph-node
+      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_DB: graph-node
+      PGDATA: '/var/lib/postgresql/data'
+      POSTGRES_INITDB_ARGS: '-E UTF8 --locale=C'
+    networks:
+      - x11
+
+  contracts-deployer:
+    image: linuzeth/aelin-contracts-deployer
+    command: ['cd ci && . ./deploy-ci.sh && tail -f /dev/null ']
+    depends_on:
+      - anvil
+    volumes:
+      - 'aelin-envs:/usr/share/envs'
+    networks:
+      - x11
+
+  subgraph-deployer:
+    image: linuzeth/aelin-subgraph-deployer
+    command: ['cd ci && . ./generate-data.sh && cd .. && npm run deploy-ci && tail -f /dev/null']
+    depends_on:
+      - graph-node
+      - ipfs
+    volumes:
+      - 'aelin-envs:/usr/share/envs'
+    networks:
+      - x11
+
+  aelin-ui:
+    container_name: aelin-ui
+    build:
+      context: ..
+      dockerfile: ./ci/Dockerfile
+    depends_on:
+      - display
+      - video
+    command: >
+      bash -c 'cd ci && . ./add-envs.sh && mv .env ../.env && cd .. && echo -n "======> local noVNC URL:
+      http://localhost:8080/vnc.html?autoconnect=true " && npx wait-on
+      http://display:8080 && echo -n "======> remote noVNC URL: " && curl -s
+      ngrok:4040/api/tunnels | jq -r .tunnels[0].public_url && yarn
+      e2e:ci'
+    environment:
+      - DISPLAY=display:0.0
+      - CYPRESS_DOCKER_RUN=true
+    ports:
+      - '3000:3000'
+    volumes:
+      - 'aelin-envs:/usr/share/envs'
+    networks:
+      - x11
+
+  display:
+    image: synthetixio/display:457bb48776c3b14de232d9dda620ba9188dc40ac-base
+    environment:
+      - RUN_XTERM=no
+    ports:
+      - '8080:8080'
+    networks:
+      - x11
+
+  ngrok:
+    image: synthetixio/ngrok:457bb48776c3b14de232d9dda620ba9188dc40ac-base
+    ports:
+      - '4040:4040'
+    command: >
+      sh -c "ngrok config upgrade && 
+             ngrok http display:8080 --authtoken ${NGROK_AUTH}"
+    depends_on:
+      - display
+    networks:
+      - x11
+
+  video:
+    image: synthetixio/video:457bb48776c3b14de232d9dda620ba9188dc40ac-base
+    volumes:
+      - ./docker/videos-ci:/videos
+    environment:
+      - FILE_NAME=CI-full-video.mp4
+    depends_on:
+      - display
+    networks:
+      - x11
+
+networks:
+  x11:
+
+volumes:
+  aelin-envs:

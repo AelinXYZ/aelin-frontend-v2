@@ -1,11 +1,20 @@
 #!/bin/bash
 
+file_path="/usr/share/envs/.env.linuz"
+
+while [ ! -f $file_path ]
+do
+  echo "Waiting for file $file_path to exist..."
+  sleep 1
+done
+
 echo "Exporting ENVs for Aelin UI..."
 
-NEXT_PUBLIC_AELIN_POOL_FACTORY=$(grep AelinPoolFactory_address /usr/share/.env.linuz | tail -1 | awk -F "=" '{print $2}')
-NEXT_PUBLIC_AELIN_DEAL_FACTORY=$(grep AelinUpFrontDealFactory_address /usr/share/.env.linuz | tail -1 | awk -F "=" '{print $2}')
-NEXT_PUBLIC_UNI=$(grep UNI_address /usr/share/.env.linuz | tail -1 | awk -F "=" '{print $2}')
-NEXT_PUBLIC_USDC=$(grep USDC_address /usr/share/.env.linuz | tail -1 | awk -F "=" '{print $2}')
+NEXT_PUBLIC_AELIN_POOL_FACTORY=$(grep AelinPoolFactory_address /usr/share/envs/.env.linuz | tail -1 | awk -F "=" '{print $2}')
+NEXT_PUBLIC_AELIN_DEAL_FACTORY=$(grep AelinUpFrontDealFactory_address /usr/share/envs/.env.linuz | tail -1 | awk -F "=" '{print $2}')
+NEXT_PUBLIC_UNI=$(grep UNI_address /usr/share/envs/.env.linuz | tail -1 | awk -F "=" '{print $2}')
+NEXT_PUBLIC_USDC=$(grep USDC_address /usr/share/envs/.env.linuz | tail -1 | awk -F "=" '{print $2}')
+NEXT_PUBLIC_WETH=$(grep WETH_address /usr/share/envs/.env.linuz | tail -1 | awk -F "=" '{print $2}')
 
 echo "
 NEXT_PUBLIC_APP_NAME=Aelin
@@ -22,5 +31,8 @@ NEXT_PUBLIC_AELIN_POOL_FACTORY=${NEXT_PUBLIC_AELIN_POOL_FACTORY}
 NEXT_PUBLIC_AELIN_DEAL_FACTORY=${NEXT_PUBLIC_AELIN_DEAL_FACTORY}
 NEXT_PUBLIC_UNI=${NEXT_PUBLIC_UNI}
 NEXT_PUBLIC_USDC=${NEXT_PUBLIC_USDC}
+NEXT_PUBLIC_WETH=${NEXT_PUBLIC_WETH}
 NEXT_PUBLIC_ANVIL=http://0.0.0.0:8545
+PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+NETWORK_NAME=goerli
 " >> .env
