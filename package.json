@@ -18,7 +18,9 @@
     "sdk": "graphql-codegen --config codegen.js",
     "postinstall": "yarn typechain && yarn sdk",
     "create:csv": "node --experimental-json-modules --loader ts-node/esm scripts/generate-csv-for-merkle-tree.ts",
-    "create:nft:metadata": "node --experimental-json-modules --loader ts-node/esm scripts/generate-nft-metadata.ts"
+    "create:nft:metadata": "node --experimental-json-modules --loader ts-node/esm scripts/generate-nft-metadata.ts",
+    "e2e:local": "synpress run --noExit --browser chrome",
+    "e2e:ci": "start-server-and-test 'yarn dev' http-get://localhost:3000 'synpress run'"
   },
   "dependencies": {
     "@eth-optimism/sdk": "^1.1.8",
