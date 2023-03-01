@@ -210,11 +210,11 @@ export const ethlizardsTheme = {
   },
   stepCircle: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    backgroundColorActive: 'rgba(130, 128, 255, 0.2)',
+    backgroundColorActive: 'rgba(147, 221, 125, 0.2);',
     backgroundColorMain: '#fff',
-    backgroundColorMainActive: '#8280ff',
+    backgroundColorMainActive: '#93DD7D',
     backgroundColorMiddle: transparentWhite,
-    backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4)',
+    backgroundColorMiddleActive: 'rgba(147, 221, 125, 0.4);',
   },
   textField: {
     backgroundColor: gray,
