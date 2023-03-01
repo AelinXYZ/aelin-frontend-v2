@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 
+import { ETHLIZARDS_VOUCHER_ENS } from '@/src/constants/misc'
 import { ThemeType } from '@/src/constants/types'
 import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 import { commonTheme } from '@/src/theme/commonTheme'
@@ -34,7 +35,7 @@ const ThemeContextProvider: React.FC = ({ children }) => {
   }, [isLightTheme])
 
   useEffect(() => {
-    if (router.query.voucher === 'ethlizards.eth') {
+    if (router.query.voucher === ETHLIZARDS_VOUCHER_ENS) {
       setPersistentState(ThemeType.ethlizards)
       setCurrentThemeJSON({ ...commonTheme, ...ethlizardsTheme })
       return

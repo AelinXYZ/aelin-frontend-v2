@@ -156,9 +156,9 @@ export const ethlizardsTheme = {
     borderColor: lightGray,
     boxShadow: 'none',
     item: {
-      backgroundColor: 'transparent',
-      backgroundColorActive: 'rgba(255, 255, 255, 0.12)',
-      backgroundColorHover: 'rgba(255, 255, 255, 0.12)',
+      backgroundColor: '#000c0e',
+      backgroundColorActive: '#001418',
+      backgroundColorHover: '#001418',
       borderColor: 'transparent',
       color: textColor,
       colorActive: textColor,
