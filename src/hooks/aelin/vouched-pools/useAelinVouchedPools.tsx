@@ -1,6 +1,6 @@
+import useVoucherAddress from './useVoucherAddress'
 import { useEnsResolver } from '../../useEnsResolvers'
 import useAelinUser from '../useAelinUser'
-import useVoucherAddress from './useVoucherAddress'
 import env from '@/config/env'
 import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
 import { ZERO_ADDRESS } from '@/src/constants/misc'

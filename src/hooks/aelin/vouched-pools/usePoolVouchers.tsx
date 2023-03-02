@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
+import useAelinVouchedPools from './useAelinVouchedPools'
 import { ParsedAelinPool } from '../useAelinPool'
 import useAelinUsers, { ParsedUserAmt } from '../useAelinUsers'
-import useAelinVouchedPools from './useAelinVouchedPools'
 import { OrderDirection, User_OrderBy } from '@/graphql-schema'
 
 type ParsedCouncilAmt = Omit<

@@ -3,8 +3,8 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { CurrencyKey } from '@synthetixio/contracts-interface'
 import Wei, { wei } from '@synthetixio/wei'
 
-import { Chains, ChainsValues } from '../constants/chains'
 import formatGwei from './formatGwei'
+import { Chains, ChainsValues } from '../constants/chains'
 import { BASE_DECIMALS, GWEI_UNIT, ZERO_BN } from '@/src/constants/misc'
 import { Eip1559GasPrice, GasLimitEstimate, Rates } from '@/types/utils'
 

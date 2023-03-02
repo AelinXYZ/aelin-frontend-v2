@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { Contents as BaseContents, Title as BaseTitle } from '../Wrapper'
 import VouchersModal from './VouchersModal'
+import { Contents as BaseContents, Title as BaseTitle } from '../Wrapper'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import {
