@@ -13,12 +13,10 @@ const Description = styled.div`
   display: flex;
   align-items: center;
   text-align: center;
-  height: 41px;
   color: ${({ theme }) => theme.colors.textColor};
   font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
-  margin: 10px 0;
 `
 
 const Modal = styled(BaseModal)`
