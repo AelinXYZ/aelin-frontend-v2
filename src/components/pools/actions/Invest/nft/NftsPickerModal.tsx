@@ -18,6 +18,7 @@ const Description = styled.div`
   font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
+  margin: 10px 0;
 `
 
 const Modal = styled(BaseModal)`

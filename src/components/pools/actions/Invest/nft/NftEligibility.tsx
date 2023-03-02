@@ -12,20 +12,20 @@ import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 const Title = styled.h1`
   color: ${({ theme: { colors } }) => colors.textColor};
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   line-height: 1.4;
 `
 const SubTitle = styled.div`
   color: ${({ theme: { colors } }) => colors.textColor};
   font-weight: 400;
-  font-size: 1.25rem;
+  font-size: 0.8rem;
   line-height: 1rem;
   padding-bottom: 1rem;
 `
 
 const Eligible = styled.div`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.25rem;
+  font-size: 0.8rem;
   font-weight: 400;
   line-height: 1.2;
   margin: 1rem;

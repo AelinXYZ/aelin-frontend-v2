@@ -34,7 +34,7 @@ export const Items = styled.div`
   grid-auto-flow: column;
   grid-auto-columns: 100%;
 
-  padding: 0 0rem 2.5rem;
+  padding: 0 0rem 0.9rem;
 
   overflow-x: auto;
   overscroll-behavior-inline: contain;
@@ -91,7 +91,7 @@ export const LoadingWrapper = styled.div`
 export const SectionTitle = styled.h2`
   text-align: center;
   color: ${({ theme: { colors } }) => colors.textColor};
-  font-size: 1.6rem;
+  font-size: 1rem;
   line-height: 1.4;
   margin: 10px;
 `
