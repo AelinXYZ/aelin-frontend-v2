@@ -217,7 +217,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
       network: 'center',
       seePool: 'right',
     },
-    widths: '110px 115px 132px 115px 170px 80px 1fr',
+    widths: '110px 120px 140px 115px 170px 90px 1fr',
   }
 
   const tableHeaderCells = [

@@ -77,7 +77,7 @@ const Item = styled.div<{ isActive: boolean }>`
   cursor: pointer;
   display: flex;
   flex-shrink: 0;
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   gap: 10px;
   line-height: 1.4;
@@ -112,7 +112,7 @@ const InvalidResults = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.colors.textColor};
   display: flex;
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
   height: 100%;
   justify-content: center;

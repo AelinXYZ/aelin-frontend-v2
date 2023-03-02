@@ -31,7 +31,7 @@ const EmptyPools = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 0;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 500;
   justify-content: center;
   white-space: normal;

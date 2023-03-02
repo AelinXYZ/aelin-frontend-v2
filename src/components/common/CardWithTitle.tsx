@@ -34,7 +34,7 @@ export const CardTitle = styled.h2<{ isActive?: boolean }>`
   cursor: pointer;
   display: flex;
   flex-grow: 1;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   font-weight: 400;
   justify-content: center;
   line-height: 1.4;
@@ -45,7 +45,7 @@ export const CardTitle = styled.h2<{ isActive?: boolean }>`
   transition: opacity 0.15s linear;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.6rem;
+    font-size: 1rem;
     min-height: 50px;
   }
 

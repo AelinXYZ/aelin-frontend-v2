@@ -26,7 +26,7 @@ const AelinChart = styled.div`
 `
 
 const LastPrice = styled.div`
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
   margin: 0 0 4px;
@@ -44,13 +44,13 @@ const PriceDifferenceWrapper = styled.div`
 
 const PriceDifference = styled.div`
   color: ${({ theme: { colors } }) => colors.primary};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   margin-right: 3px;
 `
 
 const IntervalDescription = styled.div`
   color: ${({ theme: { colors } }) => colors.textColor};
-  font-size: 0.8rem;
+  font-size: 0.6rem;
 `
 
 const ButtonContainer = styled.div`

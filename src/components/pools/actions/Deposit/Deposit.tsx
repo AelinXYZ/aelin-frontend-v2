@@ -33,7 +33,7 @@ const StyledTokenInput = styled(TokenInput)<{ isPrivate?: boolean }>`
 
 export const Contents = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.5;
   margin: 15px 0 30px 0;
@@ -45,10 +45,6 @@ export const Contents = styled.p`
 const ButtonsWrapper = styled.div`
   display: flex;
   gap: 5px;
-`
-
-const Button = styled(ButtonGradient)`
-  width: 110px;
 `
 
 const MinimumInvestment = styled.span`
@@ -219,7 +215,7 @@ function Deposit({ pool, poolHelpers }: Props) {
         />
       )}
       <ButtonsWrapper>
-        <Button
+        <ButtonGradient
           disabled={
             !address ||
             !isAppConnected ||
@@ -233,8 +229,10 @@ function Deposit({ pool, poolHelpers }: Props) {
           onClick={depositTokens}
         >
           Deposit
-        </Button>
-        {pool.hasNftList && <Button onClick={handleOpenNftSelectionModal}>Select NFT</Button>}
+        </ButtonGradient>
+        {pool.hasNftList && (
+          <ButtonGradient onClick={handleOpenNftSelectionModal}>Select NFT</ButtonGradient>
+        )}
       </ButtonsWrapper>
     </>
   )

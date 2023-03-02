@@ -34,7 +34,7 @@ export const Card = styled(BaseCard)<{ size?: modalSize }>`
 export const Title = styled.h1`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0 0 20px;
@@ -66,7 +66,7 @@ export const ModalButtonCSS = css`
 
 export const ModalTextCSS = css`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.2;
   margin: 0 auto 20px;
