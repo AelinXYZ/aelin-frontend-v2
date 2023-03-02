@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { OrderDirection, Vest_OrderBy } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { TableCard, TableWrapper } from '@/src/components/history/common/TableWrapper'
+import { TableCard, TableWrapper, Text } from '@/src/components/history/common/TableWrapper'
 import {
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
@@ -104,7 +104,7 @@ export const Vests: React.FC = () => {
         tableHeaderCells={tableHeaderCells}
       >
         <TableCard>
-          <p>There’s no vest history yet</p>
+          <Text>There’s no vest history yet</Text>
           <ButtonPrimaryLight
             onClick={() => {
               router.push('/')

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { DealSponsored_OrderBy, OrderDirection } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { TableCard, TableWrapper } from '@/src/components/history/common/TableWrapper'
+import { TableCard, TableWrapper, Text } from '@/src/components/history/common/TableWrapper'
 import {
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
@@ -112,7 +112,7 @@ export const DealsSponsored: React.FC = () => {
         tableHeaderCells={tableHeaderCells}
       >
         <TableCard>
-          <p>There’s no deal sponsored history yet</p>
+          <Text>There’s no deal sponsored history yet</Text>
           <ButtonPrimaryLight
             onClick={() => {
               router.push('/pool/create')
