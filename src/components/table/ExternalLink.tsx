@@ -42,7 +42,7 @@ export const ExternalLink = ({ children, className, href }: ExternalLinkProps) =
       window.open(href, '_blank')
     }}
   >
-    {children}
+    <span data-cy="external-link-children">{children}</span>
     <Link />
   </Wrapper>
 )

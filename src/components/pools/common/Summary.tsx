@@ -44,7 +44,7 @@ export const SummaryItem: React.FC<{
 }> = ({ title, value }) => (
   <Cell>
     <Title>{title}</Title>
-    <Value>{value}</Value>
+    <Value data-cy={`summary-item-${title.toLowerCase().split(' ').join('-')}`}>{value}</Value>
   </Cell>
 )
 

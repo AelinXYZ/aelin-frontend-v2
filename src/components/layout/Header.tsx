@@ -328,7 +328,9 @@ export const Header: React.FC = (props) => {
                   ) : (
                     <>
                       {currentChain.icon}
-                      <CurrentChainShortName>{currentChain.shortName}</CurrentChainShortName>
+                      <CurrentChainShortName data-cy="selected-network">
+                        {currentChain.shortName}
+                      </CurrentChainShortName>
                     </>
                   )}
                   <ChevronDown />
@@ -344,7 +346,7 @@ export const Header: React.FC = (props) => {
                   dropdownButtonContent={
                     <DropdownButton>
                       <Metamask />
-                      {isWalletConnected && address && <Item>{shortenAddress(address)}</Item>}
+                      {address && <Item data-cy="wallet-btn">{shortenAddress(address)}</Item>}
                       <ChevronDown />
                     </DropdownButton>
                   }
@@ -358,7 +360,9 @@ export const Header: React.FC = (props) => {
             {!isWalletConnected && (
               <>
                 <Line />
-                <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
+                <ButtonPrimary data-cy="connect-btn" onClick={connectWallet}>
+                  Connect
+                </ButtonPrimary>
               </>
             )}
             <Line />

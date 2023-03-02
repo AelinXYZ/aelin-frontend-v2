@@ -85,7 +85,7 @@ services:
       - display
       - video
     command: >
-      bash -c 'cd ci && . ./add-envs.sh && mv .env ../.env && cd .. && echo -n "======> local noVNC URL:
+      bash -c 'cd ci && . ./add-envs.sh ci && mv .env ../.env && cd .. && echo -n "======> local noVNC URL:
       http://localhost:8080/vnc.html?autoconnect=true " && npx wait-on
       http://display:8080 && echo -n "======> remote noVNC URL: " && curl -s
       ngrok:4040/api/tunnels | jq -r .tunnels[0].public_url && yarn

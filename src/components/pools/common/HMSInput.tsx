@@ -80,6 +80,7 @@ export const HMSInput = ({
     <>
       <Grid {...restProps}>
         <Textfield
+          data-cy="hmsInput-durationDays"
           disabled={emptyValue || disabled}
           id="durationDays"
           min="0"
@@ -91,6 +92,7 @@ export const HMSInput = ({
           value={duration?.days ?? ''}
         />
         <Textfield
+          data-cy="hmsInput-durationHours"
           disabled={emptyValue || disabled}
           id="durationHours"
           min="0"
@@ -101,6 +103,7 @@ export const HMSInput = ({
           value={duration?.hours ?? ''}
         />
         <Textfield
+          data-cy="hmsInput-durationMinutes"
           disabled={emptyValue || disabled}
           id="durationMinutes"
           min="0"

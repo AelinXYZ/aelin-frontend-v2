@@ -23,6 +23,7 @@ module.exports = defineConfig({
   viewportHeight: 1080,
   env: {
     coverage: false,
+    anvil: process.env.NEXT_PUBLIC_ANVIL,
   },
   defaultCommandTimeout: process.env.SYNDEBUG ? 9999999 : 60000,
   pageLoadTimeout: process.env.SYNDEBUG ? 9999999 : 60000,

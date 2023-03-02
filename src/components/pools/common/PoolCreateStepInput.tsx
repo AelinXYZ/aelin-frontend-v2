@@ -63,6 +63,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
     <Wrapper onKeyUp={onKeyUp} {...restProps}>
       {step === CreatePoolSteps.poolName ? (
         <Textfield
+          data-cy="pool-name-input"
           maxLength={31}
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
@@ -73,6 +74,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
         />
       ) : step === CreatePoolSteps.poolSymbol ? (
         <Textfield
+          data-cy="pool-symbol-input"
           maxLength={8}
           name={step}
           onChange={(e) => setPoolField(e.target.value)}
@@ -90,6 +92,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
       ) : step === CreatePoolSteps.poolCap ? (
         <>
           <Textfield
+            data-cy="no-cap-input"
             disabled={currentState[step] === 0}
             maxLength={8}
             name={step}
@@ -103,6 +106,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
           />
           <Checkbox
             checked={currentState[step] === 0}
+            data-cy="no-cap-checkbox"
             label={'No cap'}
             onClick={() => {
               setPoolField(currentState[step] === 0 ? undefined : 0)
@@ -129,6 +133,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
         </PrivacyGrid>
       ) : step === CreatePoolSteps.sponsorFee ? (
         <SponsorFeeTextfield
+          data-cy="sponsor-fee-input"
           maxLength={8}
           name={step}
           onChange={(e) => setPoolField(e.target.value)}

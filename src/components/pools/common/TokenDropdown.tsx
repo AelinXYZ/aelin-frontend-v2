@@ -210,7 +210,7 @@ function TokenDropdown(props: TokenDropdownProps) {
 
   return (
     <>
-      <ButtonDropdown onClick={() => setShowModal(true)}>
+      <ButtonDropdown data-cy="form-token-btn-dropdown" onClick={() => setShowModal(true)}>
         {selectedToken ? selectedToken.label : placeholder}
       </ButtonDropdown>
       {showModal && (
@@ -220,6 +220,7 @@ function TokenDropdown(props: TokenDropdownProps) {
             <Textfield
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
+              data-cy="from-token-modal-input"
               disabled={searchingToken}
               onChange={(e) => {
                 handlerSearchAddress(e.target.value)
@@ -246,6 +247,7 @@ function TokenDropdown(props: TokenDropdownProps) {
               options.map((item) => {
                 return (
                   <Item
+                    data-cy="token-selection-modal-item"
                     isActive={item.value.address === selectedToken?.value.address}
                     key={item.value.address}
                     onClick={() => {
@@ -264,6 +266,7 @@ function TokenDropdown(props: TokenDropdownProps) {
             )}
           </Tokens>
           <Button
+            data-cy="form-token-modal-confirm-btn"
             disabled={!selectedToken || tokenSelected === selectedToken.value}
             onClick={() => {
               onChange(selectedToken?.value)

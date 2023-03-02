@@ -117,7 +117,12 @@ const Step = ({ children, isActive, isDone, ...restProps }: StepProps) => {
   return (
     <Item {...restProps}>
       <StepCircleBig isActive={isActive || isDone} />
-      <Info className="info" isActive={isActive} isDone={isDone}>
+      <Info
+        className="info"
+        data-cy={`timeline-step-${isActive ? 'active' : 'inactive'}-${isDone ? 'done' : 'todo'}`}
+        isActive={isActive}
+        isDone={isDone}
+      >
         <Contents className="contents">{children}</Contents>
       </Info>
     </Item>

@@ -38,4 +38,5 @@ yarn-error.log*
 /out_publish/
 /out_functions/
 
+tests/
 synpress.config.js
