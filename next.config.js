@@ -10,5 +10,6 @@ module.exports = {
       "storage.googleapis.com",
       "ipfs.io"
     ]
-  }
+  },
+  output: "standalone"
 }

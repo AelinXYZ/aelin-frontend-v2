@@ -53,7 +53,11 @@ const ConfirmTransactionModal = ({
         setLoadingGas={setLoadingGas}
       />
       {!!alert && <Alert>{alert}</Alert>}
-      <Button disabled={disableButton || loadingGas} onClick={onSubmit}>
+      <Button
+        data-cy="transaction-modal-confirm-btn"
+        disabled={disableButton || loadingGas}
+        onClick={onSubmit}
+      >
         Submit
       </Button>
     </Modal>

@@ -79,7 +79,7 @@ export const ToastComponent = ({
     <IconContainer>{icon}</IconContainer>
     <InnerWrapper>
       <TextContainer>
-        <Title>{title}</Title>
+        <Title data-cy="toast-message">{title}</Title>
         {link && (
           <Link href={link.url} rel="noreferrer" target="_blank">
             {link.text}

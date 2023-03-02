@@ -1,8 +1,8 @@
 import ms from 'ms'
 import useSWR from 'swr'
 
-import { getGasPriceEIP1559, getGasPriceFromProvider } from '../utils/gasUtils'
 import { mainnetRpcProvider } from './useEnsResolvers'
+import { getGasPriceEIP1559, getGasPriceFromProvider } from '../utils/gasUtils'
 import { Chains, chainsConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { GasPrice, GasPrices, GasSpeed } from '@/types/utils'

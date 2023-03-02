@@ -1,6 +1,11 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+      - e2e-devops
 
 env:
   NEXT_PUBLIC_GRAPH_ENDPOINT_MAINNET: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-mainnet'
@@ -8,21 +13,36 @@ env:
   NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-goerli'
   NEXT_PUBLIC_GRAPH_ENDPOINT_ARBITRUM: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-arbitrum'
   NEXT_PUBLIC_GRAPH_ENDPOINT_POLYGON: 'https://api.thegraph.com/subgraphs/name/alextheboredape/aelin-polygon'
+  NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID: 1
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+
+      - name: Set yarn cache directory
+        run: yarn config set cache-folder .yarn-cache
+        continue-on-error: true
 
       - name: Use Node.js 16
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '16.x'
 
       - name: Install yarn
         run: npm install -g yarn
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .yarn-cache
+            node_modules
+          key: ${{ runner.os }}-yarn-v1-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-v1-
+        continue-on-error: true
 
       - name: Installing dependencies
         run: yarn --prefer-offline
@@ -32,3 +52,36 @@ jobs:
 
       - name: Running Tests
         run: yarn test
+
+  e2e:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Chown workspace
+        run: chown -R $(whoami) .
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Run e2e tests
+        run: |
+          docker-compose -f ./ci/docker-compose.ci.yaml up --build --exit-code-from aelin-ui
+        env:
+          COMPOSE_DOCKER_CLI_BUILD: 1
+          DOCKER_BUILDKIT: 1
+          DOCKER_DEFAULT_PLATFORM: linux/amd64
+          NGROK_AUTH: ${{ secrets.NGROK_AUTH }}

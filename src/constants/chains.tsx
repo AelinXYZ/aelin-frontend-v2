@@ -83,8 +83,12 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     iconUrls: [],
     isProd: false,
     name: 'Görli Testnet',
-    rpcUrl: `https://eth-goerli.g.alchemy.com/v2/${env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
-    defaultRpcUrl: `https://eth-goerli.g.alchemy.com/v2/${env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
+    rpcUrl:
+      (process.env.NEXT_PUBLIC_ANVIL as string) ??
+      `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
+    defaultRpcUrl:
+      (process.env.NEXT_PUBLIC_ANVIL as string) ??
+      `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
     shortName: 'Goerli',
     tokenListUrl: [
       'https://tokens.1inch.eth.limo',

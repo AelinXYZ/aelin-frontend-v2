@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
+import { AllocationErc1155 } from './NftCollectionsTable'
 import {
   Cell as BaseCell,
   HideOnDesktop as BaseHideOnDesktop,
@@ -9,7 +10,6 @@ import {
 import { ExternalLink } from '../../table/ExternalLink'
 import NftMedia from '../actions/Invest/nft/NftMedia'
 import { Value } from '../common/InfoCell'
-import { AllocationErc1155 } from './NftCollectionsTable'
 import { Chains } from '@/src/constants/chains'
 import { OPEN_SEA_BASE_URL, QUIXOTIC_BASE_URL, STRATOS_BASE_URL } from '@/src/constants/misc'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'

@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 
-import { genericSuspense } from '../../helpers/SafeSuspense'
-import { TableBody as BaseTableBody } from '../../pureStyledComponents/common/Table'
 import CollectionRulesRow, { Row } from './NftCollectionRulesRow'
 import { CollectionsData } from './NftCollectionsTable'
+import { genericSuspense } from '../../helpers/SafeSuspense'
+import { TableBody as BaseTableBody } from '../../pureStyledComponents/common/Table'
 import useNftCollectionLists from '@/src/hooks/aelin/useNftCollectionLists'
 
 const TableBody = styled(BaseTableBody)`

@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 
+import NftCollectionTableBody from './NftCollectionTableBody'
 import { TableCard as BaseTableCard } from '../../history/common/TableWrapper'
 import { BaseCard } from '../../pureStyledComponents/common/BaseCard'
 import { TableHead as BaseTableHead } from '../../pureStyledComponents/common/Table'
 import { SortableTH as BaseSortableTH } from '../../table/SortableTH'
 import { NftWhiteListState } from '../whitelist/nft/nftWhiteListReducer'
-import NftCollectionTableBody from './NftCollectionTableBody'
 import { ChainsValues } from '@/src/constants/chains'
 import { Token } from '@/src/constants/token'
 import useNftCollectionTableData from '@/src/hooks/aelin/nftTable/useNftCollectionTableData'

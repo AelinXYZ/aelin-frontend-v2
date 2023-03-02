@@ -25,7 +25,7 @@ export const LabeledRadioButton: React.FC<{
   label: string
   onClick: () => void
 }> = ({ checked, label, onClick, ...restProps }) => (
-  <Wrapper onClick={onClick} {...restProps}>
+  <Wrapper data-cy={`radio-btn-${label.toLowerCase()}`} onClick={onClick} {...restProps}>
     <RadioButton checked={checked} />
     <Label checked={checked}>{label}</Label>
   </Wrapper>
