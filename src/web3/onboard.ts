@@ -84,4 +84,5 @@ init({
   notify: {
     enabled: false,
   },
+  theme: 'dark',
 })
