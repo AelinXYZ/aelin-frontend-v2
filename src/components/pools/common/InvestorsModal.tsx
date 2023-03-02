@@ -135,8 +135,9 @@ const columns = {
 const Loading = () => {
   return (
     <LoadingWrapper>
-      <i>Loading</i>
       <Spinner />
+      <br />
+      <i>Loading</i>
     </LoadingWrapper>
   )
 }

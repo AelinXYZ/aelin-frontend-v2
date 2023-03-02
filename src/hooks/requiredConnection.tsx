@@ -31,7 +31,7 @@ const Text = styled.p`
 `
 
 const TextBig = styled(Text)`
-  font-size: 1.3rem;
+  font-size: 1rem;
 `
 
 const withRequiredConnection = (Component: React.FC) =>
