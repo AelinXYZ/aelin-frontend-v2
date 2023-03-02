@@ -41,7 +41,7 @@ export const ExternalLink: React.FC<Props> = ({ children, className, href, ...re
     }}
     {...restProps}
   >
-    {children}
+    <span data-cy="external-link-children">{children}</span>
     <Link />
   </Wrapper>
 )

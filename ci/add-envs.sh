@@ -10,6 +10,11 @@ done
 
 echo "Exporting ENVs for Aelin UI..."
 
+
+NEXT_PUBLIC_ANVIL="http://0.0.0.0:8545";
+
+[[ $1 == ci ]] && NEXT_PUBLIC_ANVIL="http://anvil:8545";
+
 NEXT_PUBLIC_AELIN_POOL_FACTORY=$(grep AelinPoolFactory_address /usr/share/envs/.env.linuz | tail -1 | awk -F "=" '{print $2}')
 NEXT_PUBLIC_AELIN_DEAL_FACTORY=$(grep AelinUpFrontDealFactory_address /usr/share/envs/.env.linuz | tail -1 | awk -F "=" '{print $2}')
 NEXT_PUBLIC_UNI=$(grep UNI_address /usr/share/envs/.env.linuz | tail -1 | awk -F "=" '{print $2}')
@@ -50,7 +55,7 @@ NEXT_PUBLIC_AELIN_DEAL_FACTORY=${NEXT_PUBLIC_AELIN_DEAL_FACTORY}
 NEXT_PUBLIC_UNI=${NEXT_PUBLIC_UNI}
 NEXT_PUBLIC_USDC=${NEXT_PUBLIC_USDC}
 NEXT_PUBLIC_WETH=${NEXT_PUBLIC_WETH}
-NEXT_PUBLIC_ANVIL=http://0.0.0.0:8545
+NEXT_PUBLIC_ANVIL=${NEXT_PUBLIC_ANVIL}
 PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 NETWORK_NAME=goerli
 " >> .env

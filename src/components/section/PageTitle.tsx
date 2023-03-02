@@ -127,7 +127,7 @@ export const PageTitle: React.FC<{
     <Wrapper {...restProps}>
       <Title>
         <TitleText as={'span'}>
-          {title} {isVerified && <Verified />}{' '}
+          <span data-cy="page-title">{title}</span> {isVerified && <Verified />}{' '}
           {href && (
             <a {...titleLinkProps}>
               <Link />
@@ -136,7 +136,7 @@ export const PageTitle: React.FC<{
         </TitleText>
       </Title>
       <SubTitle>
-        {subTitle ? subTitle : '--'}
+        {subTitle ? <span data-cy="page-subtitle">subTitle</span> : '--'}
         {network && ' - '}
         {network}
       </SubTitle>

@@ -19,8 +19,8 @@
     "postinstall": "yarn typechain && yarn sdk",
     "create:csv": "node --experimental-json-modules --loader ts-node/esm scripts/generate-csv-for-merkle-tree.ts",
     "create:nft:metadata": "node --experimental-json-modules --loader ts-node/esm scripts/generate-nft-metadata.ts",
-    "e2e:local": "synpress run --noExit --browser chrome",
-    "e2e:ci": "start-server-and-test 'yarn dev' http-get://localhost:3000 'synpress run'"
+    "e2e:local": "synpress run --configFile=synpress.config.js --noExit --browser chrome",
+    "e2e:ci": "start-server-and-test 'yarn dev' http-get://localhost:3000 'synpress run --configFile=synpress.config.js'"
   },
   "dependencies": {
     "@alch/alchemy-sdk": "^1.2.0",
@@ -82,6 +82,7 @@
     "web3.storage": "^4.4.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@graphql-codegen/cli": "2.6.2",
     "@graphql-codegen/introspection": "2.1.1",
     "@graphql-codegen/typescript": "2.4.7",
@@ -123,6 +124,9 @@
     "ts-node": "^10.8.2",
     "typechain": "^7.0.1",
     "typescript": "4.6.2"
+  },
+  "resolutions": {
+    "pretty-format": "27.5.1"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
