@@ -1,37 +1,44 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-import { isValidAddress } from 'ethereumjs-util'
+import { isAddress } from '@ethersproject/address'
 
 import { isValidENSName, useEnsResolver } from '../../useEnsResolvers'
 import env from '@/config/env'
-import { ZERO_ADDRESS } from '@/src/constants/misc'
 
 export default function useVoucherAddress() {
+  const [voucherAddress, setVoucherAddress] = useState<string | null>(null)
+
   const {
     query: { voucher },
   } = useRouter()
 
-  const [voucherAddress, setVoucherAddress] = useState<string | null>(null)
-  const { data: aelinVouchAddress } = useEnsResolver(
-    env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string,
-  )
-  const { data: ensAddress } = useEnsResolver(voucher as string)
-  const { data: ensDotEthAddress } = useEnsResolver(voucher + '.eth')
+  const formattedVoucher =
+    voucher && typeof voucher === 'string'
+      ? isAddress(voucher)
+        ? voucher
+        : voucher.endsWith('.eth')
+        ? voucher
+        : `${voucher}.eth`
+      : env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS
+
+  const { data: ensAddress } = useEnsResolver(formattedVoucher as string)
 
   useEffect(() => {
-    if (!voucher || typeof voucher !== 'string') {
-      setVoucherAddress(aelinVouchAddress ?? null)
-    } else if (isValidAddress(voucher)) {
-      setVoucherAddress(voucher)
-    } else if (isValidENSName(voucher) && ensAddress) {
-      setVoucherAddress(ensAddress)
-    } else if (isValidENSName(voucher + '.eth') && ensDotEthAddress) {
-      setVoucherAddress(ensDotEthAddress)
-    } else {
-      setVoucherAddress(ZERO_ADDRESS)
+    function getVoucherAddress(): string {
+      if (isAddress(formattedVoucher as string)) {
+        return formattedVoucher as string
+      }
+
+      if (isValidENSName(formattedVoucher as string) && ensAddress) {
+        return ensAddress
+      }
+
+      return env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string
     }
-  }, [voucher, voucherAddress, aelinVouchAddress, ensAddress, ensDotEthAddress])
+
+    setVoucherAddress(getVoucherAddress())
+  }, [voucher, voucherAddress, ensAddress, formattedVoucher])
 
   return voucherAddress
 }

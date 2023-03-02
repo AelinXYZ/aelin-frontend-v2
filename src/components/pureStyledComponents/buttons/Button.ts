@@ -166,7 +166,7 @@ export const ButtonGradientSmCSS = css`
   height: 24px;
   padding-left: 10px;
   padding-right: 10px;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 400;
 `
 

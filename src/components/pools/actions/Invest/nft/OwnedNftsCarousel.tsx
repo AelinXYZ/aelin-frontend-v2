@@ -71,7 +71,7 @@ const Card = styled(BaseCard)<{ arrowsVisible: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 30px;
+  margin-top: 15px;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
   border: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderColor};
 

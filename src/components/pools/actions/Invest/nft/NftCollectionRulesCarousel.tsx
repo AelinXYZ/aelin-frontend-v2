@@ -40,7 +40,7 @@ const Card = styled(BaseCard)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 2rem 0rem 2rem;
+  padding: 1.25rem 1.25rem 0rem 1.25rem;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
   border: ${({ theme: { nftWhiteList } }) => nftWhiteList.border};
   width: 275px;
@@ -58,7 +58,9 @@ const AllocationText = styled(Row)`
 `
 const AllocationValue = styled(Row)`
   color: ${({ theme: { colors } }) => colors.primary};
-  margin: 0.5rem 1rem;
+  margin: 0.5rem 0.65rem;
+  font-size: 1rem;
+  font-weight: 500;
 `
 
 const Title = styled.h1`
