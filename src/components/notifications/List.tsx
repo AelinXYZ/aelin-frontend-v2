@@ -40,10 +40,6 @@ const Row = styled(BaseRow)`
     width: 100%;
   }
 
-  .cellText {
-    width: calc(100% - 120px);
-  }
-
   .cellLink {
     margin-left: auto;
     width: fit-content;

@@ -52,7 +52,7 @@ const Tab = styled.h3<{ isActive?: boolean }>`
   cursor: pointer;
   display: flex;
   flex-grow: 1;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 600;
   justify-content: center;
   line-height: 1.4;

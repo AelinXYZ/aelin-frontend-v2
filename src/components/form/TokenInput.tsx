@@ -32,7 +32,7 @@ const MaxButton = styled.button`
   border: none;
   color: ${({ theme }) => theme.colors.textColor};
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.7rem;
   font-weight: 400;
   padding: 0;
   position: absolute;
@@ -49,7 +49,7 @@ const MaxButton = styled.button`
 
 const Balance = styled.div`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 400;
   line-height: 1.2;
   margin: 0;

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { Deposit_OrderBy, OrderDirection } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { TableCard, TableWrapper } from '@/src/components/history/common/TableWrapper'
+import { TableCard, TableWrapper, Text } from '@/src/components/history/common/TableWrapper'
 import {
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
@@ -109,7 +109,7 @@ export const Deposits: React.FC = () => {
         tableHeaderCells={tableHeaderCells}
       >
         <TableCard>
-          <p>There’s no deposit history yet</p>
+          <Text>There’s no deposit history yet</Text>
           <ButtonPrimaryLight
             onClick={() => {
               router.push('/')

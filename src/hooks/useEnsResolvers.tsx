@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
-import useSWR, { SWRConfiguration } from 'swr'
+import useSWR from 'swr'
 
 import { Chains, getNetworkConfig } from '@/src/constants/chains'
 
@@ -10,7 +10,7 @@ const { rpcUrl: optimismRpcUrl } = getNetworkConfig(Chains.optimism)
 export const optimismRpcProvider = new JsonRpcProvider(optimismRpcUrl)
 
 // Get ens name by address
-export const useEnsLookUpAddress = (address: string, swrOptions?: SWRConfiguration) => {
+export const useEnsLookUpAddress = (address: string) => {
   const { data, isValidating } = useSWR(
     mainnetRpcProvider && address ? ['ensLookUpAddress', address] : null,
 
@@ -25,7 +25,13 @@ export const useEnsLookUpAddress = (address: string, swrOptions?: SWRConfigurati
         return address
       }
     },
-    swrOptions,
+    {
+      refreshWhenHidden: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
+      refreshWhenOffline: false,
+    },
   )
 
   return {
@@ -67,6 +73,13 @@ export const useEnsResolver = (name: string | undefined) => {
       } catch (err) {
         return null
       }
+    },
+    {
+      refreshWhenHidden: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
+      refreshWhenOffline: false,
     },
   )
 

@@ -70,7 +70,7 @@ const Item = styled.div<{ isActive: boolean }>`
       ? ({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor
       : theme.dropdown.item.backgroundColorHover};
   color: ${({ theme }) => theme.dropdown.item.color};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
   padding: 15px 14px 15px 10px;

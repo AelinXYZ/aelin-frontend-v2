@@ -48,7 +48,7 @@ const TabLink = styled.button`
   border: 0;
   color: ${({ theme }) => theme.colors.textColor};
   cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 600;
   height: 100%;
   line-height: 1.2;

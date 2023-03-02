@@ -36,12 +36,12 @@ const MaintenanceImage = styled.div<{ backgroundImage: string }>`
 const Title = styled.h1`
   color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 3.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
   line-height: 1.2;
 `
 const SubTitle = styled.h3`
-  font-size: 2rem;
+  font-size: 1rem;
   font-weight: 400;
   line-height: 1.2;
 `

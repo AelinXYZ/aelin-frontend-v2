@@ -109,7 +109,7 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   color: ${({ theme }) => theme.dropdown.item.color};
   cursor: pointer;
   display: flex;
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   gap: 10px;
   justify-content: ${({ justifyContent }) => justifyContent};

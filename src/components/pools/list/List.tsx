@@ -62,7 +62,7 @@ const TokenIconSmall = styled(TokenIcon)`
   margin-top: -2px;
 
   .externalLink {
-    font-size: 1.2rem !important;
+    font-size: 0.8rem !important;
   }
 `
 

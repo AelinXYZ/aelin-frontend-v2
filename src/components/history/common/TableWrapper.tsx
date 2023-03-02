@@ -32,6 +32,12 @@ export const TableCard = styled.div`
   align-items: center;
 `
 
+export const Text = styled.h3`
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.2;
+`
+
 export const TableWrapper: React.FC<TableWrapper> = ({
   children,
   columns,

@@ -163,7 +163,7 @@ export const Cell = styled.span<CellProps>`
   align-items: center;
   color: ${({ light, theme: { colors } }) => (light ? colors.textColor : colors.textColorLight)};
   display: flex;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 500;
   height: fit-content;
   justify-content: ${({ justifyContent }) => justifyContent};
@@ -172,7 +172,7 @@ export const Cell = styled.span<CellProps>`
   min-width: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
   }
 
   ${({ justifyContent, mobileJustifyContent }) =>
@@ -237,7 +237,7 @@ export const HideOnDesktop = styled.span`
 export const TH = styled(Cell)`
   color: ${({ theme }) => theme.table.thColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.2;
   white-space: nowrap;
@@ -249,7 +249,7 @@ TH.defaultProps = {
 
 export const CellText = styled.span`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 500;
   line-height: 1.2;
 `

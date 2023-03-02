@@ -79,7 +79,7 @@ const TokenIconSmall = styled(TokenIcon)`
   margin-top: -2px;
 
   .externalLink {
-    font-size: 1.2rem !important;
+    font-size: 0.8rem !important;
   }
 `
 
@@ -103,13 +103,13 @@ const Title = styled.h3`
   align-items: center;
   color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 25px 0 0 0;
   padding: 0;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
   }
 `
 
@@ -122,6 +122,7 @@ const HideOnDesktop = styled(BaseHideOnDesktop)`
 
 const NoPoolsWrapper = styled(Row)`
   text-align: center;
+  font-size: 0.9rem;
 `
 
 const LoadingWrapper = styled(NoPoolsWrapper)`

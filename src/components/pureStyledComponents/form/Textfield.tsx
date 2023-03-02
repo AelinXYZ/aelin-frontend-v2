@@ -76,7 +76,7 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
 
 export const TextfieldCSS = css<TexfieldCSSProps>`
   --textfield-border-radius: 8px;
-  --texfield-font-size: 1.4rem;
+  --texfield-font-size: 0.9rem;
   --textfield-padding: 0 15px;
   --textfield-height: 36px;
   --textfield-font-weight: 400;
