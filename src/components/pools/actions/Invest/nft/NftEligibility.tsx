@@ -12,11 +12,7 @@ import { ParsedNftCollectionRules } from '@/src/utils/aelinPoolUtils'
 const Title = styled.h1`
   color: ${({ theme: { colors } }) => colors.textColor};
   font-weight: 600;
-<<<<<<< HEAD
-  font-size: 0.9rem;
-=======
   font-size: 0.8rem;
->>>>>>> staging
   line-height: 1.4;
 `
 const SubTitle = styled.div`
