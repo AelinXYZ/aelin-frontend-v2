@@ -1,31 +1,88 @@
-# Aelin Frontend v2
+# Aelin Frontend
 
-### Run this application with Node 14
+![Build](https://img.shields.io/github/actions/workflow/status/AelinXYZ/aelin-frontend-v2/ci.yml?branch=main)
 
-1. Copy `.env.example` as `.env.local`
+[![Discord](https://img.shields.io/discord/880914235444572210?logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/zxSwN8Z)
 
+[![Twitter Follow](https://img.shields.io/twitter/follow/aelinprotocol?style=social)](https://twitter.com/aelinprotocol)
+
+<p align="center">
+  <img height="350" src="https://github.com/AelinXYZ/aelin-frontend-v2/blob/master/media/homepage.png?raw=true" alt="Homepage"/>
+</p>
+
+Aelin is a dApp enabling protocols to leverage their communities for funding through permissionless multi-chain capital raises and OTC deals
+
+## Tech stack
+
+- React
+- Next.js
+- Typescript
+- GraphQL
+- Styled-Components
+- IPFS (web3.storage)
+
+# Contributing
+
+We are a community-driven and open-source project. Aelin welcomes contributors to submit their contributions by forking, fixing, committing, and creating a pull request that describes their work in detail. For more information, please refer to the [Contribution guidelines](CONTRIBUTING.md).
+
+## Development
+
+### Requeriments
+
+- Node LTS
+- Yarn
+
+### Getting Started
+
+#### Set up environment variables
+
+Copy `.env.example` as `.env.local`
+
+```bash
+cp .env.example .env.local
 ```
-$ cp .env.example .env.local
+
+Then, open `.env.local` and add the missing environment variables:
+
+Required:
+
+- `NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER=get-alchemy-api-key`
+
+#### Install dependencies
+
+```bash
+yarn
 ```
 
-2. Install dependencies
+#### Auto generate generate contracts types, subgraph types & queries SDK
 
-```
-$ yarn
-```
-
-3. Auto generate generate contracts types, subgraph types & queries SDK
-
-```
-$ yarn postinstall
+```bash
+yarn postinstall
 ```
 
-- NOTE: `postinstall` will generates an sdk file in `CODEGEN_OUTPUT_FILE` environment variable (default value: `types/generated/queries.ts` ) with all queries uses in the App.
+Note `postinstall` will generates an sdk file in `CODEGEN_OUTPUT_FILE` environment variable (default value: `types/generated/queries.ts` ) with all queries uses in the App.
 
-4. Run application as dev mode
+#### Run
 
+```bash
+yarn dev
 ```
-$ yarn dev
+
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+#### Build
+
+```bash
+yarn build
+yarn start
 ```
 
-5. Open `http://localhost:3000`
+#### Unit Testing
+
+```bash
+yarn test
+```
+
+## Contact
+
+Join the community on the [Aelin Discord server](https://discord.gg/vNkXAeZpuU)!
