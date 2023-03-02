@@ -84,6 +84,7 @@ const ButtonCSS = css`
 `
 
 const VestButton = styled(ButtonGradientSm)`
+  font-size: 0.7rem;
   ${ButtonCSS}
 `
 
