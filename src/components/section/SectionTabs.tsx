@@ -31,10 +31,10 @@ const ActiveItemCSS = css`
 const Item = styled(ButtonPrimaryLighter)<{ isActive?: boolean }>`
   height: 24px;
   padding: 0 10px;
-  font-size: 1rem;
+  font-size: 0.7rem;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
     height: 36px;
     padding: 0 20px;
   }

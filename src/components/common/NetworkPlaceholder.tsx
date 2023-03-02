@@ -17,7 +17,7 @@ Wrapper.defaultProps = {
 
 const Name = styled.div`
   color: ${({ theme: { networkPlaceholder } }) => networkPlaceholder.color};
-  font-size: 1.3rem;
+  font-size: 0.8rem;
   font-weight: 700;
   height: 11px;
   line-height: 1;

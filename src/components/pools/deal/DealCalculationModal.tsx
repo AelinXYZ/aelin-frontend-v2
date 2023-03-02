@@ -26,7 +26,7 @@ const Textfield = styled(BaseTextField)`
 
 const Label = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   line-height: 1.2;
   margin: 0 0 8px;
   text-align: left;

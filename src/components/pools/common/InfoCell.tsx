@@ -25,7 +25,7 @@ const TitleWrapper = styled.div`
 const Title = styled.h4`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.4;
   margin: 2px 0;
@@ -33,7 +33,7 @@ const Title = styled.h4`
   word-break: break-word;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
   }
 `
 
@@ -42,7 +42,7 @@ const Contents = styled.div``
 export const Value = styled.div`
   color: ${({ theme }) => theme.colors.textColorLight};
   display: block;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   font-weight: 400;
   gap: 12px;
   line-height: 1.4;
@@ -57,7 +57,7 @@ export const Value = styled.div`
   text-overflow: ellipsis;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
   }
 `
 

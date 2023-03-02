@@ -21,7 +21,7 @@ export const ButtonCSS = css`
   cursor: pointer;
   display: flex;
   font-family: ${({ theme }) => theme.fonts.fontFamily};
-  font-size: 1.4rem;
+  font-size: 0.85rem;
   font-weight: 400;
   gap: 8px;
   height: 36px;
@@ -106,7 +106,7 @@ export const ButtonPrimaryLightSmCSS = css`
   height: 24px;
   padding-left: 10px;
   padding-right: 10px;
-  font-size: 1rem;
+  font-size: 0.7rem;
   font-weight: 400;
 `
 
@@ -166,7 +166,7 @@ export const ButtonGradientSmCSS = css`
   height: 24px;
   padding-left: 10px;
   padding-right: 10px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 400;
 `
 
@@ -174,7 +174,7 @@ export const TabButtonCSS = css<{ isActive?: boolean }>`
   background-color: transparent;
   border-color: #babcc1;
   color: #babcc1;
-  font-size: 1rem;
+  font-size: 0.65rem;
   font-weight: 400;
   height: 24px;
   margin: 0;

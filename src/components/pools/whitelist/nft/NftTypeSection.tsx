@@ -5,7 +5,7 @@ import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReduce
 
 const Description = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
   margin: 0 0 51px;

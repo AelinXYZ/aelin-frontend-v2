@@ -15,7 +15,7 @@ const Description = styled.div`
   text-align: center;
   height: 41px;
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
 `

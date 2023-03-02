@@ -188,7 +188,7 @@ const DropdownButton = styled.button`
 
 const NetworkError = styled.p`
   color: ${({ theme }) => theme.colors.error};
-  font-size: 1.6rem;
+  font-size: 1rem;
   line-height: 1.4;
   margin: 0 auto 30px;
 `

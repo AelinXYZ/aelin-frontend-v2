@@ -64,7 +64,7 @@ const AllocationValue = styled(Row)`
 const Title = styled.h1`
   color: ${({ theme: { colors } }) => colors.textColor};
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   line-height: 1.4;
 `
 

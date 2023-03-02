@@ -34,7 +34,7 @@ const Title = styled(BaseTitle)`
 `
 const Contents = styled(BaseContents)`
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
 `
 const Vouchers = styled.span`
   color: ${({ theme }) => theme.buttonPrimary.color};

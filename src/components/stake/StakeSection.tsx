@@ -35,7 +35,7 @@ const TitleWrapper = styled.div`
 
 const Note = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   line-height: 1.2;
   margin: 10px;
   min-width: 320px;

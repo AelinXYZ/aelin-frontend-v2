@@ -28,9 +28,9 @@ const Rows = styled.div`
 
 const Row = styled.div`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 0.9rem;
   margin: 0 0 8px 0;
 
   &:last-child {

@@ -24,7 +24,7 @@ const Row = styled.div`
 
 export const Label = styled.div`
   font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   line-height: 20px;
   color: ${({ theme: { colors } }) => colors.textColor};
 `
