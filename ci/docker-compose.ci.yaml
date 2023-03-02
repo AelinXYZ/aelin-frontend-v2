@@ -57,7 +57,7 @@ services:
 
   contracts-deployer:
     image: aelinprotocol/contracts-deployer
-    command: ['cd ci && . ./deploy-ci.sh && tail -f /dev/null ']
+    command: ['cd ci && . ./deploy-ci.sh && mv .env.linuz /usr/share/envs && tail -f /dev/null ']
     depends_on:
       - anvil
     volumes:
