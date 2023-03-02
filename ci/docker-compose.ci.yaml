@@ -1,7 +1,7 @@
 version: '3'
 services:
   anvil:
-    image: linuzeth/aelin-anvil
+    image: aelinprotocol/anvil
     command:
       ["anvil --gas-limit 18446744073709551615 --host 0.0.0.0 --allow-origin '*' --chain-id 5"]
     environment:
@@ -56,7 +56,7 @@ services:
       - x11
 
   contracts-deployer:
-    image: linuzeth/aelin-contracts-deployer
+    image: aelinprotocol/contracts-deployer
     command: ['cd ci && . ./deploy-ci.sh && tail -f /dev/null ']
     depends_on:
       - anvil
@@ -66,7 +66,7 @@ services:
       - x11
 
   subgraph-deployer:
-    image: linuzeth/aelin-subgraph-deployer
+    image: aelinprotocol/subgraph-deployer
     command: ['cd ci && . ./generate-data.sh && cd .. && npm run deploy-ci && tail -f /dev/null']
     depends_on:
       - graph-node
