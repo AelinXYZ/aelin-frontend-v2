@@ -156,6 +156,7 @@ const DealCreateStepInput: React.FC<Props> = ({
             <Title>Deal Name</Title>
             <StyledDescription>{createDealConfig[step].text?.[0]}</StyledDescription>
             <Textfield
+              data-cy="direct-deal-name-input"
               maxLength={31}
               name={step}
               onChange={(e) => setDealField(e.target.value, `${step}.name`)}
@@ -170,6 +171,7 @@ const DealCreateStepInput: React.FC<Props> = ({
             <Title>Deal Symbol</Title>
             <StyledDescription>{createDealConfig[step].text?.[1]}</StyledDescription>
             <Textfield
+              data-cy="direct-deal-symbol-input"
               maxLength={8}
               name={step}
               onChange={(e) => setDealField(e.target.value, `${step}.symbol`)}
@@ -202,6 +204,7 @@ const DealCreateStepInput: React.FC<Props> = ({
         <Container>
           <StyledDescription>{createDealConfig[step].text?.[0]}</StyledDescription>
           <SponsorFeeTextfield
+            data-cy="sponsor-fee-input"
             disabled={!hasFee}
             maxLength={8}
             min="0"
@@ -215,6 +218,7 @@ const DealCreateStepInput: React.FC<Props> = ({
           <br />
           <LabeledCheckbox
             checked={!hasFee}
+            data-cy="no-sponsor-fee-labeled-checkbox"
             label="No sponsor fee"
             onClick={() => {
               if (hasFee) {
@@ -231,6 +235,7 @@ const DealCreateStepInput: React.FC<Props> = ({
         <Container>
           <StyledDescription>{createDealConfig[step].text?.[0]}</StyledDescription>
           <Textfield
+            data-cy="holder-address-input"
             maxLength={42}
             name={step}
             onChange={(e) => setDealField(e.target.value)}
@@ -259,6 +264,7 @@ const DealCreateStepInput: React.FC<Props> = ({
               } would you like to raise?`}
             </p>
             <Textfield
+              data-cy="investment-amount-to-raise-input"
               maxLength={42}
               min="0"
               name={step}
@@ -270,6 +276,7 @@ const DealCreateStepInput: React.FC<Props> = ({
             />
             <p>What’s the exchange rate?</p>
             <Textfield
+              data-cy="exchange-rate-input"
               maxLength={42}
               min="0"
               name={step}
@@ -282,12 +289,12 @@ const DealCreateStepInput: React.FC<Props> = ({
             <ExchangeRateSummary>
               <>
                 {dealTotal && (
-                  <ExchangeRateSpan>
+                  <ExchangeRateSpan data-cy="deal-total-info">
                     Deal Total: {dealTotal} {currentState[CreateUpFrontDealSteps.dealToken]?.symbol}
                   </ExchangeRateSpan>
                 )}
                 {investmentPerDeal && (
-                  <ExchangeRateSpan>
+                  <ExchangeRateSpan data-cy="deal-investment-per-deal-info">
                     (
                     {`${investmentPerDeal} ${
                       currentState[CreateUpFrontDealSteps.dealToken]?.symbol
@@ -307,11 +314,13 @@ const DealCreateStepInput: React.FC<Props> = ({
             <ExchangeRatesGrid>
               <LabeledRadioButton
                 checked={currentState[step]?.isCapped}
+                data-cy="deal-capped-labeled-radio-btn-yes"
                 label={'Yes'}
                 onClick={() => setDealField(true, `${step}.isCapped`)}
               />
               <LabeledRadioButton
                 checked={!currentState[step]?.isCapped}
+                data-cy="deal-capped-labeled-radio-btn-no"
                 label={'No'}
                 onClick={() => setDealField(false, `${step}.isCapped`)}
               />
@@ -326,11 +335,13 @@ const DealCreateStepInput: React.FC<Props> = ({
             <ExchangeRatesGrid>
               <LabeledRadioButton
                 checked={currentState[step]?.hasDealMinimum}
+                data-cy="deal-has-minimum-labeled-radio-btn-yes"
                 label={'Yes'}
                 onClick={() => setDealField(true, `${step}.hasDealMinimum`)}
               />
               <LabeledRadioButton
                 checked={!currentState[step]?.hasDealMinimum}
+                data-cy="deal-has-minimum-labeled-radio-btn-no"
                 label={'No'}
                 onClick={() => setDealField(false, `${step}.hasDealMinimum`)}
               />
@@ -339,6 +350,7 @@ const DealCreateStepInput: React.FC<Props> = ({
               <>
                 <br />
                 <Textfield
+                  data-cy="investment-minimum-amount-input"
                   maxLength={42}
                   min="0"
                   name={step}

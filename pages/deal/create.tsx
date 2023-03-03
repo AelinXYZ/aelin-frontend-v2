@@ -184,7 +184,12 @@ const Create: NextPage = () => {
             return (
               <WrapperGrid key={index}>
                 <PrevNextWrapper>
-                  {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
+                  {!isFirstStep && (
+                    <ButtonPrev
+                      data-cy="direct-deal-create-left-arrow-btn"
+                      onClick={() => moveStep('prev')}
+                    />
+                  )}
                 </PrevNextWrapper>
                 <StepContents>
                   {!withTitle && <Title>{title}</Title>}
@@ -198,19 +203,27 @@ const Create: NextPage = () => {
                   />
 
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <StyledError textAlign="center">{currentStepError}</StyledError>
+                    <StyledError data-cy="direct-deal-create-current-step-error" textAlign="center">
+                      {currentStepError}
+                    </StyledError>
                   )}
 
                   <ButtonWrapper>
                     {createDealState.currentStep === CreateUpFrontDealSteps.dealPrivacy &&
                       createDealState.dealPrivacy === Privacy.PRIVATE && (
-                        <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                        <ButtonPrimaryLight
+                          data-cy="direct-deal-create-edit-addresses-btn"
+                          onClick={() => setShowWhiteListModal(true)}
+                        >
                           Edit allowlisted addresses
                         </ButtonPrimaryLight>
                       )}
                     {createDealState.currentStep === CreateUpFrontDealSteps.dealPrivacy &&
                       createDealState.dealPrivacy === Privacy.NFT && (
-                        <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                        <ButtonPrimaryLight
+                          data-cy="direct-deal-create-edit-collections-btn"
+                          onClick={() => setShowWhiteListModal(true)}
+                        >
                           Edit collections
                         </ButtonPrimaryLight>
                       )}
@@ -221,6 +234,7 @@ const Create: NextPage = () => {
                       </BackButton>
                       {isFinalStep ? (
                         <ButtonGradient
+                          data-cy="direct-deal-create-btn"
                           disabled={disableSubmit}
                           key={`${step}_button`}
                           onClick={() => {
@@ -231,6 +245,7 @@ const Create: NextPage = () => {
                         </ButtonGradient>
                       ) : (
                         <ButtonGradient
+                          data-cy="direct-deal-create-next-btn"
                           disabled={!!currentStepError}
                           key={`${step}_button`}
                           onClick={() => moveStep('next')}
@@ -255,7 +270,11 @@ const Create: NextPage = () => {
                 </StepContents>
                 <PrevNextWrapper>
                   {!isFinalStep && (
-                    <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
+                    <ButtonNext
+                      data-cy="direct-deal-create-right-arrow-btn"
+                      disabled={!!currentStepError}
+                      onClick={() => moveStep('next')}
+                    />
                   )}
                 </PrevNextWrapper>
               </WrapperGrid>

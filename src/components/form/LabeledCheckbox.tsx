@@ -26,7 +26,7 @@ export const LabeledCheckbox: React.FC<{
   onClick: () => void
 }> = ({ checked, label, onClick, ...restProps }) => (
   <Wrapper onClick={onClick} {...restProps}>
-    <Checkbox checked={checked} />
+    <Checkbox checked={checked} data-cy="checkbox" />
     <Label checked={checked}>{label}</Label>
   </Wrapper>
 )

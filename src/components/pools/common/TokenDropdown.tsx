@@ -220,7 +220,7 @@ function TokenDropdown(props: TokenDropdownProps) {
             <Textfield
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
-              data-cy="from-token-modal-input"
+              data-cy="form-token-modal-input"
               disabled={searchingToken}
               onChange={(e) => {
                 handlerSearchAddress(e.target.value)

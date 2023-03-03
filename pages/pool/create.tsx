@@ -115,7 +115,12 @@ const Create: NextPage = () => {
             return (
               <WrapperGrid key={index}>
                 <PrevNextWrapper>
-                  {!isFirstStep && <ButtonPrev onClick={() => moveStep('prev')} />}
+                  {!isFirstStep && (
+                    <ButtonPrev
+                      data-cy="pool-create-left-arrow-btn"
+                      onClick={() => moveStep('prev')}
+                    />
+                  )}
                 </PrevNextWrapper>
                 <StepContents>
                   <Title>{title}</Title>
@@ -129,17 +134,25 @@ const Create: NextPage = () => {
                   />
 
                   {currentStepError && typeof currentStepError === 'string' && (
-                    <StyledError textAlign="center">{currentStepError}</StyledError>
+                    <StyledError data-cy="pool-create-current-step-error" textAlign="center">
+                      {currentStepError}
+                    </StyledError>
                   )}
 
                   <ButtonWrapper>
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.PRIVATE && (
-                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                      <ButtonPrimaryLight
+                        data-cy="pool-create-edit-addresses-btn"
+                        onClick={() => setShowWhiteListModal(true)}
+                      >
                         Edit allowlisted addresses
                       </ButtonPrimaryLight>
                     )}
                     {isFinalStep && createPoolState.poolPrivacy === Privacy.NFT && (
-                      <ButtonPrimaryLight onClick={() => setShowWhiteListModal(true)}>
+                      <ButtonPrimaryLight
+                        data-cy="pool-create-edit-collections-btn"
+                        onClick={() => setShowWhiteListModal(true)}
+                      >
                         Edit collections
                       </ButtonPrimaryLight>
                     )}
@@ -186,7 +199,11 @@ const Create: NextPage = () => {
                 </StepContents>
                 <PrevNextWrapper>
                   {!isFinalStep && (
-                    <ButtonNext disabled={!!currentStepError} onClick={() => moveStep('next')} />
+                    <ButtonNext
+                      data-cy="pool-create-right-arrow-btn"
+                      disabled={!!currentStepError}
+                      onClick={() => moveStep('next')}
+                    />
                   )}
                 </PrevNextWrapper>
               </WrapperGrid>

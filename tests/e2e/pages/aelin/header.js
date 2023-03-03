@@ -14,14 +14,14 @@ export default class Header extends Page {
   // }
 
   getConnectWalletBtn() {
-    cy.get("[data-cy='connect-btn']").click()
+    cy.dataCy('connect-btn').click()
     return cy.get('onboard-v2').shadow().contains('MetaMask')
   }
   getWalletButton() {
-    return cy.get("[data-cy='wallet-btn']")
+    return cy.dataCy('wallet-btn')
   }
   getSelectedNetwork() {
-    return cy.get("[data-cy='selected-network']")
+    return cy.dataCy('selected-network')
   }
   connectBrowserWallet() {
     const connectWalletButton = this.getConnectWalletBtn()

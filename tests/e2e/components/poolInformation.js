@@ -3,13 +3,13 @@
 
 export default class PoolInformation {
   getAllElements() {
-    return cy.get("[data-cy='info-cell']")
+    return cy.dataCy('info-cell')
   }
   getNthElement(n) {
     return this.getAllElements().eq(n).find('div')
   }
   getInvestmentTokenSymbol() {
-    return cy.get("[data-cy='external-link-children']").eq(0)
+    return cy.dataCy('external-link-children').eq(0)
   }
   getPoolCap() {
     return this.getNthElement(1).eq(1)
@@ -27,7 +27,7 @@ export default class PoolInformation {
     return this.getNthElement(6).eq(1)
   }
   getSponsor() {
-    return cy.get("[data-cy='external-link-children']").eq(1)
+    return cy.dataCy('external-link-children').eq(1)
   }
   getParticipants() {
     return this.getNthElement(9).eq(1)

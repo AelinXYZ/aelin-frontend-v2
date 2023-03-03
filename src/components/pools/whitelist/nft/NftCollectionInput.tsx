@@ -126,6 +126,7 @@ const NftCollectionInput = ({ nftType, onChange, selectedCollection }: NftCollec
         <Search />
       </SearchWrapper>
       <Input
+        data-cy="nft-white-list-collection-input"
         isOpen={!!input.length && !!collections && collections.length > 0}
         onChange={(e) => {
           setInput(e.target.value)
@@ -145,6 +146,7 @@ const NftCollectionInput = ({ nftType, onChange, selectedCollection }: NftCollec
           {collections?.map((collection) => {
             return (
               <Item
+                data-cy="nft-white-list-collection-item"
                 isActive={
                   !!selectedCollection.nftCollectionData &&
                   collection.id === selectedCollection.nftCollectionData.id
