@@ -23,6 +23,8 @@ export default class PoolStepperBuilder {
     this.creationDate = Date.now()
     this.purchaseTokenSymbol =
       PURCHASE_TOKEN_SYMBOL[Math.floor(Math.random() * PURCHASE_TOKEN_SYMBOL.length)]
+    this.allowlistAddress = '0x0000000000000000000000000000000000000000'
+    this.allowlistAmount = 1
   }
 
   createPoolId(poolName) {

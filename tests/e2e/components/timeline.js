@@ -43,7 +43,7 @@ export default class TimeLine {
   }
 
   getActiveStep() {
-    return cy.get("[data-cy='timeline-step-active-todo']")
+    return cy.dataCy('timeline-step-active-todo')
   }
 
   getActiveStepTitle() {
@@ -57,6 +57,6 @@ export default class TimeLine {
   }
 
   getDoneSteps() {
-    return cy.get("[data-cy='timeline-step-inactive-done']")
+    return cy.dataCy('timeline-step-inactive-done')
   }
 }

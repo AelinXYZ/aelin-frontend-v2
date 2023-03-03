@@ -246,12 +246,14 @@ const WhiteListRow = ({
   return (
     <>
       <Textfield
+        data-cy="allowlist-address-input"
         onChange={(e) => onChangeRow(e.target.value, 'address', rowIndex)}
         placeholder="Add address..."
         status={address && !isAddress(address) ? TextfieldState.error : undefined}
         value={address}
       />
       <Textfield
+        data-cy="allowlist-amount-input"
         onChange={(e) => {
           const amount = Number(e.target.value)
 
@@ -470,7 +472,9 @@ const AddressesWhiteList = ({
                 />
               ))}
             </AmountFormatsWrapper>
-            <MainButton onClick={handleNext}>Next</MainButton>
+            <MainButton data-cy="allowlist-next-btn" onClick={handleNext}>
+              Next
+            </MainButton>
           </>
         )}
         {currentStep === AddressesWhiteListStep.addresses && (
@@ -512,7 +516,11 @@ const AddressesWhiteList = ({
               </ButtonPrimaryLightSm>
             </RelativeRow>
             {getError(status)}
-            <MainButton disabled={status !== AddressesWhiteListStatus.valid} onClick={handleSave}>
+            <MainButton
+              data-cy="allowlist-save-btn"
+              disabled={status !== AddressesWhiteListStatus.valid}
+              onClick={handleSave}
+            >
               Save
             </MainButton>
           </>

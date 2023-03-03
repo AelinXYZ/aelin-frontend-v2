@@ -272,6 +272,7 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose, onConfirm }: NftWh
               {getContent()}
               {getError()}
               <NextButton
+                data-cy="nft-white-list-next-btn"
                 disabled={getError() !== null}
                 onClick={() => {
                   if (isLastStep) {
