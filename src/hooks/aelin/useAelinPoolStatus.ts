@@ -736,7 +736,7 @@ export function useTimelineStatus(pool?: ParsedAelinPool, _isUpfrontDeal?: boole
           : '',
         deadlineProgress: pool?.deal
           ? pool.deal.holderAlreadyDeposited
-            ? '0'
+            ? '100'
             : calculateDeadlineProgress(pool.deal.holderFundingExpiration, pool.deal.createdAt)
           : '0',
         value: pool?.deal
@@ -892,6 +892,8 @@ export function useTimelineStatus(pool?: ParsedAelinPool, _isUpfrontDeal?: boole
                 ),
                 addMilliseconds(pool.deal.redemption.end, pool.deal.vestingPeriod.cliff.ms),
               )
+            : isAfter(now, pool.deal.vestingPeriod.vesting.end as Date)
+            ? '100'
             : '0'
           : '',
         value: pool?.deal
@@ -1019,6 +1021,8 @@ export function useTimelineStatus(pool?: ParsedAelinPool, _isUpfrontDeal?: boole
                   ),
                   addMilliseconds(pool?.purchaseExpiry, pool.upfrontDeal.vestingPeriod.cliff.ms),
                 )
+              : isAfter(now, pool.upfrontDeal.vestingPeriod.vesting.end)
+              ? '100'
               : '0'
             : '',
         value:
