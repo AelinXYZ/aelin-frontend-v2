@@ -14,7 +14,7 @@ export default class DirectDealBuilder {
     this.dealTokenSymbol = 'UNI'
     this.privacy = DirectDealPrivacy.PUBLIC
     this.allowlistAddress = '0x0000000000000000000000000000000000000000'
-    this.allowlistAmount = 1
+    this.allowlistAmount = faker.datatype.number({ max: 1000, min: 1 })
     this.nftCollectionName = 'test'
     this.investmentAmountToRaise = 190
     this.exchangeRate = 2

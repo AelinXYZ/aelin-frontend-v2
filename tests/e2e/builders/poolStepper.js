@@ -24,7 +24,7 @@ export default class PoolStepperBuilder {
     this.purchaseTokenSymbol =
       PURCHASE_TOKEN_SYMBOL[Math.floor(Math.random() * PURCHASE_TOKEN_SYMBOL.length)]
     this.allowlistAddress = '0x0000000000000000000000000000000000000000'
-    this.allowlistAmount = 1
+    this.allowlistAmount = faker.datatype.number({ max: 1000, min: 1 })
   }
 
   createPoolId(poolName) {
