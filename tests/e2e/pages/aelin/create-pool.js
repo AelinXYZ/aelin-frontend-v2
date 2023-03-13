@@ -11,6 +11,17 @@ export const PoolPrivacy = {
   NFT: 'NFT',
 }
 
+export const CreatePoolSteps = {
+  PoolName: 1,
+  PoolSymbol: 2,
+  InvestmentToken: 3,
+  InvestmentDeadLine: 4,
+  DealDeadline: 5,
+  PoolCap: 6,
+  SponsorFee: 7,
+  PoolPrivacy: 8,
+}
+
 export default class CreatePoolPage extends Page {
   constructor() {
     super()
@@ -28,109 +39,173 @@ export default class CreatePoolPage extends Page {
   }
 
   nextStep() {
-    cy.get("[data-cy='pool-create-next-btn']").click()
+    this.getNextButton().click()
   }
 
   getNameInput() {
-    return cy.get("[data-cy='pool-name-input']")
+    return cy.dataCy('pool-name-input')
   }
 
   getSymbolInput() {
-    return cy.get("[data-cy='pool-symbol-input']")
+    return cy.dataCy('pool-symbol-input')
   }
 
   getSummaryItem(item) {
-    return cy.get(`[data-cy='summary-item-${item}']`)
+    return cy.dataCy(`summary-item-${item}`)
   }
 
   getInvestmentTokenModalButton() {
-    return cy.get("[data-cy='form-token-btn-dropdown']")
+    return cy.dataCy('form-token-btn-dropdown')
   }
 
   getInvestmentTokenModalInput() {
-    return cy.get("[data-cy='from-token-modal-input']")
+    return cy.dataCy('form-token-modal-input')
   }
 
   getTokenSelectionModalItem() {
-    return cy.get("[data-cy='token-selection-modal-item']")
+    return cy.dataCy('token-selection-modal-item')
   }
 
   getInvestmentTokenModalConfirmBtn() {
-    return cy.get("[data-cy='form-token-modal-confirm-btn']")
+    return cy.dataCy('form-token-modal-confirm-btn')
   }
 
   getSummaryInvestmentToken() {
-    return cy.get("[data-cy='external-link-children']")
+    return cy.dataCy('external-link-children')
   }
 
   getDeadlineDuration(period) {
-    return cy.get(`[data-cy='hmsInput-duration${period}']`)
+    return cy.dataCy(`hmsInput-duration${period}`)
+  }
+
+  getNoCapLabeledCheckBox() {
+    return cy.dataCy('no-cap-labeled-checkbox')
   }
 
   getNoCapCheckBox() {
-    return cy.get("[data-cy='no-cap-checkbox']")
+    return this.getNoCapLabeledCheckBox().find("[data-cy='checkbox']")
   }
 
   getNoCapInput() {
-    return cy.get("[data-cy='no-cap-input']")
+    return cy.dataCy('no-cap-input')
   }
 
   getSponsorFeeInput() {
-    return cy.get("[data-cy='sponsor-fee-input']")
+    return cy.dataCy('sponsor-fee-input')
   }
 
-  getPrivacyButton(privacy) {
-    return cy.get(`[data-cy='radio-btn-${privacy}']`)
+  getPrivacyLabeledRadioButton(privacy) {
+    return cy.dataCy(`labeled-radio-btn-${privacy.toLowerCase()}`)
+  }
+
+  getPrivacyRadioButton(privacy) {
+    return this.getPrivacyLabeledRadioButton(privacy).find("[data-cy='radio-btn']")
   }
 
   getActiveTimeLineStepTitle() {
     return this.timeLine.getActiveStepTitle()
   }
 
-  geCreateButton() {
-    return cy.get("[data-cy='pool-create-btn']")
+  getLeftArrowButton() {
+    return cy.dataCy('pool-create-left-arrow-btn')
   }
 
-  typePoolData(fakePool) {
+  getRightArrowButton() {
+    return cy.dataCy('pool-create-right-arrow-btn')
+  }
+
+  getNextButton() {
+    return cy.dataCy('pool-create-next-btn')
+  }
+
+  getCreateButton() {
+    return cy.dataCy('pool-create-btn')
+  }
+
+  getCurrentStepError() {
+    return cy.dataCy('pool-create-current-step-error')
+  }
+
+  getEditAddressesButton() {
+    return cy.dataCy('pool-create-edit-addresses-btn')
+  }
+
+  getEditCollectionsButton() {
+    return cy.dataCy('pool-create-edit-collections-btn')
+  }
+
+  getFirstAllowlistAddressInput() {
+    return cy.dataCy('allowlist-address-input').first()
+  }
+
+  getFirstAllowlistAmountInput() {
+    return cy.dataCy('allowlist-amount-input').first()
+  }
+
+  getAllowlistNextButton() {
+    return cy.dataCy('allowlist-next-btn')
+  }
+
+  getAllowlistSaveButton() {
+    return cy.dataCy('allowlist-save-btn')
+  }
+
+  typePoolData(fakePool, step = CreatePoolSteps.PoolPrivacy) {
     //Pool Name
-    this.getNameInput().type(fakePool.name)
-    this.nextStep()
+    if (step >= CreatePoolSteps.PoolName) {
+      this.getNameInput().type(fakePool.name)
+      this.nextStep()
+    }
 
     //Pool Symbol
-    this.getSymbolInput().type(fakePool.symbol)
-    this.nextStep()
+    if (step >= CreatePoolSteps.PoolSymbol) {
+      this.getSymbolInput().type(fakePool.symbol)
+      this.nextStep()
+    }
 
     //Purchase Token
-    this.getInvestmentTokenModalButton().click()
-    this.getInvestmentTokenModalInput().type(fakePool.purchaseTokenSymbol)
-    this.getTokenSelectionModalItem().click()
-    this.nextStep()
+    if (step >= CreatePoolSteps.InvestmentToken) {
+      this.getInvestmentTokenModalButton().click()
+      this.getInvestmentTokenModalInput().type(fakePool.purchaseTokenSymbol)
+      this.getTokenSelectionModalItem().click()
+      this.nextStep()
+    }
 
     //Investment Deadline
-    this.getDeadlineDuration('Minutes').type(fakePool.investmentDeadlineMinutes)
-    this.nextStep()
+    if (step >= CreatePoolSteps.InvestmentDeadLine) {
+      this.getDeadlineDuration('Minutes').type(fakePool.investmentDeadlineMinutes)
+      this.nextStep()
+    }
 
     //Deal Deadline
-    this.getDeadlineDuration('Days').type(fakePool.dealDeadlineDays)
-    this.getDeadlineDuration('Hours').type(fakePool.dealDeadlineHours)
-    this.getDeadlineDuration('Minutes').type(fakePool.dealDeadlineMinutes)
-    this.nextStep()
+    if (step >= CreatePoolSteps.DealDeadline) {
+      this.getDeadlineDuration('Days').type(fakePool.dealDeadlineDays)
+      this.getDeadlineDuration('Hours').type(fakePool.dealDeadlineHours)
+      this.getDeadlineDuration('Minutes').type(fakePool.dealDeadlineMinutes)
+      this.nextStep()
+    }
 
     //PoolCap
-    this.getNoCapCheckBox().click()
-    this.getNoCapInput().type(fakePool.poolCap)
-    this.nextStep()
+    if (step >= CreatePoolSteps.PoolCap) {
+      this.getNoCapLabeledCheckBox().click()
+      this.getNoCapInput().type(fakePool.poolCap)
+      this.nextStep()
+    }
 
     //SponsorFee
-    this.getSponsorFeeInput().type(fakePool.sponsorFee)
-    this.nextStep()
+    if (step >= CreatePoolSteps.SponsorFee) {
+      this.getSponsorFeeInput().type(fakePool.sponsorFee)
+      this.nextStep()
+    }
 
     //Pool Privacy
-    this.assignPoolPrivacy(fakePool.privacy)
+    if (step === CreatePoolSteps.PoolPrivacy) {
+      this.assignPoolPrivacy(fakePool.privacy)
+    }
   }
 
   createPool() {
-    this.geCreateButton().click()
+    this.getCreateButton().click()
     this.confirmModalTransaction()
     this.confirmMetamaskTransaction()
     this.waitUntilTransaction(Transaction.Confirmed)
@@ -139,7 +214,7 @@ export default class CreatePoolPage extends Page {
   assignPoolPrivacy(privacy) {
     switch (privacy) {
       case PoolPrivacy.PUBLIC:
-        return this.getPrivacyButton(privacy.toLowerCase()).click()
+        return this.getPrivacyLabeledRadioButton(privacy).click()
       case PoolPrivacy.PRIVATE:
         // Private pool logic
         break
@@ -147,7 +222,47 @@ export default class CreatePoolPage extends Page {
         // NFT pool logic
         break
       default:
-        return this.getPrivacyButton(privacy.toLowerCase()).click()
+        return this.getPrivacyLabeledRadioButton(privacy).click()
+    }
+  }
+
+  assertNoCapCheckBox(checked) {
+    return this.getNoCapCheckBox().should(
+      'have.css',
+      'background-color',
+      checked ? 'rgb(130, 128, 255)' : 'rgba(255, 255, 255, 0.04)',
+    )
+  }
+
+  assertPrivacyRadioButton(privacy, checked) {
+    return this.getPrivacyRadioButton(privacy).should(
+      'have.css',
+      'background-color',
+      checked ? 'rgb(130, 128, 255)' : 'rgba(255, 255, 255, 0.04)',
+    )
+  }
+
+  assertPrivacyRadioButtons(privacy) {
+    switch (privacy) {
+      case PoolPrivacy.PUBLIC:
+        this.assertPrivacyRadioButton(PoolPrivacy.PUBLIC, true)
+        this.assertPrivacyRadioButton(PoolPrivacy.PRIVATE, false)
+        this.assertPrivacyRadioButton(PoolPrivacy.NFT, false)
+        break
+      case PoolPrivacy.PRIVATE:
+        this.assertPrivacyRadioButton(PoolPrivacy.PUBLIC, false)
+        this.assertPrivacyRadioButton(PoolPrivacy.PRIVATE, true)
+        this.assertPrivacyRadioButton(PoolPrivacy.NFT, false)
+        break
+      case PoolPrivacy.NFT:
+        this.assertPrivacyRadioButton(PoolPrivacy.PUBLIC, false)
+        this.assertPrivacyRadioButton(PoolPrivacy.PRIVATE, false)
+        this.assertPrivacyRadioButton(PoolPrivacy.NFT, true)
+        break
+      default:
+        this.assertPrivacyRadioButton(PoolPrivacy.PUBLIC, false)
+        this.assertPrivacyRadioButton(PoolPrivacy.PRIVATE, false)
+        this.assertPrivacyRadioButton(PoolPrivacy.NFT, false)
     }
   }
 }

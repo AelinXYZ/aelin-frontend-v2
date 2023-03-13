@@ -49,6 +49,13 @@ docker cp anvil:/usr/share/envs/.env.generated ./.env.generated
 yarn dev
 ```
 
+> Alternatively you can use prod build. Test run will be much faster, but it requires to make new build manualy everytime when new changes were made:
+
+```sh
+yarn build
+yarn start
+```
+
 ### 4 - Run E2E test?
 
 > step 3 required!

@@ -22,7 +22,7 @@ export default class CreateDealPage extends Page {
   }
 
   nextStep() {
-    cy.get("[data-cy='deal-create-next-btn']").click()
+    cy.dataCy('deal-create-next-btn').click()
   }
 
   getFormTitle() {
@@ -34,51 +34,51 @@ export default class CreateDealPage extends Page {
   }
 
   getSummaryItem(item) {
-    return cy.get(`[data-cy='summary-item-${item}']`)
+    return cy.dataCy(`summary-item-${item}`)
   }
 
   getDealTokenModalButton() {
-    return cy.get("[data-cy='form-token-btn-dropdown']")
+    return cy.dataCy('form-token-btn-dropdown')
   }
 
   getDealTokenModalInput() {
-    return cy.get("[data-cy='from-token-modal-input']")
+    return cy.dataCy('form-token-modal-input')
   }
 
   getDealTokenModalConfirmBtn() {
-    return cy.get("[data-cy='form-token-modal-confirm-btn']")
+    return cy.dataCy('form-token-modal-confirm-btn')
   }
 
   getTotalPurchaseAmountInput() {
-    return cy.get("[data-cy='total-purchase-amount-input']")
+    return cy.dataCy('total-purchase-amount-input')
   }
 
   getDealTokenTotalInput() {
-    return cy.get("[data-cy='deal-token-total-input']")
+    return cy.dataCy('deal-token-total-input')
   }
 
-  getPartialRadioButton() {
-    return cy.get("[data-cy='radio-btn-partial']").find('span')
+  getPartialLabeledRadioButton() {
+    return cy.dataCy('labeled-radio-btn-partial').find('span')
   }
 
   getSummaryDealToken() {
-    return cy.get("[data-cy='external-link-children']")
+    return cy.dataCy('external-link-children')
   }
 
   getDeadlineDuration(period) {
-    return cy.get(`[data-cy='hmsInput-duration${period}']`)
+    return cy.dataCy(`hmsInput-duration${period}`)
   }
 
   getCounterPartyAddressInput() {
-    return cy.get("[data-cy='counterparty-address-input']")
+    return cy.dataCy('counterparty-address-input')
   }
 
   getActiveTimeLineStepTitle() {
     return this.timeLine.getActiveStepTitle()
   }
 
-  geCreateButton() {
-    return cy.get("[data-cy='create-deal-form-btn']")
+  getCreateButton() {
+    return cy.dataCy('create-deal-form-btn')
   }
 
   typePoolData() {
@@ -89,7 +89,7 @@ export default class CreateDealPage extends Page {
     this.nextStep()
 
     //Total investment amount
-    this.getPartialRadioButton().click()
+    this.getPartialLabeledRadioButton().click()
     this.getTotalPurchaseAmountInput().type(this.fakeDeal.totalInvestmentAmount)
     this.nextStep()
 
@@ -124,7 +124,7 @@ export default class CreateDealPage extends Page {
   }
 
   createDeal() {
-    this.geCreateButton().click()
+    this.getCreateButton().click()
     this.confirmModalTransaction()
     this.confirmMetamaskTransaction()
     this.waitUntilTransaction(Transaction.Confirmed)

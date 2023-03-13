@@ -9,11 +9,11 @@ export const Transaction = {
 
 export default class Page {
   getTitle() {
-    return cy.get("[data-cy='page-title']")
+    return cy.dataCy('page-title')
   }
 
   getSubTitle() {
-    return cy.get("[data-cy='page-subtitle']")
+    return cy.dataCy('page-subtitle')
   }
 
   getMetamaskWalletAddress() {
@@ -21,7 +21,7 @@ export default class Page {
   }
 
   getToastMessage() {
-    return cy.get("[data-cy='toast-message']")
+    return cy.dataCy('toast-message')
   }
 
   acceptMetamaskAccessRequest(allAccounts) {
@@ -56,7 +56,7 @@ export default class Page {
   }
 
   confirmModalTransaction() {
-    cy.get("[data-cy='transaction-modal-confirm-btn']").click()
+    cy.dataCy('transaction-modal-confirm-btn').click()
   }
 
   waitForCyComponentToExist(cyComponent) {

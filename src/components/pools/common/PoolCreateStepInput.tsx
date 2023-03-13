@@ -106,7 +106,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
           />
           <Checkbox
             checked={currentState[step] === 0}
-            data-cy="no-cap-checkbox"
+            data-cy="no-cap-labeled-checkbox"
             label={'No cap'}
             onClick={() => {
               setPoolField(currentState[step] === 0 ? undefined : 0)
