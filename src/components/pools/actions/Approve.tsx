@@ -28,6 +28,7 @@ type Props = {
   approveAmt?: BigNumber
   allowance?: string
   symbol?: string
+  noEnoughBalance?: boolean
 }
 
 const Allowance = ({ allowance, symbol }: { allowance: string; symbol: string }) => (
@@ -48,6 +49,7 @@ export default function Approve({
   tokenAddress,
   approveAmt = MAX_BN,
   allowance,
+  noEnoughBalance,
 }: Props) {
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 
@@ -78,13 +80,16 @@ export default function Approve({
       <Contents>{description}</Contents>
       <ButtonsWrapper>
         <ButtonGradient
-          disabled={!address || !isAppConnected || isSubmitting || !userBalance?.gt(0)}
+          disabled={
+            !address || !isAppConnected || isSubmitting || noEnoughBalance || !userBalance?.gt(0)
+          }
           onClick={approveInvestmentToken}
         >
           Approve
         </ButtonGradient>
       </ButtonsWrapper>
-      {!userBalance?.gt(0) && symbol && (
+      {noEnoughBalance && <BaseError textAlign="center">Insufficient balance</BaseError>}
+      {!noEnoughBalance && !userBalance?.gt(0) && symbol && (
         <BaseError textAlign="center">You must have {symbol} in your wallet</BaseError>
       )}
     </>
