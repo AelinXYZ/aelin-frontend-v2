@@ -1,6 +1,6 @@
 import { lighten, rgba } from 'polished'
 
-const componentBackgroundColor = 'rgba(255, 255, 255, 0.05)'
+const componentBackgroundColor = '#0d1617'
 const componentBorderColor = '#93DD7D'
 const componentBorderColorSecondary = '#93DD7D'
 const componentBorder = `0.5px solid ${componentBorderColor}`
@@ -231,5 +231,11 @@ export const ethlizardsTheme = {
     placeholder: {
       color: lightGray,
     },
+  },
+  voucherModal: {
+    backgroundColor: '#0d1617',
+  },
+  investorModal: {
+    backgroundColor: '#0d1617',
   },
 }

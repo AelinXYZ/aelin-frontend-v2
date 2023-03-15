@@ -230,4 +230,10 @@ export const darkTheme = {
       color: lightGray,
     },
   },
+  voucherModal: {
+    backgroundColor: gray,
+  },
+  investorModal: {
+    backgroundColor: gray,
+  },
 }
