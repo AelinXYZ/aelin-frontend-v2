@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
-import EthlizardsLogo from '../../../public/resources/ethlizards_logo.png'
+import EthlizardsLogo from '../../../public/resources/AelinXEthlizards.svg'
 import { NetworkPlaceholder } from '../common/NetworkPlaceholder'
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { DarkMode } from '@/src/components/assets/DarkMode'
