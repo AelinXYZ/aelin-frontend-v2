@@ -1,6 +1,8 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
+import EthlizardsLogo from '../../../public/resources/ethlizards_logo.png'
 import { NetworkPlaceholder } from '../common/NetworkPlaceholder'
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { DarkMode } from '@/src/components/assets/DarkMode'
@@ -67,7 +69,24 @@ const InnerContainer = styled(BaseInnerContainer)`
   }
 `
 
+const EthlizardWrapper = styled.div`
+  display: ${({ theme }) => (theme.ethliz ? 'flex' : 'none')};
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  max-height: calc(var(--header-height) - 20px);
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    max-height: calc(var(--header-height) - 80px);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    max-height: calc(var(--header-height) - 20px);
+  }
+`
+
 const HomeLink = styled.a`
+  display: flex;
   position: relative;
   transition: opacity 0.05s linear;
   z-index: 10;
@@ -78,6 +97,7 @@ const HomeLink = styled.a`
 `
 
 const Logo = styled(AelinLogo)`
+  display: ${({ theme }) => (theme.ethliz ? 'none' : '')};
   cursor: pointer;
   max-height: calc(var(--header-height) - 20px);
 
@@ -272,6 +292,9 @@ export const Header: React.FC = (props) => {
             <Link href="/" passHref>
               <HomeLink>
                 <Logo />
+                <EthlizardWrapper>
+                  <Image alt="Aelin x Ethlizard" src={EthlizardsLogo} />
+                </EthlizardWrapper>
               </HomeLink>
             </Link>
           </StartWrapper>
