@@ -7,7 +7,7 @@ import { SWRConfiguration } from 'swr'
 
 import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { PoolStages } from '@/src/constants/pool'
 import useAelinPoolAccess from '@/src/hooks/aelin/useAelinPoolAccess'
 import useGetMinimumPurchaseAmount from '@/src/hooks/aelin/useGetMinimumPurchaseAmount'
@@ -72,6 +72,7 @@ export type ParsedAelinPool = {
   minimumPurchaseAmount?: DetailedNumber
   totalVouchers: number
   vouchers: string[]
+  totalAmountEarnedByProtocol: DetailedNumber
   upfrontDeal?: {
     address: string
     name: string
@@ -228,6 +229,14 @@ export const getParsedPool = ({
       : undefined,
     totalVouchers: pool.totalVouchers,
     vouchers: pool.vouchers.map((addr) => getAddress(addr)),
+    totalAmountEarnedByProtocol: getDetailedNumber(
+      pool.totalAmountEarnedByProtocol,
+      pool.deal
+        ? pool.deal.underlyingDealTokenDecimals
+        : pool.upfrontDeal
+        ? pool.upfrontDeal.underlyingDealTokenDecimals
+        : BASE_DECIMALS,
+    ),
   }
 
   const dealDetails = pool.deal

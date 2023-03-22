@@ -25,6 +25,7 @@ gql`
     filter
 
     totalAmountEarnedBySponsor
+    totalAmountEarnedByProtocol
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
@@ -45,6 +46,9 @@ gql`
     }
 
     dealType
+    deal {
+      ...PoolDeal
+    }
     upfrontDeal {
       ...UpfrontDealDetails
     }
@@ -62,13 +66,17 @@ gql`
     underlyingDealTokenDecimals
     underlyingDealTokenTotalSupply
     underlyingDealTokenTotal
+    underlyingPerDealExchangeRate
 
     purchaseTokenTotalForDeal
 
     proRataRedemptionPeriod
     proRataRedemptionPeriodStart
+    proRataRedemptionExpiry
+    proRataRedemptionStart
     openRedemptionPeriod
     openRedemptionStart
+    openRedemptionExpiry
 
     vestingPeriod
     vestingCliff
@@ -84,6 +92,8 @@ gql`
     totalAmountUnredeemed
     totalUsersAccepted
     totalUsersRejected
+
+    maxDealTotalSupply
   }
 `
 
