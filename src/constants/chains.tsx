@@ -64,7 +64,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     defaultRpcUrl: 'https://rpc.ankr.com/eth',
     shortName: 'Mainnet',
     tokenListUrl: [
-      'https://tokens.1inch.eth.limo',
+      'https://tokens.1inch.eth.link',
       'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
     ],
     nativeCurrency: {
@@ -87,7 +87,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     defaultRpcUrl: `https://eth-goerli.g.alchemy.com/v2/${env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
     shortName: 'Goerli',
     tokenListUrl: [
-      'https://tokens.1inch.eth.limo',
+      'https://tokens.1inch.eth.link',
       'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
     ],
     nativeCurrency: {
