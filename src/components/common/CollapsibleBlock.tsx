@@ -33,14 +33,14 @@ const Header = styled.div`
 const Title = styled.h3`
   color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
   padding: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
   }
 `
 

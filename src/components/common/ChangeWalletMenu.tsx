@@ -20,7 +20,7 @@ const Row = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   gap: 8px;
   justify-content: center;
   margin-bottom: 10px;
@@ -49,7 +49,7 @@ const ExternalLink = styled.a`
 
 const Button = styled(ButtonPrimaryLight)`
   border-width: 0.5px;
-  font-size: 1rem;
+  font-size: 0.65rem;
   font-weight: 500;
   height: 24px;
   line-height: 1.2;

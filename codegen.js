@@ -27,5 +27,6 @@ module.exports = {
     // excludeQueries:
     // useSWRInfinite: ['poolsCreated'],
     autogenSWRKey: true,
+    namingConvention: './codegen-custom-naming.js',
   },
 }

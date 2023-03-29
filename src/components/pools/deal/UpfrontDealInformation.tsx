@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 import { genericSuspense } from '../../helpers/SafeSuspense'
+import { ButtonPrimaryLightSm } from '../../pureStyledComponents/buttons/Button'
 import InlineLoading from '../../pureStyledComponents/common/InlineLoading'
 import { TokenIcon } from '../common/TokenIcon'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -20,10 +21,21 @@ const Column = styled.div`
 `
 
 const DealParticipantsInfoCell = genericSuspense(
-  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
+  ({
+    pool,
+    showInvestorsModal,
+    title,
+    tooltip,
+  }: {
+    pool: ParsedAelinPool
+    title: string
+    tooltip: string
+    showInvestorsModal: () => void
+  }) => {
     return (
       <InfoCell title={title} tooltip={tooltip}>
         <Value>Accepted: {pool.upfrontDeal?.totalUsersAccepted || 0}</Value>
+        <ButtonPrimaryLightSm onClick={showInvestorsModal}>See more</ButtonPrimaryLightSm>
       </InfoCell>
     )
   },
@@ -33,7 +45,8 @@ const DealParticipantsInfoCell = genericSuspense(
 export const UpfrontDealInformation: React.FC<{
   pool: ParsedAelinPool
   poolHelpers: Funding
-}> = ({ pool, poolHelpers }) => {
+  showInvestorsModal: () => void
+}> = ({ pool, poolHelpers, showInvestorsModal }) => {
   const { chainId, sponsorFee, upfrontDeal } = pool
 
   if (!upfrontDeal) {
@@ -91,6 +104,7 @@ export const UpfrontDealInformation: React.FC<{
         </InfoCell>
         <DealParticipantsInfoCell
           pool={pool}
+          showInvestorsModal={showInvestorsModal}
           title="Deal participants"
           tooltip="Total number of deal participants that have accepted or declined"
         />

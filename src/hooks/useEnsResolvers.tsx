@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from '@ethersproject/providers'
 import useSWR from 'swr'
 
-import { Chains, getNetworkConfig } from '../constants/chains'
+import { Chains, getNetworkConfig } from '@/src/constants/chains'
 
 const { rpcUrl: mainnetRpcUrl } = getNetworkConfig(Chains.mainnet)
 export const mainnetRpcProvider = new JsonRpcProvider(mainnetRpcUrl)
@@ -17,11 +17,20 @@ export const useEnsLookUpAddress = (address: string) => {
     async () => {
       try {
         const ens = await mainnetRpcProvider.lookupAddress(address)
+
         if (!ens) throw new Error(`No ens name for this address`)
+
         return ens
       } catch (err) {
         return address
       }
+    },
+    {
+      refreshWhenHidden: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
+      refreshWhenOffline: false,
     },
   )
 
@@ -31,14 +40,16 @@ export const useEnsLookUpAddress = (address: string) => {
   }
 }
 
-const isValidENSName = (str: string) => str.length > 3 && str.includes('.')
+export const isValidENSName = (str: string) => str.length > 3 && str.includes('.')
 
 // get address by ens name
 export const ensResolver = async (name: string) => {
   if (isValidENSName(name)) {
     try {
       const ens = await mainnetRpcProvider.resolveName(name)
+
       if (!ens) throw new Error(`No address for this ens name`)
+
       return ens.toLowerCase()
     } catch (err) {
       console.log(err)
@@ -46,4 +57,34 @@ export const ensResolver = async (name: string) => {
     }
   }
   return name
+}
+
+// Get address by ens name
+export const useEnsResolver = (name: string | undefined) => {
+  const { data, isValidating } = useSWR<string | null>(
+    mainnetRpcProvider && name ? ['ensResolver', name] : null,
+    async () => {
+      if (!name || !isValidENSName(name)) return null
+
+      try {
+        const ens = await mainnetRpcProvider.resolveName(name)
+        if (!ens) throw new Error(`No address for this ens name`)
+        return ens
+      } catch (err) {
+        return null
+      }
+    },
+    {
+      refreshWhenHidden: false,
+      revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
+      refreshWhenOffline: false,
+    },
+  )
+
+  return {
+    data,
+    isValidating,
+  }
 }

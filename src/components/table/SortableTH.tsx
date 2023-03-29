@@ -18,6 +18,7 @@ const Text = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 0.9rem;
 `
 
 const Sort = styled(BaseSort)<{ isActive?: boolean }>`

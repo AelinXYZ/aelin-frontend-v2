@@ -63,7 +63,7 @@ const ExchangeRateSummary = styled.div`
 `
 
 const ExchangeRateSpan = styled.span`
-  font-size: 1.2rem;
+  font-size: 0.7rem;
 `
 
 const ExchangeRatesDescription = styled.div`
@@ -73,7 +73,7 @@ const ExchangeRatesDescription = styled.div`
 
 const ExchangeRatesLabel = styled.div`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.2;
   margin: 1px 5px 0 0;

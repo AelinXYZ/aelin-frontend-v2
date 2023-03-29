@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { DealAccepted_OrderBy, OrderDirection } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { TableCard, TableWrapper } from '@/src/components/history/common/TableWrapper'
+import { TableCard, TableWrapper, Text } from '@/src/components/history/common/TableWrapper'
 import {
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
@@ -108,7 +108,7 @@ export const DealsAccepted: React.FC = () => {
         tableHeaderCells={tableHeaderCells}
       >
         <TableCard>
-          <p>There’s no deal accepted yet</p>
+          <Text>There’s no deal accepted yet</Text>
           <ButtonPrimaryLight
             onClick={() => {
               router.push('/')

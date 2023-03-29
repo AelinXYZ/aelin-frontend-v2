@@ -34,14 +34,14 @@ const Title = styled.h3`
   align-items: center;
   color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 10px 0;
   padding: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.8rem;
+    font-size: 1rem;
   }
 `
 

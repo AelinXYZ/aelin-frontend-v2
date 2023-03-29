@@ -31,6 +31,9 @@ gql`
     totalUsersInvested
     totalAddressesInvested
 
+    totalVouchers
+    vouchers
+
     vestingEnds
     vestingStarts
     holder

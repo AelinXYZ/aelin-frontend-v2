@@ -21,6 +21,7 @@ export const USERS = gql`
     ) {
       id
       poolsInvestedAmt
+      poolsVouchedAmt
       poolsAsHolderAmt
       poolsSponsoredAmt
       dealsAcceptedAmt

@@ -20,7 +20,7 @@ const Wrapper = styled.div`
 
 const Description = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
   margin: 0;
@@ -42,7 +42,7 @@ const ActiveItemCSS = css`
 const Item = styled(ButtonPrimaryLight)<{ isActive?: boolean }>`
   width: 140px;
   height: 30px;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
 
   ${({ isActive }) => isActive && ActiveItemCSS}
 `

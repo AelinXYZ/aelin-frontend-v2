@@ -26,7 +26,7 @@ Wrapper.defaultProps = {
 
 const ExternalLink = styled(BaseExternalLink)<{ direction?: Direction }>`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: ${({ direction }) => (direction === 'row' ? 'inherit' : '1rem')};
+  font-size: ${({ direction }) => (direction === 'row' ? 'inherit' : '0.8rem')};
   gap: 6px;
 
   ${({ direction }) =>

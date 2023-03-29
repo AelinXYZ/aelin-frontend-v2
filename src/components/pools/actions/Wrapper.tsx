@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 
-const Title = styled.h4`
+export const Title = styled.h4`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1.15rem;
   font-weight: 600;
   line-height: 1.4;
   margin: 0 0 20px;
@@ -13,7 +13,7 @@ const Title = styled.h4`
 
 export const Contents = styled.div`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.5;
   text-align: left;

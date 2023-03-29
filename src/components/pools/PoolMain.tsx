@@ -1,10 +1,13 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import NoActions from './actions/NoActions'
 import ClaimUpfrontDealTokens from './actions/Vest/ClaimUpfrontDealTokens'
 import VestUpfrontDeal from './actions/Vest/VestUpfrontDeal'
+import Vouch from './actions/Vouch/Vouch'
+import InvestorsModal from './common/InvestorsModal'
 import UpfrontDealInformation from './deal/UpfrontDealInformation'
 import NftCollectionsTable from './nftTable/NftCollectionsTable'
 import { NotificationType } from '@/graphql-schema'
@@ -70,6 +73,12 @@ const CardWithTitle = styled(BaseCardWithTitle)`
   }
 `
 
+const ActionsWrapper = styled.div`
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+`
+
 type Props = {
   chainId: ChainsValues
   poolAddress: string
@@ -80,6 +89,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     query: { notification },
   } = useRouter()
 
+  const [showInvestorsModal, setShowInvestorsModal] = useState<boolean>(false)
+
   const { derivedStatus, funding, pool, tabs, timeline } = useAelinPoolStatus(
     chainId,
     poolAddress as string,
@@ -89,6 +100,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   )
 
   const isVerified = useCheckVerifiedPool(pool)
+
+  const handleCloseInvestorsModal = () => setShowInvestorsModal(false)
+  const handleOpenInvestorsModal = () => setShowInvestorsModal(true)
 
   return (
     <>
@@ -117,41 +131,51 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             ))}
           >
             <ContentGrid>
-              {tabs.active === PoolTab.PoolInformation && <PoolInformation pool={pool} />}
+              {tabs.active === PoolTab.PoolInformation && (
+                <PoolInformation pool={pool} showInvestorsModal={handleOpenInvestorsModal} />
+              )}
               {tabs.active === PoolTab.DealInformation && !!pool.deal && (
                 <DealInformation pool={pool} poolHelpers={funding} />
               )}
               {tabs.active === PoolTab.DealInformation && !!pool.upfrontDeal && (
-                <UpfrontDealInformation pool={pool} poolHelpers={funding} />
+                <UpfrontDealInformation
+                  pool={pool}
+                  poolHelpers={funding}
+                  showInvestorsModal={handleOpenInvestorsModal}
+                />
               )}
               {tabs.active === PoolTab.WithdrawUnredeemed && <UnredeemedInformation pool={pool} />}
               {tabs.active === PoolTab.Vest && <VestingInformation pool={pool} />}
             </ContentGrid>
             {tabs.isReleaseFundsAvailable && <ReleaseFunds pool={pool} />}
           </CardWithTitle>
-          <ActionTabs
-            active={tabs.actionTabs.active}
-            onTabClick={tabs.actionTabs.setActive}
-            tabs={tabs.actionTabs.states}
-          >
-            <NftSelectionProvider>
-              <RequiredConnection
-                isNotConnectedText="Connect your wallet"
-                minHeight={175}
-                networkToCheck={pool.chainId}
-              >
-                <DealActionTabs
-                  activeTab={tabs.actionTabs.active}
-                  derivedStatus={derivedStatus}
-                  funding={funding}
-                  isUpfrontDeal={!!pool.upfrontDeal}
-                  pool={pool}
-                />
-              </RequiredConnection>
-            </NftSelectionProvider>
-          </ActionTabs>
+          <ActionsWrapper>
+            <ActionTabs
+              active={tabs.actionTabs.active}
+              onTabClick={tabs.actionTabs.setActive}
+              tabs={tabs.actionTabs.states}
+            >
+              <NftSelectionProvider>
+                <RequiredConnection
+                  isNotConnectedText="Connect your wallet"
+                  minHeight={175}
+                  networkToCheck={pool.chainId}
+                >
+                  <DealActionTabs
+                    activeTab={tabs.actionTabs.active}
+                    derivedStatus={derivedStatus}
+                    funding={funding}
+                    isUpfrontDeal={!!pool.upfrontDeal}
+                    pool={pool}
+                  />
+                </RequiredConnection>
+              </NftSelectionProvider>
+            </ActionTabs>
+            <Vouch pool={pool} />
+          </ActionsWrapper>
           {pool.hasNftList && <NftCollectionsTable pool={pool} />}
         </MainGrid>
+        {showInvestorsModal && <InvestorsModal onClose={handleCloseInvestorsModal} pool={pool} />}
       </RightTimelineLayout>
     </>
   )

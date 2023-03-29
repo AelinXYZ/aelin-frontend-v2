@@ -25,7 +25,7 @@ const Text = styled.div<{ isActive?: boolean; isDone?: boolean }>`
   color: ${({ isActive, isDone, theme: { steps } }) =>
     isActive ? steps.textIsActiveColor : isDone ? steps.textIsDoneColor : steps.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.2rem;
+  font-size: 0.75rem;
   font-weight: 600;
   line-height: 1.3;
   padding: 6px 16px 0;

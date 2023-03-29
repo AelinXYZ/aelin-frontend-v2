@@ -56,7 +56,7 @@ const NextWrapper = styled.div`
 const Title = styled.h2`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.2;
   margin: 0 0 21px;
@@ -66,7 +66,7 @@ const Title = styled.h2`
 
 const NftTypeRemark = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.2rem;
+  font-size: 0.7rem;
   font-weight: 400;
   line-height: 1.4;
   margin: 40px 0 0;

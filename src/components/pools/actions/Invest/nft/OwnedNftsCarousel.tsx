@@ -40,7 +40,7 @@ const Allocation = styled.div`
   justify-content: center;
   gap: 4px;
   margin-top: 10px;
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 500;
   line-height: 1.4;
 `
@@ -71,7 +71,7 @@ const Card = styled(BaseCard)<{ arrowsVisible: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 30px;
+  margin-top: 15px;
   background: ${({ theme: { nftWhiteList } }) => nftWhiteList.layerBackgroundColor};
   border: ${({ theme: { nftWhiteList } }) => nftWhiteList.borderColor};
 

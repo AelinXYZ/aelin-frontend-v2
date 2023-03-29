@@ -61,7 +61,7 @@ const Icon = styled.span`
 
 const Text = styled.span`
   color: ${({ theme }) => theme.mobileMenu.itemColor};
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.2;
   padding: 0 12px;

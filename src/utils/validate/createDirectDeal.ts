@@ -1,9 +1,10 @@
 import { isAddress } from '@ethersproject/address'
+import { wei } from '@synthetixio/wei'
 
 import { AddressWhiteListProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import { POOL_NAME_MAX_LENGTH } from '@/src/constants/misc'
+import { POOL_NAME_MAX_LENGTH, ZERO_BN } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { ONE_DAY_IN_SECS, ONE_MINUTE_IN_SECS } from '@/src/constants/time'
 import { Token } from '@/src/constants/token'
@@ -80,12 +81,10 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
 
     if (redemptionDeadLineSeconds > ONE_DAY_IN_SECS * 30) {
       errors.redemptionDeadline = 'Max redemption deadline is 30 days'
-    } else if (
-      !currentNetwork.isProd
-        ? redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS
-        : redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS * 30
-    ) {
-      errors.investmentDeadLine = 'Min redemption deadline is 30 mins'
+    } else if (currentNetwork.isProd && redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS * 30) {
+      errors.redemptionDeadline = 'Min redemption deadline is 30 mins'
+    } else if (redemptionDeadLineSeconds < ONE_MINUTE_IN_SECS) {
+      errors.redemptionDeadline = 'Min redemption deadline is 1 min'
     }
   }
 
@@ -93,6 +92,14 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
     errors.dealToken = true
   } else if (!isAddress(values.dealToken.address as string)) {
     errors.dealToken = 'Invalid ethereum address'
+  } else if (values.dealToken.address === values.investmentToken?.address) {
+    errors.dealToken = 'The deal and investment token cannot be the same'
+  } else if (
+    values.investmentToken &&
+    values.dealToken.decimals < values.investmentToken.decimals
+  ) {
+    errors.dealToken =
+      'The number of decimals in the deal token must be equal or higher to the number of decimals in the investment token'
   }
 
   if (!values.dealPrivacy) {
@@ -118,30 +125,69 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
     if (!values.exchangeRates?.investmentTokenToRaise) {
       errors.exchangeRates = 'Set how much you want to raise'
     } else {
-      if (values.exchangeRates?.investmentTokenToRaise <= 0) {
-        errors.exchangeRates = 'The investment has to be greater than zero'
+      if (!values.exchangeRates?.exchangeRates) {
+        errors.exchangeRates = 'Set an exchange rate'
       } else {
-        if (!values.exchangeRates?.exchangeRates) {
-          errors.exchangeRates = 'Set an exchange rate'
+        const exchangeRatesInWei = wei(
+          values.exchangeRates?.exchangeRates,
+          values.investmentToken?.decimals,
+        )
+        if (!exchangeRatesInWei.gt(ZERO_BN)) {
+          errors.exchangeRates = 'The exchange rate has to be greater than zero'
         } else {
-          if (Number(values.exchangeRates?.exchangeRates) <= 0) {
-            errors.exchangeRates = 'The exchange rate has to be greater than zero'
+          const underlyingDealTokenTotal = wei(
+            values.exchangeRates?.investmentTokenToRaise,
+            values.dealToken?.decimals,
+          ).mul(wei(values.exchangeRates?.exchangeRates, values.dealToken?.decimals))
+          if (!underlyingDealTokenTotal.gt(ZERO_BN)) {
+            errors.exchangeRates =
+              'The deal total has to be greater than zero, please increase amount to raise or the exchange rate'
           } else {
-            if (values.exchangeRates?.hasDealMinimum) {
-              if (!values.exchangeRates?.minimumAmount) {
-                errors.exchangeRates = 'Invalid minimum amount'
-              } else if (
-                Number(values.exchangeRates?.minimumAmount) >
-                Number(values.exchangeRates?.investmentTokenToRaise)
-              ) {
-                errors.exchangeRates =
-                  'The deal minimum has to be equal or less than the amount you would like to raise'
+            const investmentPerDeal = wei(1, values.investmentToken?.decimals).div(
+              exchangeRatesInWei,
+            )
+            if (!investmentPerDeal.gt(ZERO_BN)) {
+              errors.exchangeRates =
+                'Deal token price has to be greater than zero, please decrease the exchange rate'
+            } else {
+              if (values.exchangeRates?.hasDealMinimum) {
+                if (!values.exchangeRates?.minimumAmount) {
+                  errors.exchangeRates = 'Invalid minimum amount'
+                } else if (
+                  Number(values.exchangeRates?.minimumAmount) >
+                  Number(values.exchangeRates?.investmentTokenToRaise)
+                ) {
+                  errors.exchangeRates =
+                    'The deal minimum has to be equal or less than the amount you would like to raise'
+                }
               }
             }
           }
         }
       }
     }
+  }
+
+  if (
+    convertToSeconds({
+      days: values.vestingSchedule?.vestingCliff?.days ?? 0,
+      hours: values.vestingSchedule?.vestingCliff?.hours ?? 0,
+      minutes: values.vestingSchedule?.vestingCliff?.minutes ?? 0,
+    }) >
+    1825 * ONE_DAY_IN_SECS
+  ) {
+    errors.vestingSchedule = 'The vesting cliff max is 5 years or 1825 days'
+  }
+
+  if (
+    convertToSeconds({
+      days: values.vestingSchedule?.vestingPeriod?.days ?? 0,
+      hours: values.vestingSchedule?.vestingPeriod?.hours ?? 0,
+      minutes: values.vestingSchedule?.vestingPeriod?.minutes ?? 0,
+    }) >
+    1825 * ONE_DAY_IN_SECS
+  ) {
+    errors.vestingSchedule = 'The vesting period max is 5 years or 1825 days'
   }
 
   return errors

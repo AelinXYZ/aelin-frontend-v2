@@ -42,20 +42,20 @@ const ButtonClose = styled.button`
 `
 
 const Title = styled.p`
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 500;
   margin: 5px 0;
 `
 
 const Link = styled.a`
   color: ${({ theme: { colors } }) => colors.textColorLight};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   margin: 5px 0;
 `
 
 const Text = styled.p`
   color: ${({ theme: { colors } }) => colors.textColorLight};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   margin: 5px 0;
 `
 

@@ -22,6 +22,7 @@ const Loading = styled.div`
   animation-timing-function: ease-in-out;
   color: ${({ theme }) => theme.colors.textLight};
   font-style: italic;
+  font-size: 0.8rem;
 `
 
 export default function InlineLoading() {

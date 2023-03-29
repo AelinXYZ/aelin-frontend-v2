@@ -12,7 +12,7 @@ const Wrapper = styled.a`
   border: 1px solid ${({ theme: { myPool } }) => myPool.borderColor};
   color: ${({ theme: { myPool } }) => myPool.color};
   display: flex;
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 500;
   gap: 14px;
   height: 36px;

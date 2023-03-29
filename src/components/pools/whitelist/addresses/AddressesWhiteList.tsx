@@ -41,7 +41,7 @@ const TitleGrid = styled.div`
 const Title = styled.h4`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.2;
   margin: 0;
@@ -61,7 +61,7 @@ const Error = styled(BaseError)`
 
 const AmountFormatDescription = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
   margin: 30px 0 10px;
@@ -95,7 +95,7 @@ const TotalAddressesLabel = styled.div`
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.colors.lightGray};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 2;
   letter-spacing: 0.35px;
@@ -105,7 +105,7 @@ const TotalAddressesValue = styled.div`
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.colors.primary};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 500;
   line-height: 2;
   letter-spacing: 0.35px;

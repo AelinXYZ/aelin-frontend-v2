@@ -29,7 +29,7 @@ export const PrevNextWrapper = styled.div`
 export const Title = styled.h2`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.2;
   max-width: 100%;
@@ -40,7 +40,7 @@ export const Title = styled.h2`
 
 export const Description = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
   margin: 0 0 30px;

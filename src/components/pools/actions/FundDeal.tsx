@@ -16,7 +16,7 @@ type Props = {
 }
 
 const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
-  const { address } = useWeb3Connection()
+  const { address, appChainId } = useWeb3Connection()
 
   const [allowance, refetch] = useERC20Call(
     pool.chainId,
@@ -56,6 +56,15 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
     return (allowance || ZERO_BN).lt(pool.deal?.underlyingToken.dealAmount.raw || ZERO_BN)
   }, [pool, allowance])
 
+  const tokenAddress =
+    pool.deal?.underlyingToken.token || pool.upfrontDeal?.underlyingToken.token || ZERO_ADDRESS
+
+  const [userBalance] = useERC20Call(appChainId, tokenAddress || ZERO_ADDRESS, 'balanceOf', [
+    address || ZERO_ADDRESS,
+  ])
+
+  const noEnoughBalance = (userBalance || ZERO_BN).lt(approveAmt || ZERO_BN)
+
   return (
     <Wrapper title="Fund deal" {...restProps}>
       {shouldApprove ? (
@@ -64,15 +73,12 @@ const FundDeal: React.FC<Props> = ({ pool, ...restProps }) => {
           description={`Before funding the deal, you need to approve the pool to transfer your ${
             pool.deal?.underlyingToken.symbol || pool.upfrontDeal?.underlyingToken.symbol
           }. ${releaseFundNote}`}
+          noEnoughBalance={noEnoughBalance}
           refetchAllowance={refetch}
           spender={pool.dealAddress || pool.upfrontDeal?.address || ZERO_ADDRESS}
           symbol={pool.upfrontDeal?.underlyingToken.symbol}
           title="Fund deal"
-          tokenAddress={
-            pool.deal?.underlyingToken.token ||
-            pool.upfrontDeal?.underlyingToken.token ||
-            ZERO_ADDRESS
-          }
+          tokenAddress={tokenAddress}
         />
       ) : (
         <>

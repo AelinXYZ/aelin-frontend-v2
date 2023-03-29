@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import isAfter from 'date-fns/isAfter'
 
+import { ButtonPrimaryLightSm } from '../../pureStyledComponents/buttons/Button'
 import { TokenIcon } from '../common/TokenIcon'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -24,6 +25,7 @@ const Column = styled.div`
 
 type Props = {
   pool: ParsedAelinPool
+  showInvestorsModal: () => void
 }
 
 const UserStatsInfoCell = genericSuspense(
@@ -45,17 +47,28 @@ const UserStatsInfoCell = genericSuspense(
 )
 
 const PoolParticipantsInfoCell = genericSuspense(
-  ({ pool, title, tooltip }: { pool: ParsedAelinPool; title: string; tooltip: string }) => {
+  ({
+    pool,
+    showInvestorsModal,
+    title,
+    tooltip,
+  }: {
+    pool: ParsedAelinPool
+    title: string
+    tooltip: string
+    showInvestorsModal: () => void
+  }) => {
     return (
       <InfoCell title={title} tooltip={tooltip}>
         <Value>{pool.totalUsersInvested}</Value>
+        <ButtonPrimaryLightSm onClick={showInvestorsModal}>See more</ButtonPrimaryLightSm>
       </InfoCell>
     )
   },
   () => <InlineLoading />,
 )
 
-export const PoolInformation = ({ pool }: Props) => {
+export const PoolInformation = ({ pool, showInvestorsModal }: Props) => {
   const now = new Date()
 
   return (
@@ -142,6 +155,7 @@ export const PoolInformation = ({ pool }: Props) => {
         />
         <PoolParticipantsInfoCell
           pool={pool}
+          showInvestorsModal={showInvestorsModal}
           title="Pool participants"
           tooltip="Total amount of users who invested in the pool"
         />

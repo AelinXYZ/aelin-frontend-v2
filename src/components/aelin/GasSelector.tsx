@@ -24,7 +24,7 @@ const Wrapper = styled.div`
 
 const Text = styled.span`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.2;
 `
@@ -80,7 +80,7 @@ const ButtonDropdown = styled.button`
 `
 
 const EditButton = styled(ButtonPrimaryLight)`
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 400;
   height: 24px;
   margin-left: 10px;

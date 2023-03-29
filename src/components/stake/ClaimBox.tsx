@@ -24,7 +24,7 @@ const Wrapper = styled.div`
 const Title = styled.h2`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0 0 20px;
@@ -34,7 +34,7 @@ const Title = styled.h2`
 
 const Text = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.2;
   margin: 0 0 15px;
