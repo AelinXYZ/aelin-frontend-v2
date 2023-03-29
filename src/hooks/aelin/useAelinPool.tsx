@@ -80,7 +80,6 @@ export type ParsedAelinPool = {
       token: string
       symbol: string
       decimals: number
-      totalSupply: DetailedNumber
       dealAmount: DetailedNumber
       remaining: DetailedNumber
       totalRedeemed: DetailedNumber
@@ -104,7 +103,6 @@ export type ParsedAelinPool = {
       start: Date | null
     }
     holder: string
-    maxDealTotalSupply: DetailedNumber
     purchaseTokenPerDealToken: DetailedNumber
     purchaseRaiseMinimum: DetailedNumber
     allowDeallocation: boolean

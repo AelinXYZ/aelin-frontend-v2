@@ -145,11 +145,9 @@ gql`
     underlyingDealTokenSymbol
     underlyingDealTokenDecimals
     underlyingDealTokenTotalSupply
-    purchaseTokenTotalForDeal
     underlyingDealTokenTotal
     vestingPeriod
     holder
-    maxDealTotalSupply
     purchaseTokenPerDealToken
     purchaseRaiseMinimum
     vestingCliffPeriod

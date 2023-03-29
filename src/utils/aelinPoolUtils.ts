@@ -1,8 +1,7 @@
-import { isAddress } from '@ethersproject/address'
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
-import { HashZero, MaxUint256 } from '@ethersproject/constants'
+import { HashZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
-import Wei, { wei } from '@synthetixio/wei'
+import Wei from '@synthetixio/wei'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import addSeconds from 'date-fns/addSeconds'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
@@ -18,13 +17,7 @@ import {
 import { BASE_DECIMALS, DISPLAY_DECIMALS, EXCHANGE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { PoolStages, Privacy } from '@/src/constants/pool'
 import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
-import { CreatePoolStateComplete, CreatePoolValues } from '@/src/hooks/aelin/useAelinCreatePool'
-import {
-  CreateUpFrontDealStateComplete,
-  CreateUpFrontDealValues,
-} from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { getDuration } from '@/src/utils/date'
 import { formatToken } from '@/src/web3/bigNumber'
 import { DetailedNumber } from '@/types/utils'
 
@@ -520,7 +513,9 @@ export const getMinimumPurchaseAmount = (
 
 export function parseUpfrontDeal(pool: PoolCreated) {
   const { purchaseTokenDecimals, upfrontDeal } = pool
+
   if (!upfrontDeal || !purchaseTokenDecimals) return
+
   const now = new Date()
   const cliffMs = Number(upfrontDeal.vestingCliffPeriod ?? 0) * 1000
   const vestingMs = Number(upfrontDeal.vestingPeriod ?? 0) * 1000
@@ -548,10 +543,6 @@ export function parseUpfrontDeal(pool: PoolCreated) {
         upfrontDeal.underlyingDealTokenTotal,
         upfrontDeal.underlyingDealTokenDecimals,
       ),
-      totalSupply: getDetailedNumber(
-        upfrontDeal.underlyingDealTokenTotalSupply,
-        upfrontDeal.underlyingDealTokenDecimals,
-      ),
       remaining: getDetailedNumber(
         upfrontDeal.remainingDealTokens,
         upfrontDeal.underlyingDealTokenDecimals,
@@ -562,10 +553,6 @@ export function parseUpfrontDeal(pool: PoolCreated) {
       ),
     },
     exchangeRates,
-    maxDealTotalSupply: getDetailedNumber(
-      upfrontDeal.maxDealTotalSupply,
-      upfrontDeal.underlyingDealTokenDecimals,
-    ),
     purchaseRaiseMinimum: getDetailedNumber(
       upfrontDeal.purchaseRaiseMinimum,
       Number(purchaseTokenDecimals),
@@ -574,10 +561,6 @@ export function parseUpfrontDeal(pool: PoolCreated) {
       // Double check
       upfrontDeal.purchaseTokenPerDealToken,
       Number(purchaseTokenDecimals),
-    ),
-    purchaseTokenTotalForDeal: getDetailedNumber(
-      upfrontDeal.purchaseTokenTotalForDeal,
-      upfrontDeal.underlyingDealTokenDecimals,
     ),
     vestingPeriod: {
       cliff: {
