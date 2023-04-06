@@ -25,6 +25,7 @@ gql`
     filter
 
     totalAmountEarnedBySponsor
+    totalAmountEarnedByProtocol
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded

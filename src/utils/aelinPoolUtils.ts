@@ -76,9 +76,7 @@ export function getDealDeadline(pool: PoolCreated): Date | null {
 }
 
 // returns the max amount a pool can raise from investors
-export function getPurchaseTokenCap<
-  P extends { purchaseTokenCap: string; purchaseTokenDecimals?: number },
->(pool: P) {
+export function getPurchaseTokenCap(pool: PoolCreated) {
   return {
     raw: BigNumber.from(pool.purchaseTokenCap),
     formatted: formatToken(
@@ -424,7 +422,7 @@ export function getInvestmentDealToken(
 }
 
 export function parseNftCollectionRules(pool: PoolCreated): ParsedNftCollectionRules[] {
-  return pool.nftCollectionRules.map((collectionRule) => {
+  return (pool.nftCollectionRules ?? []).map((collectionRule) => {
     const purchaseAmountBN = new Wei(
       collectionRule.purchaseAmount,
       pool.purchaseTokenDecimals || BASE_DECIMALS,
@@ -534,7 +532,7 @@ export function parseUpfrontDeal(pool: PoolCreated) {
     name: upfrontDeal.name,
     symbol: upfrontDeal.symbol,
     holder: upfrontDeal.holder,
-    allowDeallocation: upfrontDeal.allowDeallocation,
+    allowDeallocation: upfrontDeal.allowDeallocation ?? false,
     underlyingToken: {
       token: upfrontDeal.underlyingDealToken,
       symbol: upfrontDeal.underlyingDealTokenSymbol,
