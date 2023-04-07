@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { isValidAddress } from 'ethereumjs-util'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, User_OrderBy } from '@/graphql-schema'
