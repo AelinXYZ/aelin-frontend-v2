@@ -97,6 +97,7 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
   } else if (
     // TODO: Remove these checks completely when new version of contracts will be deployed.
     chainId !== Chains.goerli &&
+    chainId !== Chains.mainnet &&
     values.investmentToken &&
     values.dealToken.decimals < values.investmentToken.decimals
   ) {
