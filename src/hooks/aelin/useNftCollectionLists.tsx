@@ -73,18 +73,22 @@ const parseOpenSeaResponse = async (
 }
 
 const getParsedNFTCollectionData = async (collectionAddress: string, chainId: ChainsValues) => {
-  if (chainId === Chains.goerli) {
-    return Promise.resolve({})
-  }
-
   const url =
-    chainId === Chains.optimism || chainId === Chains.arbitrum || chainId === Chains.polygon
+    chainId === Chains.goerli ||
+    chainId === Chains.optimism ||
+    chainId === Chains.arbitrum ||
+    chainId === Chains.polygon
       ? `/api/nft/${chainId}/${collectionAddress}`
       : `https://api.opensea.io/api/v1/asset_contract/${collectionAddress}?format=json`
 
   return fetch(url).then(async (res) => {
     if (res.status !== 200) return
-    if (chainId === Chains.optimism || chainId === Chains.arbitrum || chainId === Chains.polygon)
+    if (
+      chainId === Chains.goerli ||
+      chainId === Chains.optimism ||
+      chainId === Chains.arbitrum ||
+      chainId === Chains.polygon
+    )
       return res.json()
     return { data: await parseOpenSeaResponse(res, chainId) }
   })
