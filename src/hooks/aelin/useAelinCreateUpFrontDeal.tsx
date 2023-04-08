@@ -37,7 +37,6 @@ import { storeJson } from '@/src/utils/web3storage'
 const VestinScheduleContainer = styled.div`
   display: flex;
   flex-direction: column;
-  white-space: nowrap;
 `
 
 export enum CreateUpFrontDealSteps {
