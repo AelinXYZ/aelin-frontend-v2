@@ -25,6 +25,7 @@ gql`
     filter
 
     totalAmountEarnedBySponsor
+    totalAmountEarnedByProtocol
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
@@ -144,11 +145,9 @@ gql`
     underlyingDealTokenSymbol
     underlyingDealTokenDecimals
     underlyingDealTokenTotalSupply
-    purchaseTokenTotalForDeal
     underlyingDealTokenTotal
     vestingPeriod
     holder
-    maxDealTotalSupply
     purchaseTokenPerDealToken
     purchaseRaiseMinimum
     vestingCliffPeriod

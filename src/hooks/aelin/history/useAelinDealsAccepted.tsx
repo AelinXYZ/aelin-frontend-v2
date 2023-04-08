@@ -35,10 +35,16 @@ export const getParsedDealAcceptedsHistory = ({
   pool: {
     id: string
     name: string
-    purchaseTokenDecimals?: number | null
+    purchaseTokenDecimals?: number | null | undefined
     purchaseTokenSymbol: string
-    deal?: { underlyingDealTokenDecimals: number; underlyingDealTokenSymbol: string } | null
-    upfrontDeal?: { underlyingDealTokenDecimals: number; underlyingDealTokenSymbol: string } | null
+    deal?: {
+      underlyingDealTokenDecimals?: number | null | undefined
+      underlyingDealTokenSymbol?: string | null | undefined
+    } | null
+    upfrontDeal?: {
+      underlyingDealTokenDecimals?: number | null | undefined
+      underlyingDealTokenSymbol?: string | null | undefined
+    } | null
   }
   timestamp: any
 }) => {
