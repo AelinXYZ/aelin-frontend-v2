@@ -26,6 +26,7 @@ gql`
 
     totalAmountEarnedBySponsor
     totalAmountEarnedByProtocol
+    totalAmountEarnedByProtocolDecimal
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded

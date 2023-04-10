@@ -30,7 +30,8 @@ const Name = styled.span`
 const List: React.FC<{
   dealType: DealType
   nameQuery?: string
-}> = ({ dealType, nameQuery }) => {
+  hideSmallFees?: boolean
+}> = ({ dealType, hideSmallFees, nameQuery }) => {
   const [orderBy, setOrderBy] = useState<PoolCreated_OrderBy>(PoolCreated_OrderBy.Timestamp)
   const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
   const { data, error, hasMore, nextPage } = useAelinPools(
@@ -40,7 +41,8 @@ const List: React.FC<{
       where: {
         dealType: dealType,
         name_contains_nocase: nameQuery,
-        totalAmountEarnedByProtocol_gt: 0,
+        totalAmountEarnedByProtocol_gt: hideSmallFees ? undefined : 0,
+        totalAmountEarnedByProtocolDecimal_gte: hideSmallFees ? 1 : undefined,
         purchaseExpiry_not: null,
       },
     },
@@ -75,7 +77,7 @@ const List: React.FC<{
       title: 'Protocol fee',
     },
     {
-      title: 'Escrow date',
+      title: 'Vesting end',
     },
   ]
 
