@@ -12,7 +12,9 @@ import useAelinUSDPrice, { PriceData, TimeInterval } from '@/src/hooks/aelin/use
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatNumber } from '@/src/utils/formatNumber'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  margin-bottom: 15px;
+`
 
 const AelinChart = styled.div`
   background-color: ${({ theme: { colors } }) => colors.transparentWhite2};

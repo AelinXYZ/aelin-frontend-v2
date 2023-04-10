@@ -4,6 +4,7 @@ export type PoolSocials = {
   discordServerInvite?: string
   mirrorHashPost?: string
   mediumPost?: string
+  substackPost?: string
 }
 
 export const VerifiedPoolsSocials: { [poolAddress: string]: PoolSocials } = {
@@ -39,5 +40,11 @@ export const VerifiedPoolsSocials: { [poolAddress: string]: PoolSocials } = {
     twitterHandle: 'LootRealms',
     discordServerInvite: 'yF6vNegMZd',
     mediumPost: '@bibliothecaDAO/bibliothecadao-community-raise-41450b2fdcde',
+  },
+  ['0x36e8031e2843f3ce873bd66b3915e1e624e6da31']: {
+    websiteName: 'influenceth.io/sale',
+    twitterHandle: 'influenceth',
+    discordServerInvite: 'influenceth',
+    substackPost: 'https://influenceth.substack.com/p/prepare-for-launch',
   },
 } as const
