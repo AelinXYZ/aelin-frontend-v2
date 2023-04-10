@@ -8,6 +8,8 @@ import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { SPONSORS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { USERS_QUERY_NAME } from '@/src/queries/pools/users'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
+import { isHiddenPool, isTestPool } from '@/src/utils/isHiddenPool'
+import isProd from '@/src/utils/isProd'
 import { isSuccessful } from '@/src/utils/isSuccessful'
 
 export interface ParsedUserAmt {
@@ -36,7 +38,11 @@ export async function fetcherUsers(variables: UsersQueryVariables) {
               poolsInvestedAmt: user.poolsInvestedAmt,
               poolsVouchedAmt: user.poolsVouchedAmt,
               poolsAsHolderAmt: user.poolsAsHolderAmt,
-              poolsSponsoredAmt: user.poolsSponsoredAmt,
+              poolsSponsoredAmt: user.poolsSponsored.filter((pool) => {
+                if (isTestPool(pool.name) && isProd) return false
+                if (isHiddenPool(pool.id)) return false
+                return true
+              }).length,
               dealsAcceptedAmt: user.dealsAcceptedAmt,
             }
           }),

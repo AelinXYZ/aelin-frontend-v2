@@ -66,17 +66,13 @@ gql`
     underlyingDealTokenDecimals
     underlyingDealTokenTotalSupply
     underlyingDealTokenTotal
-    underlyingPerDealExchangeRate
 
     purchaseTokenTotalForDeal
 
     proRataRedemptionPeriod
     proRataRedemptionPeriodStart
-    proRataRedemptionExpiry
-    proRataRedemptionStart
     openRedemptionPeriod
     openRedemptionStart
-    openRedemptionExpiry
 
     vestingPeriod
     vestingCliff
@@ -92,8 +88,6 @@ gql`
     totalAmountUnredeemed
     totalUsersAccepted
     totalUsersRejected
-
-    maxDealTotalSupply
   }
 `
 
@@ -154,11 +148,9 @@ gql`
     underlyingDealTokenSymbol
     underlyingDealTokenDecimals
     underlyingDealTokenTotalSupply
-    purchaseTokenTotalForDeal
     underlyingDealTokenTotal
     vestingPeriod
     holder
-    maxDealTotalSupply
     purchaseTokenPerDealToken
     purchaseRaiseMinimum
     vestingCliffPeriod

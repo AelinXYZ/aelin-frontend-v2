@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   padding: 20px;
   width: 100%;
 
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopWideStart}) {
     grid-auto-flow: column;
   }
 `
