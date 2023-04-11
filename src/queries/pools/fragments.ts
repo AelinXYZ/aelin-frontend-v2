@@ -26,6 +26,7 @@ gql`
 
     totalAmountEarnedBySponsor
     totalAmountEarnedByProtocol
+    totalAmountEarnedByProtocolDecimal
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
@@ -46,6 +47,9 @@ gql`
     }
 
     dealType
+    deal {
+      ...PoolDeal
+    }
     upfrontDeal {
       ...UpfrontDealDetails
     }
