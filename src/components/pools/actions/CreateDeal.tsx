@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import styled from 'styled-components'
 
-import { LinkWrapper } from '../common/Create'
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
+import { LinkWrapper } from '@/src/components/pools/common/Create'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
