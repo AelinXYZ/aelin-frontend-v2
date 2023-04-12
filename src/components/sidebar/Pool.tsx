@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
 
-const Wrapper = styled.a`
+const Wrapper = styled.div`
   align-items: center;
   background-color: ${({ theme: { myPool } }) => myPool.backgroundColor};
   border-radius: 8px;

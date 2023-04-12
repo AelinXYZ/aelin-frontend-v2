@@ -82,9 +82,7 @@ export const TableRowCSS = css<RowProps>`
 
   ${({ hasHover }) => hasHover && RowHover}
 
-  &[href] {
-    ${RowHover}
-  }
+  ${RowHover}
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     padding-bottom: 10px;
@@ -117,18 +115,14 @@ export const RowLink: React.FC<RowLinkProps> = ({ children, href, withGradient, 
     return (
       <GradientWrapper>
         <Link href={href} passHref>
-          <Row as="a" {...restProps}>
-            {children}
-          </Row>
+          <Row {...restProps}>{children}</Row>
         </Link>
       </GradientWrapper>
     )
   }
   return (
     <Link href={href} passHref>
-      <Row as="a" {...restProps}>
-        {children}
-      </Row>
+      <Row {...restProps}>{children}</Row>
     </Link>
   )
 }
