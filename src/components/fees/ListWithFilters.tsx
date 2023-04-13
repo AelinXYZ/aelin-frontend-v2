@@ -3,11 +3,11 @@ import styled, { css } from 'styled-components'
 
 import { debounce } from 'lodash'
 
-import { DealType } from '@/graphql-schema'
-import List from '@/src/components/fees/List'
+import HistoricalStakersDistributionList from '@/src/components/fees/HistoricalStakersDistributionList'
+import ProtocolFeesList from '@/src/components/fees/ProtocolFeesList'
 import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
 import { SafeSuspense, genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { ButtonCSS } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonPrimaryLighter } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Search as BaseSearch } from '@/src/components/pureStyledComponents/form/Search'
 import { DEBOUNCED_INPUT_TIME } from '@/src/constants/misc'
 
@@ -15,6 +15,7 @@ const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  margin-bottom: 20px;
 `
 
 const Search = styled(BaseSearch)`
@@ -26,44 +27,51 @@ const RowWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
 `
 
 const TabsWrapper = styled.div`
   display: flex;
+  flex-direction: row;
   gap: 20px;
-  margin-bottom: 20px;
 `
 
-const ButtonOnCSS = css`
-  background-color: ${({ theme }) => theme.buttonPrimary.backgroundColor};
-  border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
-  color: ${({ theme }) => theme.buttonPrimary.color};
-
-  .fill {
-    fill: ${({ theme }) => theme.buttonPrimary.borderColor};
-  }
-`
-const TabButton = styled.div<{ active?: boolean }>`
-  ${ButtonCSS}
-  color: ${({ theme: { colors } }) => colors.textColor};
-  padding: 0 10px;
-  width: 110px;
+const ActiveTabButtonCSS = css`
+  &,
   &:hover {
-    ${ButtonOnCSS}
+    background-color: rgba(130, 128, 255, 0.08);
+    border-color: ${({ theme: { colors } }) => colors.primary};
+    color: ${({ theme: { colors } }) => colors.primary};
+    cursor: default;
+    pointer-events: none;
   }
-  ${({ active }) => active && ButtonOnCSS}
+`
+
+const TabButton = styled(ButtonPrimaryLighter)<{ isActive?: boolean }>`
+  height: 24px;
+  padding: 0 10px;
+  font-size: 0.7rem;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    font-size: 0.9rem;
+    height: 36px;
+    padding: 0 20px;
+  }
+
+  ${({ isActive }) => isActive && ActiveTabButtonCSS}
 `
 
 enum Tab {
-  Pools = 'pool',
-  Deals = 'deal',
+  HistoricalStakersDistribution = 'Historical stakers distribution',
+  ProtocolFees = 'Protocol fees',
 }
 
 export const ListWithFilters: React.FC = () => {
   const searchRef = useRef<HTMLInputElement>(null)
   const [hideSmallFees, setHideSmallFees] = useState<boolean>(true)
   const [searchString, setSearchString] = useState<string>()
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.Pools)
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.HistoricalStakersDistribution)
 
   const debouncedChangeHandler = useMemo(
     () => debounce(setSearchString, DEBOUNCED_INPUT_TIME),
@@ -73,38 +81,48 @@ export const ListWithFilters: React.FC = () => {
   return (
     <>
       <HeaderWrapper>
-        <Search
-          onChange={(evt) => {
-            debouncedChangeHandler(evt.target.value)
-          }}
-          placeholder={`Enter ${activeTab} name...`}
-          ref={searchRef}
-        />
-        <RowWrapper>
-          <TabsWrapper>
-            <TabButton active={activeTab === Tab.Pools} onClick={() => setActiveTab(Tab.Pools)}>
-              Pools
-            </TabButton>
-            <TabButton active={activeTab === Tab.Deals} onClick={() => setActiveTab(Tab.Deals)}>
-              Deals
-            </TabButton>
-          </TabsWrapper>
-          <LabeledCheckbox
-            checked={hideSmallFees}
-            label={`Hide small fee ${activeTab}s`}
-            onClick={() => {
-              setHideSmallFees((prev) => !prev)
-            }}
-          />
-        </RowWrapper>
+        <TabsWrapper>
+          <TabButton
+            isActive={activeTab === Tab.HistoricalStakersDistribution}
+            onClick={() => setActiveTab(Tab.HistoricalStakersDistribution)}
+          >
+            {Tab.HistoricalStakersDistribution}
+          </TabButton>
+          <TabButton
+            isActive={activeTab === Tab.ProtocolFees}
+            onClick={() => setActiveTab(Tab.ProtocolFees)}
+          >
+            {Tab.ProtocolFees}
+          </TabButton>
+        </TabsWrapper>
+        {activeTab === Tab.ProtocolFees && (
+          <RowWrapper>
+            <Search
+              onChange={(evt) => {
+                debouncedChangeHandler(evt.target.value)
+              }}
+              placeholder={`Enter pool or deal name...`}
+              ref={searchRef}
+            />
+            <LabeledCheckbox
+              checked={hideSmallFees}
+              label={`Hide small fee entries`}
+              onClick={() => {
+                setHideSmallFees((prev) => !prev)
+              }}
+            />
+          </RowWrapper>
+        )}
       </HeaderWrapper>
-      <SafeSuspense>
-        <List
-          dealType={activeTab === Tab.Pools ? DealType.SponsorDeal : DealType.UpfrontDeal}
-          hideSmallFees={hideSmallFees}
-          nameQuery={searchString && searchString !== '' ? searchString : undefined}
-        />
-      </SafeSuspense>
+      {activeTab === Tab.HistoricalStakersDistribution && <HistoricalStakersDistributionList />}
+      {activeTab === Tab.ProtocolFees && (
+        <SafeSuspense>
+          <ProtocolFeesList
+            hideSmallFees={hideSmallFees}
+            nameQuery={searchString && searchString !== '' ? searchString : undefined}
+          />
+        </SafeSuspense>
+      )}
     </>
   )
 }
