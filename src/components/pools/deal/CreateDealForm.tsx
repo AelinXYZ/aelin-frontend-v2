@@ -13,6 +13,7 @@ import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout
 import {
   ButtonWrapper,
   Description,
+  LinkWrapper,
   MobileButtonWrapper,
   PrevNextWrapper,
   StepContents,
@@ -213,9 +214,11 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
             )
           })}
         </CardWithTitle>
-        <Link href={`/pool/${network}/${poolAddress}`} passHref>
-          <CancelButton as="a">Cancel</CancelButton>
-        </Link>
+        <LinkWrapper>
+          <Link href={`/pool/${network}/${poolAddress}`} passHref>
+            <CancelButton>Cancel</CancelButton>
+          </Link>
+        </LinkWrapper>
       </RightTimelineLayout>
       {showDealCalculationModal && (
         <DealCalculationModal

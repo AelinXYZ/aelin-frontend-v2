@@ -67,7 +67,7 @@ const InnerContainer = styled(BaseInnerContainer)`
   }
 `
 
-const HomeLink = styled.a`
+const HomeLink = styled.div`
   position: relative;
   transition: opacity 0.05s linear;
   z-index: 10;

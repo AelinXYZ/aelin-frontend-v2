@@ -2,6 +2,7 @@ import Link from 'next/link'
 import styled from 'styled-components'
 
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
+import { LinkWrapper } from '@/src/components/pools/common/Create'
 import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
 import { getKeyChainByValue } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -52,14 +53,16 @@ export const CreateDeal: React.FC<Props> = ({ pool, ...restProps }) => {
         </>
       )}
       {noFundsInPool ? null : (
-        <Link
-          href={`/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}/create-deal`}
-          passHref
-        >
-          <ButtonsWrapper>
-            <ButtonGradient as="a">Create Deal</ButtonGradient>
-          </ButtonsWrapper>
-        </Link>
+        <LinkWrapper>
+          <Link
+            href={`/pool/${getKeyChainByValue(pool.chainId)}/${pool.address}/create-deal`}
+            passHref
+          >
+            <ButtonsWrapper>
+              <ButtonGradient>Create Deal</ButtonGradient>
+            </ButtonsWrapper>
+          </Link>
+        </LinkWrapper>
       )}
     </Wrapper>
   )
