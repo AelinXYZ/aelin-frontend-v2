@@ -475,6 +475,14 @@ export const VouchedPools: React.FC = () => {
     }
   }, [searchRef])
 
+  useEffect(() => {
+    const voucherAddress = ensVoucher || voucher
+    if (!voucherAddress) {
+      const input = searchRef.current as HTMLInputElement
+      input.value = aelinVoucherENS
+    }
+  }, [voucher, ensVoucher, searchRef])
+
   return (
     <>
       <Title>
