@@ -24,6 +24,8 @@ export type UserPoolBalance = {
   userMaxDepositPrivateAmount: DetailedNumberExtended
   refetchBalances: () => void
   investmentTokenBalance: DetailedNumberExtended
+  userAllowance: DetailedNumberExtended
+  refetchUserAllowance: () => void
 }
 
 export function useUserAvailableToDepositDirectDeal(pool: ParsedAelinPool): UserPoolBalance {
@@ -34,6 +36,13 @@ export function useUserAvailableToDepositDirectDeal(pool: ParsedAelinPool): User
     pool.investmentToken,
     'balanceOf',
     [address || ZERO_ADDRESS],
+  )
+
+  const [userAllowance, refetchUserAllowance] = useERC20Call(
+    pool.chainId,
+    pool.investmentToken,
+    'allowance',
+    [address || ZERO_ADDRESS, pool.address],
   )
 
   const [[allowListValues, userPoolBalance], refetchAllowListBalance] =
@@ -87,10 +96,20 @@ export function useUserAvailableToDepositDirectDeal(pool: ParsedAelinPool): User
       ),
       type: AmountTypes.investmentTokenBalance,
     },
+    userAllowance: {
+      raw: userAllowance || ZERO_BN,
+      formatted: formatToken(
+        userAllowance || ZERO_BN,
+        pool.investmentTokenDecimals,
+        DISPLAY_DECIMALS,
+      ),
+      type: AmountTypes.investmentTokenBalance,
+    },
     userAlreadyInvested,
     refetchBalances: () => {
       refetchUserInvestmentTokenBalance()
       isPrivatePool(pool.poolType) && refetchAllowListBalance()
     },
+    refetchUserAllowance,
   }
 }
