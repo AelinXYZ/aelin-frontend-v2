@@ -52,7 +52,6 @@ export const Value = styled.div`
   word-break: break-word;
   text-align: left;
 
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 

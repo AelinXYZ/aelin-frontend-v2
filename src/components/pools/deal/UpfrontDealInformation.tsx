@@ -85,11 +85,9 @@ export const UpfrontDealInformation: React.FC<{
           <Value>{`${upfrontDeal.exchangeRates.investmentPerDeal.formatted} ${pool.investmentTokenSymbol} per ${upfrontDeal.underlyingToken.symbol}`}</Value>
         </InfoCell>
         <InfoCell title="Deal stats">
-          <Value>Total redeemed: {pool.upfrontDeal?.underlyingToken.totalRedeemed.formatted}</Value>
-          <Value>Total invested: {pool.funded.formatted} </Value>
-          <Value>
-            Remaining deal tokens: {pool.upfrontDeal?.underlyingToken.remaining.formatted}
-          </Value>
+          <Value>{`Total redeemed: ${pool.upfrontDeal?.underlyingToken.totalRedeemed.formatted} ${upfrontDeal.underlyingToken.symbol}`}</Value>
+          <Value>{`Total invested: ${pool.funded.formatted} ${pool.investmentTokenSymbol}`}</Value>
+          <Value>{`Remaining deal tokens: ${pool.upfrontDeal?.underlyingToken.remaining.formatted} ${upfrontDeal.underlyingToken.symbol}`}</Value>
           {poolHelpers.capReached && (
             <Value>
               <b>Cap reached</b>
