@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
+import { getAddress } from '@ethersproject/address'
+
 import OptimismDealTokenDistribution from '@/public/data/optimism-deal-token-distribution.json'
 import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Cell, Row, TableBody, TableHead } from '@/src/components/pureStyledComponents/common/Table'
@@ -54,7 +56,9 @@ const HistoricalStakersDistributionList: React.FC = () => {
   const { address: userAddress, appChainId, pushNetwork } = useWeb3Connection()
 
   const userAllocation = useMemo(
-    () => OptimismDealTokenDistribution.find((item) => item.address === userAddress)?.allocation,
+    () =>
+      OptimismDealTokenDistribution.find((item) => getAddress(item.address) === userAddress)
+        ?.allocation,
     [userAddress],
   )
 
