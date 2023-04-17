@@ -78,22 +78,17 @@ const HistoricalStakersDistributionList: React.FC = () => {
 
   return (
     <>
-      {(appChainId !== Chains.optimism || userAllocation === undefined) && (
+      {appChainId !== Chains.optimism && (
         <InfoContainer>
-          {appChainId !== Chains.optimism && (
-            <Text>Fees can only be claimed on Optimism network</Text>
-          )}
-          {appChainId !== Chains.optimism && appChainId !== Chains.goerli && (
+          {<Text>Fees can only be claimed on Optimism network</Text>}
+          {appChainId !== Chains.goerli && (
             <ButtonPrimaryLight onClick={() => pushNetwork(Chains.optimism)}>
               Switch to Optimism
             </ButtonPrimaryLight>
           )}
-          {appChainId === Chains.optimism && userAllocation === undefined && (
-            <Text>This address isn’t eligible for the historical stakers fee distribution</Text>
-          )}
         </InfoContainer>
       )}
-      {appChainId === Chains.optimism && userAllocation !== undefined && (
+      {appChainId === Chains.optimism && (
         <>
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ title }, index) => (
@@ -103,9 +98,6 @@ const HistoricalStakersDistributionList: React.FC = () => {
           <TableBody>
             {data.map((item) => {
               const { tokenName, totalAmount } = item
-
-              console.log('xxx allocated', Number(userAllocation) * totalAmount)
-
               return (
                 <Row columns={columns.widths} key={tokenName}>
                   <Cell mobileJustifyContent="center">{tokenName}</Cell>
@@ -117,9 +109,11 @@ const HistoricalStakersDistributionList: React.FC = () => {
                   <Cell mobileJustifyContent="center">
                     {Intl.NumberFormat('en', {
                       maximumFractionDigits: 18,
-                    }).format(Number(userAllocation) * totalAmount)}
+                    }).format(Number(userAllocation ?? 0) * totalAmount)}
                   </Cell>
-                  <Cell mobileJustifyContent="center">Claimable soon</Cell>
+                  <Cell mobileJustifyContent="center">
+                    {userAllocation === undefined ? 'Not eligible' : 'Claimable soon'}
+                  </Cell>
                 </Row>
               )
             })}
