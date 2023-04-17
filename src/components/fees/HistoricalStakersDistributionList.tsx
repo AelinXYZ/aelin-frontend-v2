@@ -4,26 +4,40 @@ import styled from 'styled-components'
 import { getAddress } from '@ethersproject/address'
 
 import OptimismDealTokenDistribution from '@/public/data/optimism-deal-token-distribution.json'
-import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonGradient,
+  ButtonPrimaryLight,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { Cell, Row, TableBody, TableHead } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Chains } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const InfoContainer = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 20px;
   margin-top: 18px;
 `
 
 const Text = styled.span`
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.2;
   color: ${({ theme: { colors } }) => colors.textColor};
+`
+
+const ClaimButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+`
+
+const ClaimButton = styled(ButtonGradient)`
+  min-width: 140px;
 `
 
 const columns = {
@@ -105,11 +119,14 @@ const HistoricalStakersDistributionList: React.FC = () => {
                       maximumFractionDigits: 18,
                     }).format(Number(userAllocation) * totalAmount)}
                   </Cell>
-                  <Cell mobileJustifyContent="center">Will be claimable soon</Cell>
+                  <Cell mobileJustifyContent="center">Claimable soon</Cell>
                 </Row>
               )
             })}
           </TableBody>
+          <ClaimButtonContainer>
+            <ClaimButton disabled={true}>Claim</ClaimButton>
+          </ClaimButtonContainer>
         </>
       )}
     </>
