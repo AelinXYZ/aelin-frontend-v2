@@ -1,4 +1,5 @@
 import AelinDirectDealFactoryABI from '@/src/abis/AelinDirectDealFactory.json'
+import AelinFeeDistributorABI from '@/src/abis/AelinFeeDistributorABI.json'
 import AelinRegularPoolFactoryABI from '@/src/abis/AelinRegularPoolFactory.json'
 import AelinStakingABI from '@/src/abis/AelinStaking.json'
 import ERC20 from '@/src/abis/ERC20.json'
@@ -95,5 +96,15 @@ export const contracts = constantContracts({
       [Chains.polygon]: '',
     },
     abi: GelatoPoolABI,
+  },
+  FEE_DISTRIBUTOR: {
+    address: {
+      [Chains.mainnet]: '',
+      [Chains.optimism]: '',
+      [Chains.goerli]: '0xfB63feC187f5Aa242E9537B1Fa396ABb90412461',
+      [Chains.arbitrum]: '',
+      [Chains.polygon]: '',
+    },
+    abi: AelinFeeDistributorABI,
   },
 })
