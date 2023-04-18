@@ -10,7 +10,6 @@ import erc721 from '@/src/abis/ERC721.json'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'
-import getNftType from '@/src/utils/getNftType'
 import getTokenType from '@/src/utils/getTokenType'
 import { shortenAddress } from '@/src/utils/string'
 
@@ -32,8 +31,8 @@ export type NftCollectionData = {
   name: string
   network: ChainsValues
   contractType: NFTType
-  symbol?: string
-  description?: string
+  symbol?: string | null
+  description?: string | null
   imageUrl?: string
   totalSupply: number
   slug?: string
@@ -48,49 +47,18 @@ const AELIN_MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/aelin-mainnet-metadata
 const AELIN_OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-optimism-metadata.json'
 const AELIN_ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-arbitrum-metadata.json'
 const AELIN_POLYGON_NFT_COLLECTIONS = '/data/nft-metadata/aelin-polygon-metadata.json'
-const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/open-sea-mainnet-metadata.json'
-const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/quixotic-metadata.json'
-const ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/stratos-metadata.json'
-const POLYGON_NFT_COLLECTIONS = '/data/nft-metadata/open-sea-polygon-metadata.json'
+const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/mainnet-metadata.json'
+const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/optimism-metadata.json'
+const ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/arbitrum-metadata.json'
+const POLYGON_NFT_COLLECTIONS = '/data/nft-metadata/polygon-metadata.json'
 const GOERLI_NFT_COLLECTIONS = '/data/nft-metadata/goerli-metadata.json'
 
-const parseOpenSeaResponse = async (
-  openSeaRes: Response,
-  chainId: ChainsValues,
-): Promise<Omit<NftCollectionData, 'totalSupply'>> => {
-  const data = await openSeaRes.json()
-  return {
-    id: 0,
-    address: data.address,
-    name: data.name,
-    slug: data.collection?.slug,
-    symbol: data.symbol,
-    description: data.description,
-    imageUrl: data.image_url,
-    contractType: getNftType(data.schema_name),
-    network: chainId,
-  }
-}
-
 const getParsedNFTCollectionData = async (collectionAddress: string, chainId: ChainsValues) => {
-  const url =
-    chainId === Chains.goerli ||
-    chainId === Chains.optimism ||
-    chainId === Chains.arbitrum ||
-    chainId === Chains.polygon
-      ? `/api/nft/${chainId}/${collectionAddress}`
-      : `https://api.opensea.io/api/v1/asset_contract/${collectionAddress}?format=json`
+  const url = `/api/nft/${chainId}/${collectionAddress}`
 
   return fetch(url).then(async (res) => {
     if (res.status !== 200) return
-    if (
-      chainId === Chains.goerli ||
-      chainId === Chains.optimism ||
-      chainId === Chains.arbitrum ||
-      chainId === Chains.polygon
-    )
-      return res.json()
-    return { data: await parseOpenSeaResponse(res, chainId) }
+    return res.json()
   })
 }
 
