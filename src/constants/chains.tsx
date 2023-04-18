@@ -173,5 +173,12 @@ export function getChainsByEnvironmentArray() {
 
 export function getNetworkConfig(chainId: ChainsValues): ChainConfig {
   const networkConfig = chainsConfig[chainId]
-  return nullthrows(networkConfig, `No config for chain id: ${chainId}`)
+  if (networkConfig == null) {
+    throw new Error(`No config for chain id: ${chainId}`)
+  } else {
+    if (`${env.NEXT_PUBLIC_RPC_PROVIDER}` == 'ankr') {
+      networkConfig.rpcUrl = networkConfig.fallbackRpcUrl
+    }
+    return networkConfig
+  }
 }
