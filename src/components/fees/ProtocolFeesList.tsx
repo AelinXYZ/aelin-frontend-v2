@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
-import { DealType, OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
+import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 import {
   Cell,
@@ -27,11 +27,38 @@ const Name = styled.span`
   white-space: nowrap;
 `
 
-const List: React.FC<{
-  dealType: DealType
+const columns = {
+  alignment: {
+    externalLink: 'right',
+    network: 'center',
+  },
+  widths: '160px 80px 170px 170px 1fr 30px',
+}
+
+const tableHeaderCells = [
+  {
+    title: 'Pool name',
+    sortKey: PoolCreated_OrderBy.Name,
+  },
+  {
+    title: 'Network',
+    justifyContent: columns.alignment.network,
+  },
+  {
+    title: 'Deal token total',
+  },
+  {
+    title: 'Protocol fee',
+  },
+  {
+    title: 'Vesting end',
+  },
+]
+
+const ProtocolFeesList: React.FC<{
   nameQuery?: string
   hideSmallFees?: boolean
-}> = ({ dealType, hideSmallFees, nameQuery }) => {
+}> = ({ hideSmallFees, nameQuery }) => {
   const [orderBy, setOrderBy] = useState<PoolCreated_OrderBy>(PoolCreated_OrderBy.Timestamp)
   const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
   const { data, error, hasMore, nextPage } = useAelinPools(
@@ -39,7 +66,6 @@ const List: React.FC<{
       orderBy: orderBy,
       orderDirection: orderDirection,
       where: {
-        dealType: dealType,
         name_contains_nocase: nameQuery,
         totalAmountEarnedByProtocol_gt: hideSmallFees ? undefined : 0,
         totalAmountEarnedByProtocolDecimal_gte: hideSmallFees ? 1 : undefined,
@@ -52,34 +78,6 @@ const List: React.FC<{
   if (error) {
     throw error
   }
-
-  const columns = {
-    alignment: {
-      externalLink: 'right',
-      network: 'center',
-    },
-    widths: '160px 80px 170px 170px 1fr 30px',
-  }
-
-  const tableHeaderCells = [
-    {
-      title: 'Pool name',
-      sortKey: PoolCreated_OrderBy.Name,
-    },
-    {
-      title: 'Network',
-      justifyContent: columns.alignment.network,
-    },
-    {
-      title: 'Deal token total',
-    },
-    {
-      title: 'Protocol fee',
-    },
-    {
-      title: 'Vesting end',
-    },
-  ]
 
   const handleSort = (newOrderBy: PoolCreated_OrderBy) => {
     if (newOrderBy === orderBy) {
@@ -118,7 +116,7 @@ const List: React.FC<{
         ))}
       </TableHead>
       {!data?.length ? (
-        <BaseCard>{`No ${dealType === DealType.SponsorDeal ? 'pools' : 'deals'}.`}</BaseCard>
+        <BaseCard>Nothing found. Please enter another name.</BaseCard>
       ) : (
         <TableBody>
           {data.map((item) => {
@@ -184,4 +182,4 @@ const List: React.FC<{
   )
 }
 
-export default List
+export default ProtocolFeesList
