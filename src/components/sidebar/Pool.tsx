@@ -54,6 +54,10 @@ const State = styled.span<{ stage: StageTypes }>`
   width: var(--dimensions);
 `
 
+export const StyledLink = styled(Link)`
+  text-decoration: none;
+`
+
 interface Props {
   href: string
   notifications?: number
@@ -62,13 +66,13 @@ interface Props {
 
 export const Pool: React.FC<Props> = ({ children, href, notifications, stage, ...restProps }) => {
   return (
-    <Link href={href} passHref>
+    <StyledLink href={href} passHref>
       <Wrapper {...restProps}>
         <State stage={stage.toLowerCase()} />
         {children}
         {notifications !== 0 && <Badge>{notifications}</Badge>}
       </Wrapper>
-    </Link>
+    </StyledLink>
   )
 }
 
