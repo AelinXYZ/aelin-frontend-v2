@@ -4,26 +4,40 @@ import styled from 'styled-components'
 import { getAddress } from '@ethersproject/address'
 
 import OptimismDealTokenDistribution from '@/public/data/optimism-deal-token-distribution.json'
-import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonGradient,
+  ButtonPrimaryLight,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { Cell, Row, TableBody, TableHead } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { Chains } from '@/src/constants/chains'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const InfoContainer = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 20px;
   margin-top: 18px;
 `
 
 const Text = styled.span`
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.2;
   color: ${({ theme: { colors } }) => colors.textColor};
+`
+
+const ClaimButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+`
+
+const ClaimButton = styled(ButtonGradient)`
+  min-width: 140px;
 `
 
 const columns = {
@@ -64,22 +78,17 @@ const HistoricalStakersDistributionList: React.FC = () => {
 
   return (
     <>
-      {(appChainId !== Chains.optimism || userAllocation === undefined) && (
+      {appChainId !== Chains.optimism && (
         <InfoContainer>
-          {appChainId !== Chains.optimism && (
-            <Text>Fees can only be claimed on Optimism network</Text>
-          )}
-          {appChainId !== Chains.optimism && appChainId !== Chains.goerli && (
+          {<Text>Fees can only be claimed on Optimism network</Text>}
+          {appChainId !== Chains.goerli && (
             <ButtonPrimaryLight onClick={() => pushNetwork(Chains.optimism)}>
               Switch to Optimism
             </ButtonPrimaryLight>
           )}
-          {appChainId === Chains.optimism && userAllocation === undefined && (
-            <Text>This address isn’t eligible for the historical stakers fee distribution</Text>
-          )}
         </InfoContainer>
       )}
-      {appChainId === Chains.optimism && userAllocation !== undefined && (
+      {appChainId === Chains.optimism && (
         <>
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ title }, index) => (
@@ -89,9 +98,6 @@ const HistoricalStakersDistributionList: React.FC = () => {
           <TableBody>
             {data.map((item) => {
               const { tokenName, totalAmount } = item
-
-              console.log('xxx allocated', Number(userAllocation) * totalAmount)
-
               return (
                 <Row columns={columns.widths} key={tokenName}>
                   <Cell mobileJustifyContent="center">{tokenName}</Cell>
@@ -103,13 +109,18 @@ const HistoricalStakersDistributionList: React.FC = () => {
                   <Cell mobileJustifyContent="center">
                     {Intl.NumberFormat('en', {
                       maximumFractionDigits: 18,
-                    }).format(Number(userAllocation) * totalAmount)}
+                    }).format(Number(userAllocation ?? 0) * totalAmount)}
                   </Cell>
-                  <Cell mobileJustifyContent="center">Will be claimable soon</Cell>
+                  <Cell mobileJustifyContent="center">
+                    {userAllocation === undefined ? 'Not eligible' : 'Claimable soon'}
+                  </Cell>
                 </Row>
               )
             })}
           </TableBody>
+          <ClaimButtonContainer>
+            <ClaimButton disabled={true}>Claim</ClaimButton>
+          </ClaimButtonContainer>
         </>
       )}
     </>
