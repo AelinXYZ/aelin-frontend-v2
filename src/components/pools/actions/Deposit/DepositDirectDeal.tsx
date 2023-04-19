@@ -91,8 +91,13 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
 
   const allocation = useNftUserAllocation(pool)
 
-  const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
-    useUserAvailableToDepositDirectDeal(pool)
+  const {
+    investmentTokenBalance,
+    refetchBalances,
+    refetchUserAllowance,
+    userAllowance,
+    userMaxDepositPrivateAmount,
+  } = useUserAvailableToDepositDirectDeal(pool)
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
@@ -115,6 +120,7 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
 
   const balances = [
     investmentTokenBalance,
+    { ...userAllowance, type: AmountTypes.maxDepositAllowed },
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
 
@@ -184,6 +190,7 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
           : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
           refetchBalances()
+          refetchUserAllowance()
           setTokenInputValue('')
           setInputError('')
         }

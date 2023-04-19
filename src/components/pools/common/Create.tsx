@@ -65,3 +65,8 @@ export const MobileButtonWrapper = styled.div`
   display: flex;
   column-gap: 20px;
 `
+export const LinkWrapper = styled.div`
+  a {
+    text-decoration: none;
+  }
+`

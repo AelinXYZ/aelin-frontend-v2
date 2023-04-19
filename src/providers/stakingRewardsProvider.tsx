@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { noop } from 'lodash'
@@ -49,7 +49,7 @@ const initialState = {
 
 const StakingRewardsContext = createContext<StakingRewardsContextType>({} as any)
 
-const StakingRewardsContextProvider: React.FC = ({ children }) => {
+const StakingRewardsContextProvider = ({ children }: { children: ReactNode }) => {
   const { address, appChainId } = useWeb3Connection()
   const [data, setData] = useState<StakingRewardsContextType['data']>(initialState)
   const [isLoading, setIsLoading] = useState<boolean>(false)

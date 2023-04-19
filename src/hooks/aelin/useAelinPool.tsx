@@ -333,9 +333,11 @@ export default function useAelinPool(
 
   const pool = poolCreatedData.poolCreated as PoolCreated
   const purchaseTokenDecimals = pool.purchaseTokenDecimals
-  const minimumPurchaseAmount = minimumPurchaseAmounts[chainId]?.[pool.id]
+  const minimumPurchaseAmount = minimumPurchaseAmounts
+    ? // @ts-ignore: minimumPurchaseAmounts expect to receive a number
+      minimumPurchaseAmounts[chainId]?.[pool.id]
+    : null
 
-  // prevent TS error
   if (!purchaseTokenDecimals) {
     throw Error('PurchaseTokenDecimals is null or undefined for pool: ' + poolAddress)
   }

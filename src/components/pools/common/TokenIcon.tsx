@@ -77,6 +77,10 @@ export const TokenIcon: React.FC<Props> = ({
         className="tokenIcon"
         height={iconHeight}
         src={investmentTokenImage}
+        style={{
+          maxWidth: '100%',
+          height: 'auto',
+        }}
         title={symbol}
         width={iconWidth}
       />

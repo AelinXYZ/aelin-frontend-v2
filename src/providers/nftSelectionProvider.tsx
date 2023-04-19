@@ -1,4 +1,12 @@
-import { Dispatch, SetStateAction, createContext, useContext, useMemo, useState } from 'react'
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import groupBy from 'lodash/groupBy'
@@ -34,7 +42,7 @@ export type NftSelectionContextType = {
 // eslint-disable-next-line
 const NftSelectionContext = createContext<NftSelectionContextType>({} as any)
 
-const NftSelectionContextProvider: React.FC = ({ children }) => {
+const NftSelectionContextProvider = ({ children }: { children: ReactNode }) => {
   const [selectedNfts, setSelectedNfts] = useState<SelectedNfts>({})
   const [storedSelectedNfts, setStoredSelectedNfts] = useState<NftPurchaseList[]>([])
   const [showNftSelectionModal, setShowNftSelectionModal] = useState<boolean>(false)

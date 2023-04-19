@@ -1,11 +1,12 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import { TableCard as BaseTableCard } from '../../history/common/TableWrapper'
-import { BaseCard } from '../../pureStyledComponents/common/BaseCard'
-import { TableHead as BaseTableHead } from '../../pureStyledComponents/common/Table'
-import { SortableTH as BaseSortableTH } from '../../table/SortableTH'
-import { NftWhiteListState } from '../whitelist/nft/nftWhiteListReducer'
-import NftCollectionTableBody from './NftCollectionTableBody'
+import { TableCard as BaseTableCard } from '@/src/components/history/common/TableWrapper'
+import NftCollectionTableBody from '@/src/components/pools/nftTable/NftCollectionTableBody'
+import { NftWhiteListState } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
+import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
+import { TableHead as BaseTableHead } from '@/src/components/pureStyledComponents/common/Table'
+import { SortableTH as BaseSortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues } from '@/src/constants/chains'
 import { Token } from '@/src/constants/token'
 import useNftCollectionTableData from '@/src/hooks/aelin/nftTable/useNftCollectionTableData'
@@ -48,9 +49,11 @@ const TableCard = styled(BaseTableCard)`
   order: 3;
 `
 
-const Wrapper: React.FC = ({ children, ...restProps }) => (
-  <TableCard {...restProps}>{children}</TableCard>
-)
+type WrapperProps = {
+  children?: ReactNode
+}
+
+const Wrapper = ({ children }: WrapperProps) => <TableCard>{children}</TableCard>
 
 export interface AllocationErc1155 {
   nftID: string

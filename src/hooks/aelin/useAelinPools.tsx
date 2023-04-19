@@ -59,7 +59,10 @@ export async function fetcherPools(variables: PoolsCreatedQueryVariables, networ
           if (isTestPool(pool.name) && isProd) return accum
           if (isHiddenPool(pool.id)) return accum
 
-          const minimumPurchaseAmount = minimumPurchaseAmounts[chainId]?.[pool.id]
+          const minimumPurchaseAmount = minimumPurchaseAmounts
+            ? // @ts-ignore: minimumPurchaseAmounts expect to receive a number
+              minimumPurchaseAmounts[chainId]?.[pool.id]
+            : null
 
           accum.push(
             getParsedPool({

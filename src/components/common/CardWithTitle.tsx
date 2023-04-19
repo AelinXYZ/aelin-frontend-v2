@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -72,20 +72,18 @@ const Inner = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    padding: 20px 45px 40px;
-  }
 `
 
-export const CardWithTitle: React.FC<{ titles: React.ReactNode }> = ({
-  children,
-  titles,
-  ...restProps
-}) => (
+type CardWithTitleProps = {
+  children: ReactNode
+  titles: ReactNode
+}
+
+export const CardWithTitle = ({ children, titles, ...restProps }: CardWithTitleProps) => (
   <Wrapper {...restProps}>
-    <Titles>{titles}</Titles>
-    <Inner className="cardWithTitleInner">{children}</Inner>
+    <Inner>
+      <Titles>{titles}</Titles>
+      {children}
+    </Inner>
   </Wrapper>
 )

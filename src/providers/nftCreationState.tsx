@@ -1,4 +1,4 @@
-import { Dispatch, createContext, useContext, useReducer } from 'react'
+import { Dispatch, ReactNode, createContext, useContext, useReducer } from 'react'
 
 import {
   NftWhiteListAction,
@@ -17,7 +17,7 @@ const NftCreationContext = createContext<NftCreationReducerContext>({
   dispatch: () => null,
 })
 
-const NftCreationContextProvider: React.FC = ({ children }) => {
+const NftCreationContextProvider = ({ children }: { children: ReactNode }) => {
   const [nftWhiteListState, dispatch] = useReducer(nftWhiteListReducer, initialState)
 
   return (
