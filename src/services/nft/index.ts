@@ -1,4 +1,4 @@
-import { Nft } from './models/SimpleHashRes'
+import { SimpleHashNft } from './models/SimpleHashRes'
 import env from '@/config/env'
 import { Chains, ChainsValues } from '@/src/constants/chains'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
@@ -12,27 +12,8 @@ export interface ParsedOwnedNft {
   type: NFTType
 }
 
-export interface QuixoticNft {
-  token_id: string
-  name: string
-  description: string
-  image_url: string
-  animation_url: null
-  background_color: null
-  collection: {
-    address: string
-    name: string
-    symbol: string
-    contract_type: string
-    external_link: string
-    slug: string
-    image_url: string
-    verified: boolean
-  }
-}
-
 const parseSimpleHashNFTsResponse = async (res: Response): Promise<ParsedOwnedNft[]> => {
-  const ret = (await res.json()).nfts.map((nft: Nft) => ({
+  const ret = (await res.json()).nfts.map((nft: SimpleHashNft) => ({
     id: nft.token_id,
     type: nft.contract.type,
     contractAddress: nft.contract_address,
@@ -50,7 +31,6 @@ const parseSimpleHashCollectionResponse = async (
   const data = await simpleHashRes.json()
   const nft = data.nfts[0]
 
-  console.log(nft)
   return {
     id: 0, // Always return 1 exact collection
     address: collectionAddress,
@@ -115,9 +95,8 @@ export const getNftOwnedByAddress = async (
     }
 
     return await parseSimpleHashNFTsResponse(simpleHashRes)
-  } else {
-    throw new Error('Unsupported network.', 400)
   }
+  throw new Error('Unsupported network.', 400)
 }
 
 export const getNftCollectionData = async (chainId: ChainsValues, collectionAddress: string) => {
