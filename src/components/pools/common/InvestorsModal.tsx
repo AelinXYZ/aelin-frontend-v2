@@ -29,7 +29,7 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues } from '@/src/constants/chains'
-import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import useAelinInvestors from '@/src/hooks/aelin/useAelinInvestors'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { formatToken } from '@/src/web3/bigNumber'

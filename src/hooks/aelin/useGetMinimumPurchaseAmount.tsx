@@ -1,12 +1,10 @@
 import useSWR from 'swr'
 
-const MINIMUM_PURCHASE_AMOUNT_ENDPOINT = '/data/minimum-purchase-amount.json'
+import minimumPurchaseAmount from '@/public/data/minimum-purchase-amount.json'
 
 export const fetchMinimumPurchaseAmount = async () => {
   try {
-    const response = await fetch(MINIMUM_PURCHASE_AMOUNT_ENDPOINT)
-
-    return response.json()
+    return minimumPurchaseAmount
   } catch (e) {
     console.error('error: ', e)
     return {}

@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Tooltip } from '@/src/components/tooltip/Tooltip'
@@ -60,13 +60,16 @@ export const Value = styled.div`
   }
 `
 
-export const InfoCell: React.FC<{
+type InfoCellProps = {
   title: string
   tooltip?: string
-  value?: React.ReactNode
-}> = ({ children, title, tooltip, value, ...restProps }) => {
+  value?: ReactNode
+  children?: ReactNode
+}
+
+export const InfoCell = ({ children, title, tooltip, value }: InfoCellProps) => {
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       <TitleWrapper>
         <Title>{title}</Title>
         {tooltip && <Tooltip text={tooltip} />}

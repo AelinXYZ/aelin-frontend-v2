@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { lighten } from 'polished'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Badge } from '@/src/components/pureStyledComponents/common/Badge'
@@ -58,16 +58,17 @@ export const StyledLink = styled(Link)`
   text-decoration: none;
 `
 
-interface Props {
+type PoolProps = {
   href: string
   notifications?: number
   stage: StageTypes
+  children: ReactNode
 }
 
-export const Pool: React.FC<Props> = ({ children, href, notifications, stage, ...restProps }) => {
+export const Pool = ({ children, href, notifications, stage }: PoolProps) => {
   return (
     <StyledLink href={href} passHref>
-      <Wrapper {...restProps}>
+      <Wrapper>
         <State stage={stage.toLowerCase()} />
         {children}
         {notifications !== 0 && <Badge>{notifications}</Badge>}

@@ -93,7 +93,7 @@
     "@types/lodash": "^4.14.180",
     "@types/ms": "^0.7.31",
     "@types/puppeteer": "^5.4.6",
-    "@types/react": "17.0.39",
+    "@types/react": "^18.0.37",
     "@types/react-copy-to-clipboard": "^5.0.2",
     "@types/react-dom": "^18.0.8",
     "@types/styled-components": "^5.1.24",

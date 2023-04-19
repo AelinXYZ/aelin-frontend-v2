@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { lighten } from 'polished'
+import { ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
 const loadingAnimation = keyframes`
@@ -106,6 +107,7 @@ export const Row = styled.div<RowProps>`
 `
 
 interface RowLinkProps extends RowProps {
+  children: ReactNode
   href: string
   withGradient?: boolean
 }
@@ -114,7 +116,7 @@ export const StyledLink = styled(Link)`
   text-decoration: none;
 `
 
-export const RowLink: React.FC<RowLinkProps> = ({ children, href, withGradient, ...restProps }) => {
+export const RowLink = ({ children, href, withGradient, ...restProps }: RowLinkProps) => {
   if (withGradient) {
     return (
       <GradientWrapper>

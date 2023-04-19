@@ -1,15 +1,15 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
+import { ExternalLink } from '../../table/ExternalLink'
+import NftMedia from '@/src/components/pools/actions/Invest/nft/NftMedia'
+import { Value } from '@/src/components/pools/common/InfoCell'
+import { AllocationErc1155 } from '@/src/components/pools/nftTable/NftCollectionsTable'
 import {
   Cell as BaseCell,
   HideOnDesktop as BaseHideOnDesktop,
   Row as BaseRow,
-} from '../../pureStyledComponents/common/Table'
-import { ExternalLink } from '../../table/ExternalLink'
-import NftMedia from '../actions/Invest/nft/NftMedia'
-import { Value } from '../common/InfoCell'
-import { AllocationErc1155 } from './NftCollectionsTable'
+} from '@/src/components/pureStyledComponents/common/Table'
 import { Chains } from '@/src/constants/chains'
 import { OPEN_SEA_BASE_URL, QUIXOTIC_BASE_URL, STRATOS_BASE_URL } from '@/src/constants/misc'
 import { NFTType, NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'

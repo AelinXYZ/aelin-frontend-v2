@@ -1,6 +1,7 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import { Cell, CellProps } from '@/src/components/pureStyledComponents/common/Table'
+import { Cell } from '@/src/components/pureStyledComponents/common/Table'
 
 const Wrapper = styled.div`
   color: ${({ theme }) => theme.colors.textColor};
@@ -11,10 +12,13 @@ const Wrapper = styled.div`
   white-space: nowrap;
 `
 
-export const NameCell: React.FC<CellProps> = ({ children, ...restProps }) => {
-  return (
-    <Wrapper as={Cell} {...restProps}>
-      {children}
-    </Wrapper>
-  )
+type NameCellProps = {
+  children: ReactNode
+  justifyContent?: string
+  light?: boolean
+  mobileJustifyContent?: string
+}
+
+export const NameCell = ({ children }: NameCellProps) => {
+  return <Wrapper as={Cell}>{children}</Wrapper>
 }

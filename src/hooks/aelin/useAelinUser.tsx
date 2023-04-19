@@ -72,7 +72,10 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts
+                  ? // @ts-ignore
+                    minimumPurchaseAmounts[chainId]?.[pool.id]
+                  : null,
               }),
             ),
             poolsAsHolder: user.poolsAsHolder.map((pool) =>
@@ -81,7 +84,10 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts
+                  ? // @ts-ignore: minimumPurchaseAmounts expect to receive a number
+                    minimumPurchaseAmounts[chainId]?.[pool.id]
+                  : null,
               }),
             ),
             poolsSponsored: user.poolsSponsored.map((pool) =>
@@ -90,7 +96,10 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts
+                  ? // @ts-ignore: minimumPurchaseAmounts expect to receive a number
+                    minimumPurchaseAmounts[chainId]?.[pool.id]
+                  : null,
               }),
             ),
             poolsVouched: user.poolsVouched.map((pool) =>
@@ -117,7 +126,10 @@ export async function fetcherUser(userAddress: string): Promise<ParsedUser | und
                 pool,
                 poolAddress: pool.id,
                 purchaseTokenDecimals: pool?.purchaseTokenDecimals as number,
-                minimumPurchaseAmount: minimumPurchaseAmounts[chainId]?.[pool.id],
+                minimumPurchaseAmount: minimumPurchaseAmounts
+                  ? // @ts-ignore: minimumPurchaseAmounts expect to receive a number
+                    minimumPurchaseAmounts[chainId]?.[pool.id]
+                  : null,
               }),
             ),
           }
