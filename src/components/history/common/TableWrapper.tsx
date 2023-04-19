@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -12,7 +13,8 @@ type tableHeaderCellProps = {
   title: string
 }
 
-type TableWrapper = {
+type TableWrapperProps = {
+  children: ReactNode
   dataLength: number
   columns: any
   handleSort: (sortBy: any) => void
@@ -38,7 +40,7 @@ export const Text = styled.h3`
   line-height: 1.2;
 `
 
-export const TableWrapper: React.FC<TableWrapper> = ({
+export const TableWrapper = ({
   children,
   columns,
   dataLength,
@@ -47,7 +49,7 @@ export const TableWrapper: React.FC<TableWrapper> = ({
   nextPage,
   order,
   tableHeaderCells,
-}) => {
+}: TableWrapperProps) => {
   return (
     <InfiniteScroll
       dataLength={dataLength}

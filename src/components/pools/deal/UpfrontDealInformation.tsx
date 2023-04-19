@@ -18,6 +18,11 @@ const Column = styled.div`
   flex-direction: column;
   min-width: 0;
   row-gap: 20px;
+  padding: 20px;
+
+  @media (min-width: 1025px) {
+    padding: 20px 45px 40px;
+  }
 `
 
 const DealParticipantsInfoCell = genericSuspense(

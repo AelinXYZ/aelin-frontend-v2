@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 export const Title = styled.h4`
@@ -21,7 +22,12 @@ export const Contents = styled.div`
   width: 100%;
 `
 
-export const Wrapper: React.FC<{ title?: string }> = ({ children, title }) => {
+type WrapperProps = {
+  title?: string
+  children?: ReactNode
+}
+
+export const Wrapper = ({ children, title }: WrapperProps) => {
   return (
     <>
       {title && <Title>{title}</Title>}

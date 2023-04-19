@@ -1,4 +1,12 @@
-import { DOMAttributes, cloneElement, createRef, useCallback, useEffect, useState } from 'react'
+import {
+  DOMAttributes,
+  ReactEventHandler,
+  cloneElement,
+  createRef,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import styled, { css } from 'styled-components'
 
 export enum DropdownPosition {
@@ -198,7 +206,7 @@ export const Dropdown: React.FC<Props> = (props) => {
   const node = createRef<HTMLDivElement>()
 
   const onButtonClick = useCallback(
-    (e) => {
+    (e: any) => {
       e.stopPropagation()
       if (disabled) return
       setIsOpen(!isOpen)

@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react'
+import { ReactNode, createContext, useContext } from 'react'
 
 import { Chains } from '../constants/chains'
 import { Token } from '../constants/token'
@@ -12,7 +12,7 @@ export type TokenIconsContextType = {
 
 const TokenIconsContext = createContext<TokenIconsContextType>({} as any)
 
-const TokenIconsContextProvider: React.FC = ({ children }) => {
+const TokenIconsContextProvider = ({ children }: { children: ReactNode }) => {
   const { tokensBySymbol = {} } = useAelinTokenList(Chains.mainnet) || {}
 
   return (

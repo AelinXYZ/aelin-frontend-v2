@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -85,7 +85,7 @@ const ButtonWrapper = styled.div`
   gap: 15px;
 `
 
-export const SectionIntro: React.FC<{
+type SectionIntroProps = {
   backgroundImage?: string
   backgroundPosition?: string
   button?: Array<{
@@ -98,7 +98,10 @@ export const SectionIntro: React.FC<{
     title: string
   }
   title: string
-}> = ({
+  children: ReactNode
+}
+
+export const SectionIntro = ({
   backgroundImage,
   backgroundPosition,
   button,
@@ -106,7 +109,7 @@ export const SectionIntro: React.FC<{
   secondaryButton,
   title,
   ...restProps
-}) => {
+}: SectionIntroProps) => {
   return (
     <Wrapper
       backgroundImage={backgroundImage}

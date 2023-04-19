@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -89,13 +90,16 @@ export enum WhiteListTab {
   Nft = 'NFT allowlist',
 }
 
-export const WhiteListTabs: React.FC<{
+type WhiteListTabsProps = {
   active?: WhiteListTab
   onTabClick: (tab: WhiteListTab) => void
   tabs?: WhiteListTab[]
-}> = ({ active, children, onTabClick, tabs, ...restProps }) => {
+  children?: ReactNode
+}
+
+export const WhiteListTabs = ({ active, children, onTabClick, tabs }: WhiteListTabsProps) => {
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       {tabs && tabs.length > 1 && (
         <Tabs>
           {tabs.map((action, index) => (

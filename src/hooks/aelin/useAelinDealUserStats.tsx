@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { BigNumber } from '@synthetixio/wei/node_modules/ethers'
+import { BigNumber } from '@ethersproject/bignumber'
 
 import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
