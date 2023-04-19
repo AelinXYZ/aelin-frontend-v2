@@ -110,20 +110,24 @@ interface RowLinkProps extends RowProps {
   withGradient?: boolean
 }
 
+export const StyledLink = styled(Link)`
+  text-decoration: none;
+`
+
 export const RowLink: React.FC<RowLinkProps> = ({ children, href, withGradient, ...restProps }) => {
   if (withGradient) {
     return (
       <GradientWrapper>
-        <Link href={href} passHref>
+        <StyledLink href={href} passHref>
           <Row {...restProps}>{children}</Row>
-        </Link>
+        </StyledLink>
       </GradientWrapper>
     )
   }
   return (
-    <Link href={href} passHref>
+    <StyledLink href={href} passHref>
       <Row {...restProps}>{children}</Row>
-    </Link>
+    </StyledLink>
   )
 }
 
