@@ -32,7 +32,7 @@ export enum PoolStages {
 export const poolStagesText = {
   [PoolStages.Open]: 'Open',
   [PoolStages.AwaitingDeal]: 'Awaiting deal',
-  [PoolStages.AwaitingDealFunds]: 'Awaiting deal funds',
+  [PoolStages.AwaitingDealFunds]: 'Awaiting deposit',
   [PoolStages.DealReady]: 'Deal ready',
   [PoolStages.Vesting]: 'Vesting',
   [PoolStages.Complete]: 'Complete',
