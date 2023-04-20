@@ -175,7 +175,8 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                         click next to proceed
                       </Error>
                     )}
-                  {currentStepError && typeof currentStepError === 'string' && (
+
+                  {currentStepError !== null && typeof currentStepError === 'string' && (
                     <Error textAlign="center">{currentStepError}</Error>
                   )}
                   <ButtonWrapper>

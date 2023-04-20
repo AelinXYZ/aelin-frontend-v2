@@ -8,7 +8,7 @@ const STEP_WIDTH = 98
 const Wrapper = styled.div`
   --step-width: ${STEP_WIDTH}px;
 
-  margin: 0 auto 40px;
+  margin: 20px auto 40px;
   max-width: 100%;
   overflow: hidden;
   position: relative;

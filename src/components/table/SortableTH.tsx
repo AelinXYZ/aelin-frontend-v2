@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Sort as BaseSort } from '@/src/components/assets/Sort'
@@ -26,13 +27,16 @@ const Sort = styled(BaseSort)<{ isActive?: boolean }>`
   opacity: ${({ isActive }) => (isActive ? 1 : 0.2)};
 `
 
-export const SortableTH: React.FC<{
+type SortableTHProps = {
+  children: ReactNode
   isActive?: boolean
   justifyContent?: string
   onClick?: () => void
-}> = ({ children, isActive, onClick, ...restProps }) => {
+}
+
+export const SortableTH = ({ children, isActive, onClick }: SortableTHProps) => {
   return (
-    <Wrapper onClick={onClick} {...restProps}>
+    <Wrapper onClick={onClick}>
       <Text>{children}</Text>
       {onClick && <Sort isActive={isActive} />}
     </Wrapper>

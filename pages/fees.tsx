@@ -15,9 +15,10 @@ const Fees: NextPage = () => {
         <SectionIntro
           backgroundImage="/resources/svg/bg-fees.svg"
           backgroundPosition="100% 100%"
-          title="Fees"
+          title="Protocol fees"
         >
-          This section provides information about fees collected by the aelin protocol.
+          This section shows the amount of deal fees collected by Aelin protocol and allows AELIN
+          stakers to claim their share of deal fees.
         </SectionIntro>
         <ListWithFilters />
       </LeftSidebarLayout>

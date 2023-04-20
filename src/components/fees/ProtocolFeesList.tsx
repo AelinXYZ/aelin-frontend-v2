@@ -55,10 +55,12 @@ const tableHeaderCells = [
   },
 ]
 
-const ProtocolFeesList: React.FC<{
+type ProtocolFeesListProps = {
   nameQuery?: string
   hideSmallFees?: boolean
-}> = ({ hideSmallFees, nameQuery }) => {
+}
+
+const ProtocolFeesList = ({ hideSmallFees, nameQuery }: ProtocolFeesListProps) => {
   const [orderBy, setOrderBy] = useState<PoolCreated_OrderBy>(PoolCreated_OrderBy.Timestamp)
   const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
   const { data, error, hasMore, nextPage } = useAelinPools(

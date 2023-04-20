@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Link as BaseLink } from '@/src/components/assets/Link'
@@ -26,12 +27,13 @@ const Link = styled(BaseLink)`
   }
 `
 
-interface Props extends CellProps {
+interface ExternalLinkProps extends CellProps {
   className?: string
   href: string
+  children?: ReactNode
 }
 
-export const ExternalLink: React.FC<Props> = ({ children, className, href, ...restProps }) => (
+export const ExternalLink = ({ children, className, href }: ExternalLinkProps) => (
   <Wrapper
     className={`${className} externalLink`}
     onClick={(e) => {
@@ -39,7 +41,6 @@ export const ExternalLink: React.FC<Props> = ({ children, className, href, ...re
       e.stopPropagation()
       window.open(href, '_blank')
     }}
-    {...restProps}
   >
     {children}
     <Link />
