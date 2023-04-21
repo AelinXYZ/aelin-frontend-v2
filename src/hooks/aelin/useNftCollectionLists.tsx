@@ -5,14 +5,6 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import Fuse from 'fuse.js'
 import useSWR from 'swr'
 
-import erc1155 from '@/src/abis/ERC1155.json'
-import erc721 from '@/src/abis/ERC721.json'
-import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
-import contractCall from '@/src/utils/contractCall'
-import getTokenType from '@/src/utils/getTokenType'
-import { shortenAddress } from '@/src/utils/string'
-
 export enum NFTType {
   ERC721 = 'erc721',
   ERC1155 = 'erc1155',
@@ -43,15 +35,22 @@ export type NftCollectionData = {
   updatedAt?: string
 }
 
-const AELIN_MAINNET_NFT_COLLECTIONS = '@/data/nft-metadata/aelin-mainnet-metadata.json'
-const AELIN_OPTIMISM_NFT_COLLECTIONS = '@/data/nft-metadata/aelin-optimism-metadata.json'
-const AELIN_ARBITRUM_NFT_COLLECTIONS = '@/data/nft-metadata/aelin-arbitrum-metadata.json'
-const AELIN_POLYGON_NFT_COLLECTIONS = '@/data/nft-metadata/aelin-polygon-metadata.json'
-const MAINNET_NFT_COLLECTIONS = '@/data/nft-metadata/open-sea-mainnet-metadata.json'
-const OPTIMISM_NFT_COLLECTIONS = '@/data/nft-metadata/quixotic-metadata.json'
-const ARBITRUM_NFT_COLLECTIONS = '@/data/nft-metadata/stratos-metadata.json'
-const POLYGON_NFT_COLLECTIONS = '@/data/nft-metadata/open-sea-polygon-metadata.json'
-const GOERLI_NFT_COLLECTIONS = '@/data/nft-metadata/goerli-metadata.json'
+import AELIN_ARBITRUM_NFT_COLLECTIONS from '@/public/data/nft-metadata/aelin-arbitrum-metadata.json'
+import AELIN_MAINNET_NFT_COLLECTIONS from '@/public/data/nft-metadata/aelin-mainnet-metadata.json'
+import AELIN_OPTIMISM_NFT_COLLECTIONS from '@/public/data/nft-metadata/aelin-optimism-metadata.json'
+import AELIN_POLYGON_NFT_COLLECTIONS from '@/public/data/nft-metadata/aelin-polygon-metadata.json'
+import GOERLI_NFT_COLLECTIONS from '@/public/data/nft-metadata/goerli-metadata.json'
+import MAINNET_NFT_COLLECTIONS from '@/public/data/nft-metadata/open-sea-mainnet-metadata.json'
+import POLYGON_NFT_COLLECTIONS from '@/public/data/nft-metadata/open-sea-polygon-metadata.json'
+import OPTIMISM_NFT_COLLECTIONS from '@/public/data/nft-metadata/quixotic-metadata.json'
+import ARBITRUM_NFT_COLLECTIONS from '@/public/data/nft-metadata/stratos-metadata.json'
+import erc1155 from '@/src/abis/ERC1155.json'
+import erc721 from '@/src/abis/ERC721.json'
+import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import contractCall from '@/src/utils/contractCall'
+import getTokenType from '@/src/utils/getTokenType'
+import { shortenAddress } from '@/src/utils/string'
 
 const getParsedNFTCollectionData = async (collectionAddress: string, chainId: ChainsValues) => {
   const url = `/api/nft/${chainId}/${collectionAddress}`
@@ -85,24 +84,30 @@ function useNftCollectionLists(
 
   useEffect(() => {
     const fetchCollections = async (appChainId: ChainsValues) => {
+      const aelinMainnetCollections: any = AELIN_ARBITRUM_NFT_COLLECTIONS
+      const aelinOptimismCollections: any = AELIN_OPTIMISM_NFT_COLLECTIONS
+      const aelinArbitrumCollections: any = AELIN_ARBITRUM_NFT_COLLECTIONS
+      const aelinPolygonCollections: any = AELIN_POLYGON_NFT_COLLECTIONS
+      const mainnetCollections: any = MAINNET_NFT_COLLECTIONS
+      const optimismCollections: any = OPTIMISM_NFT_COLLECTIONS
+      const arbitrumCollections: any = ARBITRUM_NFT_COLLECTIONS
+      const polygonCollections: any = POLYGON_NFT_COLLECTIONS
+      const goerliCollections: any = GOERLI_NFT_COLLECTIONS
+
       const collections: NftCollectionData[] = (
         await Promise.all([
           // NFTs added manually
-          appChainId === Chains.mainnet &&
-            fetch(AELIN_MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
-          appChainId === Chains.optimism &&
-            fetch(AELIN_OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
-          appChainId === Chains.arbitrum &&
-            fetch(AELIN_ARBITRUM_NFT_COLLECTIONS).then((r) => r.json()),
-          appChainId === Chains.polygon &&
-            fetch(AELIN_POLYGON_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.mainnet && fetch(aelinMainnetCollections).then((r) => r.json()),
+          appChainId === Chains.optimism && fetch(aelinOptimismCollections).then((r) => r.json()),
+          appChainId === Chains.arbitrum && fetch(aelinArbitrumCollections).then((r) => r.json()),
+          appChainId === Chains.polygon && fetch(aelinPolygonCollections).then((r) => r.json()),
           // NFTs fetched by API
-          appChainId === Chains.mainnet && fetch(MAINNET_NFT_COLLECTIONS).then((r) => r.json()),
-          appChainId === Chains.optimism && fetch(OPTIMISM_NFT_COLLECTIONS).then((r) => r.json()),
-          appChainId === Chains.arbitrum && fetch(ARBITRUM_NFT_COLLECTIONS).then((r) => r.json()),
-          appChainId === Chains.polygon && fetch(POLYGON_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.mainnet && fetch(mainnetCollections).then((r) => r.json()),
+          appChainId === Chains.optimism && fetch(optimismCollections).then((r) => r.json()),
+          appChainId === Chains.arbitrum && fetch(arbitrumCollections).then((r) => r.json()),
+          appChainId === Chains.polygon && fetch(polygonCollections).then((r) => r.json()),
           // NFT for testing reasons
-          appChainId === Chains.goerli && fetch(GOERLI_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.goerli && fetch(goerliCollections).then((r) => r.json()),
         ])
       )
         .filter(Boolean)
