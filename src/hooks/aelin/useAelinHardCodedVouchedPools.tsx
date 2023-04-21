@@ -2,14 +2,13 @@ import { orderBy } from 'lodash'
 import useSWR from 'swr'
 
 import { InputMaybe, PoolCreated_OrderBy, PoolsCreatedQueryVariables } from '@/graphql-schema'
+import VOUCHED_POOLS_ENDPOINT from '@/public/data/vouched-pools.json'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { ParsedAelinPool, getParsedPool } from '@/src/hooks/aelin/useAelinPool'
 import { fetchMinimumPurchaseAmount } from '@/src/hooks/aelin/useGetMinimumPurchaseAmount'
 import { POOLS_CREATED_QUERY_NAME } from '@/src/queries/pools/poolsCreated'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
 import { isSuccessful } from '@/src/utils/isSuccessful'
-
-const VOUCHED_POOLS_ENDPOINT = '/data/vouched-pools.json'
 
 const getLocalKeySort = (orderBy: InputMaybe<PoolCreated_OrderBy> | undefined) => {
   switch (orderBy) {
@@ -39,10 +38,9 @@ const useAelinHardCodedVouchedPools = (variables: Props) => {
       const allSDK = getAllGqlSDK()
       const chainIds = Object.keys(allSDK).map(Number) as ChainsValuesArray
 
-      const response = await fetch(VOUCHED_POOLS_ENDPOINT)
-      const vouchedPools = await response.json()
+      const vouchedPools: any = VOUCHED_POOLS_ENDPOINT
 
-      const purchaseMinimumAmounts = await fetchMinimumPurchaseAmount()
+      const purchaseMinimumAmounts: any = await fetchMinimumPurchaseAmount()
 
       const queryPromises = (): Promise<any>[] =>
         chainIds.map(async (chainId: ChainsValues) => {

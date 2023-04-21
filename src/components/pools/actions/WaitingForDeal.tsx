@@ -6,10 +6,10 @@ type WaitingForDealProps = {
 
 const WaitingForDeal = ({ isUpfrontDeal }: WaitingForDealProps) => {
   return (
-    <Wrapper title={isUpfrontDeal ? 'Awaiting Deal Funds' : 'Awaiting Deal'}>
+    <Wrapper title={isUpfrontDeal ? 'Waiting to be funded' : 'Awaiting Deal'}>
       <Contents>
         {isUpfrontDeal
-          ? 'The sponsor is looking for deal funds. If a deal is found, investors will be able to buy deal tokens'
+          ? 'The deal is ready but needs to be funded. Investors will be able to purchase deal tokens once funded'
           : 'The sponsor is looking for a deal. If a deal is found, investors will be able to either accept or withdraw their tokens'}
       </Contents>
     </Wrapper>

@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Deadline } from '@/src/components/common/Deadline'
@@ -106,12 +107,13 @@ const Value = styled.p`
   margin: 0;
 `
 
-const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
-  children,
-  isActive,
-  isDone,
-  ...restProps
-}) => {
+type StepProps = {
+  isActive?: boolean
+  isDone?: boolean
+  children: ReactNode
+}
+
+const Step = ({ children, isActive, isDone, ...restProps }: StepProps) => {
   return (
     <Item {...restProps}>
       <StepCircleBig isActive={isActive || isDone} />
