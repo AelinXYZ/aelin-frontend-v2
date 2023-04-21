@@ -43,15 +43,15 @@ export type NftCollectionData = {
   updatedAt?: string
 }
 
-const AELIN_MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/aelin-mainnet-metadata.json'
-const AELIN_OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-optimism-metadata.json'
-const AELIN_ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/aelin-arbitrum-metadata.json'
-const AELIN_POLYGON_NFT_COLLECTIONS = '/data/nft-metadata/aelin-polygon-metadata.json'
-const MAINNET_NFT_COLLECTIONS = '/data/nft-metadata/mainnet-metadata.json'
-const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/optimism-metadata.json'
-const ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/arbitrum-metadata.json'
-const POLYGON_NFT_COLLECTIONS = '/data/nft-metadata/polygon-metadata.json'
-const GOERLI_NFT_COLLECTIONS = '/data/nft-metadata/goerli-metadata.json'
+const AELIN_MAINNET_NFT_COLLECTIONS = '@/data/nft-metadata/aelin-mainnet-metadata.json'
+const AELIN_OPTIMISM_NFT_COLLECTIONS = '@/data/nft-metadata/aelin-optimism-metadata.json'
+const AELIN_ARBITRUM_NFT_COLLECTIONS = '@/data/nft-metadata/aelin-arbitrum-metadata.json'
+const AELIN_POLYGON_NFT_COLLECTIONS = '@/data/nft-metadata/aelin-polygon-metadata.json'
+const MAINNET_NFT_COLLECTIONS = '@/data/nft-metadata/open-sea-mainnet-metadata.json'
+const OPTIMISM_NFT_COLLECTIONS = '@/data/nft-metadata/quixotic-metadata.json'
+const ARBITRUM_NFT_COLLECTIONS = '@/data/nft-metadata/stratos-metadata.json'
+const POLYGON_NFT_COLLECTIONS = '@/data/nft-metadata/open-sea-polygon-metadata.json'
+const GOERLI_NFT_COLLECTIONS = '@/data/nft-metadata/goerli-metadata.json'
 
 const getParsedNFTCollectionData = async (collectionAddress: string, chainId: ChainsValues) => {
   const url = `/api/nft/${chainId}/${collectionAddress}`
