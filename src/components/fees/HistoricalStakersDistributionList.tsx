@@ -87,14 +87,13 @@ const HistoricalStakersDistributionList: React.FC = () => {
     { tokenName: 'AELIN', totalAmount: 16.846242936861671 },
   ]
 
-
   const optimismUserEntry = useMemo(
     () => OptimismDealTokenDistribution.find((item) => getAddress(item.address) === userAddress),
     [userAddress],
   )
 
   const goerliUserEntry = useMemo(
-    () => GoerliDealTokenDistribution.find((item) => getAddress(item[1]) === userAddress),
+    () => GoerliDealTokenDistribution.find((item) => getAddress(item[1] as string) === userAddress),
     [userAddress],
   )
 
@@ -135,7 +134,7 @@ const HistoricalStakersDistributionList: React.FC = () => {
       'uint256',
     ])
     const merkleTreeEntry = Array.from(merkleTree.entries()).find(
-      ([, [, address]]) => getAddress(address) === userAddress,
+      ([, [, address]]) => getAddress(address as string) === userAddress,
     )
     if (!merkleTreeEntry) {
       return
