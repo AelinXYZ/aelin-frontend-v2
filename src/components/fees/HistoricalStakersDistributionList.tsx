@@ -205,6 +205,7 @@ const HistoricalStakersDistributionList: React.FC = () => {
                             )
                             .toString(),
                           18,
+                          18,
                         ).formatted}
                   </Cell>
                   <Cell mobileJustifyContent="center">{status}</Cell>
