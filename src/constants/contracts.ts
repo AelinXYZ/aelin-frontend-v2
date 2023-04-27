@@ -101,7 +101,7 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '',
       [Chains.optimism]: '',
-      [Chains.goerli]: '0xfB63feC187f5Aa242E9537B1Fa396ABb90412461',
+      [Chains.goerli]: '0xF5bF8E0B2F1efb98872c44f928e648f6bc190750',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
     },

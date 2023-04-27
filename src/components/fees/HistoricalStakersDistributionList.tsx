@@ -80,20 +80,13 @@ const HistoricalStakersDistributionList: React.FC = () => {
   const { address: userAddress, appChainId, pushNetwork } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const data =
-    appChainId === Chains.optimism
-      ? [
-          { tokenName: 'vSEY', totalAmount: 7519488.153057938 },
-          { tokenName: 'vKWENTA', totalAmount: 313.37299999999999 },
-          { tokenName: 'vHECO', totalAmount: 2047.43007028 },
-          { tokenName: 'AELIN', totalAmount: 16.846242936861671 },
-        ]
-      : [
-          { tokenName: 'SNX', totalAmount: '80000000000000000000' },
-          { tokenName: 'DAI', totalAmount: '100000000000000000000' },
-          { tokenName: 'WETH', totalAmount: '1000000000000000000' },
-          { tokenName: 'UNI', totalAmount: '50000000000000000000' },
-        ]
+  const data = [
+    { tokenName: 'vSEY', totalAmount: 7519488.153057938 },
+    { tokenName: 'vKWENTA', totalAmount: 313.37299999999999 },
+    { tokenName: 'vHECO', totalAmount: 2047.43007028 },
+    { tokenName: 'AELIN', totalAmount: 16.846242936861671 },
+  ]
+
 
   const optimismUserEntry = useMemo(
     () => OptimismDealTokenDistribution.find((item) => getAddress(item.address) === userAddress),
