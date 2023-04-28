@@ -113,7 +113,7 @@ const HistoricalStakersDistributionList: React.FC = () => {
 
   const status = useMemo(() => {
     if (appChainId === Chains.optimism) {
-      return optimismUserEntry === undefined ? Status.NotEligible : Status.ClaimableSoon
+      return optimismUserEntry === undefined ? Status.NotEligible : Status.Claimable
     }
 
     if (goerliUserEntry === undefined) {
