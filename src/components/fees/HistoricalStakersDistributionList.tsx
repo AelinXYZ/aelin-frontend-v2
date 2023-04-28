@@ -124,7 +124,7 @@ const HistoricalStakersDistributionList: React.FC = () => {
   }, [appChainId, optimismUserEntry, goerliUserEntry, isClaimed])
 
   const claimButtonHandler = () => {
-    if (appChainId !== Chains.goerli) {
+    if (appChainId !== Chains.goerli && appChainId !== Chains.optimism) {
       return
     }
 
