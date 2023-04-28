@@ -100,7 +100,7 @@ export const contracts = constantContracts({
   FEE_DISTRIBUTOR: {
     address: {
       [Chains.mainnet]: '',
-      [Chains.optimism]: '',
+      [Chains.optimism]: '0xa621eEFAa0A6B23fA4C0111e9316cCa4b53469e6',
       [Chains.goerli]: '0xF5bF8E0B2F1efb98872c44f928e648f6bc190750',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
