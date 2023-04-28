@@ -6,7 +6,6 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree'
 
-import GoerliDealTokenDistribution from '@/public/data/goerli-deal-token-distribution.json'
 import OptimismDealTokenDistribution from '@/public/data/optimism-deal-token-distribution.json'
 import AelinFeeDistributorABI from '@/src/abis/AelinFeeDistributorABI.json'
 import {
@@ -71,7 +70,6 @@ const tableHeaderCells = [
 
 enum Status {
   NotEligible = 'Not eligible',
-  ClaimableSoon = 'Claimable soon',
   Claimable = 'Claimable',
   Claimed = 'Claimed',
 }
@@ -87,22 +85,28 @@ const HistoricalStakersDistributionList: React.FC = () => {
     { tokenName: 'AELIN', totalAmount: '16846242936861671899' },
   ]
 
-  const optimismUserEntry = useMemo(
-    () => OptimismDealTokenDistribution.find((item) => getAddress(item.address) === userAddress),
-    [userAddress],
-  )
+  const userEntry = useMemo(() => {
+    const item = OptimismDealTokenDistribution.find(
+      (item) => getAddress(item[1] as string) === userAddress,
+    )
 
-  const goerliUserEntry = useMemo(
-    () => GoerliDealTokenDistribution.find((item) => getAddress(item[1] as string) === userAddress),
-    [userAddress],
-  )
+    if (!item) {
+      return undefined
+    }
+
+    return {
+      index: item[0] as number,
+      address: item[1] as string,
+      amount: item[2] as string,
+    }
+  }, [userAddress])
 
   const [isClaimed, refetchIsClaimed] = useContractCall(
     new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl),
     contracts.FEE_DISTRIBUTOR.address[appChainId],
     AelinFeeDistributorABI,
     'isClaimed',
-    goerliUserEntry ? [goerliUserEntry[0]] : null,
+    userEntry ? [userEntry.index] : null,
   )
 
   const { estimate: estimateClaim, execute: executeClaim } = useTransaction(
@@ -112,23 +116,19 @@ const HistoricalStakersDistributionList: React.FC = () => {
   )
 
   const status = useMemo(() => {
-    if (appChainId === Chains.optimism) {
-      return optimismUserEntry === undefined ? Status.NotEligible : Status.Claimable
-    }
-
-    if (goerliUserEntry === undefined) {
+    if (!userEntry) {
       return Status.NotEligible
     }
 
     return isClaimed ? Status.Claimed : Status.Claimable
-  }, [appChainId, optimismUserEntry, goerliUserEntry, isClaimed])
+  }, [userEntry, isClaimed])
 
   const claimButtonHandler = () => {
     if (appChainId !== Chains.goerli && appChainId !== Chains.optimism) {
       return
     }
 
-    const merkleTree = StandardMerkleTree.of(GoerliDealTokenDistribution, [
+    const merkleTree = StandardMerkleTree.of(OptimismDealTokenDistribution, [
       'uint256',
       'address',
       'uint256',
@@ -177,28 +177,20 @@ const HistoricalStakersDistributionList: React.FC = () => {
                 <Row columns={columns.widths} key={tokenName}>
                   <Cell mobileJustifyContent="center">{tokenName}</Cell>
                   <Cell mobileJustifyContent="center">
-                    {typeof totalAmount === 'number'
-                      ? Intl.NumberFormat('en', {
-                          maximumFractionDigits: 2,
-                        }).format(totalAmount)
-                      : getDetailedNumber(totalAmount, 18).formatted}
+                    {getDetailedNumber(totalAmount, 18).formatted}
                   </Cell>
                   <Cell mobileJustifyContent="center">
-                    {typeof totalAmount === 'number'
-                      ? Intl.NumberFormat('en', {
-                          maximumFractionDigits: 18,
-                        }).format(Number(optimismUserEntry?.allocation ?? 0) * totalAmount)
-                      : getDetailedNumber(
-                          BigNumber.from(goerliUserEntry ? goerliUserEntry[2] : '0')
-                            .mul(
-                              BigNumber.from(totalAmount).div(
-                                BigNumber.from('1000000000000000000'),
-                              ),
-                            )
-                            .toString(),
-                          18,
-                          18,
-                        ).formatted}
+                    {
+                      getDetailedNumber(
+                        BigNumber.from(userEntry ? userEntry.amount : '0')
+                          .mul(
+                            BigNumber.from(totalAmount).div(BigNumber.from('1000000000000000000')),
+                          )
+                          .toString(),
+                        18,
+                        18,
+                      ).formatted
+                    }
                   </Cell>
                   <Cell mobileJustifyContent="center">{status}</Cell>
                 </Row>
