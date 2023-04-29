@@ -46,6 +46,7 @@ export type ChainConfig = {
   name: string
   rpcUrl: string
   defaultRpcUrl: string
+  fallbackRpcUrl: string
   shortName: string
   tokenListUrl: string[]
   buyAelinUrl: string | undefined
@@ -62,6 +63,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Ethereum Mainnet',
     rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_MAINNET_TOKEN_PROVIDER}`,
     defaultRpcUrl: 'https://rpc.ankr.com/eth',
+    fallbackRpcUrl: `https://rpc.ankr.com/eth/${env.NEXT_PUBLIC_ANKR_MAINNET_TOKEN_PROVIDER}`,
     shortName: 'Mainnet',
     tokenListUrl: [
       'https://tokens.1inch.eth.link',
@@ -85,6 +87,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     name: 'Görli Testnet',
     rpcUrl: `https://eth-goerli.g.alchemy.com/v2/${env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
     defaultRpcUrl: `https://eth-goerli.g.alchemy.com/v2/${env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER}`,
+    fallbackRpcUrl: `https://rpc.ankr.com/eth_goerli/${env.NEXT_PUBLIC_ANKR_GOERLI_TOKEN_PROVIDER}`,
     shortName: 'Goerli',
     tokenListUrl: [
       'https://tokens.1inch.eth.link',
@@ -104,6 +107,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     chainIdHex: toHex(Chains.optimism),
     rpcUrl: `https://opt-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_OPTIMISM_TOKEN_PROVIDER}`,
     defaultRpcUrl: 'https://mainnet.optimism.io',
+    fallbackRpcUrl: `https://rpc.ankr.com/optimism/${env.NEXT_PUBLIC_ANKR_OPTIMISM_TOKEN_PROVIDER}`,
     blockExplorerUrls: ['https://optimistic.etherscan.io/'],
     iconUrls: [],
     isProd: true,
@@ -125,6 +129,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     chainIdHex: toHex(Chains.arbitrum),
     rpcUrl: `https://arb-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_ARBITRUM_TOKEN_PROVIDER}`,
     defaultRpcUrl: 'https://arb1.arbitrum.io/rpc',
+    fallbackRpcUrl: `https://rpc.ankr.com/arbitrum/${env.NEXT_PUBLIC_ANKR_ARBITRUM_TOKEN_PROVIDER}`,
     blockExplorerUrls: ['https://arbiscan.io/'],
     iconUrls: [],
     isProd: true,
@@ -145,6 +150,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     chainIdHex: toHex(Chains.polygon),
     rpcUrl: `https://polygon-mainnet.g.alchemy.com/v2/${env.NEXT_PUBLIC_POLYGON_TOKEN_PROVIDER}`,
     defaultRpcUrl: 'https://polygon-rpc.com/',
+    fallbackRpcUrl: `https://rpc.ankr.com/polygon/${env.NEXT_PUBLIC_ANKR_POLYGON_TOKEN_PROVIDER}`,
     blockExplorerUrls: ['https://polygonscan.com/'],
     iconUrls: [],
     isProd: true,
@@ -167,5 +173,12 @@ export function getChainsByEnvironmentArray() {
 
 export function getNetworkConfig(chainId: ChainsValues): ChainConfig {
   const networkConfig = chainsConfig[chainId]
-  return nullthrows(networkConfig, `No config for chain id: ${chainId}`)
+  if (networkConfig == null) {
+    throw new Error(`No config for chain id: ${chainId}`)
+  } else {
+    if (`${env.NEXT_PUBLIC_RPC_PROVIDER}` == 'ankr') {
+      networkConfig.rpcUrl = networkConfig.fallbackRpcUrl
+    }
+    return networkConfig
+  }
 }
