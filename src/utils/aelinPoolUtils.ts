@@ -128,10 +128,10 @@ export function getAmountRedeem(amount: BigNumber, purchaseTokenDecimals: number
   }
 }
 
-export function getDetailedNumber(amount: string, decimals: number) {
+export function getDetailedNumber(amount: string, valueScale: number, decimals = DISPLAY_DECIMALS) {
   return {
     raw: BigNumber.from(amount),
-    formatted: formatToken(amount, decimals),
+    formatted: formatToken(amount, valueScale, decimals),
   }
 }
 

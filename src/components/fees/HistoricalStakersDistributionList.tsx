@@ -2,16 +2,25 @@ import { useMemo } from 'react'
 import styled from 'styled-components'
 
 import { getAddress } from '@ethersproject/address'
+import { BigNumber } from '@ethersproject/bignumber'
+import { JsonRpcProvider } from '@ethersproject/providers'
+import { StandardMerkleTree } from '@openzeppelin/merkle-tree'
 
 import OptimismDealTokenDistribution from '@/public/data/optimism-deal-token-distribution.json'
+import AelinFeeDistributorABI from '@/src/abis/AelinFeeDistributorABI.json'
 import {
   ButtonGradient,
   ButtonPrimaryLight,
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { Cell, Row, TableBody, TableHead } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
-import { Chains } from '@/src/constants/chains'
+import { Chains, getNetworkConfig } from '@/src/constants/chains'
+import { contracts } from '@/src/constants/contracts'
+import useContractCall from '@/src/hooks/contracts/useContractCall'
+import useTransaction from '@/src/hooks/contracts/useTransaction'
+import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getDetailedNumber } from '@/src/utils/aelinPoolUtils'
 
 const InfoContainer = styled.div`
   display: flex;
@@ -59,36 +68,102 @@ const tableHeaderCells = [
   },
 ]
 
-const data = [
-  { tokenName: 'vSEY', totalAmount: 7519488.153057938 },
-  { tokenName: 'vKWENTA', totalAmount: 313.37299999999999 },
-  { tokenName: 'vHECO', totalAmount: 2047.43007028 },
-  { tokenName: 'AELIN', totalAmount: 16.846242936861671 },
-]
+enum Status {
+  NotEligible = 'Not eligible',
+  Claimable = 'Claimable',
+  Claimed = 'Claimed',
+}
 
 const HistoricalStakersDistributionList: React.FC = () => {
   const { address: userAddress, appChainId, pushNetwork } = useWeb3Connection()
+  const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const userAllocation = useMemo(
-    () =>
-      OptimismDealTokenDistribution.find((item) => getAddress(item.address) === userAddress)
-        ?.allocation,
-    [userAddress],
+  const data = [
+    { tokenName: 'vSEY', totalAmount: '7519488153057938939527000' },
+    { tokenName: 'vKWENTA', totalAmount: '313372999999999999999' },
+    { tokenName: 'vHECO', totalAmount: '2047430070280000000000' },
+    { tokenName: 'AELIN', totalAmount: '16846242936861671899' },
+  ]
+
+  const userEntry = useMemo(() => {
+    const item = OptimismDealTokenDistribution.find(
+      (item) => getAddress(item[1] as string) === userAddress,
+    )
+
+    if (!item) {
+      return undefined
+    }
+
+    return {
+      index: item[0] as number,
+      address: item[1] as string,
+      amount: item[2] as string,
+    }
+  }, [userAddress])
+
+  const [isClaimed, refetchIsClaimed] = useContractCall(
+    new JsonRpcProvider(getNetworkConfig(appChainId).rpcUrl),
+    contracts.FEE_DISTRIBUTOR.address[appChainId],
+    AelinFeeDistributorABI,
+    'isClaimed',
+    userEntry ? [userEntry.index] : null,
   )
+
+  const { estimate: estimateClaim, execute: executeClaim } = useTransaction(
+    contracts.FEE_DISTRIBUTOR.address[appChainId],
+    AelinFeeDistributorABI,
+    'claim',
+  )
+
+  const status = useMemo(() => {
+    if (!userEntry) {
+      return Status.NotEligible
+    }
+
+    return isClaimed ? Status.Claimed : Status.Claimable
+  }, [userEntry, isClaimed])
+
+  const claimButtonHandler = () => {
+    if (appChainId !== Chains.goerli && appChainId !== Chains.optimism) {
+      return
+    }
+
+    const merkleTree = StandardMerkleTree.of(OptimismDealTokenDistribution, [
+      'uint256',
+      'address',
+      'uint256',
+    ])
+    const merkleTreeEntry = Array.from(merkleTree.entries()).find(
+      ([, [, address]]) => getAddress(address as string) === userAddress,
+    )
+    if (!merkleTreeEntry) {
+      return
+    }
+
+    const [index, value] = merkleTreeEntry
+    const proof = merkleTree.getProof(index)
+    const params = [...value, proof]
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        await executeClaim(params, txGasOptions)
+        await refetchIsClaimed()
+      },
+      title: 'Claim historical stakers distribution',
+      estimate: () => estimateClaim(params),
+    })
+  }
 
   return (
     <>
-      {appChainId !== Chains.optimism && (
+      {appChainId !== Chains.optimism && appChainId !== Chains.goerli && (
         <InfoContainer>
-          {<Text>Fees can only be claimed on Optimism network</Text>}
-          {appChainId !== Chains.goerli && (
-            <ButtonPrimaryLight onClick={() => pushNetwork(Chains.optimism)}>
-              Switch to Optimism
-            </ButtonPrimaryLight>
-          )}
+          <Text>Fees can only be claimed on Optimism network</Text>
+          <ButtonPrimaryLight onClick={() => pushNetwork(Chains.optimism)}>
+            Switch to Optimism
+          </ButtonPrimaryLight>
         </InfoContainer>
       )}
-      {appChainId === Chains.optimism && (
+      {(appChainId === Chains.optimism || appChainId === Chains.goerli) && (
         <>
           <TableHead columns={columns.widths}>
             {tableHeaderCells.map(({ title }, index) => (
@@ -102,24 +177,32 @@ const HistoricalStakersDistributionList: React.FC = () => {
                 <Row columns={columns.widths} key={tokenName}>
                   <Cell mobileJustifyContent="center">{tokenName}</Cell>
                   <Cell mobileJustifyContent="center">
-                    {Intl.NumberFormat('en', {
-                      maximumFractionDigits: 2,
-                    }).format(totalAmount)}
+                    {getDetailedNumber(totalAmount, 18).formatted}
                   </Cell>
                   <Cell mobileJustifyContent="center">
-                    {Intl.NumberFormat('en', {
-                      maximumFractionDigits: 18,
-                    }).format(Number(userAllocation ?? 0) * totalAmount)}
+                    {
+                      getDetailedNumber(
+                        BigNumber.from(userEntry ? userEntry.amount : '0')
+                          .mul(BigNumber.from(totalAmount))
+                          .div(BigNumber.from('1000000000000000000'))
+                          .toString(),
+                        18,
+                        18,
+                      ).formatted
+                    }
                   </Cell>
-                  <Cell mobileJustifyContent="center">
-                    {userAllocation === undefined ? 'Not eligible' : 'Claimable soon'}
-                  </Cell>
+                  <Cell mobileJustifyContent="center">{status}</Cell>
                 </Row>
               )
             })}
           </TableBody>
           <ClaimButtonContainer>
-            <ClaimButton disabled={true}>Claim</ClaimButton>
+            <ClaimButton
+              disabled={status !== Status.Claimable || isSubmitting}
+              onClick={claimButtonHandler}
+            >
+              Claim
+            </ClaimButton>
           </ClaimButtonContainer>
         </>
       )}

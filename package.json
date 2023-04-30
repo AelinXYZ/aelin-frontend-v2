@@ -34,6 +34,7 @@
     "@ethersproject/units": "5.4.0",
     "@ethersproject/wallet": "^5.7.0",
     "@metamask/detect-provider": "^1.2.0",
+    "@openzeppelin/merkle-tree": "^1.0.4",
     "@synthetixio/contracts-interface": "^2.67.0-alpha",
     "@synthetixio/wei": "^2.63.1",
     "@visx/curve": "2.1.0",
