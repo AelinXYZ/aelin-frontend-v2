@@ -183,9 +183,8 @@ const HistoricalStakersDistributionList: React.FC = () => {
                     {
                       getDetailedNumber(
                         BigNumber.from(userEntry ? userEntry.amount : '0')
-                          .mul(
-                            BigNumber.from(totalAmount).div(BigNumber.from('1000000000000000000')),
-                          )
+                          .mul(BigNumber.from(totalAmount))
+                          .div(BigNumber.from('1000000000000000000'))
                           .toString(),
                         18,
                         18,
