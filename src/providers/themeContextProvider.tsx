@@ -1,5 +1,13 @@
 import { useRouter } from 'next/router'
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { ThemeProvider } from 'styled-components'
 
 import { ETHLIZARDS_VOUCHER_ENS } from '@/src/constants/misc'
@@ -14,7 +22,7 @@ import { lightTheme } from '@/src/theme/lightTheme'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ThemeContext = createContext({} as any)
 
-const ThemeContextProvider: React.FC = ({ children }) => {
+const ThemeContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
 
   const [persistentState, setPersistentState] = useLocalStorage(
