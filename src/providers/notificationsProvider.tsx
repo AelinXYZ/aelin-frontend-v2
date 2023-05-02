@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, createContext, useContext } from 'react'
+import { Dispatch, ReactNode, SetStateAction, createContext, useContext } from 'react'
 
 import { genericSuspense } from '../components/helpers/SafeSuspense'
 import useAelinNotifications, {
@@ -18,7 +18,7 @@ export type NotificationsContextType = {
 
 const NotificationsContext = createContext<NotificationsContextType>({} as any)
 
-const NotificationsContextProvider: React.FC = ({ children }) => {
+export const NotificationsContextProvider = ({ children }: { children: ReactNode }) => {
   const [clearedNotifications, setClearedNotifications] = useLocalStorage<ClearedNotifications>(
     'aelin-cleared-notifications',
     {},

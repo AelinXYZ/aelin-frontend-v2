@@ -20,7 +20,7 @@ const Wrapper = styled.div`
 
 const Text = styled.p`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 400;
   line-height: 1.5;
   margin: 0 auto 10px;
@@ -31,7 +31,7 @@ const Text = styled.p`
 `
 
 const TextBig = styled(Text)`
-  font-size: 1.3rem;
+  font-size: 1rem;
 `
 
 const withRequiredConnection = (Component: React.FC) =>
@@ -56,12 +56,12 @@ type RequiredConnectionProps = {
 }
 
 const RequiredConnection: React.FC<RequiredConnectionProps> = ({
-  children,
-  minHeight,
   buttonSize,
-  networkToCheck,
+  children,
   isNotConnectedText = 'You must be logged in.',
   isWrongNetworkText = `Please switch to this pool's network`,
+  minHeight,
+  networkToCheck,
   ...restProps
 }) => {
   const { address, appChainId, connectWallet, isWalletConnected, pushNetwork, walletChainId } =

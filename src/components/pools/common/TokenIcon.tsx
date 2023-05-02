@@ -26,7 +26,7 @@ Wrapper.defaultProps = {
 
 const ExternalLink = styled(BaseExternalLink)<{ direction?: Direction }>`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: ${({ direction }) => (direction === 'row' ? 'inherit' : '1rem')};
+  font-size: ${({ direction }) => (direction === 'row' ? 'inherit' : '0.8rem')};
   gap: 6px;
 
   ${({ direction }) =>
@@ -77,6 +77,10 @@ export const TokenIcon: React.FC<Props> = ({
         className="tokenIcon"
         height={iconHeight}
         src={investmentTokenImage}
+        style={{
+          maxWidth: '100%',
+          height: 'auto',
+        }}
         title={symbol}
         width={iconWidth}
       />

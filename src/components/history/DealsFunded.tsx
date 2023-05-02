@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { DealFunded_OrderBy, OrderDirection } from '@/graphql-schema'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
-import { TableCard, TableWrapper } from '@/src/components/history/common/TableWrapper'
+import { TableCard, TableWrapper, Text } from '@/src/components/history/common/TableWrapper'
 import {
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
@@ -108,7 +108,7 @@ export const DealsFunded: React.FC = () => {
         tableHeaderCells={tableHeaderCells}
       >
         <TableCard>
-          <p>There’s no deal funded history yet</p>
+          <Text>There’s no deal funded history yet</Text>
           <ButtonPrimaryLight
             onClick={() => {
               router.push('/')

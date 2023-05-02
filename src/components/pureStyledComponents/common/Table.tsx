@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { lighten } from 'polished'
+import { ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
 const loadingAnimation = keyframes`
@@ -83,9 +84,7 @@ export const TableRowCSS = css<RowProps>`
 
   ${({ hasHover }) => hasHover && RowHover}
 
-  &[href] {
-    ${RowHover}
-  }
+  ${RowHover}
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     padding-bottom: 10px;
@@ -109,28 +108,29 @@ export const Row = styled.div<RowProps>`
 `
 
 interface RowLinkProps extends RowProps {
+  children: ReactNode
   href: string
   withGradient?: boolean
 }
 
-export const RowLink: React.FC<RowLinkProps> = ({ children, href, withGradient, ...restProps }) => {
+export const StyledLink = styled(Link)`
+  text-decoration: none;
+`
+
+export const RowLink = ({ children, href, withGradient, ...restProps }: RowLinkProps) => {
   if (withGradient) {
     return (
       <GradientWrapper>
-        <Link href={href} passHref>
-          <Row as="a" {...restProps}>
-            {children}
-          </Row>
-        </Link>
+        <StyledLink href={href} passHref>
+          <Row {...restProps}>{children}</Row>
+        </StyledLink>
       </GradientWrapper>
     )
   }
   return (
-    <Link href={href} passHref>
-      <Row as="a" {...restProps}>
-        {children}
-      </Row>
-    </Link>
+    <StyledLink href={href} passHref>
+      <Row {...restProps}>{children}</Row>
+    </StyledLink>
   )
 }
 
@@ -164,7 +164,7 @@ export const Cell = styled.span<CellProps>`
   align-items: center;
   color: ${({ light, theme: { colors } }) => (light ? colors.textColor : colors.textColorLight)};
   display: flex;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 500;
   height: fit-content;
   justify-content: ${({ justifyContent }) => justifyContent};
@@ -173,7 +173,7 @@ export const Cell = styled.span<CellProps>`
   min-width: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
   }
 
   ${({ justifyContent, mobileJustifyContent }) =>
@@ -238,7 +238,7 @@ export const HideOnDesktop = styled.span`
 export const TH = styled(Cell)`
   color: ${({ theme }) => theme.table.thColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.2;
   white-space: nowrap;
@@ -250,7 +250,7 @@ TH.defaultProps = {
 
 export const CellText = styled.span`
   color: ${({ theme }) => theme.colors.textColor};
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 500;
   line-height: 1.2;
 `

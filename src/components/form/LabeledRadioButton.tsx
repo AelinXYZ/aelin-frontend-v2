@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 const Label = styled.span<{ checked?: boolean }>`
   color: ${({ checked, theme: { colors } }) =>
     checked ? colors.textColor : colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.2;
   margin-top: 1px;

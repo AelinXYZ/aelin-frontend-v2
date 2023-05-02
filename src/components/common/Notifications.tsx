@@ -6,7 +6,7 @@ import { Notifications as NotificationsIcon } from '@/src/components/assets/Noti
 import { NOTIFICATIONS_BADGE_MAX } from '@/src/constants/pool'
 import { useNotifications } from '@/src/providers/notificationsProvider'
 
-const Wrapper = styled.a`
+const Wrapper = styled.div`
   align-items: center;
   display: flex;
   justify-content: center;
@@ -23,7 +23,7 @@ const Badge = styled.span`
   border-radius: 50%;
   color: #fff;
   display: flex;
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   font-weight: 600;
   height: 14px;
   justify-content: center;

@@ -29,7 +29,7 @@ import {
 } from '@/src/components/pureStyledComponents/common/Table'
 import { SortableTH } from '@/src/components/table/SortableTH'
 import { ChainsValues } from '@/src/constants/chains'
-import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
 import useAelinInvestors from '@/src/hooks/aelin/useAelinInvestors'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -135,8 +135,9 @@ const columns = {
 const Loading = () => {
   return (
     <LoadingWrapper>
-      <i>Loading</i>
       <Spinner />
+      <br />
+      <i>Loading</i>
     </LoadingWrapper>
   )
 }
@@ -145,22 +146,35 @@ const InvestorsTable = genericSuspense(
   ({ pool }: { pool: ParsedAelinPool }) => {
     const router = useRouter()
     const [orderDirection, setOrderDirection] = useState<OrderDirection>(OrderDirection.Desc)
+    const [sortBy, setSortBy] = useState<Investor_OrderBy | undefined>(
+      Investor_OrderBy.AmountInvested,
+    )
 
     const { data, hasMore, nextPage } = useAelinInvestors({
-      orderDirection: OrderDirection.Desc,
+      orderBy: sortBy,
+      orderDirection: orderDirection,
       where: {
         poolAddress: pool.address,
       },
     })
 
-    const handleSort = () => {
-      if (orderDirection === OrderDirection.Desc) return setOrderDirection(OrderDirection.Asc)
-      setOrderDirection(OrderDirection.Desc)
+    const handleSort = (newSortBy: Investor_OrderBy | undefined) => {
+      if (sortBy === newSortBy) {
+        if (orderDirection === OrderDirection.Desc) {
+          setOrderDirection(OrderDirection.Asc)
+        } else {
+          setOrderDirection(OrderDirection.Desc)
+        }
+      } else {
+        setSortBy(newSortBy)
+        setOrderDirection(OrderDirection.Desc)
+      }
     }
 
     const tableHeaderCells = [
       {
         title: 'Address or ens',
+        sortKey: Investor_OrderBy.UserAddress,
       },
       {
         title: 'Amount invested',
@@ -184,7 +198,7 @@ const InvestorsTable = genericSuspense(
                 key={index}
                 onClick={() => {
                   if (sortKey) {
-                    handleSort()
+                    handleSort(sortKey)
                   }
                 }}
               >

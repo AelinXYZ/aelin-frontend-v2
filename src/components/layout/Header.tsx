@@ -85,7 +85,7 @@ const EthlizardWrapper = styled.div`
   }
 `
 
-const HomeLink = styled.a`
+const HomeLink = styled.div`
   display: flex;
   position: relative;
   transition: opacity 0.05s linear;
@@ -208,7 +208,7 @@ const DropdownButton = styled.button`
 
 const NetworkError = styled.p`
   color: ${({ theme }) => theme.colors.error};
-  font-size: 1.6rem;
+  font-size: 1rem;
   line-height: 1.4;
   margin: 0 auto 30px;
 `

@@ -23,14 +23,14 @@ const Row = styled.div`
 
 const Value = styled.div`
   font-weight: 700;
-  font-size: 1.8rem;
+  font-size: 1rem;
   line-height: 1.4;
   color: ${({ theme }) => theme.colors.textColor};
 `
 
 const Name = styled.div`
   font-weight: 400;
-  font-size: 1rem;
+  font-size: 0.7rem;
   line-height: 1.4;
   color: ${({ theme }) => theme.colors.textColorLight};
 `

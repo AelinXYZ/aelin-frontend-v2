@@ -12,7 +12,9 @@ import useAelinUSDPrice, { PriceData, TimeInterval } from '@/src/hooks/aelin/use
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatNumber } from '@/src/utils/formatNumber'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  margin-bottom: 15px;
+`
 
 const AelinChart = styled.div`
   background-color: ${({ theme: { colors } }) => colors.transparentWhite2};
@@ -26,7 +28,7 @@ const AelinChart = styled.div`
 `
 
 const LastPrice = styled.div`
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
   margin: 0 0 4px;
@@ -44,13 +46,13 @@ const PriceDifferenceWrapper = styled.div`
 
 const PriceDifference = styled.div`
   color: ${({ theme: { colors } }) => colors.primary};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   margin-right: 3px;
 `
 
 const IntervalDescription = styled.div`
   color: ${({ theme: { colors } }) => colors.textColor};
-  font-size: 0.8rem;
+  font-size: 0.6rem;
 `
 
 const ButtonContainer = styled.div`

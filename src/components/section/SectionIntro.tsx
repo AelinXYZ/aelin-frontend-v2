@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import {
@@ -32,20 +32,20 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string; backgroundPosition?
 const Title = styled.h1`
   color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme: { fonts } }) => fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0 0 12px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    font-size: 2.4rem;
+    font-size: 1.4rem;
     margin-bottom: 16px;
   }
 `
 
 const Description = styled.p`
   color: ${({ theme: { colors } }) => colors.textColor};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 400;
   line-height: 1.4;
   margin: 0 0 16px;
@@ -59,7 +59,7 @@ const Description = styled.p`
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
     margin-bottom: 18px;
   }
 `
@@ -85,7 +85,7 @@ const ButtonWrapper = styled.div`
   gap: 15px;
 `
 
-export const SectionIntro: React.FC<{
+type SectionIntroProps = {
   backgroundImage?: string
   backgroundPosition?: string
   button?: Array<{
@@ -98,7 +98,10 @@ export const SectionIntro: React.FC<{
     title: string
   }
   title: string
-}> = ({
+  children: ReactNode
+}
+
+export const SectionIntro = ({
   backgroundImage,
   backgroundPosition,
   button,
@@ -106,7 +109,7 @@ export const SectionIntro: React.FC<{
   secondaryButton,
   title,
   ...restProps
-}) => {
+}: SectionIntroProps) => {
   return (
     <Wrapper
       backgroundImage={backgroundImage}

@@ -20,7 +20,7 @@ const Wrapper = styled.div`
 
 const Description = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.4;
   margin: 0;
@@ -42,7 +42,7 @@ const ActiveItemCSS = css`
 const Item = styled(ButtonPrimaryLight)<{ isActive?: boolean }>`
   width: 140px;
   height: 30px;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
 
   ${({ isActive }) => isActive && ActiveItemCSS}
 `
@@ -69,7 +69,7 @@ const getDescription = (active: NftWhitelistProcess): string => {
       return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens, regardless of the number of qualified NFTs held.'
     */
     case NftWhitelistProcess.limitedPerNft:
-      return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens, regarding of the number of qualified NFTs held.'
+      return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens for each NFT held.'
     case NftWhitelistProcess.minimumAmount:
       return 'Each wallet holding a qualified ERC-1155 can deposit a minimum amount of Investment tokens.'
     default:

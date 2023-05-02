@@ -5,7 +5,7 @@ import { onBoardCSS } from '@/src/theme/onBoard'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const GlobalStyle = createGlobalStyle<{ theme: any }>`
   html {
-    font-size: 10px;
+    font-size: 16px;
     scroll-behavior: smooth;
   }
 
@@ -59,7 +59,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: any }>`
     color: ${({ theme }) => theme.colors.textColor};
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.25);
-    font-size: 1.4rem;
+    font-size: 0.9rem;
     font-weight: 400;
     line-height: 1.5;
     max-width: 280px;

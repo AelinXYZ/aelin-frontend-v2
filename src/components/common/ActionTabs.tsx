@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -52,7 +53,7 @@ const Tab = styled.h3<{ isActive?: boolean }>`
   cursor: pointer;
   display: flex;
   flex-grow: 1;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 600;
   justify-content: center;
   line-height: 1.4;
@@ -81,13 +82,16 @@ Tab.defaultProps = {
   isActive: true,
 }
 
-export const ActionTabs: React.FC<{
+type ActionTabsProps = {
   active?: PoolAction
   onTabClick: (action: PoolAction) => void
   tabs?: PoolAction[]
-}> = ({ active, children, onTabClick, tabs, ...restProps }) => {
+  children: ReactNode
+}
+
+export const ActionTabs = ({ active, children, onTabClick, tabs }: ActionTabsProps) => {
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       {tabs && tabs.length > 1 && (
         <Tabs>
           {tabs.map((action, index) => (

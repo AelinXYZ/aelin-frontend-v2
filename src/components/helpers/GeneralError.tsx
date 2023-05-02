@@ -26,7 +26,7 @@ const Title = styled.h1`
 
 const Text = styled.p`
   color: ${({ theme }) => theme.colors.error};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.2;
   margin: 0 auto 40px;

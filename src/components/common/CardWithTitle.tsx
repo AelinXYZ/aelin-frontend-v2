@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -34,7 +34,7 @@ export const CardTitle = styled.h2<{ isActive?: boolean }>`
   cursor: pointer;
   display: flex;
   flex-grow: 1;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   font-weight: 400;
   justify-content: center;
   line-height: 1.4;
@@ -45,7 +45,7 @@ export const CardTitle = styled.h2<{ isActive?: boolean }>`
   transition: opacity 0.15s linear;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.6rem;
+    font-size: 1rem;
     min-height: 50px;
   }
 
@@ -72,20 +72,18 @@ const Inner = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    padding: 20px 45px 40px;
-  }
 `
 
-export const CardWithTitle: React.FC<{ titles: React.ReactNode }> = ({
-  children,
-  titles,
-  ...restProps
-}) => (
+type CardWithTitleProps = {
+  children: ReactNode
+  titles: ReactNode
+}
+
+export const CardWithTitle = ({ children, titles, ...restProps }: CardWithTitleProps) => (
   <Wrapper {...restProps}>
-    <Titles>{titles}</Titles>
-    <Inner className="cardWithTitleInner">{children}</Inner>
+    <Inner>
+      <Titles>{titles}</Titles>
+      {children}
+    </Inner>
   </Wrapper>
 )

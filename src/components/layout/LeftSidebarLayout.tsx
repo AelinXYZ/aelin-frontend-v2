@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
@@ -66,9 +67,13 @@ const Break = styled.div`
   }
 `
 
-export const LeftSidebarLayout: React.FC = ({ children, ...restProps }) => {
+type LeftSidebarLayoutProps = {
+  children: ReactNode
+}
+
+export const LeftSidebarLayout = ({ children }: LeftSidebarLayoutProps) => {
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       <SidebarWrapper as="nav">
         <MyPools />
         <Break />

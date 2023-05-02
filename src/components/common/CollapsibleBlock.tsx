@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { ArrowDown } from '@/src/components/assets/ArrowDown'
@@ -13,13 +13,13 @@ enum CollapsibleBlockStates {
 
 const Wrapper = styled(BaseCard)<{ state?: CollapsibleBlockStates }>`
   height: ${({ state }) => (state === CollapsibleBlockStates.expanded ? 'auto' : 'fit-content')};
-  padding: 10px 20px;
+  padding: 10px 10px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     background-color: transparent;
     border: none;
     margin-bottom: 0;
-    padding: 20px 20px;
+    padding: 20px;
   }
 `
 
@@ -33,14 +33,14 @@ const Header = styled.div`
 const Title = styled.h3`
   color: ${({ theme: { card } }) => card.titleColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
   padding: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
   }
 `
 
@@ -78,12 +78,13 @@ const ContentsInner = styled.section<{ isExpanded?: boolean }>`
   padding-top: 20px;
 `
 
-const CollapsibleBlock: React.FC<{ title: string; name: string }> = ({
-  children,
-  name,
-  title,
-  ...restProps
-}) => {
+type CollapsibleBlockProps = {
+  title: string
+  name: string
+  children: ReactNode
+}
+
+const CollapsibleBlock = ({ children, name, title, ...restProps }: CollapsibleBlockProps) => {
   const [isCompact, setIsCompact] = useState(false)
   const [persistentState, setPersistentState] = useLocalStorage(
     `persistent-state_${name}`,

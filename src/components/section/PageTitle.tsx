@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
+import { Substack } from '../assets/Substack'
 import { Discord } from '@/src/components/assets/Discord'
 import { Link as BaseLink } from '@/src/components/assets/Link'
 import { Medium } from '@/src/components/assets/Medium'
@@ -17,14 +18,14 @@ const Wrapper = styled.div`
 
 const Title = styled.h1`
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.4;
   margin: 0 0 4px;
   padding: 20px 0 0 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 2.4rem;
+    font-size: 1.5rem;
     margin-bottom: 12px;
   }
 `
@@ -69,14 +70,14 @@ const SubTitle = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.colors.textColorLight};
   display: flex;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   font-weight: 500;
   gap: 8px;
   line-height: 1.3;
   margin: 0;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
   }
 
   .networkIcon {
@@ -95,7 +96,7 @@ const WebsiteLinkWrapper = styled.div`
 `
 
 const WebsiteLink = styled.a`
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 500;
   line-height: 1.4;
   color: ${({ theme }) => theme.colors.gradientEnd};
@@ -150,7 +151,8 @@ export const PageTitle: React.FC<{
       {(poolSocials?.twitterHandle ||
         poolSocials?.discordServerInvite ||
         poolSocials?.mirrorHashPost ||
-        poolSocials?.mediumPost) && (
+        poolSocials?.mediumPost ||
+        poolSocials?.substackPost) && (
         <Socials>
           {poolSocials?.twitterHandle && (
             <a
@@ -186,6 +188,11 @@ export const PageTitle: React.FC<{
               target="_blank"
             >
               <Medium />
+            </a>
+          )}
+          {poolSocials?.substackPost && (
+            <a href={poolSocials.substackPost} rel="noreferrer" target="_blank">
+              <Substack />
             </a>
           )}
         </Socials>

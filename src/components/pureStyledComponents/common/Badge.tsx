@@ -8,7 +8,7 @@ export const Badge = styled.span`
   border-radius: 50%;
   color: #fff;
   display: flex;
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: 600;
   height: var(--dimensions);
   justify-content: center;

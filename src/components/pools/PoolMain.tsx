@@ -61,7 +61,7 @@ const ContentGrid = styled.div`
   width: 100%;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    column-gap: 70px;
+    column-gap: 0;
   }
 `
 
@@ -113,7 +113,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         href={getExplorerUrl(pool.address || '', pool.chainId)}
         isVerified={isVerified ?? false}
         network={chainsConfig[pool.chainId].icon}
-        poolSocials={isVerified ? VerifiedPoolsSocials[pool.address] : undefined}
+        poolSocials={VerifiedPoolsSocials[pool.address]}
         subTitle={pool.poolType || pool.hasNftList ? getPoolType(pool) + ' pool' : ''}
         title={pool.nameFormatted}
       />

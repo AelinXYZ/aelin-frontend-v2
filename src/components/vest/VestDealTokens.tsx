@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -175,14 +175,18 @@ type AmountToVestCellComponentProps = {
   tokenSymbol: string
 }
 
-const Wrapper: React.FC = ({ children, ...restProps }) => (
-  <TableCard id="outerWrapper" {...restProps}>
+type WrapperProps = {
+  children: ReactNode
+}
+
+const Wrapper = ({ children }: WrapperProps) => (
+  <TableCard id="outerWrapper">
     <Title>Vest Deal Tokens</Title>
     {children}
   </TableCard>
 )
 
-export const VestDealTokens: React.FC = ({ ...restProps }) => {
+export const VestDealTokens: React.FC = () => {
   const { address: user } = useWeb3Connection()
   const [order, setOrder] = useState<Order>({
     orderBy: VestingDeal_OrderBy.VestingPeriodEnds,
@@ -217,7 +221,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
       network: 'center',
       seePool: 'right',
     },
-    widths: '110px 115px 132px 115px 170px 80px 1fr',
+    widths: '110px 120px 140px 115px 170px 90px 1fr',
   }
 
   const tableHeaderCells = [
@@ -279,7 +283,7 @@ export const VestDealTokens: React.FC = ({ ...restProps }) => {
   }
 
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       <Dropdown
         currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
         dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}

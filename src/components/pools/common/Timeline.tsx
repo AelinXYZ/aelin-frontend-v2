@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Deadline } from '@/src/components/common/Deadline'
@@ -92,7 +93,7 @@ const Contents = styled.div`
 const Title = styled.h4`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.2;
   margin: 0 0 4px;
@@ -100,18 +101,19 @@ const Title = styled.h4`
 
 const Value = styled.p`
   color: ${({ theme }) => theme.colors.textColorLight};
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 400;
   line-height: 1.3;
   margin: 0;
 `
 
-const Step: React.FC<{ isActive?: boolean; isDone?: boolean }> = ({
-  children,
-  isActive,
-  isDone,
-  ...restProps
-}) => {
+type StepProps = {
+  isActive?: boolean
+  isDone?: boolean
+  children: ReactNode
+}
+
+const Step = ({ children, isActive, isDone, ...restProps }: StepProps) => {
   return (
     <Item {...restProps}>
       <StepCircleBig isActive={isActive || isDone} />

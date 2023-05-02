@@ -1,4 +1,4 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Tooltip } from '@/src/components/tooltip/Tooltip'
@@ -25,7 +25,7 @@ const TitleWrapper = styled.div`
 const Title = styled.h4`
   color: ${({ theme }) => theme.colors.textColor};
   font-family: ${({ theme }) => theme.fonts.fontFamilyTitle};
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.4;
   margin: 2px 0;
@@ -33,7 +33,7 @@ const Title = styled.h4`
   word-break: break-word;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
   }
 `
 
@@ -42,7 +42,7 @@ const Contents = styled.div``
 export const Value = styled.div`
   color: ${({ theme }) => theme.colors.textColorLight};
   display: block;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   font-weight: 400;
   gap: 12px;
   line-height: 1.4;
@@ -52,22 +52,24 @@ export const Value = styled.div`
   word-break: break-word;
   text-align: left;
 
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
   }
 `
 
-export const InfoCell: React.FC<{
+type InfoCellProps = {
   title: string
   tooltip?: string
-  value?: React.ReactNode
-}> = ({ children, title, tooltip, value, ...restProps }) => {
+  value?: ReactNode
+  children?: ReactNode
+}
+
+export const InfoCell = ({ children, title, tooltip, value }: InfoCellProps) => {
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       <TitleWrapper>
         <Title>{title}</Title>
         {tooltip && <Tooltip text={tooltip} />}

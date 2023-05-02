@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { Contents as BaseContents, Title as BaseTitle } from '../Wrapper'
-import VouchersModal from './VouchersModal'
 import { Loading } from '@/src/components/common/Loading'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import VouchersModal from '@/src/components/pools/actions/Vouch/VouchersModal'
 import {
   ButtonGradient,
   ButtonPrimaryLight,
@@ -34,7 +34,7 @@ const Title = styled(BaseTitle)`
 `
 const Contents = styled(BaseContents)`
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
 `
 const Vouchers = styled.span`
   color: ${({ theme }) => theme.buttonPrimary.color};
