@@ -217,4 +217,10 @@ export const lightTheme = {
       color: 'rgba(71, 87, 97, 0.5)',
     },
   },
+  voucherModal: {
+    backgroundColor: gray,
+  },
+  investorModal: {
+    backgroundColor: gray,
+  },
 }

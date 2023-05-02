@@ -22,7 +22,8 @@ export const GlobalStyle = createGlobalStyle<{ theme: any }>`
     width: 100%;
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-      background-image: url('/resources/svg/bg-main.svg');
+      background-image:  url(${({ theme }) =>
+        theme.ethliz ? '/resources/ethlizards_bg.png' : '/resources/svg/bg-main.svg'});
       background-repeat: repeat;
     }
   }
