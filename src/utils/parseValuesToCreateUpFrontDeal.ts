@@ -6,6 +6,7 @@ import { wei } from '@synthetixio/wei'
 
 import { NftType } from '../components/pools/whitelist/nft/nftWhiteListReducer'
 import { NftCollectionRulesProps } from '../hooks/aelin/useAelinCreatePool'
+import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/types'
 import { ZERO_BN } from '@/src/constants/misc'
 import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
@@ -14,11 +15,6 @@ import {
   CreateUpFrontDealValues,
 } from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
 import { getDuration } from '@/src/utils/date'
-
-enum AddressesWhiteListAmountFormat {
-  decimal = 'Decimal',
-  uint256 = 'uint256',
-}
 
 const getWhiteListAmount = (
   amount: number,
