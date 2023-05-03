@@ -15,7 +15,8 @@ export interface TextfieldProps extends InputHTMLAttributes<HTMLInputElement>, T
 export const TexfieldPartsCSS = css<TexfieldCSSProps>`
   &:active,
   &:focus {
-    background-color: ${({ theme: { textField } }) => textField.active.backgroundColor};
+    background-color: ${({ theme }) =>
+      theme.ethliz ? 'transparent' : theme.textField.active.backgroundColor};
     border-color: ${({ status, theme: { textField } }) =>
       status === TextfieldState.error
         ? textField.errorColor
@@ -53,7 +54,8 @@ export const TexfieldPartsCSS = css<TexfieldCSSProps>`
   }
 
   &[readonly] {
-    background-color: ${({ theme: { textField } }) => textField.backgroundColor};
+    background-color: ${({ theme }) =>
+      theme.ethliz ? 'transparent' : theme.textField.backgroundColor};
     border-color: ${({ theme: { textField } }) => textField.borderColor};
     color: ${({ theme: { textField } }) => textField.placeholder.color};
     cursor: default;
@@ -80,8 +82,8 @@ export const TextfieldCSS = css<TexfieldCSSProps>`
   --textfield-padding: 0 15px;
   --textfield-height: 36px;
   --textfield-font-weight: 400;
-
-  background-color: ${({ theme: { textField } }) => textField.backgroundColor};
+  background-color: ${({ theme }) =>
+    theme.ethliz ? 'transparent' : theme.textField.backgroundColor};
   border-color: ${({ status, theme: { textField } }) =>
     status === TextfieldState.error
       ? textField.errorColor

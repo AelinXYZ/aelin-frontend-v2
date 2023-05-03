@@ -10,8 +10,9 @@ import {
 } from 'react'
 import { ThemeProvider } from 'styled-components'
 
-import { ETHLIZARDS_VOUCHER_ENS } from '@/src/constants/misc'
+import { ETHLIZARDS_VOUCHER_ENS, ZERO_ADDRESS } from '@/src/constants/misc'
 import { ThemeType } from '@/src/constants/types'
+import useIsPoolVouchedByAddress from '@/src/hooks/aelin/vouched-pools/useIsPoolVouchedByAddress'
 import useLocalStorage from '@/src/hooks/localStorage/useLocalStorage'
 import { commonTheme } from '@/src/theme/commonTheme'
 import { darkTheme } from '@/src/theme/darkTheme'
@@ -24,6 +25,8 @@ const ThemeContext = createContext({} as any)
 
 const ThemeContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
+
+  const { address: poolAddress, voucher } = router.query
 
   const [persistentState, setPersistentState] = useLocalStorage(
     `persistent-state_theme`,
@@ -38,21 +41,34 @@ const ThemeContextProvider = ({ children }: { children: ReactNode }) => {
     isLightTheme ? { ...commonTheme, ...lightTheme } : { ...commonTheme, ...darkTheme },
   )
 
+  const { isVouched } = useIsPoolVouchedByAddress((poolAddress ?? ZERO_ADDRESS) as string)
+
   const switchTheme = useCallback(() => {
     setCurrentThemeName(isLightTheme ? ThemeType.dark : ThemeType.light)
   }, [isLightTheme])
 
   useEffect(() => {
-    if (router.query.voucher === ETHLIZARDS_VOUCHER_ENS) {
+    const isOnHomePage = router.pathname === '/'
+    const isOnPoolPage = router.pathname === '/pool/[network]/[address]' && isVouched
+
+    const isEthlizardsVoucher = [
+      ETHLIZARDS_VOUCHER_ENS.slice(0, ETHLIZARDS_VOUCHER_ENS.lastIndexOf('.')),
+      ETHLIZARDS_VOUCHER_ENS,
+    ].some((ens) => ens === voucher)
+
+    if (isEthlizardsVoucher && (isOnHomePage || isOnPoolPage)) {
       setPersistentState(ThemeType.ethlizards)
+      setCurrentThemeName(ThemeType.ethlizards)
       setCurrentThemeJSON({ ...commonTheme, ...ethlizardsTheme })
       return
     }
+
     setPersistentState(currentThemeName)
-    setCurrentThemeJSON(
-      isLightTheme ? { ...commonTheme, ...lightTheme } : { ...commonTheme, ...darkTheme },
-    )
-  }, [currentThemeName, isLightTheme, setPersistentState, router.query])
+    setCurrentThemeJSON({
+      ...commonTheme,
+      ...(isLightTheme ? lightTheme : darkTheme),
+    })
+  }, [currentThemeName, isLightTheme, setPersistentState, voucher, isVouched, router.pathname])
 
   const values = {
     switchTheme,

@@ -71,7 +71,7 @@ export const ethlizardsTheme = {
     buttonColor: '#fff',
   },
   myPool: {
-    backgroundColor: gray,
+    backgroundColor: 'transparent',
     borderColor: gray,
     color: textColor,
   },
