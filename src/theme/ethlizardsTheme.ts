@@ -24,6 +24,7 @@ const blueishGray = '#484D58'
 const transparentWhite = 'rgba(255, 255, 255, 0.4)'
 const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
+const transparent = 'transparent'
 
 export const ethlizardsTheme = {
   ethliz: {},
@@ -50,9 +51,9 @@ export const ethlizardsTheme = {
     backgroundColor: gray,
   },
   tooltip: {
-    iconBackgroundColor: gray,
+    iconBackgroundColor: componentBackgroundColor,
     iconBorderColor: '#fff',
-    textBackgroundColor: gray,
+    textBackgroundColor: componentBackgroundColor,
     textBorderColor: '#fff',
     textColor: '#fff',
   },
@@ -71,7 +72,7 @@ export const ethlizardsTheme = {
     buttonColor: '#fff',
   },
   myPool: {
-    backgroundColor: 'transparent',
+    backgroundColor: transparent,
     borderColor: gray,
     color: textColor,
   },
@@ -95,8 +96,8 @@ export const ethlizardsTheme = {
     colorHover: secondary,
   },
   buttonPrimaryLight: {
-    backgroundColor: 'transparent',
-    backgroundColorHover: 'transparent',
+    backgroundColor: transparent,
+    backgroundColorHover: transparent,
     borderColor: '#fff',
     borderColorHover: '#fff',
     color: textColor,
@@ -156,10 +157,10 @@ export const ethlizardsTheme = {
     borderColor: lightGray,
     boxShadow: 'none',
     item: {
-      backgroundColor: '#000c0e',
+      backgroundColor: mainBodyBackground,
       backgroundColorActive: '#001418',
       backgroundColorHover: '#001418',
-      borderColor: 'transparent',
+      borderColor: transparent,
       color: textColor,
       colorActive: textColor,
     },
@@ -190,7 +191,7 @@ export const ethlizardsTheme = {
     thColor: textColor,
   },
   toast: {
-    backgroundColor: gray,
+    backgroundColor: componentBackgroundColor,
     boxShadow: '0 0 10px rgba(255, 255, 255, 0.25)',
   },
   nftWhiteList: {
@@ -217,13 +218,13 @@ export const ethlizardsTheme = {
     backgroundColorMiddleActive: 'rgba(147, 221, 125, 0.4);',
   },
   textField: {
-    backgroundColor: gray,
+    backgroundColor: componentBackgroundColor,
     borderColor: lightGray,
     color: textColor,
     errorColor: error,
     successColor: green,
     active: {
-      backgroundColor: gray,
+      backgroundColor: componentBackgroundColor,
       borderColor: primary,
       boxShadow: '0 0 10px rgba(0, 0, 0, 0.25)',
       color: textColor,
@@ -233,9 +234,9 @@ export const ethlizardsTheme = {
     },
   },
   voucherModal: {
-    backgroundColor: '#0d1617',
+    backgroundColor: componentBackgroundColor,
   },
   investorModal: {
-    backgroundColor: '#0d1617',
+    backgroundColor: componentBackgroundColor,
   },
 }

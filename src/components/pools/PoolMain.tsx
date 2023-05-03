@@ -36,12 +36,14 @@ import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import { ETHLIZARDS_VOUCHER_ENS } from '@/src/constants/misc'
+import { ThemeType } from '@/src/constants/types'
 import { VerifiedPoolsSocials } from '@/src/constants/verifiedPoolsSocials'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { getPoolType } from '@/src/utils/aelinPoolUtils'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { DerivedStatus, Funding, PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
@@ -98,8 +100,10 @@ type Props = {
 
 export default function PoolMain({ chainId, poolAddress }: Props) {
   const {
-    query: { notification, voucher },
+    query: { notification },
   } = useRouter()
+
+  const { currentThemeName } = useThemeContext()
 
   const [showInvestorsModal, setShowInvestorsModal] = useState<boolean>(false)
 
@@ -113,14 +117,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
 
   const isVerified = useCheckVerifiedPool(pool)
 
-  const isLizardPool = [
-    ETHLIZARDS_VOUCHER_ENS,
-    ETHLIZARDS_VOUCHER_ENS.slice(0, ETHLIZARDS_VOUCHER_ENS.lastIndexOf('.')),
-  ].some((ens) => ens === voucher)
-
   // If the pool is in the vesting stage, we should hide the lizard because it overlaps with the timeline.
   const shouldDisplayLizard =
-    isLizardPool && !!pool.upfrontDeal && derivedStatus.current !== PoolStatus.Vesting
+    currentThemeName === ThemeType.ethlizards &&
+    !!pool.upfrontDeal &&
+    derivedStatus.current !== PoolStatus.Vesting
 
   const handleCloseInvestorsModal = () => setShowInvestorsModal(false)
   const handleOpenInvestorsModal = () => setShowInvestorsModal(true)
