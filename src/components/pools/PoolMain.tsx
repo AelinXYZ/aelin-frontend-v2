@@ -114,8 +114,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   const isVerified = useCheckVerifiedPool(pool)
 
   const isLizardPool = [
-    ETHLIZARDS_VOUCHER_ENS.slice(0, ETHLIZARDS_VOUCHER_ENS.lastIndexOf('.')),
     ETHLIZARDS_VOUCHER_ENS,
+    ETHLIZARDS_VOUCHER_ENS.slice(0, ETHLIZARDS_VOUCHER_ENS.lastIndexOf('.')),
   ].some((ens) => ens === voucher)
 
   // If the pool is in the vesting stage, we should hide the lizard because it overlaps with the timeline.

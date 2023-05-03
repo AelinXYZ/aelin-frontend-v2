@@ -52,8 +52,8 @@ const ThemeContextProvider = ({ children }: { children: ReactNode }) => {
     const isOnPoolPage = router.pathname === '/pool/[network]/[address]' && isVouched
 
     const isEthlizardsVoucher = [
-      ETHLIZARDS_VOUCHER_ENS.slice(0, ETHLIZARDS_VOUCHER_ENS.lastIndexOf('.')),
       ETHLIZARDS_VOUCHER_ENS,
+      ETHLIZARDS_VOUCHER_ENS.slice(0, ETHLIZARDS_VOUCHER_ENS.lastIndexOf('.')),
     ].some((ens) => ens === voucher)
 
     if (isEthlizardsVoucher && (isOnHomePage || isOnPoolPage)) {

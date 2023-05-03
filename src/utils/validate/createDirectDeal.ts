@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { wei } from '@synthetixio/wei'
 
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { POOL_NAME_MAX_LENGTH, ZERO_BN } from '@/src/constants/misc'
