@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import NoActions from './actions/NoActions'
@@ -35,7 +35,6 @@ import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
-import { ETHLIZARDS_VOUCHER_ENS } from '@/src/constants/misc'
 import { ThemeType } from '@/src/constants/types'
 import { VerifiedPoolsSocials } from '@/src/constants/verifiedPoolsSocials'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -118,10 +117,13 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   const isVerified = useCheckVerifiedPool(pool)
 
   // If the pool is in the vesting stage, we should hide the lizard because it overlaps with the timeline.
-  const shouldDisplayLizard =
-    currentThemeName === ThemeType.ethlizards &&
-    !!pool.upfrontDeal &&
-    derivedStatus.current !== PoolStatus.Vesting
+  const shouldDisplayLizard = useMemo(
+    () =>
+      currentThemeName === ThemeType.ethlizards &&
+      !!pool.upfrontDeal &&
+      derivedStatus.current !== PoolStatus.Vesting,
+    [currentThemeName, derivedStatus, pool.upfrontDeal],
+  )
 
   const handleCloseInvestorsModal = () => setShowInvestorsModal(false)
   const handleOpenInvestorsModal = () => setShowInvestorsModal(true)

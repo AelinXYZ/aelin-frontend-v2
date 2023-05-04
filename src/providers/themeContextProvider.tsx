@@ -68,6 +68,7 @@ const ThemeContextProvider = ({ children }: { children: ReactNode }) => {
       ...commonTheme,
       ...(isLightTheme ? lightTheme : darkTheme),
     })
+    setCurrentThemeName(isLightTheme ? ThemeType.light : ThemeType.dark)
   }, [currentThemeName, isLightTheme, setPersistentState, voucher, isVouched, router.pathname])
 
   const values = {

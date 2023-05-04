@@ -28,6 +28,9 @@ const transparent = 'transparent'
 
 export const ethlizardsTheme = {
   ethliz: {},
+  body: {
+    backgoundImage: `/resources/lizards/ethlizards_bg.png`,
+  },
   modal: {
     overlayBackgroundColor: 'rgba(0, 0, 0, 0.6)',
   },

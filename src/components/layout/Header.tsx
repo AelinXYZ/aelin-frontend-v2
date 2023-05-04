@@ -70,7 +70,6 @@ const InnerContainer = styled(BaseInnerContainer)`
 `
 
 const EthlizardWrapper = styled.div`
-  display: ${({ theme }) => (theme.ethliz ? 'flex' : 'none')};
   justify-content: center;
   align-items: center;
   cursor: pointer;
@@ -97,7 +96,6 @@ const HomeLink = styled.div`
 `
 
 const Logo = styled(AelinLogo)`
-  display: ${({ theme }) => (theme.ethliz ? 'none' : '')};
   cursor: pointer;
   max-height: calc(var(--header-height) - 20px);
 
@@ -263,6 +261,8 @@ export const Header: React.FC = (props) => {
 
   const { currentThemeName, switchTheme } = useThemeContext()
 
+  const isLizardTheme = currentThemeName === ThemeType.ethlizards
+
   const networksDropdownItems = getChainsByEnvironmentArray().map((item, index) => (
     <DropdownItem
       key={index}
@@ -291,10 +291,13 @@ export const Header: React.FC = (props) => {
           <StartWrapper>
             <Link href="/" passHref>
               <HomeLink>
-                <Logo />
-                <EthlizardWrapper>
-                  <Image alt="Aelin x Ethlizard" priority src={EthlizardsLogo} />
-                </EthlizardWrapper>
+                {!isLizardTheme ? (
+                  <Logo />
+                ) : (
+                  <EthlizardWrapper>
+                    <Image alt="Aelin x Ethlizard" priority src={EthlizardsLogo} />
+                  </EthlizardWrapper>
+                )}
               </HomeLink>
             </Link>
           </StartWrapper>
