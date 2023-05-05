@@ -22,25 +22,25 @@ const useMerkleTreeData = (variables: Props) => {
       try {
         if (!isIPFS.cid(variables.ipfsHash)) throw new Error('Invalid ipfs hash')
 
-        const client = new Web3Storage({
-          token: env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN_KEY as string,
-        })
-
-        const res = await client.get(variables.ipfsHash)
-
-        if (!res?.ok) throw new Error('Unexpected fetch response')
-
-        const files = await res?.files()
-
-        const merkleTreeDataJson = JSON.parse(await files[0].text())
-
+        const response = await fetch(getMerkleTreeIpfsGatewayUrl(variables.ipfsHash))
+        const merkleTreeDataJson = await response.json()
         return merkleTreeDataJson
       } catch (err) {
         console.error(err)
 
         try {
-          const response = await fetch(getMerkleTreeIpfsGatewayUrl(variables.ipfsHash))
-          const merkleTreeDataJson = await response.json()
+          const client = new Web3Storage({
+            token: env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN_KEY as string,
+          })
+
+          const res = await client.get(variables.ipfsHash)
+
+          if (!res?.ok) throw new Error('Unexpected fetch response')
+
+          const files = await res?.files()
+
+          const merkleTreeDataJson = JSON.parse(await files[0].text())
+
           return merkleTreeDataJson
         } catch (err) {
           console.log(err)
