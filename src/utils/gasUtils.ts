@@ -97,6 +97,7 @@ export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber, appChainId: ChainsV
   switch (appChainId) {
     case Chains.mainnet:
     case Chains.goerli:
+    case Chains.sepolia:
       return {
         low: {
           maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)).add(wei(1, 9)),

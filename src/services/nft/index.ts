@@ -1,5 +1,6 @@
-import { Network, OwnedNft, getNftsForOwner, initializeAlchemy } from '@alch/alchemy-sdk'
+import { getAddress } from '@ethersproject/address'
 import { JsonRpcProvider } from '@ethersproject/providers'
+import { Alchemy, Network, OwnedNft } from 'alchemy-sdk'
 
 import env from '@/config/env'
 import erc1155 from '@/src/abis/ERC1155.json'
@@ -127,6 +128,8 @@ const getAlchemyNetworkId = (chainId: ChainsValues): Network => {
   switch (chainId) {
     case Chains.goerli:
       return Network.ETH_GOERLI
+    case Chains.sepolia:
+      return Network.ETH_SEPOLIA
     case Chains.mainnet:
       return Network.ETH_MAINNET
     case Chains.arbitrum:
@@ -145,6 +148,7 @@ export const getNftOwnedByAddress = async (
 ) => {
   if (
     chainId === Chains.goerli ||
+    chainId === Chains.sepolia ||
     chainId === Chains.mainnet ||
     chainId === Chains.arbitrum ||
     chainId === Chains.polygon
@@ -155,10 +159,10 @@ export const getNftOwnedByAddress = async (
       maxRetries: 10,
     }
 
-    const alchemy = initializeAlchemy(settings)
+    const alchemy = new Alchemy(settings)
 
     try {
-      const ownersForNft = await getNftsForOwner(alchemy, walletAddress, {
+      const ownersForNft = await alchemy.nft.getNftsForOwner(walletAddress, {
         contractAddresses: [collectionAddress],
       })
 
@@ -254,6 +258,24 @@ export const getNftCollectionData = async (chainId: ChainsValues, collectionAddr
     }
 
     return parseSimpleHashCollectionResponse(simpleHashRes, collectionAddress, chainId)
+  }
+
+  if (chainId === Chains.sepolia) {
+    const isERC721 =
+      getAddress(collectionAddress) === getAddress('0x260587e477d5012d341564D2a32Cc9bF80968F0A')
+    return {
+      id: 0, // Always return 1 exact collection
+      address: collectionAddress,
+      name: isERC721 ? 'Test ERC-721' : 'Test ERC-1155',
+      slug: isERC721 ? 'test-erc-721' : 'test-erc-1155',
+      symbol: undefined,
+      description: undefined,
+      imageUrl: isERC721
+        ? 'https://ipfs.io/ipfs/bafybeifvwitulq6elvka2hoqhwixfhgb42l4aiukmtrw335osetikviuuu'
+        : 'https://storage.googleapis.com/goerli-pixxiti/c7f8510719344f67d90fb82a3bae2161b848171d',
+      contractType: isERC721 ? NFTType.ERC721 : NFTType.ERC1155,
+      network: chainId,
+    }
   }
 
   throw new Error('Unsupported network.', 400)

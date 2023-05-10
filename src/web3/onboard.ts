@@ -57,6 +57,12 @@ init({
       label: chainsConfig[Chains.goerli].name,
       rpcUrl: chainsConfig[Chains.goerli].rpcUrl,
     },
+    {
+      id: chainsConfig[Chains.sepolia].chainIdHex,
+      token: chainsConfig[Chains.sepolia].nativeCurrency.name,
+      label: chainsConfig[Chains.sepolia].name,
+      rpcUrl: chainsConfig[Chains.sepolia].rpcUrl,
+    },
   ],
   appMetadata: {
     name: APP_NAME,
