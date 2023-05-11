@@ -16,6 +16,7 @@ export const Chains = {
   optimism: 10,
   polygon: 137,
   arbitrum: 42161,
+  sepolia: 11155111,
 } as const
 
 export type ChainsValues = ObjectValues<typeof Chains>
@@ -157,6 +158,28 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     tokenListUrl: ['https://tokens.uniswap.org/'],
     buyAelinUrl: undefined,
     isL2: true,
+  },
+  [Chains.sepolia]: {
+    blockExplorerUrls: ['https://sepolia.etherscan.io/'],
+    chainId: Chains.sepolia,
+    chainIdHex: toHex(Chains.sepolia),
+    icon: <NetworkPlaceholder name="S" />,
+    iconUrls: [],
+    isProd: false,
+    name: 'Sepolia Testnet',
+    rpcUrl: `https://eth-sepolia.g.alchemy.com/v2/${env.NEXT_PUBLIC_SEPOLIA_TOKEN_PROVIDER}`,
+    defaultRpcUrl: `https://eth-sepolia.g.alchemy.com/v2/${env.NEXT_PUBLIC_SEPOLIA_TOKEN_PROVIDER}`,
+    shortName: 'Sepolia',
+    tokenListUrl: [
+      'https://tokens.1inch.eth.link',
+      'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
+    ],
+    nativeCurrency: {
+      name: 'Sepolia ETH',
+      symbol: 'SepoliaETH',
+      decimals: BASE_DECIMALS,
+    },
+    buyAelinUrl: undefined,
   },
 }
 

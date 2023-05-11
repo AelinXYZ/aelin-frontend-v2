@@ -55,4 +55,28 @@ export const TestnetTokens: { [chainId: number]: Token[] } = {
       chainId: Chains.goerli,
     },
   ],
+  [Chains.sepolia]: [
+    {
+      name: 'DEC6',
+      address: '0x2e8a1986c635B526796C913c108B6C7B42D36BE5',
+      symbol: 'DEC6',
+      decimals: 6,
+      chainId: Chains.sepolia,
+    },
+    {
+      name: 'DEC8',
+      address: '0xD7f7b6B95A8C73D397fbb431ea0EeB1E51f1DF75',
+      symbol: 'DEC8',
+      decimals: 8,
+      chainId: Chains.sepolia,
+    },
+
+    {
+      name: 'DEC18',
+      address: '0xe8422dfAAf35E146C58d3cA7331Ab441Ed4091E8',
+      symbol: 'DEC18',
+      decimals: BASE_DECIMALS,
+      chainId: Chains.sepolia,
+    },
+  ],
 }

@@ -15,6 +15,9 @@ export const gqlGqlSdkByNetwork: AllSDK = {
   [Chains.goerli]: getSdkWithHooks(
     new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI as string),
   ),
+  [Chains.sepolia]: getSdkWithHooks(
+    new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_SEPOLIA as string),
+  ),
   [Chains.optimism]: getSdkWithHooks(
     new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_OPTIMISM as string),
   ),
