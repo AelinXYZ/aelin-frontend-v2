@@ -1,33 +1,35 @@
 import { lighten, rgba } from 'polished'
 
-const componentBackgroundColor = '#1A212F'
-const componentBorderColor = '#555C65'
-const componentBorderColorSecondary = '#9A40BB'
+const componentBackgroundColor = '#0d1617'
+const componentBorderColor = '#93DD7D'
+const componentBorderColorSecondary = '#93DD7D'
 const componentBorder = `0.5px solid ${componentBorderColor}`
 const lightGray = '#BABCC1'
 const error = '#FF7777'
-const primary = '#8280FF'
+const primary = '#93DD7D'
 const secondary = '#5452C3'
 const tertiary = '#E56399'
 const textColor = '#FFF'
-const mainBodyBackground = '#101826'
+const mainBodyBackground = '#000c0e'
 const green = '#A2FF00'
 const yellow = '#F1C40F'
 const blue = '#469FFF'
 const gray = '#282E3B'
 const pink = '#FF50B9'
-const primaryGradientStart = '#5452C3'
-const primaryGradientEnd = '#01A0D3'
-const secondaryGradientStart = '#9A40BB'
-const secondaryGradientEnd = '#B0386F'
+const primaryGradientStart = '#93DD7D'
+const primaryGradientEnd = '#558CCE'
+const secondaryGradientStart = '#93DD7D'
+const secondaryGradientEnd = '#558CCE'
 const blueishGray = '#484D58'
 const transparentWhite = 'rgba(255, 255, 255, 0.4)'
 const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
+const transparent = 'transparent'
 
-export const darkTheme = {
+export const ethlizardsTheme = {
+  ethliz: {},
   body: {
-    backgoundImage: '/resources/svg/bg-main.svg',
+    backgoundImage: `/resources/lizards/ethlizards_bg.png`,
   },
   modal: {
     overlayBackgroundColor: 'rgba(0, 0, 0, 0.6)',
@@ -52,9 +54,9 @@ export const darkTheme = {
     backgroundColor: gray,
   },
   tooltip: {
-    iconBackgroundColor: gray,
+    iconBackgroundColor: componentBackgroundColor,
     iconBorderColor: '#fff',
-    textBackgroundColor: gray,
+    textBackgroundColor: componentBackgroundColor,
     textBorderColor: '#fff',
     textColor: '#fff',
   },
@@ -73,7 +75,7 @@ export const darkTheme = {
     buttonColor: '#fff',
   },
   myPool: {
-    backgroundColor: gray,
+    backgroundColor: transparent,
     borderColor: gray,
     color: textColor,
   },
@@ -97,8 +99,8 @@ export const darkTheme = {
     colorHover: secondary,
   },
   buttonPrimaryLight: {
-    backgroundColor: 'transparent',
-    backgroundColorHover: 'transparent',
+    backgroundColor: transparent,
+    backgroundColorHover: transparent,
     borderColor: '#fff',
     borderColorHover: '#fff',
     color: textColor,
@@ -127,6 +129,7 @@ export const darkTheme = {
     backgroundColor: componentBackgroundColor,
     borderColor: componentBorder,
     titleColor: textColor,
+    backdropFilter: 'blur(5px)',
   },
   colors: {
     blueishGray: blueishGray,
@@ -157,10 +160,10 @@ export const darkTheme = {
     borderColor: lightGray,
     boxShadow: 'none',
     item: {
-      backgroundColor: 'transparent',
-      backgroundColorActive: 'rgba(255, 255, 255, 0.12)',
-      backgroundColorHover: 'rgba(255, 255, 255, 0.12)',
-      borderColor: 'transparent',
+      backgroundColor: mainBodyBackground,
+      backgroundColorActive: '#001418',
+      backgroundColorHover: '#001418',
+      borderColor: transparent,
       color: textColor,
       colorActive: textColor,
     },
@@ -191,7 +194,7 @@ export const darkTheme = {
     thColor: textColor,
   },
   toast: {
-    backgroundColor: gray,
+    backgroundColor: componentBackgroundColor,
     boxShadow: '0 0 10px rgba(255, 255, 255, 0.25)',
   },
   nftWhiteList: {
@@ -211,20 +214,20 @@ export const darkTheme = {
   },
   stepCircle: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    backgroundColorActive: 'rgba(130, 128, 255, 0.2)',
+    backgroundColorActive: 'rgba(147, 221, 125, 0.2);',
     backgroundColorMain: '#fff',
-    backgroundColorMainActive: '#8280ff',
+    backgroundColorMainActive: '#93DD7D',
     backgroundColorMiddle: transparentWhite,
-    backgroundColorMiddleActive: 'rgba(130, 128, 255, 0.4)',
+    backgroundColorMiddleActive: 'rgba(147, 221, 125, 0.4);',
   },
   textField: {
-    backgroundColor: gray,
+    backgroundColor: componentBackgroundColor,
     borderColor: lightGray,
     color: textColor,
     errorColor: error,
     successColor: green,
     active: {
-      backgroundColor: gray,
+      backgroundColor: componentBackgroundColor,
       borderColor: primary,
       boxShadow: '0 0 10px rgba(0, 0, 0, 0.25)',
       color: textColor,
@@ -234,9 +237,9 @@ export const darkTheme = {
     },
   },
   voucherModal: {
-    backgroundColor: gray,
+    backgroundColor: componentBackgroundColor,
   },
   investorModal: {
-    backgroundColor: gray,
+    backgroundColor: componentBackgroundColor,
   },
 }

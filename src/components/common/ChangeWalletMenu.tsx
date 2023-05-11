@@ -9,6 +9,7 @@ import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { shortenAddress } from '@/src/utils/string'
 
 const Wrapper = styled.div`
+  background-color: ${({ theme }) => theme.colors.componentBackgroundColor};
   align-items: center;
   display: flex;
   flex-direction: column;

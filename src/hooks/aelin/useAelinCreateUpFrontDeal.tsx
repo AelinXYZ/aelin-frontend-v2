@@ -13,7 +13,7 @@ import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import {
   AddressWhitelistProps,
   AddressesWhiteListAmountFormat,
-} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+} from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'

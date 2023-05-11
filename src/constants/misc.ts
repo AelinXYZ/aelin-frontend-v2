@@ -43,6 +43,8 @@ export const QUIXOTIC_BASE_URL = 'https://qx.app/'
 export const STRATOS_BASE_URL = 'https://stratosnft.io/'
 export const AELIN_APP_DEV_URL = 'https://testnet.app.aelin.xyz'
 
+export const ETHLIZARDS_VOUCHER_ENS = 'ethlizards.eth'
+
 export const POOL_NAME_MAX_LENGTH = 30
 
 export const MAX_PRIVATE_ROWS = 20

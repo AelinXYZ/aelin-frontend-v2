@@ -35,4 +35,5 @@ export enum PoolTimelineStateTitles {
 export enum ThemeType {
   light = 'light',
   dark = 'dark',
+  ethlizards = 'ethlizards',
 }

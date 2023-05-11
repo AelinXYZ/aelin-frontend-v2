@@ -1,6 +1,8 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
+import EthlizardsLogo from '../../../public/resources/lizards/AelinXEthlizards.svg'
 import { NetworkPlaceholder } from '../common/NetworkPlaceholder'
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { DarkMode } from '@/src/components/assets/DarkMode'
@@ -67,7 +69,23 @@ const InnerContainer = styled(BaseInnerContainer)`
   }
 `
 
+const EthlizardWrapper = styled.div`
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  max-height: calc(var(--header-height) - 20px);
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    max-height: calc(var(--header-height) - 80px);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    max-height: calc(var(--header-height) - 20px);
+  }
+`
+
 const HomeLink = styled.div`
+  display: flex;
   position: relative;
   transition: opacity 0.05s linear;
   z-index: 10;
@@ -243,6 +261,8 @@ export const Header: React.FC = (props) => {
 
   const { currentThemeName, switchTheme } = useThemeContext()
 
+  const isLizardTheme = currentThemeName === ThemeType.ethlizards
+
   const networksDropdownItems = getChainsByEnvironmentArray().map((item, index) => (
     <DropdownItem
       key={index}
@@ -271,7 +291,13 @@ export const Header: React.FC = (props) => {
           <StartWrapper>
             <Link href="/" passHref>
               <HomeLink>
-                <Logo />
+                {!isLizardTheme ? (
+                  <Logo />
+                ) : (
+                  <EthlizardWrapper>
+                    <Image alt="Aelin x Ethlizard" priority src={EthlizardsLogo} />
+                  </EthlizardWrapper>
+                )}
               </HomeLink>
             </Link>
           </StartWrapper>
