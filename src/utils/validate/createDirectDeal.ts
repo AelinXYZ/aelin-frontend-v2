@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { wei } from '@synthetixio/wei'
 
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { POOL_NAME_MAX_LENGTH, ZERO_BN } from '@/src/constants/misc'
@@ -97,6 +97,7 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
   } else if (
     // TODO: Remove these checks completely when new version of contracts will be deployed.
     chainId !== Chains.goerli &&
+    chainId !== Chains.sepolia &&
     chainId !== Chains.mainnet &&
     values.investmentToken &&
     values.dealToken.decimals < values.investmentToken.decimals

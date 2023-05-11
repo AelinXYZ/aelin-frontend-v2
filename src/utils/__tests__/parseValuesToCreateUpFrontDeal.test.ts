@@ -2,7 +2,7 @@ import { HashZero } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 
 import { parseValuesToCreateUpFrontDeal } from '../parseValuesToCreateUpFrontDeal'
-import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ZERO_BN } from '@/src/constants/misc'
 import { CreateUpFrontDealStateComplete } from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'

@@ -7,7 +7,7 @@ const { compilerOptions } = require('./tsconfig.json')
 module.exports = {
   // Use the TypeScript compiler to transpile TypeScript code
   transform: {
-    '^.+\\.(tsx|ts)?$': 'ts-jest',
+    '^.+\\.(tsx|ts)?$': ['ts-jest', { tsconfig: { jsx: 'react-jsx' } }],
   },
 
   // Specify the file patterns for test files
@@ -21,12 +21,4 @@ module.exports = {
 
   // Config re-map imports
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
-
-  globals: {
-    'ts-jest': {
-      tsConfig: {
-        jsx: 'react-jsx',
-      },
-    },
-  },
 }

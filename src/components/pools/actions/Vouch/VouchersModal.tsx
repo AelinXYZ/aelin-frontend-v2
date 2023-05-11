@@ -50,7 +50,7 @@ const Modal = styled(BaseModal)`
 
 const TableWrapper = styled(BaseCard)`
   margin-top: 20px;
-  background-color: ${({ theme }) => theme.colors.gray};
+  background-color: ${({ theme: { voucherModal } }) => voucherModal.backgroundColor};
   border: ${({ theme: { card } }) => `1px solid ${card.titleColor}`};
   padding: 0px;
   padding-left: 30px;
@@ -77,7 +77,7 @@ const TableBody = styled(BaseTableBody)`
 `
 
 const Row = styled(BaseRow)`
-  background-color: ${({ theme }) => theme.colors.gray};
+  background-color: ${({ theme: { voucherModal } }) => voucherModal.backgroundColor};
   border: none;
   border-radius: 0px;
   border-bottom: ${({ theme }) => theme.card.borderColor};
@@ -95,7 +95,7 @@ const Row = styled(BaseRow)`
 `
 
 const TableHead = styled(BaseTableHead)`
-  background-color: ${({ theme }) => theme.colors.gray};
+  background-color: ${({ theme: { voucherModal } }) => voucherModal.backgroundColor};
   padding-left: 0;
   padding-top: 25px;
   margin-bottom: 0px;

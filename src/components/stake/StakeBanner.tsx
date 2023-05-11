@@ -145,6 +145,11 @@ const StakeBanner = ({ ...restProps }) => {
         title: 'Feature not available',
         description: `Staking is not available on test networks.`,
       },
+      [Chains.sepolia]: {
+        backgroundImage: 'bg-pools.svg',
+        title: 'Feature not available',
+        description: `Staking is not available on test networks.`,
+      },
     }),
     [router],
   )
