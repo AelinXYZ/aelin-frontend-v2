@@ -7,6 +7,13 @@ import { ModalButtonCSS } from '@/src/components/common/Modal'
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import UploadCSV from '@/src/components/pools/whitelist/addresses/UploadWhiteListCsv'
 import {
+  AddressWhitelistProps,
+  AddressesWhiteListAmountFormat,
+  AddressesWhiteListStatus,
+  AddressesWhiteListStep,
+  AddressesWhiteListStepInfo,
+} from '@/src/components/pools/whitelist/addresses/types'
+import {
   ButtonGradient,
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
@@ -21,11 +28,6 @@ import { Error as BaseError } from '@/src/components/pureStyledComponents/text/E
 import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { PrivacyType } from '@/src/constants/pool'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
-
-export interface AddressWhitelistProps {
-  address: string
-  amount: number | null
-}
 
 const WrapperGrid = styled.div`
   width: 700px;
@@ -189,17 +191,6 @@ const TotalAddressesValue = styled.div`
   letter-spacing: 0.35px;
 `
 
-export enum AddressesWhiteListStep {
-  format = 'format',
-  addresses = 'addresses',
-}
-
-interface AddressesWhiteListStepInfo {
-  order: number
-  title: string
-  id: AddressesWhiteListStep
-}
-
 const addressesWhiteListStepsConfig: Record<AddressesWhiteListStep, AddressesWhiteListStepInfo> = {
   [AddressesWhiteListStep.format]: {
     id: AddressesWhiteListStep.format,
@@ -211,11 +202,6 @@ const addressesWhiteListStepsConfig: Record<AddressesWhiteListStep, AddressesWhi
     order: 2,
     title: 'Addresses',
   },
-}
-
-export enum AddressesWhiteListAmountFormat {
-  decimal = 'Decimal',
-  uint256 = 'uint256',
 }
 
 const getStepIndicatorData = (
@@ -280,14 +266,6 @@ export const initialAddressesWhitelistValues = [
     amount: null,
   } as AddressWhitelistProps),
 ]
-
-enum AddressesWhiteListStatus {
-  invalidAddress,
-  duplicatedAddresses,
-  invalidAmount,
-  invalidDecimals,
-  valid,
-}
 
 const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
   switch (status) {

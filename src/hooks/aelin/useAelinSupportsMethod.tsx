@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import * as optimismSDK from '@eth-optimism/sdk'
+import { Signer } from '@ethersproject/abstract-signer'
 import { Contract } from '@ethersproject/contracts'
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
 
@@ -81,7 +82,7 @@ function useSupportMethod(
 ) {
   return useCallback(
     async (method: string, params: any) => {
-      const signer = provider.getSigner(ZERO_ADDRESS)
+      const signer = provider.getSigner(ZERO_ADDRESS) as Signer
       const contract = new Contract(address, abi, signer) as Contract
       const _params = Array.isArray(params) ? params : []
 

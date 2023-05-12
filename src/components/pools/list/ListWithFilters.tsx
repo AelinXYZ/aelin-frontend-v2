@@ -91,7 +91,7 @@ export const ListWithFilters = ({
   userPoolsInvested?: ParsedAelinPool[]
 }) => {
   const {
-    query: { filter },
+    query: { chainId, filter },
   } = useRouter()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const { address, isWalletConnected } = useWeb3Connection()
@@ -120,6 +120,12 @@ export const ListWithFilters = ({
       searchRef.current.value = filter as string
     }
   }, [filter, searchRef])
+
+  useEffect(() => {
+    if (chainId) {
+      setNetwork(Number(chainId) as ChainsValues)
+    }
+  }, [chainId, setNetwork])
 
   useEffect(() => {
     setNow(Math.round(Date.now() / 1000).toString())

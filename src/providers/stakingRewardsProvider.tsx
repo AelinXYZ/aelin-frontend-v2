@@ -114,6 +114,11 @@ const StakingRewardsContextProvider = ({ children }: { children: ReactNode }) =>
 
         setError(error)
       },
+      [Chains.sepolia]: () => {
+        const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.sepolia}`)
+
+        setError(error)
+      },
       [Chains.arbitrum]: () => {
         noop()
       },

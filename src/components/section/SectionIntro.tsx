@@ -9,7 +9,11 @@ import {
 } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCard } from '@/src/components/pureStyledComponents/common/BaseCard'
 
-const Wrapper = styled(BaseCard)<{ backgroundImage?: string; backgroundPosition?: string }>`
+const Wrapper = styled(BaseCard)<{
+  backgroundImage?: string
+  backgroundPosition?: string
+  backgroundSize?: string
+}>`
   background-color: ${({ theme: { card } }) => card.backgroundColor};
   background-repeat: no-repeat;
   margin: 0 0 20px;
@@ -25,7 +29,7 @@ const Wrapper = styled(BaseCard)<{ backgroundImage?: string; backgroundPosition?
       backgroundImage ? `url(${backgroundImage})` : 'none'};
     background-position: ${({ backgroundPosition }) =>
       backgroundPosition ? backgroundPosition : 'initial'};
-    background-size: auto auto;
+    background-size: ${({ backgroundSize }) => (backgroundSize ? backgroundSize : 'auto auto')};
   }
 `
 
@@ -88,6 +92,7 @@ const ButtonWrapper = styled.div`
 type SectionIntroProps = {
   backgroundImage?: string
   backgroundPosition?: string
+  backgroundSize?: string
   button?: Array<{
     onClick: () => void
     title: string
@@ -104,6 +109,7 @@ type SectionIntroProps = {
 export const SectionIntro = ({
   backgroundImage,
   backgroundPosition,
+  backgroundSize,
   button,
   children,
   secondaryButton,
@@ -114,6 +120,7 @@ export const SectionIntro = ({
     <Wrapper
       backgroundImage={backgroundImage}
       backgroundPosition={backgroundPosition}
+      backgroundSize={backgroundSize}
       {...restProps}
     >
       <Title>{title}</Title>
