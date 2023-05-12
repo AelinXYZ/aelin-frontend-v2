@@ -2,8 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
-import EthlizardsLogo from '../../../public/resources/lizards/AelinXEthlizards.svg'
+import { isMobile } from 'react-device-detect'
+
 import { NetworkPlaceholder } from '../common/NetworkPlaceholder'
+import EthlizardsLogo from '@/public/resources/lizards/AelinXEthlizards.svg'
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { DarkMode } from '@/src/components/assets/DarkMode'
 import { Docs } from '@/src/components/assets/Docs'
@@ -248,7 +250,7 @@ const RedirectLink = styled.a`
 
 export const Header: React.FC = (props) => {
   const {
-    address = '',
+    address,
     appChainId,
     connectWallet,
     isWalletConnected,
@@ -295,7 +297,18 @@ export const Header: React.FC = (props) => {
                   <Logo />
                 ) : (
                   <EthlizardWrapper>
-                    <Image alt="Aelin x Ethlizard" priority src={EthlizardsLogo} />
+                    <Image
+                      alt="Aelin x Ethlizard"
+                      priority
+                      src={EthlizardsLogo}
+                      {...(isMobile &&
+                        !isWalletConnected && {
+                          style: {
+                            width: '220px',
+                            marginLeft: '55px',
+                          },
+                        })}
+                    />
                   </EthlizardWrapper>
                 )}
               </HomeLink>
@@ -331,7 +344,7 @@ export const Header: React.FC = (props) => {
                   dropdownButtonContent={
                     <DropdownButton>
                       <Metamask />
-                      {address && <Item>{shortenAddress(address)}</Item>}
+                      {isWalletConnected && address && <Item>{shortenAddress(address)}</Item>}
                       <ChevronDown />
                     </DropdownButton>
                   }
