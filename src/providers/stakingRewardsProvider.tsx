@@ -16,6 +16,10 @@ import {
   getGelatoStakingRewards,
 } from '@/src/utils/stake/getGelatoStakingRewards'
 import {
+  KwentaStakingResponse,
+  getKwentaStakingRewards,
+} from '@/src/utils/stake/getKwentaStakingRewards'
+import {
   UniswapStakingResponse,
   getUniswapStakingRewards,
 } from '@/src/utils/stake/getUniswapStakingRewards'
@@ -24,12 +28,14 @@ export enum StakingEnum {
   UNISWAP = 'UNISWAP',
   GELATO = 'GELATO',
   AELIN = 'AELIN',
+  KWENTA = 'KWENTA',
 }
 
 export type StakingType = {
   [StakingEnum.UNISWAP]: UniswapStakingResponse | null
   [StakingEnum.GELATO]: GelatoStakingResponse | null
   [StakingEnum.AELIN]: AelinStakingResponse | null
+  [StakingEnum.KWENTA]: KwentaStakingResponse | null
 }
 
 export type StakingRewardsContextType = {
@@ -45,6 +51,7 @@ const initialState = {
   [StakingEnum.UNISWAP]: null,
   [StakingEnum.GELATO]: null,
   [StakingEnum.AELIN]: null,
+  [StakingEnum.KWENTA]: null,
 }
 
 const StakingRewardsContext = createContext<StakingRewardsContextType>({} as any)
@@ -71,10 +78,18 @@ const StakingRewardsContextProvider = ({ children }: { children: ReactNode }) =>
             chainId: Chains.optimism,
           })
 
+          // TODO: Uncomment when Optimism contracts will be deployed
+          // const kwentaRewards = await getKwentaStakingRewards({
+          //   address: address || ZERO_ADDRESS,
+          //   chainId: Chains.optimism,
+          // })
+
           setData((prevState) => ({
             ...prevState,
             [StakingEnum.GELATO]: gelatoRewards,
             [StakingEnum.AELIN]: aelinRewards,
+            // TODO: Uncomment when Optimism contracts will be deployed
+            // [StakingEnum.KWENTA]: kwentaRewards,
           }))
 
           setIsLoading(false)
@@ -110,14 +125,30 @@ const StakingRewardsContextProvider = ({ children }: { children: ReactNode }) =>
         }
       },
       [Chains.goerli]: () => {
-        const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.goerli}`)
-
-        setError(error)
+        noop()
       },
-      [Chains.sepolia]: () => {
-        const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.sepolia}`)
+      [Chains.sepolia]: async () => {
+        try {
+          setIsLoading(true)
 
-        setError(error)
+          const kwentaRewards = await getKwentaStakingRewards({
+            address: address || ZERO_ADDRESS,
+            chainId: Chains.sepolia,
+          })
+
+          setData((prevState) => ({
+            ...prevState,
+            [StakingEnum.KWENTA]: kwentaRewards,
+          }))
+
+          setIsLoading(false)
+        } catch (error) {
+          setIsLoading(false)
+
+          if (error instanceof Error) {
+            setError(error)
+          }
+        }
       },
       [Chains.arbitrum]: () => {
         noop()

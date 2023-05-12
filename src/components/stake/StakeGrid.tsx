@@ -26,6 +26,19 @@ const StakeGrid = ({ ...restProps }) => {
       [Chains.optimism]: [
         <StakeSection
           contractAddresses={{
+            stakingAddress: contracts.KWENTA_STAKING_REWARDS.address[Chains.optimism],
+            tokenAddress: contracts.AELIN_TOKEN.address[Chains.optimism],
+          }}
+          explorerUrl={getExplorerUrl(
+            contracts.KWENTA_STAKING_REWARDS.address[Chains.optimism],
+            appChainId,
+          )}
+          key={StakingEnum.KWENTA}
+          stakeType={StakingEnum.KWENTA}
+          title={'Aelin staking'}
+        />,
+        <StakeSection
+          contractAddresses={{
             stakingAddress: contracts.STAKING_REWARDS.address[Chains.optimism],
             tokenAddress: contracts.AELIN_TOKEN.address[Chains.optimism],
           }}
@@ -33,14 +46,11 @@ const StakeGrid = ({ ...restProps }) => {
             contracts.STAKING_REWARDS.address[Chains.optimism],
             appChainId,
           )}
+          isDeprecated={true}
           key={StakingEnum.AELIN}
-          note={
-            'Note: There are no active rewards for pool 1 stakers although in the future there will be a pro rata claim of deal fees for stakers based on time in the pool'
-          }
           stakeType={StakingEnum.AELIN}
-          title={'Aelin staking'}
+          title={'Deprecated Aelin staking'}
         />,
-
         <StakeSection
           contractAddresses={{
             stakingAddress: contracts.LP_STAKING_REWARDS.address[Chains.optimism],
@@ -50,28 +60,29 @@ const StakeGrid = ({ ...restProps }) => {
             contracts.LP_STAKING_REWARDS.address[Chains.optimism],
             appChainId,
           )}
+          isDeprecated={true}
           key={StakingEnum.GELATO}
           stakeType={StakingEnum.GELATO}
           title={'Deprecated AELIN/ETH staking'}
         />,
       ],
-      [Chains.mainnet]: [
+      [Chains.mainnet]: [],
+      [Chains.goerli]: [],
+      [Chains.sepolia]: [
         <StakeSection
           contractAddresses={{
-            stakingAddress: contracts.LP_STAKING_REWARDS.address[Chains.mainnet],
-            tokenAddress: contracts.LP_TOKEN.address[Chains.mainnet],
+            stakingAddress: contracts.KWENTA_STAKING_REWARDS.address[Chains.sepolia],
+            tokenAddress: contracts.AELIN_TOKEN.address[Chains.sepolia],
           }}
           explorerUrl={getExplorerUrl(
-            contracts.LP_STAKING_REWARDS.address[Chains.mainnet],
+            contracts.KWENTA_STAKING_REWARDS.address[Chains.sepolia],
             appChainId,
           )}
-          key={StakingEnum.UNISWAP}
-          stakeType={StakingEnum.UNISWAP}
-          title={'AELIN/ETH staking'}
+          key={StakingEnum.KWENTA}
+          stakeType={StakingEnum.KWENTA}
+          title={'Aelin staking'}
         />,
       ],
-      [Chains.goerli]: [],
-      [Chains.sepolia]: [],
       [Chains.arbitrum]: [],
       [Chains.polygon]: [],
     }),

@@ -75,7 +75,7 @@ const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakeType, stakingAddress, user
           handleAfterClaim(stakeType)
         }
       },
-      title: 'Claim AELIN tokens',
+      title: `Claim ${stakeType === StakingEnum.KWENTA ? 'KWENTA' : 'AELIN'} tokens`,
       estimate: () => estimateGetReward(),
     })
   }
@@ -84,7 +84,12 @@ const ClaimBox: FC<ClaimBoxProps> = ({ decimals, stakeType, stakingAddress, user
     <Wrapper>
       <Title>Claim rewards</Title>
       <Text>
-        My Rewards: <Value>{formatToken(userRewards, decimals, STAKING_DECIMALS)} AELIN</Value>
+        My Rewards:{' '}
+        <Value>
+          {`${formatToken(userRewards, decimals, STAKING_DECIMALS)} ${
+            stakeType === StakingEnum.KWENTA ? 'KWENTA' : 'AELIN'
+          }`}
+        </Value>
       </Text>
       <Button disabled={userRewards.eq(ZERO_BN) || isSubmitting} onClick={handleClaim}>
         Claim

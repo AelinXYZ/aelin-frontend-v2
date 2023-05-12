@@ -66,7 +66,7 @@ const StakeBanner = ({ ...restProps }) => {
         secondaryButton: !router.pathname.includes('deprecated')
           ? {
               onClick: () => router.push('/stake/deprecated'),
-              title: 'Deprecated Pool',
+              title: 'Deprecated Pools',
             }
           : undefined,
         description: router.pathname.includes('deprecated') ? (
@@ -143,12 +143,38 @@ const StakeBanner = ({ ...restProps }) => {
       [Chains.goerli]: {
         backgroundImage: 'bg-pools.svg',
         title: 'Feature not available',
-        description: `Staking is not available on test networks.`,
+        description: `Staking is not available on Goerli network.`,
       },
       [Chains.sepolia]: {
-        backgroundImage: 'bg-pools.svg',
-        title: 'Feature not available',
-        description: `Staking is not available on test networks.`,
+        backgroundImage: 'bg-stake.svg',
+        button: [
+          {
+            onClick: () =>
+              window.open(
+                'https://app.velodrome.finance/liquidity/manage?address=0x3eec44e94ee86ce79f34bb26dc3cdbbee18d6d17',
+                '_blank',
+              ),
+            title: 'Go to Velodrome!',
+            type: ButtonType.Primary,
+          },
+        ],
+        description: (
+          <>
+            Holders can stake their AELIN or AELIN/ETH liquidity tokens to receive rewards and deal
+            fees. If you already have funds in the deprecated Sorbet/Arrakis Pool 2, you can easily
+            withdraw them and move them over to the new Velodrome AELIN/wETH Pool 2. For more
+            information on the Velodrome pool click{' '}
+            <a
+              href="https://mirror.xyz/aelinnews.eth/0tttX4Liu0rK_1om-oyS9dnPSjO-p09DVZDpkcR9B2Y"
+              rel="noreferrer"
+              target="_blank"
+            >
+              here
+            </a>
+            .
+          </>
+        ),
+        title: 'Stake',
       },
     }),
     [router],

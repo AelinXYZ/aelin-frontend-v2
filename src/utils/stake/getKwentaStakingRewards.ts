@@ -10,12 +10,12 @@ import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { ONE_YEAR_IN_SECS } from '@/src/constants/time'
 import contractCall from '@/src/utils/contractCall'
 
-type AelinStakingArgs = {
+type KwentaStakingArgs = {
   address: string
   chainId: ChainsValues
 }
 
-export type AelinStakingResponse = {
+export type KwentaStakingResponse = {
   decimals: number
   symbol: string
   userRewards: BigNumber
@@ -25,11 +25,11 @@ export type AelinStakingResponse = {
   APY: number
 }
 
-export const getAelinStakingRewards = async ({ address, chainId }: AelinStakingArgs) => {
+export const getKwentaStakingRewards = async ({ address, chainId }: KwentaStakingArgs) => {
   const provider = new JsonRpcProvider(getNetworkConfig(chainId).rpcUrl)
 
   const tokenAddress = contracts.AELIN_TOKEN.address[chainId]
-  const stakingAddress = contracts.STAKING_REWARDS.address[chainId]
+  const stakingAddress = contracts.KWENTA_STAKING_REWARDS.address[chainId]
 
   try {
     const promises = [

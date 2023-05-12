@@ -53,11 +53,13 @@ interface StakeSectionProps {
   note?: string
   stakeType: StakingEnum
   title: string
+  isDeprecated?: boolean
 }
 
 const StakeSection: FC<StakeSectionProps> = ({
   contractAddresses,
   explorerUrl,
+  isDeprecated = false,
   note,
   stakeType,
   title,
@@ -71,16 +73,12 @@ const StakeSection: FC<StakeSectionProps> = ({
   const rewards = data[stakeType]
 
   useEffect(() => {
-    if (stakeType === StakingEnum.GELATO) {
-      if (router.pathname.includes('deprecated')) {
-        setIsVisible(true)
-      }
-    }
-
-    if (stakeType === StakingEnum.AELIN) {
-      setIsVisible(true)
-    }
-  }, [stakeType])
+    setIsVisible(
+      isDeprecated
+        ? router.pathname.includes('deprecated')
+        : !router.pathname.includes('deprecated'),
+    )
+  }, [isDeprecated])
 
   if (error) {
     throw error
@@ -103,7 +101,7 @@ const StakeSection: FC<StakeSectionProps> = ({
       </TitleWrapper>
 
       <Tabs>
-        {stakeType === StakingEnum.AELIN && (
+        {!isDeprecated && (
           <Tab label="Deposit">
             <StakeTabContent
               rewards={rewards}
