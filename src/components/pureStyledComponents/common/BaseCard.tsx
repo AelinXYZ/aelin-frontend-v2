@@ -14,8 +14,6 @@ export const BaseCardCSS = css`
     position: absolute;
     width: 100%;
     height: 100%;
-    backdrop-filter: ${({ theme: { card } }) => card.backdropFilter};
-    -webkit-backdrop-filter: ${({ theme: { card } }) => card.backdropFilter};
     z-index: -1;
   }
 `
