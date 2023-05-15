@@ -27,9 +27,10 @@ const areaChartGradientEnd = '#232A37'
 const transparent = 'transparent'
 
 export const ethlizardsTheme = {
-  ethliz: {},
   body: {
     backgoundImage: `/resources/lizards/ethlizards_bg.png`,
+    backgoundRepeat: 'initial',
+    backgroundSize: 'cover',
   },
   modal: {
     overlayBackgroundColor: 'rgba(0, 0, 0, 0.6)',
@@ -129,7 +130,6 @@ export const ethlizardsTheme = {
     backgroundColor: componentBackgroundColor,
     borderColor: componentBorder,
     titleColor: textColor,
-    backdropFilter: 'blur(5px)',
   },
   colors: {
     blueishGray: blueishGray,

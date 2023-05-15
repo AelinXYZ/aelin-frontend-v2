@@ -28,6 +28,8 @@ const areaChartGradientEnd = '#232A37'
 export const darkTheme = {
   body: {
     backgoundImage: '/resources/svg/bg-main.svg',
+    backgoundRepeat: 'repeat',
+    backgroundSize: 'initial',
   },
   modal: {
     overlayBackgroundColor: 'rgba(0, 0, 0, 0.6)',

@@ -23,7 +23,8 @@ export const GlobalStyle = createGlobalStyle<{ theme: any }>`
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
       background-image:  url(${({ theme }) => theme.body.backgoundImage});
-      background-repeat: repeat;
+      background-repeat: ${({ theme }) => theme.body.backgoundRepeat};
+      background-size: ${({ theme }) => theme.body.backgroundSize};
     }
   }
 
