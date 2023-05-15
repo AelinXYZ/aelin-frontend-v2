@@ -27,8 +27,8 @@ const areaChartGradientEnd = '#232A37'
 
 export const darkTheme = {
   body: {
-    backgoundImage: '/resources/svg/bg-main.svg',
-    backgoundRepeat: 'repeat',
+    backgroundImage: '/resources/svg/bg-main.svg',
+    backgroundRepeat: 'repeat',
     backgroundSize: 'initial',
   },
   modal: {

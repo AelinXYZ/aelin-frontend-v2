@@ -28,8 +28,8 @@ const transparent = 'transparent'
 
 export const ethlizardsTheme = {
   body: {
-    backgoundImage: `/resources/lizards/ethlizards_bg.png`,
-    backgoundRepeat: 'initial',
+    backgroundImage: `/resources/lizards/ethlizards_bg.png`,
+    backgroundRepeat: 'initial',
     backgroundSize: 'cover',
   },
   modal: {

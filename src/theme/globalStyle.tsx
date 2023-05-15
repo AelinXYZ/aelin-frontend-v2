@@ -22,8 +22,8 @@ export const GlobalStyle = createGlobalStyle<{ theme: any }>`
     width: 100%;
 
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-      background-image:  url(${({ theme }) => theme.body.backgoundImage});
-      background-repeat: ${({ theme }) => theme.body.backgoundRepeat};
+      background-image:  url(${({ theme }) => theme.body.backgroundImage});
+      background-repeat: ${({ theme }) => theme.body.backgroundRepeat};
       background-size: ${({ theme }) => theme.body.backgroundSize};
     }
   }
