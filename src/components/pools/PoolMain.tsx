@@ -114,8 +114,6 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
     },
   )
 
-  console.log('funding: ', funding)
-
   const isVerified = useCheckVerifiedPool(pool)
 
   // If the pool is in the vesting stage, we should hide the lizard because it overlaps with the timeline.

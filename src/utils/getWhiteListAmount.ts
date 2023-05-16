@@ -1,7 +1,7 @@
 import { BigNumberish } from '@ethersproject/bignumber'
 import { parseUnits } from '@ethersproject/units'
 
-import { AddressesWhiteListAmountFormat } from '../components/pools/whitelist/addresses/types'
+import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/types'
 
 export const getWhiteListAmount = (
   amount: string,
