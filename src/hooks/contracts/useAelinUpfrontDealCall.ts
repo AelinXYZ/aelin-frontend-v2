@@ -3,11 +3,11 @@ import { SWRConfiguration } from 'swr'
 
 import useContractCall, { useContractCallMultiple } from './useContractCall'
 import AelinUpfrontDealABI from '@/src/abis/AelinUpfrontDeal.json'
-import AelinUpfrontDealV1ABI from '@/src/abis/AelinUpfrontDeal_v1.json'
+import AelinUpfrontDealTransferABI from '@/src/abis/AelinUpfrontDeal_v1.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import { AelinUpfrontDeal, AelinUpfrontDealV1 } from '@/types/typechain'
+import { AelinUpfrontDeal, AelinUpfrontDealV1 as AelinUpfrontDealTransfer } from '@/types/typechain'
 
-export type AelinUpfrontDealCombined = AelinUpfrontDeal & AelinUpfrontDealV1
+export type AelinUpfrontDealCombined = AelinUpfrontDeal & AelinUpfrontDealTransfer
 
 export default function useAelinUpfrontDealCall<
   MethodName extends keyof AelinUpfrontDealCombined['functions'],
@@ -26,7 +26,7 @@ export default function useAelinUpfrontDealCall<
   const [data, refetch] = useContractCall(
     provider,
     address,
-    isUpfrontDealTransferable ? AelinUpfrontDealV1ABI : AelinUpfrontDealABI,
+    isUpfrontDealTransferable ? AelinUpfrontDealTransferABI : AelinUpfrontDealABI,
     method as string,
     params,
     false,
@@ -49,7 +49,7 @@ export function useAelinUpfrontDealCallMultiple<
   const [data, refetch] = useContractCallMultiple(
     provider,
     address,
-    isUpfrontDealTransferable ? AelinUpfrontDealV1ABI : AelinUpfrontDealABI,
+    isUpfrontDealTransferable ? AelinUpfrontDealTransferABI : AelinUpfrontDealABI,
     calls,
   )
   return [data, refetch]

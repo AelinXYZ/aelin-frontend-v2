@@ -5,9 +5,9 @@ import useContractCall from './useContractCall'
 import AelinDealABI from '@/src/abis/AelinDeal.json'
 import AelinDealTransferABI from '@/src/abis/AelinDeal_v1.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import { AelinDeal, AelinDealV1 } from '@/types/typechain'
+import { AelinDeal, AelinDealV1 as AelinDealTransfer } from '@/types/typechain'
 
-export type AelinDealCombined = AelinDeal & AelinDealV1
+export type AelinDealCombined = AelinDeal & AelinDealTransfer
 
 export default function useAelinDealCall<MethodName extends keyof AelinDealCombined['functions']>(
   chainId: ChainsValues,

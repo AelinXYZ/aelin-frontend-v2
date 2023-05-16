@@ -1,10 +1,10 @@
 import useTransaction from './useTransaction'
 import AelinUpfrontDealABI from '@/src/abis/AelinUpfrontDeal.json'
 import AelinUpfrontDealTransferABI from '@/src/abis/AelinUpfrontDeal_v1.json'
-import { AelinUpfrontDeal, AelinUpfrontDealV1 } from '@/types/typechain'
+import { AelinUpfrontDeal, AelinUpfrontDealV1 as AelinUpfrontDealTransfer } from '@/types/typechain'
 import { UseTransactionReturn } from '@/types/utils'
 
-export type AelinUpfrontDealCombined = AelinUpfrontDeal & AelinUpfrontDealV1
+export type AelinUpfrontDealCombined = AelinUpfrontDeal & AelinUpfrontDealTransfer
 
 export function useAelinUpfrontDealTransaction<
   MethodName extends keyof AelinUpfrontDealCombined['functions'],

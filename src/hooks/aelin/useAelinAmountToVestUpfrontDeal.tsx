@@ -5,7 +5,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import ms from 'ms'
 
 import AelinUpfrontDealABI from '@/src/abis/AelinUpfrontDeal.json'
-import AelinUpfrontDealV1ABI from '@/src/abis/AelinUpfrontDeal_v1.json'
+import AelinUpfrontDealTransferABI from '@/src/abis/AelinUpfrontDeal_v1.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
@@ -27,7 +27,7 @@ export const fetchAmountToVest = (
   if (isDealTokenTransferable) {
     return contractCall(
       dealAddress as string,
-      AelinUpfrontDealV1ABI,
+      AelinUpfrontDealTransferABI,
       provider,
       'claimableUnderlyingTokens',
       [tokenIds],
