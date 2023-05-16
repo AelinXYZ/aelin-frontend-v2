@@ -12,7 +12,11 @@ import VestingPeriod from '@/src/components/pools/actions/Vest/VestingPeriod'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinDealTransaction } from '@/src/hooks/contracts/useAelinDealTransaction'
+import useGetVestingTokens from '@/src/hooks/aelin/useGetVestingTokens'
+import {
+  AelinDealCombined,
+  useAelinDealTransaction,
+} from '@/src/hooks/contracts/useAelinDealTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -28,9 +32,23 @@ function Vest({ pool }: Props) {
   const { address, isAppConnected } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const { estimate, execute: claim } = useAelinDealTransaction(
-    pool.dealAddress || ZERO_ADDRESS,
-    'claim',
+  const { data: vestingTokensData } = useGetVestingTokens({
+    chainId: pool.chainId,
+    where: {
+      dealAddress: pool.dealAddress,
+      owner: address,
+    },
+  })
+
+  const tokenIds =
+    vestingTokensData?.vestingTokens.map((vestingToken) => Number(vestingToken.tokenId)) ?? []
+
+  const method = pool.isDealTokenTransferable ? 'claimUnderlyingMultipleEntries' : 'claim'
+
+  const { estimate: estimateClaim, execute: claim } = useAelinDealTransaction(
+    pool.dealAddress ?? ZERO_ADDRESS,
+    method,
+    pool.isDealTokenTransferable as boolean,
   )
 
   const { data, mutate: refetch } = useVestingDealById(
@@ -51,13 +69,15 @@ function Vest({ pool }: Props) {
   const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
 
   const [amountToVest, refetchAmountToVest] = useAelinAmountToVest(
+    pool.isDealTokenTransferable,
+    tokenIds,
     pool.address,
     pool.chainId,
     withinInterval,
   )
 
   const hasRemainingTokens =
-    Number(lastClaim) !== 0
+    lastClaim !== null
       ? isBefore(lastClaim * 1000, pool.deal?.vestingPeriod.vesting.end as Date)
       : amountToVest.gt(ZERO_BN)
 
@@ -74,12 +94,21 @@ function Vest({ pool }: Props) {
   const handleVest = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        await claim([], txGasOptions)
+        pool.isDealTokenTransferable
+          ? await claim([tokenIds] as Parameters<AelinDealCombined['functions'][typeof method]>)
+          : await claim(
+              [] as Parameters<AelinDealCombined['functions'][typeof method]>,
+              txGasOptions,
+            )
+
         await refetch()
         await refetchAmountToVest()
       },
       title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
-      estimate: () => estimate([]),
+      estimate: () =>
+        pool.isDealTokenTransferable
+          ? estimateClaim([tokenIds] as Parameters<AelinDealCombined['functions'][typeof method]>)
+          : estimateClaim([] as Parameters<AelinDealCombined['functions'][typeof method]>),
     })
   }
 

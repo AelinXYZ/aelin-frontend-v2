@@ -16,7 +16,11 @@ import useAelinAmountToVestUpfrontDeal from '@/src/hooks/aelin/useAelinAmountToV
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolSharesPerUser from '@/src/hooks/aelin/useAelinPoolSharesPerUser'
 import useAelinUserRoles from '@/src/hooks/aelin/useAelinUserRoles'
-import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
+import useGetVestingTokens from '@/src/hooks/aelin/useGetVestingTokens'
+import {
+  AelinUpfrontDealCombined,
+  useAelinUpfrontDealTransaction,
+} from '@/src/hooks/contracts/useAelinUpfrontDealTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import getAllGqlSDK from '@/src/utils/getAllGqlSDK'
@@ -33,9 +37,23 @@ function VestUpfrontDeal({ pool }: Props) {
   const { address, isAppConnected } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const { estimate, execute: claim } = useAelinPoolUpfrontDealTransaction(
+  const { data: vestingTokensData } = useGetVestingTokens({
+    chainId: pool.chainId,
+    where: {
+      dealAddress: pool.address,
+      owner: address,
+    },
+  })
+
+  const tokenIds =
+    vestingTokensData?.vestingTokens.map((vestingToken) => Number(vestingToken.tokenId)) ?? []
+
+  const method = pool.isDealTokenTransferable ? 'claimUnderlyingMultipleEntries' : 'claimUnderlying'
+
+  const { estimate, execute: claim } = useAelinUpfrontDealTransaction(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
-    'claimUnderlying',
+    method,
+    pool.isDealTokenTransferable,
   )
 
   const { data, mutate: refetch } = useVestingDealById(
@@ -45,8 +63,12 @@ function VestUpfrontDeal({ pool }: Props) {
     { refreshInterval: ms('10s') },
   )
 
-  const { investorDealTotal, lastClaim, totalVested, underlyingDealTokenDecimals } =
-    data?.vestingDeal || {}
+  const {
+    investorDealTotal,
+    lastClaim = null,
+    totalVested = ZERO_BN,
+    underlyingDealTokenDecimals,
+  } = data?.vestingDeal ?? {}
 
   const now = new Date()
 
@@ -56,6 +78,8 @@ function VestUpfrontDeal({ pool }: Props) {
   const withinInterval = isVestingCliffEnded && !isVestingPeriodEnded
 
   const [amountToVest, refetchAmountToVest] = useAelinAmountToVestUpfrontDeal(
+    pool.isDealTokenTransferable,
+    tokenIds,
     pool.address,
     pool.chainId,
     withinInterval,
@@ -66,16 +90,16 @@ function VestUpfrontDeal({ pool }: Props) {
     pool.upfrontDeal?.underlyingToken.decimals || BASE_DECIMALS,
     pool.chainId,
     withinInterval,
+    pool.isDealTokenTransferable,
   )
 
-  const hasClaimedAtLeastOnce = lastClaim !== undefined
+  const hasClaimedAtLeastOnce = lastClaim !== null
   const sponsorClaim = !!pool.upfrontDeal?.sponsorClaim
   const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
 
-  const hasRemainingTokens =
-    Number(lastClaim) !== 0
-      ? isBefore(lastClaim * 1000, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
-      : amountToVest.gt(ZERO_BN)
+  const hasRemainingTokens = hasClaimedAtLeastOnce
+    ? isBefore(lastClaim, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
+    : amountToVest.gt(ZERO_BN)
 
   const userRoles = useAelinUserRoles(pool)
 
@@ -101,12 +125,21 @@ function VestUpfrontDeal({ pool }: Props) {
   const handleVest = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        await claim([], txGasOptions)
+        pool.isDealTokenTransferable
+          ? await claim([tokenIds] as Parameters<
+              AelinUpfrontDealCombined['functions'][typeof method]
+            >)
+          : await claim(
+              [] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+              txGasOptions,
+            )
+
         await refetch()
         await refetchAmountToVest()
       },
       title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
-      estimate: () => estimate([]),
+      estimate: () =>
+        estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
     })
   }
 

@@ -21,7 +21,7 @@ import AcceptDeal from '@/src/components/pools/actions/AcceptDeal'
 import CreateDeal from '@/src/components/pools/actions/CreateDeal'
 import FundDeal from '@/src/components/pools/actions/FundDeal'
 import Invest from '@/src/components/pools/actions/Invest/Invest'
-import InvestDirectDeal from '@/src/components/pools/actions/Invest/InvestDirectDeal'
+import InvestDirectDeal from '@/src/components/pools/actions/Invest/InvestUpfrontDeal'
 import ReleaseFunds from '@/src/components/pools/actions/ReleaseFunds'
 import Vest from '@/src/components/pools/actions/Vest/Vest'
 import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
@@ -98,6 +98,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
       tabs: notification as NotificationType,
     },
   )
+
+  console.log('funding: ', funding)
 
   const isVerified = useCheckVerifiedPool(pool)
 

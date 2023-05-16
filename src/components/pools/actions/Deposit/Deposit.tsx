@@ -71,8 +71,14 @@ function Deposit({ pool, poolHelpers }: Props) {
   } = useNftSelection()
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
   const allocation = useNftUserAllocation(pool)
-  const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
-    useUserAvailableToDeposit(pool)
+
+  const {
+    investmentTokenBalance,
+    refetchBalances,
+    refetchUserAllowance,
+    userAllowance,
+    userMaxDepositPrivateAmount,
+  } = useUserAvailableToDeposit(pool)
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
   const { address, isAppConnected } = useWeb3Connection()
@@ -87,12 +93,13 @@ function Deposit({ pool, poolHelpers }: Props) {
 
   const balances = [
     investmentTokenBalance,
+    { ...userAllowance, type: AmountTypes.maxDepositAllowed },
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
 
-  const sortedBalances = !isPrivatePool(pool.poolType)
-    ? balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
-    : balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+  const sortedBalances = isPrivatePool(pool.poolType)
+    ? balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+    : balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
   useEffect(() => {
     if (!investmentTokenBalance.raw) {
@@ -153,6 +160,7 @@ function Deposit({ pool, poolHelpers }: Props) {
           : await purchasePoolTokens([tokenInputValue], txGasOptions)
         if (receipt) {
           refetchBalances()
+          refetchUserAllowance()
           setTokenInputValue('')
           setInputError('')
         }

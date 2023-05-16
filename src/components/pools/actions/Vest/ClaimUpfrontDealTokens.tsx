@@ -9,7 +9,10 @@ import { BASE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolSharesPerUser from '@/src/hooks/aelin/useAelinPoolSharesPerUser'
 import useAelinUserRoles from '@/src/hooks/aelin/useAelinUserRoles'
-import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
+import {
+  AelinUpfrontDealCombined,
+  useAelinUpfrontDealTransaction,
+} from '@/src/hooks/contracts/useAelinUpfrontDealTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { UserRole } from '@/types/aelinPool'
@@ -23,16 +26,19 @@ type PurchaserClaimProps = {
   refund?: boolean
   upfrontDeal: ParsedAelinPool['upfrontDeal']
   chainId: ChainsValues
+  isDealTokenTransferable: boolean
 }
 
 type SponsorClaimProps = {
   refund?: boolean
   upfrontDeal: ParsedAelinPool['upfrontDeal']
+  isDealTokenTransferable: boolean
 }
 
 type HolderClaimProps = {
   refund?: boolean
   upfrontDeal: ParsedAelinPool['upfrontDeal']
+  isDealTokenTransferable: boolean
 }
 
 const ButtonsWrapper = styled.div`
@@ -50,11 +56,20 @@ const InnerContainer = styled.div`
   margin-bottom: 20px;
 `
 
-const PurchaserClaim = ({ chainId, refund, upfrontDeal }: PurchaserClaimProps) => {
+const PurchaserClaim = ({
+  chainId,
+  isDealTokenTransferable,
+  refund,
+  upfrontDeal,
+}: PurchaserClaimProps) => {
   const { address, isAppConnected } = useWeb3Connection()
-  const { estimate, execute: claim } = useAelinPoolUpfrontDealTransaction(
+
+  const method = 'purchaserClaim'
+
+  const { estimate, execute: claim } = useAelinUpfrontDealTransaction(
     upfrontDeal?.address || ZERO_ADDRESS,
-    'purchaserClaim',
+    method,
+    isDealTokenTransferable,
   )
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -63,18 +78,23 @@ const PurchaserClaim = ({ chainId, refund, upfrontDeal }: PurchaserClaimProps) =
     upfrontDeal?.underlyingToken.decimals || BASE_DECIMALS,
     chainId,
     false,
+    isDealTokenTransferable,
   )
 
   const claimDealTokens = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        const receipt = await claim([], txGasOptions)
+        const receipt = await claim(
+          [] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+          txGasOptions,
+        )
         if (receipt) {
           refetchPoolShares()
         }
       },
       title: refund ? `Refund Deal Tokens as Purchaser` : `Settle Deal Tokens as Purchaser`,
-      estimate: () => estimate([]),
+      estimate: () =>
+        estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
     })
   }
 
@@ -88,21 +108,30 @@ const PurchaserClaim = ({ chainId, refund, upfrontDeal }: PurchaserClaimProps) =
   )
 }
 
-const SponsorClaim = ({ upfrontDeal }: SponsorClaimProps) => {
+const SponsorClaim = ({ isDealTokenTransferable, upfrontDeal }: SponsorClaimProps) => {
   const { address, isAppConnected } = useWeb3Connection()
-  const { estimate, execute: claim } = useAelinPoolUpfrontDealTransaction(
+
+  const method = 'sponsorClaim'
+
+  const { estimate, execute: claim } = useAelinUpfrontDealTransaction(
     upfrontDeal?.address || ZERO_ADDRESS,
-    'sponsorClaim',
+    method,
+    isDealTokenTransferable,
   )
+
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const claimDealTokens = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        await claim([], txGasOptions)
+        await claim(
+          [] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+          txGasOptions,
+        )
       },
       title: `Settle Deal Tokens as Sponsor`,
-      estimate: () => estimate([]),
+      estimate: () =>
+        estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
     })
   }
 
@@ -116,21 +145,29 @@ const SponsorClaim = ({ upfrontDeal }: SponsorClaimProps) => {
   )
 }
 
-const HolderClaim = ({ refund, upfrontDeal }: HolderClaimProps) => {
+const HolderClaim = ({ isDealTokenTransferable, refund, upfrontDeal }: HolderClaimProps) => {
   const { address, isAppConnected } = useWeb3Connection()
-  const { estimate, execute: claim } = useAelinPoolUpfrontDealTransaction(
+
+  const method = 'holderClaim'
+
+  const { estimate, execute: claim } = useAelinUpfrontDealTransaction(
     upfrontDeal?.address || ZERO_ADDRESS,
-    'holderClaim',
+    method,
+    isDealTokenTransferable,
   )
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const claimDealTokens = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        await claim([], txGasOptions)
+        await claim(
+          [] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+          txGasOptions,
+        )
       },
       title: refund ? `Refund Deal Tokens as Holder` : `Claim Deal Tokens as Holder`,
-      estimate: () => estimate([]),
+      estimate: () =>
+        estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
     })
   }
 
@@ -145,7 +182,7 @@ const HolderClaim = ({ refund, upfrontDeal }: HolderClaimProps) => {
 }
 
 function ClaimUpfrontDealTokens({ pool, refund }: Props) {
-  const { upfrontDeal } = pool
+  const { isDealTokenTransferable, upfrontDeal } = pool
 
   const userRoles = useAelinUserRoles(pool)
 
@@ -154,6 +191,7 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
     pool.upfrontDeal?.underlyingToken.decimals || BASE_DECIMALS,
     pool.chainId,
     true,
+    isDealTokenTransferable,
   )
 
   const sponsorClaim = !!upfrontDeal?.sponsorClaim
@@ -194,7 +232,12 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
               Withdraw your <b>invesment tokens</b> since the minimum raise has not been reached
             </span>
             <ButtonsWrapper>
-              <PurchaserClaim chainId={pool.chainId} refund upfrontDeal={upfrontDeal} />
+              <PurchaserClaim
+                chainId={pool.chainId}
+                isDealTokenTransferable={isDealTokenTransferable}
+                refund
+                upfrontDeal={upfrontDeal}
+              />
             </ButtonsWrapper>
           </InnerContainer>
         )
@@ -209,7 +252,11 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
               Withdraw your <b>deal tokens</b> since the minimum raise has not been reached
             </span>
             <ButtonsWrapper>
-              <HolderClaim refund upfrontDeal={upfrontDeal} />
+              <HolderClaim
+                isDealTokenTransferable={isDealTokenTransferable}
+                refund
+                upfrontDeal={upfrontDeal}
+              />
             </ButtonsWrapper>
           </InnerContainer>
         )
@@ -222,7 +269,11 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
             <Title>Investor</Title>
             <span>Begin the vesting period for your deal tokens</span>
             <ButtonsWrapper>
-              <PurchaserClaim chainId={pool.chainId} upfrontDeal={upfrontDeal} />
+              <PurchaserClaim
+                chainId={pool.chainId}
+                isDealTokenTransferable={isDealTokenTransferable}
+                upfrontDeal={upfrontDeal}
+              />
             </ButtonsWrapper>
           </InnerContainer>
         )
@@ -236,7 +287,10 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
             <Title>Sponsor</Title>
             <span>Collect the sponsor fee from the pool</span>
             <ButtonsWrapper>
-              <SponsorClaim upfrontDeal={upfrontDeal} />
+              <SponsorClaim
+                isDealTokenTransferable={isDealTokenTransferable}
+                upfrontDeal={upfrontDeal}
+              />
             </ButtonsWrapper>
           </InnerContainer>
         )
@@ -250,7 +304,10 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
             <Title>Holder</Title>
             <span>Claim the investment tokens from the pool</span>
             <ButtonsWrapper>
-              <HolderClaim upfrontDeal={upfrontDeal} />
+              <HolderClaim
+                isDealTokenTransferable={isDealTokenTransferable}
+                upfrontDeal={upfrontDeal}
+              />
             </ButtonsWrapper>
           </InnerContainer>
         )
@@ -269,6 +326,7 @@ function ClaimUpfrontDealTokens({ pool, refund }: Props) {
     poolShares.raw,
     holderClaim,
     pool.chainId,
+    isDealTokenTransferable,
     upfrontDeal,
     sponsorClaim,
     hasSponsorFees,

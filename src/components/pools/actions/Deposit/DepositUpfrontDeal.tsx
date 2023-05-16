@@ -14,9 +14,11 @@ import useAelinUserMerkleTreeData, {
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useNftUserAllocation from '@/src/hooks/aelin/useNftUserAllocation'
 import { AmountTypes } from '@/src/hooks/aelin/useUserAvailableToDeposit'
-import { useUserAvailableToDepositDirectDeal } from '@/src/hooks/aelin/useUserAvailableToDepositDirectDeal'
-import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
-import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
+import { useUserAvailableToDepositUpfrontDeal } from '@/src/hooks/aelin/useUserAvailableToDepositUpfrontDeal'
+import {
+  AelinUpfrontDealCombined,
+  useAelinUpfrontDealTransaction,
+} from '@/src/hooks/contracts/useAelinUpfrontDealTransaction'
 import { useNftSelection } from '@/src/providers/nftSelectionProvider'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -78,7 +80,7 @@ const Allowance = ({ allowance }: { allowance: string }) => (
   </AllowanceWrapper>
 )
 
-function DepositDirectDeal({ pool, poolHelpers }: Props) {
+function DepositUpfrontDeal({ pool, poolHelpers }: Props) {
   const { address, isAppConnected } = useWeb3Connection()
 
   const {
@@ -91,8 +93,13 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
 
   const allocation = useNftUserAllocation(pool)
 
-  const { investmentTokenBalance, refetchBalances, userMaxDepositPrivateAmount } =
-    useUserAvailableToDepositDirectDeal(pool)
+  const {
+    investmentTokenBalance,
+    refetchBalances,
+    refetchUserAllowance,
+    userAllowance,
+    userMaxDepositPrivateAmount,
+  } = useUserAvailableToDepositUpfrontDeal(pool)
 
   const [tokenInputValue, setTokenInputValue] = useState('')
   const [inputError, setInputError] = useState('')
@@ -100,14 +107,21 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
   const { estimate: purchasePoolTokensEstimate, execute: purchasePoolTokens } =
-    useAelinPoolTransaction(pool.address, 'purchasePoolTokens')
+    useAelinUpfrontDealTransaction(pool.address, 'purchasePoolTokens', pool.isDealTokenTransferable)
 
   const { estimate: purchasePoolTokensWithNftEstimate, execute: purchasePoolTokensWithNft } =
-    useAelinPoolTransaction(pool.address, 'purchasePoolTokensWithNft')
+    useAelinUpfrontDealTransaction(
+      pool.address,
+      'purchasePoolTokensWithNft',
+      pool.isDealTokenTransferable,
+    )
 
-  const { estimate: acceptDealEstimate, execute: acceptDeal } = useAelinPoolUpfrontDealTransaction(
+  const method = 'acceptDeal'
+
+  const { estimate: acceptDealEstimate, execute: acceptDeal } = useAelinUpfrontDealTransaction(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
-    'acceptDeal',
+    method,
+    pool.isDealTokenTransferable,
   )
 
   const userMerkle = useAelinUserMerkleTreeData(pool)
@@ -116,6 +130,7 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
 
   const balances = [
     investmentTokenBalance,
+    { ...userAllowance, type: AmountTypes.maxDepositAllowed },
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
 
@@ -179,12 +194,26 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
         const receipt = pool.upfrontDeal
-          ? await acceptDeal([storedSelectedNfts, userMerkleData, tokenInputValue], txGasOptions)
+          ? await acceptDeal(
+              [storedSelectedNfts, userMerkleData, tokenInputValue] as Parameters<
+                AelinUpfrontDealCombined['functions'][typeof method]
+              >,
+              txGasOptions,
+            )
           : pool.hasNftList
-          ? await purchasePoolTokensWithNft([storedSelectedNfts, tokenInputValue], txGasOptions)
-          : await purchasePoolTokens([tokenInputValue], txGasOptions)
+          ? await purchasePoolTokensWithNft(
+              [storedSelectedNfts, tokenInputValue] as Parameters<
+                AelinUpfrontDealCombined['functions'][typeof method]
+              >,
+              txGasOptions,
+            )
+          : await purchasePoolTokens(
+              [tokenInputValue] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+              txGasOptions,
+            )
         if (receipt) {
           refetchBalances()
+          refetchUserAllowance()
           setTokenInputValue('')
           setInputError('')
         }
@@ -198,10 +227,16 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
         : undefined,
       estimate: () =>
         pool.upfrontDeal
-          ? acceptDealEstimate([storedSelectedNfts, userMerkleData, tokenInputValue])
+          ? acceptDealEstimate([storedSelectedNfts, userMerkleData, tokenInputValue] as Parameters<
+              AelinUpfrontDealCombined['functions'][typeof method]
+            >)
           : pool.hasNftList
-          ? purchasePoolTokensWithNftEstimate([storedSelectedNfts, tokenInputValue])
-          : purchasePoolTokensEstimate([tokenInputValue]),
+          ? purchasePoolTokensWithNftEstimate([storedSelectedNfts, tokenInputValue] as Parameters<
+              AelinUpfrontDealCombined['functions'][typeof method]
+            >)
+          : purchasePoolTokensEstimate([tokenInputValue] as Parameters<
+              AelinUpfrontDealCombined['functions'][typeof method]
+            >),
     })
   }
 
@@ -227,12 +262,19 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
     }
   }, [pool.hasNftList, allocation, investmentTokenSymbol, investmentTokenDecimals])
 
+  poolHelpers.isCap
+
   return (
     <>
       {!!pool?.upfrontDeal && (
         <Contents>
           By clicking "accept deal" you are agreeing to the negotiated exchange rate. <br />
-          If there is excess interest in the pool, all investors will be deallocated proportionally
+          {!poolHelpers.isCap && (
+            <>
+              If there is excess interest in the pool, all investors will be deallocated
+              proportionally
+            </>
+          )}
           {isMerklePool(pool) && (
             <>
               <br />
@@ -293,4 +335,4 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
   )
 }
 
-export default genericSuspense(DepositDirectDeal)
+export default genericSuspense(DepositUpfrontDeal)
