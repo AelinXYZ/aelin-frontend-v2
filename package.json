@@ -56,7 +56,6 @@
     "big-number-input": "^1.0.3",
     "date-fns": "^2.28.0",
     "envalid": "^7.3.1",
-    "ethereumjs-util": "^7.1.5",
     "fuse.js": "^6.6.2",
     "graphql": "^16.3.0",
     "graphql-request": "4.0.0",
