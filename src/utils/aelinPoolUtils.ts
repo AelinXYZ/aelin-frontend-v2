@@ -8,7 +8,7 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { DealType, PoolCreated } from '@/graphql-schema'
+import { DealType, NftCollectionRule, PoolCreated } from '@/graphql-schema'
 import {
   NftType,
   NftWhiteListState,
@@ -77,12 +77,12 @@ export function getDealDeadline(pool: PoolCreated): Date | null {
 
 // returns the max amount a pool can raise from investors
 export function getPurchaseTokenCap<
-  P extends { purchaseTokenCap: string; purchaseTokenDecimals?: number },
+  P extends { purchaseTokenCap?: string; purchaseTokenDecimals?: number },
 >(pool: P) {
   return {
     raw: BigNumber.from(pool.purchaseTokenCap),
     formatted: formatToken(
-      pool.purchaseTokenCap,
+      pool.purchaseTokenCap as string,
       pool.purchaseTokenDecimals || BASE_DECIMALS,
       DISPLAY_DECIMALS,
     ),
@@ -424,7 +424,7 @@ export function getInvestmentDealToken(
 }
 
 export function parseNftCollectionRules(pool: PoolCreated): ParsedNftCollectionRules[] {
-  return pool.nftCollectionRules.map((collectionRule) => {
+  return (pool.nftCollectionRules as NftCollectionRule[]).map((collectionRule) => {
     const purchaseAmountBN = new Wei(
       collectionRule.purchaseAmount,
       pool.purchaseTokenDecimals || BASE_DECIMALS,
