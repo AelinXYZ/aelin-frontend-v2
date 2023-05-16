@@ -2,7 +2,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { SWRConfiguration } from 'swr'
 
 import useContractCall, { useContractCallMultiple } from './useContractCall'
-import aelinPool from '@/src/abis/AelinPool.json'
+import AelinPoolABI from '@/src/abis/AelinPool_v1.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { AelinPool } from '@/types/typechain'
 
@@ -22,7 +22,7 @@ export default function useAelinPoolCall<
   const [data, refetch] = useContractCall(
     provider,
     address,
-    aelinPool,
+    AelinPoolABI,
     method,
     params,
     false,
@@ -37,6 +37,6 @@ export function useAelinPoolCallMultiple<
 >(chainId: ChainsValues, address: string, calls: { method: MethodName; params: Params }[]) {
   const provider = new JsonRpcProvider(getNetworkConfig(chainId).rpcUrl)
 
-  const [data, refetch] = useContractCallMultiple(provider, address, aelinPool, calls)
+  const [data, refetch] = useContractCallMultiple(provider, address, AelinPoolABI, calls)
   return [data, refetch]
 }

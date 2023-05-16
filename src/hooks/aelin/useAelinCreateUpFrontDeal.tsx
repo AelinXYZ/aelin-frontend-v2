@@ -22,8 +22,8 @@ import { Privacy } from '@/src/constants/pool'
 import { Token } from '@/src/constants/token'
 import {
   getDealCreatedId,
-  useAelinDirectDealCreateTransaction,
-} from '@/src/hooks/contracts/useAelinDirectDealCreateTransaction'
+  useAelinUpfrontDealFactoryTransaction,
+} from '@/src/hooks/contracts/useAelinUpfrontDealFactoryTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, isEmptyDuration, secondsToDhm } from '@/src/utils/date'
@@ -505,8 +505,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
   const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
   const router = useRouter()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
-  const { estimate: createUpFrontDealEstimate, execute } = useAelinDirectDealCreateTransaction(
-    contracts.DIRECT_DEALS_FACTORY.address[chainId],
+  const { estimate: createUpFrontDealEstimate, execute } = useAelinUpfrontDealFactoryTransaction(
+    contracts.UPFRONT_DEAL_FACTORY.address[chainId],
     'createUpFrontDeal',
   )
 

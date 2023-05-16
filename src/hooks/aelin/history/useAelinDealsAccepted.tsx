@@ -32,14 +32,7 @@ export const getParsedDealAcceptedsHistory = ({
   chainId: ChainsValues
   dealTokenAmount: any
   investmentAmount: any
-  pool: {
-    id: string
-    name: string
-    purchaseTokenDecimals?: number | null
-    purchaseTokenSymbol: string
-    deal?: { underlyingDealTokenDecimals: number; underlyingDealTokenSymbol: string } | null
-    upfrontDeal?: { underlyingDealTokenDecimals: number; underlyingDealTokenSymbol: string } | null
-  }
+  pool: any
   timestamp: any
 }) => {
   return {

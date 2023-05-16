@@ -72,6 +72,7 @@ export type ParsedAelinPool = {
   minimumPurchaseAmount?: DetailedNumber
   totalVouchers: number
   vouchers: string[]
+  isDealTokenTransferable: boolean
   upfrontDeal?: {
     address: string
     name: string
@@ -105,7 +106,7 @@ export type ParsedAelinPool = {
     holder: string
     purchaseTokenPerDealToken: DetailedNumber
     purchaseRaiseMinimum: DetailedNumber
-    allowDeallocation: boolean
+    allowDeallocation?: boolean | null
     unredeemed: DetailedNumber
     dealStart: Date | null
     holderClaim: boolean
@@ -226,6 +227,7 @@ export const getParsedPool = ({
       : undefined,
     totalVouchers: pool.totalVouchers,
     vouchers: pool.vouchers.map((addr) => getAddress(addr)),
+    isDealTokenTransferable: pool.isDealTokenTransferable,
   }
 
   const dealDetails = pool.deal
@@ -246,7 +248,7 @@ export const getParsedPool = ({
     dealDetails.purchaseTokenTotalForDeal,
     purchaseTokenDecimals,
     dealDetails.underlyingDealTokenTotal,
-    dealDetails.underlyingDealTokenDecimals,
+    dealDetails.underlyingDealTokenDecimals as number,
   )
 
   res.deal = {
@@ -254,15 +256,15 @@ export const getParsedPool = ({
     symbol: dealDetails.symbol,
     underlyingToken: {
       token: dealDetails.underlyingDealToken,
-      symbol: dealDetails.underlyingDealTokenSymbol,
-      decimals: dealDetails.underlyingDealTokenDecimals,
+      symbol: dealDetails.underlyingDealTokenSymbol as string,
+      decimals: dealDetails.underlyingDealTokenDecimals as number,
       dealAmount: getDetailedNumber(
         dealDetails.underlyingDealTokenTotal,
-        dealDetails.underlyingDealTokenDecimals,
+        dealDetails.underlyingDealTokenDecimals as number,
       ),
       investmentAmount: getInvestmentDealToken(
         dealDetails.underlyingDealTokenTotal,
-        dealDetails.underlyingDealTokenDecimals,
+        dealDetails.underlyingDealTokenDecimals as number,
         purchaseTokenDecimals,
         exchangeRates.dealPerInvestment,
       ),
@@ -283,7 +285,7 @@ export const getParsedPool = ({
     fundedAt: dealDetails.isDealFunded ? new Date(dealDetails.dealFundedAt * 1000) : null,
     unredeemed: getDetailedNumber(
       dealDetails.totalAmountUnredeemed || ZERO_BN,
-      dealDetails.underlyingDealTokenDecimals,
+      dealDetails.underlyingDealTokenDecimals as number,
     ),
     totalUsersAccepted: dealDetails.totalUsersAccepted,
     totalUsersRejected: dealDetails.totalUsersRejected,
@@ -291,7 +293,7 @@ export const getParsedPool = ({
       res.redeem,
       exchangeRates.dealPerInvestment,
       purchaseTokenDecimals,
-      dealDetails.underlyingDealTokenDecimals,
+      dealDetails.underlyingDealTokenDecimals as number,
     ),
   }
 
@@ -313,20 +315,26 @@ export default function useAelinPool(
     config,
   )
 
-  const [hasAllowList] = useAelinPoolAccess(poolAddress, chainId, false)
-  const { data: minimumPurchaseAmounts } = useGetMinimumPurchaseAmount()
-
-  const refetch = () => {
-    poolCreatedMutate()
-  }
-
   if (!poolCreatedData?.poolCreated) {
     throw Error('It was not possible to fetch pool id: ' + poolAddress)
   }
 
+  const { data: minimumPurchaseAmounts } = useGetMinimumPurchaseAmount()
+
   const pool = poolCreatedData.poolCreated as PoolCreated
   const purchaseTokenDecimals = pool.purchaseTokenDecimals
   const minimumPurchaseAmount = minimumPurchaseAmounts[chainId]?.[pool.id]
+
+  const [hasAllowList] = useAelinPoolAccess(
+    poolAddress,
+    chainId,
+    false,
+    pool.isDealTokenTransferable,
+  )
+
+  const refetch = () => {
+    poolCreatedMutate()
+  }
 
   // prevent TS error
   if (!purchaseTokenDecimals) {

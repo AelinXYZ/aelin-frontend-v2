@@ -2,15 +2,15 @@ import { Interface } from '@ethersproject/abi'
 import { ContractReceipt } from '@ethersproject/contracts'
 
 import useTransaction from './useTransaction'
-import AelinRegularPoolFactoryABI from '@/src/abis/AelinRegularPoolFactory.json'
-import { AelinRegularPoolFactory } from '@/types/typechain'
+import AelinPoolFactoryABI from '@/src/abis/AelinPoolFactory.json'
+import { AelinPoolFactory } from '@/types/typechain'
 import { UseTransactionReturn } from '@/types/utils'
 
-export function useAelinPoolCreateTransaction<
-  MethodName extends keyof AelinRegularPoolFactory['functions'],
-  Params extends Parameters<AelinRegularPoolFactory[MethodName]>,
+export function useAelinPoolFactoryTransaction<
+  MethodName extends keyof AelinPoolFactory['functions'],
+  Params extends Parameters<AelinPoolFactory[MethodName]>,
 >(address: string, method: MethodName): UseTransactionReturn<Params> {
-  return useTransaction(address, AelinRegularPoolFactoryABI, method)
+  return useTransaction(address, AelinPoolFactoryABI, method)
 }
 
 /**
@@ -19,7 +19,7 @@ export function useAelinPoolCreateTransaction<
  * @returns
  */
 export const getPoolCreatedId = (receipt: ContractReceipt) => {
-  const poolCreateInterface = new Interface(AelinRegularPoolFactoryABI)
+  const poolCreateInterface = new Interface(AelinPoolFactoryABI)
   const parsedLogs = poolCreateInterface.parseLog(receipt.logs[receipt.logs.length - 1])
   return parsedLogs.args[0]
 }

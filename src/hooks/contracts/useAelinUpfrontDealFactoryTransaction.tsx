@@ -2,15 +2,15 @@ import { Interface } from '@ethersproject/abi'
 import { ContractReceipt } from '@ethersproject/contracts'
 
 import useTransaction from './useTransaction'
-import AelinDirectDealFactoryABI from '@/src/abis/AelinDirectDealFactory.json'
-import { AelinDirectDealFactory } from '@/types/typechain'
+import AelinUpfrontDealFactory from '@/src/abis/AelinUpfrontDealFactory.json'
+import { AelinUpfrontDealFactory as AelinUpfrontDealFactoryType } from '@/types/typechain'
 import { UseTransactionReturn } from '@/types/utils'
 
-export function useAelinDirectDealCreateTransaction<
-  MethodName extends keyof AelinDirectDealFactory['functions'],
-  Params extends Parameters<AelinDirectDealFactory[MethodName]>,
+export function useAelinUpfrontDealFactoryTransaction<
+  MethodName extends keyof AelinUpfrontDealFactoryType['functions'],
+  Params extends Parameters<AelinUpfrontDealFactoryType[MethodName]>,
 >(address: string, method: MethodName): UseTransactionReturn<Params> {
-  return useTransaction(address, AelinDirectDealFactoryABI, method)
+  return useTransaction(address, AelinUpfrontDealFactory, method)
 }
 
 /**
@@ -19,7 +19,7 @@ export function useAelinDirectDealCreateTransaction<
  * @returns
  */
 export const getDealCreatedId = (receipt: ContractReceipt) => {
-  const dealCreateInterface = new Interface(AelinDirectDealFactoryABI)
+  const dealCreateInterface = new Interface(AelinUpfrontDealFactory)
   const parsedLogs = dealCreateInterface.parseLog(receipt.logs[receipt.logs.length - 1])
   return parsedLogs.args[0]
 }

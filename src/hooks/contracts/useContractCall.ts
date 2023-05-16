@@ -2,7 +2,6 @@ import { Contract, ContractInterface } from '@ethersproject/contracts'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import useSWR, { KeyedMutator, SWRConfiguration } from 'swr'
 
-//import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'
 import getCacheKey from '@/src/utils/getCacheKey'

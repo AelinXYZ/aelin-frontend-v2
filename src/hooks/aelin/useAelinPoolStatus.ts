@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { MaxUint256 } from '@ethersproject/constants'
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
@@ -9,7 +10,7 @@ import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { DISPLAY_DECIMALS, MAX_BN, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
@@ -203,16 +204,16 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
 function useFundingStatus(pool: ParsedAelinPool, derivedStatus: DerivedStatus): Funding {
   return useMemo(() => {
     derivedStatus // used to force re-render
-    const isCap = pool.poolCap.raw.eq(0)
     const capAmount = pool.poolCap.raw
+    const isCap = capAmount.gt(ZERO_BN)
     const funded = pool.funded.raw
     const maxDepositAllowed = capAmount.sub(funded)
 
     return {
       isCap,
-      capReached: isCap ? false : capAmount.eq(funded),
+      capReached: isCap ? capAmount.eq(funded) : false,
       maxDepositAllowed: {
-        raw: isCap ? MAX_BN : maxDepositAllowed,
+        raw: isCap ? maxDepositAllowed : MaxUint256,
         formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals, DISPLAY_DECIMALS),
       },
       minimumAmount: pool.upfrontDeal?.purchaseRaiseMinimum,
