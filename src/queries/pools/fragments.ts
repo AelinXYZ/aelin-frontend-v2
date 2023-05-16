@@ -25,11 +25,15 @@ gql`
     filter
 
     totalAmountEarnedBySponsor
+    totalAmountEarnedByProtocol
+    totalAmountEarnedByProtocolDecimal
     totalAmountAccepted
     totalAmountWithdrawn
     totalAmountFunded
     totalUsersInvested
     totalAddressesInvested
+    totalVouchers
+    vouchers
 
     totalVouchers
     vouchers
@@ -49,6 +53,8 @@ gql`
     upfrontDeal {
       ...UpfrontDealDetails
     }
+
+    isDealTokenTransferable
   }
 `
 
