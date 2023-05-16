@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Cell } from '@/src/components/pureStyledComponents/common/Table'
@@ -36,11 +37,14 @@ export const StageColor = styled.span<{ stage: StageTypes }>`
   width: var(--dimensions);
 `
 
-export const Stage: React.FC<{
+type StageProps = {
+  children: ReactNode
   stage: StageTypes
-}> = ({ children, stage, ...restProps }) => {
+}
+
+export const Stage = ({ children, stage }: StageProps) => {
   return (
-    <Wrapper {...restProps}>
+    <Wrapper>
       <StageColor stage={stage.toLowerCase()} /> {children}
     </Wrapper>
   )

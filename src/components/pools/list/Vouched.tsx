@@ -258,12 +258,17 @@ const tableHeaderCells = [
   },
 ]
 
+type TableDataProps = {
+  isTyping: boolean
+  voucherAddress: string
+}
+
 const aelinVoucherENS = env.NEXT_PUBLIC_AELIN_VOUCHER_ENS_ADDRESS as string
 
 const Loading = () => <LoadingWrapper> loading... </LoadingWrapper>
 
-const TableData: React.FC<{ isTyping: boolean }> = genericSuspense(
-  ({ isTyping }) => {
+const TableData = genericSuspense(
+  ({ isTyping, voucherAddress }: TableDataProps) => {
     const { data, error } = useAelinVouchedPools()
     const { notifications } = useNotifications()
 
@@ -292,7 +297,9 @@ const TableData: React.FC<{ isTyping: boolean }> = genericSuspense(
           return (
             <RowLink
               columns={columns.largeWidths}
-              href={`/pool/${getKeyChainByValue(network)}/${id}`}
+              href={`/pool/${getKeyChainByValue(network)}/${id}/${
+                voucherAddress ? `?voucher=${voucherAddress}` : ''
+              }`}
               key={id}
               withGradient
             >
@@ -420,14 +427,14 @@ const TableData: React.FC<{ isTyping: boolean }> = genericSuspense(
 
 export const VouchedPools: React.FC = () => {
   const router = useRouter()
-  const [voucherAddress, setVoucherAddress] = useState<string>()
-  const searchRef = useRef<HTMLInputElement | null>(null)
-  const prevVoucherAddress = usePrevious(voucherAddress)
-  const [isTyping, setIsTyping] = useState<boolean>(false)
-
   const {
     query: { voucher },
   } = router
+
+  const [voucherAddress, setVoucherAddress] = useState<string>((voucher ?? '') as string)
+  const searchRef = useRef<HTMLInputElement | null>(null)
+  const prevVoucherAddress = usePrevious(voucherAddress)
+  const [isTyping, setIsTyping] = useState<boolean>(false)
 
   const { data: ensVoucher } = useEnsLookUpAddress(voucher as string)
 
@@ -475,6 +482,14 @@ export const VouchedPools: React.FC = () => {
     }
   }, [searchRef])
 
+  useEffect(() => {
+    const voucherAddress = ensVoucher || voucher
+    if (!voucherAddress) {
+      const input = searchRef.current as HTMLInputElement
+      input.value = aelinVoucherENS
+    }
+  }, [voucher, ensVoucher, searchRef])
+
   return (
     <>
       <Title>
@@ -489,7 +504,7 @@ export const VouchedPools: React.FC = () => {
             </SortableTH>
           ))}
         </TableHead>
-        <TableData isTyping={isTyping} />
+        <TableData isTyping={isTyping} voucherAddress={voucherAddress} />
       </Wrapper>
     </>
   )

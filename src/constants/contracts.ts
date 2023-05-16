@@ -1,4 +1,5 @@
 import AelinDirectDealFactoryABI from '@/src/abis/AelinDirectDealFactory.json'
+import AelinFeeDistributorABI from '@/src/abis/AelinFeeDistributorABI.json'
 import AelinRegularPoolFactoryABI from '@/src/abis/AelinRegularPoolFactory.json'
 import AelinStakingABI from '@/src/abis/AelinStaking.json'
 import ERC20 from '@/src/abis/ERC20.json'
@@ -30,6 +31,7 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '0xa9C125BF4C8bB26f299c00969532B66732b1F758',
       [Chains.goerli]: '',
+      [Chains.sepolia]: '',
       [Chains.optimism]: '0x61BAADcF22d2565B0F471b291C475db5555e0b76',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
@@ -39,7 +41,8 @@ export const contracts = constantContracts({
   REGULAR_POOL_FACTORY: {
     address: {
       [Chains.mainnet]: '0x722969A3fdc778a5cC7CbC8DC8Ae3e96a288f853',
-      [Chains.goerli]: '0x3068a70D28429BdE8A9D3F2ebb4dA710d6b56F39',
+      [Chains.goerli]: '0x19360EF7870Ed8F75171A8C6FBD6943DFfd6d687',
+      [Chains.sepolia]: '0x687abb9507860FfBfDc3c1E8409f094Dfe7FD40A',
       [Chains.optimism]: '0x8B35551d6459a3d49B9A5A0D7333c6D7E0cCbBd9',
       [Chains.arbitrum]: '0xbf7c0Fd0D31bC377f861d11d4aAc15296c0405b6',
       [Chains.polygon]: '0xbf7c0fd0d31bc377f861d11d4aac15296c0405b6',
@@ -48,8 +51,9 @@ export const contracts = constantContracts({
   },
   DIRECT_DEALS_FACTORY: {
     address: {
-      [Chains.mainnet]: '0x97efdb29c0d6dacdc0bb334cc227ae03a1a7c01e',
-      [Chains.goerli]: '0xBE00D2c1e154bcdd243dcba5C6363d06155212CD',
+      [Chains.mainnet]: '0x82BccFA913dB473147e5274C7821Bc13fFBaBE17',
+      [Chains.goerli]: '0xe63C594560CB6A780b480a8594Da8CaD544F4Db8',
+      [Chains.sepolia]: '0xF38B0D93a3E034E6B41Fd6601D7A40DC5dda7bA1',
       [Chains.optimism]: '0xe6355E5B217390A2F888c35f73248844847b0ef4',
       [Chains.arbitrum]: '0x91fCeA33D02d11621b7f90ebd5E44eD393eD7b5e',
       [Chains.polygon]: '0x82eaa001029d4686b343b53ce6e7f1823725e736',
@@ -61,6 +65,7 @@ export const contracts = constantContracts({
       [Chains.mainnet]: '',
       [Chains.optimism]: '0xFe757A40F3EdA520845b339c698b321663986a4d',
       [Chains.goerli]: '',
+      [Chains.sepolia]: '',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
     },
@@ -71,6 +76,7 @@ export const contracts = constantContracts({
       [Chains.mainnet]: '0x974d51faFc9013E42CbbB9465ea03fE097824bcC',
       [Chains.optimism]: '0x665d8d87ac09bdbc1222b8b9e72ddcb82f76b54a',
       [Chains.goerli]: '',
+      [Chains.sepolia]: '',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
     },
@@ -81,6 +87,7 @@ export const contracts = constantContracts({
       [Chains.mainnet]: '0x944cb90082fc1416d4B551A21cFe6D7cc5447C80',
       [Chains.optimism]: '0x4aeC980a0Daef4905520a11b99971C7B9583f4F8',
       [Chains.goerli]: '',
+      [Chains.sepolia]: '',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
     },
@@ -91,9 +98,21 @@ export const contracts = constantContracts({
       [Chains.mainnet]: '',
       [Chains.optimism]: '0x665d8D87ac09Bdbc1222B8B9E72Ddcb82f76B54A',
       [Chains.goerli]: '',
+      [Chains.sepolia]: '',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
     },
     abi: GelatoPoolABI,
+  },
+  FEE_DISTRIBUTOR: {
+    address: {
+      [Chains.mainnet]: '',
+      [Chains.optimism]: '0xa621eEFAa0A6B23fA4C0111e9316cCa4b53469e6',
+      [Chains.goerli]: '0xF5bF8E0B2F1efb98872c44f928e648f6bc190750',
+      [Chains.sepolia]: '',
+      [Chains.arbitrum]: '',
+      [Chains.polygon]: '',
+    },
+    abi: AelinFeeDistributorABI,
   },
 })

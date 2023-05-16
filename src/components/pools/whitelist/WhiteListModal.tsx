@@ -3,11 +3,13 @@ import styled from 'styled-components'
 
 import { Modal as BaseModal } from '@/src/components/common/Modal'
 import AddressesWhiteList, {
+  addInitialAddressesWhiteListValues,
+} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import {
   AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
   AddressesWhiteListStep,
-  addInitialAddressesWhiteListValues,
-} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+} from '@/src/components/pools/whitelist/addresses/types'
 import NftWhiteList from '@/src/components/pools/whitelist/nft/NftWhiteList'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { Privacy } from '@/src/constants/pool'

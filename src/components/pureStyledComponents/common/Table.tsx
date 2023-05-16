@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { lighten } from 'polished'
+import { ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
 const loadingAnimation = keyframes`
@@ -82,9 +83,7 @@ export const TableRowCSS = css<RowProps>`
 
   ${({ hasHover }) => hasHover && RowHover}
 
-  &[href] {
-    ${RowHover}
-  }
+  ${RowHover}
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     padding-bottom: 10px;
@@ -108,28 +107,29 @@ export const Row = styled.div<RowProps>`
 `
 
 interface RowLinkProps extends RowProps {
+  children: ReactNode
   href: string
   withGradient?: boolean
 }
 
-export const RowLink: React.FC<RowLinkProps> = ({ children, href, withGradient, ...restProps }) => {
+export const StyledLink = styled(Link)`
+  text-decoration: none;
+`
+
+export const RowLink = ({ children, href, withGradient, ...restProps }: RowLinkProps) => {
   if (withGradient) {
     return (
       <GradientWrapper>
-        <Link href={href} passHref>
-          <Row as="a" {...restProps}>
-            {children}
-          </Row>
-        </Link>
+        <StyledLink href={href} passHref>
+          <Row {...restProps}>{children}</Row>
+        </StyledLink>
       </GradientWrapper>
     )
   }
   return (
-    <Link href={href} passHref>
-      <Row as="a" {...restProps}>
-        {children}
-      </Row>
-    </Link>
+    <StyledLink href={href} passHref>
+      <Row {...restProps}>{children}</Row>
+    </StyledLink>
   )
 }
 

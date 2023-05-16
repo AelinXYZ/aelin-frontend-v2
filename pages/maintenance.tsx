@@ -1,4 +1,3 @@
-import type { NextPage } from 'next'
 import Head from 'next/head'
 import styled from 'styled-components'
 
@@ -49,7 +48,7 @@ const SubTitle = styled.h3`
 const MAINTENANCE_MESSAGE_TITLE = env.NEXT_PUBLIC_MAINTENANCE_MESSAGE_TITLE
 const MAINTENANCE_MESSAGE_SUBTITLE = env.NEXT_PUBLIC_MAINTENANCE_MESSAGE_SUBTITLE
 
-const Maintenance: NextPage = () => {
+const Maintenance = () => {
   return (
     <>
       <Head>

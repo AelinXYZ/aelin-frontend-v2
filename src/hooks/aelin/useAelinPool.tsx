@@ -7,7 +7,7 @@ import { SWRConfiguration } from 'swr'
 
 import { PoolByIdQuery, PoolCreated, PoolStatus } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { PoolStages } from '@/src/constants/pool'
 import useAelinPoolAccess from '@/src/hooks/aelin/useAelinPoolAccess'
 import useGetMinimumPurchaseAmount from '@/src/hooks/aelin/useGetMinimumPurchaseAmount'
@@ -72,6 +72,7 @@ export type ParsedAelinPool = {
   minimumPurchaseAmount?: DetailedNumber
   totalVouchers: number
   vouchers: string[]
+  totalAmountEarnedByProtocol: DetailedNumber
   upfrontDeal?: {
     address: string
     name: string
@@ -80,7 +81,6 @@ export type ParsedAelinPool = {
       token: string
       symbol: string
       decimals: number
-      totalSupply: DetailedNumber
       dealAmount: DetailedNumber
       remaining: DetailedNumber
       totalRedeemed: DetailedNumber
@@ -104,7 +104,6 @@ export type ParsedAelinPool = {
       start: Date | null
     }
     holder: string
-    maxDealTotalSupply: DetailedNumber
     purchaseTokenPerDealToken: DetailedNumber
     purchaseRaiseMinimum: DetailedNumber
     allowDeallocation: boolean
@@ -228,6 +227,12 @@ export const getParsedPool = ({
       : undefined,
     totalVouchers: pool.totalVouchers,
     vouchers: pool.vouchers.map((addr) => getAddress(addr)),
+    totalAmountEarnedByProtocol: getDetailedNumber(
+      pool.totalAmountEarnedByProtocol,
+      pool.deal?.underlyingDealTokenDecimals ??
+        pool.upfrontDeal?.underlyingDealTokenDecimals ??
+        BASE_DECIMALS,
+    ),
   }
 
   const dealDetails = pool.deal
@@ -248,7 +253,7 @@ export const getParsedPool = ({
     dealDetails.purchaseTokenTotalForDeal,
     purchaseTokenDecimals,
     dealDetails.underlyingDealTokenTotal,
-    dealDetails.underlyingDealTokenDecimals,
+    dealDetails.underlyingDealTokenDecimals ?? BASE_DECIMALS,
   )
 
   res.deal = {
@@ -256,15 +261,15 @@ export const getParsedPool = ({
     symbol: dealDetails.symbol,
     underlyingToken: {
       token: dealDetails.underlyingDealToken,
-      symbol: dealDetails.underlyingDealTokenSymbol,
-      decimals: dealDetails.underlyingDealTokenDecimals,
+      symbol: dealDetails.underlyingDealTokenSymbol ?? '',
+      decimals: dealDetails.underlyingDealTokenDecimals ?? BASE_DECIMALS,
       dealAmount: getDetailedNumber(
         dealDetails.underlyingDealTokenTotal,
-        dealDetails.underlyingDealTokenDecimals,
+        dealDetails.underlyingDealTokenDecimals ?? BASE_DECIMALS,
       ),
       investmentAmount: getInvestmentDealToken(
         dealDetails.underlyingDealTokenTotal,
-        dealDetails.underlyingDealTokenDecimals,
+        dealDetails.underlyingDealTokenDecimals ?? BASE_DECIMALS,
         purchaseTokenDecimals,
         exchangeRates.dealPerInvestment,
       ),
@@ -285,7 +290,7 @@ export const getParsedPool = ({
     fundedAt: dealDetails.isDealFunded ? new Date(dealDetails.dealFundedAt * 1000) : null,
     unredeemed: getDetailedNumber(
       dealDetails.totalAmountUnredeemed || ZERO_BN,
-      dealDetails.underlyingDealTokenDecimals,
+      dealDetails.underlyingDealTokenDecimals ?? BASE_DECIMALS,
     ),
     totalUsersAccepted: dealDetails.totalUsersAccepted,
     totalUsersRejected: dealDetails.totalUsersRejected,
@@ -293,7 +298,7 @@ export const getParsedPool = ({
       res.redeem,
       exchangeRates.dealPerInvestment,
       purchaseTokenDecimals,
-      dealDetails.underlyingDealTokenDecimals,
+      dealDetails.underlyingDealTokenDecimals ?? BASE_DECIMALS,
     ),
   }
 
@@ -328,9 +333,11 @@ export default function useAelinPool(
 
   const pool = poolCreatedData.poolCreated as PoolCreated
   const purchaseTokenDecimals = pool.purchaseTokenDecimals
-  const minimumPurchaseAmount = minimumPurchaseAmounts[chainId]?.[pool.id]
+  const minimumPurchaseAmount = minimumPurchaseAmounts
+    ? // @ts-ignore: minimumPurchaseAmounts expect to receive a number
+      minimumPurchaseAmounts[chainId]?.[pool.id]
+    : null
 
-  // prevent TS error
   if (!purchaseTokenDecimals) {
     throw Error('PurchaseTokenDecimals is null or undefined for pool: ' + poolAddress)
   }

@@ -5,7 +5,7 @@ import { isAddress } from '@ethersproject/address'
 import { ParseResult } from 'papaparse'
 import { useCSVReader } from 'react-papaparse'
 
-import { AddressWhiteListProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { AddressWhiteListProps } from '@/src/components/pools/whitelist/addresses/types'
 import { ButtonPrimaryLightSm } from '@/src/components/pureStyledComponents/buttons/Button'
 
 export interface IUploadCSV {

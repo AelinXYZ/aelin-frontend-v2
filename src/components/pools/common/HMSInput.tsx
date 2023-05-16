@@ -39,13 +39,13 @@ enum durationTypes {
 const MAX_LENGTH = 6
 
 export const HMSInput = ({
-  defaultValue = { days: undefined, hours: undefined, minutes: undefined },
-  onChange,
-  inputNames = [durationTypes.days, durationTypes.hours, durationTypes.minutes],
   autofocusOnRender,
+  defaultValue = { days: undefined, hours: undefined, minutes: undefined },
   disabled = false,
   emptyCheckbox,
   emptyCheckboxLabel = 'No value',
+  inputNames = [durationTypes.days, durationTypes.hours, durationTypes.minutes],
+  onChange,
   ...restProps
 }: InputDeadlineProps) => {
   const [duration, setDuration] = useState(defaultValue)

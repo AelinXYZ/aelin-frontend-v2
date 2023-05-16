@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
+import { Substack } from '../assets/Substack'
 import { Discord } from '@/src/components/assets/Discord'
 import { Link as BaseLink } from '@/src/components/assets/Link'
 import { Medium } from '@/src/components/assets/Medium'
@@ -150,7 +151,8 @@ export const PageTitle: React.FC<{
       {(poolSocials?.twitterHandle ||
         poolSocials?.discordServerInvite ||
         poolSocials?.mirrorHashPost ||
-        poolSocials?.mediumPost) && (
+        poolSocials?.mediumPost ||
+        poolSocials?.substackPost) && (
         <Socials>
           {poolSocials?.twitterHandle && (
             <a
@@ -186,6 +188,11 @@ export const PageTitle: React.FC<{
               target="_blank"
             >
               <Medium />
+            </a>
+          )}
+          {poolSocials?.substackPost && (
+            <a href={poolSocials.substackPost} rel="noreferrer" target="_blank">
+              <Substack />
             </a>
           )}
         </Socials>

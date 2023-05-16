@@ -11,6 +11,13 @@ import { ModalButtonCSS } from '@/src/components/common/Modal'
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import UploadCSV from '@/src/components/pools/whitelist/addresses/UploadWhiteListCsv'
 import {
+  AddressWhiteListProps,
+  AddressesWhiteListAmountFormat,
+  AddressesWhiteListStatus,
+  AddressesWhiteListStep,
+  AddressesWhiteListStepInfo,
+} from '@/src/components/pools/whitelist/addresses/types'
+import {
   ButtonGradient,
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
@@ -111,17 +118,6 @@ const TotalAddressesValue = styled.div`
   letter-spacing: 0.35px;
 `
 
-export enum AddressesWhiteListStep {
-  format = 'format',
-  addresses = 'addresses',
-}
-
-interface AddressesWhiteListStepInfo {
-  order: number
-  title: string
-  id: AddressesWhiteListStep
-}
-
 export const addressesWhiteListStepsConfig: Record<
   AddressesWhiteListStep,
   AddressesWhiteListStepInfo
@@ -138,17 +134,6 @@ export const addressesWhiteListStepsConfig: Record<
   },
 }
 
-export enum AddressesWhiteListAmountFormat {
-  decimal = 'Decimal',
-  uint256 = 'uint256',
-}
-
-export interface AddressWhiteListProps {
-  index: number
-  address: string
-  amount: string | null
-}
-
 export const addInitialAddressesWhiteListValues = (list: AddressWhiteListProps[] = []) => {
   let index = list.length
 
@@ -157,14 +142,6 @@ export const addInitialAddressesWhiteListValues = (list: AddressWhiteListProps[]
     index++
     return newList
   })
-}
-
-enum AddressesWhiteListStatus {
-  invalidAddress,
-  duplicatedAddresses,
-  invalidAmount,
-  invalidDecimals,
-  valid,
 }
 
 const getError = (status: AddressesWhiteListStatus): ReactElement | null => {

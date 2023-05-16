@@ -1,7 +1,11 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
+import { isMobile } from 'react-device-detect'
+
 import { NetworkPlaceholder } from '../common/NetworkPlaceholder'
+import EthlizardsLogo from '@/public/resources/lizards/AelinXEthlizards.svg'
 import { ChevronDown } from '@/src/components/assets/ChevronDown'
 import { DarkMode } from '@/src/components/assets/DarkMode'
 import { Docs } from '@/src/components/assets/Docs'
@@ -67,7 +71,23 @@ const InnerContainer = styled(BaseInnerContainer)`
   }
 `
 
-const HomeLink = styled.a`
+const EthlizardWrapper = styled.div`
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  max-height: calc(var(--header-height) - 20px);
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    max-height: calc(var(--header-height) - 80px);
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    max-height: calc(var(--header-height) - 20px);
+  }
+`
+
+const HomeLink = styled.div`
+  display: flex;
   position: relative;
   transition: opacity 0.05s linear;
   z-index: 10;
@@ -230,7 +250,7 @@ const RedirectLink = styled.a`
 
 export const Header: React.FC = (props) => {
   const {
-    address = '',
+    address,
     appChainId,
     connectWallet,
     isWalletConnected,
@@ -242,6 +262,8 @@ export const Header: React.FC = (props) => {
   const wrongNetwork = isWalletConnected && !isWalletNetworkSupported
 
   const { currentThemeName, switchTheme } = useThemeContext()
+
+  const isLizardTheme = currentThemeName === ThemeType.ethlizards
 
   const networksDropdownItems = getChainsByEnvironmentArray().map((item, index) => (
     <DropdownItem
@@ -271,7 +293,24 @@ export const Header: React.FC = (props) => {
           <StartWrapper>
             <Link href="/" passHref>
               <HomeLink>
-                <Logo />
+                {!isLizardTheme ? (
+                  <Logo />
+                ) : (
+                  <EthlizardWrapper>
+                    <Image
+                      alt="Aelin x Ethlizard"
+                      priority
+                      src={EthlizardsLogo}
+                      {...(isMobile &&
+                        !isWalletConnected && {
+                          style: {
+                            width: '220px',
+                            marginLeft: '55px',
+                          },
+                        })}
+                    />
+                  </EthlizardWrapper>
+                )}
               </HomeLink>
             </Link>
           </StartWrapper>
@@ -305,7 +344,7 @@ export const Header: React.FC = (props) => {
                   dropdownButtonContent={
                     <DropdownButton>
                       <Metamask />
-                      {address && <Item>{shortenAddress(address)}</Item>}
+                      {isWalletConnected && address && <Item>{shortenAddress(address)}</Item>}
                       <ChevronDown />
                     </DropdownButton>
                   }

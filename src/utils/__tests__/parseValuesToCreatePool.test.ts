@@ -1,6 +1,6 @@
 import { parseUnits } from '@ethersproject/units'
 
-import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ZERO_BN } from '@/src/constants/misc'
 import { CreatePoolStateComplete } from '@/src/hooks/aelin/useAelinCreatePool'

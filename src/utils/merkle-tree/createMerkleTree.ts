@@ -5,7 +5,7 @@ import { getWhiteListAmount } from '../getWhiteListAmount'
 import {
   AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
-} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+} from '@/src/components/pools/whitelist/addresses/types'
 
 addEventListener(
   'message',

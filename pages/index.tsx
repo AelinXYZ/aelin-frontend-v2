@@ -8,7 +8,9 @@ import { ListWithFilters } from '@/src/components/pools/list/ListWithFilters'
 import { VouchedPools } from '@/src/components/pools/list/Vouched'
 import { ButtonType } from '@/src/components/pureStyledComponents/buttons/Button'
 import { SectionIntro as BaseSectionIntro } from '@/src/components/section/SectionIntro'
+import { ThemeType } from '@/src/constants/types'
 import useAelinUser from '@/src/hooks/aelin/useAelinUser'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
 const Container = styled.div`
@@ -34,6 +36,10 @@ const Home: NextPage = () => {
   const { address } = useWeb3Connection()
   const { data: userResponse } = useAelinUser(address)
 
+  const { currentThemeName } = useThemeContext()
+
+  const isLizardTheme = currentThemeName === ThemeType.ethlizards
+
   return (
     <>
       <Head>
@@ -42,8 +48,11 @@ const Home: NextPage = () => {
       <LeftSidebarLayout>
         <Container>
           <SectionIntro
-            backgroundImage="/resources/svg/bg-deals.svg"
+            backgroundImage={
+              isLizardTheme ? `/resources/lizards/violet-lizard.png` : `/resources/svg/bg-deals.svg`
+            }
             backgroundPosition="100% 110%"
+            backgroundSize={isLizardTheme ? '100px 85px' : 'auto auto'}
             button={[
               {
                 title: 'Create deal',
@@ -58,8 +67,11 @@ const Home: NextPage = () => {
             such as a defined vesting period and a vesting cliff.
           </SectionIntro>
           <SectionIntro
-            backgroundImage="/resources/svg/bg-pools.svg"
-            backgroundPosition="100% 120px"
+            backgroundImage={
+              isLizardTheme ? `/resources/lizards/green-lizard.png` : `/resources/svg/bg-pools.svg`
+            }
+            backgroundPosition={isLizardTheme ? '100% 100%' : '100% 120px'}
+            backgroundSize={isLizardTheme ? '100px 85px' : 'auto auto'}
             button={[
               {
                 title: 'Create pool',
@@ -76,7 +88,7 @@ const Home: NextPage = () => {
         </Container>
 
         <VouchedPools />
-        <ListWithFilters userPoolsInvested={userResponse?.poolsInvested} />
+        {!isLizardTheme && <ListWithFilters userPoolsInvested={userResponse?.poolsInvested} />}
       </LeftSidebarLayout>
     </>
   )

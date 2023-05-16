@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { noop } from 'lodash'
@@ -49,7 +49,7 @@ const initialState = {
 
 const StakingRewardsContext = createContext<StakingRewardsContextType>({} as any)
 
-const StakingRewardsContextProvider: React.FC = ({ children }) => {
+const StakingRewardsContextProvider = ({ children }: { children: ReactNode }) => {
   const { address, appChainId } = useWeb3Connection()
   const [data, setData] = useState<StakingRewardsContextType['data']>(initialState)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -111,6 +111,11 @@ const StakingRewardsContextProvider: React.FC = ({ children }) => {
       },
       [Chains.goerli]: () => {
         const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.goerli}`)
+
+        setError(error)
+      },
+      [Chains.sepolia]: () => {
+        const error = new Error(`Staking Rewards isn't available on Network Id = ${Chains.sepolia}`)
 
         setError(error)
       },

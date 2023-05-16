@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { isValidAddress } from 'ethereumjs-util'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { OrderDirection, User_OrderBy } from '@/graphql-schema'
@@ -327,7 +326,11 @@ const List: React.FC = () => {
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            router.push(activeTab === Section.SPONSORS ? `/?filter=${id}` : '#')
+                            router.push(
+                              activeTab === Section.SPONSORS
+                                ? `/?filter=${id}&chainId=${network}`
+                                : '#',
+                            )
                           }}
                         >
                           See more

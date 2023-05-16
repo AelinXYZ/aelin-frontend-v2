@@ -41,15 +41,15 @@ const Allowance = ({ allowance, symbol }: { allowance: string; symbol: string })
 )
 
 export default function Approve({
+  allowance,
+  approveAmt = MAX_BN,
   description,
-  symbol,
+  noEnoughBalance,
   refetchAllowance,
   spender,
+  symbol,
   title,
   tokenAddress,
-  approveAmt = MAX_BN,
-  allowance,
-  noEnoughBalance,
 }: Props) {
   const { address, appChainId, isAppConnected } = useWeb3Connection()
 

@@ -16,5 +16,4 @@ const Aelin = ({ ...restProps }) => {
     </CollapsibleBlock>
   )
 }
-
 export default Aelin

@@ -13,7 +13,7 @@ import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import {
   AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
-} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+} from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { contracts } from '@/src/constants/contracts'
@@ -36,7 +36,6 @@ import { storeFile } from '@/src/utils/web3storage'
 const VestinScheduleContainer = styled.div`
   display: flex;
   flex-direction: column;
-  white-space: nowrap;
 `
 
 export enum CreateUpFrontDealSteps {

@@ -1,12 +1,12 @@
 import { useEnsResolver } from '../../useEnsResolvers'
 import { ParsedAelinPool } from '../useAelinPool'
 import useAelinUser from '../useAelinUser'
-import useVoucherAddress from './useVoucherAddress'
 import env from '@/config/env'
 import { OrderDirection, PoolCreated_OrderBy } from '@/graphql-schema'
 import { Chains } from '@/src/constants/chains'
 import { ZERO_ADDRESS } from '@/src/constants/misc'
 import useHardCodedVouchedPools from '@/src/hooks/aelin/useAelinHardCodedVouchedPools'
+import useVoucherAddress from '@/src/hooks/aelin/vouched-pools/useVoucherAddress'
 import useIsMultisigOnMainnet from '@/src/hooks/useIsMultisigOnMainnet'
 
 export default function useAelinVouchedPools() {
