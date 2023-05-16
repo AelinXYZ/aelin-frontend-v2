@@ -30,7 +30,7 @@ import { getDuration, isEmptyDuration, secondsToDhm } from '@/src/utils/date'
 import { formatNumber } from '@/src/utils/formatNumber'
 import { parseValuesToCreateUpFrontDeal } from '@/src/utils/parseValuesToCreateUpFrontDeal'
 import { promisifyWorker } from '@/src/utils/promisifyWorker'
-import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
+import validateCreateUpfrontDeal, { dealErrors } from '@/src/utils/validate/createUpfrontDeal'
 import { storeFile } from '@/src/utils/web3storage'
 
 const VestinScheduleContainer = styled.div`
@@ -659,7 +659,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
   const isFirstStep = createDealState.currentStep === CreateUpFrontDealSteps.dealAttributes
 
   useEffect(() => {
-    setErrors(validateCreateDirectDeal(createDealState, chainId))
+    setErrors(validateCreateUpfrontDeal(createDealState, chainId))
   }, [createDealState, chainId])
 
   useEffect(() => {

@@ -29,7 +29,7 @@ export type dealErrors = {
   whitelist?: AddressWhiteListProps[]
 }
 
-const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => {
+const validateCreateUpfrontDeal = (values: dealErrors, chainId: ChainsValues) => {
   const errors: any = {}
 
   const currentNetwork = getNetworkConfig(chainId)
@@ -197,4 +197,4 @@ const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => 
   return errors
 }
 
-export default validateCreateDirectDeal
+export default validateCreateUpfrontDeal
