@@ -8,7 +8,7 @@ import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { DealType, NftCollectionRule, PoolCreated } from '@/graphql-schema'
+import { DealType, PoolCreated } from '@/graphql-schema'
 import {
   NftType,
   NftWhiteListState,
@@ -76,9 +76,7 @@ export function getDealDeadline(pool: PoolCreated): Date | null {
 }
 
 // returns the max amount a pool can raise from investors
-export function getPurchaseTokenCap<
-  P extends { purchaseTokenCap?: string; purchaseTokenDecimals?: number },
->(pool: P) {
+export function getPurchaseTokenCap(pool: PoolCreated) {
   return {
     raw: BigNumber.from(pool.purchaseTokenCap),
     formatted: formatToken(
@@ -130,10 +128,10 @@ export function getAmountRedeem(amount: BigNumber, purchaseTokenDecimals: number
   }
 }
 
-export function getDetailedNumber(amount: string, decimals: number) {
+export function getDetailedNumber(amount: string, valueScale: number, decimals = DISPLAY_DECIMALS) {
   return {
     raw: BigNumber.from(amount),
-    formatted: formatToken(amount, decimals),
+    formatted: formatToken(amount, valueScale, decimals),
   }
 }
 
@@ -424,7 +422,7 @@ export function getInvestmentDealToken(
 }
 
 export function parseNftCollectionRules(pool: PoolCreated): ParsedNftCollectionRules[] {
-  return (pool.nftCollectionRules as NftCollectionRule[]).map((collectionRule) => {
+  return (pool.nftCollectionRules ?? []).map((collectionRule) => {
     const purchaseAmountBN = new Wei(
       collectionRule.purchaseAmount,
       pool.purchaseTokenDecimals || BASE_DECIMALS,
@@ -534,7 +532,7 @@ export function parseUpfrontDeal(pool: PoolCreated) {
     name: upfrontDeal.name,
     symbol: upfrontDeal.symbol,
     holder: upfrontDeal.holder,
-    allowDeallocation: upfrontDeal.allowDeallocation,
+    allowDeallocation: upfrontDeal.allowDeallocation ?? false,
     underlyingToken: {
       token: upfrontDeal.underlyingDealToken,
       symbol: upfrontDeal.underlyingDealTokenSymbol,

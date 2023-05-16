@@ -326,7 +326,11 @@ const List: React.FC = () => {
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            router.push(activeTab === Section.SPONSORS ? `/?filter=${id}` : '#')
+                            router.push(
+                              activeTab === Section.SPONSORS
+                                ? `/?filter=${id}&chainId=${network}`
+                                : '#',
+                            )
                           }}
                         >
                           See more

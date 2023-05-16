@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { ProgressBar as BaseProgressBar } from '@/src/components/common/ProgressBar'
@@ -29,14 +30,15 @@ const Value = styled.div`
   text-transform: capitalize;
 `
 
-export const Deadline: React.FC<{ progress: string; width?: string }> = ({
-  children,
-  progress,
-  width,
-  ...restProps
-}) => {
+type DeadlineProps = {
+  progress: string
+  width?: string
+  children: ReactNode
+}
+
+export const Deadline = ({ children, progress, width }: DeadlineProps) => {
   return (
-    <Wrapper width={width} {...restProps}>
+    <Wrapper width={width}>
       <ProgressBar progress={progress} />
       <Value>{children}</Value>
     </Wrapper>

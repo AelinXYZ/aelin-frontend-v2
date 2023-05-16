@@ -96,6 +96,7 @@ module.exports = {
       { functions: false, classes: false, variables: true },
     ],
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off'
   },
   globals: {
     "React": "writable"

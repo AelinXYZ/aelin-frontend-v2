@@ -22,8 +22,8 @@ export type UserPoolBalance = {
   userAlreadyInvested: boolean
   userMaxDepositPrivateAmount: DetailedNumberExtended
   refetchBalances: () => void
-  userAllowance: DetailedNumberExtended
   investmentTokenBalance: DetailedNumberExtended
+  userAllowance: DetailedNumberExtended
   refetchUserAllowance: () => void
 }
 

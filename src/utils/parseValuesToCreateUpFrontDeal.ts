@@ -4,17 +4,17 @@ import { HashZero, MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { wei } from '@synthetixio/wei'
 
-import { NftType } from '../components/pools/whitelist/nft/nftWhiteListReducer'
-import { NftCollectionRulesProps } from '../hooks/aelin/useAelinCreatePool'
-import { getWhiteListAmount } from './getWhiteListAmount'
+import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ZERO_BN } from '@/src/constants/misc'
 import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
+import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
 import {
   CreateUpFrontDealStateComplete,
   CreateUpFrontDealValues,
 } from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
 import { getDuration } from '@/src/utils/date'
+import { getWhiteListAmount } from '@/src/utils/getWhiteListAmount'
 
 export const parseValuesToCreateUpFrontDeal = (
   createDealState: CreateUpFrontDealStateComplete,
@@ -99,8 +99,8 @@ export const parseValuesToCreateUpFrontDeal = (
       return accum
     }, [] as { address: string; amount: BigNumberish }[])
 
-    dealAddresses = formattedWhiteList.map(({ address }) => address)
-    dealAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
+    dealAddresses = formattedWhiteList.map(({ address }: { address: string }) => address)
+    dealAddressesAmounts = formattedWhiteList.map(({ amount }: { amount: BigNumberish }) => amount)
   }
 
   if (dealPrivacy === Privacy.NFT && createDealState[NftType.erc721]) {

@@ -1,4 +1,12 @@
-import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 
 import { Chains } from '@/src/constants/chains'
 import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
@@ -27,7 +35,7 @@ export type LayoutStatusContextType = {
 
 const LayoutStatusContext = createContext<LayoutStatusContextType>({} as LayoutStatusContextType)
 
-const LayoutStatusContextProvider: React.FC = ({ children }) => {
+const LayoutStatusContextProvider = ({ children }: { children: ReactNode }) => {
   const [activeMyPoolsFilter, setActiveMyPoolsFilter] = useState<MyPoolsFilter>(
     MyPoolsFilter.Invested,
   )

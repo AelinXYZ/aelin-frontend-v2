@@ -1,7 +1,8 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react'
 import styled from 'styled-components'
 
-import { AddressesWhiteListStep, addressesWhiteListStepsConfig } from './AddressesWhiteList'
+import { addressesWhiteListStepsConfig } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { AddressesWhiteListStep } from '@/src/components/pools/whitelist/addresses/types'
 import {
   ButtonNext,
   ButtonPrev,

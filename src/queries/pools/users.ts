@@ -23,6 +23,10 @@ export const USERS = gql`
       poolsInvestedAmt
       poolsVouchedAmt
       poolsAsHolderAmt
+      poolsSponsored {
+        id
+        name
+      }
       poolsSponsoredAmt
       dealsAcceptedAmt
       upfrontDealsAcceptedAmt

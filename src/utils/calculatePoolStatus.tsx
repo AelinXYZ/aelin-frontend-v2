@@ -1,7 +1,7 @@
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 
-import { DealType, Maybe, PoolCreated, PoolStatus, UpfrontDeal } from '@/graphql-schema'
+import { Maybe, PoolStatus, UpfrontDeal } from '@/graphql-schema'
 import { PoolStages } from '@/src/constants/pool'
 
 export function calculateStatus<

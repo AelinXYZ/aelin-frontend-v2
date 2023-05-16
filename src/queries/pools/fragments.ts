@@ -50,6 +50,9 @@ gql`
     }
 
     dealType
+    deal {
+      ...PoolDeal
+    }
     upfrontDeal {
       ...UpfrontDealDetails
     }

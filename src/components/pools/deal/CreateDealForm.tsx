@@ -13,6 +13,7 @@ import { RightTimelineLayout } from '@/src/components/layout/RightTimelineLayout
 import {
   ButtonWrapper,
   Description,
+  LinkWrapper,
   MobileButtonWrapper,
   PrevNextWrapper,
   StepContents,
@@ -174,7 +175,8 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
                         click next to proceed
                       </Error>
                     )}
-                  {currentStepError && typeof currentStepError === 'string' && (
+
+                  {currentStepError !== null && typeof currentStepError === 'string' && (
                     <Error textAlign="center">{currentStepError}</Error>
                   )}
                   <ButtonWrapper>
@@ -213,9 +215,11 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
             )
           })}
         </CardWithTitle>
-        <Link href={`/pool/${network}/${poolAddress}`} passHref>
-          <CancelButton as="a">Cancel</CancelButton>
-        </Link>
+        <LinkWrapper>
+          <Link href={`/pool/${network}/${poolAddress}`} passHref>
+            <CancelButton>Cancel</CancelButton>
+          </Link>
+        </LinkWrapper>
       </RightTimelineLayout>
       {showDealCalculationModal && (
         <DealCalculationModal

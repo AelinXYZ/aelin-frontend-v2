@@ -4,8 +4,8 @@ import { CurrencyKey } from '@synthetixio/contracts-interface'
 import Wei, { wei } from '@synthetixio/wei'
 
 import { Chains, ChainsValues } from '../constants/chains'
-import formatGwei from './formatGwei'
 import { BASE_DECIMALS, GWEI_UNIT, ZERO_BN } from '@/src/constants/misc'
+import formatGwei from '@/src/utils/formatGwei'
 import { Eip1559GasPrice, GasLimitEstimate, Rates } from '@/types/utils'
 
 export const iStandardSynth = (currencyKey: CurrencyKey) => currencyKey.startsWith('s')
@@ -97,6 +97,7 @@ export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber, appChainId: ChainsV
   switch (appChainId) {
     case Chains.mainnet:
     case Chains.goerli:
+    case Chains.sepolia:
       return {
         low: {
           maxFeePerGas: wei(baseFeePerGas, 9).mul(wei(1)).add(wei(1, 9)),

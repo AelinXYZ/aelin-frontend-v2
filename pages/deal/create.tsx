@@ -22,7 +22,7 @@ import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
 import {
   AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
-} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+} from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import {
   ButtonGradient,

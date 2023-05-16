@@ -1,3 +1,4 @@
+import { Fees } from '@/src/components/assets/Fees'
 import { History } from '@/src/components/assets/History'
 import { Pools } from '@/src/components/assets/Pools'
 import { Stake } from '@/src/components/assets/Stake'
@@ -29,5 +30,10 @@ export const sections = [
     href: '/history',
     icon: <History />,
     title: 'History',
+  },
+  {
+    href: '/fees',
+    icon: <Fees />,
+    title: 'Fees',
   },
 ]

@@ -1,6 +1,7 @@
 import Head from 'next/head'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import NoActions from './actions/NoActions'
@@ -11,6 +12,7 @@ import InvestorsModal from './common/InvestorsModal'
 import UpfrontDealInformation from './deal/UpfrontDealInformation'
 import NftCollectionsTable from './nftTable/NftCollectionsTable'
 import { NotificationType } from '@/graphql-schema'
+import Lizard from '@/public/resources/lizards/lizard-bottom-right-corner.png'
 import { ActionTabs } from '@/src/components/common/ActionTabs'
 import {
   CardWithTitle as BaseCardWithTitle,
@@ -33,12 +35,14 @@ import VestingInformation from '@/src/components/pools/deal/VestingInformation'
 import PoolInformation from '@/src/components/pools/main/PoolInformation'
 import { PageTitle } from '@/src/components/section/PageTitle'
 import { ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { ThemeType } from '@/src/constants/types'
 import { VerifiedPoolsSocials } from '@/src/constants/verifiedPoolsSocials'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import useAelinPoolStatus from '@/src/hooks/aelin/useAelinPoolStatus'
 import { useCheckVerifiedPool } from '@/src/hooks/aelin/useCheckVerifiedPool'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import NftSelectionProvider from '@/src/providers/nftSelectionProvider'
+import { useThemeContext } from '@/src/providers/themeContextProvider'
 import { getPoolType } from '@/src/utils/aelinPoolUtils'
 import { getExplorerUrl } from '@/src/utils/getExplorerUrl'
 import { DerivedStatus, Funding, PoolAction, PoolStatus, PoolTab } from '@/types/aelinPool'
@@ -61,7 +65,7 @@ const ContentGrid = styled.div`
   width: 100%;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    column-gap: 70px;
+    column-gap: 0;
   }
 `
 
@@ -79,6 +83,15 @@ const ActionsWrapper = styled.div`
   flex-direction: column;
 `
 
+const LizardWrapper = styled.div`
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  @media (max-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: none;
+  }
+`
+
 type Props = {
   chainId: ChainsValues
   poolAddress: string
@@ -88,6 +101,8 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   const {
     query: { notification },
   } = useRouter()
+
+  const { currentThemeName } = useThemeContext()
 
   const [showInvestorsModal, setShowInvestorsModal] = useState<boolean>(false)
 
@@ -103,6 +118,15 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
 
   const isVerified = useCheckVerifiedPool(pool)
 
+  // If the pool is in the vesting stage, we should hide the lizard because it overlaps with the timeline.
+  const shouldDisplayLizard = useMemo(
+    () =>
+      currentThemeName === ThemeType.ethlizards &&
+      !!pool.upfrontDeal &&
+      derivedStatus.current !== PoolStatus.Vesting,
+    [currentThemeName, derivedStatus, pool.upfrontDeal],
+  )
+
   const handleCloseInvestorsModal = () => setShowInvestorsModal(false)
   const handleOpenInvestorsModal = () => setShowInvestorsModal(true)
 
@@ -115,7 +139,7 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         href={getExplorerUrl(pool.address || '', pool.chainId)}
         isVerified={isVerified ?? false}
         network={chainsConfig[pool.chainId].icon}
-        poolSocials={isVerified ? VerifiedPoolsSocials[pool.address] : undefined}
+        poolSocials={VerifiedPoolsSocials[pool.address]}
         subTitle={pool.poolType || pool.hasNftList ? getPoolType(pool) + ' pool' : ''}
         title={pool.nameFormatted}
       />
@@ -176,6 +200,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
             <Vouch pool={pool} />
           </ActionsWrapper>
           {pool.hasNftList && <NftCollectionsTable pool={pool} />}
+          {shouldDisplayLizard && (
+            <LizardWrapper>
+              <Image alt="Lizard image" src={Lizard} />
+            </LizardWrapper>
+          )}
         </MainGrid>
         {showInvestorsModal && <InvestorsModal onClose={handleCloseInvestorsModal} pool={pool} />}
       </RightTimelineLayout>

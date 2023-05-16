@@ -1,4 +1,4 @@
-import { NftTokenType } from '@alch/alchemy-sdk'
+import { NftTokenType } from 'alchemy-sdk'
 
 import { NFTType } from '../hooks/aelin/useNftCollectionLists'
 

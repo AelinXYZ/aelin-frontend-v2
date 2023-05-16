@@ -1,11 +1,11 @@
 import { StandardMerkleTree } from '@openzeppelin/merkle-tree'
 import pako from 'pako'
 
-import { getWhiteListAmount } from '../getWhiteListAmount'
 import {
   AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
-} from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+} from '@/src/components/pools/whitelist/addresses/types'
+import { getWhiteListAmount } from '@/src/utils/getWhiteListAmount'
 
 addEventListener(
   'message',

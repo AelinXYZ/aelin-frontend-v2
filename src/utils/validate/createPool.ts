@@ -1,6 +1,6 @@
 import { isAddress } from '@ethersproject/address'
 
-import { AddressWhiteListProps } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
+import { AddressWhiteListProps } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { POOL_NAME_MAX_LENGTH } from '@/src/constants/misc'

@@ -53,6 +53,7 @@ const OPTIMISM_NFT_COLLECTIONS = '/data/nft-metadata/quixotic-metadata.json'
 const ARBITRUM_NFT_COLLECTIONS = '/data/nft-metadata/stratos-metadata.json'
 const POLYGON_NFT_COLLECTIONS = '/data/nft-metadata/open-sea-polygon-metadata.json'
 const GOERLI_NFT_COLLECTIONS = '/data/nft-metadata/goerli-metadata.json'
+const SEPOLIA_NFT_COLLECTIONS = '/data/nft-metadata/sepolia-metadata.json'
 
 const parseOpenSeaResponse = async (
   openSeaRes: Response,
@@ -73,18 +74,24 @@ const parseOpenSeaResponse = async (
 }
 
 const getParsedNFTCollectionData = async (collectionAddress: string, chainId: ChainsValues) => {
-  if (chainId === Chains.goerli) {
-    return Promise.resolve({})
-  }
-
   const url =
-    chainId === Chains.optimism || chainId === Chains.arbitrum || chainId === Chains.polygon
+    chainId === Chains.goerli ||
+    chainId === Chains.sepolia ||
+    chainId === Chains.optimism ||
+    chainId === Chains.arbitrum ||
+    chainId === Chains.polygon
       ? `/api/nft/${chainId}/${collectionAddress}`
       : `https://api.opensea.io/api/v1/asset_contract/${collectionAddress}?format=json`
 
   return fetch(url).then(async (res) => {
     if (res.status !== 200) return
-    if (chainId === Chains.optimism || chainId === Chains.arbitrum || chainId === Chains.polygon)
+    if (
+      chainId === Chains.goerli ||
+      chainId === Chains.sepolia ||
+      chainId === Chains.optimism ||
+      chainId === Chains.arbitrum ||
+      chainId === Chains.polygon
+    )
       return res.json()
     return { data: await parseOpenSeaResponse(res, chainId) }
   })
@@ -131,6 +138,7 @@ function useNftCollectionLists(
           appChainId === Chains.polygon && fetch(POLYGON_NFT_COLLECTIONS).then((r) => r.json()),
           // NFT for testing reasons
           appChainId === Chains.goerli && fetch(GOERLI_NFT_COLLECTIONS).then((r) => r.json()),
+          appChainId === Chains.sepolia && fetch(SEPOLIA_NFT_COLLECTIONS).then((r) => r.json()),
         ])
       )
         .filter(Boolean)

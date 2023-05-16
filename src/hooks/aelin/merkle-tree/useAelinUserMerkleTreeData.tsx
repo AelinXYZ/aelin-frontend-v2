@@ -5,9 +5,9 @@ import { wei } from '@synthetixio/wei'
 import isEmpty from 'lodash.isempty'
 import ms from 'ms'
 
-import { ParsedAelinPool } from '../useAelinPool'
-import useAelinUserRoles from '../useAelinUserRoles'
-import useMerkleTreeData from './useMerkleTreeData'
+import useMerkleTreeData from '@/src/hooks/aelin/merkle-tree/useMerkleTreeData'
+import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinUserRoles from '@/src/hooks/aelin/useAelinUserRoles'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { UserRole } from '@/types/aelinPool'
 

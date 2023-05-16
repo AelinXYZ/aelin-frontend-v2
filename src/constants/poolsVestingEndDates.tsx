@@ -1,7 +1,4 @@
 export const PoolsVestingEndDates: { [poolAddress: string]: Date } = {
-  ['0xabab6d9dd92645789d52fcb5c4988b7ab8d3e4ca']: new Date(0),
-  ['0x20369baa917bd1867bdafc24d72458ac777c9a2c']: new Date(0),
-  ['0xc7bbd38d1ae4a4aa4bf0d0e7b061b1bb858b0d09']: new Date(0),
   ['0x576c9fb6c46abb24530cea6b7eb51277196575ea']: new Date(1662658841 * 1000),
   ['0xe361ac500fc1d91d49e2c0204963f2cadbcaf67a']: new Date(1663286395 * 1000),
   ['0x21f4f88a95f656ef4ee1ea107569b3b38cf8daef']: new Date(Date.UTC(2023, 4, 14)),

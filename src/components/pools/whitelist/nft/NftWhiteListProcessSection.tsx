@@ -69,7 +69,7 @@ const getDescription = (active: NftWhitelistProcess): string => {
       return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens, regardless of the number of qualified NFTs held.'
     */
     case NftWhitelistProcess.limitedPerNft:
-      return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens, regarding of the number of qualified NFTs held.'
+      return 'Each wallet holding qualified NFTs can deposit a limited amount of Investment tokens for each NFT held.'
     case NftWhitelistProcess.minimumAmount:
       return 'Each wallet holding a qualified ERC-1155 can deposit a minimum amount of Investment tokens.'
     default:

@@ -20,7 +20,9 @@ type ToastComponentProps = {
 const ToastTypes = {
   [WAITING_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
     <ToastComponent
-      icon={<Image alt="Loading..." src={LoaderIcon} />}
+      icon={
+        <Image alt="Loading..." src={LoaderIcon} style={{ maxWidth: '100%', height: 'auto' }} />
+      }
       link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Etherscan' } : undefined}
       message={message ? message : undefined}
       t={t}

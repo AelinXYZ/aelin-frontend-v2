@@ -3,7 +3,6 @@ import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 
-import { AddressesWhiteListAmountFormat } from '../components/pools/whitelist/addresses/AddressesWhiteList'
 import { NftType } from '../components/pools/whitelist/nft/nftWhiteListReducer'
 import { NftCollectionRulesProps } from '../hooks/aelin/useAelinCreatePool'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -11,19 +10,7 @@ import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { CreatePoolStateComplete, CreatePoolValues } from '@/src/hooks/aelin/useAelinCreatePool'
 import { getDuration } from '@/src/utils/date'
-
-const getWhiteListAmount = (
-  amount: string,
-  whiteListAmountFormat: AddressesWhiteListAmountFormat,
-  investmentTokenDecimals: number,
-): string => {
-  switch (whiteListAmountFormat) {
-    case AddressesWhiteListAmountFormat.decimal:
-      return parseUnits(amount, investmentTokenDecimals).toString()
-    case AddressesWhiteListAmountFormat.uint256:
-      return String(amount)
-  }
-}
+import { getWhiteListAmount } from '@/src/utils/getWhiteListAmount'
 
 export const parseValuesToCreatePool = (
   createPoolState: CreatePoolStateComplete,
@@ -83,8 +70,8 @@ export const parseValuesToCreatePool = (
       return accum
     }, [] as { address: string; amount: BigNumberish }[])
 
-    poolAddresses = formattedWhiteList.map(({ address }) => address)
-    poolAddressesAmounts = formattedWhiteList.map(({ amount }) => amount)
+    poolAddresses = formattedWhiteList.map(({ address }: { address: string }) => address)
+    poolAddressesAmounts = formattedWhiteList.map(({ amount }: { amount: BigNumberish }) => amount)
   }
 
   if (poolPrivacy === Privacy.NFT && createPoolState[NftType.erc721]) {

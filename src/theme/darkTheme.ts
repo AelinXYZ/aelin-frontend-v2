@@ -26,6 +26,11 @@ const transparentWhite2 = 'rgba(255, 255, 255, 0.04)'
 const areaChartGradientEnd = '#232A37'
 
 export const darkTheme = {
+  body: {
+    backgroundImage: '/resources/svg/bg-main.svg',
+    backgroundRepeat: 'repeat',
+    backgroundSize: 'initial',
+  },
   modal: {
     overlayBackgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
@@ -229,5 +234,11 @@ export const darkTheme = {
     placeholder: {
       color: lightGray,
     },
+  },
+  voucherModal: {
+    backgroundColor: gray,
+  },
+  investorModal: {
+    backgroundColor: gray,
   },
 }
