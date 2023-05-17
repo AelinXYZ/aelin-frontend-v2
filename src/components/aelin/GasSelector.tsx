@@ -167,7 +167,7 @@ const GasSelector = ({
     }
   }, [customGasPrice, gasPriceL1, ethGasPriceDataL2, gasSpeed, isL2Chain])
 
-  const transactionFee = useMemo(
+  const transactionFeeInUSD = useMemo(
     () =>
       getTransactionPrice(
         gasPriceL1,
@@ -250,7 +250,7 @@ const GasSelector = ({
         />
       </div>
       &nbsp;
-      <DollarValue>(${transactionFee})</DollarValue>
+      <DollarValue>(${transactionFeeInUSD})</DollarValue>
       {!isL2Chain && (
         <Dropdown
           currentItem={GAS_SPEEDS.findIndex((speed) => speed === gasSpeed)}
