@@ -17,14 +17,15 @@ const useEthGasPrice = () => {
     appChainId ? ['network', 'gasPrice', appChainId] : null,
     async () => {
       try {
-        const block = await mainnetRpcProvider.getBlock('latest')
+        const l1Block = await mainnetRpcProvider.getBlock('latest')
         const l2Block = await readOnlyAppProvider.getBlock('latest')
         const l2GasPrice = l2Block?.baseFeePerGas
           ? getGasPriceEIP1559(l2Block.baseFeePerGas, appChainId)
           : await getGasPriceFromProvider(readOnlyAppProvider)
+
         return {
-          l1: block?.baseFeePerGas
-            ? getGasPriceEIP1559(block.baseFeePerGas, Chains.mainnet)
+          l1: l1Block?.baseFeePerGas
+            ? getGasPriceEIP1559(l1Block.baseFeePerGas, Chains.mainnet)
             : await getGasPriceFromProvider(mainnetRpcProvider),
           l2: isL2Chain ? l2GasPrice : undefined,
         }
