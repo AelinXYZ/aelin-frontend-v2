@@ -16,7 +16,7 @@ export function useWeb3Provider(wallet: WalletState | null, chainId: number | nu
     if (wallet?.provider) {
       if (chainId === Chains.optimism) {
         setWeb3Provider(optimismSDK.asL2Provider(new Web3Provider(wallet.provider)))
-      } else if ((chainId === Chains.zkSync || chainId) === Chains.zkSyncTestnet) {
+      } else if (chainId === Chains.zkSync || chainId === Chains.zkSyncTestnet) {
         setWeb3Provider(new ZkSyncWeb3Provider(wallet.provider))
       } else {
         setWeb3Provider(new Web3Provider(wallet.provider))
