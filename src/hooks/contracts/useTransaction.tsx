@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 
 import * as optimismSDK from '@eth-optimism/sdk'
-import { BigNumber } from '@ethersproject/bignumber'
 import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers'
 import { toast } from 'react-hot-toast'
@@ -116,7 +115,7 @@ export default function useTransaction<
           ? new ZkSyncContract(address, abi, signer)
           : (new Contract(address, abi, signer) as MyContract)
       try {
-        console.info('Calculating transaction gas.', appChainId)
+        console.info('Calculating transaction gas.')
         if (
           appChainId === Chains.optimism ||
           appChainId === Chains.zkSync ||
