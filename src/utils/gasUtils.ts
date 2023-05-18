@@ -31,7 +31,13 @@ export const getTransactionPrice = (
 ) => {
   if (!gasPrice || !gasLimit || !ethPrice || !maticPrice || !gasPriceL1) return null
 
-  if (isL2Chain && appChainId !== Chains.arbitrum && appChainId !== Chains.polygon) {
+  if (
+    isL2Chain &&
+    appChainId !== Chains.arbitrum &&
+    appChainId !== Chains.polygon &&
+    appChainId !== Chains.zkSyncTestnet &&
+    appChainId !== Chains.zkSync
+  ) {
     return (gasPrice as Wei)
       .mul(ethPrice)
       .mul(gasLimit.l2)
@@ -96,6 +102,8 @@ export const getGasPriceFromProvider = async (provider: JsonRpcProvider) => {
 export const getGasPriceEIP1559 = (baseFeePerGas: BigNumber, appChainId: ChainsValues) => {
   switch (appChainId) {
     case Chains.mainnet:
+    case Chains.zkSync:
+    case Chains.zkSyncTestnet:
     case Chains.goerli:
     case Chains.sepolia:
       return {

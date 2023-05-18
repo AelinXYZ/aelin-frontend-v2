@@ -7,6 +7,8 @@ export const getTokenProvider = (chainId: ChainsValues) => {
     [Chains.optimism]: env.NEXT_PUBLIC_OPTIMISM_TOKEN_PROVIDER as string,
     [Chains.arbitrum]: env.NEXT_PUBLIC_ARBITRUM_TOKEN_PROVIDER as string,
     [Chains.polygon]: env.NEXT_PUBLIC_POLYGON_TOKEN_PROVIDER as string,
+    [Chains.zkSync]: '',
+    [Chains.zkSyncTestnet]: '',
     [Chains.goerli]: env.NEXT_PUBLIC_GOERLI_TOKEN_PROVIDER as string,
     [Chains.sepolia]: env.NEXT_PUBLIC_SEPOLIA_TOKEN_PROVIDER as string,
   }

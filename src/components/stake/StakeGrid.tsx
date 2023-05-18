@@ -74,6 +74,8 @@ const StakeGrid = ({ ...restProps }) => {
       [Chains.sepolia]: [],
       [Chains.arbitrum]: [],
       [Chains.polygon]: [],
+      [Chains.zkSync]: [],
+      [Chains.zkSyncTestnet]: [],
     }),
     [appChainId],
   )

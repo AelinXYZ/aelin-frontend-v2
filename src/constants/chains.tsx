@@ -1,12 +1,13 @@
 import nullthrows from 'nullthrows'
 
-import { BASE_DECIMALS } from './misc'
 import env from '@/config/env'
 import { Arbitrum } from '@/src/components/assets/Arbitrum'
 import { Mainnet } from '@/src/components/assets/Mainnet'
 import { Optimism } from '@/src/components/assets/Optimism'
 import { Polygon } from '@/src/components/assets/Polygon'
+import { ZkSync } from '@/src/components/assets/ZkSync'
 import { NetworkPlaceholder } from '@/src/components/common/NetworkPlaceholder'
+import { BASE_DECIMALS } from '@/src/constants/misc'
 import isDev from '@/src/utils/isDev'
 import { ObjectValues } from '@/types/utils'
 
@@ -15,6 +16,8 @@ export const Chains = {
   goerli: 5,
   optimism: 10,
   polygon: 137,
+  zkSyncTestnet: 280,
+  zkSync: 324,
   arbitrum: 42161,
   sepolia: 11155111,
 } as const
@@ -180,6 +183,46 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
       decimals: BASE_DECIMALS,
     },
     buyAelinUrl: undefined,
+  },
+  [Chains.zkSyncTestnet]: {
+    name: 'zkSync Era Testnet',
+    shortName: 'zkSync Era Testnet',
+    chainId: Chains.zkSyncTestnet,
+    chainIdHex: toHex(Chains.zkSyncTestnet),
+    rpcUrl: 'https://testnet.era.zksync.dev',
+    defaultRpcUrl: 'https://testnet.era.zksync.dev',
+    blockExplorerUrls: ['https://goerli.explorer.zksync.io/'],
+    iconUrls: [],
+    isProd: false,
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: BASE_DECIMALS,
+    },
+    icon: <ZkSync />,
+    tokenListUrl: ['https://tokens.uniswap.org/'],
+    buyAelinUrl: undefined,
+    isL2: true,
+  },
+  [Chains.zkSync]: {
+    name: 'zkSync Era Mainnet',
+    shortName: 'zkSync Era',
+    chainId: Chains.zkSync,
+    chainIdHex: toHex(Chains.zkSync),
+    rpcUrl: 'https://zksync2-mainnet.zksync.io',
+    defaultRpcUrl: 'https://zksync2-mainnet.zksync.io',
+    blockExplorerUrls: ['https://explorer.zksync.io/'],
+    iconUrls: [],
+    isProd: true,
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: BASE_DECIMALS,
+    },
+    icon: <ZkSync />,
+    tokenListUrl: ['https://tokens.uniswap.org/'],
+    buyAelinUrl: undefined,
+    isL2: true,
   },
 }
 

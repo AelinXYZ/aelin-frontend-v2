@@ -11,7 +11,9 @@ const Aelin = ({ ...restProps }) => {
 
   return (
     <CollapsibleBlock name="aelin" title={'Aelin'} {...restProps}>
-      {appChainId !== Chains.arbitrum && appChainId !== Chains.polygon && <AelinData />}
+      {appChainId !== Chains.arbitrum &&
+        appChainId !== Chains.polygon &&
+        appChainId !== Chains.zkSync && <AelinData />}
       <BuyAelin />
     </CollapsibleBlock>
   )

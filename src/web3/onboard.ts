@@ -52,6 +52,18 @@ init({
       rpcUrl: chainsConfig[Chains.polygon].rpcUrl,
     },
     {
+      id: chainsConfig[Chains.zkSync].chainIdHex,
+      token: chainsConfig[Chains.zkSync].nativeCurrency.name,
+      label: chainsConfig[Chains.zkSync].name,
+      rpcUrl: chainsConfig[Chains.zkSync].rpcUrl,
+    },
+    {
+      id: chainsConfig[Chains.zkSyncTestnet].chainIdHex,
+      token: chainsConfig[Chains.zkSyncTestnet].nativeCurrency.name,
+      label: chainsConfig[Chains.zkSyncTestnet].name,
+      rpcUrl: chainsConfig[Chains.zkSyncTestnet].rpcUrl,
+    },
+    {
       id: chainsConfig[Chains.goerli].chainIdHex,
       token: chainsConfig[Chains.goerli].nativeCurrency.name,
       label: chainsConfig[Chains.goerli].name,

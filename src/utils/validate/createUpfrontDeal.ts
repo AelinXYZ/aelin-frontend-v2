@@ -94,16 +94,6 @@ const validateCreateUpfrontDeal = (values: dealErrors, chainId: ChainsValues) =>
     errors.dealToken = 'Invalid ethereum address'
   } else if (values.dealToken.address === values.investmentToken?.address) {
     errors.dealToken = 'The deal and investment token cannot be the same'
-  } else if (
-    // TODO: Remove these checks completely when new version of contracts will be deployed.
-    chainId !== Chains.goerli &&
-    chainId !== Chains.sepolia &&
-    chainId !== Chains.mainnet &&
-    values.investmentToken &&
-    values.dealToken.decimals < values.investmentToken.decimals
-  ) {
-    errors.dealToken =
-      'The number of decimals in the deal token must be equal or higher to the number of decimals in the investment token'
   }
 
   if (!values.dealPrivacy) {
