@@ -57,13 +57,13 @@ export default function useAelinAmountToVestUpfrontDeal(
 
   const [amountToVest, setAmountToVest] = useState<BigNumber>(ZERO_BN)
 
-  const method = isDealTokenTransferable ? 'claimableUnderlyingTokens' : 'claimableTokens'
+  const method = 'claimableUnderlyingTokens'
   const params = isDealTokenTransferable ? [tokenIds] : [address ?? ZERO_ADDRESS]
 
   const [claimableTokens] = useAelinUpfrontDealCall(
     chainId,
     upfrontDeal?.address as string,
-    'claimableUnderlyingTokens',
+    method,
     params as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
     isDealTokenTransferable,
     {
