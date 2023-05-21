@@ -98,7 +98,7 @@ function VestUpfrontDeal({ pool }: Props) {
   const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
 
   const hasRemainingTokens = hasClaimedAtLeastOnce
-    ? isBefore(lastClaim, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
+    ? isBefore(new Date(lastClaim * 1000), pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
     : amountToVest.gt(ZERO_BN)
 
   const userRoles = useAelinUserRoles(pool)
@@ -126,9 +126,10 @@ function VestUpfrontDeal({ pool }: Props) {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
         pool.isDealTokenTransferable
-          ? await claim([tokenIds] as Parameters<
-              AelinUpfrontDealCombined['functions'][typeof method]
-            >)
+          ? await claim(
+              [tokenIds] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+              txGasOptions,
+            )
           : await claim(
               [] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
               txGasOptions,
@@ -139,7 +140,9 @@ function VestUpfrontDeal({ pool }: Props) {
       },
       title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
       estimate: () =>
-        estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
+        pool.isDealTokenTransferable
+          ? estimate([tokenIds] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>)
+          : estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
     })
   }
 

@@ -37,6 +37,7 @@ export const Items = styled.div`
   padding: 0 0rem 0.9rem;
 
   overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior-inline: contain;
 
   scroll-snap-type: inline mandatory;
