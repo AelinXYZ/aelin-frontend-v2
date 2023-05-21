@@ -65,7 +65,7 @@ const MinimumInvestment = styled.span`
 
 const AllowanceWrapper = styled.div`
   color: ${({ theme }) => theme.colors.white};
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: 400;
   line-height: 1.5;
   text-align: left;
@@ -268,16 +268,18 @@ function DepositUpfrontDeal({ pool, poolHelpers }: Props) {
     <>
       {!!pool?.upfrontDeal && (
         <Contents>
-          By clicking "accept deal" you are agreeing to the negotiated exchange rate. <br />
+          By clicking "accept deal" you are agreeing to the negotiated exchange rate.
+          <br />
           {!poolHelpers.isCap && (
             <>
+              <br />
               If there is excess interest in the pool, all investors will be deallocated
-              proportionally
+              proportionally.
+              <br />
             </>
           )}
           {isMerklePool(pool) && (
             <>
-              <br />
               <br />
               You will only be allowed to <b>deposit once</b> for this deal. Any unused allocation
               will be forfeited.

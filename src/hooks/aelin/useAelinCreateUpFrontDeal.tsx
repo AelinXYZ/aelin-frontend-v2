@@ -557,7 +557,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
       worker.postMessage({
         action: 'start',
         whitelist: createDealState.whitelist,
-        investmentTokenDeciamal: createDealState.investmentToken?.decimals,
+        investmentTokenDecimal: createDealState.investmentToken?.decimals,
         whiteListAmountFormat: createDealState.whiteListAmountFormat,
       })
 
