@@ -115,8 +115,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
       symbol: 'ETH',
       decimals: BASE_DECIMALS,
     },
-    buyAelinUrl:
-      'https://app.velodrome.finance/liquidity/manage?address=0x3eec44e94ee86ce79f34bb26dc3cdbbee18d6d17',
+    buyAelinUrl: 'https://app.velodrome.finance/swap',
     isL2: true,
   },
   [Chains.arbitrum]: {
