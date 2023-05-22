@@ -116,7 +116,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
       decimals: BASE_DECIMALS,
     },
     buyAelinUrl:
-      'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism',
+      'https://app.velodrome.finance/liquidity/manage?address=0x3eec44e94ee86ce79f34bb26dc3cdbbee18d6d17',
     isL2: true,
   },
   [Chains.arbitrum]: {
