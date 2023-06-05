@@ -1,4 +1,3 @@
-import useVoucherAddress from './useVoucherAddress'
 import { useEnsResolver } from '../../useEnsResolvers'
 import { ParsedAelinPool } from '../useAelinPool'
 import useAelinUser from '../useAelinUser'
