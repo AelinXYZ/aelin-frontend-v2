@@ -11,6 +11,7 @@ gql`
     duration
     sponsorFee
     sponsor
+    sponsorClaimed
     purchaseDuration
     purchaseExpiry
     purchaseTokenDecimals

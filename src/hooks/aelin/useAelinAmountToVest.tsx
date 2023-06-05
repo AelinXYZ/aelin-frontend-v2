@@ -27,7 +27,7 @@ export const fetchAmountToVest = (
       dealAddress as string,
       AelinDealTransferABI,
       provider,
-      'claimableUnderlyingTokens',
+      'claimableUnderlyingTokensMultipleEntries',
       [tokenIds],
     )
   } else {
@@ -51,7 +51,9 @@ export default function useAelinAmountToVest(
 
   const [amountToVest, setAmountToVest] = useState<BigNumber>(ZERO_BN)
 
-  const method = isDealTokenTransferable ? 'claimableUnderlyingTokens' : 'claimableTokens'
+  const method = isDealTokenTransferable
+    ? 'claimableUnderlyingTokensMultipleEntries'
+    : 'claimableTokens'
   const params = isDealTokenTransferable ? [tokenIds] : [address ?? ZERO_ADDRESS]
 
   const [claimableTokens] = useAelinDealCall(

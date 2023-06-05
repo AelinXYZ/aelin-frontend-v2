@@ -6,6 +6,7 @@ import ms from 'ms'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import NothingToClaim from '@/src/components/pools/actions/Vest/NothingToClaim'
+import PoolIsSyncing from '@/src/components/pools/actions/Vest/PoolSyncing'
 import VestingCliff from '@/src/components/pools/actions/Vest/VestingCliff'
 import VestingCompleted from '@/src/components/pools/actions/Vest/VestingCompleted'
 import VestingPeriod from '@/src/components/pools/actions/Vest/VestingPeriod'
@@ -68,9 +69,9 @@ function Vest({ pool }: Props) {
   const now = new Date()
 
   const isVestingCliffEnded = isAfter(now, pool.deal?.vestingPeriod.cliff.end as Date)
-  const isVestindPeriodEnded = isAfter(now, pool.deal?.vestingPeriod.vesting.end as Date)
+  const isVestingPeriodEnded = isAfter(now, pool.deal?.vestingPeriod.vesting.end as Date)
 
-  const withinInterval = isVestingCliffEnded && !isVestindPeriodEnded
+  const withinInterval = isVestingCliffEnded && !isVestingPeriodEnded
 
   const [amountToVest, refetchAmountToVest] = useAelinAmountToVest(
     pool.isDealTokenTransferable,
@@ -139,13 +140,14 @@ function Vest({ pool }: Props) {
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
         />
       )}
-      {isVestingCliffEnded && isVestindPeriodEnded && !hasRemainingTokens && (
+      {isVestingCliffEnded && isVestingPeriodEnded && !hasRemainingTokens && (
         <VestingCompleted
           symbol={data?.vestingDeal?.tokenToVestSymbol}
           totalVested={totalVested}
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
         />
       )}
+      {!hasRemainingTokens && isVestingCliffEnded && !isVestingPeriodEnded && <PoolIsSyncing />}
     </>
   )
 }

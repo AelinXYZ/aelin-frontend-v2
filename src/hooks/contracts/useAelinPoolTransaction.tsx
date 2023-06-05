@@ -1,6 +1,6 @@
 import useTransaction from './useTransaction'
 import AelinPoolABI from '@/src/abis/AelinPool_v1.json'
-import { AelinPool } from '@/types/typechain'
+import { AelinPoolV1 as AelinPool } from '@/types/typechain'
 import { UseTransactionReturn } from '@/types/utils'
 
 export function useAelinPoolTransaction<
