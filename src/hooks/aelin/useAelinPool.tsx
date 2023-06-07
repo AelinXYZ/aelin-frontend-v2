@@ -55,6 +55,7 @@ export type ParsedAelinPool = {
   dealAddress: string | null
   sponsor: string
   sponsorFee: DetailedNumber
+  sponsorClaimed: boolean
   poolCap: DetailedNumber
   amountInPool: DetailedNumber
   funded: DetailedNumber
@@ -200,6 +201,7 @@ export const getParsedPool = ({
     sponsor: pool.sponsor,
     dealAddress: pool.dealAddress ? (pool.dealAddress as string) : null,
     sponsorFee: getSponsorFee(pool),
+    sponsorClaimed: pool.sponsorClaimed,
     poolCap: getPurchaseTokenCap({ ...pool, purchaseTokenDecimals }),
     purchaseExpiry: getPurchaseExpiry(pool),
     dealDeadline: getDealDeadline(pool),

@@ -121,7 +121,7 @@ const CreateDealForm = ({ chainId, poolAddress }: Props) => {
     }
   }, [createDealState.totalPurchaseAmount, pool.amountInPool.raw, pool.investmentTokenDecimals])
 
-  const currentUserIsSponsor = useMemo(() => userRole === UserRole.Sponsor, [userRole])
+  const currentUserIsSponsor = useMemo(() => userRole.includes(UserRole.Sponsor), [userRole])
 
   useEffect(() => {
     if (isOpenPeriodDisabled && createDealState.currentStep === CreateDealSteps.openPeriod) {

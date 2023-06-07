@@ -4,10 +4,10 @@ import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import ms from 'ms'
 
-import HasTokensToClaim from './HasTokensToClaim'
-import PoolIsSyncing from './PoolSyncing'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
+import HasTokensToClaim from '@/src/components/pools/actions/Vest/HasTokensToClaim'
 import NothingToClaim from '@/src/components/pools/actions/Vest/NothingToClaim'
+import PoolIsSyncing from '@/src/components/pools/actions/Vest/PoolSyncing'
 import VestingCliff from '@/src/components/pools/actions/Vest/VestingCliff'
 import VestingCompleted from '@/src/components/pools/actions/Vest/VestingCompleted'
 import VestingPeriod from '@/src/components/pools/actions/Vest/VestingPeriod'
@@ -98,7 +98,7 @@ function VestUpfrontDeal({ pool }: Props) {
   const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
 
   const hasRemainingTokens = hasClaimedAtLeastOnce
-    ? isBefore(lastClaim, pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
+    ? isBefore(new Date(lastClaim * 1000), pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
     : amountToVest.gt(ZERO_BN)
 
   const userRoles = useAelinUserRoles(pool)
@@ -126,9 +126,10 @@ function VestUpfrontDeal({ pool }: Props) {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
         pool.isDealTokenTransferable
-          ? await claim([tokenIds] as Parameters<
-              AelinUpfrontDealCombined['functions'][typeof method]
-            >)
+          ? await claim(
+              [tokenIds] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+              txGasOptions,
+            )
           : await claim(
               [] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
               txGasOptions,
@@ -139,7 +140,9 @@ function VestUpfrontDeal({ pool }: Props) {
       },
       title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
       estimate: () =>
-        estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
+        pool.isDealTokenTransferable
+          ? estimate([tokenIds] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>)
+          : estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
     })
   }
 

@@ -38,7 +38,7 @@ export async function fetcherVestingDeals(variables: VestingDealsQueryVariables)
       allSDK[chainId][VESTING_DEALS_QUERY_NAME](variables)
         .then((res) =>
           Promise.all(
-            res.vestingDeals.map(async (vestingDeal) => ({
+            res.vestingDeals.map((vestingDeal) => ({
               poolName: parsePoolName(vestingDeal.poolName),
               tokenSymbol: vestingDeal.tokenToVestSymbol,
               totalAmount: vestingDeal.investorDealTotal,

@@ -328,6 +328,25 @@
       {
         "indexed": true,
         "internalType": "address",
+        "name": "sponsor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sponsorFeeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SponsorClaim",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
         "name": "from",
         "type": "address"
       },

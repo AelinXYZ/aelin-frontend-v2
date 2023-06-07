@@ -37,6 +37,7 @@ export enum PoolAction {
   AcceptDeal = 'Accept Deal',
   Withdraw = 'Withdraw',
   Vest = 'Vest',
+  SponsorClaim = 'Sponsor Claim',
   WithdrawUnredeemed = 'Withdraw Unredeemed',
   //UpfrontDeal
   DealInvest = 'Purchase Deal Tokens',

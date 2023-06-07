@@ -25,6 +25,7 @@ import FundDeal from '@/src/components/pools/actions/FundDeal'
 import Invest from '@/src/components/pools/actions/Invest/Invest'
 import InvestUpfrontDeal from '@/src/components/pools/actions/Invest/InvestUpfrontDeal'
 import ReleaseFunds from '@/src/components/pools/actions/ReleaseFunds'
+import SponsorClaim from '@/src/components/pools/actions/SponsorClaim'
 import Vest from '@/src/components/pools/actions/Vest/Vest'
 import WaitingForDeal from '@/src/components/pools/actions/WaitingForDeal'
 import WithdrawUnredeemed from '@/src/components/pools/actions/WithdrawUnredeemed'
@@ -237,6 +238,7 @@ function RegularPoolsActionTabs({ activeTab, derivedStatus, funding, pool }: Dea
       {activeTab === PoolAction.FundDeal && <FundDeal pool={pool} />}
       {activeTab === PoolAction.Vest && <Vest pool={pool} />}
       {activeTab === PoolAction.WithdrawUnredeemed && <WithdrawUnredeemed pool={pool} />}
+      {activeTab === PoolAction.SponsorClaim && <SponsorClaim pool={pool} />}
     </>
   )
 }
