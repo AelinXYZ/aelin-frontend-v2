@@ -24,7 +24,7 @@ import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/But
 import { ButtonDropdown as BaseButtonDropdown } from '@/src/components/pureStyledComponents/buttons/Button'
 import { BaseCardCSS } from '@/src/components/pureStyledComponents/common/BaseCard'
 import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
-import { getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
+import { Chains, getChainsByEnvironmentArray, getNetworkConfig } from '@/src/constants/chains'
 import { AELIN_APP_DEV_URL } from '@/src/constants/misc'
 import { ThemeType } from '@/src/constants/types'
 import { useThemeContext } from '@/src/providers/themeContextProvider'
@@ -382,7 +382,7 @@ export const Header: React.FC = (props) => {
                 </DropdownItem>,
                 <DropdownItem
                   as="a"
-                  href="https://app.uniswap.org/#/swap?outputCurrency=0xa9c125bf4c8bb26f299c00969532b66732b1f758&inputCurrency=ETH&chain=mainnet"
+                  href={getNetworkConfig(Chains.mainnet).buyAelinUrl}
                   key={'external_links_2'}
                   target="_blank"
                 >
@@ -391,7 +391,7 @@ export const Header: React.FC = (props) => {
                 </DropdownItem>,
                 <DropdownItem
                   as="a"
-                  href="https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism"
+                  href={getNetworkConfig(Chains.optimism).buyAelinUrl}
                   key={'external_links_3'}
                   target="_blank"
                 >
