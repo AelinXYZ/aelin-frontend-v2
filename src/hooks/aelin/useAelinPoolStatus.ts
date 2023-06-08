@@ -407,7 +407,12 @@ function useUserActions(
     }
 
     if (currentStatus === PoolStatus.Vesting) {
-      if (isSponsor && pool.isDealTokenTransferable && !pool.sponsorClaimed) {
+      if (
+        isSponsor &&
+        pool.isDealTokenTransferable &&
+        !pool.sponsorClaimed &&
+        pool.sponsorFee.raw.gt(ZERO_BN)
+      ) {
         return [PoolAction.SponsorClaim]
       } else {
         return userPoolBalance.gt(ZERO_BN)
