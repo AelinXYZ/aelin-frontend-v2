@@ -382,7 +382,21 @@ function useUserActions(
       }
 
       // Accept deal. For investors
+
+      // Round 1
       if (
+        pool.deal.redemption?.stage === 1 &&
+        userPoolBalance.gt(ZERO_BN) &&
+        pool.deal.redemption &&
+        isBefore(now, pool.deal.redemption?.end)
+      ) {
+        actions.push(PoolAction.AcceptDeal)
+      }
+
+      // Round 2
+      if (
+        pool.deal.redemption?.stage === 2 &&
+        userAllocationStats.isRoundOneMaxAccepted &&
         userPoolBalance.gt(ZERO_BN) &&
         pool.deal.redemption &&
         isBefore(now, pool.deal.redemption?.end)
@@ -422,7 +436,22 @@ function useUserActions(
     }
 
     return []
-  }, [isConnected, userRole, currentStatus, pool, walletAddress, userAllocationStats.raw])
+  }, [
+    userRole,
+    userAllocationStats.raw,
+    userAllocationStats.isRoundOneMaxAccepted,
+    pool.upfrontDeal,
+    pool.dealAddress,
+    pool.dealDeadline,
+    pool.deal,
+    pool.dealsCreated,
+    pool.isDealTokenTransferable,
+    pool.sponsorClaimed,
+    pool.sponsorFee.raw,
+    currentStatus,
+    isConnected,
+    walletAddress,
+  ])
 }
 
 function useUserTabs(

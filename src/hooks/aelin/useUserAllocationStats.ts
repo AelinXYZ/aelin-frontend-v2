@@ -27,6 +27,7 @@ export function useUserAllocationStats(
           )
         : '0',
       totalWithdrawn: data?.userAllocationStat?.totalWithdrawn || ZERO_BN,
+      isRoundOneMaxAccepted: data?.userAllocationStat?.isRoundOneMaxAccepted || false,
     },
     refetch: mutate,
   }
