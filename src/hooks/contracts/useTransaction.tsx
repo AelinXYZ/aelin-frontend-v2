@@ -52,7 +52,7 @@ export default function useTransaction<
         toast.dismiss()
 
         const error = new TransactionError(
-          e.reason || 'Unable to decode revert reason',
+          e.reason || e.data?.message || e.message || 'Unable to decode revert reason',
           e.data?.code || e.code,
           e.data,
         )
@@ -79,7 +79,7 @@ export default function useTransaction<
         toast.dismiss()
 
         const error = new TransactionError(
-          e.reason || 'Unable to decode revert reason',
+          e.reason || e.data?.message || e.message || 'Unable to decode revert reason',
           e.data?.code || e.code,
           e.data,
         )
