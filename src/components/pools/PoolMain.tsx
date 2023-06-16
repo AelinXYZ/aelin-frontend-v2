@@ -76,6 +76,8 @@ const CardWithTitle = styled(BaseCardWithTitle)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     order: 0;
   }
+
+  padding-bottom: 20px;
 `
 
 const ActionsWrapper = styled.div`
