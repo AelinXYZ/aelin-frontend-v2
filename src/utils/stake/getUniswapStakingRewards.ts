@@ -70,9 +70,11 @@ export const getUniswapStakingRewards = async ({
     const aelinRate = rates.aelin.usd
     const ethRate = rates.ethereum.usd
 
+    /*
     const uniswapData: UniswapResponse = await getUniswapPoolAmount()
     const aelinInPool = uniswapData.pair.reserve0
     const ethInPool = uniswapData.pair.reserve1
+    
 
     const uniV2TotalSupplyInWei = new Wei(BigNumber.from(uniV2TotalSupply), BASE_DECIMALS)
     const totalStakedBalanceInWei = new Wei(BigNumber.from(totalStakedBalance), BASE_DECIMALS)
@@ -85,6 +87,7 @@ export const getUniswapStakingRewards = async ({
 
     const uniV2ValueInContract = totalStakedBalanceInWei.toNumber() * uniV2Price
     const rewardsValuePerYear = rewardForDurationInWei.toNumber() * yearProRata * aelinRate
+    */
 
     return {
       decimals: decimals || BASE_DECIMALS,
@@ -92,9 +95,10 @@ export const getUniswapStakingRewards = async ({
       userRewards: userRewards || ZERO_BN,
       userStake: userStake || ZERO_BN,
       tokenBalance: tokenBalance || ZERO_BN,
-      ethInPool,
-      aelinInPool,
-      APY: (100 * rewardsValuePerYear) / uniV2ValueInContract,
+      // Temp fix til uniswap v2 subgraph work
+      ethInPool: '0',
+      aelinInPool: '0',
+      APY: 0, // (100 * rewardsValuePerYear) / uniV2ValueInContract,
     }
   } catch (error) {
     console.error('error: ', error)
