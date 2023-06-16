@@ -8,6 +8,8 @@ export const WrapperGrid = styled.div`
     display: grid;
     grid-template-columns: 30px 1fr 30px;
   }
+
+  padding: 0px 20px 20px 20px;
 `
 
 export const StepContents = styled.div`
