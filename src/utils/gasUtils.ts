@@ -21,66 +21,32 @@ export const getExchangeRatesForCurrencies = (
 const GAS_LIMIT_BUFFER_MULTIPLIER = 20
 
 export const getTransactionPrice = (
-  gasPriceL1: Eip1559GasPrice | Wei | null,
   gasPrice: Eip1559GasPrice | Wei | null,
-  appChainId: ChainsValues,
-  isL2Chain: boolean | undefined,
-  gasLimit: GasLimitEstimate,
-  ethPrice: Wei | undefined,
-  maticPrice: Wei | undefined,
+  gasEstimate: GasLimitEstimate,
+  gasCurrencyPrice: Wei | undefined,
 ) => {
-  if (!gasPrice || !gasLimit || !ethPrice || !maticPrice || !gasPriceL1) return null
-
-  if (isL2Chain && appChainId !== Chains.arbitrum && appChainId !== Chains.polygon) {
-    return (gasPrice as Wei)
-      .mul(ethPrice)
-      .mul(gasLimit.l2)
-      .div(GWEI_UNIT)
-      .add((gasPriceL1 as Wei).mul(ethPrice).mul(gasLimit.l1).div(GWEI_UNIT))
-      .toNumber()
-      .toFixed(4)
-  }
+  if (!gasPrice || !gasEstimate || !gasCurrencyPrice) return null
 
   if (gasPrice instanceof Wei) {
     return gasPrice
-      .mul(appChainId === Chains.polygon ? maticPrice : ethPrice)
-      .mul(gasLimit.l1)
+      .mul(gasCurrencyPrice)
+      .mul(gasEstimate.gasLimit)
       .div(GWEI_UNIT)
       .toNumber()
       .toFixed(4)
   }
+  const totalGasPrice = gasPrice.maxFeePerGas.add(gasPrice.maxPriorityFeePerGas)
+  const gasPriceCost = totalGasPrice.mul(gasCurrencyPrice).mul(gasEstimate.gasLimit).div(GWEI_UNIT)
+  const l1Cost = gasCurrencyPrice.mul(gasEstimate.l1Fee || 0)
 
-  return gasPrice.maxFeePerGas
-    .add(gasPrice.maxPriorityFeePerGas)
-    .mul(appChainId === Chains.polygon ? maticPrice : ethPrice)
-    .mul(gasLimit.l1)
-    .div(GWEI_UNIT)
-    .toNumber()
-    .toFixed(4)
+  return gasPriceCost.add(l1Cost).toNumber().toFixed(4)
 }
 
 export const MIN_GAS_ESTIMATE = wei(21000, BASE_DECIMALS)
 
-export const getGasEstimateWithBuffer = (gasEstimate: GasLimitEstimate) => {
-  if (!gasEstimate) return undefined
-
-  const { l1: gasEstimateL1, l2: gasEstimateL2 } = gasEstimate
-  const estimateWithBufferL1 = gasEstimateL1.add(
-    gasEstimateL1.mul(wei(GAS_LIMIT_BUFFER_MULTIPLIER, 0)).div(100),
-  )
-
-  const estimateWithBufferL2 = gasEstimateL2?.add(
-    gasEstimateL2?.mul(wei(GAS_LIMIT_BUFFER_MULTIPLIER, 0)).div(100),
-  )
-
-  const gasEstimateL1Buffer = estimateWithBufferL1.gt(MIN_GAS_ESTIMATE)
-    ? estimateWithBufferL1.toBN()
-    : undefined
-  const gasEstimateL2Buffer = estimateWithBufferL2?.gt(MIN_GAS_ESTIMATE)
-    ? estimateWithBufferL2.toBN()
-    : undefined
-
-  return gasEstimateL1Buffer ? gasEstimateL1Buffer.add(gasEstimateL2Buffer ?? ZERO_BN) : undefined
+export const getGasEstimateWithBuffer = (gasLimit: Wei) => {
+  if (!gasLimit) return undefined
+  return gasLimit?.add(gasLimit?.mul(wei(GAS_LIMIT_BUFFER_MULTIPLIER, 0)).div(100)).toBN() ?? null
 }
 
 export const getGasPriceFromProvider = async (provider: JsonRpcProvider) => {

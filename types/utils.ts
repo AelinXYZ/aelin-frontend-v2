@@ -17,8 +17,8 @@ export type DetailedNumber = {
   formatted: string | undefined
 }
 export type GasLimitEstimate = {
-  l1: Wei
-  l2?: Wei
+  gasLimit: Wei
+  l1Fee?: Wei
 } | null
 
 export type GasPrices = {

@@ -20,7 +20,7 @@ const Alert = styled(ModalText)`
 
 export type ModalTransactionProps = {
   disableButton: boolean
-  gasLimitEstimate: GasLimitEstimate
+  gasEstimate: GasLimitEstimate
   onSubmit: () => void
   setGasPrice: (gasPrice: Wei | Eip1559GasPrice) => void
   onClose: () => void
@@ -32,7 +32,7 @@ export type ModalTransactionProps = {
 const ConfirmTransactionModal = ({
   alert,
   disableButton,
-  gasLimitEstimate,
+  gasEstimate,
   onClose,
   onSubmit,
   setGasPrice,
@@ -47,11 +47,7 @@ const ConfirmTransactionModal = ({
       <ModalText>{title}</ModalText>
       {!!subTitle && <ModalText>{subTitle}</ModalText>}
       <ModalLine />
-      <GasSelector
-        gasLimitEstimate={gasLimitEstimate}
-        onChange={setGasPrice}
-        setLoadingGas={setLoadingGas}
-      />
+      <GasSelector gasEstimate={gasEstimate} onChange={setGasPrice} setLoadingGas={setLoadingGas} />
       {!!alert && <Alert>{alert}</Alert>}
       <Button disabled={disableButton || loadingGas} onClick={onSubmit}>
         Submit

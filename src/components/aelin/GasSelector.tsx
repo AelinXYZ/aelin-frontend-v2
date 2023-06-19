@@ -12,7 +12,7 @@ import { ButtonPrimaryLight } from '@/src/components/pureStyledComponents/button
 import { chainsConfig } from '@/src/constants/chains'
 import { DEBOUNCED_INPUT_TIME, GWEI_PRECISION } from '@/src/constants/misc'
 import useEthGasPrice, { GAS_SPEEDS, useEthGasPriceLegacy } from '@/src/hooks/useGasPrice'
-import useGasPriceUnitInUSD, { GasPriceUnit } from '@/src/hooks/useGasPriceUnitInUSD'
+import useGasPriceUnitInUSD from '@/src/hooks/useGasPriceUnitInUSD'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getTransactionPrice } from '@/src/utils/gasUtils'
 import { Eip1559GasPrice, GasLimitEstimate, GasSpeed } from '@/types/utils'
@@ -20,6 +20,7 @@ import { Eip1559GasPrice, GasLimitEstimate, GasSpeed } from '@/types/utils'
 const Wrapper = styled.div`
   align-items: center;
   display: flex;
+  flex-direction: column;
 `
 
 const Text = styled.span`
@@ -41,7 +42,6 @@ const GasInput = styled.input`
   padding: 0;
   outline: none;
   text-align: right;
-  width: 50px;
 
   &[readonly] {
     cursor: default;
@@ -89,21 +89,20 @@ const EditButton = styled(ButtonPrimaryLight)`
 `
 
 const GasSelector = ({
-  gasLimitEstimate,
+  gasEstimate,
   initialGasSpeed = 'market',
   onChange,
   setLoadingGas,
   ...restProps
 }: {
-  gasLimitEstimate: GasLimitEstimate
+  gasEstimate: GasLimitEstimate
   initialGasSpeed?: GasSpeed
   onChange: (value: Wei | Eip1559GasPrice) => void
   setLoadingGas: (value: boolean) => void
 }) => {
   const { data: ethGasPriceData, isValidating } = useEthGasPrice()
   const { data: ethGasPriceDataLegacy, isValidating: isValidatingLegacy } = useEthGasPriceLegacy()
-  const { data: ethPriceInUSD } = useGasPriceUnitInUSD(GasPriceUnit.eth)
-  const { data: maticPriceInUSD } = useGasPriceUnitInUSD(GasPriceUnit.matic)
+  const { data: gasCurrencyPrice } = useGasPriceUnitInUSD()
 
   const { appChainId } = useWeb3Connection()
 
@@ -168,17 +167,8 @@ const GasSelector = ({
   }, [customGasPrice, gasPriceL1, ethGasPriceDataL2, gasSpeed, isL2Chain])
 
   const transactionFeeInUSD = useMemo(
-    () =>
-      getTransactionPrice(
-        gasPriceL1,
-        gasPrice,
-        appChainId,
-        isL2Chain,
-        gasLimitEstimate,
-        ethPriceInUSD,
-        maticPriceInUSD,
-      ) ?? 0,
-    [gasPrice, gasPriceL1, gasLimitEstimate, ethPriceInUSD, maticPriceInUSD, isL2Chain, appChainId],
+    () => getTransactionPrice(gasPrice, gasEstimate, gasCurrencyPrice) ?? 0,
+    [gasPrice, gasEstimate, gasCurrencyPrice],
   )
 
   const formattedGasPrice = useMemo(() => {
@@ -196,8 +186,8 @@ const GasSelector = ({
     const nCustomGasPrice = Number(customGasPrice)
 
     if (!nCustomGasPrice) {
-      if (!Number.isInteger(nGasPrice)) return nGasPrice.toFixed(3)
-      return nGasPrice
+      if (nGasPrice >= 1) return nGasPrice.toFixed(3)
+      return nGasPrice.toFixed(8)
     }
 
     if (!Number.isInteger(nCustomGasPrice)) return nCustomGasPrice.toFixed(3)
@@ -229,8 +219,8 @@ const GasSelector = ({
 
   return (
     <Wrapper {...restProps}>
-      <div>
-        <Text>Gas Price (GWEI):</Text>&nbsp;
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Text>Max Fee:</Text>&nbsp;
         <GasInput
           onBlur={() => {
             setIsEditing(false)
@@ -248,34 +238,36 @@ const GasSelector = ({
           type="number"
           value={isEditing ? customGasPrice : formattedGasPrice}
         />
+        {!isL2Chain && (
+          <Dropdown
+            currentItem={GAS_SPEEDS.findIndex((speed) => speed === gasSpeed)}
+            dropdownButtonContent={
+              <ButtonDropdown>
+                <ChevronDown />
+              </ButtonDropdown>
+            }
+            dropdownPosition={DropdownPosition.right}
+            items={GAS_SPEEDS.map((gasSpeed) => (
+              <DropdownItem
+                key={gasSpeed}
+                onClick={() => {
+                  setCustomGasPrice('')
+                  setIsEditing(false)
+                  setGasSpeed(gasSpeed)
+                }}
+              >
+                {`${gasSpeed[0].toUpperCase()}${gasSpeed.slice(1)}`}:{' '}
+                {renderGasPrices(gasPrices?.[gasSpeed])}
+              </DropdownItem>
+            ))}
+          />
+        )}
+        {!isL2Chain && <EditButton onClick={onEdit}>Edit</EditButton>}
       </div>
-      &nbsp;
-      <DollarValue>(${transactionFeeInUSD})</DollarValue>
-      {!isL2Chain && (
-        <Dropdown
-          currentItem={GAS_SPEEDS.findIndex((speed) => speed === gasSpeed)}
-          dropdownButtonContent={
-            <ButtonDropdown>
-              <ChevronDown />
-            </ButtonDropdown>
-          }
-          dropdownPosition={DropdownPosition.right}
-          items={GAS_SPEEDS.map((gasSpeed) => (
-            <DropdownItem
-              key={gasSpeed}
-              onClick={() => {
-                setCustomGasPrice('')
-                setIsEditing(false)
-                setGasSpeed(gasSpeed)
-              }}
-            >
-              {`${gasSpeed[0].toUpperCase()}${gasSpeed.slice(1)}`}:{' '}
-              {renderGasPrices(gasPrices?.[gasSpeed])}
-            </DropdownItem>
-          ))}
-        />
-      )}
-      {!isL2Chain && <EditButton onClick={onEdit}>Edit</EditButton>}
+      <div style={{ marginTop: '5px' }}>
+        <Text>Price:</Text>&nbsp;
+        <DollarValue>${transactionFeeInUSD}</DollarValue>
+      </div>
     </Wrapper>
   )
 }

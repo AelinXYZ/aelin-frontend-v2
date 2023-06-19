@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 
-import * as optimismSDK from '@eth-optimism/sdk'
 import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
-import { Web3Provider } from '@ethersproject/providers'
+import { serialize } from '@ethersproject/transactions'
+import { wei } from '@synthetixio/wei'
 import { toast } from 'react-hot-toast'
 
 import { notify } from '@/src/components/toast/Toast'
@@ -11,6 +11,9 @@ import { Chains } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { TransactionError } from '@/src/utils/TransactionError'
+import contractCall from '@/src/utils/contractCall'
+
+const optimismOracleContractAddress = '0x420000000000000000000000000000000000000F'
 
 export type QueryOptions = {
   refetchInterval: number
@@ -120,23 +123,28 @@ export default function useTransaction<
       const contract = new Contract(address, abi, signer) as MyContract
       try {
         console.info('Calculating transaction gas.')
+        let estimate = {}
         if (appChainId === Chains.optimism) {
           const txReq = await contract.populateTransaction[method as string](..._params)
           const tx = await signer.populateTransaction(txReq)
 
-          const l1Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateL1Gas(
-            tx,
+          const l1Fee = await contractCall(
+            optimismOracleContractAddress as string,
+            ['function getL1Fee(bytes _data) view returns (uint256)'],
+            web3Provider,
+            'getL1Fee',
+            [serialize(tx)],
           )
-
-          const l2Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateGas(tx)
-
-          return { l1Gas, l2Gas }
+          estimate = { l1Fee: wei(l1Fee) }
         }
-        const l1Gas = await contract.estimateGas[method as string](..._params)
-        return { l1Gas, l2Gas: ZERO_BN }
+        const gasLimit = await contract.estimateGas[method as string](..._params)
+        return {
+          gasLimit: wei(gasLimit, 0),
+          ...estimate,
+        }
       } catch (e: any) {
         console.error('Gas estimate failed', e.message)
-        return { l1Gas: ZERO_BN, l2Gas: ZERO_BN }
+        return { gasLimit: ZERO_BN, l1Gas: ZERO_BN, l2Gas: ZERO_BN }
       }
     },
     [abi, address, isAppConnected, method, web3Provider, appChainId],
