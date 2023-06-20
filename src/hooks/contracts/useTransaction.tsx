@@ -144,7 +144,7 @@ export default function useTransaction<
         }
       } catch (e: any) {
         console.error('Gas estimate failed', e.message)
-        return { gasLimit: ZERO_BN, l1Gas: ZERO_BN, l2Gas: ZERO_BN }
+        return { gasLimit: wei(0) }
       }
     },
     [abi, address, isAppConnected, method, web3Provider, appChainId],
