@@ -4,7 +4,6 @@ import useSWR from 'swr'
 
 import { mainnetRpcProvider } from './useEnsResolvers'
 import { Chains } from '../constants/chains'
-
 import chainlinkAggregatorABI from '@/src/abis/ChainlinkAggregator.json'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import contractCall from '@/src/utils/contractCall'

@@ -1,4 +1,4 @@
-import { BigNumber } from '@ethersproject/bignumber'
+import Wei from '@synthetixio/wei'
 
 import useTransaction from './useTransaction'
 import aelinDeal from '@/src/abis/AelinDeal.json'
@@ -19,8 +19,7 @@ export function useAelinDealEstimate<
   address: string,
   method: MethodName,
 ): (params: Params) => Promise<{
-  l1Gas: BigNumber
-  l2Gas: BigNumber
+  gasLimit: Wei | null
 } | null> {
   const { estimate } = useTransaction(address, aelinDeal, method)
   return estimate

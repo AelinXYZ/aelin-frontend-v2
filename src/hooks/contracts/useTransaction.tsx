@@ -1,14 +1,13 @@
 import { useCallback } from 'react'
 
 import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
-import { serialize } from '@ethersproject/transactions'
+import { UnsignedTransaction, serialize } from '@ethersproject/transactions'
 import { wei } from '@synthetixio/wei'
 import { toast } from 'react-hot-toast'
 
 import { notify } from '@/src/components/toast/Toast'
 import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 import { Chains } from '@/src/constants/chains'
-import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { TransactionError } from '@/src/utils/TransactionError'
 import contractCall from '@/src/utils/contractCall'
@@ -133,7 +132,7 @@ export default function useTransaction<
             ['function getL1Fee(bytes _data) view returns (uint256)'],
             web3Provider,
             'getL1Fee',
-            [serialize(tx)],
+            [serialize(tx as UnsignedTransaction)],
           )
           estimate = { l1Fee: wei(l1Fee) }
         }
