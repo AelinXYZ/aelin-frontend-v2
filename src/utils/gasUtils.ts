@@ -45,8 +45,10 @@ export const getTransactionPrice = (
 export const MIN_GAS_ESTIMATE = wei(21000, BASE_DECIMALS)
 
 export const getGasEstimateWithBuffer = (gasLimit: Wei) => {
-  if (!gasLimit) return undefined
-  return gasLimit?.add(gasLimit?.mul(wei(GAS_LIMIT_BUFFER_MULTIPLIER, 0)).div(100)).toBN() ?? null
+  if (!gasLimit || gasLimit.eq(wei(0))) return undefined
+  return (
+    gasLimit?.add(gasLimit?.mul(wei(GAS_LIMIT_BUFFER_MULTIPLIER, 0)).div(100)).toBN() ?? undefined
+  )
 }
 
 export const getGasPriceFromProvider = async (provider: JsonRpcProvider) => {
