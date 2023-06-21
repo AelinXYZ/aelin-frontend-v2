@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { BigNumber } from 'alchemy-sdk'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import ms from 'ms'
@@ -29,9 +30,10 @@ import { UserRole } from '@/types/aelinPool'
 
 type Props = {
   pool: ParsedAelinPool
+  handleTransfer: () => void
 }
 
-function VestUpfrontDeal({ pool }: Props) {
+function VestUpfrontDeal({ handleTransfer, pool }: Props) {
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
   const { address, isAppConnected } = useWeb3Connection()
@@ -46,7 +48,7 @@ function VestUpfrontDeal({ pool }: Props) {
   })
 
   const tokenIds =
-    vestingTokensData?.vestingTokens.map((vestingToken) => Number(vestingToken.tokenId)) ?? []
+    vestingTokensData?.vestingTokens.map((vestingToken: any) => Number(vestingToken.tokenId)) ?? []
 
   const method = pool.isDealTokenTransferable ? 'claimUnderlyingMultipleEntries' : 'claimUnderlying'
 
@@ -64,7 +66,7 @@ function VestUpfrontDeal({ pool }: Props) {
   )
 
   const {
-    investorDealTotal,
+    investorDealTotal = ZERO_BN,
     lastClaim = null,
     totalVested = ZERO_BN,
     underlyingDealTokenDecimals,
@@ -122,6 +124,16 @@ function VestUpfrontDeal({ pool }: Props) {
     )
   }, [address, hasRemainingTokens, isAppConnected, isSubmitting, pool.address])
 
+  const isTransferButtonDisabled = useMemo(() => {
+    return (
+      !address ||
+      !isAppConnected ||
+      !pool.isDealTokenTransferable ||
+      BigNumber.from(investorDealTotal).lte(ZERO_BN) ||
+      isHiddenPool(pool.address)
+    )
+  }, [address, investorDealTotal, isAppConnected, pool.address, pool.isDealTokenTransferable])
+
   const handleVest = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
@@ -172,8 +184,10 @@ function VestUpfrontDeal({ pool }: Props) {
       {isVestingCliffEnded && hasRemainingTokens && (
         <VestingPeriod
           amountToVest={amountToVest}
+          handleTransfer={handleTransfer}
           handleVest={handleVest}
-          isButtonDisabled={isVestButtonDisabled}
+          isTransferButtonDisabled={isTransferButtonDisabled}
+          isVestButtonDisabled={isVestButtonDisabled}
           symbol={data?.vestingDeal?.tokenToVestSymbol}
           totalAmount={investorDealTotal}
           totalVested={totalVested}
