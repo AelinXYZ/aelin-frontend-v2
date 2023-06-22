@@ -41,8 +41,8 @@ export const contracts = constantContracts({
   POOL_FACTORY: {
     address: {
       [Chains.mainnet]: '0x722969A3fdc778a5cC7CbC8DC8Ae3e96a288f853',
-      [Chains.goerli]: '0x0A6971Aec452834b337d418fA53393dec29db350',
-      [Chains.sepolia]: '0x69692ea8BAFdA43fCD6DC9940301752e3991a618',
+      [Chains.goerli]: '0x0f310d96038c60C075A3B9573EDE4F4ec5c6e634',
+      [Chains.sepolia]: '0xA2400deD523D8aa03D8d72D97D0db14dD2FF546a',
       [Chains.optimism]: '0x8B35551d6459a3d49B9A5A0D7333c6D7E0cCbBd9',
       [Chains.arbitrum]: '0xbf7c0Fd0D31bC377f861d11d4aAc15296c0405b6',
       [Chains.polygon]: '0xbf7c0fd0d31bc377f861d11d4aac15296c0405b6',
@@ -52,8 +52,8 @@ export const contracts = constantContracts({
   UPFRONT_DEAL_FACTORY: {
     address: {
       [Chains.mainnet]: '0x82BccFA913dB473147e5274C7821Bc13fFBaBE17',
-      [Chains.goerli]: '0x378d755195f9bFED679557B562c664Ed98AAaD41',
-      [Chains.sepolia]: '0xC1a1Ebf5f1Ea585e37d16dDD4A288c921C060d33',
+      [Chains.goerli]: '0xe369b042ba7E7200c8688c7Bfe069F37AfD06dDB',
+      [Chains.sepolia]: '0x286050d62164a5093554416d0Dbdc533110A4B7a',
       [Chains.optimism]: '0xe6355E5B217390A2F888c35f73248844847b0ef4',
       [Chains.arbitrum]: '0x91fCeA33D02d11621b7f90ebd5E44eD393eD7b5e',
       [Chains.polygon]: '0x82eaa001029d4686b343b53ce6e7f1823725e736',
