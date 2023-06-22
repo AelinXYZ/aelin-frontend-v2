@@ -4,7 +4,7 @@ import { BigNumber } from 'alchemy-sdk'
 import ms from 'ms'
 
 import CommonTransferVestingShareModal from './CommonTransferVestingShareModal'
-import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import useGetVestingTokens from '@/src/hooks/aelin/useGetVestingTokens'
 import {
@@ -43,10 +43,16 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
 
-  const method = 'transferVestingShare'
-  const { estimate, execute } = useAelinDealTransaction(
+  const { estimate: estimateTransferVestingShare, execute: executeTransferVestingShare } =
+    useAelinDealTransaction(
+      pool.dealAddress ?? ZERO_ADDRESS,
+      'transferVestingShare',
+      pool.isDealTokenTransferable as boolean,
+    )
+
+  const { estimate: estimateTransfer, execute: executeTransfer } = useAelinDealTransaction(
     pool.dealAddress ?? ZERO_ADDRESS,
-    method,
+    'transfer',
     pool.isDealTokenTransferable as boolean,
   )
 
@@ -82,18 +88,52 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
   ])
 
   const handleTransfer = async (amount: string, toAddress: string) => {
+    const isPartialTransfer = BigNumber.from(investorDealTotal).gt(BigNumber.from(amount))
+    const method = isPartialTransfer ? 'transferVestingShare' : 'transfer'
+
+    if (!pool.deal) {
+      throw new Error('Deal not found.')
+    }
+
+    const convertedAmount = BigNumber.from(amount)
+      .mul(BigNumber.from('10').pow(BASE_DECIMALS - (underlyingDealTokenDecimals ?? BASE_DECIMALS)))
+      .mul(
+        pool.deal.exchangeRates.dealPerInvestment.raw.div(
+          BigNumber.from('10').pow(pool.investmentTokenDecimals),
+        ),
+      )
+
+    console.log('xxx onConfirm isPartialTransfer:', isPartialTransfer)
+    console.log('xxx onConfirm method:', method)
     console.log('xxx onConfirm tokenIds:', tokenIds)
-    console.log('xxx onConfirm amount:', amount)
+    console.log('xxx onConfirm convertedAmount:', convertedAmount.toString())
     console.log('xxx onConfirm toAddress:', toAddress)
 
-    // setConfigAndOpenModal({
-    //   onConfirm: async (txGasOptions: GasOptions) => {
-    //     await execute([] as Parameters<AelinDealCombined['functions'][typeof method]>, txGasOptions)
-    //     await refetch()
-    //   },
-    //   title: `Transfer ${tokenToVestSymbol}`,
-    //   estimate: () => estimate([] as Parameters<AelinDealCombined['functions'][typeof method]>),
-    // })
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        isPartialTransfer
+          ? await executeTransferVestingShare(
+              [toAddress, 0, convertedAmount] as Parameters<
+                AelinDealCombined['functions'][typeof method]
+              >,
+              txGasOptions,
+            )
+          : await executeTransfer(
+              [toAddress, 0, '0x00'] as Parameters<AelinDealCombined['functions'][typeof method]>,
+              txGasOptions,
+            )
+        await refetch()
+      },
+      title: `Transfer ${tokenToVestSymbol}`,
+      estimate: () =>
+        isPartialTransfer
+          ? estimateTransferVestingShare([toAddress, 0, convertedAmount] as Parameters<
+              AelinDealCombined['functions'][typeof method]
+            >)
+          : estimateTransfer([toAddress, 0, '0x00'] as Parameters<
+              AelinDealCombined['functions'][typeof method]
+            >),
+    })
   }
 
   return (

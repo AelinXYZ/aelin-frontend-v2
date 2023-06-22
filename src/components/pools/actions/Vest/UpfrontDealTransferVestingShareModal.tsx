@@ -43,10 +43,16 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
 
-  const method = 'transferVestingShare'
-  const { estimate, execute } = useAelinUpfrontDealTransaction(
+  const { estimate: estimateTransferVestingShare, execute: executeTransferVestingShare } =
+    useAelinUpfrontDealTransaction(
+      pool.upfrontDeal?.address || ZERO_ADDRESS,
+      'transferVestingShare',
+      pool.isDealTokenTransferable,
+    )
+
+  const { estimate: estimateTransfer, execute: executeTransfer } = useAelinUpfrontDealTransaction(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
-    method,
+    'transfer',
     pool.isDealTokenTransferable,
   )
 
@@ -82,22 +88,42 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
   ])
 
   const handleTransfer = async (amount: string, toAddress: string) => {
+    const isPartialTransfer = BigNumber.from(investorDealTotal).gt(BigNumber.from(amount))
+    const method = isPartialTransfer ? 'transferVestingShare' : 'transfer'
+
+    console.log('xxx onConfirm isPartialTransfer:', isPartialTransfer)
+    console.log('xxx onConfirm method:', method)
     console.log('xxx onConfirm tokenIds:', tokenIds)
     console.log('xxx onConfirm amount:', amount)
     console.log('xxx onConfirm toAddress:', toAddress)
 
-    // setConfigAndOpenModal({
-    //   onConfirm: async (txGasOptions: GasOptions) => {
-    //     await execute(
-    //       [] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
-    //       txGasOptions,
-    //     )
-    //     await refetch()
-    //   },
-    //   title: `Transfer ${tokenToVestSymbol}`,
-    //   estimate: () =>
-    //     estimate([] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
-    // })
+    setConfigAndOpenModal({
+      onConfirm: async (txGasOptions: GasOptions) => {
+        isPartialTransfer
+          ? await executeTransferVestingShare(
+              [toAddress, 0, BigNumber.from(amount)] as Parameters<
+                AelinUpfrontDealCombined['functions'][typeof method]
+              >,
+              txGasOptions,
+            )
+          : await executeTransfer(
+              [toAddress, 0, '0x00'] as Parameters<
+                AelinUpfrontDealCombined['functions'][typeof method]
+              >,
+              txGasOptions,
+            )
+        await refetch()
+      },
+      title: `Transfer ${tokenToVestSymbol}`,
+      estimate: () =>
+        isPartialTransfer
+          ? estimateTransferVestingShare([toAddress, 0, BigNumber.from(amount)] as Parameters<
+              AelinUpfrontDealCombined['functions'][typeof method]
+            >)
+          : estimateTransfer([toAddress, 0, '0x00'] as Parameters<
+              AelinUpfrontDealCombined['functions'][typeof method]
+            >),
+    })
   }
 
   return (
