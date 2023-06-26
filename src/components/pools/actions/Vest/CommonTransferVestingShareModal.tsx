@@ -20,7 +20,7 @@ import {
   TextfieldState,
 } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
-import { BASE_DECIMALS, DISPLAY_DECIMALS } from '@/src/constants/misc'
+import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const Modal = styled(BaseModal)`
@@ -119,13 +119,23 @@ const CommonTransferVestingShareModal = ({
   totalAmount,
   underlyingDealTokenDecimals,
 }: Props) => {
-  const [amount, setAmount] = useState('0')
+  const [amount, setAmount] = useState('')
   const [toAddress, setToAddress] = useState('')
 
   const amountError = useMemo(() => {
-    return BigNumber.from(amount === '' ? 0 : amount).gt(totalAmount)
-      ? 'Not enough deal tokens held'
-      : ''
+    if (amount === '') {
+      return ''
+    }
+
+    if (BigNumber.from(amount).gt(totalAmount)) {
+      return 'Not enough deal tokens held'
+    }
+
+    if (BigNumber.from(amount).lte(ZERO_BN)) {
+      return 'Amount should be greater than zero'
+    }
+
+    return ''
   }, [amount, totalAmount])
 
   const addressError = useMemo(() => {

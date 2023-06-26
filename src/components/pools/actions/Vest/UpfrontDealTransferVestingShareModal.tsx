@@ -4,6 +4,7 @@ import { BigNumber } from 'alchemy-sdk'
 import ms from 'ms'
 
 import CommonTransferVestingShareModal from './CommonTransferVestingShareModal'
+import { VestingToken } from '@/graphql-schema'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import useGetVestingTokens from '@/src/hooks/aelin/useGetVestingTokens'
@@ -37,23 +38,14 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     },
   })
 
-  const tokenIds =
-    vestingTokensData?.vestingTokens.map((vestingToken: any) => Number(vestingToken.tokenId)) ?? []
-
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
 
-  const { estimate: estimateTransferVestingShare, execute: executeTransferVestingShare } =
-    useAelinUpfrontDealTransaction(
-      pool.upfrontDeal?.address || ZERO_ADDRESS,
-      'transferVestingShare',
-      pool.isDealTokenTransferable,
-    )
-
-  const { estimate: estimateTransfer, execute: executeTransfer } = useAelinUpfrontDealTransaction(
+  const method = 'transferManyVestTokens'
+  const { estimate, execute } = useAelinUpfrontDealTransaction(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
-    'transfer',
-    pool.isDealTokenTransferable,
+    method,
+    pool.isDealTokenTransferable as boolean,
   )
 
   const { data, mutate: refetch } = useVestingDealById(
@@ -88,41 +80,59 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
   ])
 
   const handleTransfer = async (amount: string, toAddress: string) => {
-    const isPartialTransfer = BigNumber.from(investorDealTotal).gt(BigNumber.from(amount))
-    const method = isPartialTransfer ? 'transferVestingShare' : 'transfer'
+    const compare = (a: VestingToken, b: VestingToken) => {
+      if (BigNumber.from(a.amount).lt(BigNumber.from(b.amount))) {
+        return -1
+      }
 
-    console.log('xxx onConfirm isPartialTransfer:', isPartialTransfer)
-    console.log('xxx onConfirm method:', method)
-    console.log('xxx onConfirm tokenIds:', tokenIds)
-    console.log('xxx onConfirm amount:', amount)
-    console.log('xxx onConfirm toAddress:', toAddress)
+      if (BigNumber.from(a.amount).gt(BigNumber.from(b.amount))) {
+        return 1
+      }
+
+      return 0
+    }
+
+    const ascendingVestingTokens = (vestingTokensData?.vestingTokens ?? []).sort(compare)
+    const transferTokenIds: number[] = []
+    let partialTransferTokenId: number | null = null
+    let partialTransferAmount = BigNumber.from(amount)
+
+    for (const vestingToken of ascendingVestingTokens) {
+      if (partialTransferAmount.gte(vestingToken.amount)) {
+        transferTokenIds.push(vestingToken.tokenId)
+        partialTransferAmount = partialTransferAmount.sub(vestingToken.amount)
+        continue
+      }
+
+      partialTransferTokenId = vestingToken.tokenId
+      break
+    }
 
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        isPartialTransfer
-          ? await executeTransferVestingShare(
-              [toAddress, 0, BigNumber.from(amount)] as Parameters<
-                AelinUpfrontDealCombined['functions'][typeof method]
-              >,
-              txGasOptions,
-            )
-          : await executeTransfer(
-              [toAddress, 0, '0x00'] as Parameters<
-                AelinUpfrontDealCombined['functions'][typeof method]
-              >,
-              txGasOptions,
-            )
+        await execute(
+          [
+            toAddress,
+            transferTokenIds,
+            partialTransferTokenId ?? 0,
+            partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)
+              ? partialTransferAmount
+              : ZERO_BN,
+          ] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+          txGasOptions,
+        )
         await refetch()
       },
       title: `Transfer ${tokenToVestSymbol}`,
       estimate: () =>
-        isPartialTransfer
-          ? estimateTransferVestingShare([toAddress, 0, BigNumber.from(amount)] as Parameters<
-              AelinUpfrontDealCombined['functions'][typeof method]
-            >)
-          : estimateTransfer([toAddress, 0, '0x00'] as Parameters<
-              AelinUpfrontDealCombined['functions'][typeof method]
-            >),
+        estimate([
+          toAddress,
+          transferTokenIds,
+          partialTransferTokenId ?? 0,
+          partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)
+            ? partialTransferAmount
+            : ZERO_BN,
+        ] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>),
     })
   }
 

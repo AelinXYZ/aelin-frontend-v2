@@ -39,25 +39,6 @@
   {
     "anonymous": false,
     "inputs": [
-        {
-            "indexed": true,
-            "internalType": "address",
-            "name": "collection",
-            "type": "address"
-        },
-        {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "nftID",
-            "type": "uint256"
-        }
-    ],
-    "name": "BlacklistNFT",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
       {
         "indexed": true,
         "internalType": "address",
@@ -1722,6 +1703,34 @@
       }
     ],
     "name": "transferFrom",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_fullTransferTokenIds",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_partialTransferID",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_partialShareAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "transferManyVestTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
