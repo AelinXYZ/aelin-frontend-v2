@@ -1,10 +1,12 @@
 import { useMemo } from 'react'
 
+import { Interface } from '@ethersproject/abi'
 import { BigNumber } from 'alchemy-sdk'
 import ms from 'ms'
 
 import CommonTransferVestingShareModal from './CommonTransferVestingShareModal'
 import { VestingToken } from '@/graphql-schema'
+import AelinDealTransferABI from '@/src/abis/AelinDeal_v1.json'
 import { BASE_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
 import useGetVestingTokens from '@/src/hooks/aelin/useGetVestingTokens'
@@ -41,7 +43,7 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
 
-  const method = 'transferManyVestTokens'
+  const method = 'multicall'
   const { estimate, execute } = useAelinDealTransaction(
     pool.dealAddress ?? ZERO_ADDRESS,
     method,
@@ -120,31 +122,31 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
       break
     }
 
+    const dealInterface = new Interface(AelinDealTransferABI)
+    const calls = transferTokenIds.map((tokenId) =>
+      dealInterface.encodeFunctionData('transfer', [toAddress, tokenId, '0x00']),
+    )
+    if (partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)) {
+      calls.push(
+        dealInterface.encodeFunctionData('transferVestingShare', [
+          toAddress,
+          partialTransferTokenId,
+          partialTransferAmount,
+        ]),
+      )
+    }
+
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
         await execute(
-          [
-            toAddress,
-            transferTokenIds,
-            partialTransferTokenId ?? 0,
-            partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)
-              ? partialTransferAmount
-              : ZERO_BN,
-          ] as Parameters<AelinDealCombined['functions'][typeof method]>,
+          [calls] as Parameters<AelinDealCombined['functions'][typeof method]>,
           txGasOptions,
         )
         await refetch()
       },
       title: `Transfer ${tokenToVestSymbol}`,
       estimate: () =>
-        estimate([
-          toAddress,
-          transferTokenIds,
-          partialTransferTokenId ?? 0,
-          partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)
-            ? partialTransferAmount
-            : ZERO_BN,
-        ] as Parameters<AelinDealCombined['functions'][typeof method]>),
+        estimate([calls] as Parameters<AelinDealCombined['functions'][typeof method]>),
     })
   }
 
