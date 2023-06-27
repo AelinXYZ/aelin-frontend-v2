@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
-import { isAddress } from '@ethersproject/address'
+import { getAddress, isAddress } from '@ethersproject/address'
 import { BigNumber } from 'alchemy-sdk'
 
 import {
@@ -20,7 +20,8 @@ import {
   TextfieldState,
 } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
-import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
+import { BASE_DECIMALS, DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const Modal = styled(BaseModal)`
@@ -119,6 +120,8 @@ const CommonTransferVestingShareModal = ({
   totalAmount,
   underlyingDealTokenDecimals,
 }: Props) => {
+  const { address } = useWeb3Connection()
+
   const [amount, setAmount] = useState('')
   const [toAddress, setToAddress] = useState('')
 
@@ -139,8 +142,18 @@ const CommonTransferVestingShareModal = ({
   }, [amount, totalAmount])
 
   const addressError = useMemo(() => {
-    return toAddress && !isAddress(toAddress) ? 'Invalid address' : ''
-  }, [toAddress])
+    if (!toAddress) {
+      return ''
+    }
+
+    if (!isAddress(toAddress)) {
+      return 'Invalid address'
+    }
+
+    if (getAddress(address || ZERO_ADDRESS) === getAddress(toAddress)) {
+      return 'Please select address different from yours'
+    }
+  }, [toAddress, address])
 
   const setTokensToTransfer = (percents: Percents) => {
     switch (percents) {
