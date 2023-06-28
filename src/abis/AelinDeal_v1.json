@@ -743,6 +743,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "data",
+        "type": "bytes[]"
+      }
+    ],
+    "name": "multicall",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "results",
+        "type": "bytes[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "name",
     "outputs": [
@@ -1047,34 +1066,6 @@
       }
     ],
     "name": "transferFrom",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_fullTransferTokenIds",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_partialTransferID",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_partialShareAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "transferManyVestTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
