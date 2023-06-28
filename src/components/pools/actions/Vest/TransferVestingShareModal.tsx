@@ -86,11 +86,17 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
       throw new Error('Deal not found.')
     }
 
+    const underlyingDealTokenDecimal = underlyingDealTokenDecimals ?? BASE_DECIMALS
+
     const convertedAmount = BigNumber.from(amount)
-      .mul(BigNumber.from('10').pow(BASE_DECIMALS - (underlyingDealTokenDecimals ?? BASE_DECIMALS)))
+      .mul(BigNumber.from('10').pow(BASE_DECIMALS - underlyingDealTokenDecimal))
       .mul(
         pool.deal.exchangeRates.dealPerInvestment.raw.div(
-          BigNumber.from('10').pow(pool.investmentTokenDecimals),
+          BigNumber.from('10').pow(
+            underlyingDealTokenDecimal > pool.investmentTokenDecimals
+              ? underlyingDealTokenDecimal
+              : pool.investmentTokenDecimals,
+          ),
         ),
       )
 
@@ -123,9 +129,11 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     }
 
     const dealInterface = new Interface(AelinDealTransferABI)
+
     const calls = transferTokenIds.map((tokenId) =>
       dealInterface.encodeFunctionData('transfer', [toAddress, tokenId, '0x00']),
     )
+
     if (partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)) {
       calls.push(
         dealInterface.encodeFunctionData('transferVestingShare', [
