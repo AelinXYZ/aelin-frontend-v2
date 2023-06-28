@@ -87,7 +87,6 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     }
 
     const underlyingDealTokenDecimal = underlyingDealTokenDecimals ?? BASE_DECIMALS
-
     const convertedAmount = BigNumber.from(amount)
       .mul(BigNumber.from('10').pow(BASE_DECIMALS - underlyingDealTokenDecimal))
       .mul(
@@ -129,11 +128,9 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     }
 
     const dealInterface = new Interface(AelinDealTransferABI)
-
     const calls = transferTokenIds.map((tokenId) =>
       dealInterface.encodeFunctionData('transfer', [toAddress, tokenId, '0x00']),
     )
-
     if (partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)) {
       calls.push(
         dealInterface.encodeFunctionData('transferVestingShare', [
