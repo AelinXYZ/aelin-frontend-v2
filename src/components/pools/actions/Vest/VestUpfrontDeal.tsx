@@ -163,7 +163,8 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
     (!userRoles.includes(UserRole.Investor) && userRoles.includes(UserRole.Holder)) ||
     (!userRoles.includes(UserRole.Investor) &&
       userRoles.includes(UserRole.Sponsor) &&
-      !hasSponsorFees)
+      !hasSponsorFees) ||
+    tokenIds.length === 0
   ) {
     return <NothingToClaim />
   }
