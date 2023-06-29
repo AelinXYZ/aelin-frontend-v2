@@ -17,8 +17,8 @@ export type DetailedNumber = {
   formatted: string | undefined
 }
 export type GasLimitEstimate = {
-  l1: Wei
-  l2?: Wei
+  gasLimit: Wei
+  l1Fee?: Wei
 } | null
 
 export type GasPrices = {
@@ -40,10 +40,7 @@ export type GasSpeed = keyof GasPrice<number>
 export type Rates = Record<string, Wei>
 
 export type UseTransactionReturn<Params> = {
-  estimate: (params?: Params) => Promise<{
-    l1Gas: BigNumber
-    l2Gas: BigNumber
-  } | null>
+  estimate: (params?: Params) => Promise<GasLimitEstimate | null>
   execute: (
     params?: Params | undefined,
     options?: Overrides | undefined,
