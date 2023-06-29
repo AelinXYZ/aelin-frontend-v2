@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 
 import { Interface } from '@ethersproject/abi'
@@ -25,6 +26,7 @@ type Props = {
 }
 
 const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
+  const router = useRouter()
   const { address, appChainId, isAppConnected } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -40,9 +42,6 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     },
   })
 
-  const allSDK = getAllGqlSDK()
-  const { useVestingDealById } = allSDK[pool.chainId]
-
   const method = 'multicall'
   const { estimate, execute } = useAelinUpfrontDealTransaction(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
@@ -50,7 +49,9 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     pool.isDealTokenTransferable as boolean,
   )
 
-  const { data, mutate: refetch } = useVestingDealById(
+  const allSDK = getAllGqlSDK()
+  const { useVestingDealById } = allSDK[pool.chainId]
+  const { data } = useVestingDealById(
     {
       id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.upfrontDeal?.address}`,
     },
@@ -130,7 +131,7 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
           [calls] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
           txGasOptions,
         )
-        await refetch()
+        router.reload()
       },
       title: `Transfer ${tokenToVestSymbol}`,
       estimate: () =>

@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 
 import { Interface } from '@ethersproject/abi'
@@ -25,6 +26,7 @@ type Props = {
 }
 
 const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
+  const router = useRouter()
   const { address, appChainId, isAppConnected } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -40,9 +42,6 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     },
   })
 
-  const allSDK = getAllGqlSDK()
-  const { useVestingDealById } = allSDK[pool.chainId]
-
   const method = 'multicall'
   const { estimate, execute } = useAelinDealTransaction(
     pool.dealAddress ?? ZERO_ADDRESS,
@@ -50,7 +49,9 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     pool.isDealTokenTransferable as boolean,
   )
 
-  const { data, mutate: refetch } = useVestingDealById(
+  const allSDK = getAllGqlSDK()
+  const { useVestingDealById } = allSDK[pool.chainId]
+  const { data } = useVestingDealById(
     {
       id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
     },
@@ -130,7 +131,6 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     const calls = transferTokenIds.map((tokenId) =>
       dealInterface.encodeFunctionData('transfer', [toAddress, tokenId, '0x00']),
     )
-
     if (partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)) {
       calls.push(
         dealInterface.encodeFunctionData('transferVestingShare', [
@@ -147,7 +147,7 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
           [calls] as Parameters<AelinDealCombined['functions'][typeof method]>,
           txGasOptions,
         )
-        await refetch()
+        router.reload()
       },
       title: `Transfer ${tokenToVestSymbol}`,
       estimate: () =>
