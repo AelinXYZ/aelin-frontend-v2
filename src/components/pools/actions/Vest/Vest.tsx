@@ -129,7 +129,10 @@ function Vest({ handleTransfer, pool }: Props) {
     })
   }
 
-  if (data?.vestingDeal === null) {
+  if (
+    data?.vestingDeal === null ||
+    (BigNumber.from(investorDealTotal).eq(ZERO_BN) && pool.isDealTokenTransferable)
+  ) {
     return <NothingToClaim />
   }
 
