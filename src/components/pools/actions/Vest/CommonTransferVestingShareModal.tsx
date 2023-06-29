@@ -174,7 +174,7 @@ const CommonTransferVestingShareModal = ({
 
   return (
     <Modal onClose={onClose} size="560px" title="Deal tokens transfer">
-      <ModalText>Wording TBD</ModalText>
+      <ModalText>Transfer tokens locked in a vesting schedule to another address</ModalText>
       <ModalLine />
       <TokensHeld>
         <Text>Tokens held in vesting schedule:</Text>
