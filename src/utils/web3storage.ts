@@ -1,17 +1,16 @@
 import { Web3Storage } from 'web3.storage'
 
 import env from '@/config/env'
-import { MerkleDistributorInfo } from '@/src/utils/merkle-tree/parse-balance-map'
 
 const client = new Web3Storage({ token: env.NEXT_PUBLIC_WEB3_STORAGE_TOKEN_KEY as string })
 
-const _makeFileObjects = (merkleTreeData: MerkleDistributorInfo, fileName: string) => {
-  const blob = new Blob([JSON.stringify(merkleTreeData)], { type: 'application/json' })
+const _makeFileObjects = (merkleTreeData: Uint8Array, fileName: string) => {
+  const blob = new Blob([merkleTreeData], { type: 'application/octet-stream' })
 
   return [new File([blob], fileName)]
 }
 
-export const storeJson = async (merkleTreeData: MerkleDistributorInfo, fileName: string) => {
+export const storeFile = async (merkleTreeData: Uint8Array, fileName: string) => {
   const files = _makeFileObjects(merkleTreeData, fileName)
 
   const promisePut = new Promise<string>((resolve, reject) => {

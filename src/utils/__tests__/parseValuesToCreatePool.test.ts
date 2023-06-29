@@ -75,8 +75,9 @@ describe('parseValuesToCreatePool', () => {
       currentStep: 'poolPrivacy',
       whitelist: [
         {
+          index: 0,
           address: '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8',
-          amount: 1000000000000000000,
+          amount: '1000000000000000000',
         },
       ],
       whiteListAmountFormat: AddressesWhiteListAmountFormat.uint256,
@@ -125,8 +126,9 @@ describe('parseValuesToCreatePool', () => {
       currentStep: 'poolPrivacy',
       whitelist: [
         {
+          index: 0,
           address: '0xa834e550B45B4a469a05B846fb637bfcB12e3Df8',
-          amount: 1,
+          amount: '1',
         },
       ],
       whiteListAmountFormat: AddressesWhiteListAmountFormat.decimal,

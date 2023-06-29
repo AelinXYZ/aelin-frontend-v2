@@ -45,3 +45,4 @@ yarn-error.log*
 
 # CSV generated for testing purposes
 csv-for-merkel-tree.csv
+csv-for-merkel-tree-decimals.csv

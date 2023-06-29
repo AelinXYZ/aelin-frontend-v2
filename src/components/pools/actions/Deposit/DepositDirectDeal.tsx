@@ -116,6 +116,7 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
   )
 
   const userMerkle = useAelinUserMerkleTreeData(pool)
+
   const userMerkleData = userMerkle?.data || (MERKLE_TREE_DATA_EMPTY as UserMerkleData)
 
   const balances = [

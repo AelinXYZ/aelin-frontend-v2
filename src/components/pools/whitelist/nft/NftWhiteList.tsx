@@ -276,7 +276,6 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose, onConfirm }: NftWh
                 onClick={() => {
                   if (isLastStep) {
                     const nftCollectionRules = getParsedNftCollectionRules(nftWhiteListState)
-
                     onConfirm(nftCollectionRules, nftType)
                     onClose()
                     return

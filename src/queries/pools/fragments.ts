@@ -32,6 +32,7 @@ gql`
     totalAmountFunded
     totalUsersInvested
     totalAddressesInvested
+
     totalVouchers
     vouchers
 

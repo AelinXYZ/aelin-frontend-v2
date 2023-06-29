@@ -3,9 +3,10 @@ export enum AddressesWhiteListAmountFormat {
   uint256 = 'uint256',
 }
 
-export interface AddressWhitelistProps {
+export interface AddressWhiteListProps {
   address: string
-  amount: number | null
+  amount: string | null
+  index: number
 }
 
 export enum AddressesWhiteListStep {

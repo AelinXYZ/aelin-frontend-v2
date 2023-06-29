@@ -11,7 +11,7 @@ import usePrevious from '../common/usePrevious'
 import ENSOrAddress from '@/src/components/aelin/ENSOrAddress'
 import { TokenIcon } from '@/src/components/pools/common/TokenIcon'
 import {
-  AddressWhitelistProps,
+  AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
 } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -28,11 +28,10 @@ import { GasOptions, useTransactionModal } from '@/src/providers/transactionModa
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, isEmptyDuration, secondsToDhm } from '@/src/utils/date'
 import { formatNumber } from '@/src/utils/formatNumber'
-import { mergeArrayKeyValuePairs } from '@/src/utils/mergeArrayKeyValuePairs'
-import { parseBalanceMap } from '@/src/utils/merkle-tree/parse-balance-map'
 import { parseValuesToCreateUpFrontDeal } from '@/src/utils/parseValuesToCreateUpFrontDeal'
+import { promisifyWorker } from '@/src/utils/promisifyWorker'
 import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
-import { storeJson } from '@/src/utils/web3storage'
+import { storeFile } from '@/src/utils/web3storage'
 
 const VestinScheduleContainer = styled.div`
   display: flex;
@@ -78,6 +77,11 @@ export type ExchangeRatesAttr = {
   minimumAmount?: number
 }
 
+export type Allowlist = {
+  allowListAddresses: string[]
+  allowListAmounts: BigNumberish[]
+}
+
 export interface CreateUpFrontDealState {
   dealAttributes: DealAttr
   investmentToken?: Token
@@ -89,7 +93,7 @@ export interface CreateUpFrontDealState {
   vestingSchedule?: VestingScheduleAttr
   dealPrivacy?: Privacy
   currentStep: CreateUpFrontDealSteps
-  whitelist: AddressWhitelistProps[]
+  whitelist: AddressWhiteListProps[]
   whiteListAmountFormat?: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
@@ -111,7 +115,7 @@ export interface CreateUpFrontDealStateComplete {
   holderAddress: string
   exchangeRates: ExchangeRatesAttr
   currentStep: CreateUpFrontDealSteps
-  whitelist: AddressWhitelistProps[]
+  whitelist: AddressWhiteListProps[]
   whiteListAmountFormat?: AddressesWhiteListAmountFormat
   withMerkleTree: boolean
   nftCollectionRules: NftCollectionRulesProps[]
@@ -145,11 +149,6 @@ export type UpFrontDealConfig = {
   vestingPeriod: number
   vestingCliffPeriod: number
   allowDeallocation: boolean
-}
-
-export type Allowlist = {
-  allowListAddresses: string[]
-  allowListAmounts: BigNumberish[]
 }
 
 export type CreateUpFrontDealValues = [
@@ -549,21 +548,30 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
 
     if (isAMerkleTreePool) {
       console.info('Merkle tree pool creation')
-      // Format data for the merkle tree
-      const balances = mergeArrayKeyValuePairs(
-        allowListAddresses.allowListAddresses,
-        allowListAddresses.allowListAmounts,
+
+      // Generate the merkle data thru Web Worker
+      const worker = new Worker(
+        new URL('@/src/utils/merkle-tree/createMerkleTree.ts', import.meta.url),
       )
 
-      // Generate the merkle data
-      const merkleData = parseBalanceMap(balances)
+      worker.postMessage({
+        action: 'start',
+        whitelist: createDealState.whitelist,
+        investmentTokenDeciamal: createDealState.investmentToken?.decimals,
+        whiteListAmountFormat: createDealState.whiteListAmountFormat,
+      })
+
+      const merkleData = await promisifyWorker(worker)
 
       // Upload the merkle tree data json to ipfs
-      const ipfsHash = await storeJson(merkleData, createDealState.dealAttributes.symbol)
+      const ipfsHash = await storeFile(
+        merkleData.compressedTree,
+        createDealState.dealAttributes.symbol,
+      )
 
       const upFrontDealDataFull = {
         ...upFrontDealData,
-        merkleRoot: merkleData.merkleRoot,
+        merkleRoot: merkleData.root,
         ipfsHash: ipfsHash,
       }
 

@@ -19,7 +19,7 @@ import { Summary } from '@/src/components/pools/common/Summary'
 import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
 import {
-  AddressWhitelistProps,
+  AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
 } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -198,7 +198,7 @@ const Create: NextPage = () => {
           currentList={createPoolState.whitelist}
           onClose={() => setShowWhiteListModal(false)}
           onConfirm={(
-            whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
+            whitelist: AddressWhiteListProps[] | NftCollectionRulesProps[],
             type: NftType | string,
             amountFormat?: AddressesWhiteListAmountFormat,
           ) => {

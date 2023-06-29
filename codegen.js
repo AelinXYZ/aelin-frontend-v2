@@ -8,8 +8,8 @@ module.exports = {
   overwrite: true,
   schema: [
     // process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_MAINNET,
-    process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_OPTIMISM,
-    // process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI,
+    // process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_OPTIMISM,
+    process.env.NEXT_PUBLIC_GRAPH_ENDPOINT_GOERLI,
   ],
   documents: 'src/queries/**/*.ts',
   generates: {

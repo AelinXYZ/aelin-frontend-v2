@@ -4,30 +4,17 @@ import { HashZero, MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
 import { wei } from '@synthetixio/wei'
 
-import { NftType } from '../components/pools/whitelist/nft/nftWhiteListReducer'
-import { NftCollectionRulesProps } from '../hooks/aelin/useAelinCreatePool'
-import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/types'
+import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { ZERO_BN } from '@/src/constants/misc'
 import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
+import { NftCollectionRulesProps } from '@/src/hooks/aelin/useAelinCreatePool'
 import {
   CreateUpFrontDealStateComplete,
   CreateUpFrontDealValues,
 } from '@/src/hooks/aelin/useAelinCreateUpFrontDeal'
 import { getDuration } from '@/src/utils/date'
-
-const getWhiteListAmount = (
-  amount: number,
-  whiteListAmountFormat: AddressesWhiteListAmountFormat,
-  investmentTokenDecimals: number,
-): number => {
-  switch (whiteListAmountFormat) {
-    case AddressesWhiteListAmountFormat.decimal:
-      return parseUnits(amount.toString(), investmentTokenDecimals).toNumber()
-    case AddressesWhiteListAmountFormat.uint256:
-      return amount
-  }
-}
+import { getWhiteListAmount } from '@/src/utils/getWhiteListAmount'
 
 export const parseValuesToCreateUpFrontDeal = (
   createDealState: CreateUpFrontDealStateComplete,

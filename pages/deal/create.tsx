@@ -20,7 +20,7 @@ import { Summary } from '@/src/components/pools/common/Summary'
 import NftCollectionsTable from '@/src/components/pools/nftTable/NftCollectionsTable'
 import WhiteListModal from '@/src/components/pools/whitelist/WhiteListModal'
 import {
-  AddressWhitelistProps,
+  AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
 } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
@@ -77,6 +77,8 @@ const getFormattedInvestmentTokenToRaise = (
         investmentTokenDecimals,
       )
   }
+
+  return ''
 }
 
 const Create: NextPage = () => {
@@ -119,11 +121,12 @@ const Create: NextPage = () => {
   ].some((step) => createDealState.currentStep === step)
 
   const handleConfirm = (
-    whitelist: Array<AddressWhitelistProps | NftCollectionRulesProps>,
+    whitelist: AddressWhiteListProps[] | NftCollectionRulesProps[],
     type: NftType | string,
-    amountFormat?: AddressesWhiteListAmountFormat,
+    amountFormat?: AddressesWhiteListAmountFormat | undefined,
   ) => {
     setDealField(whitelist, type)
+
     setDealField(true, 'withMerkleTree')
 
     /*
@@ -140,13 +143,16 @@ const Create: NextPage = () => {
         throw new Error('Format should be defined for a whitelist.')
       }
 
-      const investmentTokenToRaise = whitelist.reduce((accum: number, curr: any) => {
-        if (curr.amount) {
-          accum += curr.amount
-        }
+      const investmentTokenToRaise = (whitelist as AddressWhiteListProps[]).reduce(
+        (accum: number, curr: AddressWhiteListProps) => {
+          if (curr.amount) {
+            accum += Number(curr.amount)
+          }
 
-        return accum
-      }, 0)
+          return accum
+        },
+        0,
+      )
 
       setDealField(
         getFormattedInvestmentTokenToRaise(

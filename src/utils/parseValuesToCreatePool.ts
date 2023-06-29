@@ -1,3 +1,4 @@
+import { isAddress } from '@ethersproject/address'
 import { BigNumberish } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { parseUnits } from '@ethersproject/units'
@@ -12,13 +13,13 @@ import { CreatePoolStateComplete, CreatePoolValues } from '@/src/hooks/aelin/use
 import { getDuration } from '@/src/utils/date'
 
 const getWhiteListAmount = (
-  amount: number,
+  amount: string,
   whiteListAmountFormat: AddressesWhiteListAmountFormat,
   investmentTokenDecimals: number,
 ): string => {
   switch (whiteListAmountFormat) {
     case AddressesWhiteListAmountFormat.decimal:
-      return parseUnits(amount.toString(), investmentTokenDecimals).toString()
+      return parseUnits(amount, investmentTokenDecimals).toString()
     case AddressesWhiteListAmountFormat.uint256:
       return String(amount)
   }
@@ -70,7 +71,7 @@ export const parseValuesToCreatePool = (
     const formattedWhiteList = whitelist.reduce((accum, curr) => {
       const { address, amount } = curr
 
-      if (!address.length) return accum
+      if (!isAddress(address)) return accum
 
       accum.push({
         address,

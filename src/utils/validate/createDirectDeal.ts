@@ -1,7 +1,7 @@
 import { isAddress } from '@ethersproject/address'
 import { wei } from '@synthetixio/wei'
 
-import { AddressWhitelistProps } from '@/src/components/pools/whitelist/addresses/types'
+import { AddressWhiteListProps } from '@/src/components/pools/whitelist/addresses/types'
 import { NftType } from '@/src/components/pools/whitelist/nft/nftWhiteListReducer'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { POOL_NAME_MAX_LENGTH, ZERO_BN } from '@/src/constants/misc'
@@ -26,7 +26,7 @@ export type dealErrors = {
   [CreateUpFrontDealSteps.exchangeRates]?: ExchangeRatesAttr
   [CreateUpFrontDealSteps.vestingSchedule]?: VestingScheduleAttr
   [CreateUpFrontDealSteps.dealPrivacy]?: Privacy
-  whitelist?: AddressWhitelistProps[]
+  whitelist?: AddressWhiteListProps[]
 }
 
 const validateCreateDirectDeal = (values: dealErrors, chainId: ChainsValues) => {

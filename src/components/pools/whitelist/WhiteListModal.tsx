@@ -3,10 +3,10 @@ import styled from 'styled-components'
 
 import { Modal as BaseModal } from '@/src/components/common/Modal'
 import AddressesWhiteList, {
-  initialAddressesWhitelistValues,
+  addInitialAddressesWhiteListValues,
 } from '@/src/components/pools/whitelist/addresses/AddressesWhiteList'
 import {
-  AddressWhitelistProps,
+  AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
   AddressesWhiteListStep,
 } from '@/src/components/pools/whitelist/addresses/types'
@@ -24,12 +24,12 @@ const Modal = styled(BaseModal)`
 `
 
 type WhiteListType = {
+  currentAmountFormat: AddressesWhiteListAmountFormat | undefined
   poolPrivacy: Privacy | undefined
-  currentList: AddressWhitelistProps[]
-  currentAmountFormat?: AddressesWhiteListAmountFormat
+  currentList: AddressWhiteListProps[]
   onClose: () => void
   onConfirm: (
-    whitelist: AddressWhitelistProps[] | NftCollectionRulesProps[],
+    whitelist: AddressWhiteListProps[] | NftCollectionRulesProps[],
     type: NftType | string,
     amountFormat?: AddressesWhiteListAmountFormat,
   ) => void
@@ -43,8 +43,8 @@ const WhiteListModal = ({
   onConfirm,
   poolPrivacy,
 }: WhiteListType) => {
-  const [addressesWhiteList, setAddressesWhiteList] = useState(
-    currentList.length ? currentList : initialAddressesWhitelistValues,
+  const [addressesWhiteList] = useState(
+    currentList.length ? currentList : addInitialAddressesWhiteListValues(),
   )
   const [addressesWhiteListStep, setAddressesWhiteListStep] = useState(
     currentAmountFormat ? AddressesWhiteListStep.addresses : AddressesWhiteListStep.format,
@@ -68,7 +68,6 @@ const WhiteListModal = ({
           onConfirm={onConfirm}
           setAmountFormat={setAddressesWhiteListAmountFormat}
           setCurrentStep={setAddressesWhiteListStep}
-          setList={setAddressesWhiteList}
         />
       )}
       {poolPrivacy === Privacy.NFT && (

@@ -1,13 +1,17 @@
-import { Dispatch, ReactElement, SetStateAction, useMemo } from 'react'
+import { Dispatch, ReactElement, SetStateAction, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
+import AddressesWhiteListWrapper from './AddressesWhiteListWrapper'
+import { DecimalWarning, DuplicatedAddressesWarning, Uint256Warning } from './Warnings'
+import WhiteListRow from './WhiteListRow'
 import { ModalButtonCSS } from '@/src/components/common/Modal'
 import { LabeledRadioButton } from '@/src/components/form/LabeledRadioButton'
 import UploadCSV from '@/src/components/pools/whitelist/addresses/UploadWhiteListCsv'
 import {
-  AddressWhitelistProps,
+  AddressWhiteListProps,
   AddressesWhiteListAmountFormat,
   AddressesWhiteListStatus,
   AddressesWhiteListStep,
@@ -18,44 +22,8 @@ import {
   ButtonPrimaryLight,
   ButtonPrimaryLightSm,
 } from '@/src/components/pureStyledComponents/buttons/Button'
-import { ButtonRemove } from '@/src/components/pureStyledComponents/buttons/ButtonCircle'
-import {
-  ButtonNext,
-  ButtonPrev,
-} from '@/src/components/pureStyledComponents/buttons/ButtonPrevNext'
-import { Textfield, TextfieldState } from '@/src/components/pureStyledComponents/form/Textfield'
 import { Error as BaseError } from '@/src/components/pureStyledComponents/text/Error'
-import { StepIndicator } from '@/src/components/steps/StepIndicator'
 import { PrivacyType } from '@/src/constants/pool'
-import { useThemeContext } from '@/src/providers/themeContextProvider'
-
-const WrapperGrid = styled.div`
-  width: 700px;
-  display: grid;
-  grid-template-columns: 50px 1fr 50px;
-`
-
-const StepContents = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-
-const PrevWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-right: 20px;
-`
-
-const NextWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-left: 20px;
-`
 
 const Grid = styled.div`
   align-items: center;
@@ -84,47 +52,6 @@ const Title = styled.h4`
   font-weight: 600;
   line-height: 1.2;
   margin: 0;
-`
-
-const Note = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding: 20px;
-  gap: 20px;
-  background-color: ${({ theme }) => theme.colors.transparentWhite2};
-  border: 1px solid ${({ theme: { colors } }) => colors.borderColor};
-  border-radius: 8px;
-  text-align: center;
-`
-
-const ExampleRow = styled.div`
-  display: flex;
-  gap: 20px;
-`
-
-const ExampleAddress = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0px 20px 0px 10px;
-  width: 340px;
-  height: 36px;
-  background: #282e3b;
-  border: 1px solid #8280ff;
-  border-radius: 8px;
-`
-
-const ExampleAmount = styled(ExampleAddress)`
-  width: 140px;
-`
-
-const ButtonsGrid = styled.div`
-  align-items: center;
-  column-gap: 10px;
-  display: grid;
-  grid-template-columns: 32px 32px;
 `
 
 const MainButton = styled(ButtonGradient)`
@@ -191,7 +118,10 @@ const TotalAddressesValue = styled.div`
   letter-spacing: 0.35px;
 `
 
-const addressesWhiteListStepsConfig: Record<AddressesWhiteListStep, AddressesWhiteListStepInfo> = {
+export const addressesWhiteListStepsConfig: Record<
+  AddressesWhiteListStep,
+  AddressesWhiteListStepInfo
+> = {
   [AddressesWhiteListStep.format]: {
     id: AddressesWhiteListStep.format,
     order: 1,
@@ -204,68 +134,15 @@ const addressesWhiteListStepsConfig: Record<AddressesWhiteListStep, AddressesWhi
   },
 }
 
-const getStepIndicatorData = (
-  currentStep: AddressesWhiteListStep,
-): { title: string; isActive: boolean }[] =>
-  Object.values(AddressesWhiteListStep).map((step) => ({
-    isActive: currentStep === step,
-    title: addressesWhiteListStepsConfig[step].title,
-  }))
+export const addInitialAddressesWhiteListValues = (list: AddressWhiteListProps[] = []) => {
+  let index = list.length
 
-const WhiteListRow = ({
-  address,
-  amount,
-  amountFormat,
-  onChangeRow,
-  onDeleteRow,
-  rowIndex,
-}: {
-  address: string
-  amount: number | null
-  amountFormat: AddressesWhiteListAmountFormat
-  onChangeRow: (value: string | number | null, key: string, index: number) => void
-  onDeleteRow: (index: number) => void
-  rowIndex: number
-}) => {
-  const { currentThemeName } = useThemeContext()
-
-  return (
-    <>
-      <Textfield
-        onChange={(e) => onChangeRow(e.target.value, 'address', rowIndex)}
-        placeholder="Add address..."
-        status={address && !isAddress(address) ? TextfieldState.error : undefined}
-        value={address}
-      />
-      <Textfield
-        onChange={(e) => {
-          const amount = Number(e.target.value)
-
-          if (amountFormat === AddressesWhiteListAmountFormat.uint256 && amount < 0) {
-            return
-          }
-
-          onChangeRow(amount, 'amount', rowIndex)
-        }}
-        placeholder="Max allocation..."
-        status={address && !amount ? TextfieldState.error : undefined}
-        type="number"
-        value={amount?.toLocaleString('en', { useGrouping: false }) || ''}
-      />
-      <ButtonsGrid>
-        <div>&nbsp;</div>
-        <ButtonRemove currentThemeName={currentThemeName} onClick={() => onDeleteRow(rowIndex)} />
-      </ButtonsGrid>
-    </>
-  )
+  return new Array(5).fill({ address: '', amount: null }).map((item) => {
+    const newList = { index, ...item }
+    index++
+    return newList
+  })
 }
-
-export const initialAddressesWhitelistValues = [
-  ...new Array(5).fill({
-    address: '',
-    amount: null,
-  } as AddressWhitelistProps),
-]
 
 const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
   switch (status) {
@@ -282,6 +159,8 @@ const getError = (status: AddressesWhiteListStatus): ReactElement | null => {
   }
 }
 
+const PAGE_SIZE = 100
+
 const AddressesWhiteList = ({
   amountFormat,
   currentStep,
@@ -290,13 +169,11 @@ const AddressesWhiteList = ({
   onConfirm,
   setAmountFormat,
   setCurrentStep,
-  setList,
 }: {
-  list: AddressWhitelistProps[]
-  setList: (whitelist: AddressWhitelistProps[]) => void
+  list: AddressWhiteListProps[]
   onClose: () => void
   onConfirm: (
-    whitelist: AddressWhitelistProps[],
+    whitelist: AddressWhiteListProps[],
     type: string,
     amountFormat: AddressesWhiteListAmountFormat,
   ) => void
@@ -305,55 +182,81 @@ const AddressesWhiteList = ({
   amountFormat: AddressesWhiteListAmountFormat
   setAmountFormat: Dispatch<SetStateAction<AddressesWhiteListAmountFormat>>
 }) => {
-  const { order } = addressesWhiteListStepsConfig[currentStep]
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const [innerList, setInnerList] = useState(list)
+  const [displayList, setDisplayList] = useState(list.slice(0, PAGE_SIZE))
 
   const status = useMemo(() => {
-    if (list.some((item: AddressWhitelistProps) => item.address && !isAddress(item.address))) {
+    if (innerList.some((item: AddressWhiteListProps) => item.address && !isAddress(item.address))) {
       return AddressesWhiteListStatus.invalidAddress
     }
 
-    const validAddresses = list.reduce((result, item) => {
-      if (item.address) {
-        result.push(item.address)
-      }
-
-      return result
-    }, [] as Array<string>)
-
-    if (new Set(validAddresses).size != validAddresses.length) {
-      return AddressesWhiteListStatus.duplicatedAddresses
+    if (
+      innerList.some(
+        (item: AddressWhiteListProps) => item.amount && !item.amount && Number(item.amount) > 0,
+      )
+    ) {
+      return AddressesWhiteListStatus.invalidAmount
     }
 
-    if (list.some((item: AddressWhitelistProps) => item.address && !item.amount)) {
-      return AddressesWhiteListStatus.invalidAmount
+    const addressesInSet = new Set()
+
+    if (
+      innerList.some((item: AddressWhiteListProps) => {
+        // Returning true means that there is at least one duplicated address
+        if (addressesInSet.has(item.address)) {
+          return true
+        }
+
+        // Add the address to the set only if it is a valid address
+        if (isAddress(item.address)) {
+          addressesInSet.add(item.address)
+        }
+
+        // Returning false means that there are no duplicated addresses.
+        return false
+      })
+    ) {
+      return AddressesWhiteListStatus.duplicatedAddresses
     }
 
     if (
       amountFormat === AddressesWhiteListAmountFormat.uint256 &&
-      list.some((item: AddressWhitelistProps) => item.amount && item.amount % 1 !== 0)
+      innerList.some((item: AddressWhiteListProps) => item.amount && Number(item.amount) % 1 !== 0)
     ) {
       return AddressesWhiteListStatus.invalidDecimals
     }
 
     return AddressesWhiteListStatus.valid
-  }, [list, amountFormat])
+  }, [amountFormat, innerList])
 
-  const handleUploadCSV = (whitelist: AddressWhitelistProps[]): void => {
-    setList(whitelist)
+  const handleUploadCSV = (whitelist: AddressWhiteListProps[]): void => {
+    setInnerList(whitelist)
+    setDisplayList(whitelist.slice(0, PAGE_SIZE))
   }
 
   const onChangeRow = (value: string | number | null, key: string, index: number) => {
-    const addresses = [...list]
+    const innerListCopy = [...innerList]
+    const displayListCopy = [...displayList]
 
-    addresses[index] = {
-      ...addresses[index],
+    innerListCopy[index] = {
+      ...innerListCopy[index],
       [key]: value,
     }
-    setList(addresses)
+
+    displayListCopy[index] = {
+      ...displayList[index],
+      [key]: value,
+    }
+
+    setInnerList(innerListCopy)
+    setDisplayList(displayListCopy)
   }
 
   const onDeleteRow = (rowIndex: number) => {
-    setList([...list].filter((_, index) => index !== rowIndex))
+    setInnerList(() => [...innerList].filter((_, index) => index !== rowIndex))
+    setDisplayList(() => [...displayList].filter((_, index) => index !== rowIndex))
   }
 
   const handleNext = () => {
@@ -361,80 +264,40 @@ const AddressesWhiteList = ({
   }
 
   const handleSave = () => {
-    // Remove empty rows.
-    const filterRows = [...list.filter((row: AddressWhitelistProps) => row.address)]
+    // Filter incomplete or wrong rows
+    const filterRows = [
+      ...innerList.filter((row: AddressWhiteListProps) => {
+        return isAddress(row.address) && row.amount !== null && Number(row.amount) > 0
+      }),
+    ]
+
     onConfirm(filterRows, PrivacyType.WHITELIST, amountFormat)
     onClose()
   }
 
-  const isFirstStep = addressesWhiteListStepsConfig[currentStep].order === 1
-  const isLastStep =
-    addressesWhiteListStepsConfig[currentStep].order ===
-    Object.keys(addressesWhiteListStepsConfig).length
+  const loadMoreRows = () => {
+    const start = page * PAGE_SIZE
+    const end = start + PAGE_SIZE
 
-  const prevStep = Object.values(addressesWhiteListStepsConfig).find(
-    ({ order }) => order === addressesWhiteListStepsConfig[currentStep].order - 1,
-  )?.id
+    // Set hasMore to false at the end of the list
+    if (end > innerList.length) {
+      setHasMore(false)
+      return
+    }
 
-  const nextStep = Object.values(addressesWhiteListStepsConfig).find(
-    ({ order }) => order === addressesWhiteListStepsConfig[currentStep].order + 1,
-  )?.id
+    const chunk = innerList.slice(start, end)
+
+    setPage(page + 1)
+    setDisplayList([...displayList, ...chunk])
+  }
 
   return (
-    <WrapperGrid>
-      <PrevWrapper>
-        {!isFirstStep && (
-          <ButtonPrev
-            onClick={() => {
-              if (prevStep) {
-                setCurrentStep(prevStep)
-              }
-            }}
-          />
-        )}
-      </PrevWrapper>
-      <StepContents>
-        <StepIndicator
-          currentStepOrder={order}
-          data={getStepIndicatorData(currentStep)}
-          direction={undefined}
-        />
+    <AddressesWhiteListWrapper currentStep={currentStep} setCurrentStep={setCurrentStep}>
+      <>
         {currentStep === AddressesWhiteListStep.format && (
           <>
-            {amountFormat === AddressesWhiteListAmountFormat.decimal && (
-              <Note>
-                <div>
-                  If you are using an investment token with 6 decimals then <b>1.5</b> investment
-                  token is equivalent to <b>1.5</b>.
-                  <br />
-                  Please input the amount as a <b>decimal</b>.
-                </div>
-                <div>
-                  Example with <b>decimal</b> :
-                </div>
-                <ExampleRow>
-                  <ExampleAddress>0x0000000000000000000000000000000000000000</ExampleAddress>
-                  <ExampleAmount>1.5</ExampleAmount>
-                </ExampleRow>
-              </Note>
-            )}
-            {amountFormat === AddressesWhiteListAmountFormat.uint256 && (
-              <Note>
-                <div>
-                  If you are using an investment token with 6 decimals then <b>1.5</b> investment
-                  token is equivalent to <b>1500000</b>.
-                  <br />
-                  Please input the amount as a <b>uint256</b>.
-                </div>
-                <div>
-                  Example with <b>uint256</b> :
-                </div>
-                <ExampleRow>
-                  <ExampleAddress>0x0000000000000000000000000000000000000000</ExampleAddress>
-                  <ExampleAmount>1500000</ExampleAmount>
-                </ExampleRow>
-              </Note>
-            )}
+            {amountFormat === AddressesWhiteListAmountFormat.decimal && <DecimalWarning />}
+            {amountFormat === AddressesWhiteListAmountFormat.uint256 && <Uint256Warning />}
             <AmountFormatDescription>Select the format you want to use :</AmountFormatDescription>
             <AmountFormatsWrapper>
               {Object.entries(AddressesWhiteListAmountFormat).map(([key, value]) => (
@@ -453,11 +316,8 @@ const AddressesWhiteList = ({
         )}
         {currentStep === AddressesWhiteListStep.addresses && (
           <>
-            <Note>
-              You can select a CSV file to input automatically the addresses and amounts.
-              <br />
-              Please avoid duplicate addresses in your CSV file.
-            </Note>
+            <DuplicatedAddressesWarning />
+
             <Grid>
               <TitleGrid>
                 <Title>Address</Title>
@@ -465,50 +325,58 @@ const AddressesWhiteList = ({
               </TitleGrid>
               <Title>{`Amount (${amountFormat})`}</Title>
               <div>&nbsp;</div>
-              {list.map((listItem: AddressWhitelistProps, rowIndex: number) => (
-                <WhiteListRow
-                  {...listItem}
-                  amountFormat={amountFormat}
-                  key={rowIndex}
-                  onChangeRow={onChangeRow}
-                  onDeleteRow={onDeleteRow}
-                  rowIndex={rowIndex}
-                />
-              ))}
             </Grid>
+
+            <InfiniteScroll
+              dataLength={displayList.length}
+              hasMore={hasMore}
+              loader={<></>}
+              next={loadMoreRows}
+            >
+              <Grid>
+                {displayList.map(({ address, amount, index }: AddressWhiteListProps) => (
+                  <WhiteListRow
+                    address={address}
+                    amount={amount}
+                    key={index}
+                    onChangeRow={onChangeRow}
+                    onDeleteRow={onDeleteRow}
+                    rowIndex={index}
+                  />
+                ))}
+              </Grid>
+            </InfiniteScroll>
+
             <RelativeRow>
               <TotalAddressesWrapper>
-                <TotalAddressesLabel>Total addresses :</TotalAddressesLabel>
+                <TotalAddressesLabel>Total addresses:</TotalAddressesLabel>
                 <TotalAddressesValue>
-                  {list.filter((item) => item.address).length}
+                  {innerList.filter((item) => item.address).length}
                 </TotalAddressesValue>
               </TotalAddressesWrapper>
               <ButtonPrimaryLightSm
-                onClick={() => setList(list.concat(initialAddressesWhitelistValues))}
+                onClick={() => {
+                  setInnerList([...innerList, ...addInitialAddressesWhiteListValues(innerList)])
+                  setDisplayList([
+                    ...displayList,
+                    ...addInitialAddressesWhiteListValues(displayList),
+                  ])
+                }}
               >
                 Add more rows
               </ButtonPrimaryLightSm>
             </RelativeRow>
+
             {getError(status)}
+
             <MainButton disabled={status !== AddressesWhiteListStatus.valid} onClick={handleSave}>
               Save
             </MainButton>
           </>
         )}
         <CancelButton onClick={onClose}>Cancel</CancelButton>
-      </StepContents>
-      <NextWrapper>
-        {!isLastStep && (
-          <ButtonNext
-            onClick={() => {
-              if (nextStep) {
-                setCurrentStep(nextStep)
-              }
-            }}
-          />
-        )}
-      </NextWrapper>
-    </WrapperGrid>
+      </>
+    </AddressesWhiteListWrapper>
   )
 }
 

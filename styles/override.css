@@ -2,3 +2,8 @@
 :root {
   --onboard-font-family-normal: 'Hind Madurai';
 }
+
+/* Override infinite scroll outer container */
+.infinite-scroll-component__outerdiv {
+  width: 100%;
+}
