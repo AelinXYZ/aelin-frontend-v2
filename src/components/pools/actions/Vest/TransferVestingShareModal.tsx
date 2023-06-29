@@ -89,13 +89,12 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     const underlyingDealTokenDecimal = underlyingDealTokenDecimals ?? BASE_DECIMALS
     const convertedAmount = BigNumber.from(amount)
       .mul(BigNumber.from('10').pow(BASE_DECIMALS - underlyingDealTokenDecimal))
-      .mul(
-        pool.deal.exchangeRates.dealPerInvestment.raw.div(
-          BigNumber.from('10').pow(
-            underlyingDealTokenDecimal > pool.investmentTokenDecimals
-              ? underlyingDealTokenDecimal
-              : pool.investmentTokenDecimals,
-          ),
+      .mul(pool.deal.exchangeRates.dealPerInvestment.raw)
+      .div(
+        BigNumber.from('10').pow(
+          underlyingDealTokenDecimal > pool.investmentTokenDecimals
+            ? underlyingDealTokenDecimal
+            : pool.investmentTokenDecimals,
         ),
       )
 
@@ -131,6 +130,7 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     const calls = transferTokenIds.map((tokenId) =>
       dealInterface.encodeFunctionData('transfer', [toAddress, tokenId, '0x00']),
     )
+
     if (partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)) {
       calls.push(
         dealInterface.encodeFunctionData('transferVestingShare', [
