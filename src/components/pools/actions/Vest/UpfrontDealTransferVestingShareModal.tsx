@@ -81,7 +81,11 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     isSubmitting,
   ])
 
-  const handleTransfer = async (amount: string, toAddress: string) => {
+  const handleTransfer = async (
+    amount: string,
+    toAddress: string,
+    clearInputValues: () => void,
+  ) => {
     const compare = (a: VestingToken, b: VestingToken) => {
       if (BigNumber.from(a.amount).lt(BigNumber.from(b.amount))) {
         return -1
@@ -130,6 +134,7 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
           [calls] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
           txGasOptions,
         )
+        clearInputValues()
         await refetch()
       },
       title: `Transfer ${tokenToVestSymbol}`,
