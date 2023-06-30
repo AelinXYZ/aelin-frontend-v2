@@ -82,7 +82,11 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     isSubmitting,
   ])
 
-  const handleTransfer = async (amount: string, toAddress: string) => {
+  const handleTransfer = async (
+    amount: string,
+    toAddress: string,
+    clearInputValues: () => void,
+  ) => {
     if (!pool.deal) {
       throw new Error('Deal not found.')
     }
@@ -147,6 +151,7 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
           [calls] as Parameters<AelinDealCombined['functions'][typeof method]>,
           txGasOptions,
         )
+        clearInputValues()
         router.reload()
       },
       title: `Transfer ${tokenToVestSymbol}`,

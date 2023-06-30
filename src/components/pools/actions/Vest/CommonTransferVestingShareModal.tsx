@@ -101,7 +101,7 @@ type Props = {
   totalAmount: BigNumber
   underlyingDealTokenDecimals: number | undefined
   onClose: () => void
-  onTransfer: (amount: string, toAddress: string) => void
+  onTransfer: (amount: string, toAddress: string, clearInputValues: () => void) => void
   isTransferButtonDisabled: boolean
 }
 
@@ -124,6 +124,11 @@ const CommonTransferVestingShareModal = ({
 
   const [amount, setAmount] = useState('')
   const [toAddress, setToAddress] = useState('')
+
+  const clearInputValues = () => {
+    setAmount('')
+    setToAddress('')
+  }
 
   const amountError = useMemo(() => {
     if (amount === '') {
@@ -221,7 +226,7 @@ const CommonTransferVestingShareModal = ({
         disabled={
           isTransferButtonDisabled || !amount || !toAddress || !!amountError || !!addressError
         }
-        onClick={() => onTransfer(amount, toAddress)}
+        onClick={() => onTransfer(amount, toAddress, clearInputValues)}
       >
         Transfer
       </TransferButton>
