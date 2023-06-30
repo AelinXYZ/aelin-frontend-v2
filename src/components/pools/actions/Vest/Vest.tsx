@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { BigNumber } from 'alchemy-sdk'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import ms from 'ms'
@@ -25,9 +26,10 @@ import { isHiddenPool } from '@/src/utils/isHiddenPool'
 
 type Props = {
   pool: ParsedAelinPool
+  handleTransfer: () => void
 }
 
-function Vest({ pool }: Props) {
+function Vest({ handleTransfer, pool }: Props) {
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
   const { address, isAppConnected } = useWeb3Connection()
@@ -42,7 +44,7 @@ function Vest({ pool }: Props) {
   })
 
   const tokenIds =
-    vestingTokensData?.vestingTokens.map((vestingToken) => Number(vestingToken.tokenId)) ?? []
+    vestingTokensData?.vestingTokens.map((vestingToken: any) => Number(vestingToken.tokenId)) ?? []
 
   const method = pool.isDealTokenTransferable ? 'claimUnderlyingMultipleEntries' : 'claim'
 
@@ -60,7 +62,7 @@ function Vest({ pool }: Props) {
   )
 
   const {
-    investorDealTotal,
+    investorDealTotal = ZERO_BN,
     lastClaim = null,
     totalVested = ZERO_BN,
     underlyingDealTokenDecimals,
@@ -96,6 +98,16 @@ function Vest({ pool }: Props) {
     )
   }, [address, hasRemainingTokens, isAppConnected, isSubmitting, pool.address])
 
+  const isTransferButtonDisabled = useMemo(() => {
+    return (
+      !address ||
+      !isAppConnected ||
+      !pool.isDealTokenTransferable ||
+      BigNumber.from(investorDealTotal).lte(ZERO_BN) ||
+      isHiddenPool(pool.address)
+    )
+  }, [address, investorDealTotal, isAppConnected, pool.address, pool.isDealTokenTransferable])
+
   const handleVest = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
@@ -117,7 +129,10 @@ function Vest({ pool }: Props) {
     })
   }
 
-  if (data?.vestingDeal === null) {
+  if (
+    data?.vestingDeal === null ||
+    (BigNumber.from(investorDealTotal).eq(ZERO_BN) && pool.isDealTokenTransferable)
+  ) {
     return <NothingToClaim />
   }
 
@@ -132,8 +147,10 @@ function Vest({ pool }: Props) {
       {isVestingCliffEnded && hasRemainingTokens && (
         <VestingPeriod
           amountToVest={amountToVest}
+          handleTransfer={handleTransfer}
           handleVest={handleVest}
-          isButtonDisabled={isVestButtonDisabled}
+          isTransferButtonDisabled={isTransferButtonDisabled}
+          isVestButtonDisabled={isVestButtonDisabled}
           symbol={data?.vestingDeal?.tokenToVestSymbol}
           totalAmount={investorDealTotal}
           totalVested={totalVested}

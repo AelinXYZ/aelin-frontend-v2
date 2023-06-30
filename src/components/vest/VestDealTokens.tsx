@@ -6,6 +6,8 @@ import { BigNumber } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import TransferVestingShareModal from '../pools/actions/Vest/TransferVestingShareModal'
+import UpfrontDealTransferVestingShareModal from '../pools/actions/Vest/UpfrontDealTransferVestingShareModal'
 import { OrderDirection, VestingDeal_OrderBy } from '@/graphql-schema'
 import { Dropdown as BaseDropdown, DropdownItem } from '@/src/components/common/Dropdown'
 import { DynamicDeadline } from '@/src/components/common/DynamicDeadline'
@@ -31,7 +33,7 @@ import VestActionButton from '@/src/components/vest/buttons/VestActionButton'
 import VestUpfrontDealActionButton from '@/src/components/vest/buttons/VestUpfrontDealActionButton'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { getNetworkConfig } from '@/src/constants/chains'
-import { DISPLAY_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import useAelinAmountToVestUpfrontDeal from '@/src/hooks/aelin/useAelinAmountToVestUpfrontDeal'
 import useAelinVestingDeals, { VestingDealsFilter } from '@/src/hooks/aelin/useAelinVestingDeals'
@@ -39,6 +41,7 @@ import useGetVestingTokens from '@/src/hooks/aelin/useGetVestingTokens'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getFormattedDurationFromDateToNow } from '@/src/utils/date'
+import { isHiddenPool } from '@/src/utils/isHiddenPool'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const TableCard = styled.div`
@@ -83,7 +86,7 @@ const ButtonCSS = css`
   }
 `
 
-const SeePoolButton = styled(ButtonPrimaryLightSm)`
+const Button = styled(ButtonPrimaryLightSm)`
   ${ButtonCSS}
 `
 
@@ -142,7 +145,7 @@ const Wrapper = ({ children }: WrapperProps) => (
 )
 
 export const VestDealTokens: React.FC = () => {
-  const { address: user } = useWeb3Connection()
+  const { address: user, isAppConnected } = useWeb3Connection()
   const [order, setOrder] = useState<Order>({
     orderBy: VestingDeal_OrderBy.VestingPeriodEnds,
     orderDirection: OrderDirection.Desc,
@@ -150,6 +153,13 @@ export const VestDealTokens: React.FC = () => {
   const [vestingDealsFilter, setVestingDealsFilter] = useState<VestingDealsFilter>(
     VestingDealsFilter.Active,
   )
+  const [transferVestingModalPoolAddress, setTransferVestingModalPoolAddress] = useState<
+    string | null
+  >(null)
+  const [
+    upfrontDealTransferVestingModalPoolAddress,
+    setUpfrontDealTransferVestingModalPoolAddress,
+  ] = useState<string | null>(null)
 
   const { data, error, hasMore, nextPage } = useAelinVestingDeals(
     {
@@ -170,7 +180,7 @@ export const VestDealTokens: React.FC = () => {
       network: 'center',
       seePool: 'right',
     },
-    widths: '110px 120px 140px 115px 170px 90px 1fr',
+    widths: '110px 120px 140px 115px 120px 90px 1fr',
   }
 
   const tableHeaderCells = [
@@ -191,7 +201,7 @@ export const VestDealTokens: React.FC = () => {
       sortKey: VestingDeal_OrderBy.TotalVested,
     },
     {
-      title: 'Vesting period ends',
+      title: 'Vesting ends',
       sortKey: VestingDeal_OrderBy.VestingPeriodEnds,
     },
     { title: 'Network' },
@@ -232,120 +242,151 @@ export const VestDealTokens: React.FC = () => {
   }
 
   return (
-    <Wrapper>
-      <Dropdown
-        currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
-        dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
-        items={vestingDealsFilterArr.map((vestingDeal, key) => (
-          <DropdownItem key={key} onClick={() => setVestingDealsFilter(vestingDeal)}>
-            {vestingDeal}
-          </DropdownItem>
-        ))}
-      />
-      <InfiniteScroll
-        dataLength={data.length}
-        hasMore={hasMore}
-        loader={<LoadingTableRow />}
-        next={nextPage}
-        scrollableTarget={'outerWrapper'}
-      >
-        <TableHead columns={columns.widths}>
-          {tableHeaderCells.map(({ sortKey, title }, index) => (
-            <SortableTH
-              isActive={order.orderBy === sortKey}
-              key={index}
-              onClick={() => {
-                if (sortKey) handleSort(sortKey)
-              }}
-            >
-              {title}
-            </SortableTH>
+    <>
+      <Wrapper>
+        <Dropdown
+          currentItem={vestingDealsFilterArr.findIndex((vdf) => vdf === vestingDealsFilter)}
+          dropdownButtonContent={<ButtonDropdown>{vestingDealsFilter}</ButtonDropdown>}
+          items={vestingDealsFilterArr.map((vestingDeal, key) => (
+            <DropdownItem key={key} onClick={() => setVestingDealsFilter(vestingDeal)}>
+              {vestingDeal}
+            </DropdownItem>
           ))}
-        </TableHead>
-        <TableBody>
-          {data.map((item, index) => {
-            const {
-              chainId,
-              dealAddress,
-              isDealTokenTransferable,
-              poolAddress,
-              poolName,
-              tokenSymbol,
-              totalAmount,
-              totalVested,
-              underlyingDealTokenDecimals,
-              upfrontDealAddress,
-              vestingPeriodEnds,
-              vestingPeriodStarts,
-            } = item
+        />
+        <InfiniteScroll
+          dataLength={data.length}
+          hasMore={hasMore}
+          loader={<LoadingTableRow />}
+          next={nextPage}
+          scrollableTarget={'outerWrapper'}
+        >
+          <TableHead columns={columns.widths}>
+            {tableHeaderCells.map(({ sortKey, title }, index) => (
+              <SortableTH
+                isActive={order.orderBy === sortKey}
+                key={index}
+                onClick={() => {
+                  if (sortKey) handleSort(sortKey)
+                }}
+              >
+                {title}
+              </SortableTH>
+            ))}
+          </TableHead>
+          <TableBody>
+            {data.map((item, index) => {
+              const {
+                chainId,
+                dealAddress,
+                isDealTokenTransferable,
+                poolAddress,
+                poolName,
+                tokenSymbol,
+                totalAmount,
+                totalVested,
+                underlyingDealTokenDecimals,
+                upfrontDealAddress,
+                vestingPeriodEnds,
+                vestingPeriodStarts,
+              } = item
 
-            return (
-              <Row columns={columns.widths} key={index}>
-                <NameCell mobileJustifyContent="center">{poolName}</NameCell>
-                <Cell mobileJustifyContent="center">
-                  <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
-                  <Value>
-                    {formatToken(totalAmount, underlyingDealTokenDecimals, DISPLAY_DECIMALS)}{' '}
-                    {tokenSymbol}
-                  </Value>
-                </Cell>
-                <AmountToVestCell
-                  chainId={chainId}
-                  dealAddress={dealAddress as string}
-                  isDealTokenTransferable={isDealTokenTransferable}
-                  isUpfrontDeal={!!upfrontDealAddress}
-                  poolAddress={poolAddress}
-                  tokenSymbol={tokenSymbol}
-                  underlyingDealTokenDecimals={underlyingDealTokenDecimals}
-                  vestingPeriodEnds={vestingPeriodEnds}
-                  vestingPeriodStarts={vestingPeriodStarts}
-                />
-                <Cell mobileJustifyContent="center">
-                  <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
-                  <Value>
-                    {formatToken(totalVested, underlyingDealTokenDecimals, DISPLAY_DECIMALS)}{' '}
-                    {tokenSymbol}
-                  </Value>
-                </Cell>
-                <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
-                  <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
-                  <DynamicDeadline deadline={vestingPeriodEnds} start={vestingPeriodStarts}>
-                    {getFormattedDurationFromDateToNow(vestingPeriodEnds)}
-                  </DynamicDeadline>
-                </Cell>
-                <Cell justifyContent="center" mobileJustifyContent="center">
-                  <HideOnDesktop>Network</HideOnDesktop>
-                  {getNetworkConfig(chainId).icon}
-                </Cell>
-                <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
-                  <RequiredConnection
-                    buttonSize="sm"
-                    isNotConnectedText=""
-                    isWrongNetworkText=""
-                    networkToCheck={chainId}
-                  >
-                    {item.upfrontDealAddress ? (
-                      <VestUpfrontDealActionButton pool={item} />
-                    ) : (
-                      <VestActionButton pool={item} />
-                    )}
-                  </RequiredConnection>
+              const canTransfer =
+                user &&
+                isAppConnected &&
+                isDealTokenTransferable &&
+                BigNumber.from(totalAmount).gt(ZERO_BN) &&
+                !isHiddenPool(poolAddress)
 
-                  <SeePoolButton
-                    onClick={(e) => {
-                      e.preventDefault()
-                      router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
-                    }}
-                  >
-                    See Pool
-                  </SeePoolButton>
-                </LinkCell>
-              </Row>
-            )
-          })}
-        </TableBody>
-      </InfiniteScroll>
-    </Wrapper>
+              return (
+                <Row columns={columns.widths} key={index}>
+                  <NameCell mobileJustifyContent="center">{poolName}</NameCell>
+                  <Cell mobileJustifyContent="center">
+                    <HideOnDesktop>My deal total:&nbsp;</HideOnDesktop>
+                    <Value>
+                      {formatToken(totalAmount, underlyingDealTokenDecimals, DISPLAY_DECIMALS)}{' '}
+                      {tokenSymbol}
+                    </Value>
+                  </Cell>
+                  <AmountToVestCell
+                    chainId={chainId}
+                    dealAddress={dealAddress as string}
+                    isDealTokenTransferable={isDealTokenTransferable}
+                    isUpfrontDeal={!!upfrontDealAddress}
+                    poolAddress={poolAddress}
+                    tokenSymbol={tokenSymbol}
+                    underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+                    vestingPeriodEnds={vestingPeriodEnds}
+                    vestingPeriodStarts={vestingPeriodStarts}
+                  />
+                  <Cell mobileJustifyContent="center">
+                    <HideOnDesktop>Total vested:&nbsp;</HideOnDesktop>
+                    <Value>
+                      {formatToken(totalVested, underlyingDealTokenDecimals, DISPLAY_DECIMALS)}{' '}
+                      {tokenSymbol}
+                    </Value>
+                  </Cell>
+                  <Cell style={{ flexFlow: 'column', alignItems: 'flex-start' }}>
+                    <HideOnDesktop>Vesting period ends:&nbsp;</HideOnDesktop>
+                    <DynamicDeadline deadline={vestingPeriodEnds} start={vestingPeriodStarts}>
+                      {getFormattedDurationFromDateToNow(vestingPeriodEnds)}
+                    </DynamicDeadline>
+                  </Cell>
+                  <Cell justifyContent="center" mobileJustifyContent="center">
+                    <HideOnDesktop>Network</HideOnDesktop>
+                    {getNetworkConfig(chainId).icon}
+                  </Cell>
+                  <LinkCell flexFlowColumn justifyContent={columns.alignment.seePool}>
+                    <RequiredConnection
+                      buttonSize="sm"
+                      isNotConnectedText=""
+                      isWrongNetworkText=""
+                      networkToCheck={chainId}
+                    >
+                      {item.upfrontDealAddress ? (
+                        <VestUpfrontDealActionButton pool={item} />
+                      ) : (
+                        <VestActionButton pool={item} />
+                      )}
+                    </RequiredConnection>
+                    <Button
+                      disabled={!canTransfer}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        item.upfrontDealAddress
+                          ? setUpfrontDealTransferVestingModalPoolAddress(poolAddress)
+                          : setTransferVestingModalPoolAddress(poolAddress)
+                      }}
+                    >
+                      Transfer
+                    </Button>
+                    <Button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        router.push(`/pool/${getKeyChainByValue(chainId)}/${poolAddress}`)
+                      }}
+                    >
+                      See Pool
+                    </Button>
+                  </LinkCell>
+                </Row>
+              )
+            })}
+          </TableBody>
+        </InfiniteScroll>
+      </Wrapper>
+      {transferVestingModalPoolAddress && (
+        <TransferVestingShareModal
+          onClose={() => setTransferVestingModalPoolAddress(null)}
+          poolAddress={transferVestingModalPoolAddress}
+        />
+      )}
+      {upfrontDealTransferVestingModalPoolAddress && (
+        <UpfrontDealTransferVestingShareModal
+          onClose={() => setUpfrontDealTransferVestingModalPoolAddress(null)}
+          poolAddress={upfrontDealTransferVestingModalPoolAddress}
+        />
+      )}
+    </>
   )
 }
 
@@ -415,7 +456,7 @@ function AmountToVestCellSponsorDeal({
   })
 
   const tokenIds =
-    vestingTokensData?.vestingTokens.map((vestingToken) => Number(vestingToken.tokenId)) ?? []
+    vestingTokensData?.vestingTokens.map((vestingToken: any) => Number(vestingToken.tokenId)) ?? []
 
   const [amountToVest] = useAelinAmountToVest(
     isDealTokenTransferable,
@@ -459,7 +500,7 @@ function AmountToVestCellUpfrontDeal({
   })
 
   const tokenIds =
-    vestingTokensData?.vestingTokens.map((vestingToken) => Number(vestingToken.tokenId)) ?? []
+    vestingTokensData?.vestingTokens.map((vestingToken: any) => Number(vestingToken.tokenId)) ?? []
 
   const [amountToVest] = useAelinAmountToVestUpfrontDeal(
     isDealTokenTransferable,

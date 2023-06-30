@@ -64,9 +64,10 @@ interface Props {
   disabled?: boolean
   error?: string
   maxDisabled?: boolean
-  maxValue: string
+  maxValue?: string
   withBalance?: boolean
-  maxValueFormatted: string
+  withMaxButton?: boolean
+  maxValueFormatted?: string
   setValue: (value: string) => void
   value: string
   symbol?: string
@@ -79,12 +80,13 @@ export const TokenInput = ({
   error,
   maxAllocationFormatted,
   maxDisabled,
-  maxValue,
+  maxValue = '',
   maxValueFormatted,
   setValue,
   symbol,
   value,
   withBalance = true,
+  withMaxButton = true,
   ...restProps
 }: Props) => {
   const setMax = () => setValue(maxValue)
@@ -106,9 +108,11 @@ export const TokenInput = ({
           )}
           value={value}
         />
-        <MaxButton disabled={maxDisabled} onClick={setMax}>
-          Max
-        </MaxButton>
+        {withMaxButton && (
+          <MaxButton disabled={maxDisabled} onClick={setMax}>
+            Max
+          </MaxButton>
+        )}
       </InputWrapper>
       {withBalance && (
         <Balance>
