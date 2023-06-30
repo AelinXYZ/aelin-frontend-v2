@@ -41,6 +41,7 @@ function Vest({ handleTransfer, pool }: Props) {
       dealAddress: pool.dealAddress,
       owner: address,
     },
+    config: { refreshInterval: ms('5s') },
   })
 
   const tokenIds =
