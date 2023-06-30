@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { Interface } from '@ethersproject/abi'
 import { BigNumber } from 'alchemy-sdk'
@@ -32,25 +32,18 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     refreshInterval: ms('5s'),
   })
 
-  const { data: vestingTokensData } = useGetVestingTokens({
+  const { data: vestingTokensData, mutate: refetchVestingTokensData } = useGetVestingTokens({
     chainId: pool.chainId,
     where: {
       dealAddress: pool.dealAddress,
       owner: address,
     },
+    config: { refreshInterval: ms('5s') },
   })
 
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
-
-  const method = 'multicall'
-  const { estimate, execute } = useAelinDealTransaction(
-    pool.dealAddress ?? ZERO_ADDRESS,
-    method,
-    pool.isDealTokenTransferable as boolean,
-  )
-
-  const { data, mutate: refetch } = useVestingDealById(
+  const { data: vestingDealData, mutate: refetchVestingDealData } = useVestingDealById(
     {
       id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.dealAddress}`,
     },
@@ -61,7 +54,20 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     investorDealTotal = ZERO_BN,
     tokenToVestSymbol,
     underlyingDealTokenDecimals,
-  } = data?.vestingDeal ?? {}
+  } = vestingDealData?.vestingDeal ?? {}
+
+  const method = 'multicall'
+  const { estimate, execute } = useAelinDealTransaction(
+    pool.dealAddress ?? ZERO_ADDRESS,
+    method,
+    pool.isDealTokenTransferable as boolean,
+  )
+
+  useEffect(() => {
+    if (BigNumber.from(investorDealTotal).eq(ZERO_BN)) {
+      onClose()
+    }
+  }, [investorDealTotal, onClose])
 
   const isTransferButtonDisabled = useMemo(() => {
     return (
@@ -134,7 +140,6 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     const calls = transferTokenIds.map((tokenId) =>
       dealInterface.encodeFunctionData('transfer', [toAddress, tokenId, '0x00']),
     )
-
     if (partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)) {
       calls.push(
         dealInterface.encodeFunctionData('transferVestingShare', [
@@ -152,7 +157,8 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
           txGasOptions,
         )
         clearInputValues()
-        await refetch()
+        refetchVestingTokensData()
+        refetchVestingDealData()
       },
       title: `Transfer ${tokenToVestSymbol}`,
       estimate: () =>

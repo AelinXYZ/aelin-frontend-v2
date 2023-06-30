@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { Interface } from '@ethersproject/abi'
 import { BigNumber } from 'alchemy-sdk'
@@ -32,25 +32,18 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     refreshInterval: ms('5s'),
   })
 
-  const { data: vestingTokensData } = useGetVestingTokens({
+  const { data: vestingTokensData, mutate: refetchVestingTokensData } = useGetVestingTokens({
     chainId: pool.chainId,
     where: {
       dealAddress: pool.address,
       owner: address,
     },
+    config: { refreshInterval: ms('5s') },
   })
 
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
-
-  const method = 'multicall'
-  const { estimate, execute } = useAelinUpfrontDealTransaction(
-    pool.upfrontDeal?.address || ZERO_ADDRESS,
-    method,
-    pool.isDealTokenTransferable as boolean,
-  )
-
-  const { data, mutate: refetch } = useVestingDealById(
+  const { data: vestingDealData, mutate: refetchVestingDealData } = useVestingDealById(
     {
       id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.upfrontDeal?.address}`,
     },
@@ -61,7 +54,20 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     investorDealTotal = ZERO_BN,
     tokenToVestSymbol,
     underlyingDealTokenDecimals,
-  } = data?.vestingDeal ?? {}
+  } = vestingDealData?.vestingDeal ?? {}
+
+  const method = 'multicall'
+  const { estimate, execute } = useAelinUpfrontDealTransaction(
+    pool.upfrontDeal?.address || ZERO_ADDRESS,
+    method,
+    pool.isDealTokenTransferable as boolean,
+  )
+
+  useEffect(() => {
+    if (BigNumber.from(investorDealTotal).eq(ZERO_BN)) {
+      onClose()
+    }
+  }, [investorDealTotal, onClose])
 
   const isTransferButtonDisabled = useMemo(() => {
     return (
@@ -135,7 +141,8 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
           txGasOptions,
         )
         clearInputValues()
-        await refetch()
+        refetchVestingTokensData()
+        refetchVestingDealData()
       },
       title: `Transfer ${tokenToVestSymbol}`,
       estimate: () =>
