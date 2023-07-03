@@ -84,10 +84,7 @@ function Vest({ handleTransfer, pool }: Props) {
     withinInterval,
   )
 
-  const hasRemainingTokens =
-    lastClaim !== null
-      ? isBefore(new Date(lastClaim * 1000), pool.deal?.vestingPeriod.vesting.end as Date)
-      : amountToVest.gt(ZERO_BN)
+  const hasRemainingTokens = amountToVest.gt(ZERO_BN)
 
   const isVestButtonDisabled = useMemo(() => {
     return (

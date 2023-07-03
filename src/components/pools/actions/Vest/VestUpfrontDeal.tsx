@@ -100,9 +100,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
   const sponsorClaim = !!pool.upfrontDeal?.sponsorClaim
   const hasSponsorFees = !!pool.sponsorFee.raw.gt(ZERO_BN)
 
-  const hasRemainingTokens = hasClaimedAtLeastOnce
-    ? isBefore(new Date(lastClaim * 1000), pool.upfrontDeal?.vestingPeriod.vesting.end as Date)
-    : amountToVest.gt(ZERO_BN)
+  const hasRemainingTokens = amountToVest.gt(ZERO_BN)
 
   const userRoles = useAelinUserRoles(pool)
 
