@@ -53,6 +53,7 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
   const {
     investorDealTotal = ZERO_BN,
     tokenToVestSymbol,
+    totalVested = ZERO_BN,
     underlyingDealTokenDecimals,
   } = vestingDealData?.vestingDeal ?? {}
 
@@ -156,7 +157,7 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
       onClose={onClose}
       onTransfer={handleTransfer}
       symbol={tokenToVestSymbol}
-      totalAmount={BigNumber.from(investorDealTotal)}
+      totalAmount={BigNumber.from(investorDealTotal).sub(BigNumber.from(totalVested))}
       underlyingDealTokenDecimals={underlyingDealTokenDecimals}
     />
   )
