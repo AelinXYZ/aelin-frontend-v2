@@ -64,18 +64,23 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     pool.isDealTokenTransferable as boolean,
   )
 
+  const transferableAmount = useMemo(
+    () => BigNumber.from(investorDealTotal).sub(BigNumber.from(totalVested)),
+    [investorDealTotal, totalVested],
+  )
+
   useEffect(() => {
-    if (BigNumber.from(investorDealTotal).eq(ZERO_BN)) {
+    if (transferableAmount.eq(ZERO_BN)) {
       onClose()
     }
-  }, [investorDealTotal, onClose])
+  }, [transferableAmount, onClose])
 
   const isTransferButtonDisabled = useMemo(() => {
     return (
       !address ||
       !isAppConnected ||
       !pool.isDealTokenTransferable ||
-      BigNumber.from(investorDealTotal).lte(ZERO_BN) ||
+      transferableAmount.lte(ZERO_BN) ||
       isHiddenPool(pool.address) ||
       isSubmitting
     )
@@ -83,7 +88,7 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
     address,
     isAppConnected,
     pool.isDealTokenTransferable,
-    investorDealTotal,
+    transferableAmount,
     pool.address,
     isSubmitting,
   ])
@@ -173,7 +178,7 @@ const TransferVestingShareModal = ({ onClose, poolAddress }: Props) => {
       onClose={onClose}
       onTransfer={handleTransfer}
       symbol={tokenToVestSymbol}
-      totalAmount={BigNumber.from(investorDealTotal).sub(BigNumber.from(totalVested))}
+      totalAmount={transferableAmount}
       underlyingDealTokenDecimals={underlyingDealTokenDecimals}
     />
   )
