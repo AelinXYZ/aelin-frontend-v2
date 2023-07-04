@@ -36,7 +36,7 @@ const SponsorClaimButton = ({ pool }: Props) => {
       onConfirm: async (txGasOptions: GasOptions) => {
         await claim([], txGasOptions)
       },
-      title: `Claim sponsor fee`,
+      title: `Settle sponsor fee`,
       estimate: () => estimate([]),
     })
   }
@@ -46,7 +46,7 @@ const SponsorClaimButton = ({ pool }: Props) => {
       disabled={!address || !isAppConnected || isSubmitting}
       onClick={claimDealTokens}
     >
-      Claim
+      Settle
     </ButtonGradient>
   )
 }

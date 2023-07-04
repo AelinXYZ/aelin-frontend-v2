@@ -57,6 +57,7 @@ const Text = styled.p`
   color: ${({ theme: { colors } }) => colors.textColorLight};
   font-size: 0.8rem;
   margin: 5px 0;
+  overflow-wrap: anywhere;
 `
 
 export const ToastComponent = ({

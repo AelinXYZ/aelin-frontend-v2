@@ -6,6 +6,8 @@ import styled from 'styled-components'
 
 import NoActions from './actions/NoActions'
 import ClaimUpfrontDealTokens from './actions/Vest/ClaimUpfrontDealTokens'
+import TransferVestingShareModal from './actions/Vest/TransferVestingShareModal'
+import UpfrontDealTransferVestingShareModal from './actions/Vest/UpfrontDealTransferVestingShareModal'
 import VestUpfrontDeal from './actions/Vest/VestUpfrontDeal'
 import Vouch from './actions/Vouch/Vouch'
 import InvestorsModal from './common/InvestorsModal'
@@ -76,6 +78,8 @@ const CardWithTitle = styled(BaseCardWithTitle)`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
     order: 0;
   }
+
+  padding-bottom: 20px;
 `
 
 const ActionsWrapper = styled.div`
@@ -106,6 +110,9 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
   const { currentThemeName } = useThemeContext()
 
   const [showInvestorsModal, setShowInvestorsModal] = useState<boolean>(false)
+  const [showTransferVestingShareModal, setShowTransferVestingShareModal] = useState<boolean>(false)
+  const [showUpfrontDealTransferVestingShareModal, setUpfrontDealShowTransferVestingShareModal] =
+    useState<boolean>(false)
 
   const { derivedStatus, funding, pool, tabs, timeline } = useAelinPoolStatus(
     chainId,
@@ -190,6 +197,11 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
                     activeTab={tabs.actionTabs.active}
                     derivedStatus={derivedStatus}
                     funding={funding}
+                    handleTransfer={() =>
+                      pool.upfrontDeal
+                        ? setUpfrontDealShowTransferVestingShareModal(true)
+                        : setShowTransferVestingShareModal(true)
+                    }
                     isUpfrontDeal={!!pool.upfrontDeal}
                     pool={pool}
                   />
@@ -207,6 +219,18 @@ export default function PoolMain({ chainId, poolAddress }: Props) {
         </MainGrid>
         {showInvestorsModal && <InvestorsModal onClose={handleCloseInvestorsModal} pool={pool} />}
       </RightTimelineLayout>
+      {showTransferVestingShareModal && (
+        <TransferVestingShareModal
+          onClose={() => setShowTransferVestingShareModal(false)}
+          poolAddress={pool.address}
+        />
+      )}
+      {showUpfrontDealTransferVestingShareModal && (
+        <UpfrontDealTransferVestingShareModal
+          onClose={() => setUpfrontDealShowTransferVestingShareModal(false)}
+          poolAddress={pool.address}
+        />
+      )}
     </>
   )
 }
@@ -217,6 +241,7 @@ type DealActionTabsProps = {
   activeTab: PoolAction | null
   derivedStatus: DerivedStatus
   funding: Funding
+  handleTransfer: () => void
 }
 function DealActionTabs({ ...props }: DealActionTabsProps) {
   return props.isUpfrontDeal ? (
@@ -226,7 +251,13 @@ function DealActionTabs({ ...props }: DealActionTabsProps) {
   )
 }
 
-function RegularPoolsActionTabs({ activeTab, derivedStatus, funding, pool }: DealActionTabsProps) {
+function RegularPoolsActionTabs({
+  activeTab,
+  derivedStatus,
+  funding,
+  handleTransfer,
+  pool,
+}: DealActionTabsProps) {
   return (
     <>
       {!activeTab && <NoActions pool={pool} status={derivedStatus} />}
@@ -236,14 +267,20 @@ function RegularPoolsActionTabs({ activeTab, derivedStatus, funding, pool }: Dea
       {activeTab === PoolAction.CreateDeal && <CreateDeal pool={pool} />}
       {activeTab === PoolAction.AcceptDeal && <AcceptDeal pool={pool} />}
       {activeTab === PoolAction.FundDeal && <FundDeal pool={pool} />}
-      {activeTab === PoolAction.Vest && <Vest pool={pool} />}
+      {activeTab === PoolAction.Vest && <Vest handleTransfer={handleTransfer} pool={pool} />}
       {activeTab === PoolAction.WithdrawUnredeemed && <WithdrawUnredeemed pool={pool} />}
       {activeTab === PoolAction.SponsorClaim && <SponsorClaim pool={pool} />}
     </>
   )
 }
 
-function UpfrontDealActionTabs({ activeTab, derivedStatus, funding, pool }: DealActionTabsProps) {
+function UpfrontDealActionTabs({
+  activeTab,
+  derivedStatus,
+  funding,
+  handleTransfer,
+  pool,
+}: DealActionTabsProps) {
   return (
     <>
       {!activeTab && <NoActions pool={pool} status={derivedStatus} />}
@@ -254,7 +291,9 @@ function UpfrontDealActionTabs({ activeTab, derivedStatus, funding, pool }: Deal
         <WaitingForDeal isUpfrontDeal={!!pool.upfrontDeal} />
       )}
       {activeTab === PoolAction.FundDeal && <FundDeal pool={pool} />}
-      {activeTab === PoolAction.Vest && <VestUpfrontDeal pool={pool} />}
+      {activeTab === PoolAction.Vest && (
+        <VestUpfrontDeal handleTransfer={handleTransfer} pool={pool} />
+      )}
       {activeTab === PoolAction.Settle && (
         <ClaimUpfrontDealTokens
           pool={pool}

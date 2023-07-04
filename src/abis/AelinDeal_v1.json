@@ -743,6 +743,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "data",
+        "type": "bytes[]"
+      }
+    ],
+    "name": "multicall",
+    "outputs": [
+      {
+        "internalType": "bytes[]",
+        "name": "results",
+        "type": "bytes[]"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "name",
     "outputs": [
@@ -968,7 +987,7 @@
   },
   {
     "inputs": [],
-    "name": "totalProtocolFee",
+    "name": "totalDealTokenAccepted",
     "outputs": [
       {
         "internalType": "uint256",
@@ -981,7 +1000,7 @@
   },
   {
     "inputs": [],
-    "name": "totalUnderlyingAccepted",
+    "name": "totalProtocolFee",
     "outputs": [
       {
         "internalType": "uint256",

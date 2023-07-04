@@ -118,8 +118,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
       symbol: 'ETH',
       decimals: BASE_DECIMALS,
     },
-    buyAelinUrl:
-      'https://app.uniswap.org/#/swap?outputCurrency=0x61BAADcF22d2565B0F471b291C475db5555e0b76&inputCurrency=ETH&chain=optimism',
+    buyAelinUrl: 'https://app.velodrome.finance/swap',
     isL2: true,
   },
   [Chains.arbitrum]: {
