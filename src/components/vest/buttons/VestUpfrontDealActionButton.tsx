@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
 
 import isBefore from 'date-fns/isBefore'
+import ms from 'ms'
 
 import { ButtonGradientSm } from '../../pureStyledComponents/buttons/Button'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
@@ -35,6 +36,7 @@ const VestUpfrontDealActionButton = ({ pool }: { pool: ParsedVestingDeal }) => {
       dealAddress: pool.upfrontDealAddress ?? pool.dealAddress,
       owner: userAddress,
     },
+    config: { refreshInterval: ms('5s') },
   })
 
   const tokenIds =

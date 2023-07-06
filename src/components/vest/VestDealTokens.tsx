@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import isAfter from 'date-fns/isAfter'
+import ms from 'ms'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import TransferVestingShareModal from '../pools/actions/Vest/TransferVestingShareModal'
@@ -33,10 +34,13 @@ import VestActionButton from '@/src/components/vest/buttons/VestActionButton'
 import VestUpfrontDealActionButton from '@/src/components/vest/buttons/VestUpfrontDealActionButton'
 import { ChainsValues, getKeyChainByValue } from '@/src/constants/chains'
 import { getNetworkConfig } from '@/src/constants/chains'
-import { DISPLAY_DECIMALS, ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_ADDRESS } from '@/src/constants/misc'
 import useAelinAmountToVest from '@/src/hooks/aelin/useAelinAmountToVest'
 import useAelinAmountToVestUpfrontDeal from '@/src/hooks/aelin/useAelinAmountToVestUpfrontDeal'
-import useAelinVestingDeals, { VestingDealsFilter } from '@/src/hooks/aelin/useAelinVestingDeals'
+import useAelinVestingDeals, {
+  ParsedVestingDeal,
+  VestingDealsFilter,
+} from '@/src/hooks/aelin/useAelinVestingDeals'
 import useGetVestingTokens from '@/src/hooks/aelin/useGetVestingTokens'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -145,7 +149,7 @@ const Wrapper = ({ children }: WrapperProps) => (
 )
 
 export const VestDealTokens: React.FC = () => {
-  const { address: user, isAppConnected } = useWeb3Connection()
+  const { address: user } = useWeb3Connection()
   const [order, setOrder] = useState<Order>({
     orderBy: VestingDeal_OrderBy.VestingPeriodEnds,
     orderDirection: OrderDirection.Desc,
@@ -290,13 +294,6 @@ export const VestDealTokens: React.FC = () => {
                 vestingPeriodStarts,
               } = item
 
-              const canTransfer =
-                user &&
-                isAppConnected &&
-                isDealTokenTransferable &&
-                BigNumber.from(totalAmount).gt(ZERO_BN) &&
-                !isHiddenPool(poolAddress)
-
               return (
                 <Row columns={columns.widths} key={index}>
                   <NameCell mobileJustifyContent="center">{poolName}</NameCell>
@@ -348,17 +345,15 @@ export const VestDealTokens: React.FC = () => {
                         <VestActionButton pool={item} />
                       )}
                     </RequiredConnection>
-                    <Button
-                      disabled={!canTransfer}
+                    <TransferActionButton
                       onClick={(e) => {
                         e.preventDefault()
                         item.upfrontDealAddress
                           ? setUpfrontDealTransferVestingModalPoolAddress(poolAddress)
                           : setTransferVestingModalPoolAddress(poolAddress)
                       }}
-                    >
-                      Transfer
-                    </Button>
+                      pool={item}
+                    />
                     <Button
                       onClick={(e) => {
                         e.preventDefault()
@@ -533,4 +528,35 @@ function AmountToVestCellComponent({
       </Value>
     </Cell>
   )
+}
+
+function TransferActionButton({
+  onClick,
+  pool,
+}: {
+  pool: ParsedVestingDeal
+  onClick: (e: any) => void
+}) {
+  const { address: userAddress, isAppConnected } = useWeb3Connection()
+
+  const { data: vestingTokensData } = useGetVestingTokens({
+    chainId: pool.chainId,
+    where: {
+      dealAddress: pool.upfrontDealAddress ?? pool.dealAddress,
+      owner: userAddress,
+    },
+    config: { refreshInterval: ms('5s') },
+  })
+
+  const tokenIds =
+    vestingTokensData?.vestingTokens.map((vestingToken) => Number(vestingToken.tokenId)) ?? []
+
+  const canTransfer =
+    userAddress &&
+    isAppConnected &&
+    pool.isDealTokenTransferable &&
+    tokenIds.length > 0 &&
+    !isHiddenPool(pool.poolAddress)
+
+  return <Button disabled={!canTransfer} onClick={onClick}></Button>
 }
