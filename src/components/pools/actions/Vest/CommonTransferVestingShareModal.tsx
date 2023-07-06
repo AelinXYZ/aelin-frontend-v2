@@ -132,7 +132,7 @@ const CommonTransferVestingShareModal = ({
         {addressError && <Error margin="0">{addressError}</Error>}
       </InputBox>
       <TransferButton
-        disabled={isTransferButtonDisabled || !totalAmount || !toAddress || !!addressError}
+        disabled={isTransferButtonDisabled || !toAddress || !!addressError}
         onClick={() => onTransfer(toAddress)}
       >
         Transfer
