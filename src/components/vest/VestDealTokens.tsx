@@ -558,5 +558,9 @@ function TransferActionButton({
     tokenIds.length > 0 &&
     !isHiddenPool(pool.poolAddress)
 
-  return <Button disabled={!canTransfer} onClick={onClick}></Button>
+  return (
+    <Button disabled={!canTransfer} onClick={onClick}>
+      Transfer
+    </Button>
+  )
 }
