@@ -63,6 +63,7 @@ function Vest({ handleTransfer, pool }: Props) {
 
   const {
     investorDealTotal = ZERO_BN,
+    tokenToVestSymbol = '',
     totalVested = ZERO_BN,
     underlyingDealTokenDecimals,
   } = data?.vestingDeal ?? {}
@@ -118,7 +119,7 @@ function Vest({ handleTransfer, pool }: Props) {
         refetchAmountToVest()
         refetchVestingTokensData()
       },
-      title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
+      title: `Vest ${tokenToVestSymbol}`,
       estimate: () =>
         pool.isDealTokenTransferable
           ? estimateClaim([tokenIds] as Parameters<AelinDealCombined['functions'][typeof method]>)
@@ -128,9 +129,28 @@ function Vest({ handleTransfer, pool }: Props) {
 
   if (
     data?.vestingDeal === null ||
-    (BigNumber.from(investorDealTotal).eq(ZERO_BN) && pool.isDealTokenTransferable)
+    (pool.isDealTokenTransferable &&
+      data?.vestingDeal !== null &&
+      tokenIds.length === 0 &&
+      BigNumber.from(amountToVest).eq(ZERO_BN) &&
+      BigNumber.from(totalVested).eq(ZERO_BN))
   ) {
     return <NothingToClaim />
+  }
+
+  if (
+    pool.isDealTokenTransferable &&
+    data?.vestingDeal !== null &&
+    tokenIds.length === 0 &&
+    BigNumber.from(totalVested).gt(ZERO_BN)
+  ) {
+    return (
+      <VestingCompleted
+        symbol={tokenToVestSymbol}
+        totalVested={totalVested}
+        underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+      />
+    )
   }
 
   return (
@@ -148,7 +168,7 @@ function Vest({ handleTransfer, pool }: Props) {
           handleVest={handleVest}
           isTransferButtonDisabled={isTransferButtonDisabled}
           isVestButtonDisabled={isVestButtonDisabled}
-          symbol={data?.vestingDeal?.tokenToVestSymbol}
+          symbol={tokenToVestSymbol}
           totalAmount={investorDealTotal}
           totalVested={totalVested}
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
@@ -156,7 +176,7 @@ function Vest({ handleTransfer, pool }: Props) {
       )}
       {isVestingCliffEnded && isVestingPeriodEnded && !hasRemainingTokens && (
         <VestingCompleted
-          symbol={data?.vestingDeal?.tokenToVestSymbol}
+          symbol={tokenToVestSymbol}
           totalVested={totalVested}
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
         />

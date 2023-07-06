@@ -68,6 +68,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
   const {
     investorDealTotal = ZERO_BN,
     lastClaim = null,
+    tokenToVestSymbol = '',
     totalVested = ZERO_BN,
     underlyingDealTokenDecimals,
   } = data?.vestingDeal ?? {}
@@ -149,7 +150,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
         refetchAmountToVest()
         refetchVestingTokensData()
       },
-      title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
+      title: `Vest ${tokenToVestSymbol}`,
       estimate: () =>
         pool.isDealTokenTransferable
           ? estimate([tokenIds] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>)
@@ -158,15 +159,29 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
   }
 
   if (
-    userRoles.includes(UserRole.Visitor) ||
-    (!userRoles.includes(UserRole.Investor) && userRoles.includes(UserRole.Holder)) ||
-    (!userRoles.includes(UserRole.Investor) &&
-      userRoles.includes(UserRole.Sponsor) &&
-      !hasSponsorFees) ||
-    (pool.isDealTokenTransferable && BigNumber.from(investorDealTotal).eq(ZERO_BN)) ||
-    (pool.isDealTokenTransferable && tokenIds.length === 0)
+    data?.vestingDeal === null ||
+    (pool.isDealTokenTransferable &&
+      data?.vestingDeal !== null &&
+      tokenIds.length === 0 &&
+      BigNumber.from(amountToVest).eq(ZERO_BN) &&
+      BigNumber.from(totalVested).eq(ZERO_BN))
   ) {
     return <NothingToClaim />
+  }
+
+  if (
+    pool.isDealTokenTransferable &&
+    data?.vestingDeal !== null &&
+    tokenIds.length === 0 &&
+    BigNumber.from(totalVested).gt(ZERO_BN)
+  ) {
+    return (
+      <VestingCompleted
+        symbol={tokenToVestSymbol}
+        totalVested={totalVested}
+        underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+      />
+    )
   }
 
   return (
@@ -189,7 +204,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
           handleVest={handleVest}
           isTransferButtonDisabled={isTransferButtonDisabled}
           isVestButtonDisabled={isVestButtonDisabled}
-          symbol={data?.vestingDeal?.tokenToVestSymbol}
+          symbol={tokenToVestSymbol}
           totalAmount={investorDealTotal}
           totalVested={totalVested}
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
@@ -200,7 +215,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
         !hasRemainingTokens &&
         hasClaimedAtLeastOnce && (
           <VestingCompleted
-            symbol={data?.vestingDeal?.tokenToVestSymbol}
+            symbol={tokenToVestSymbol}
             totalVested={totalVested}
             underlyingDealTokenDecimals={underlyingDealTokenDecimals}
           />
