@@ -17,8 +17,8 @@ import { Privacy } from '@/src/constants/pool'
 import { Token, isToken } from '@/src/constants/token'
 import {
   getPoolCreatedId,
-  useAelinPoolCreateTransaction,
-} from '@/src/hooks/contracts/useAelinPoolCreateTransaction'
+  useAelinPoolFactoryTransaction,
+} from '@/src/hooks/contracts/useAelinPoolFactoryTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getFormattedDurationFromNowToDuration, sumDurations } from '@/src/utils/date'
@@ -290,8 +290,8 @@ export default function useAelinCreatePool(chainId: ChainsValues) {
   const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
   const router = useRouter()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
-  const { estimate: createPoolEstimate, execute } = useAelinPoolCreateTransaction(
-    contracts.REGULAR_POOL_FACTORY.address[chainId],
+  const { estimate: createPoolEstimate, execute } = useAelinPoolFactoryTransaction(
+    contracts.POOL_FACTORY.address[chainId],
     'createPool',
   )
 

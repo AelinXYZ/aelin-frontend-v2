@@ -1,14 +1,8 @@
 import { useCallback } from 'react'
 
-import orderBy from 'lodash/orderBy'
 import useSWRInfinite from 'swr/infinite'
 
-import {
-  Investor,
-  Investor_OrderBy,
-  InvestorsQueryVariables,
-  QueryInvestorsArgs,
-} from '@/graphql-schema'
+import { Investor, InvestorsQueryVariables, QueryInvestorsArgs } from '@/graphql-schema'
 import { ChainsValues, ChainsValuesArray } from '@/src/constants/chains'
 import { INVESTORS_RESULTS_PER_CHAIN } from '@/src/constants/pool'
 import { INVESTORS_QUERY_NAME } from '@/src/queries/pools/investors'

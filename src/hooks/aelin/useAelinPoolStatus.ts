@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
+import { MaxUint256 } from '@ethersproject/constants'
 import { addMilliseconds } from 'date-fns'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
@@ -9,10 +10,11 @@ import ms from 'ms'
 
 import { NotificationType } from '@/graphql-schema'
 import { ChainsValues } from '@/src/constants/chains'
-import { DISPLAY_DECIMALS, MAX_BN, ZERO_BN } from '@/src/constants/misc'
+import { DISPLAY_DECIMALS, ZERO_BN } from '@/src/constants/misc'
 import { MAX_ALLOWED_DEALS } from '@/src/constants/pool'
 import { PoolTimelineState } from '@/src/constants/types'
 import useAelinPool, { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
+import useAelinUserRoles from '@/src/hooks/aelin/useAelinUserRoles'
 import { useUserAllocationStats } from '@/src/hooks/aelin/useUserAllocationStats'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { calculateDeadlineProgress } from '@/src/utils/aelinPoolUtils'
@@ -203,16 +205,16 @@ function useCurrentStatus(pool: ParsedAelinPool): DerivedStatus {
 function useFundingStatus(pool: ParsedAelinPool, derivedStatus: DerivedStatus): Funding {
   return useMemo(() => {
     derivedStatus // used to force re-render
-    const isCap = pool.poolCap.raw.eq(0)
     const capAmount = pool.poolCap.raw
+    const isCap = capAmount.gt(ZERO_BN)
     const funded = pool.funded.raw
     const maxDepositAllowed = capAmount.sub(funded)
 
     return {
       isCap,
-      capReached: isCap ? false : capAmount.eq(funded),
+      capReached: isCap ? capAmount.eq(funded) : false,
       maxDepositAllowed: {
-        raw: isCap ? MAX_BN : maxDepositAllowed,
+        raw: isCap ? maxDepositAllowed : MaxUint256,
         formatted: formatToken(maxDepositAllowed, pool.investmentTokenDecimals, DISPLAY_DECIMALS),
       },
       minimumAmount: pool.upfrontDeal?.purchaseRaiseMinimum,
@@ -226,38 +228,8 @@ function useFundingStatus(pool: ParsedAelinPool, derivedStatus: DerivedStatus): 
   ])
 }
 
-function useUserRole(
-  walletAddress: string | null,
-  pool: ParsedAelinPool,
-  derivedStatus: DerivedStatus,
-): UserRole {
-  return useMemo(() => {
-    let userRole = UserRole.Investor
-
-    if (!walletAddress) {
-      userRole = UserRole.Visitor
-      return userRole
-    }
-
-    const address = walletAddress.toLowerCase()
-
-    if (address === pool.sponsor) {
-      userRole = UserRole.Sponsor
-    }
-
-    if (
-      (address === pool.deal?.holderAddress && derivedStatus.current !== PoolStatus.SeekingDeal) ||
-      address === pool.upfrontDeal?.holder
-    ) {
-      userRole = UserRole.Holder
-    }
-
-    return userRole
-  }, [walletAddress, pool, derivedStatus])
-}
-
 function useUserActions(
-  userRole: UserRole,
+  userRole: UserRole[],
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
 ): PoolAction[] {
@@ -278,7 +250,7 @@ function useUserActions(
 
   return useMemo(() => {
     const actions: PoolAction[] = []
-    const isSponsor = userRole === UserRole.Sponsor
+    const isSponsor = userRole.includes(UserRole.Sponsor)
     const now = new Date()
     const userPoolBalance = BigNumber.from(userAllocationStats.raw)
 
@@ -288,7 +260,7 @@ function useUserActions(
       }
       // Waiting for holder
       if (currentStatus === PoolStatus.WaitingForHolder) {
-        if (userRole !== UserRole.Holder) {
+        if (!userRole.includes(UserRole.Holder)) {
           actions.push(PoolAction.AwaitingForDeal)
         } else {
           actions.push(PoolAction.FundDeal)
@@ -386,13 +358,13 @@ function useUserActions(
 
     // Waiting for holder
     if (currentStatus === PoolStatus.WaitingForHolder) {
-      if (userRole !== UserRole.Holder) {
+      if (!userRole.includes(UserRole.Holder)) {
         actions.push(PoolAction.AwaitingForDeal)
       }
 
       // Fund deal
       if (
-        userRole === UserRole.Holder &&
+        userRole.includes(UserRole.Holder) &&
         pool.deal &&
         !pool.deal.holderAlreadyDeposited &&
         isBefore(now, pool.deal.holderFundingExpiration)
@@ -410,7 +382,21 @@ function useUserActions(
       }
 
       // Accept deal. For investors
+
+      // Round 1
       if (
+        pool.deal.redemption?.stage === 1 &&
+        userPoolBalance.gt(ZERO_BN) &&
+        pool.deal.redemption &&
+        isBefore(now, pool.deal.redemption?.end)
+      ) {
+        actions.push(PoolAction.AcceptDeal)
+      }
+
+      // Round 2
+      if (
+        pool.deal.redemption?.stage === 2 &&
+        userAllocationStats.isRoundOneMaxAccepted &&
         userPoolBalance.gt(ZERO_BN) &&
         pool.deal.redemption &&
         isBefore(now, pool.deal.redemption?.end)
@@ -435,19 +421,43 @@ function useUserActions(
     }
 
     if (currentStatus === PoolStatus.Vesting) {
-      return userPoolBalance.gt(ZERO_BN)
-        ? [PoolAction.Vest, PoolAction.Withdraw]
-        : [PoolAction.Vest]
+      if (
+        isSponsor &&
+        pool.isDealTokenTransferable &&
+        !pool.sponsorClaimed &&
+        pool.sponsorFee.raw.gt(ZERO_BN)
+      ) {
+        return [PoolAction.SponsorClaim]
+      } else {
+        return userPoolBalance.gt(ZERO_BN)
+          ? [PoolAction.Vest, PoolAction.Withdraw]
+          : [PoolAction.Vest]
+      }
     }
 
     return []
-  }, [isConnected, userRole, currentStatus, pool, walletAddress, userAllocationStats.raw])
+  }, [
+    userRole,
+    userAllocationStats.raw,
+    userAllocationStats.isRoundOneMaxAccepted,
+    pool.upfrontDeal,
+    pool.dealAddress,
+    pool.dealDeadline,
+    pool.deal,
+    pool.dealsCreated,
+    pool.isDealTokenTransferable,
+    pool.sponsorClaimed,
+    pool.sponsorFee.raw,
+    currentStatus,
+    isConnected,
+    walletAddress,
+  ])
 }
 
 function useUserTabs(
   pool: ParsedAelinPool,
   derivedStatus: DerivedStatus,
-  userRole: UserRole,
+  userRole: UserRole[],
   defaultTab?: NotificationType,
 ): TabsState {
   const { history } = derivedStatus
@@ -539,7 +549,7 @@ function useUserTabs(
         switch (defaultTab) {
           case NotificationType.HolderSet:
             setActiveTab(PoolTab.DealInformation)
-            if (userRole === UserRole.Holder) {
+            if (userRole.includes(UserRole.Holder)) {
               setActiveAction(PoolAction.FundDeal)
             } else {
               setActiveAction(PoolAction.AwaitingForDeal)
@@ -584,7 +594,7 @@ function useUserTabs(
     }
 
     if (history.includes(PoolStatus.Vesting)) {
-      if (pool.deal?.unredeemed.raw.gt(0) && userRole === UserRole.Holder) {
+      if (pool.deal?.unredeemed.raw.gt(ZERO_BN) && userRole.includes(UserRole.Holder)) {
         tabs.push(PoolTab.WithdrawUnredeemed)
       }
       tabs.push(PoolTab.Vest)
@@ -627,7 +637,7 @@ function useUserTabs(
           break
         case NotificationType.FundingWindowEnded:
           setActiveTab(PoolTab.PoolInformation)
-          userRole === UserRole.Sponsor
+          userRole.includes(UserRole.Sponsor)
             ? setActiveAction(PoolAction.CreateDeal)
             : setActiveAction(PoolAction.Withdraw)
           break
@@ -638,7 +648,7 @@ function useUserTabs(
           setActiveAction(PoolAction.Vest)
           break
         case NotificationType.WithdrawUnredeemed:
-          if (pool.deal?.unredeemed.raw.gt(0) && userRole === UserRole.Holder) {
+          if (pool.deal?.unredeemed.raw.gt(ZERO_BN) && userRole.includes(UserRole.Holder)) {
             setActiveTab(PoolTab.WithdrawUnredeemed)
             setActiveAction(PoolAction.WithdrawUnredeemed)
           } else {
@@ -649,7 +659,7 @@ function useUserTabs(
           setActiveTab(tabs[tabs.length - 1])
       }
     } else {
-      if (tabs.includes(PoolTab.WithdrawUnredeemed) && pool.deal?.unredeemed.raw.gt(0)) {
+      if (tabs.includes(PoolTab.WithdrawUnredeemed) && pool.deal?.unredeemed.raw.gt(ZERO_BN)) {
         setActiveTab(PoolTab.WithdrawUnredeemed)
         setActiveAction(PoolAction.WithdrawUnredeemed)
       } else {
@@ -1059,12 +1069,10 @@ export default function useAelinPoolStatus(
     refreshInterval: ms('5s'),
   })
 
-  const { address } = useWeb3Connection()
-
   // derive data for UI
   const derivedStatus = useCurrentStatus(poolResponse)
 
-  const userRole = useUserRole(address, poolResponse, derivedStatus)
+  const userRole = useAelinUserRoles(poolResponse)
   const tabs = useUserTabs(poolResponse, derivedStatus, userRole, initialData?.tabs)
   const funding = useFundingStatus(poolResponse, derivedStatus)
   const timeline = useTimelineStatus(poolResponse)

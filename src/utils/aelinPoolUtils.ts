@@ -80,7 +80,7 @@ export function getPurchaseTokenCap(pool: PoolCreated) {
   return {
     raw: BigNumber.from(pool.purchaseTokenCap),
     formatted: formatToken(
-      pool.purchaseTokenCap,
+      pool.purchaseTokenCap as string,
       pool.purchaseTokenDecimals || BASE_DECIMALS,
       DISPLAY_DECIMALS,
     ),

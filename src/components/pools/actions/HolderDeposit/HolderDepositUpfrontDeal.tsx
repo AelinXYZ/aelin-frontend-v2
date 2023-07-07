@@ -6,7 +6,10 @@ import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Bu
 import { Error } from '@/src/components/pureStyledComponents/text/Error'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
-import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
+import {
+  AelinUpfrontDealCombined,
+  useAelinUpfrontDealTransaction,
+} from '@/src/hooks/contracts/useAelinUpfrontDealTransaction'
 import useERC20Call from '@/src/hooks/contracts/useERC20Call'
 import { useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -39,9 +42,12 @@ function HolderDepositUpfrontDeal({ pool }: Props) {
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
   const [disabledAfterDeposit, setDisabledAfterDeposit] = useState(false)
 
-  const { estimate: estimate, execute: deposit } = useAelinPoolUpfrontDealTransaction(
+  const method = 'depositUnderlyingTokens'
+
+  const { estimate: estimate, execute: deposit } = useAelinUpfrontDealTransaction(
     pool.upfrontDeal?.address || ZERO_ADDRESS,
-    'depositUnderlyingTokens',
+    method,
+    pool.isDealTokenTransferable,
   )
 
   const underlyingAmount = pool.upfrontDeal?.underlyingToken.dealAmount.raw || ZERO_BN
@@ -49,11 +55,17 @@ function HolderDepositUpfrontDeal({ pool }: Props) {
   const depositTokens = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions) => {
-        await deposit([underlyingAmount], txGasOptions)
+        await deposit(
+          [underlyingAmount] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
+          txGasOptions,
+        )
         setDisabledAfterDeposit(true)
       },
       title: `Fund deal`,
-      estimate: () => estimate([underlyingAmount]),
+      estimate: () =>
+        estimate([underlyingAmount] as Parameters<
+          AelinUpfrontDealCombined['functions'][typeof method]
+        >),
     })
   }
 

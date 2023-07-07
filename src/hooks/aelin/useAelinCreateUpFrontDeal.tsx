@@ -22,15 +22,15 @@ import { Privacy } from '@/src/constants/pool'
 import { Token } from '@/src/constants/token'
 import {
   getDealCreatedId,
-  useAelinDirectDealCreateTransaction,
-} from '@/src/hooks/contracts/useAelinDirectDealCreateTransaction'
+  useAelinUpfrontDealFactoryTransaction,
+} from '@/src/hooks/contracts/useAelinUpfrontDealFactoryTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { getDuration, isEmptyDuration, secondsToDhm } from '@/src/utils/date'
 import { formatNumber } from '@/src/utils/formatNumber'
 import { parseValuesToCreateUpFrontDeal } from '@/src/utils/parseValuesToCreateUpFrontDeal'
 import { promisifyWorker } from '@/src/utils/promisifyWorker'
-import validateCreateDirectDeal, { dealErrors } from '@/src/utils/validate/createDirectDeal'
+import validateCreateUpfrontDeal, { dealErrors } from '@/src/utils/validate/createUpfrontDeal'
 import { storeFile } from '@/src/utils/web3storage'
 
 const VestinScheduleContainer = styled.div`
@@ -504,8 +504,8 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
   const [showWarningOnLeave, setShowWarningOnLeave] = useState<boolean>(false)
   const router = useRouter()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
-  const { estimate: createUpFrontDealEstimate, execute } = useAelinDirectDealCreateTransaction(
-    contracts.DIRECT_DEALS_FACTORY.address[chainId],
+  const { estimate: createUpFrontDealEstimate, execute } = useAelinUpfrontDealFactoryTransaction(
+    contracts.UPFRONT_DEAL_FACTORY.address[chainId],
     'createUpFrontDeal',
   )
 
@@ -557,7 +557,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
       worker.postMessage({
         action: 'start',
         whitelist: createDealState.whitelist,
-        investmentTokenDeciamal: createDealState.investmentToken?.decimals,
+        investmentTokenDecimal: createDealState.investmentToken?.decimals,
         whiteListAmountFormat: createDealState.whiteListAmountFormat,
       })
 
@@ -659,7 +659,7 @@ export default function useAelinCreateDeal(chainId: ChainsValues) {
   const isFirstStep = createDealState.currentStep === CreateUpFrontDealSteps.dealAttributes
 
   useEffect(() => {
-    setErrors(validateCreateDirectDeal(createDealState, chainId))
+    setErrors(validateCreateUpfrontDeal(createDealState, chainId))
   }, [createDealState, chainId])
 
   useEffect(() => {

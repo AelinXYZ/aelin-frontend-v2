@@ -71,6 +71,7 @@ function Deposit({ pool, poolHelpers }: Props) {
   } = useNftSelection()
   const { investmentTokenDecimals, investmentTokenSymbol } = pool
   const allocation = useNftUserAllocation(pool)
+
   const {
     investmentTokenBalance,
     refetchBalances,
@@ -96,9 +97,9 @@ function Deposit({ pool, poolHelpers }: Props) {
     { ...poolHelpers.maxDepositAllowed, type: AmountTypes.maxDepositAllowed },
   ]
 
-  const sortedBalances = !isPrivatePool(pool.poolType)
-    ? balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
-    : balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+  const sortedBalances = isPrivatePool(pool.poolType)
+    ? balances.concat(userMaxDepositPrivateAmount).sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
+    : balances.sort((a, b) => (a.raw.lt(b.raw) ? -1 : 1))
 
   useEffect(() => {
     if (!investmentTokenBalance.raw) {

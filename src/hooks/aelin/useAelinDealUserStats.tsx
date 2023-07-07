@@ -69,6 +69,7 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
         raw: userAmountAccepted,
         formatted: formatToken(userAmountAccepted, pool.investmentTokenDecimals, DISPLAY_DECIMALS),
       },
+      isRoundOneMaxAccepted: userAllocationStats.isRoundOneMaxAccepted,
     }
   }, [
     data,
@@ -76,6 +77,7 @@ export default function useAelinDealUserStats(pool: ParsedAelinPool) {
     pool.investmentTokenDecimals,
     refetchPool,
     refetchUserAllocationStats,
+    userAllocationStats.isRoundOneMaxAccepted,
     userAllocationStats?.totalWithdrawn,
   ])
 }

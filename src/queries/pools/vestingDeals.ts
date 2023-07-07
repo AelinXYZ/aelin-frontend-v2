@@ -30,6 +30,7 @@ export const VESTING_DEALS = gql`
       lastClaim
       pool {
         dealAddress
+        isDealTokenTransferable
         upfrontDeal {
           id
         }

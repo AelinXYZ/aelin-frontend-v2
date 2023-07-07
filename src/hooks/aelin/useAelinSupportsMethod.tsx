@@ -7,9 +7,9 @@ import { Contract } from '@ethersproject/contracts'
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
 
 import { ParsedAelinPool } from './useAelinPool'
-import aelinDealABI from '@/src/abis/AelinDeal.json'
-import aelinPoolABI from '@/src/abis/AelinPool.json'
-import aelinUpfrontDealABI from '@/src/abis/AelinUpfrontDeal.json'
+import AelinDealABI from '@/src/abis/AelinDeal_v1.json'
+import AelinPoolABI from '@/src/abis/AelinPool_v1.json'
+import AelinUpfrontDealABI from '@/src/abis/AelinUpfrontDeal_v1.json'
 import { Chains, ChainsValues, getNetworkConfig } from '@/src/constants/chains'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import { AelinUpfrontDeal } from '@/types/typechain'
@@ -23,7 +23,7 @@ export function useAelinPoolSupportsMethod<
   const [supportsMethod, setSupportsMethod] = useState<boolean>()
   const provider = new JsonRpcProvider(getNetworkConfig(pool.chainId).rpcUrl)
 
-  const isMethodSupported = useSupportMethod(provider, pool.address, pool.chainId, aelinPoolABI)
+  const isMethodSupported = useSupportMethod(provider, pool.address, pool.chainId, AelinPoolABI)
 
   useEffect(() => {
     isMethodSupported(methodName, params).then(setSupportsMethod)
@@ -43,7 +43,7 @@ export function useAelinUpFrontDealSupportsMethod<
     provider,
     pool.address,
     pool.chainId,
-    aelinUpfrontDealABI,
+    AelinUpfrontDealABI,
   )
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export function useAelinDealSupportsMethod<
     provider,
     pool.dealAddress || ZERO_ADDRESS,
     pool.chainId,
-    aelinDealABI,
+    AelinDealABI,
   )
 
   useEffect(() => {

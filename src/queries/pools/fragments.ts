@@ -11,6 +11,7 @@ gql`
     duration
     sponsorFee
     sponsor
+    sponsorClaimed
     purchaseDuration
     purchaseExpiry
     purchaseTokenDecimals
@@ -32,6 +33,8 @@ gql`
     totalAmountFunded
     totalUsersInvested
     totalAddressesInvested
+    totalVouchers
+    vouchers
 
     totalVouchers
     vouchers
@@ -54,6 +57,8 @@ gql`
     upfrontDeal {
       ...UpfrontDealDetails
     }
+
+    isDealTokenTransferable
   }
 `
 

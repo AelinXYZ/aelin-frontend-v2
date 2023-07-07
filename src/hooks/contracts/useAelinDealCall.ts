@@ -3,27 +3,29 @@ import { SWRConfiguration } from 'swr'
 
 import useContractCall from './useContractCall'
 import AelinDealABI from '@/src/abis/AelinDeal.json'
+import AelinDealTransferABI from '@/src/abis/AelinDeal_v1.json'
 import { ChainsValues, getNetworkConfig } from '@/src/constants/chains'
-import { AelinDeal } from '@/types/typechain'
+import { AelinDeal, AelinDealV1 as AelinDealTransfer } from '@/types/typechain'
 
-export default function useAelinDealCall<
-  MethodName extends keyof AelinDeal['functions'],
-  Params extends Parameters<AelinDeal[MethodName]> | null,
-  Return extends Awaited<ReturnType<AelinDeal[MethodName]>>,
->(
+export type AelinDealCombined = AelinDeal & AelinDealTransfer
+
+export default function useAelinDealCall<MethodName extends keyof AelinDealCombined['functions']>(
   chainId: ChainsValues,
   address: string,
   method: MethodName,
-  params: Params,
+  params: Parameters<AelinDealCombined['functions'][MethodName]>,
+  isDealTokenTransferable: boolean,
   options?: SWRConfiguration,
-): [Return | null, () => void] {
+): [ReturnType<AelinDealCombined['functions'][MethodName]> | null, () => void] {
   const provider = new JsonRpcProvider(getNetworkConfig(chainId).rpcUrl)
+
+  const ABI = isDealTokenTransferable ? AelinDealTransferABI : AelinDealABI
 
   const [data, refetch] = useContractCall(
     provider,
     address,
-    AelinDealABI,
-    method,
+    ABI,
+    method as string,
     params,
     false,
     options,

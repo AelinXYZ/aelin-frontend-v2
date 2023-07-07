@@ -1,27 +1,16 @@
-import { BigNumber } from '@ethersproject/bignumber'
-
-import useTransaction from './useTransaction'
-import aelinDeal from '@/src/abis/AelinDeal.json'
-import { AelinDeal } from '@/types/typechain'
+import AelinDealABI from '@/src/abis/AelinDeal.json'
+import AelinDealTransferABI from '@/src/abis/AelinDeal_v1.json'
+import useTransaction from '@/src/hooks/contracts/useTransaction'
+import { AelinDeal, AelinDealV1 as AelinDealTransfer } from '@/types/typechain'
 import { UseTransactionReturn } from '@/types/utils'
 
-export function useAelinDealTransaction<
-  MethodName extends keyof AelinDeal['functions'],
-  Params extends Parameters<AelinDeal[MethodName]>,
->(address: string, method: MethodName): UseTransactionReturn<Params> {
-  return useTransaction(address, aelinDeal, method)
-}
+export type AelinDealCombined = AelinDeal & AelinDealTransfer
 
-export function useAelinDealEstimate<
-  MethodName extends keyof AelinDeal['functions'],
-  Params extends Parameters<AelinDeal[MethodName]>,
->(
+export function useAelinDealTransaction<MethodName extends keyof AelinDealCombined['functions']>(
   address: string,
   method: MethodName,
-): (params: Params) => Promise<{
-  l1Gas: BigNumber
-  l2Gas: BigNumber
-} | null> {
-  const { estimate } = useTransaction(address, aelinDeal, method)
-  return estimate
+  isDealTokenTransferable: boolean,
+): UseTransactionReturn<Parameters<AelinDealCombined['functions'][MethodName]>> {
+  const ABI = isDealTokenTransferable ? AelinDealTransferABI : AelinDealABI
+  return useTransaction(address, ABI, method as string)
 }

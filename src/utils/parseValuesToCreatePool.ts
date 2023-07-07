@@ -5,25 +5,12 @@ import { parseUnits } from '@ethersproject/units'
 
 import { NftType } from '../components/pools/whitelist/nft/nftWhiteListReducer'
 import { NftCollectionRulesProps } from '../hooks/aelin/useAelinCreatePool'
-import { AddressesWhiteListAmountFormat } from '@/src/components/pools/whitelist/addresses/types'
 import { ZERO_BN } from '@/src/constants/misc'
 import { BASE_DECIMALS } from '@/src/constants/misc'
 import { Privacy } from '@/src/constants/pool'
 import { CreatePoolStateComplete, CreatePoolValues } from '@/src/hooks/aelin/useAelinCreatePool'
 import { getDuration } from '@/src/utils/date'
-
-const getWhiteListAmount = (
-  amount: string,
-  whiteListAmountFormat: AddressesWhiteListAmountFormat,
-  investmentTokenDecimals: number,
-): string => {
-  switch (whiteListAmountFormat) {
-    case AddressesWhiteListAmountFormat.decimal:
-      return parseUnits(amount, investmentTokenDecimals).toString()
-    case AddressesWhiteListAmountFormat.uint256:
-      return String(amount)
-  }
-}
+import { getWhiteListAmount } from '@/src/utils/getWhiteListAmount'
 
 export const parseValuesToCreatePool = (
   createPoolState: CreatePoolStateComplete,

@@ -3,22 +3,39 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { Contents, Wrapper } from '@/src/components/pools/actions/Wrapper'
-import { ButtonGradient } from '@/src/components/pureStyledComponents/buttons/Button'
+import {
+  ButtonGradient,
+  ButtonPrimaryLight,
+} from '@/src/components/pureStyledComponents/buttons/Button'
 import { TextPrimary } from '@/src/components/pureStyledComponents/text/Text'
 import { DISPLAY_DECIMALS } from '@/src/constants/misc'
 import { formatToken } from '@/src/web3/bigNumber'
 
 const ButtonsWrapper = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 10px;
   justify-content: center;
   width: 100%;
   margin-top: 15px;
+  padding-left: 25px;
+  padding-right: 25px;
+`
+
+const TransferButton = styled(ButtonPrimaryLight)`
+  width: 100%;
+`
+
+const VestButton = styled(ButtonGradient)`
+  width: 100%;
 `
 
 type VestingPeriodProps = {
   amountToVest: BigNumber | null
+  handleTransfer: () => void
   handleVest: () => void
-  isButtonDisabled: boolean
+  isTransferButtonDisabled: boolean
+  isVestButtonDisabled: boolean
   symbol: string | undefined
   totalVested: BigNumber
   totalAmount: BigNumber
@@ -27,8 +44,10 @@ type VestingPeriodProps = {
 
 function VestingPeriod({
   amountToVest,
+  handleTransfer,
   handleVest,
-  isButtonDisabled,
+  isTransferButtonDisabled,
+  isVestButtonDisabled,
   symbol,
   totalAmount,
   totalVested,
@@ -64,9 +83,12 @@ function VestingPeriod({
         )} ${symbol}`}</TextPrimary>
       </Contents>
       <ButtonsWrapper>
-        <ButtonGradient disabled={isButtonDisabled} onClick={handleVest}>
+        <VestButton disabled={isVestButtonDisabled} onClick={handleVest}>
           Vest
-        </ButtonGradient>
+        </VestButton>
+        <TransferButton disabled={isTransferButtonDisabled} onClick={handleTransfer}>
+          Transfer
+        </TransferButton>
       </ButtonsWrapper>
     </Wrapper>
   )

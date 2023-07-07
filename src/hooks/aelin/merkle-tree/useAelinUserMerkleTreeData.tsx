@@ -38,7 +38,7 @@ function useAelinUserMerkleTreeData(pool: ParsedAelinPool): MerkleTreeUserData |
   useEffect(() => {
     if (userAddress && !isEmpty(merkleTreeData) && merkleTreeData) {
       setUserData({
-        isElegible: merkleTreeData.index,
+        isElegible: merkleTreeData.index >= 0,
         hasInvested,
         data: {
           index: merkleTreeData.index,

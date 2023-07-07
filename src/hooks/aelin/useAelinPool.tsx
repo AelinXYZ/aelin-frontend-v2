@@ -55,6 +55,7 @@ export type ParsedAelinPool = {
   dealAddress: string | null
   sponsor: string
   sponsorFee: DetailedNumber
+  sponsorClaimed: boolean
   poolCap: DetailedNumber
   amountInPool: DetailedNumber
   funded: DetailedNumber
@@ -72,6 +73,7 @@ export type ParsedAelinPool = {
   minimumPurchaseAmount?: DetailedNumber
   totalVouchers: number
   vouchers: string[]
+  isDealTokenTransferable: boolean
   totalAmountEarnedByProtocol: DetailedNumber
   upfrontDeal?: {
     address: string
@@ -106,7 +108,7 @@ export type ParsedAelinPool = {
     holder: string
     purchaseTokenPerDealToken: DetailedNumber
     purchaseRaiseMinimum: DetailedNumber
-    allowDeallocation: boolean
+    allowDeallocation?: boolean | null
     unredeemed: DetailedNumber
     dealStart: Date | null
     holderClaim: boolean
@@ -199,6 +201,7 @@ export const getParsedPool = ({
     sponsor: pool.sponsor,
     dealAddress: pool.dealAddress ? (pool.dealAddress as string) : null,
     sponsorFee: getSponsorFee(pool),
+    sponsorClaimed: pool.sponsorClaimed,
     poolCap: getPurchaseTokenCap({ ...pool, purchaseTokenDecimals }),
     purchaseExpiry: getPurchaseExpiry(pool),
     dealDeadline: getDealDeadline(pool),
@@ -227,6 +230,7 @@ export const getParsedPool = ({
       : undefined,
     totalVouchers: pool.totalVouchers,
     vouchers: pool.vouchers.map((addr) => getAddress(addr)),
+    isDealTokenTransferable: pool.isDealTokenTransferable,
     totalAmountEarnedByProtocol: getDetailedNumber(
       pool.totalAmountEarnedByProtocol,
       pool.deal?.underlyingDealTokenDecimals ??
@@ -320,16 +324,11 @@ export default function useAelinPool(
     config,
   )
 
-  const [hasAllowList] = useAelinPoolAccess(poolAddress, chainId, false)
-  const { data: minimumPurchaseAmounts } = useGetMinimumPurchaseAmount()
-
-  const refetch = () => {
-    poolCreatedMutate()
-  }
-
   if (!poolCreatedData?.poolCreated) {
     throw Error('It was not possible to fetch pool id: ' + poolAddress)
   }
+
+  const { data: minimumPurchaseAmounts } = useGetMinimumPurchaseAmount()
 
   const pool = poolCreatedData.poolCreated as PoolCreated
   const purchaseTokenDecimals = pool.purchaseTokenDecimals
@@ -337,6 +336,17 @@ export default function useAelinPool(
     ? // @ts-ignore: minimumPurchaseAmounts expect to receive a number
       minimumPurchaseAmounts[chainId]?.[pool.id]
     : null
+
+  const [hasAllowList] = useAelinPoolAccess(
+    poolAddress,
+    chainId,
+    false,
+    pool.isDealTokenTransferable,
+  )
+
+  const refetch = () => {
+    poolCreatedMutate()
+  }
 
   if (!purchaseTokenDecimals) {
     throw Error('PurchaseTokenDecimals is null or undefined for pool: ' + poolAddress)

@@ -15,7 +15,10 @@ import { ParsedAelinPool } from '@/src/hooks/aelin/useAelinPool'
 import { useAelinPoolSupportsMethod } from '@/src/hooks/aelin/useAelinSupportsMethod'
 import useAelinVouchedPools from '@/src/hooks/aelin/vouched-pools/useAelinVouchedPools'
 import { useAelinPoolTransaction } from '@/src/hooks/contracts/useAelinPoolTransaction'
-import { useAelinPoolUpfrontDealTransaction } from '@/src/hooks/contracts/useAelinPoolUpfrontDealTransaction'
+import {
+  AelinUpfrontDealCombined,
+  useAelinUpfrontDealTransaction,
+} from '@/src/hooks/contracts/useAelinUpfrontDealTransaction'
 import { GasOptions, useTransactionModal } from '@/src/providers/transactionModalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 
@@ -80,7 +83,10 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
   const isUpfrontDeal = !!pool.upfrontDeal
 
-  const supportsVouch = useAelinPoolSupportsMethod(pool, 'vouch')
+  const vouchMethod = 'vouch'
+  const disavowMethod = 'disavow'
+
+  const supportsVouch = useAelinPoolSupportsMethod(pool, vouchMethod)
 
   const wrongNetwork = pool.chainId !== appChainId
 
@@ -88,30 +94,36 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
 
   const { estimate: vouchPoolEstimate, execute: vouchPool } = useAelinPoolTransaction(
     pool.address,
-    'vouch',
+    vouchMethod,
   )
 
   const { estimate: vouchUpfrontDealEstimate, execute: vouchUpfrontDeal } =
-    useAelinPoolUpfrontDealTransaction(pool.address, 'vouch')
+    useAelinUpfrontDealTransaction(pool.address, vouchMethod, pool.isDealTokenTransferable)
 
   const { estimate: disavowPoolEstimate, execute: disavowPool } = useAelinPoolTransaction(
     pool.address,
-    'disavow',
+    disavowMethod,
   )
 
   const { estimate: disavowUpfrontDealEstimate, execute: disavowUpfrontDeal } =
-    useAelinPoolUpfrontDealTransaction(pool.address, 'disavow')
+    useAelinUpfrontDealTransaction(pool.address, disavowMethod, pool.isDealTokenTransferable)
 
   const handleVouchClick = async () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
         if (hasVouched) {
           isUpfrontDeal
-            ? await disavowUpfrontDeal([], txGasOptions)
+            ? await disavowUpfrontDeal(
+                [] as Parameters<AelinUpfrontDealCombined['functions'][typeof disavowMethod]>,
+                txGasOptions,
+              )
             : await disavowPool([], txGasOptions)
         } else {
           isUpfrontDeal
-            ? await vouchUpfrontDeal([], txGasOptions)
+            ? await vouchUpfrontDeal(
+                [] as Parameters<AelinUpfrontDealCombined['functions'][typeof vouchMethod]>,
+                txGasOptions,
+              )
             : await vouchPool([], txGasOptions)
         }
       },

@@ -1,7 +1,7 @@
-import AelinDirectDealFactoryABI from '@/src/abis/AelinDirectDealFactory.json'
 import AelinFeeDistributorABI from '@/src/abis/AelinFeeDistributorABI.json'
-import AelinRegularPoolFactoryABI from '@/src/abis/AelinRegularPoolFactory.json'
+import AelinPoolFactoryABI from '@/src/abis/AelinPoolFactory.json'
 import AelinStakingABI from '@/src/abis/AelinStaking.json'
+import AelinUpfrontDealFactoryABI from '@/src/abis/AelinUpfrontDealFactory.json'
 import ERC20 from '@/src/abis/ERC20.json'
 import GelatoPoolABI from '@/src/abis/GelatoPool.json'
 import { Chains, ChainsValues } from '@/src/constants/chains'
@@ -38,27 +38,27 @@ export const contracts = constantContracts({
     },
     abi: ERC20,
   },
-  REGULAR_POOL_FACTORY: {
+  POOL_FACTORY: {
     address: {
       [Chains.mainnet]: '0x722969A3fdc778a5cC7CbC8DC8Ae3e96a288f853',
-      [Chains.goerli]: '0x19360EF7870Ed8F75171A8C6FBD6943DFfd6d687',
-      [Chains.sepolia]: '0x687abb9507860FfBfDc3c1E8409f094Dfe7FD40A',
+      [Chains.goerli]: '0x9Ae7e0db87dbCde59e8c909bb93eE86b3756fb98',
+      [Chains.sepolia]: '0xc99A026a856C6373372e3c04C8586ADe35AE5335',
       [Chains.optimism]: '0x8B35551d6459a3d49B9A5A0D7333c6D7E0cCbBd9',
       [Chains.arbitrum]: '0xbf7c0Fd0D31bC377f861d11d4aAc15296c0405b6',
       [Chains.polygon]: '0xbf7c0fd0d31bc377f861d11d4aac15296c0405b6',
     },
-    abi: AelinRegularPoolFactoryABI,
+    abi: AelinPoolFactoryABI,
   },
-  DIRECT_DEALS_FACTORY: {
+  UPFRONT_DEAL_FACTORY: {
     address: {
       [Chains.mainnet]: '0x82BccFA913dB473147e5274C7821Bc13fFBaBE17',
-      [Chains.goerli]: '0xe63C594560CB6A780b480a8594Da8CaD544F4Db8',
-      [Chains.sepolia]: '0xF38B0D93a3E034E6B41Fd6601D7A40DC5dda7bA1',
+      [Chains.goerli]: '0x1742d008b77cFA690CC5ECdE1DB6b90EDD532F7E',
+      [Chains.sepolia]: '0x6554680a10c1884C076F2aA8FFd4594571b71D5A',
       [Chains.optimism]: '0xe6355E5B217390A2F888c35f73248844847b0ef4',
       [Chains.arbitrum]: '0x91fCeA33D02d11621b7f90ebd5E44eD393eD7b5e',
       [Chains.polygon]: '0x82eaa001029d4686b343b53ce6e7f1823725e736',
     },
-    abi: AelinDirectDealFactoryABI,
+    abi: AelinUpfrontDealFactoryABI,
   },
   STAKING_REWARDS: {
     address: {
