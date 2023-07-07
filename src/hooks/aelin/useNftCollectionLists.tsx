@@ -236,7 +236,7 @@ function useNftCollectionLists(
         const contractType = r.contractType
         const chainId = r.network
 
-        if (contractType === NFTType.PUNKS && appChainId === Chains.mainnet) return true
+        if (contractType === NFTType.PUNKS) return false
 
         return chainId === appChainId && contractType === nftType
       })
