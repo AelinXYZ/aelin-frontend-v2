@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 
 import { BigNumber } from 'alchemy-sdk'
 import isAfter from 'date-fns/isAfter'
-import isBefore from 'date-fns/isBefore'
 import ms from 'ms'
 
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
@@ -39,7 +38,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
   const { address, isAppConnected } = useWeb3Connection()
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
-  const { data: vestingTokensData } = useGetVestingTokens({
+  const { data: vestingTokensData, mutate: refetchVestingTokensData } = useGetVestingTokens({
     chainId: pool.chainId,
     where: {
       dealAddress: pool.address,
@@ -69,6 +68,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
   const {
     investorDealTotal = ZERO_BN,
     lastClaim = null,
+    tokenToVestSymbol = '',
     totalVested = ZERO_BN,
     underlyingDealTokenDecimals,
   } = data?.vestingDeal ?? {}
@@ -128,10 +128,10 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
       !address ||
       !isAppConnected ||
       !pool.isDealTokenTransferable ||
-      BigNumber.from(investorDealTotal).lte(ZERO_BN) ||
+      tokenIds.length === 0 ||
       isHiddenPool(pool.address)
     )
-  }, [address, investorDealTotal, isAppConnected, pool.address, pool.isDealTokenTransferable])
+  }, [address, isAppConnected, pool.isDealTokenTransferable, pool.address, tokenIds.length])
 
   const handleVest = async () => {
     setConfigAndOpenModal({
@@ -146,10 +146,11 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
               txGasOptions,
             )
 
-        await refetch()
-        await refetchAmountToVest()
+        refetch()
+        refetchAmountToVest()
+        refetchVestingTokensData()
       },
-      title: `Vest ${data?.vestingDeal?.tokenToVestSymbol}`,
+      title: `Vest ${tokenToVestSymbol}`,
       estimate: () =>
         pool.isDealTokenTransferable
           ? estimate([tokenIds] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>)
@@ -158,14 +159,29 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
   }
 
   if (
-    userRoles.includes(UserRole.Visitor) ||
-    (!userRoles.includes(UserRole.Investor) && userRoles.includes(UserRole.Holder)) ||
-    (!userRoles.includes(UserRole.Investor) &&
-      userRoles.includes(UserRole.Sponsor) &&
-      !hasSponsorFees) ||
-    (pool.isDealTokenTransferable && BigNumber.from(investorDealTotal).eq(ZERO_BN))
+    data?.vestingDeal === null ||
+    (pool.isDealTokenTransferable &&
+      data?.vestingDeal !== null &&
+      tokenIds.length === 0 &&
+      BigNumber.from(amountToVest).eq(ZERO_BN) &&
+      BigNumber.from(totalVested).eq(ZERO_BN))
   ) {
     return <NothingToClaim />
+  }
+
+  if (
+    pool.isDealTokenTransferable &&
+    data?.vestingDeal !== null &&
+    tokenIds.length === 0 &&
+    BigNumber.from(totalVested).gt(ZERO_BN)
+  ) {
+    return (
+      <VestingCompleted
+        symbol={tokenToVestSymbol}
+        totalVested={totalVested}
+        underlyingDealTokenDecimals={underlyingDealTokenDecimals}
+      />
+    )
   }
 
   return (
@@ -188,7 +204,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
           handleVest={handleVest}
           isTransferButtonDisabled={isTransferButtonDisabled}
           isVestButtonDisabled={isVestButtonDisabled}
-          symbol={data?.vestingDeal?.tokenToVestSymbol}
+          symbol={tokenToVestSymbol}
           totalAmount={investorDealTotal}
           totalVested={totalVested}
           underlyingDealTokenDecimals={underlyingDealTokenDecimals}
@@ -199,7 +215,7 @@ function VestUpfrontDeal({ handleTransfer, pool }: Props) {
         !hasRemainingTokens &&
         hasClaimedAtLeastOnce && (
           <VestingCompleted
-            symbol={data?.vestingDeal?.tokenToVestSymbol}
+            symbol={tokenToVestSymbol}
             totalVested={totalVested}
             underlyingDealTokenDecimals={underlyingDealTokenDecimals}
           />

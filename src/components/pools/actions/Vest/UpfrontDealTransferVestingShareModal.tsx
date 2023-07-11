@@ -1,11 +1,10 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { Interface } from '@ethersproject/abi'
 import { BigNumber } from 'alchemy-sdk'
 import ms from 'ms'
 
 import CommonTransferVestingShareModal from './CommonTransferVestingShareModal'
-import { VestingToken } from '@/graphql-schema'
 import AelinUpfrontDealTransferABI from '@/src/abis/AelinUpfrontDeal_v1.json'
 import { ZERO_ADDRESS, ZERO_BN } from '@/src/constants/misc'
 import useAelinPool from '@/src/hooks/aelin/useAelinPool'
@@ -32,7 +31,7 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     refreshInterval: ms('5s'),
   })
 
-  const { data: vestingTokensData, mutate: refetchVestingTokensData } = useGetVestingTokens({
+  const { data: vestingTokensData } = useGetVestingTokens({
     chainId: pool.chainId,
     where: {
       dealAddress: pool.address,
@@ -40,10 +39,12 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     },
     config: { refreshInterval: ms('5s') },
   })
+  const tokenIds =
+    vestingTokensData?.vestingTokens.map((vestingToken: any) => Number(vestingToken.tokenId)) ?? []
 
   const allSDK = getAllGqlSDK()
   const { useVestingDealById } = allSDK[pool.chainId]
-  const { data: vestingDealData, mutate: refetchVestingDealData } = useVestingDealById(
+  const { data: vestingDealData } = useVestingDealById(
     {
       id: `${(address || ZERO_ADDRESS).toLowerCase()}-${pool.upfrontDeal?.address}`,
     },
@@ -53,6 +54,7 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
   const {
     investorDealTotal = ZERO_BN,
     tokenToVestSymbol,
+    totalVested = ZERO_BN,
     underlyingDealTokenDecimals,
   } = vestingDealData?.vestingDeal ?? {}
 
@@ -63,18 +65,12 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     pool.isDealTokenTransferable as boolean,
   )
 
-  useEffect(() => {
-    if (BigNumber.from(investorDealTotal).eq(ZERO_BN)) {
-      onClose()
-    }
-  }, [investorDealTotal, onClose])
-
   const isTransferButtonDisabled = useMemo(() => {
     return (
       !address ||
       !isAppConnected ||
       !pool.isDealTokenTransferable ||
-      BigNumber.from(investorDealTotal).lte(ZERO_BN) ||
+      tokenIds.length === 0 ||
       isHiddenPool(pool.address) ||
       isSubmitting
     )
@@ -82,67 +78,24 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
     address,
     isAppConnected,
     pool.isDealTokenTransferable,
-    investorDealTotal,
+    tokenIds.length,
     pool.address,
     isSubmitting,
   ])
 
-  const handleTransfer = async (
-    amount: string,
-    toAddress: string,
-    clearInputValues: () => void,
-  ) => {
-    const compare = (a: VestingToken, b: VestingToken) => {
-      if (BigNumber.from(a.amount).lt(BigNumber.from(b.amount))) {
-        return -1
-      }
-
-      if (BigNumber.from(a.amount).gt(BigNumber.from(b.amount))) {
-        return 1
-      }
-
-      return 0
-    }
-
-    const ascendingVestingTokens = (vestingTokensData?.vestingTokens ?? []).sort(compare)
-    const transferTokenIds: number[] = []
-    let partialTransferTokenId: number | null = null
-    let partialTransferAmount = BigNumber.from(amount)
-
-    for (const vestingToken of ascendingVestingTokens) {
-      if (partialTransferAmount.gte(vestingToken.amount)) {
-        transferTokenIds.push(vestingToken.tokenId)
-        partialTransferAmount = partialTransferAmount.sub(vestingToken.amount)
-        continue
-      }
-
-      partialTransferTokenId = vestingToken.tokenId
-      break
-    }
-
+  const handleTransfer = async (toAddress: string) => {
     const upfrontDealInterface = new Interface(AelinUpfrontDealTransferABI)
-    const calls = transferTokenIds.map((tokenId) =>
+    const calls = tokenIds.map((tokenId) =>
       upfrontDealInterface.encodeFunctionData('transfer', [toAddress, tokenId, '0x00']),
     )
-    if (partialTransferTokenId && partialTransferAmount.gt(ZERO_BN)) {
-      calls.push(
-        upfrontDealInterface.encodeFunctionData('transferVestingShare', [
-          toAddress,
-          partialTransferTokenId,
-          partialTransferAmount,
-        ]),
-      )
-    }
 
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions: GasOptions) => {
-        await execute(
+        execute(
           [calls] as Parameters<AelinUpfrontDealCombined['functions'][typeof method]>,
           txGasOptions,
         )
-        clearInputValues()
-        refetchVestingTokensData()
-        refetchVestingDealData()
+        onClose()
       },
       title: `Transfer ${tokenToVestSymbol}`,
       estimate: () =>
@@ -156,7 +109,7 @@ const UpfrontDealTransferVestingShareModal = ({ onClose, poolAddress }: Props) =
       onClose={onClose}
       onTransfer={handleTransfer}
       symbol={tokenToVestSymbol}
-      totalAmount={BigNumber.from(investorDealTotal)}
+      totalAmount={BigNumber.from(investorDealTotal).sub(BigNumber.from(totalVested))}
       underlyingDealTokenDecimals={underlyingDealTokenDecimals}
     />
   )
