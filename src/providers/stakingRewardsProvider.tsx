@@ -125,6 +125,16 @@ const StakingRewardsContextProvider = ({ children }: { children: ReactNode }) =>
       [Chains.polygon]: () => {
         noop()
       },
+      [Chains.zkSync]: () => {
+        noop()
+      },
+      [Chains.zkSyncTestnet]: () => {
+        const error = new Error(
+          `Staking Rewards isn't available on Network Id = ${Chains.zkSyncTestnet}`,
+        )
+
+        setError(error)
+      },
     }),
     [address],
   )

@@ -4,6 +4,7 @@ import * as optimismSDK from '@eth-optimism/sdk'
 import { Contract, ContractTransaction, Overrides } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers'
 import { toast } from 'react-hot-toast'
+import { Contract as ZkSyncContract, Web3Provider as ZkSyncWeb3Provider } from 'zksync-web3'
 
 import { notify } from '@/src/components/toast/Toast'
 import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
@@ -117,20 +118,34 @@ export default function useTransaction<
 
       const _params = Array.isArray(params) ? params : []
 
-      const contract = new Contract(address, abi, signer) as MyContract
+      const contract =
+        appChainId === Chains.zkSync || appChainId === Chains.zkSyncTestnet
+          ? new ZkSyncContract(address, abi, signer)
+          : (new Contract(address, abi, signer) as MyContract)
       try {
         console.info('Calculating transaction gas.')
-        if (appChainId === Chains.optimism) {
+        if (
+          appChainId === Chains.optimism ||
+          appChainId === Chains.zkSync ||
+          appChainId === Chains.zkSyncTestnet
+        ) {
           const txReq = await contract.populateTransaction[method as string](..._params)
           const tx = await signer.populateTransaction(txReq)
 
-          const l1Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateL1Gas(
-            tx,
-          )
+          if (appChainId === Chains.optimism) {
+            const l1Gas = await (
+              web3Provider as optimismSDK.L2Provider<Web3Provider>
+            ).estimateL1Gas(tx)
 
-          const l2Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateGas(tx)
+            const l2Gas = await (web3Provider as optimismSDK.L2Provider<Web3Provider>).estimateGas(
+              tx,
+            )
 
-          return { l1Gas, l2Gas }
+            return { l1Gas, l2Gas }
+          }
+
+          const l1Gas = await (web3Provider as ZkSyncWeb3Provider).estimateGas(tx)
+          return { l1Gas, l2Gas: ZERO_BN }
         }
         const l1Gas = await contract.estimateGas[method as string](..._params)
         return { l1Gas, l2Gas: ZERO_BN }

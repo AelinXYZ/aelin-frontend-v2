@@ -27,6 +27,12 @@ export const gqlGqlSdkByNetwork: AllSDK = {
   [Chains.polygon]: getSdkWithHooks(
     new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_POLYGON as string),
   ),
+  [Chains.zkSync]: getSdkWithHooks(
+    new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_ZK_SYNC as string),
+  ),
+  [Chains.zkSyncTestnet]: getSdkWithHooks(
+    new GraphQLClient(env.NEXT_PUBLIC_GRAPH_ENDPOINT_ZK_SYNC_TESTNET as string),
+  ),
 }
 
 export function getGqlSdkByNetwork(chainId: ChainsValues): ReturnType<typeof getSdkWithHooks> {

@@ -79,4 +79,27 @@ export const TestnetTokens: { [chainId: number]: Token[] } = {
       chainId: Chains.sepolia,
     },
   ],
+  [Chains.zkSyncTestnet]: [
+    {
+      name: 'wBTC',
+      address: '0x0BfcE1D53451B4a8175DD94e6e029F7d8a701e9c',
+      symbol: 'wBTC',
+      decimals: BASE_DECIMALS,
+      chainId: Chains.zkSyncTestnet,
+    },
+    {
+      name: 'DAI',
+      address: '0x3e7676937A7E96CFB7616f255b9AD9FF47363D4b',
+      symbol: 'DAI',
+      decimals: 6,
+      chainId: Chains.zkSyncTestnet,
+    },
+    {
+      name: 'USDC',
+      address: '0x0faF6df7054946141266420b43783387A78d82A9',
+      symbol: 'USDC',
+      decimals: 6,
+      chainId: Chains.zkSyncTestnet,
+    },
+  ],
 }
