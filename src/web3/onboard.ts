@@ -13,12 +13,13 @@ import { Chains, chainsConfig } from '@/src/constants/chains'
 const EMAIL_CONTACT = env.NEXT_PUBLIC_EMAIL_CONTACT as string
 const APP_URL = env.NEXT_PUBLIC_APP_URL as string
 const APP_NAME = env.NEXT_PUBLIC_APP_NAME as string
+const WALLET_CONNECT_PROJECT_ID = env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string
 
 const injected = injectedModule()
 const gnosis = gnosisModule()
-const walletConnect = walletConnectModule()
+const walletConnect = walletConnectModule({ projectId: WALLET_CONNECT_PROJECT_ID, version: 2 })
 const coinbase = coinbaseModule()
-const ledger = ledgerModule()
+const ledger = ledgerModule({ projectId: WALLET_CONNECT_PROJECT_ID, walletConnectVersion: 2 })
 const trezor = trezorModule({
   email: EMAIL_CONTACT,
   appUrl: APP_URL,

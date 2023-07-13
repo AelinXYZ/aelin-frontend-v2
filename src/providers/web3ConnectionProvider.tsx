@@ -112,8 +112,8 @@ export default function Web3ConnectionProvider({ children }: Props) {
           disableModals: true,
         },
       }
+      connect(options)
     }
-    connect(options)
   }, [connect])
 
   const changeWallet = async (): Promise<void> => {
