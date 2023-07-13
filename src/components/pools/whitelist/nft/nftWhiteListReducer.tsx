@@ -1,7 +1,6 @@
 import { NftCollectionData } from '@/src/hooks/aelin/useNftCollectionLists'
 
 export enum NftWhiteListStep {
-  nftType = 'nftType',
   whiteListProcess = 'whiteListProcess',
   nftCollection = 'nftCollection',
 }
@@ -72,7 +71,7 @@ const getInitialSelectedCollection = (nftType: NftType): SelectedNftCollectionDa
 }
 
 export const initialState: NftWhiteListState = {
-  currentStep: NftWhiteListStep.nftType,
+  currentStep: NftWhiteListStep.whiteListProcess,
   nftType: NftType.erc721,
   whiteListProcess: getInitialNftWhitelistProcess(NftType.erc721),
   selectedCollections: [getInitialSelectedCollection(NftType.erc721)],

@@ -123,7 +123,7 @@ const PoolCreateStepInput: React.FC<Props> = ({
           />
           <LabeledRadioButton
             checked={currentState[CreatePoolSteps.poolPrivacy] === Privacy.NFT}
-            label="NFT"
+            label="NFT (ERC721 only)"
             onClick={() => setPoolField(Privacy.NFT)}
           />
         </PrivacyGrid>

@@ -2,7 +2,6 @@ import { Dispatch, ReactElement } from 'react'
 import styled from 'styled-components'
 
 import NftCollectionsSection from '@/src/components/pools/whitelist/nft/NftCollectionsSection'
-import NftTypeSection from '@/src/components/pools/whitelist/nft/NftTypeSection'
 import NftWhiteListProcessSection from '@/src/components/pools/whitelist/nft/NftWhiteListProcessSection'
 import {
   NftType,
@@ -64,16 +63,6 @@ const Title = styled.h2`
   text-align: center;
 `
 
-const NftTypeRemark = styled.p`
-  color: ${({ theme }) => theme.colors.textColor};
-  font-size: 0.7rem;
-  font-weight: 400;
-  line-height: 1.4;
-  margin: 40px 0 0;
-  max-width: 100%;
-  text-align: center;
-`
-
 const NextButton = styled(ButtonGradient)`
   min-width: 160px;
   margin-top: 40px;
@@ -91,19 +80,14 @@ interface NftWhiteListStepInfo {
 }
 
 const nftWhiteListStepsConfig: Record<NftWhiteListStep, NftWhiteListStepInfo> = {
-  [NftWhiteListStep.nftType]: {
-    id: NftWhiteListStep.nftType,
-    order: 1,
-    title: 'NFT type',
-  },
   [NftWhiteListStep.whiteListProcess]: {
     id: NftWhiteListStep.whiteListProcess,
-    order: 2,
+    order: 1,
     title: 'Allowlist process',
   },
   [NftWhiteListStep.nftCollection]: {
     id: NftWhiteListStep.nftCollection,
-    order: 3,
+    order: 2,
     title: 'NFT collection',
   },
 }
@@ -129,15 +113,6 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose, onConfirm }: NftWh
 
   const getContent = (): JSX.Element => {
     switch (currentStep) {
-      case NftWhiteListStep.nftType:
-        return (
-          <NftTypeSection
-            active={nftType}
-            onChange={(value) => {
-              dispatch({ type: NftWhiteListActionType.updateNftType, payload: value })
-            }}
-          />
-        )
       case NftWhiteListStep.whiteListProcess:
         return (
           <NftWhiteListProcessSection
@@ -290,9 +265,6 @@ const NftWhiteList = ({ dispatch, nftWhiteListState, onClose, onConfirm }: NftWh
                 {isLastStep ? 'Whitelist' : 'Next'}
               </NextButton>
               <CancelButton onClick={onClose}>Cancel</CancelButton>
-              {currentStep === NftWhiteListStep.nftType && (
-                <NftTypeRemark>*Including Cryptopunks</NftTypeRemark>
-              )}
             </StepContents>
             <NextWrapper>
               {!isLastStep && (
