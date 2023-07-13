@@ -58,7 +58,7 @@ const WhiteListModal = ({
   if (!poolPrivacy) return null
 
   return (
-    <Modal onClose={onClose} showCancelButton={false} size="794px" title="Allowlist">
+    <Modal onClose={onClose} showCancelButton={false} size="794px" title="ERC-721 Allowlist">
       {poolPrivacy === Privacy.PRIVATE && (
         <AddressesWhiteList
           amountFormat={addressesWhiteListAmountFormat}
