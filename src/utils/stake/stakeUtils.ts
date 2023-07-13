@@ -18,7 +18,7 @@ export const getAelinETHRates = (): Promise<AelinRatesResponse> => {
   ).then((r) => r.json())
 }
 
-const GRAPH_ENDPOINT = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2'
+const GRAPH_ENDPOINT = 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev'
 const PAIR_ID = '0x974d51fafc9013e42cbbb9465ea03fe097824bcc'
 
 const query = gql`
