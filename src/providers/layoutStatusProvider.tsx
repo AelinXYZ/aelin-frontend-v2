@@ -1,16 +1,4 @@
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
-
-import { Chains } from '@/src/constants/chains'
-import { StakingEnum } from '@/src/providers/stakingRewardsProvider'
-import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useState } from 'react'
 
 export enum MyPoolsFilter {
   Invested = 'Invested',
@@ -25,10 +13,6 @@ export type LayoutStatusContextType = {
       setActiveFilter: Dispatch<SetStateAction<MyPoolsFilter>>
       filtersExpansion: Record<MyPoolsFilter, boolean>
       setFiltersExpansion: Dispatch<SetStateAction<Record<MyPoolsFilter, boolean>>>
-    }
-    staking: {
-      activeTab: StakingEnum
-      setActiveTab: Dispatch<SetStateAction<StakingEnum>>
     }
   }
 }
@@ -47,17 +31,6 @@ const LayoutStatusContextProvider = ({ children }: { children: ReactNode }) => {
     [MyPoolsFilter.Funded]: false,
   })
 
-  const [activeStakingTab, setActiveStakingTab] = useState<StakingEnum>(StakingEnum.AELIN)
-
-  const { appChainId } = useWeb3Connection()
-  const isMainnet = Chains.mainnet === appChainId
-
-  useEffect(() => {
-    const activeTab = isMainnet ? StakingEnum.UNISWAP : StakingEnum.AELIN
-
-    setActiveStakingTab(activeTab)
-  }, [isMainnet])
-
   return (
     <LayoutStatusContext.Provider
       value={{
@@ -68,7 +41,6 @@ const LayoutStatusContextProvider = ({ children }: { children: ReactNode }) => {
             filtersExpansion: myPoolsFiltersExpansion,
             setFiltersExpansion: setMyPoolsFiltersExpansion,
           },
-          staking: { activeTab: activeStakingTab, setActiveTab: setActiveStakingTab },
         },
       }}
     >

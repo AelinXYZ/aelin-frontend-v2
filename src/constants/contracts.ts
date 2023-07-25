@@ -31,7 +31,7 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '0xa9C125BF4C8bB26f299c00969532B66732b1F758',
       [Chains.goerli]: '',
-      [Chains.sepolia]: '',
+      [Chains.sepolia]: '0x02b9E99a05458d763256B977E61c1d947a5a0d04',
       [Chains.optimism]: '0x61BAADcF22d2565B0F471b291C475db5555e0b76',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
@@ -66,6 +66,17 @@ export const contracts = constantContracts({
       [Chains.optimism]: '0xFe757A40F3EdA520845b339c698b321663986a4d',
       [Chains.goerli]: '',
       [Chains.sepolia]: '',
+      [Chains.arbitrum]: '',
+      [Chains.polygon]: '',
+    },
+    abi: AelinStakingABI,
+  },
+  KWENTA_STAKING_REWARDS: {
+    address: {
+      [Chains.mainnet]: '',
+      [Chains.optimism]: '',
+      [Chains.goerli]: '',
+      [Chains.sepolia]: '0x88fdc711eff5877b464d299c7ac3077135c6c5ca',
       [Chains.arbitrum]: '',
       [Chains.polygon]: '',
     },
