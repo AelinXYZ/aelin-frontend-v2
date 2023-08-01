@@ -65,7 +65,8 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     defaultRpcUrl: 'https://rpc.ankr.com/eth',
     shortName: 'Mainnet',
     tokenListUrl: [
-      'https://tokens.1inch.eth.link',
+      // 'https://tokens.1inch.eth.link',
+      'https://tokens.1inch.io/v1.2',
       'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
     ],
     nativeCurrency: {

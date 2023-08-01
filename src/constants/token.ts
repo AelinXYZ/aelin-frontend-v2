@@ -1,4 +1,5 @@
 import { BASE_DECIMALS } from './misc'
+import { OneInchToken } from '../hooks/aelin/useAelinTokenList'
 import { Chains } from '@/src/constants/chains'
 
 // Guard to check if var is Token type
@@ -22,13 +23,7 @@ export type Token = {
   symbol: string
 }
 export type TokenListResponse = {
-  keywords: string[]
-  logoURI: string
-  name: string
-  tags: unknown
-  timestamp: string
-  tokens: Token[]
-  version: { major: number; minor: number; patch: number }
+  [key: string]: OneInchToken
 }
 
 export const TestnetTokens: { [chainId: number]: Token[] } = {
