@@ -275,16 +275,7 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
 
       <ButtonsWrapper>
         <ButtonGradient
-          disabled={
-            !address ||
-            !isAppConnected ||
-            poolHelpers.capReached ||
-            isSubmitting ||
-            !tokenInputValue ||
-            Boolean(inputError) ||
-            (pool.hasNftList && !hasStoredSelectedNft) ||
-            isHiddenPool(pool.address)
-          }
+          disabled={true}
           onClick={() => {
             depositTokens()
           }}
@@ -292,7 +283,9 @@ function DepositDirectDeal({ pool, poolHelpers }: Props) {
           {pool?.upfrontDeal ? 'Accept Deal' : 'Deposit'}
         </ButtonGradient>
         {pool.hasNftList && (
-          <ButtonGradient onClick={handleOpenNftSelectionModal}>Select NFT</ButtonGradient>
+          <ButtonGradient disabled={true} onClick={handleOpenNftSelectionModal}>
+            Select NFT
+          </ButtonGradient>
         )}
       </ButtonsWrapper>
     </>

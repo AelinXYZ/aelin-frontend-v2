@@ -18,8 +18,7 @@ const injected = injectedModule()
 const gnosis = gnosisModule()
 const walletConnect = walletConnectModule()
 const coinbase = coinbaseModule()
-// @ts-ignore
-const ledger = ledgerModule({ projectId: WALLET_CONNECT_PROJECT_ID, walletConnectVersion: 2 })
+const ledger = ledgerModule()
 const trezor = trezorModule({
   email: EMAIL_CONTACT,
   appUrl: APP_URL,

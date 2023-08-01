@@ -96,17 +96,7 @@ function AcceptDeal({ pool }: Props) {
         setValue={setTokenInputValue}
         value={tokenInputValue}
       />
-      <ButtonGradient
-        disabled={
-          !address ||
-          !isAppConnected ||
-          isSubmitting ||
-          !tokenInputValue ||
-          BigNumber.from(tokenInputValue).eq(0) ||
-          Boolean(inputError)
-        }
-        onClick={handleAcceptDeal}
-      >
+      <ButtonGradient disabled={true} onClick={handleAcceptDeal}>
         Accept deal
       </ButtonGradient>
     </Wrapper>

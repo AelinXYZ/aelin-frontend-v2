@@ -62,10 +62,7 @@ function HolderDepositUpfrontDeal({ pool }: Props) {
   return (
     <>
       <ButtonsWrapper>
-        <ButtonGradient
-          disabled={!isAppConnected || isSubmitting || disabledAfterDeposit || noEnoughBalance}
-          onClick={depositTokens}
-        >
+        <ButtonGradient disabled={true} onClick={depositTokens}>
           Fund Deal
         </ButtonGradient>
       </ButtonsWrapper>
