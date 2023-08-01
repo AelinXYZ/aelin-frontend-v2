@@ -1,43 +1,40 @@
 import useSWR from 'swr'
 
-import { Chains, ChainsValues, chainsConfig } from '@/src/constants/chains'
+import { ChainsValues, chainsConfig } from '@/src/constants/chains'
 import { TestnetTokens, Token, TokenListResponse } from '@/src/constants/token'
 
 const getTokenList = (chainId: ChainsValues) => {
   if (chainsConfig[chainId].isProd) {
     try {
-      return fetch(chainsConfig[chainId].tokenListUrl[0]).then((x) => x.json())
+      return fetch(chainsConfig[chainId].tokenListUrl[0] + '/' + chainId).then((x) => x.json())
     } catch (e) {
       console.error('error: ', e)
-      if (chainsConfig[chainId].tokenListUrl.length >= 2) {
-        return fetch(chainsConfig[chainId].tokenListUrl[1]).then((x) => x.json())
-      } else {
-        throw e
-      }
+      throw e
     }
   } else {
     return Promise.resolve({ tokens: TestnetTokens[chainId] })
   }
 }
 
+export type OneInchToken = {
+  symbol: string
+  name: string
+  address: string
+  logoURI: string
+  decimals: number
+}
+
 const useTokenListQuery = (appChainId: ChainsValues) => {
   return useSWR(['token-list', appChainId], async () => {
     const response: TokenListResponse = await getTokenList(appChainId)
-    let tokens: Token[] = response.tokens
-
-    if (
-      appChainId === Chains.optimism ||
-      appChainId === Chains.arbitrum ||
-      appChainId === Chains.polygon
-    ) {
-      tokens = tokens.filter(({ chainId }: { chainId: number }) => Number(chainId) === appChainId)
-    }
-
-    if (appChainId === Chains.polygon) {
-      tokens = tokens.filter(({ symbol }) => symbol.toLowerCase() !== 'matic')
-    } else {
-      tokens = tokens.filter(({ symbol }) => symbol.toLowerCase() !== 'eth')
-    }
+    const tokens: Token[] = Object.values(response).map((token: OneInchToken) => ({
+      name: token.name,
+      symbol: token.symbol,
+      address: token.address,
+      decimals: token.decimals,
+      chainId: appChainId,
+      logoURI: token.logoURI,
+    }))
 
     return tokens
   })
