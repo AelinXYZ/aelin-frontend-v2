@@ -21,7 +21,6 @@ const Wrapper = styled(BaseCard)<{
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     min-height: 180px;
-    max-height: 220px;
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
@@ -49,8 +48,8 @@ const Title = styled.h1`
 
 const Description = styled.p`
   color: ${({ theme: { colors } }) => colors.textColor};
-  font-size: 0.8rem;
-  font-weight: 400;
+  font-size: 1.5rem;
+  font-weight: 100;
   line-height: 1.4;
   margin: 0 0 16px;
 
@@ -63,7 +62,6 @@ const Description = styled.p`
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    font-size: 0.9rem;
     margin-bottom: 18px;
   }
 `
