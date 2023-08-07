@@ -77,7 +77,7 @@ export const LeftSidebarLayout = ({ children }: LeftSidebarLayoutProps) => {
       <SidebarWrapper as="nav">
         <MyPools />
         <Break />
-        <Aelin />
+        {/* <Aelin /> */}
       </SidebarWrapper>
       <Main>{children}</Main>
     </Wrapper>
