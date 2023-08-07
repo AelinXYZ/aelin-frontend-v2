@@ -79,7 +79,12 @@ export default function Approve({
       {allowance && symbol && <Allowance allowance={allowance} symbol={symbol} />}
       <Contents>{description}</Contents>
       <ButtonsWrapper>
-        <ButtonGradient disabled={true} onClick={approveInvestmentToken}>
+        <ButtonGradient
+          disabled={
+            !address || !isAppConnected || isSubmitting || noEnoughBalance || !userBalance?.gt(0)
+          }
+          onClick={approveInvestmentToken}
+        >
           Approve
         </ButtonGradient>
       </ButtonsWrapper>

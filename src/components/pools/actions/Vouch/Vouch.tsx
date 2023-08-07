@@ -146,7 +146,10 @@ const Vouch: React.FC<{ pool: ParsedAelinPool }> = genericSuspense(({ pool }) =>
               <>Vouching not supported</>
             )}
           </Contents>
-          <VouchButton disabled={true} onClick={handleVouchClick}>
+          <VouchButton
+            disabled={!userAddress || isSubmitting || !supportsVouch || wrongNetwork}
+            onClick={handleVouchClick}
+          >
             {hasVouched ? 'Disavow' : 'Vouch'}
           </VouchButton>
           <SeeAllButton disabled={!supportsVouch} onClick={handleOpenVouchersModal}>

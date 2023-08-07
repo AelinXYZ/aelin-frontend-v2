@@ -222,13 +222,23 @@ function Deposit({ pool, poolHelpers }: Props) {
         />
       )}
       <ButtonsWrapper>
-        <ButtonGradient disabled={true} onClick={depositTokens}>
+        <ButtonGradient
+          disabled={
+            !address ||
+            !isAppConnected ||
+            poolHelpers.capReached ||
+            isSubmitting ||
+            !tokenInputValue ||
+            Boolean(inputError) ||
+            (pool.hasNftList && !hasStoredSelectedNft) ||
+            isHiddenPool(pool.address)
+          }
+          onClick={depositTokens}
+        >
           Deposit
         </ButtonGradient>
         {pool.hasNftList && (
-          <ButtonGradient disabled={true} onClick={handleOpenNftSelectionModal}>
-            Select NFT
-          </ButtonGradient>
+          <ButtonGradient onClick={handleOpenNftSelectionModal}>Select NFT</ButtonGradient>
         )}
       </ButtonsWrapper>
     </>
