@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
+import BaseLink from 'next/link'
 import styled from 'styled-components'
 
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
@@ -17,7 +17,15 @@ const Container = styled.div`
   flex-direction: row;
   width: 100%;
   gap: 1.5rem;
-  height: 350px;
+  height: 620px;
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    height: 350px;
+  }
+
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
+    height: 300px;
+  }
 `
 
 const SectionIntro = styled(BaseSectionIntro)`
@@ -25,7 +33,10 @@ const SectionIntro = styled(BaseSectionIntro)`
   flex-direction: column;
   flex: 1 1 0px;
   justify-content: space-between;
-  height: 300px;
+`
+
+const Link = styled(BaseLink)`
+  word-break: break-word;
 `
 
 const Home: NextPage = () => {
