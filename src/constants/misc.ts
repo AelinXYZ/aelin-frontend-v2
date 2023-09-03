@@ -55,3 +55,5 @@ export const MERKLE_TREE_DATA_EMPTY = {
   amount: ZERO_BN,
   merkleProof: [HashZero],
 }
+
+export const NFT_WAIVER_CONTRACT = '0x19305fa7B4832b7F7545cc752c71f8CDF9f60226'
