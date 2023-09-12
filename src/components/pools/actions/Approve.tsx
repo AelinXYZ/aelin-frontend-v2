@@ -29,6 +29,7 @@ type Props = {
   allowance?: string
   symbol?: string
   noEnoughBalance?: boolean
+  isBurn?: boolean
 }
 
 const Allowance = ({ allowance, symbol }: { allowance: string; symbol: string }) => (
@@ -44,6 +45,7 @@ export default function Approve({
   allowance,
   approveAmt = MAX_BN,
   description,
+  isBurn,
   noEnoughBalance,
   refetchAllowance,
   spender,
@@ -74,12 +76,16 @@ export default function Approve({
     })
   }
 
+  const disabled =
+    !!isBurn &&
+    (!address || !isAppConnected || isSubmitting || noEnoughBalance || !userBalance?.gt(0))
+
   return (
     <>
       {allowance && symbol && <Allowance allowance={allowance} symbol={symbol} />}
       <Contents>{description}</Contents>
       <ButtonsWrapper>
-        <ButtonGradient disabled={true} onClick={approveInvestmentToken}>
+        <ButtonGradient disabled={disabled} onClick={approveInvestmentToken}>
           Approve
         </ButtonGradient>
       </ButtonsWrapper>

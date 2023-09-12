@@ -29,6 +29,10 @@ const NotificationsProvider = dynamic(() => import('@/src/providers/notification
   ssr: false,
 })
 
+const BurnAelinProvider = dynamic(() => import('@/src/providers/burnAelinProvider'), {
+  ssr: false,
+})
+
 function App({ Component, pageProps }: AppProps) {
   const { hostname, port, protocol } =
     typeof window !== 'undefined'
@@ -73,11 +77,13 @@ function App({ Component, pageProps }: AppProps) {
                     <NotificationsProvider>
                       <NftCreationContextProvider>
                         <SafeSuspense>
-                          <TokenIconsProvider>
-                            <Header />
-                            <Component {...pageProps} />
-                            <Toast />
-                          </TokenIconsProvider>
+                          <BurnAelinProvider>
+                            <TokenIconsProvider>
+                              <Header />
+                              <Component {...pageProps} />
+                              <Toast />
+                            </TokenIconsProvider>
+                          </BurnAelinProvider>
                         </SafeSuspense>
                         <TooltipConfig />
                         <MobileMenu />
