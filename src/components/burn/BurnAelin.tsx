@@ -26,7 +26,7 @@ const BodyWrapper = styled.div`
 `
 
 const Card = styled(CardWithTitle)`
-  width: 500px;
+  max-width: 400px;
 `
 
 const BurnAelin: React.FC = () => {

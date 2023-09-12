@@ -17,14 +17,14 @@ const Container = styled.div`
   flex-direction: row;
   width: 100%;
   gap: 1.5rem;
-  height: 620px;
+  height: 1120px;
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
-    height: 350px;
+    height: 550px;
   }
 
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.desktopStart}) {
-    height: 300px;
+    height: 500px;
   }
 `
 
@@ -66,11 +66,19 @@ const Home: NextPage = () => {
             The Aelin Council has unanimously proposed that core contributors stop working on the
             Aelin Protocol. Over the past 2 years, the CCs and Council have worked tirelessly to
             build Aelin. Despite their best efforts, Aelin was unable to gain the level of usage
-            needed for the protocol to be sustainable. <br />
+            needed for the protocol to be sustainable.
+            <br />
+            <br />
             The full governance proposal, AELIP-53, can be found at this link with more details:{' '}
             <Link href="https://aelips.aelin.xyz/aelips/aelip-53/">
               https://aelips.aelin.xyz/aelips/aelip-53/
             </Link>
+            <br />
+            <br />
+            Claiming of treasury assets is now live. AELIN holders may claim their share of treasury
+            assets indefinitely on the Optimism network. Until December 15, 2023, AELIN holders may
+            use the Aelin interface at <Link href="/burn">/burn</Link> to claim. Before AELIN
+            holders may retrieve their share of treasury assets, they must first agree to a waiver.
           </SectionIntro>
         </Container>
         <VouchedPools />
