@@ -47,6 +47,13 @@ const MintNFT: React.FC = () => {
           target="_blank"
         >
           here
+        </Link>{' '}
+        or{' '}
+        <Link
+          href="https://arweave.net/VQi16G-BBzDThczwc1SNyd4WQ8frVip-chmENhh0Cpw"
+          target="_blank"
+        >
+          here
         </Link>
         .<br />
         <br /> By minting the NFT pursuant to the instructions on this page, you will be agreeing to
