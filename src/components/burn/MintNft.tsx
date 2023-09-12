@@ -43,7 +43,7 @@ const MintNFT: React.FC = () => {
         To retrieve your share of treasury assets, you must first agree to a waiver, a copy of which
         you can read{' '}
         <Link
-          href="https://v2.akord.com/public/vaults/active/2KzfEiio_umg2tFNymCwSp6qt7Yu4phwvqlsQ1b9u4s/gallery#public/df629071-3d77-4538-af9f-c9a6df2897dc"
+          href="https://v2.akord.com/public/vaults/active/boPGU8ShKj0KAcud8BLrzFGEkaIx5WlnBsVVhETG4ME/gallery#public/896532a7-b257-4997-8cf8-302435a915bb"
           target="_blank"
         >
           here
@@ -53,7 +53,7 @@ const MintNFT: React.FC = () => {
         the terms of the waiver.
       </Contents>
       <ButtonsWrapper>
-        <ButtonGradient disabled={!isSubmitting} onClick={handleMint}>
+        <ButtonGradient disabled={isSubmitting} onClick={handleMint}>
           Mint NFT
         </ButtonGradient>
       </ButtonsWrapper>

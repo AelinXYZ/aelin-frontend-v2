@@ -8,6 +8,7 @@ import { CardTitle, CardWithTitle } from '../common/CardWithTitle'
 import Approve from '../pools/actions/Approve'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { contracts } from '@/src/constants/contracts'
+import { BURN_AELIN_CONTRACT } from '@/src/constants/misc'
 import { RequiredConnection } from '@/src/hooks/requiredConnection'
 import { BurnAelinState, useBurnAelin } from '@/src/providers/burnAelinProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -54,8 +55,7 @@ const BurnAelin: React.FC = () => {
                 allowance={formatToken(userBalance, 18, 4)}
                 description="Approve your AELIN tokens to be moved by our swap contract"
                 refetchAllowance={refetchUserAllowance}
-                // TODO: change to real contract address
-                spender={'swap-contract'}
+                spender={BURN_AELIN_CONTRACT}
                 symbol="AELIN"
                 title="Approve AELIN tokens"
                 tokenAddress={tokenAddress}

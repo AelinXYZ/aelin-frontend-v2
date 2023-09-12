@@ -5,7 +5,7 @@ import BurnAelin from '@/src/components/burn/BurnAelin'
 import { LeftSidebarLayout } from '@/src/components/layout/LeftSidebarLayout'
 import { SectionIntro } from '@/src/components/section/SectionIntro'
 
-const Stats: NextPage = () => {
+const Burn: NextPage = () => {
   return (
     <>
       <Head>
@@ -29,4 +29,4 @@ const Stats: NextPage = () => {
   )
 }
 
-export default Stats
+export default Burn

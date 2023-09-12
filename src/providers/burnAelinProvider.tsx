@@ -4,7 +4,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 
 import { useWeb3Connection } from './web3ConnectionProvider'
 import { contracts } from '../constants/contracts'
-import { NFT_WAIVER_CONTRACT, ZERO_ADDRESS, ZERO_BN } from '../constants/misc'
+import { BURN_AELIN_CONTRACT, NFT_WAIVER_CONTRACT, ZERO_ADDRESS, ZERO_BN } from '../constants/misc'
 import useERC20Call from '../hooks/contracts/useERC20Call'
 import { useNftWaiverCall } from '../hooks/contracts/useERC721Call'
 
@@ -12,10 +12,12 @@ type BurnAelinReducerContext = {
   state: BurnAelinState
   setState: Dispatch<BurnAelinState>
   setHasSwapped: Dispatch<boolean>
+  setSwapTransactionHash: Dispatch<string>
   refetchNftContract: () => void
   refetchUserBalance: () => void
   refetchUserAllowance: () => void
   userBalance: BigNumber
+  swapTransactionHash: string
 }
 
 export const BurnAelinState = {
@@ -36,6 +38,7 @@ const BurnAelinContextProvider = ({ children }: { children: ReactNode }) => {
   const { address, appChainId } = useWeb3Connection()
   const [state, setState] = useState<BurnAelinState>(BurnAelinState.SUCCESS)
   const [hasSwapped, setHasSwapped] = useState<boolean>(false)
+  const [swapTransactionHash, setSwapTransactionHash] = useState<string>('')
 
   const [hasMinted, refetchNftContract] = useNftWaiverCall(
     appChainId,
@@ -54,8 +57,7 @@ const BurnAelinContextProvider = ({ children }: { children: ReactNode }) => {
     appChainId,
     tokenAddress,
     'allowance',
-    // TODO: Should use contract address to check allowance. Using swap-contract for testing
-    [address || ZERO_ADDRESS, 'swap-contract-address'],
+    [address || ZERO_ADDRESS, BURN_AELIN_CONTRACT],
   )
 
   useEffect(() => {
@@ -67,12 +69,12 @@ const BurnAelinContextProvider = ({ children }: { children: ReactNode }) => {
       setState(BurnAelinState.APPROVE)
     } else if (hasMinted && userBalance?.gt(ZERO_BN) && userAllowance?.gt(ZERO_BN)) {
       setState(BurnAelinState.SWAP)
-    } else if (hasMinted && userBalance?.gt(ZERO_BN) && hasSwapped) {
+    } else if (hasSwapped && swapTransactionHash) {
       setState(BurnAelinState.SUCCESS)
     } else {
       setState(BurnAelinState.ERROR)
     }
-  }, [userBalance, userAllowance, hasMinted, hasSwapped])
+  }, [userBalance, userAllowance, hasMinted, hasSwapped, swapTransactionHash])
 
   return (
     <BuenAelinContext.Provider
@@ -80,6 +82,8 @@ const BurnAelinContextProvider = ({ children }: { children: ReactNode }) => {
         state,
         setState,
         setHasSwapped,
+        setSwapTransactionHash,
+        swapTransactionHash,
         refetchNftContract,
         refetchUserBalance,
         refetchUserAllowance,
