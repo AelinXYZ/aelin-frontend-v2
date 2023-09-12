@@ -43,7 +43,7 @@ const MintNFT: React.FC = () => {
         To retrieve your share of treasury assets, you must first agree to a waiver, a copy of which
         you can read{' '}
         <Link
-          href="https://v2.akord.com/public/vaults/active/boPGU8ShKj0KAcud8BLrzFGEkaIx5WlnBsVVhETG4ME/gallery#public/896532a7-b257-4997-8cf8-302435a915bb"
+          href="https://v2.akord.com/public/vaults/active/2KzfEiio_umg2tFNymCwSp6qt7Yu4phwvqlsQ1b9u4s/gallery#public/92f85237-3912-4c09-b9b2-a89821b20e90"
           target="_blank"
         >
           here
