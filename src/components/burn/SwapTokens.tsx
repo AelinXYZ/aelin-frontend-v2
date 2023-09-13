@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 import { Contents, Wrapper } from '../pools/actions/Wrapper'
 import { ButtonGradient } from '../pureStyledComponents/buttons/Button'
+import { TextPrimary } from '../pureStyledComponents/text/Text'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { BURN_AELIN_CONTRACT } from '@/src/constants/misc'
 import { useSwapAelinTransaction } from '@/src/hooks/contracts/useSwapAelinTransaction'
@@ -16,7 +17,14 @@ const ButtonsWrapper = styled.div`
 `
 
 const SwapAelinToken: React.FC = () => {
-  const { refetchUserBalance, setHasSwapped, setSwapTransactionHash, userBalance } = useBurnAelin()
+  const {
+    refetchUserBalance,
+    setHasSwapped,
+    setSwapTransactionHash,
+    userBalance,
+    userReceiveAmtUSDC,
+    userReceiveAmtVK,
+  } = useBurnAelin()
 
   const { refetchNftContract } = useBurnAelin()
 
@@ -43,7 +51,13 @@ const SwapAelinToken: React.FC = () => {
 
   return (
     <Wrapper title={`Swap Tokens`}>
-      <Contents>Call the swap method to burn your AELIN for a share of treasury assets</Contents>
+      <Contents>
+        Call the swap method to burn your AELIN for a share of treasury assets
+        <br />
+        <br />
+        You'll receive <TextPrimary>{userReceiveAmtUSDC} USDC</TextPrimary> and{' '}
+        <TextPrimary>{userReceiveAmtVK} veKWENTA</TextPrimary>
+      </Contents>
       <ButtonsWrapper>
         <ButtonGradient disabled={isSubmitting} onClick={handleSwapTokens}>
           Swap

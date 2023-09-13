@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { Contents, Wrapper } from '../pools/actions/Wrapper'
 import { ButtonGradient } from '../pureStyledComponents/buttons/Button'
+import { TextPrimary } from '../pureStyledComponents/text/Text'
 import { genericSuspense } from '@/src/components/helpers/SafeSuspense'
 import { NFT_WAIVER_CONTRACT } from '@/src/constants/misc'
 import { useNftWaiverTransaction } from '@/src/hooks/contracts/useNftWaiverTransaction'
@@ -17,7 +18,7 @@ const ButtonsWrapper = styled.div`
 `
 
 const MintNFT: React.FC = () => {
-  const { refetchNftContract } = useBurnAelin()
+  const { refetchNftContract, userReceiveAmtUSDC, userReceiveAmtVK } = useBurnAelin()
 
   const { isSubmitting, setConfigAndOpenModal } = useTransactionModal()
 
@@ -58,6 +59,10 @@ const MintNFT: React.FC = () => {
         .<br />
         <br /> By minting the NFT pursuant to the instructions on this page, you will be agreeing to
         the terms of the waiver.
+        <br />
+        <br />
+        After swapping you'll receive <TextPrimary>{userReceiveAmtUSDC} USDC</TextPrimary> and{' '}
+        <TextPrimary>{userReceiveAmtVK} veKWENTA</TextPrimary>
       </Contents>
       <ButtonsWrapper>
         <ButtonGradient disabled={isSubmitting} onClick={handleMint}>
