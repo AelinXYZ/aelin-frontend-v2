@@ -16,7 +16,7 @@ const ButtonsWrapper = styled.div`
 `
 
 const SwapAelinToken: React.FC = () => {
-  const { setHasSwapped, setSwapTransactionHash, userBalance } = useBurnAelin()
+  const { refetchUserBalance, setHasSwapped, setSwapTransactionHash, userBalance } = useBurnAelin()
 
   const { refetchNftContract } = useBurnAelin()
 
@@ -31,6 +31,7 @@ const SwapAelinToken: React.FC = () => {
     setConfigAndOpenModal({
       onConfirm: async (txGasOptions) => {
         const res = await executeBurn([userBalance], txGasOptions)
+        refetchUserBalance()
         setHasSwapped(true)
         setSwapTransactionHash(res?.transactionHash || '')
         refetchNftContract()
