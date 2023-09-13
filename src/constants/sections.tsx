@@ -1,3 +1,4 @@
+import { Stake } from '../components/assets/Stake'
 import { Fees } from '@/src/components/assets/Fees'
 import { History } from '@/src/components/assets/History'
 import { Pools } from '@/src/components/assets/Pools'
@@ -12,6 +13,11 @@ export const sections = [
   {
     href: '/burn',
     title: 'Swap/Burn Aelin',
+  },
+  {
+    href: '/stake',
+    icon: <Stake />,
+    title: 'Stake Aelin',
   },
   {
     href: '/stats',
