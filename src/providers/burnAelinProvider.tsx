@@ -7,6 +7,8 @@ import { contracts } from '../constants/contracts'
 import { BURN_AELIN_CONTRACT, NFT_WAIVER_CONTRACT, ZERO_ADDRESS, ZERO_BN } from '../constants/misc'
 import useERC20Call from '../hooks/contracts/useERC20Call'
 import { useNftWaiverCall } from '../hooks/contracts/useERC721Call'
+import { useSwapAelinCall } from '../hooks/contracts/useSwapAelinCall'
+import { formatToken } from '../web3/bigNumber'
 
 type BurnAelinReducerContext = {
   state: BurnAelinState
@@ -18,6 +20,8 @@ type BurnAelinReducerContext = {
   refetchUserAllowance: () => void
   userBalance: BigNumber
   swapTransactionHash: string
+  userReceiveAmtUSDC: string
+  userReceiveAmtVK: string
 }
 
 export const BurnAelinState = {
@@ -36,7 +40,7 @@ const BuenAelinContext = createContext<BurnAelinReducerContext>({} as BurnAelinR
 
 const BurnAelinContextProvider = ({ children }: { children: ReactNode }) => {
   const { address, appChainId } = useWeb3Connection()
-  const [state, setState] = useState<BurnAelinState>(BurnAelinState.SUCCESS)
+  const [state, setState] = useState<BurnAelinState>(BurnAelinState.MINT)
   const [hasSwapped, setHasSwapped] = useState<boolean>(false)
   const [swapTransactionHash, setSwapTransactionHash] = useState<string>('')
 
@@ -59,6 +63,16 @@ const BurnAelinContextProvider = ({ children }: { children: ReactNode }) => {
     'allowance',
     [address || ZERO_ADDRESS, BURN_AELIN_CONTRACT],
   )
+
+  const [userReceiveAmt, refecthUserReceiveAmt] = useSwapAelinCall(
+    appChainId,
+    BURN_AELIN_CONTRACT,
+    'getSwapAmount',
+    [userBalance || ZERO_BN],
+  )
+
+  const userReceiveAmtUSDC = formatToken(userReceiveAmt?.[0] || ZERO_BN, 6, 4) || ''
+  const userReceiveAmtVK = formatToken(userReceiveAmt?.[1] || ZERO_BN, 18, 4) || ''
 
   useEffect(() => {
     if (!hasMinted) {
@@ -88,6 +102,8 @@ const BurnAelinContextProvider = ({ children }: { children: ReactNode }) => {
         refetchUserBalance,
         refetchUserAllowance,
         userBalance: userBalance ?? ZERO_BN,
+        userReceiveAmtUSDC,
+        userReceiveAmtVK,
       }}
     >
       {children}
